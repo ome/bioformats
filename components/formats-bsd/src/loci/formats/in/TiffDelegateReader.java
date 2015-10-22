@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 
 /**
@@ -42,6 +43,7 @@ import loci.formats.DelegateReader;
  * @see TiffReader
  * @see TiffJAIReader
  */
+@BioFormatsReader
 public class TiffDelegateReader extends DelegateReader {
 
   // -- Constructor --

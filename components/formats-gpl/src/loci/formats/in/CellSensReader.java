@@ -38,6 +38,7 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -62,6 +63,7 @@ import ome.xml.model.primitives.Timestamp;
 /**
  * CellSensReader is the file format reader for cellSens .vsi files.
  */
+@BioFormatsReader
 public class CellSensReader extends FormatReader {
 
   // -- Constants --

@@ -36,6 +36,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -59,7 +60,7 @@ import ome.units.quantity.Length;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-
+@BioFormatsReader
 public class BioRadReader extends FormatReader {
 
   // -- Constants --

@@ -56,6 +56,7 @@ import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -97,6 +98,7 @@ import ome.units.UNITS;
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
  */
+@BioFormatsReader
 public class FakeReader extends FormatReader {
 
   // -- Constants --

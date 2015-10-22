@@ -36,6 +36,7 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -66,6 +67,7 @@ import org.xml.sax.SAXException;
  * @author Curtis Rueden
  * @author Melissa Linkert
  */
+@BioFormatsReader
 public class PrairieReader extends FormatReader {
 
   // -- Constants --

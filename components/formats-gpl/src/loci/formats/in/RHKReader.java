@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -43,6 +44,7 @@ import ome.units.quantity.Length;
 /**
  * RHKReader is the file format reader for RHK Technologies files.
  */
+@BioFormatsReader
 public class RHKReader extends FormatReader {
 
   // -- Constants --

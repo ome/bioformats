@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -44,6 +45,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader
 public class NDPISReader extends FormatReader {
 
   // -- Fields --

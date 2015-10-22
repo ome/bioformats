@@ -48,6 +48,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -76,6 +77,7 @@ import ome.xml.model.primitives.Timestamp;
  * <a href="http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/">OME-TIFF</a>
  * files.
  */
+@BioFormatsReader
 public class OMETiffReader extends FormatReader {
 
   // -- Fields --

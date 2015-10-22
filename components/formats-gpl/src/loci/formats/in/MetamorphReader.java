@@ -45,6 +45,7 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -73,6 +74,7 @@ import ome.units.UNITS;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Sebastien Huart Sebastien dot Huart at curie.fr
  */
+@BioFormatsReader
 public class MetamorphReader extends BaseTiffReader {
 
   // -- Constants --

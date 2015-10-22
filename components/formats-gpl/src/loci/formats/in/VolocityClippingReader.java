@@ -29,6 +29,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -41,6 +42,7 @@ import loci.formats.meta.MetadataStore;
  * VolocityClippingReader is the file format reader for Volocity library
  * clipping files.
  */
+@BioFormatsReader
 public class VolocityClippingReader extends FormatReader {
 
   // -- Constants --

@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -44,6 +45,7 @@ import ome.units.quantity.Length;
  * SBIGReader is the file format reader for SBIG files.
  * See the specification at http://www.sbig.com/pdffiles/file.format.pdf.
  */
+@BioFormatsReader
 public class SBIGReader extends FormatReader {
 
   // -- Constants --

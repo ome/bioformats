@@ -37,6 +37,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -56,6 +57,7 @@ import ome.units.UNITS;
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
  */
+@BioFormatsReader
 public class NRRDReader extends FormatReader {
 
   // -- Constants --

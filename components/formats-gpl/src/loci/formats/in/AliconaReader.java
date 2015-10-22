@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -45,6 +46,7 @@ import ome.xml.model.primitives.PositiveFloat;
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
  */
+@BioFormatsReader
 public class AliconaReader extends FormatReader {
 
   // -- Constants --

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -49,6 +50,7 @@ import ome.units.UNITS;
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
  */
+@BioFormatsReader
 public class ImprovisionTiffReader extends BaseTiffReader {
 
   // -- Constants --

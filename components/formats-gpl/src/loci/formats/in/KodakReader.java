@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,6 +48,7 @@ import ome.units.UNITS;
 /**
  * KodakReader is the file format reader for Kodak Molecular Imaging .bip files.
  */
+@BioFormatsReader
 public class KodakReader extends FormatReader {
 
   // -- Constants --

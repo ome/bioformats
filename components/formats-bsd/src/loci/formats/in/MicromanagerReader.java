@@ -45,6 +45,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -66,6 +67,7 @@ import ome.units.UNITS;
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
  */
+@BioFormatsReader
 public class MicromanagerReader extends FormatReader {
 
   // -- Constants --

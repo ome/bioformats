@@ -30,6 +30,7 @@ import java.math.BigInteger;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -44,6 +45,7 @@ import ome.units.quantity.Length;
  * Specifications available at
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
  */
+@BioFormatsReader
 public class MRCReader extends FormatReader {
 
   // -- Constants --

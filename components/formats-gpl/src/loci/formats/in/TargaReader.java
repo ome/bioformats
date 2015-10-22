@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -41,6 +42,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * File format reader for Truevision Targa files.
  */
+@BioFormatsReader
 public class TargaReader extends FormatReader {
 
   // -- Fields --

@@ -35,6 +35,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -51,6 +52,7 @@ import ome.units.quantity.Length;
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
  */
+@BioFormatsReader
 public class ImarisHDFReader extends FormatReader {
 
   // -- Constants --

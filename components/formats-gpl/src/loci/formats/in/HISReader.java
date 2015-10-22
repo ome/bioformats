@@ -32,6 +32,7 @@ import ome.xml.model.primitives.Timestamp;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -45,6 +46,7 @@ import ome.units.UNITS;
 /**
  * HISReader is the file format reader for Hamamatsu .his files.
  */
+@BioFormatsReader
 public class HISReader extends FormatReader {
 
   // -- Constants --

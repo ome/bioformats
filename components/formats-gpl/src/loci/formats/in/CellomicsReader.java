@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -51,6 +52,7 @@ import ome.units.quantity.Length;
 /**
  * Reader for Cellomics C01 files.
  */
+@BioFormatsReader
 public class CellomicsReader extends FormatReader {
 
   // -- Constants --

@@ -39,6 +39,7 @@ import com.google.common.collect.ListMultimap;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -57,6 +58,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader
 public class SlidebookReader extends FormatReader {
 
   // -- Constants --

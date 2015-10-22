@@ -37,6 +37,7 @@ import java.util.Vector;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -56,6 +57,7 @@ import loci.formats.meta.MetadataStore;
  * Much of this code was adapted from Wayne Rasband's AVI Movie Reader
  * plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
  */
+@BioFormatsReader
 public class AVIReader extends FormatReader {
 
   // -- Constants --

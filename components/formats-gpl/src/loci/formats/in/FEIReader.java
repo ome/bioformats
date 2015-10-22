@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -38,6 +39,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * FEIReader is the file format reader for FEI and Philips .img files.
  */
+@BioFormatsReader
 public class FEIReader extends FormatReader {
 
   // -- Constants --

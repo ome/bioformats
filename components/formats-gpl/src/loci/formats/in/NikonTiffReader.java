@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -45,6 +46,7 @@ import ome.units.UNITS;
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
  */
+@BioFormatsReader
 public class NikonTiffReader extends BaseTiffReader {
 
   // -- Constants --

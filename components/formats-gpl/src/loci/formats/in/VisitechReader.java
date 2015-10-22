@@ -32,6 +32,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,6 +43,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * VisitechReader is the file format reader for Visitech XYS files.
  */
+@BioFormatsReader
 public class VisitechReader extends FormatReader {
 
   // -- Constants --

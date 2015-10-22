@@ -32,6 +32,7 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -45,6 +46,7 @@ import ome.xml.model.primitives.PositiveFloat;
 
 /**
  */
+@BioFormatsReader
 public class SlidebookTiffReader extends BaseTiffReader {
 
   // -- Constants --

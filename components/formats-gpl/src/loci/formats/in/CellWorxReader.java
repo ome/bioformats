@@ -37,6 +37,7 @@ import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -61,6 +62,7 @@ import ome.units.quantity.Length;
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
  */
+@BioFormatsReader
 public class CellWorxReader extends FormatReader {
 
   // -- Constants --

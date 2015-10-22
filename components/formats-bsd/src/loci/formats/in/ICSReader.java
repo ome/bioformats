@@ -45,6 +45,7 @@ import java.util.zip.GZIPInputStream;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -71,6 +72,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader
 public class ICSReader extends FormatReader {
 
   // -- Constants --

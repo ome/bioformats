@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,6 +48,7 @@ import ome.xml.model.primitives.PositiveFloat;
  *
  * See http://bio3d.colorado.edu/imod/doc/binspec.html
  */
+@BioFormatsReader
 public class IMODReader extends FormatReader {
 
   // -- Constants --

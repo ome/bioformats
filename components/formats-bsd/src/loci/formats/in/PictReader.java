@@ -38,6 +38,7 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -56,6 +57,7 @@ import loci.formats.meta.MetadataStore;
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
  * (http://www.imagemagick.org), and Java QuickDraw.
  */
+@BioFormatsReader
 public class PictReader extends FormatReader {
 
   // -- Constants --

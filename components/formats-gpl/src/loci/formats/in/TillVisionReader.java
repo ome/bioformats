@@ -50,6 +50,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -64,6 +65,7 @@ import ome.units.UNITS;
 /**
  * TillVisionReader is the file format reader for TillVision files.
  */
+@BioFormatsReader
 public class TillVisionReader extends FormatReader {
 
   // -- Constants --

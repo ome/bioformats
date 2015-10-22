@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -57,6 +58,7 @@ import ome.units.UNITS;
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
  */
+@BioFormatsReader
 public class SVSReader extends BaseTiffReader {
 
   // -- Constants --

@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -45,6 +46,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * JPXReader is the file format reader for JPX (3D JPEG-2000) images.
  */
+@BioFormatsReader
 public class JPXReader extends FormatReader {
 
   // -- Constants --

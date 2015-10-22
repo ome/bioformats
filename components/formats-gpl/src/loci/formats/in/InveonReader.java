@@ -33,6 +33,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -46,6 +47,7 @@ import ome.units.quantity.Length;
 /**
  * InveonReader is the file format reader for Inveon files.
  */
+@BioFormatsReader
 public class InveonReader extends FormatReader {
 
   // -- Constants --

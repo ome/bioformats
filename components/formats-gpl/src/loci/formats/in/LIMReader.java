@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatReader;
@@ -39,6 +40,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * LIMReader is the file format reader for Laboratory Imaging/Nikon LIM files.
  */
+@BioFormatsReader
 public class LIMReader extends FormatReader {
 
   // -- Constants --

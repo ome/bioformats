@@ -32,6 +32,7 @@ import java.util.List;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -46,6 +47,7 @@ import ome.units.quantity.Length;
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
  */
+@BioFormatsReader
 public class VarianFDFReader extends FormatReader {
 
   // -- Fields --

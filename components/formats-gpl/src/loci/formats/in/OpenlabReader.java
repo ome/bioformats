@@ -31,6 +31,7 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -55,6 +56,7 @@ import ome.units.quantity.Length;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Jim Paris jim at jtan.com
  */
+@BioFormatsReader
 public class OpenlabReader extends FormatReader {
 
   // -- Constants --

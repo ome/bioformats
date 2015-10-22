@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -41,6 +42,7 @@ import loci.formats.meta.MetadataStore;
  * Zeiss LMS reader for data from Zeiss CSM 700 systems.  Not to be confused
  * with the Zeiss LSM reader, which reads the much more common .lsm format
  */
+@BioFormatsReader
 public class ZeissLMSReader extends FormatReader {
 
   // -- Constants --

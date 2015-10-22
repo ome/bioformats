@@ -31,6 +31,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -44,6 +45,7 @@ import ome.units.quantity.Length;
 /**
  * UnisokuReader is the file format reader for Unisoku STM files.
  */
+@BioFormatsReader
 public class UnisokuReader extends FormatReader {
 
   // -- Constants --

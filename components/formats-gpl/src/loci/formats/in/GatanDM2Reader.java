@@ -32,6 +32,7 @@ import ome.xml.model.primitives.Timestamp;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,6 +48,7 @@ import ome.units.UNITS;
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
  */
+@BioFormatsReader
 public class GatanDM2Reader extends FormatReader {
 
   // -- Constants --

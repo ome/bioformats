@@ -35,6 +35,7 @@ import java.util.Vector;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -58,7 +59,8 @@ import org.scijava.nativelib.NativeLibraryUtil;
  * @author Richard Myers, richard at intelligent-imaging.com
  *
  */
-public class SlideBook6Reader  extends FormatReader {
+@BioFormatsReader
+public class SlideBook6Reader extends FormatReader {
 
 	// -- Constants --
 

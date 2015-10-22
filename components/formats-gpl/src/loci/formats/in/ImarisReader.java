@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -46,6 +47,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader
 public class ImarisReader extends FormatReader {
 
   // -- Constants --

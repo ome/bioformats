@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -39,6 +40,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * JEOLReader is the file format reader for JEOL files.
  */
+@BioFormatsReader
 public class JEOLReader extends FormatReader {
 
   // -- Fields --

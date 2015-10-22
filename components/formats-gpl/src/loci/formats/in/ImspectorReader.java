@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -40,6 +41,7 @@ import ome.xml.model.primitives.PositiveFloat;
 /**
  * ImspectorReader is the file format reader for Imspector .msr files.
  */
+@BioFormatsReader
 public class ImspectorReader extends FormatReader {
 
   // -- Constants --

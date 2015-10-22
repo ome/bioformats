@@ -36,6 +36,7 @@ import java.util.zip.InflaterInputStream;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -53,6 +54,7 @@ import ome.units.quantity.Length;
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
+@BioFormatsReader
 public class AmiraReader extends FormatReader {
 
   // -- Fields --

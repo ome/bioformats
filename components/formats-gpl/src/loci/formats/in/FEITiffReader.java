@@ -40,6 +40,7 @@ import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -58,6 +59,7 @@ import org.xml.sax.Attributes;
  * FEITiffReader is the file format reader for TIFF files produced by various
  * FEI software.
  */
+@BioFormatsReader
 public class FEITiffReader extends BaseTiffReader {
 
   // -- Constants --

@@ -39,6 +39,7 @@ import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.ServiceException;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -57,6 +58,7 @@ import ome.units.quantity.Length;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader
 public class HamamatsuVMSReader extends FormatReader {
 
   // -- Constants --

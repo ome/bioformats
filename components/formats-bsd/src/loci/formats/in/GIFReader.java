@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -49,6 +50,7 @@ import loci.formats.meta.MetadataStore;
  * (GIF) files.  Much of this code was adapted from the Animated GIF Reader
  * plugin for ImageJ (http://rsb.info.nih.gov/ij).
  */
+@BioFormatsReader
 public class GIFReader extends FormatReader {
 
   // -- Constants --

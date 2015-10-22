@@ -34,6 +34,7 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -49,6 +50,7 @@ import ome.units.quantity.Length;
 /**
  * MINCReader is the file format reader for MINC MRI files.
  */
+@BioFormatsReader
 public class MINCReader extends FormatReader {
 
   // -- Fields --

@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 import loci.formats.FormatTools;
 
@@ -36,6 +37,7 @@ import loci.formats.FormatTools;
  * @see NativeND2Reader
  * @see LegacyND2Reader
  */
+@BioFormatsReader
 public class ND2Reader extends DelegateReader {
 
   // -- Constructor --

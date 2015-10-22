@@ -42,6 +42,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.ZipHandle;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -50,6 +51,7 @@ import loci.formats.ImageReader;
 /**
  * Reader for Zip files.
  */
+@BioFormatsReader
 public class ZipReader extends FormatReader {
 
   // -- Fields --

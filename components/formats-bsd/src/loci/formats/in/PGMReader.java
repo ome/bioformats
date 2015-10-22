@@ -40,6 +40,7 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -52,6 +53,7 @@ import loci.formats.meta.MetadataStore;
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
  */
+@BioFormatsReader
 public class PGMReader extends FormatReader {
 
   // -- Constants --

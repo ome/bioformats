@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 import loci.formats.FormatTools;
 
@@ -43,6 +44,7 @@ import loci.formats.FormatTools;
  * @see NativeQTReader
  * @see LegacyQTReader
  */
+@BioFormatsReader
 public class QTReader extends DelegateReader {
 
   // -- Constructor --

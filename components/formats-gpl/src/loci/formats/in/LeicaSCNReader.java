@@ -48,6 +48,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.MetadataTools;
 import loci.formats.FormatException;
@@ -60,7 +61,7 @@ import loci.formats.tiff.TiffParser;
 /**
  * LeicaSCNReader is the file format reader for Leica SCN TIFF files.
  */
-
+@BioFormatsReader
 public class LeicaSCNReader extends BaseTiffReader {
 
   // -- Constants --

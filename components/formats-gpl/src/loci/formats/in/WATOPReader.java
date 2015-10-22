@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,6 +43,7 @@ import ome.units.quantity.Length;
 /**
  * WATOPReader is the file format reader for WA Technology .wat files.
  */
+@BioFormatsReader
 public class WATOPReader extends FormatReader {
 
   // -- Constants --

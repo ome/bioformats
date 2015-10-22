@@ -45,6 +45,7 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -69,6 +70,7 @@ import ome.units.UNITS;
  *
  * @author Shawn Garbett  Shawn.Garbett a t Vanderbilt.edu
  */
+@BioFormatsReader
 public class BDReader extends FormatReader {
 
   // -- Constants --

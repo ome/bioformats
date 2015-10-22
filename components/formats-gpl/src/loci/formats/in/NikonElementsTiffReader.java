@@ -32,6 +32,7 @@ import java.util.Map;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -54,6 +55,7 @@ import ome.units.UNITS;
  * NikonElementsTiffReader is the file format reader for TIFF files produced
  * by Nikon Elements.
  */
+@BioFormatsReader
 public class NikonElementsTiffReader extends BaseTiffReader {
 
   // -- Constants --

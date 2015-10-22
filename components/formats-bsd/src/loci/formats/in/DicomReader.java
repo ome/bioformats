@@ -47,6 +47,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -70,6 +71,7 @@ import ome.units.UNITS;
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
  */
+@BioFormatsReader
 public class DicomReader extends FormatReader {
 
   // -- Constants --

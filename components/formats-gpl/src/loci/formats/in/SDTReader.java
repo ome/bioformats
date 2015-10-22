@@ -32,6 +32,7 @@ import java.util.zip.ZipInputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -45,6 +46,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@BioFormatsReader
 public class SDTReader extends FormatReader {
 
   // -- Fields --

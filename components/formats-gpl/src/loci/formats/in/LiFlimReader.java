@@ -46,6 +46,7 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -60,6 +61,7 @@ import ome.units.UNITS;
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
  */
+@BioFormatsReader
 public class LiFlimReader extends FormatReader {
 
   // -- Constants --

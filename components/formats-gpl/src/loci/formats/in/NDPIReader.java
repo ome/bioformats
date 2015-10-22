@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.ServiceException;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -50,6 +51,7 @@ import ome.units.quantity.Length;
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
  */
+@BioFormatsReader
 public class NDPIReader extends BaseTiffReader {
 
   // -- Constants --
