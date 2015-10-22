@@ -87,7 +87,6 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
         tagMap.put(tag.getTagName(), tag.getDescription());
       }
     }
-
     return tagMap;
   }
 
@@ -104,4 +103,12 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
     directory = null;
   }
 
+  public String getTagName(int tagType)
+  {
+    String tagName = null;
+    if (directory != null) {
+      tagName = directory.getTagName(tagType);
+    }
+    return tagName;
+  }
 }

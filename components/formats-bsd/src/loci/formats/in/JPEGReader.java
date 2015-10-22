@@ -212,9 +212,9 @@ public class JPEGReader extends DelegateReader {
 
         HashMap<String, String> tags = exif.getTags();
         for (String tagName : tags.keySet()) {  
-          if (tagName.equals(ExifSubIFDDirectory.TAG_FOCAL_PLANE_X_RES)) {
+          if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_X_RES))) {
             Length sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)));
-            String units = tags.get(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT);
+            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
             if (units != null)
             {
               if (Integer.parseInt(units) == 2) { 
@@ -226,9 +226,9 @@ public class JPEGReader extends DelegateReader {
             }
             store.setPixelsPhysicalSizeX(sizeX, 0);
           }
-          else if (tagName.equals(ExifSubIFDDirectory.TAG_FOCAL_PLANE_Y_RES)) {
+          else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_Y_RES))) {
             Length sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)));
-            String units = tags.get(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT);
+            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
             if (units != null)
             {
               if (Integer.parseInt(units) == 2) { 
