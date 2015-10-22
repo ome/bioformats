@@ -470,7 +470,7 @@ public class IMODReader extends FormatReader {
   private Unit<Length> convertUnits(int units) {
     switch (units) {
       case 0:
-        return UNITS.REFERENCEFRAME;
+        return UNITS.PIXEL;
       case 1:
         return UNITS.M;
       case 3:
