@@ -37,7 +37,11 @@ Supported Formats
 #set ($openness = $format.get("opennessRating"))
 #set ($presence = $format.get("presenceRating"))
 #set ($utility = $format.get("utilityRating"))
-#set ($export = $format.get("export"))
+#if ($format.get("writer"))
+  #set ($export = "yes")
+#else
+  #set ($export = "no")
+#end
 #set ($bsd = $format.get("bsd"))
    * - :doc:`$pagename`
      - $extensions

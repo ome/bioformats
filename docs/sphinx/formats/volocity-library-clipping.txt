@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Volocity Library Clipping <volocity-library-clipping-metadata>`
+Reader: VolocityClippingReader (:bfreader:`Source Code <VolocityClippingReader.java>`, :doc:`Supported Metadata Fields </metadata/VolocityClippingReader>`)
+
 
 
 
@@ -44,13 +45,7 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`VolocityClippingReader.java`
-
-Notes:
 
 
 RGB .acff files are not yet supported.  See :ticket:`6413`.

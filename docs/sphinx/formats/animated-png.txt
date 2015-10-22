@@ -18,7 +18,9 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Animated PNG <png-metadata>`
+Reader: APNGReader (:bsd-reader:`Source Code <APNGReader.java>`, :doc:`Supported Metadata Fields </metadata/APNGReader>`)
+
+Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Freely Available Software:
 
@@ -48,12 +50,5 @@ Presence: |Good|
 
 Utility: |Poor|
 
-
-**Additional Information**
-
-
-Source Code: :bsd-reader:`APNGReader.java`
-
-Notes:
 
 

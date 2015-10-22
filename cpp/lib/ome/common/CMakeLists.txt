@@ -109,7 +109,7 @@ set(ome_common_sources
     xml/dom/NamedNodeMap.cpp
     xml/dom/NodeList.cpp)
 
-add_library(ome-common SHARED ${ome_common_sources} ${ome_common_headers})
+add_library(ome-common ${ome_common_sources} ${ome_common_headers})
 
 if(CMAKE_MAJOR_VERSION GREATER 2)
   target_link_libraries(ome-common ome-compat)

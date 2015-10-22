@@ -79,8 +79,7 @@ class XercesTest : public ::testing::TestWithParam<XercesTestParameters>
 public:
   xml::Platform plat;
 
-  std::vector<xml::EntityResolver::RegisterEntity> entities;
-  std::vector<xml::EntityResolver::RegisterCatalog> catalogs;
+  xml::EntityResolver resolver;
 
   virtual void SetUp()
   {
@@ -88,30 +87,30 @@ public:
 
     if (params.resolver == XercesTestParameters::FILES)
       {
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/XMLSchema",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/XMLSchema.xsd")));
+        resolver.registerEntity("http://www.w3.org/2001/XMLSchema",
+                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/XMLSchema.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.w3.org/2001/xml.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/xml.xsd")));
+        resolver.registerEntity("http://www.w3.org/2001/xml.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/external/xml.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ome.xsd")));
+        resolver.registerEntity("http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ome.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06/BinaryFile.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/BinaryFile.xsd")));
+        resolver.registerEntity("http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06/BinaryFile.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/BinaryFile.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/SA/2012-06/SA.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SA.xsd")));
+        resolver.registerEntity("http://www.openmicroscopy.org/Schemas/SA/2012-06/SA.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SA.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/SPW/2012-06/SPW.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SPW.xsd")));
+        resolver.registerEntity("http://www.openmicroscopy.org/Schemas/SPW/2012-06/SPW.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/SPW.xsd"));
 
-        entities.push_back(xml::EntityResolver::RegisterEntity("http://www.openmicroscopy.org/Schemas/ROI/2012-06/ROI.xsd",
-                                                               boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ROI.xsd")));
+        resolver.registerEntity("http://www.openmicroscopy.org/Schemas/ROI/2012-06/ROI.xsd",
+                                boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/2012-06/ROI.xsd"));
       }
     else if (params.resolver == XercesTestParameters::CATALOG)
       {
-        catalogs.push_back(xml::EntityResolver::RegisterCatalog(boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/catalog.xml")));
+        resolver.registerCatalog(boost::filesystem::path(PROJECT_SOURCE_DIR "/components/specification/released-schema/catalog.xml"));
       }
 
   }
@@ -178,12 +177,12 @@ TEST_P(XercesTest, DocumentFromFile)
   xml::dom::Document doc;
   if (params.valid)
     {
-      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename)));
+      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename), resolver));
       ASSERT_TRUE(doc != 0);
     }
   else
     {
-      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename)), std::runtime_error);
+      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename), resolver), std::runtime_error);
       ASSERT_TRUE(doc == 0);
     }
 }
@@ -198,12 +197,12 @@ TEST_P(XercesTest, DocumentFromStream)
   xml::dom::Document doc;
   if (params.valid)
     {
-      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(in));
+      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(in, resolver));
       ASSERT_TRUE(doc != 0);
     }
   else
     {
-      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(in), std::runtime_error);
+      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(in, resolver), std::runtime_error);
       ASSERT_TRUE(doc == 0);
     }
 }
@@ -227,12 +226,12 @@ TEST_P(XercesTest, DocumentFromString)
   xml::dom::Document doc;
   if (params.valid)
     {
-      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(data));
+      ASSERT_NO_THROW(doc = ome::common::xml::dom::createDocument(data, resolver));
       ASSERT_TRUE(doc != 0);
     }
   else
     {
-      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(data), std::runtime_error);
+      ASSERT_THROW(doc = ome::common::xml::dom::createDocument(data, resolver), std::runtime_error);
       ASSERT_TRUE(doc == 0);
     }
 }
@@ -243,7 +242,7 @@ TEST_P(XercesTest, ResetDocument)
 
   if (params.valid)
     {
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename)));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(boost::filesystem::path(params.filename), resolver));
 
       ASSERT_TRUE(doc);
       ASSERT_TRUE(doc.get() != 0);
@@ -269,7 +268,7 @@ TEST_P(XercesTest, DocumentToFile)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-common");
       std::string name("test-document-output-");
       name += boost::filesystem::path(params.filename).filename().generic_string();
@@ -281,7 +280,7 @@ TEST_P(XercesTest, DocumentToFile)
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(file));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(file, resolver));
       std::string s2;
       ome::common::xml::dom::writeDocument(doc2, s2);
 
@@ -305,13 +304,13 @@ TEST_P(XercesTest, DocumentWriteString)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::string s;
       ome::common::xml::dom::writeDocument(doc, s);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s, resolver));
       std::string s2;
       ome::common::xml::dom::writeDocument(doc2, s2);
 
@@ -342,13 +341,13 @@ TEST_P(XercesTest, DocumentWriteStringParameters)
       p.datatypeNormalization=true;
       p.canonicalForm=true;
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::string s;
       ome::common::xml::dom::writeDocument(doc, s, p);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s, resolver));
       std::string s2;
       ome::common::xml::dom::writeDocument(doc2, s2, p);
 
@@ -361,7 +360,7 @@ TEST_P(XercesTest, DocumentWriteStringParameters)
       p.datatypeNormalization=false;
       p.canonicalForm=false;
 
-      xml::dom::Document doc3(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc3(ome::common::xml::dom::createDocument(s, resolver));
       std::string s3;
       ome::common::xml::dom::writeDocument(doc3, s3, p2);
 
@@ -386,13 +385,13 @@ TEST_P(XercesTest, DocumentWriteStream)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::ostringstream os;
       ome::common::xml::dom::writeDocument(doc, os);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(os.str()));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(os.str(), resolver));
       std::ostringstream os2;
       ome::common::xml::dom::writeDocument(doc2, os2);
 
@@ -416,7 +415,7 @@ TEST_P(XercesTest, NodeToFile)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       boost::filesystem::path file(PROJECT_BINARY_DIR "/cpp/test/ome-common");
       std::string name("test-document-output-");
       name += boost::filesystem::path(params.filename).filename().generic_string();
@@ -428,7 +427,7 @@ TEST_P(XercesTest, NodeToFile)
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(file));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(file, resolver));
       std::string s2;
       ome::common::xml::dom::writeNode(doc2, s2);
 
@@ -452,13 +451,13 @@ TEST_P(XercesTest, NodeWriteString)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::string s;
       ome::common::xml::dom::writeNode(doc, s);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s, resolver));
       std::string s2;
       ome::common::xml::dom::writeNode(doc2, s2);
 
@@ -489,13 +488,13 @@ TEST_P(XercesTest, NodeWriteStringParameters)
       p.datatypeNormalization=true;
       p.canonicalForm=true;
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::string s;
       ome::common::xml::dom::writeNode(doc, s, p);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(s, resolver));
       std::string s2;
       ome::common::xml::dom::writeNode(doc2, s2, p);
 
@@ -508,7 +507,7 @@ TEST_P(XercesTest, NodeWriteStringParameters)
       p.datatypeNormalization=false;
       p.canonicalForm=false;
 
-      xml::dom::Document doc3(ome::common::xml::dom::createDocument(s));
+      xml::dom::Document doc3(ome::common::xml::dom::createDocument(s, resolver));
       std::string s3;
       ome::common::xml::dom::writeNode(doc3, s3, p2);
 
@@ -533,13 +532,13 @@ TEST_P(XercesTest, NodeWriteStream)
       data.assign(std::istreambuf_iterator<char>(in),
                   std::istreambuf_iterator<char>());
 
-      xml::dom::Document doc(ome::common::xml::dom::createDocument(data));
+      xml::dom::Document doc(ome::common::xml::dom::createDocument(data, resolver));
       std::ostringstream os;
       ome::common::xml::dom::writeNode(doc, os);
 
       // Can't compare the original directly so reparse and check it
       // round-trips identically.
-      xml::dom::Document doc2(ome::common::xml::dom::createDocument(os.str()));
+      xml::dom::Document doc2(ome::common::xml::dom::createDocument(os.str(), resolver));
       std::ostringstream os2;
       ome::common::xml::dom::writeNode(doc2, os2);
 

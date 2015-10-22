@@ -43,6 +43,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/qtwidgets/glm.h>
 #include <ome/qtwidgets/GLWindow.h>
 #include <ome/qtwidgets/gl/Image2D.h>
 #include <ome/qtwidgets/gl/Grid2D.h>
@@ -52,8 +53,6 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QSpinBox>
-
-#include <glm/glm.hpp>
 
 namespace ome
 {

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`NRRD (Nearly Raw Raster Data) <nrrd-metadata>`
+Reader: NRRDReader (:bsd-reader:`Source Code <NRRDReader.java>`, :doc:`Supported Metadata Fields </metadata/NRRDReader>`)
+
 
 Freely Available Software:
 
@@ -49,12 +50,5 @@ Presence: |Fair|
 
 Utility: |Very good|
 
-
-**Additional Information**
-
-
-Source Code: :bsd-reader:`NRRDReader.java`
-
-Notes:
 
 

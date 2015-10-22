@@ -55,27 +55,6 @@ class OMEModelEntity(object):
         prefix, = filter(None, match.groups())
         return prefix.lower() + v[len(prefix):]
 
-    def _get_omeroPackage(self):
-        namespace = self.namespace
-        try:
-            if self.isBackReference:
-                namespace = self.model.getObjectByName(self.type).namespace
-        except AttributeError:  # OMEModelObject not OMEModelProperty
-            pass
-        suffix = config.PACKAGE_NAMESPACE_RE.match(namespace).group(1)
-        try:
-            if self.isEnumeration:
-                suffix = 'enum'
-        except AttributeError:
-            pass
-        try:
-            return config.OMERO_PACKAGE_OVERRIDES[suffix]
-        except:
-            return "%s.%s" % (config.OMERO_DEFAULT_PACKAGE, suffix.lower())
-    omeroPackage = property(
-        _get_omeroPackage,
-        doc="""The OMERO package of the entity.""")
-
     def _get_argumentName(self):
         argumentName = config.REF_REGEX.sub('', self.name)
         argumentName = self.lowerCasePrefix(argumentName)

@@ -44,17 +44,22 @@ import java.util.zip.DataFormatException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
-import ome.xml.model.primitives.PositiveFloat;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
@@ -152,9 +157,28 @@ public class OBFReader extends FormatReader
     final int lengthOfDescription = in.readInt();
     final String description = in.readString(lengthOfDescription);
     metadata.put("Description", description);
+    String ome_xml = "" ;
     if (fileVersion > 1)
     {
-      in.readLong();
+      final long meta_data_position = in.readLong() ;
+      final long current_position = in.getFilePointer() ;
+
+      in.seek( meta_data_position ) ;
+
+      for (String key = readString() ; key.length() > 0 ; key = readString())
+      {
+        if (key.equals( "ome_xml" ))
+        {
+          ome_xml = readString() ;
+          break ;
+        }
+        else
+        {
+          addGlobalMeta( key, readString() ) ;
+        }
+      }
+
+      in.seek( current_position ) ;
     }
 
     if (stackPosition != 0)
@@ -168,56 +192,83 @@ public class OBFReader extends FormatReader
     }
 
     MetadataStore ome = makeFilterMetadata();
-    MetadataTools.populatePixels(ome, this);
-
-    for (int series = 0; series != core.size(); ++ series)
+    if (fileVersion <= 1)
     {
-      CoreMetadata obf = core.get(series);
+      MetadataTools.populatePixels(ome, this);
 
-      final String name = obf.seriesMetadata.get("Name").toString();
-      ome.setImageName(name, series);
-
-      @SuppressWarnings("unchecked")
-      final List<Double> lengths = (List<Double>) obf.seriesMetadata.get("Lengths");
-
-      if (lengths.size() > 0)
+      for (int series = 0; series != core.size(); ++ series)
       {
-        double lengthX = Math.abs(lengths.get(0)) ;
-        if (lengthX < 0.01)
+        CoreMetadata obf = core.get(series);
+
+        final String name = obf.seriesMetadata.get("Name").toString();
+        ome.setImageName(name, series);
+
+        @SuppressWarnings("unchecked")
+        final List<Double> lengths = (List<Double>) obf.seriesMetadata.get("Lengths");
+
+        if (lengths.size() > 0)
         {
-          lengthX *= 1000000;
+          double lengthX = Math.abs(lengths.get(0));
+          if (lengthX < 0.01)
+          {
+            lengthX *= 1000000;
+          }
+          if (lengthX > 0)
+          {
+            Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROM);
+            if (physicalSizeX != null) {
+              ome.setPixelsPhysicalSizeX(physicalSizeX, series);
+            }
+          }
         }
-        if (lengthX > 0)
+        if (lengths.size() > 1)
         {
-          final Length physicalSizeX = FormatTools.createLength( lengthX / obf.sizeX , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeX(physicalSizeX, series);
+          double lengthY = Math.abs(lengths.get(1));
+          if (lengthY < 0.01)
+          {
+            lengthY *= 1000000;
+          }
+          if (lengthY > 0)
+          {
+            Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROM);
+            if (physicalSizeY != null) {
+              ome.setPixelsPhysicalSizeY(physicalSizeY, series);
+            }
+          }
+        }
+        if (lengths.size() > 2)
+        {
+          double lengthZ = Math.abs(lengths.get(2));
+          if (lengthZ < 0.01)
+          {
+            lengthZ *= 1000000;
+          }
+          if (lengthZ > 0)
+          {
+            Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROM);
+            if (physicalSizeZ != null) {
+              ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
+            }
+          }
         }
       }
-      if (lengths.size() > 1)
+    }
+    else
+    {
+      try
       {
-        double lengthY = Math.abs(lengths.get(1));
-        if (lengthY < 0.01)
-        {
-          lengthY *= 1000000;
-        }
-        if (lengthY > 0)
-        {
-          final Length physicalSizeY = FormatTools.createLength( lengthY / obf.sizeY , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeY(physicalSizeY, series);
-        }
+        ServiceFactory factory = new ServiceFactory() ;
+        OMEXMLService service = factory.getInstance( OMEXMLService.class ) ;
+
+        service.convertMetadata( ome_xml, ome ) ;
       }
-      if (lengths.size() > 2)
+      catch (DependencyException exception) 
       {
-        double lengthZ = Math.abs(lengths.get(2));
-        if (lengthZ < 0.01)
-        {
-          lengthZ *= 1000000 ;
-        }
-        if (lengthZ > 0)
-        {
-          final Length physicalSizeZ = FormatTools.createLength( lengthZ / obf.sizeZ  , UNITS.MICROM);
-          ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
-        }
+        throw new MissingLibraryException( OMEXMLServiceImpl.NO_OME_XML_MSG, exception ) ;
+      }
+      catch (ServiceException exception) 
+      {
+        throw new FormatException( exception ) ;
       }
     }
   }
@@ -493,6 +544,19 @@ public class OBFReader extends FormatReader
       case 0: return false;
       case 1: return true;
       default: throw new FormatException("Unsupported compression " + compression);
+    }
+  }
+
+  private String readString() throws IOException
+  {
+    final int length = in.readInt() ;
+    if (length > 0)
+    {
+      return in.readString( length ) ;
+    }
+    else
+    {
+      return "" ;
     }
   }
 

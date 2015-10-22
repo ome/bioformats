@@ -40,10 +40,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * Zeiss LMS reader for data from Zeiss CSM 700 systems.  Not to be confused
  * with the Zeiss LSM reader, which reads the much more common .lsm format
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ZeissLMSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ZeissLMSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ZeissLMSReader extends FormatReader {
 

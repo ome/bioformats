@@ -36,7 +36,8 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${Boost_INCLUDE_DIRS}
-                    ${TIFF_INCLUDE_DIR})
+                    ${TIFF_INCLUDE_DIR}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
@@ -72,6 +73,7 @@ set(OME_BIOFORMATS_HEADERS
     Modulo.h
     PixelBuffer.h
     PixelProperties.h
+    PlaneRegion.h
     TileBuffer.h
     TileCache.h
     TileCoverage.h
@@ -153,7 +155,7 @@ set(BIOFORMATS_GENERATED_HEADERS)
 set(BIOFORMATS_HEADERS
     ${BIOFORMATS_STATIC_HEADERS})
 
-add_library(ome-bioformats SHARED
+add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
 target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
@@ -188,7 +190,7 @@ set(LIBRARY_HEADER ome/bioformats/CoreMetadata.h)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-bioformats)
 
 # Dump header list for testing
 header_include_list_write(BIOFORMATS_STATIC_HEADERS BIOFORMATS_GENERATED_HEADERS ome/bioformats ${PROJECT_BINARY_DIR}/cpp/test/ome-bioformats)

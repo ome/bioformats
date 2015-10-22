@@ -15,7 +15,11 @@ clean()
 maven()
 {
     mvn
-    clean
+}
+
+maven_findbugs()
+{
+    mvn findbugs:findbugs -Dfindbugs.threshold=medium
 }
 
 cpp()
@@ -71,6 +75,14 @@ sphinx()
     )
 }
 
+sphinx_html()
+{
+    (
+        cd docs/sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS html
+     )
+ }
+
 # Test Ant build targets
 antbuild()
 {
@@ -103,6 +115,8 @@ do
             clean ;;
         maven)
             maven ;;
+        maven_findbugs)
+            maven_findbugs ;;
         cpp)
             cpp ;;
         cppwrap)
@@ -111,10 +125,12 @@ do
             flake ;;
         sphinx)
             sphinx ;;
+        sphinx_html)
+            sphinx_html ;;
         ant)
             antbuild ;;
         all)
-            clean && maven && cppwrap && sphinx && antbuild;;
+            clean && maven_findbugs && cppwrap && sphinx && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1

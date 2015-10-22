@@ -31,15 +31,6 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Very good|
-     - |Poor|
-     - |no|
-     - |no|
-   * - :doc:`formats/3i-slidebook6`
-     - .sld
-     - |Very good|
-     - |Fair|
-     - |Fair|
-     - |Very good|
      - |Fair|
      - |no|
      - |no|
@@ -209,7 +200,7 @@ Supported Formats
      - .ims
      - |Very good|
      - |Very good|
-     - |Good|
+     - |Very good|
      - |Fair|
      - |Fair|
      - |no|
@@ -248,7 +239,7 @@ Supported Formats
      - |Outstanding|
      - |Fair|
      - |Very good|
-     - |no|
+     - |yes|
      - |no|
    * - :doc:`formats/cellomics`
      - .c01
@@ -350,7 +341,7 @@ Supported Formats
      - |no|
      - |yes|
    * - :doc:`formats/gatan-digital-micrograph`
-     - .dm3
+     - .dm3, .dm4
      - |Very good|
      - |Good|
      - |Fair|
@@ -971,7 +962,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/pgm`
-     - .pgm
+     - .pbm, .pgm, .ppm
      - |Very good|
      - |Good|
      - |Outstanding|
@@ -1313,7 +1304,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **143** formats
+Bio-Formats currently supports **142** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1376,7 +1367,6 @@ Bio-Formats currently supports **143** formats
     :hidden:
 
     formats/3i-slidebook
-    formats/3i-slidebook6
     formats/abd-tiff
     formats/aim
     formats/alicona-3d

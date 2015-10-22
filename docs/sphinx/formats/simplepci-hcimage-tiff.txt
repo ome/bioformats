@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SimplePCI & HCImage TIFF <simplepci-hcimage-tiff-metadata>`
+Reader: SimplePCITiffReader (:bfreader:`Source Code <SimplePCITiffReader.java>`, :doc:`Supported Metadata Fields </metadata/SimplePCITiffReader>`)
+
 
 
 
@@ -43,12 +44,5 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`SimplePCITiffReader.java`
-
-Notes:
 
 

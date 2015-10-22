@@ -27,7 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -92,6 +94,8 @@ public class NativeND2Reader extends FormatReader {
 
   private ArrayList<Double> tsT = new ArrayList<Double>();
 
+  private int positionCount = 0;
+
   private int fieldIndex;
 
   private long xOffset, yOffset, zOffset;
@@ -102,7 +106,7 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<Length> posZ;
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
 
-  private Hashtable<String, Integer> channelColors;
+  private Map<String, Integer> channelColors;
   private boolean split = false;
   private int lastChannel = 0;
   private int[] colors;
@@ -328,6 +332,7 @@ public class NativeND2Reader extends FormatReader {
       textData = false;
       refractiveIndex = null;
       exposureTime.clear();
+      positionCount = 0;
     }
   }
 
@@ -342,7 +347,7 @@ public class NativeND2Reader extends FormatReader {
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
-    channelColors = new Hashtable<String, Integer>();
+    channelColors = new HashMap<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
@@ -419,6 +424,10 @@ public class NativeND2Reader extends FormatReader {
           nameAttri.contains("CalibrationLV") ||
           (nameAttri.contains("MetadataSeqLV") && !seq))
         {
+          // prevent position count from being doubled
+          if (nameAttri.equals("ImageMetadataLV!")) {
+            positionCount = 0;
+          }
           iterateIn(in, stop);
         }
 
@@ -493,7 +502,7 @@ public class NativeND2Reader extends FormatReader {
             extraZDataCount = 0;
             useLastText = true;
           }
-          imageOffsets.add(new Long(fp));
+          imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
@@ -705,7 +714,7 @@ public class NativeND2Reader extends FormatReader {
           long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
           long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
-            customDataOffsets.add(new Long(fp));
+            customDataOffsets.add(fp);
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
@@ -770,7 +779,7 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadataList();
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      final Map<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
         nXFields = 0;
@@ -813,6 +822,12 @@ public class NativeND2Reader extends FormatReader {
       // rearrange image data offsets
 
       if (numSeries == 0) numSeries = 1;
+      else if (numSeries == 1 && positionCount > 1) {
+        for (int i=1; i<positionCount; i++) {
+          core.add(core.get(0));
+        }
+        numSeries = core.size();
+      }
 
       if (getSizeZ() == 0) {
         for (int i=0; i<getSeriesCount(); i++) {
@@ -841,7 +856,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+      if (positionCount != getSeriesCount() && (getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         if (getSeriesCount() > ms0.sizeZ) {
           ms0.sizeZ = getSeriesCount();
@@ -1355,7 +1370,7 @@ public class NativeND2Reader extends FormatReader {
             for (int plane=0; plane<count; plane++) {
               // timestamps are stored in ms; we want them in seconds
               double time = in.readDouble() / 1000;
-              tsT.add(new Double(time));
+              tsT.add(time);
               addSeriesMetaList("timestamp", time);
             }
           }
@@ -1397,7 +1412,7 @@ public class NativeND2Reader extends FormatReader {
       length -= 8;
 
       if (box == 0x6a703263) {
-        vs.add(new Long(pos));
+        vs.add(pos);
       }
       else if (box == 0x6a703268) {
         in.skipBytes(4);
@@ -1524,9 +1539,9 @@ public class NativeND2Reader extends FormatReader {
       ts = handler.getTimepoints();
       numSeries = handler.getSeriesCount();
       core = handler.getCoreMetadataList();
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
 
@@ -1736,6 +1751,9 @@ public class NativeND2Reader extends FormatReader {
         }
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
+        }
+        else if (name.equals("dPosX")) {
+          positionCount++;
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
@@ -2129,9 +2147,9 @@ public class NativeND2Reader extends FormatReader {
         backupHandler = handler;
       }
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
     catch (IOException e) {

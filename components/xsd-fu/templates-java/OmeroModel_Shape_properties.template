@@ -1,4 +1,0 @@
-            <!--
-            // Property ROI
-            -->
-            <required name="roi" type="ome.model.roi.ROI" ordered="true"/>

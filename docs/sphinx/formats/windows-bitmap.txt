@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Windows Bitmap <windows-bitmap-metadata>`
+Reader: BMPReader (:bsd-reader:`Source Code <BMPReader.java>`, :doc:`Supported Metadata Fields </metadata/BMPReader>`)
+
 
 Freely Available Software:
 
@@ -45,13 +46,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Source Code: :bsd-reader:`BMPReader.java`
-
-Notes:
 
 
 Compressed BMP files are currently not supported. 

@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PerkinElmer Operetta <perkinelmer-operetta-metadata>`
+Reader: OperettaReader (:bfreader:`Source Code <OperettaReader.java>`, :doc:`Supported Metadata Fields </metadata/OperettaReader>`)
+
 
 
 
@@ -44,12 +45,5 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`OperettaReader.java`
-
-Notes:
 
 

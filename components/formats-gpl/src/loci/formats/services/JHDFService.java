@@ -38,12 +38,6 @@ import loci.common.services.ServiceException;
 
 /**
  * Utility class for working with NetCDF/HDF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a
- * href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/NetCDFService.java">Trac</a>,
- * <a
- * href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/NetCDFService.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface JHDFService extends Service {
 
@@ -56,6 +50,16 @@ public interface JHDFService extends Service {
      */
     public void setFile(String file) throws IOException;
     
+    /**
+     * Initializes the service on a given file path.
+     *
+     * @param file Path to initialize the service with.
+     * @throws IOException If there is an error initializing the service with
+     * <code>file</code>.
+     */
+    public void setFileForWrite(String file) throws IOException;
+    
+
     /**
    * Retrieves the current initialized file path.
    * @return Current initialized file path or <code>null</code> if the service
@@ -157,6 +161,52 @@ public interface JHDFService extends Service {
      */
     public boolean exists(String path);
 
+    /**
+     * Creates an HDF5 dataset in path consisting of integers specified 
+     * by bytes per pixel bpp.
+     *
+     * @param path path to HDF5 a dataset.
+     * @param bpp bytes per pixel for the integer data type
+     * bpp \in {1,2,4} == {Byte, Short, Integer}
+     */
+    public void initIntArray(String path, long[] dimensions, long bpp);
+    
+    /**
+     * Writes an array as sub-slice into an existing HDF5 dataset
+     *
+     * @param path path to the (existing) HDF5 dataset.
+     * @param image the data stored as MDArray of pixel type Byte
+     * @param offset dimensions, where to start writing the image. The image 
+     * will be written from offset to offset + image.dimensions()
+     */
+    public void writeArraySlice(String path, MDByteArray image, long[] offset);
+    
+    /**
+     * Writes an array as sub-slice into an existing HDF5 dataset
+     *
+     * @param path path to the (existing) HDF5 dataset.
+     * @param image the data stored as MDArray of pixel type Short
+     * @param offset dimensions, where to start writing the image. The image 
+     * will be written from offset to offset + image.dimensions()
+     */
+    public void writeArraySlice(String path, MDShortArray image, long[] offset);
+    
+    /**
+     * Writes an array as sub-slice into an existing HDF5 dataset
+     *
+     * @param path path to the (existing) HDF5 dataset.
+     * @param image the data stored as MDArray of pixel type int
+     * @param offset dimensions, where to start writing the image. The image 
+     * will be written from offset to offset + image.dimensions()
+     */
+    public void writeArraySlice(String path, MDIntArray image, long[] offset);
+         
+    /**
+     * Writes an array as sub-slice into an existing HDF5 dataset
+     *
+     * @param path path of the HDF5 group.
+     */
+    public void createGroup(String path) throws IOException;
     /**
      * Closes and resets the service.
      *
