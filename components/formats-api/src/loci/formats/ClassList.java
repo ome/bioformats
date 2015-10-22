@@ -38,8 +38,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import loci.common.Constants;
+
+import org.reflections.Reflections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +84,14 @@ public class ClassList<T> {
    * @param base Base class to which all classes are assignable.
    * @throws IOException if the file cannot be read.
    */
+  @Deprecated
   public ClassList(String file, Class<T> base) throws IOException {
-    this(file, base, ClassList.class);
+    this(file, base, base.equals(IFormatReader.class) ? BioFormatsReader.class :
+      base.equals(IFormatWriter.class) ? BioFormatsWriter.class : null);
+  }
+
+  public ClassList(Class<T> base, Class<?> location) throws IOException {
+    this("loci.formats", base, location);
   }
 
   /**
@@ -98,57 +107,15 @@ public class ClassList<T> {
   {
     this.base = base;
     classes = new ArrayList<Class<? extends T>>();
-    if (file == null) return;
 
-    // read classes from file
-    BufferedReader in = null;
-    if (location == null) {
-      in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(file), Constants.ENCODING));
+    Reflections reflections = new Reflections(file);
+    Set<Class<?>> readerClasses = reflections.getTypesAnnotatedWith((Class) location);
+    for (Class c : readerClasses) {
+      Class<? extends T> toAdd = cast(c);
+      if (toAdd != null) {
+        classes.add(toAdd);
+      }
     }
-    else {
-      in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file), Constants.ENCODING));
-    }
-    while (true) {
-      String line = null;
-      line = in.readLine();
-      if (line == null) break;
-
-      // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
-      if (ndx >= 0) line = line.substring(0, ndx);
-      line = line.trim();
-      if (line.equals("")) continue;
-
-      // load class
-      Class<? extends T> c = null;
-      try {
-        Class<?> rawClass = Class.forName(line);
-        c = cast(rawClass);
-      }
-      catch (ClassNotFoundException exc) {
-        LOGGER.debug("Could not find {}", line, exc);
-      }
-      catch (NoClassDefFoundError err) {
-        LOGGER.debug("Could not find {}", line, err);
-      }
-      catch (ExceptionInInitializerError err) {
-        LOGGER.debug("Failed to create an instance of {}", line, err);
-      }
-      catch (RuntimeException exc) {
-        // HACK: workaround for bug in Apache Axis2
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        LOGGER.debug("", exc);
-      }
-      if (c == null) {
-        LOGGER.error("\"{}\" is not valid.", line);
-        continue;
-      }
-      classes.add(c);
-    }
-    in.close();
   }
 
   // -- ClassList API methods --
@@ -169,6 +136,7 @@ public class ClassList<T> {
   /** Gets the list of classes as an array. */
   @SuppressWarnings("unchecked")
   public Class<? extends T>[] getClasses() {
+    // TODO: sort in a predictable order
     return classes.toArray(new Class[0]);
   }
 
