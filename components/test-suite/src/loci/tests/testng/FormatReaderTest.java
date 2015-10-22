@@ -898,28 +898,31 @@ public class FormatReaderTest {
   }
 
   public void compareSizes(Double expectedSize, Length realSize, String testName, int i) {
-      if (expectedSize == null || expectedSize == 0d) {
-        expectedSize = null;
-      }
+    if (expectedSize == null || expectedSize == 0d) {
+      expectedSize = null;
+    }
 
-      Double doubleSize;
-      if (realSize != null) {
-        if (realSize.unit().isConvertible(UNITS.MICROM)) {
-          Number size = realSize.value(UNITS.MICROM);
-          doubleSize = size == null ? null : size.doubleValue();
-        } else {
-          doubleSize = realSize.value().doubleValue();
-        }
+    Double doubleSize;
+    if (realSize != null) {
+      if (realSize.unit().isConvertible(UNITS.MICROM)) {
+        Number size = realSize.value(UNITS.MICROM);
+        doubleSize = size == null ? null : size.doubleValue();
       } else {
-        doubleSize = null;
+        // Handle non-convertible units like reference frame
+        doubleSize = realSize.value().doubleValue();
       }
+    } else {
+      doubleSize = null;
+    }
 
-      if (!(expectedSize == null && doubleSize == null) &&
-        (expectedSize == null || doubleSize == null || (
-          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)))
-      {
+    if (expectedSize == null && doubleSize == null) {
+      return;
+    } else {
+      if (expectedSize == null || doubleSize == null || (
+          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)) {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
+    }
   }
 
   @Test(groups = {"all", "fast", "automated"})
