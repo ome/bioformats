@@ -115,6 +115,7 @@ public class FormatPageAutogen {
       context.put("utilityRating", table.get("utilityRating"));
       context.put("reader", table.get("reader"));
       context.put("writer", table.get("writer"));
+      context.put("mif", table.get("mif"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
       context.put("readerextlink",
