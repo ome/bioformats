@@ -20,6 +20,6 @@ if (Value_nodeList.size() > 1)
            map.insert(::${lang.omexml_model_package}::MapPairs::map_type::value_type(e.getAttribute("K"),
                                                                       e.getTextContent()));
        }
-     ome::compat::shared_ptr< ::${lang.omexml_model_package}::MapPairs> mapPairs(ome::compat::make_shared< ::${lang.omexml_model_package}::MapPairs>(map));
+     std::shared_ptr< ::${lang.omexml_model_package}::MapPairs> mapPairs(std::make_shared< ::${lang.omexml_model_package}::MapPairs>(map));
      setValue(mapPairs);
    }

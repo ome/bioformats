@@ -80,7 +80,7 @@ namespace ome
           /// UUID of file.
           std::string uuid;
           /// TIFF file handle.
-          ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+          std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
           /// Number of IFDs written.
           dimension_size_type ifdCount;
 
@@ -89,7 +89,7 @@ namespace ome
            *
            * @param tiff the TIFF file for which to cache state.
            */
-          TIFFState(ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>& tiff);
+          TIFFState(std::shared_ptr<ome::bioformats::tiff::TIFF>& tiff);
 
           /// Destructor.
           ~TIFFState();
@@ -137,10 +137,10 @@ namespace ome
          * solution, but need to eliminate all direct use of
          * metadataRetrieve in all writers first.
          */
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> originalMetadataRetrieve;
+        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> originalMetadataRetrieve;
 
         /// OME-XML metadata for embedding in the TIFF.
-        ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadata> omeMeta;
+        std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omeMeta;
 
       private:
         /// Write a Big TIFF

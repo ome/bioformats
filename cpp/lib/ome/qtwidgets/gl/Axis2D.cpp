@@ -48,7 +48,7 @@ namespace ome
     namespace gl
     {
 
-      Axis2D::Axis2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+      Axis2D::Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
                      ome::bioformats::dimension_size_type                    series,
                      QObject                                                *parent):
         QObject(parent),

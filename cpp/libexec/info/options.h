@@ -38,12 +38,11 @@
 #ifndef SHOWINF_OPTIONS_H
 #define SHOWINF_OPTIONS_H
 
+#include <memory>
 #include <string>
 #include <stdexcept>
 
 #include <boost/program_options.hpp>
-
-#include <ome/compat/memory.h>
 
 #include <ome/bioformats/Types.h>
 

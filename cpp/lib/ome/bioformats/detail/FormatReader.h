@@ -109,7 +109,7 @@ namespace ome
       {
       protected:
         /// List type for storing CoreMetadata.
-        typedef std::vector<ome::compat::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
+        typedef std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
 
         /// Reader properties specific to the derived file format.
         const ReaderProperties& readerProperties;
@@ -118,7 +118,7 @@ namespace ome
         boost::optional<boost::filesystem::path> currentId;
 
         /// Current input.
-        ome::compat::shared_ptr<std::istream> in;
+        std::shared_ptr<std::istream> in;
 
         /// Mapping of metadata key/value pairs.
         ::ome::bioformats::MetadataMap metadata;
@@ -202,7 +202,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataStore() prevent "null" access.
          */
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore> metadataStore;
+        std::shared_ptr< ::ome::xml::meta::MetadataStore> metadataStore;
 
         /// Metadata parsing options.
         MetadataOptions metadataOptions;
@@ -311,7 +311,7 @@ namespace ome
          * @returns a FilterMetadata instance.
          */
         virtual
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>
+        std::shared_ptr< ::ome::xml::meta::MetadataStore>
         makeFilterMetadata();
 
         /**
@@ -690,7 +690,7 @@ namespace ome
         getZCTModuloCoords(dimension_size_type index) const;
 
         // Documented in superclass.
-        const std::vector<ome::compat::shared_ptr< ::ome::bioformats::CoreMetadata> >&
+        const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&
         getCoreMetadataList() const;
 
         // Documented in superclass.
@@ -703,18 +703,18 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataStore(ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>& store);
+        setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store);
 
         // Documented in superclass.
-        const ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
+        const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
         getMetadataStore() const;
 
         // Documented in superclass.
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataStore>&
+        std::shared_ptr< ::ome::xml::meta::MetadataStore>&
         getMetadataStore();
 
         // Documented in superclass.
-        std::vector<ome::compat::shared_ptr< ::ome::bioformats::FormatReader> >
+        std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >
         getUnderlyingReaders() const;
 
         // Documented in superclass.

@@ -39,9 +39,9 @@
 #ifndef OME_QTWIDGETS_NAVIGATIONDOCK2D_H
 #define OME_QTWIDGETS_NAVIGATIONDOCK2D_H
 
-#include <ome/bioformats/FormatReader.h>
+#include <memory>
 
-#include <ome/compat/memory.h>
+#include <ome/bioformats/FormatReader.h>
 
 #include <ome/qtwidgets/glm.h>
 #include <ome/qtwidgets/GLWindow.h>
@@ -91,7 +91,7 @@ namespace ome
        * @param plane the image plane.
        */
       void
-      setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader> reader,
+      setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
                 ome::bioformats::dimension_size_type                   series = 0,
                 ome::bioformats::dimension_size_type                   plane = 0);
 
@@ -156,7 +156,7 @@ namespace ome
 
     private:
       /// The image reader.
-      ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
+      std::shared_ptr<ome::bioformats::FormatReader> reader;
       /// The image series.
       ome::bioformats::dimension_size_type series;
       /// The image plane.

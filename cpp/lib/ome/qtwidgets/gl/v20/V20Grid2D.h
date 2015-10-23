@@ -78,7 +78,7 @@ namespace ome
            * @param series the image series.
            * @param parent the parent of this object.
            */
-          explicit Grid2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+          explicit Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
                           ome::bioformats::dimension_size_type                    series,
                           QObject                                                *parent = 0);
 

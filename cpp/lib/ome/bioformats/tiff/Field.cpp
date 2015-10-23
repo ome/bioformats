@@ -116,7 +116,7 @@ namespace ome
       {
       public:
         /// Weak reference to the parent IFD.
-        ome::compat::weak_ptr<IFD>  ifd;
+        std::weak_ptr<IFD>  ifd;
         /// The tag being wrapped.
         tag_type            tag;
         /// Field information for this tag.
@@ -128,7 +128,7 @@ namespace ome
          * @param ifd the directory the field belongs to.
          * @param tag the tag identifying this field.
          */
-        Impl(ome::compat::shared_ptr<IFD>& ifd,
+        Impl(std::shared_ptr<IFD>& ifd,
              tag_type                      tag):
           ifd(ifd),
           tag(tag),
@@ -146,10 +146,10 @@ namespace ome
          *
          * @returns the directory.
          */
-        ome::compat::shared_ptr<IFD>
+        std::shared_ptr<IFD>
         getIFD() const
         {
-          ome::compat::shared_ptr<IFD> sifd = ome::compat::shared_ptr<IFD>(ifd);
+          std::shared_ptr<IFD> sifd = std::shared_ptr<IFD>(ifd);
           if (!sifd)
             throw Exception("Field reference to IFD no longer valid");
 
@@ -236,9 +236,9 @@ namespace ome
         }
       };
 
-      FieldBase::FieldBase(ome::compat::shared_ptr<IFD> ifd,
+      FieldBase::FieldBase(std::shared_ptr<IFD> ifd,
                            tag_type                     tag):
-        impl(ome::compat::shared_ptr<Impl>(new Impl(ifd, tag)))
+        impl(std::shared_ptr<Impl>(new Impl(ifd, tag)))
       {
       }
 
@@ -340,7 +340,7 @@ namespace ome
         return impl->tag;
       }
 
-      ome::compat::shared_ptr<IFD>
+      std::shared_ptr<IFD>
       FieldBase::getIFD() const
       {
         return impl->getIFD();
@@ -351,7 +351,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_get1(ome::compat::shared_ptr<IFD> ifd,
+        generic_get1(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* readcount */,
@@ -362,7 +362,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_set1(ome::compat::shared_ptr<IFD> ifd,
+        generic_set1(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* writecount */,
@@ -373,7 +373,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_get2(ome::compat::shared_ptr<IFD> ifd,
+        generic_get2(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* readcount */,
@@ -384,7 +384,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_set2(ome::compat::shared_ptr<IFD> ifd,
+        generic_set2(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* writecount */,
@@ -395,7 +395,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_get3(ome::compat::shared_ptr<IFD> ifd,
+        generic_get3(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* readcount */,
@@ -406,7 +406,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_set3(ome::compat::shared_ptr<IFD> ifd,
+        generic_set3(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* writecount */,
@@ -417,7 +417,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_get6(ome::compat::shared_ptr<IFD> ifd,
+        generic_get6(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* readcount */,
@@ -428,7 +428,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_set6(ome::compat::shared_ptr<IFD> ifd,
+        generic_set6(std::shared_ptr<IFD> ifd,
                      tag_type                     tag,
                      bool                         /* passcount */,
                      int                          /* writecount */,
@@ -439,7 +439,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_enum16_get1(ome::compat::shared_ptr<IFD> ifd,
+        generic_enum16_get1(std::shared_ptr<IFD> ifd,
                             tag_type                     tag,
                             Type                         type,
                             bool                         passcount,
@@ -460,7 +460,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_enum16_set1(ome::compat::shared_ptr<IFD> ifd,
+        generic_enum16_set1(std::shared_ptr<IFD> ifd,
                             tag_type                     tag,
                             Type                         type,
                             bool                         passcount,
@@ -480,7 +480,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_array_get1(ome::compat::shared_ptr<IFD> ifd,
+        generic_array_get1(std::shared_ptr<IFD> ifd,
                            tag_type                     tag,
                            int                          readcount,
                            T&                           value)
@@ -560,7 +560,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_array_set1(ome::compat::shared_ptr<IFD> ifd,
+        generic_array_set1(std::shared_ptr<IFD> ifd,
                            tag_type                     tag,
                            int                          writecount,
                            const T&                     value)
@@ -594,7 +594,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_array_get3(ome::compat::shared_ptr<IFD> ifd,
+        generic_array_get3(std::shared_ptr<IFD> ifd,
                            tag_type                     tag,
                            int                          readcount,
                            T&                           value)
@@ -657,7 +657,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_array_set3(ome::compat::shared_ptr<IFD> ifd,
+        generic_array_set3(std::shared_ptr<IFD> ifd,
                            tag_type                     tag,
                            int                          writecount,
                            const T&                     value)
@@ -710,7 +710,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_enum16_array_get1(ome::compat::shared_ptr<IFD> ifd,
+        generic_enum16_array_get1(std::shared_ptr<IFD> ifd,
                                   tag_type                     tag,
                                   int                          readcount,
                                   T&                           value)
@@ -726,7 +726,7 @@ namespace ome
 
         template<typename T>
         void
-        generic_enum16_array_set1(ome::compat::shared_ptr<IFD> ifd,
+        generic_enum16_array_set1(std::shared_ptr<IFD> ifd,
                                   tag_type                     tag,
                                   int                          writecount,
                                   const T&                     value)

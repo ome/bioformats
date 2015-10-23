@@ -499,7 +499,7 @@ TEST_P(CorrectionTest, ValidateAndCorrectModel)
 
   ASSERT_EQ(std::string("2013-06"), ome::bioformats::getModelVersion(doc));
 
-  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(doc));
+  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(doc));
 
   {
     const ModelState& state(current.before);

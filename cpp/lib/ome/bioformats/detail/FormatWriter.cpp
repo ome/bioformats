@@ -87,7 +87,7 @@ namespace ome
         interleaved(boost::none),
         sequential(false),
         framesPerSecond(0),
-        metadataRetrieve(ome::compat::make_shared<DummyMetadata>())
+        metadataRetrieve(std::make_shared<DummyMetadata>())
       {
         assertId(currentId, false);
       }
@@ -119,7 +119,7 @@ namespace ome
         if (!currentId || canonicalpath != currentId.get())
           {
             if (out)
-              out = ome::compat::shared_ptr<std::ostream>();
+              out = std::shared_ptr<std::ostream>();
 
             currentId = canonicalpath;
           }
@@ -339,7 +339,7 @@ namespace ome
       }
 
       void
-      FormatWriter::setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+      FormatWriter::setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
       {
         assertId(currentId, false);
 
@@ -349,13 +349,13 @@ namespace ome
         metadataRetrieve = retrieve;
       }
 
-      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve() const
       {
         return metadataRetrieve;
       }
 
-      ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve()
       {
         return metadataRetrieve;
