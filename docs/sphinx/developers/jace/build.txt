@@ -9,7 +9,7 @@ C++ 2005 and Visual C++ 2008 on Windows.
 
 .. note::
 
-    The JACE C++ bindings require Java 6 or Java 7 to build and run.
+    The JACE C++ bindings require Java 7 to build and run.
     They do *not* currently work with Java 8.
 
 Compile-time dependencies

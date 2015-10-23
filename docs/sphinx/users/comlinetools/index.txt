@@ -86,7 +86,7 @@ directory by following these steps:
 #. Point your CLASSPATH to the checked-out directory and the JAR files
    in the **jar** folder.
 
-   -  E.g. on Windows with Java 1.6 or later, if you have checked out
+   -  E.g. on Windows with Java 1.7 or later, if you have checked out
       the source at ``C:\code\bio-formats``, set your CLASSPATH environment
       variable to the value ``C:\code\bio-formats\jar\*;C:\code\bio-formats``. You can
       access the environment variable configuration area by
