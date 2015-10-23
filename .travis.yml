@@ -19,7 +19,6 @@ addons:
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
   - openjdk7
 
 env:
@@ -46,8 +45,6 @@ script:
 
 matrix:
   exclude:
-    - jdk: oraclejdk7
-      env: BUILD=sphinx_html
     - jdk: openjdk7
       env: BUILD=sphinx_html
     - jdk: oraclejdk8
@@ -56,7 +53,5 @@ matrix:
       env: BUILD=cppwrap
     - jdk: openjdk7
       env: BUILD=maven_findbugs
-    - jdk: oraclejdk7
-      env: BUILD=maven
     - jdk: oraclejdk8
       env: BUILD=maven
