@@ -317,7 +317,7 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
-          <!-- Require the Java 6 platform. -->
+          <!-- Require the Java 7 platform. -->
           <configuration>
             <source>1.7</source>
             <target>1.7</target>
@@ -385,8 +385,8 @@
                  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
             <use>false</use>
             <links>
-              <!-- Java 6 -->
-              <link>http://docs.oracle.com/javase/6/docs/api/</link>
+              <!-- Java 7 -->
+              <link>http://docs.oracle.com/javase/7/docs/api/</link>
 
               <!-- ImageJ1 -->
               <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
@@ -623,8 +623,8 @@
                http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
           <use>false</use>
           <links>
-            <!-- Java 6 -->
-            <link>http://docs.oracle.com/javase/6/docs/api/</link>
+            <!-- Java 7 -->
+            <link>http://docs.oracle.com/javase/7/docs/api/</link>
 
             <!-- ImageJ1 -->
             <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>

@@ -33,7 +33,7 @@ will also throw a warning if the runtime memory is lower than the recommended
 value.
 
 If errors of type ``java.lang.OutOfMemoryError: PermGen space`` are thrown
-while using Bio-Formats with the Java bundled with MATLAB (Java 6 or 7), you
+while using Bio-Formats with the Java bundled with MATLAB (Java 7), you
 may try to increase the default values of ``-XX:MaxPermSize`` and
 ``-XX:PermSize`` via the :file:`java.opts` file.
 
