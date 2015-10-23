@@ -114,7 +114,9 @@ int main()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
 
-if (cxxstd-autodetect)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER "3.0")
+  set(CMAKE_CXX_STANDARD 11)
+else()
   if (NOT MSVC)
     cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
     if (CXX_FLAG_CXX14)
@@ -141,7 +143,7 @@ if (cxxstd-autodetect)
       endif(CXX_FLAG_CXX11)
     endif(CXX_FLAG_CXX14)
   endif (NOT MSVC)
-endif (cxxstd-autodetect)
+endif()
 
 # Try to enable the -pedantic flag.  This one needs special casing
 # since it may break building with older compilers where int64_t (long
@@ -248,11 +250,11 @@ int main() { uint16_t test(134); }
 
 check_cxx_source_compiles("
 #include <memory>
-struct foo : public ome::compat::enable_shared_from_this<foo>
+struct foo : public std::enable_shared_from_this<foo>
 {
         foo() {}
 };
-int main() { ome::compat::shared_ptr<foo> f(new foo()); }
+int main() { std::shared_ptr<foo> f(new foo()); }
 " OME_HAVE_MEMORY)
 
 check_cxx_source_compiles("

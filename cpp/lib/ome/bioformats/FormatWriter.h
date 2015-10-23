@@ -227,7 +227,7 @@ namespace ome
        */
       virtual
       void
-      setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve) = 0;
+      setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve) = 0;
 
       /**
        * Get the current metadata store for this writer.
@@ -235,7 +235,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       getMetadataRetrieve() const = 0;
 
       /**
@@ -244,7 +244,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
       getMetadataRetrieve() = 0;
 
       /**

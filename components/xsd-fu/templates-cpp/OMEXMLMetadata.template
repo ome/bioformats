@@ -81,7 +81,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
         // DUMMYLINE
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
           return ret->getID();
@@ -90,7 +90,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
@@ -99,7 +99,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
 {% if prop.minOccurs == 0 %}\
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
@@ -123,7 +123,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
-        ome::compat::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
+        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (annotation)
           return annotation->getID();
         /// @todo: Need an exception for store inconsistency.
@@ -132,7 +132,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
-        ome::compat::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}().lock());
+        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}().lock());
         if (annotation)
           return annotation->getID();
         throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
@@ -198,10 +198,10 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${prop.name} is abstract proprietary and is a reference
-        ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
+        std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o_base(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
+        std::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(o_base, ref);
         // ${parent} is abstract proprietary
@@ -212,42 +212,42 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% choose %}\
 {% when v['level'] == 2 %}\
 {% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
+            std::shared_ptr< ${v['type']}> value(std::make_shared< ${obj.langTypeNS}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
 {% when v['max_occurs'] > 1 %}\
 {% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
 {% when v['max_occurs'] == 1 %}\
 {% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
 {% end %}\
         if (!o${i}->${v['accessor']}) // null
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
             o${i}->set${v['name']}(value);
           }
 {% end %}\
 {% end %}\
-        ome::compat::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
+        std::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
 {% if v['level'] == 2 %}\
 {% if "ID" == prop.name %}\
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
         model->addModelObject(${prop.argumentName}, o${i + 1}_base);
 {% end %}\
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(ome::compat::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
+        std::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
         if (!o${i + 1}_mostderived)
           throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
                                   "Internal metadata store inconsistency: null object");
@@ -256,7 +256,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         o${i + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% if prop.isShared %}\
-        ${prop.instanceVariableType} newval(ome::compat::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
+        ${prop.instanceVariableType} newval(std::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
         o${i + 1}_mostderived->set${prop.methodName}(newval);
 {% end %}\
 {% end %}\
@@ -264,10 +264,10 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs more than once
-        ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
+        std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
+        std::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(modelObject, ref);
 {% end %}\
@@ -277,32 +277,32 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% choose %}\
 {% when v['max_occurs'] > 1 %}\
 {% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
 {% when v['max_occurs'] == 1 %}\
 {% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
 {% end %}\
         if (!o${i}->${v['accessor']}) // null
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
             o${i}->set${v['name']}(value);
           }
 {% end %}\
 {% end %}\
-        ome::compat::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
+        std::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(std::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
         model->addModelObject(${prop.argumentName}, o${i + 1}_base);
 {% end %}\
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(ome::compat::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
+        std::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
         if (!o${i + 1}_mostderived)
           throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
                                   "Internal metadata store inconsistency: null object");
@@ -311,7 +311,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         o${i + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% if prop.isShared %}\
-        ${prop.instanceVariableType} newval(ome::compat::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
+        ${prop.instanceVariableType} newval(std::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
         o${i + 1}_mostderived->set${prop.methodName}(newval);
 {% end %}\
 {% end %}\
@@ -469,8 +469,8 @@ namespace
 
   // Throw an exception if a pointer is invalid.
   template<typename T>
-  ome::compat::shared_ptr<T>
-  safe_fetch(ome::compat::shared_ptr<T> ptr,
+  std::shared_ptr<T>
+  safe_fetch(std::shared_ptr<T> ptr,
              const char * const method)
   {
     if (!ptr)
@@ -481,11 +481,11 @@ namespace
 
   // Throw an exception if a pointer is invalid.
   template<typename T>
-  ome::compat::shared_ptr<T>
-  safe_fetch(ome::compat::weak_ptr<T>   ptr,
+  std::shared_ptr<T>
+  safe_fetch(std::weak_ptr<T>   ptr,
              const char * const method)
   {
-    ome::compat::shared_ptr<T> shared(ptr.lock());
+    std::shared_ptr<T> shared(ptr.lock());
     if (!shared)
       throw ome::xml::meta::MetadataException("OMEXMLMetadata", method,
                                               "Internal metadata store inconsistency: null weak reference");
@@ -522,11 +522,11 @@ namespace ome
       {
       private:
         /// OME-XML root node.
-        ome::compat::shared_ptr<OMEXMLMetadataRoot> root; // OME
+        std::shared_ptr<OMEXMLMetadataRoot> root; // OME
         /// Generic root node.
-        ome::compat::shared_ptr<MetadataRoot> genericRoot; // OME
+        std::shared_ptr<MetadataRoot> genericRoot; // OME
         /// OME-XML model.
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModel> model;
+        std::shared_ptr< ::${lang.omexml_model_package}::OMEModel> model;
 
       public:
 {% end header %}\
@@ -563,18 +563,18 @@ namespace ome
       void
       OMEXMLMetadata::createRoot()
       {
-        ome::compat::shared_ptr<MetadataRoot> newroot(ome::compat::make_shared<OMEXMLMetadataRoot>());
+        std::shared_ptr<MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
         setRoot(newroot);
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        ome::compat::shared_ptr<MetadataRoot>&
+        std::shared_ptr<MetadataRoot>&
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ome::compat::shared_ptr<MetadataRoot>&
+      std::shared_ptr<MetadataRoot>&
       OMEXMLMetadata::getRoot()
       {
         return this->genericRoot;
@@ -590,22 +590,22 @@ namespace ome
          * @copydoc ::${lang.metadata_package}::MetadataStore::setRoot()
          */
         void
-        setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
+        setRoot(std::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setRoot(ome::compat::shared_ptr<MetadataRoot>& root)
+      OMEXMLMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
       {
-        ome::compat::shared_ptr<OMEXMLMetadataRoot> newroot =
-          ome::compat::dynamic_pointer_cast<OMEXMLMetadataRoot>(root);
+        std::shared_ptr<OMEXMLMetadataRoot> newroot =
+          std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root);
 
         if (!newroot)
           throw MetadataException("OMEXMLMetadata", "setRoot",
                                   "root must be of type OMEXMLMetadataRoot");
 
         this->root = newroot;
-        this->genericRoot = ome::compat::static_pointer_cast<MetadataRoot>(this->root);
-        model = ome::compat::make_shared< ::${lang.omexml_model_package}::detail::OMEModel>();
+        this->genericRoot = std::static_pointer_cast<MetadataRoot>(this->root);
+        model = std::make_shared< ::${lang.omexml_model_package}::detail::OMEModel>();
       }
 {% end source %}\
 
@@ -849,7 +849,7 @@ namespace ome
                                          index_type lightSourceIndex) const
       {
         const char * const instrument_method("getLightSourceType [getInstrument]");
-        ome::compat::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightSource(lightSourceIndex);
+        std::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightSource(lightSourceIndex);
         return o->getLightSourceType();
       }
 {% end source %}\
@@ -896,28 +896,28 @@ namespace ome
       {
         if (root->sizeOfImageList() == imageIndex)
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(ome::compat::make_shared< ::${lang.omexml_model_package}::Image>());
+            std::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(std::make_shared< ::${lang.omexml_model_package}::Image>());
             root->addImage(newImage);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
+        std::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
         if (!o1->getPixels()) // null
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(ome::compat::make_shared< ::${lang.omexml_model_package}::Pixels>());
+            std::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(std::make_shared< ::${lang.omexml_model_package}::Pixels>());
             o1->setPixels(newPixels);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
+        std::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
         if (o2->sizeOfTiffDataList() == tiffDataIndex)
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::TiffData> newTiffData(ome::compat::make_shared< ::${lang.omexml_model_package}::TiffData>());
+            std::shared_ptr< ::${lang.omexml_model_package}::TiffData> newTiffData(std::make_shared< ::${lang.omexml_model_package}::TiffData>());
             o2->addTiffData(newTiffData);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::TiffData> o3 = o2->getTiffData(tiffDataIndex);
+        std::shared_ptr< ::${lang.omexml_model_package}::TiffData> o3 = o2->getTiffData(tiffDataIndex);
         if (!o3->getUUID()) // null
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::UUID> newUUID(ome::compat::make_shared< ::${lang.omexml_model_package}::UUID>());
+            std::shared_ptr< ::${lang.omexml_model_package}::UUID> newUUID(std::make_shared< ::${lang.omexml_model_package}::UUID>());
             o3->setUUID(newUUID);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::UUID> o4 = o3->getUUID();
+        std::shared_ptr< ::${lang.omexml_model_package}::UUID> o4 = o3->getUUID();
         o4->setValue(value);
       }
 {% end source %}\
@@ -969,7 +969,7 @@ ${counter(k, o, v)}\
         const char * const pixels_method("getPixelsBinDataBigEndian [getPixels]");
         const char * const bindata_method("getPixelsBinDataBigEndian [getBinData]");
 
-        ome::compat::shared_ptr<bool> bigEndian = safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBigEndian();
+        std::shared_ptr<bool> bigEndian = safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBigEndian();
 
         if (bigEndian) { // not null
           return *bigEndian;
@@ -993,7 +993,7 @@ ${counter(k, o, v)}\
       const std::string&
       OMEXMLMetadata::getUUID() const
       {
-        ome::compat::shared_ptr<const std::string> uuid = root->getUUID();
+        std::shared_ptr<const std::string> uuid = root->getUUID();
         if (uuid)
           return *root->getUUID();
         else
@@ -1104,17 +1104,17 @@ ${getter(k, o, prop, v)}\
         // Type is not a reference
         if (root->sizeOfImageList() == imageIndex)
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(ome::compat::make_shared< ::${lang.omexml_model_package}::Image>());
+            std::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(std::make_shared< ::${lang.omexml_model_package}::Image>());
             root->addImage(newImage);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
+        std::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
         if (!o1->getPixels()) // null
           {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(ome::compat::make_shared< ::${lang.omexml_model_package}::Pixels>());
+            std::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(std::make_shared< ::${lang.omexml_model_package}::Pixels>());
             o1->setPixels(newPixels);
           }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
-        ome::compat::shared_ptr<bool> newBool(ome::compat::make_shared<bool>(bigEndian));
+        std::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
+        std::shared_ptr<bool> newBool(std::make_shared<bool>(bigEndian));
         o2->setBigEndian(newBool);
       }
 {% end source %}\
@@ -1132,7 +1132,7 @@ ${getter(k, o, prop, v)}\
       void
       OMEXMLMetadata::setUUID(const std::string& uuid)
       {
-        ome::compat::shared_ptr<std::string> newString(ome::compat::make_shared<std::string>(uuid));
+        std::shared_ptr<std::string> newString(std::make_shared<std::string>(uuid));
         root->setUUID(newString);
       }
 {% end source %}\

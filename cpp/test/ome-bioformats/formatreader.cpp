@@ -141,10 +141,10 @@ protected:
     return in == "Valid file content";
   }
 
-  ome::compat::shared_ptr<CoreMetadata>
+  std::shared_ptr<CoreMetadata>
   makeCore()
   {
-    ome::compat::shared_ptr<CoreMetadata> c(ome::compat::make_shared<CoreMetadata>());
+    std::shared_ptr<CoreMetadata> c(std::make_shared<CoreMetadata>());
 
     c->sizeX = 512;
     c->sizeY = 1024;
@@ -208,7 +208,7 @@ protected:
         // 5 series, 3 with subresolutions
         core.clear();
         {
-          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
+          std::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 3;
           core.push_back(c);
           core.push_back(makeCore());
@@ -216,7 +216,7 @@ protected:
         }
 
         {
-          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
+          std::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -226,7 +226,7 @@ protected:
         core.push_back(makeCore());
 
         {
-          ome::compat::shared_ptr<CoreMetadata> c(makeCore());
+          std::shared_ptr<CoreMetadata> c(makeCore());
           c->resolutionCount = 2;
           core.push_back(c);
           core.push_back(makeCore());
@@ -969,17 +969,17 @@ TEST_P(FormatReaderTest, FlatMetadata)
 
 TEST_P(FormatReaderTest, DefaultMetadataStore)
 {
-  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
+  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
 
   EXPECT_NO_THROW(r.setMetadataStore(store));
-  EXPECT_EQ(store, ome::compat::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
+  EXPECT_EQ(store, std::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
 }
 
 TEST_P(FormatReaderTest, FlatMetadataStore)
 {
   r.setId("flat");
 
-  ome::compat::shared_ptr<MetadataStore> store(ome::compat::make_shared<OMEXMLMetadata>());
+  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
 
   EXPECT_THROW(r.setMetadataStore(store), std::logic_error);
 }

@@ -183,7 +183,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_complex<T>::value, result_type
       >::type
-    operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v)
+    operator() (const std::shared_ptr<PixelBuffer<T> >& v)
     {
       typedef T value_type;
 

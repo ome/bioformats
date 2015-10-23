@@ -40,10 +40,9 @@
 #define OME_XML_MODEL_OMEMODEL_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <ome/compat/memory.h>
 
 #include <ome/xml/model/OMEModelObject.h>
 
@@ -63,11 +62,11 @@ namespace ome
       {
       public:
         /// A list of Reference objects.
-        typedef std::vector<ome::compat::shared_ptr<Reference> > reference_list_type;
+        typedef std::vector<std::shared_ptr<Reference> > reference_list_type;
         /// A map of string model object identifiers to model objects.
-        typedef std::map<std::string, ome::compat::shared_ptr<OMEModelObject> > object_map_type;
+        typedef std::map<std::string, std::shared_ptr<OMEModelObject> > object_map_type;
         /// A map of model objects to list of Reference objects.
-        typedef std::map<ome::compat::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
+        typedef std::map<std::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
         /// Size type for reference map.
         typedef reference_map_type::size_type size_type;
 
@@ -105,9 +104,9 @@ namespace ome
          * Should it be possible to insert null objects?
          */
         virtual
-        ome::compat::shared_ptr<OMEModelObject>
+        std::shared_ptr<OMEModelObject>
         addModelObject (const std::string&                       id,
-                        ome::compat::shared_ptr<OMEModelObject>& object) = 0;
+                        std::shared_ptr<OMEModelObject>& object) = 0;
 
         /**
          * Remove a model object from the model.
@@ -118,7 +117,7 @@ namespace ome
          * not exist.
          */
         virtual
-        ome::compat::shared_ptr<OMEModelObject>
+        std::shared_ptr<OMEModelObject>
         removeModelObject (const std::string& id) = 0;
 
         /**
@@ -132,7 +131,7 @@ namespace ome
          * @todo: Would a const reference be better for the return?
          */
         virtual
-        ome::compat::shared_ptr<OMEModelObject>
+        std::shared_ptr<OMEModelObject>
         getModelObject (const std::string& id) const = 0;
 
         /**
@@ -161,8 +160,8 @@ namespace ome
          */
         virtual
         bool
-        addReference (ome::compat::shared_ptr<OMEModelObject>& a,
-                      ome::compat::shared_ptr<Reference>&      b) = 0;
+        addReference (std::shared_ptr<OMEModelObject>& a,
+                      std::shared_ptr<Reference>&      b) = 0;
 
         /**
          * Retrieve all references from the model.

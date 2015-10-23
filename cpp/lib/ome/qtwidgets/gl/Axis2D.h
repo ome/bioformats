@@ -39,6 +39,8 @@
 #ifndef OME_QTWIDGETS_GL_AXIS2D_H
 #define OME_QTWIDGETS_GL_AXIS2D_H
 
+#include <memory>
+
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShader>
@@ -46,8 +48,6 @@
 
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
-
-#include <ome/compat/memory.h>
 
 #include <ome/qtwidgets/glm.h>
 #include <ome/qtwidgets/glsl/v110/GLFlatShader2D.h>
@@ -78,7 +78,7 @@ namespace ome
          * @param series the image series.
          * @param parent the parent of this object.
          */
-        explicit Axis2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+        explicit Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
                         ome::bioformats::dimension_size_type                    series,
                         QObject                                                *parent = 0);
 
@@ -128,7 +128,7 @@ namespace ome
         /// The elements for both axes.
         QOpenGLBuffer axis_elements;
         /// The image reader.
-        ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
+        std::shared_ptr<ome::bioformats::FormatReader> reader;
         /// The image series.
         ome::bioformats::dimension_size_type series;
       };

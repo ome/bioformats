@@ -38,12 +38,12 @@
 #ifndef OME_BIOFORMATS_VARIANTPIXELBUFFER_H
 #define OME_BIOFORMATS_VARIANTPIXELBUFFER_H
 
+#include <memory>
+
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 
 #include <ome/common/variant.h>
-
-#include <ome/compat/memory.h>
 
 namespace ome
 {
@@ -115,7 +115,7 @@ namespace ome
       struct make_buffer
       {
         /// Buffer type.
-        typedef ome::compat::shared_ptr<PixelBuffer<typename T::std_type> > type;
+        typedef std::shared_ptr<PixelBuffer<typename T::std_type> > type;
       };
 
       /// Aggregate view of all buffer types.
@@ -215,7 +215,7 @@ namespace ome
        */
       template<typename T>
       explicit
-      VariantPixelBuffer(ome::compat::shared_ptr<PixelBuffer<T> >& buffer):
+      VariantPixelBuffer(std::shared_ptr<PixelBuffer<T> >& buffer):
         buffer(buffer)
       {
       }
@@ -265,7 +265,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage)));
+        return variant_buffer_type(std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       /**
@@ -285,7 +285,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage)));
+        return variant_buffer_type(std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       // No switch default to avoid -Wunreachable-code errors.
@@ -709,7 +709,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         PixelBuffer<T>&
-        operator() (ome::compat::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -742,7 +742,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         const PixelBuffer<T>&
-        operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (const std::shared_ptr<PixelBuffer<T> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -789,7 +789,7 @@ namespace ome
          * @throws if the PixelBuffer is null or the PixelBuffer's data array is null.
          */
         void
-        operator() (ome::compat::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
+        operator() (std::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");

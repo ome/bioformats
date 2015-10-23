@@ -109,9 +109,8 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
+#include <memory>
 #include <string>
-
-#include <ome/compat/memory.h>
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/meta/MetadataRoot.h>
@@ -220,7 +219,7 @@ namespace ome
          *
          * @todo should this be a reference or shared_ptr?
          */
-        virtual ome::compat::shared_ptr<MetadataRoot>&
+        virtual std::shared_ptr<MetadataRoot>&
         getRoot() = 0;
 
         /**
@@ -234,7 +233,7 @@ namespace ome
          * @todo should this be a reference or shared_ptr?
          */
         virtual void
-        setRoot(ome::compat::shared_ptr<MetadataRoot>& root) = 0;
+        setRoot(std::shared_ptr<MetadataRoot>& root) = 0;
 
 {% if debug %}\
         // -- Entity storage (manual definitions) --

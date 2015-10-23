@@ -165,7 +165,7 @@ struct RandomAssignTestVisitor : public boost::static_visitor<>
   }
 
   void
-  operator() (const ome::compat::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
+  operator() (const std::shared_ptr<PixelBuffer<PixelProperties<PT::BIT>::std_type> >& v)
   {
     typedef PixelProperties<PT::BIT>::std_type value_type;
 
@@ -240,7 +240,7 @@ struct ConstructExtentRefTestVisitor : public boost::static_visitor<>
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[10];
-    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
+    std::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0], extents));
     VariantPixelBuffer mbuf(buf);
 
@@ -264,7 +264,7 @@ struct ConstructRangeRefTestVisitor : public boost::static_visitor<>
 
     // VariantPixelBuffer with unmanaged backing store.
     value_type backing[100];
-    ome::compat::shared_ptr<PixelBuffer<value_type> > buf
+    std::shared_ptr<PixelBuffer<value_type> > buf
       (new PixelBuffer<value_type>(&backing[0],
                                    boost::extents[10][10][1][1][1][1][1][1][1]));
     VariantPixelBuffer mbuf(buf);
@@ -336,7 +336,7 @@ struct ManagedTestVisitor : public boost::static_visitor<>
     {
       // VariantPixelBuffer with unmanaged backing store.
       value_type backing[100];
-      ome::compat::shared_ptr<PixelBuffer<value_type> > buf
+      std::shared_ptr<PixelBuffer<value_type> > buf
         (new PixelBuffer<value_type>(&backing[0],
                                      boost::extents[10][10][1][1][1][1][1][1][1]));
       VariantPixelBuffer mbuf(buf);

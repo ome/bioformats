@@ -38,10 +38,10 @@
 #ifndef OME_BIOFORMATS_TIFF_TILEINFO_H
 #define OME_BIOFORMATS_TIFF_TILEINFO_H
 
+#include <memory>
+
 #include <ome/bioformats/PlaneRegion.h>
 #include <ome/bioformats/tiff/Types.h>
-
-#include <ome/compat/memory.h>
 
 namespace ome
 {
@@ -68,7 +68,7 @@ namespace ome
          *
          * @param ifd the directory the tile belongs to.
          */
-        TileInfo(ome::compat::shared_ptr<IFD> ifd);
+        TileInfo(std::shared_ptr<IFD> ifd);
 
       public:
         /// Destructor.
@@ -227,7 +227,7 @@ namespace ome
       protected:
         class Impl;
         /// Private implementation details.
-        ome::compat::shared_ptr<Impl> impl;
+        std::shared_ptr<Impl> impl;
       };
 
     }

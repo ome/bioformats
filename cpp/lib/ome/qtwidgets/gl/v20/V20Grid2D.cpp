@@ -50,7 +50,7 @@ namespace ome
       namespace v20
       {
 
-        Grid2D::Grid2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+        Grid2D::Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
                        ome::bioformats::dimension_size_type                    series,
                        QObject                                                *parent):
           gl::Grid2D(reader, series, parent),

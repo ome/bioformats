@@ -266,11 +266,11 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        ome::compat::shared_ptr<MetadataRoot>&
+        std::shared_ptr<MetadataRoot>&
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ome::compat::shared_ptr<MetadataRoot>&
+      std::shared_ptr<MetadataRoot>&
       DummyMetadata::getRoot()
       {
         throw MetadataException("DummyMetadata", "getRoot",
@@ -281,11 +281,11 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
+        setRoot(std::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::setRoot(ome::compat::shared_ptr<MetadataRoot>& /* root */)
+      DummyMetadata::setRoot(std::shared_ptr<MetadataRoot>& /* root */)
       {
       }
 {% end source %}\
