@@ -457,7 +457,7 @@ public class IMODReader extends FormatReader {
         }
       }
       if (physicalZ > 0) {
-        Length z = FormatTools.getPhysicalSizeX(physicalZ, physicalSizeUnit);
+        Length z = FormatTools.getPhysicalSizeZ(physicalZ, physicalSizeUnit);
         if (z != null) {
           store.setPixelsPhysicalSizeZ(z, 0);
         }
