@@ -213,32 +213,42 @@ public class JPEGReader extends DelegateReader {
         HashMap<String, String> tags = exif.getTags();
         for (String tagName : tags.keySet()) {  
           if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_X_RES))) {
-            Length sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)));
-            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
-            if (units != null)
-            {
-              if (Integer.parseInt(units) == 2) { 
-                sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+            try {
+              Length sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)));
+              String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
+              if (units != null)
+              {
+                if (Integer.parseInt(units) == 2) { 
+                  sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+                }
+                else if (Integer.parseInt(units) == 3) { 
+                  sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.CM);
+                }
               }
-              else if (Integer.parseInt(units) == 3) { 
-                sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.CM);
-              }
+              store.setPixelsPhysicalSizeX(sizeX, 0);
             }
-            store.setPixelsPhysicalSizeX(sizeX, 0);
+            catch(NumberFormatException e) {
+              LOGGER.debug("EXIF Tag - Focal Plane Resolution X not in correct format, expected double, found : " + tags.get(tagName));
+            }
           }
           else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_Y_RES))) {
-            Length sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)));
-            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
-            if (units != null)
-            {
-              if (Integer.parseInt(units) == 2) { 
-                sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+            try {
+              Length sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)));
+              String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
+              if (units != null)
+              {
+                if (Integer.parseInt(units) == 2) { 
+                  sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+                }
+                else if (Integer.parseInt(units) == 3) { 
+                  sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.CM);
+                }
               }
-              else if (Integer.parseInt(units) == 3) { 
-                sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.CM);
-              }
+              store.setPixelsPhysicalSizeX(sizeY, 0);
             }
-            store.setPixelsPhysicalSizeX(sizeY, 0);
+            catch(NumberFormatException e) {
+              LOGGER.debug("EXIF Tag - Focal Plane Resolution Y not in correct format, expected double, found : " + tags.get(tagName));
+            }
           }
           else {
             addGlobalMeta(tagName, tags.get(tagName));
