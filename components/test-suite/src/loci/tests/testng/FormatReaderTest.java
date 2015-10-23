@@ -898,7 +898,7 @@ public class FormatReaderTest {
   }
 
   public void compareSizes(Double expectedSize, Length realSize, String testName, int i) {
-    if (expectedSize == null || expectedSize == 0d) {
+    if (expectedSize == 0d) {
       expectedSize = null;
     }
 
