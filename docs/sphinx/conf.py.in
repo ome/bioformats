@@ -135,7 +135,7 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-omerodoc_uri = oo_site_root + '/support/omero5.1'
+omerodoc_uri = oo_site_root + '/support/omero5.2'
 if (ext_omerodoc_uri is not None and len(ext_omerodoc_uri) > 0 and
     ext_omerodoc_uri != "@%s@" % ('sphinx_omerodoc_uri}')):
     omerodoc_uri = ext_omerodoc_uri
