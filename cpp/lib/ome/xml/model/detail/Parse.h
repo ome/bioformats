@@ -73,7 +73,7 @@ namespace ome
 
         /// Type trait for shared_ptr.
         template <class T>
-        struct is_shared_ptr<std::shared_ptr<T> >
+        struct is_shared_ptr<std::shared_ptr<T>>
           : boost::true_type {};
 
         /**

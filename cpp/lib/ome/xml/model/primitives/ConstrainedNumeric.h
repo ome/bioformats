@@ -129,7 +129,7 @@ namespace ome
                                            boost::multipliable2<ConstrainedNumeric<N, C, E>, N,
                                            boost::multipliable<ConstrainedNumeric<N, C, E>,
                                            boost::incrementable<ConstrainedNumeric<N, C, E>,
-                                           boost::decrementable<ConstrainedNumeric<N, C, E> > > > > > > > > > > > > > >
+                                           boost::decrementable<ConstrainedNumeric<N, C, E>>>>>>>>>>>>>>>
         {
         public:
           /// The type to constrain.

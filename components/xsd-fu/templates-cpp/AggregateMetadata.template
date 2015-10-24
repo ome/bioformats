@@ -302,7 +302,7 @@ namespace ome
       {
       public:
         /// A list of MetadataStore and MetadataRetrieve instances.
-        typedef std::vector<std::shared_ptr<BaseMetadata> > delegate_list_type;
+        typedef std::vector<std::shared_ptr<BaseMetadata>> delegate_list_type;
 
       private:
         /** The active metadata store delegates. */

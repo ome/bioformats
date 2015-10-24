@@ -257,7 +257,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_complex<T>::value, void
       >::type
-    operator() (const std::shared_ptr<PixelBuffer<T> >& v)
+    operator() (const std::shared_ptr<PixelBuffer<T>>& v)
     {
       /// @todo Conversion from complex.
     }

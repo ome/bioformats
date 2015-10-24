@@ -81,7 +81,7 @@ namespace ome
         typedef std::map<boost::filesystem::path, boost::filesystem::path> invalid_file_map;
 
         /// Map filename to open TIFF handle.
-        typedef std::map<boost::filesystem::path, std::shared_ptr<ome::bioformats::tiff::TIFF> > tiff_map;
+        typedef std::map<boost::filesystem::path, std::shared_ptr<ome::bioformats::tiff::TIFF>> tiff_map;
 
         /// UUID to filename mapping.
         uuid_file_map files;
@@ -236,7 +236,7 @@ namespace ome
          */
         void
         getAcquisitionDates(const ome::xml::meta::OMEXMLMetadata&                                  meta,
-                            std::vector<boost::optional<ome::xml::model::primitives::Timestamp> >& timestamps);
+                            std::vector<boost::optional<ome::xml::model::primitives::Timestamp>>& timestamps);
 
         /**
          * Clean up OME-XML metadata.

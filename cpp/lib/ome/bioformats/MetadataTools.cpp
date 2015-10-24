@@ -536,11 +536,11 @@ namespace ome
 
     void
     fillMetadata(::ome::xml::meta::MetadataStore&                          store,
-                 const std::vector<std::shared_ptr<CoreMetadata> > seriesList,
+                 const std::vector<std::shared_ptr<CoreMetadata>> seriesList,
                  bool                                                      doPlane)
     {
       dimension_size_type s = 0U;
-      for (std::vector<std::shared_ptr<CoreMetadata> >::const_iterator i = seriesList.begin();
+      for (std::vector<std::shared_ptr<CoreMetadata>>::const_iterator i = seriesList.begin();
            i != seriesList.end();
            ++i, ++s)
         {
@@ -837,8 +837,8 @@ namespace ome
       std::shared_ptr<ome::xml::meta::OMEXMLMetadataRoot> root(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadataRoot>(omexml.getRoot()));
       if (root)
         {
-          std::vector<std::shared_ptr<ome::xml::model::Image> >& images(root->getImageList());
-          for(std::vector<std::shared_ptr<ome::xml::model::Image> >::const_iterator image = images.begin();
+          std::vector<std::shared_ptr<ome::xml::model::Image>>& images(root->getImageList());
+          for(std::vector<std::shared_ptr<ome::xml::model::Image>>::const_iterator image = images.begin();
               image != images.end();
               ++image)
             {
@@ -847,8 +847,8 @@ namespace ome
                 {
                   // Note a copy not a reference to avoid iterator
                   // invalidation during removal.
-                  std::vector<std::shared_ptr<ome::xml::model::BinData> > binData(pixels->getBinDataList());
-                  for (std::vector<std::shared_ptr<ome::xml::model::BinData> >::iterator bin = binData.begin();
+                  std::vector<std::shared_ptr<ome::xml::model::BinData>> binData(pixels->getBinDataList());
+                  for (std::vector<std::shared_ptr<ome::xml::model::BinData>>::iterator bin = binData.begin();
                    bin != binData.end();
                        ++bin)
                     {
@@ -876,7 +876,7 @@ namespace ome
               std::shared_ptr<ome::xml::model::Pixels> pixels(imageref->getPixels());
               if (pixels)
                 {
-                  std::vector<std::shared_ptr<ome::xml::model::Channel> > channels(pixels->getChannelList());
+                  std::vector<std::shared_ptr<ome::xml::model::Channel>> channels(pixels->getChannelList());
                   for (Metadata::index_type c = 0U; c < channels.size(); ++c)
                     {
                       std::shared_ptr<ome::xml::model::Channel> channel(channels.at(c));

@@ -62,9 +62,9 @@ namespace ome
       {
       public:
         /// A list of Reference objects.
-        typedef std::vector<std::shared_ptr<Reference> > reference_list_type;
+        typedef std::vector<std::shared_ptr<Reference>> reference_list_type;
         /// A map of string model object identifiers to model objects.
-        typedef std::map<std::string, std::shared_ptr<OMEModelObject> > object_map_type;
+        typedef std::map<std::string, std::shared_ptr<OMEModelObject>> object_map_type;
         /// A map of model objects to list of Reference objects.
         typedef std::map<std::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
         /// Size type for reference map.

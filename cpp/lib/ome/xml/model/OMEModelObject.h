@@ -88,7 +88,7 @@ namespace ome
             Ptr<T>, // value type
             boost::multi_index::indexed_by<
               boost::multi_index::random_access<>, // insertion order
-              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T> >, std::owner_less<Ptr<T> > > // sorted order
+              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T>>, std::owner_less<Ptr<T>>> // sorted order
               >
             > type;
         };

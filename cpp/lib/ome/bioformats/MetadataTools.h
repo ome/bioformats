@@ -255,7 +255,7 @@ namespace ome
      */
     void
     fillMetadata(::ome::xml::meta::MetadataStore&                          store,
-                 const std::vector<std::shared_ptr<CoreMetadata> > seriesList,
+                 const std::vector<std::shared_ptr<CoreMetadata>> seriesList,
                  bool                                                      doPlane = false);
 
     /**
