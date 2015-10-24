@@ -69,11 +69,11 @@ namespace
 {
 
   /* write-example-start */
-  shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+  shared_ptr<::ome::xml::meta::OMEXMLMetadata>
   createMetadata()
   {
     // OME-XML metadata store.
-    shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+    shared_ptr<::ome::xml::meta::OMEXMLMetadata> meta(make_shared<::ome::xml::meta::OMEXMLMetadata>());
 
     // Create simple CoreMetadata and use this to set up the OME-XML
     // metadata.  This is purely for convenience in this example; a
@@ -180,7 +180,7 @@ main(int argc, char *argv[])
 
           /* writer-example-start */
           // Create metadata for the file to be written.
-          shared_ptr< ::ome::xml::meta::MetadataRetrieve> meta(createMetadata());
+          shared_ptr<::ome::xml::meta::MetadataRetrieve> meta(createMetadata());
 
           // Create TIFF writer
           shared_ptr<FormatWriter> writer(make_shared<OMETIFFWriter>());

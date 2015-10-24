@@ -122,7 +122,7 @@ namespace ome
      * @param document the XML document.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(ome::common::xml::dom::Document& document);
 
     /**
@@ -131,7 +131,7 @@ namespace ome
      * @param file the XML file.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const boost::filesystem::path& file);
 
     /**
@@ -140,7 +140,7 @@ namespace ome
      * @param text the XML string.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const std::string& text);
 
     /**
@@ -149,7 +149,7 @@ namespace ome
      * @param stream the XML input stream.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(std::istream& stream);
 
     /**
@@ -160,7 +160,7 @@ namespace ome
      * @param doImageName set image name if @c true.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(const FormatReader& reader,
                          bool                doPlane = false,
                          bool                doImageName = true);
@@ -172,7 +172,7 @@ namespace ome
      * @param document the XML document source.
      * @returns the OME-XML metadata root.
      */
-    std::shared_ptr< ::ome::xml::meta::MetadataRoot>
+    std::shared_ptr<::ome::xml::meta::MetadataRoot>
     createOMEXMLRoot(const std::string& document);
 
     /**
@@ -183,8 +183,8 @@ namespace ome
      * @param retrieve the metadata to use.
      * @returns the OME-XML metadata.
      */
-    std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
-    getOMEXMLMetadata(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+    std::shared_ptr<::ome::xml::meta::OMEXMLMetadata>
+    getOMEXMLMetadata(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
 
     /**
      * Get OME-XML document from OME-XML metadata.

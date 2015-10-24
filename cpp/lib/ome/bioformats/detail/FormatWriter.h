@@ -140,7 +140,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataRetrieve() prevent "null" access.
          */
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
+        std::shared_ptr<::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
 
       protected:
         /// Constructor.
@@ -210,14 +210,14 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+        setMetadataRetrieve(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
 
         // Documented in superclass.
-        const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        const std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve() const;
 
         // Documented in superclass.
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
 
         /**
