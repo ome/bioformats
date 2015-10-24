@@ -86,8 +86,8 @@ namespace ome
 
     /// Properties of INT8 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::INT8> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::INT8>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::INT8> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::INT8>
     {
       /// Internal pixel format (single 8-bit channel).
       static const GLenum internal_format = GL_R8;
@@ -109,8 +109,8 @@ namespace ome
 
     /// Properties of INT16 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::INT16> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::INT16>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::INT16> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::INT16>
     {
       /// Internal pixel format (single 16-bit channel).
       static const GLenum internal_format = GL_R16;
@@ -132,8 +132,8 @@ namespace ome
 
     /// Properties of INT32 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::INT32> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::INT32>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::INT32> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::INT32>
     {
       /// Internal pixel format (single 16-bit channel; note precision loss).
       static const GLenum internal_format = GL_R16;
@@ -155,8 +155,8 @@ namespace ome
 
     /// Properties of UINT8 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::UINT8> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::UINT8>
     {
       /// Internal pixel format (single 8-bit channel).
       static const GLenum internal_format = GL_R8;
@@ -178,8 +178,8 @@ namespace ome
 
     /// Properties of UINT16 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::UINT16> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::UINT16>
     {
       /// Internal pixel format (single 16-bit channel).
       static const GLenum internal_format = GL_R16;
@@ -201,8 +201,8 @@ namespace ome
 
     /// Properties of UINT32 texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::UINT32> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::UINT32>
     {
       /// Internal pixel format (single 16-bit channel; note precision loss).
       static const GLenum internal_format = GL_R16;
@@ -224,8 +224,8 @@ namespace ome
 
     /// Properties of FLOAT texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::FLOAT> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::FLOAT>
     {
       /// Internal pixel format (single 32-bit float channel).
       static const GLenum internal_format = GL_R32F;
@@ -247,8 +247,8 @@ namespace ome
 
     /// Properties of DOUBLE texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE>
     {
       /// Internal pixel format (single 32-bit float channel; note precision loss).
       static const GLenum internal_format = GL_R32F;
@@ -270,8 +270,8 @@ namespace ome
 
     /// Properties of BIT texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::BIT> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::BIT> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::BIT>
     {
       /// Internal pixel format (single 8-bit float channel).
       static const GLenum internal_format = GL_R8;
@@ -293,8 +293,8 @@ namespace ome
 
     /// Properties of COMPLEX texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX>
     {
       /// Internal pixel format (double 32-bit float channels).
       static const GLenum internal_format = GL_RG32F;
@@ -316,8 +316,8 @@ namespace ome
 
     /// Properties of DOUBLECOMPLEX texels.
     template<>
-    struct TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
-      public ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>
+    struct TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
+      public ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>
     {
       /// Internal pixel format (double 32-bit float channels; note precision loss).
       static const GLenum internal_format = GL_RG32F;

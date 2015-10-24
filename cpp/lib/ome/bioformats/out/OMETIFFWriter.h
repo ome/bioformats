@@ -137,7 +137,7 @@ namespace ome
          * solution, but need to eliminate all direct use of
          * metadataRetrieve in all writers first.
          */
-        std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> originalMetadataRetrieve;
+        std::shared_ptr<::ome::xml::meta::MetadataRetrieve> originalMetadataRetrieve;
 
         /// OME-XML metadata for embedding in the TIFF.
         std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omeMeta;

@@ -228,7 +228,7 @@ namespace ome
         std::string omexml;
         getComment(*tiff, omexml);
 
-        std::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
+        std::shared_ptr<::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
 
         dimension_size_type nImages = 0U;
         for (dimension_size_type i = 0U;
@@ -280,7 +280,7 @@ namespace ome
 
         try
           {
-            std::shared_ptr< ::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
+            std::shared_ptr<::ome::xml::meta::Metadata> meta(createOMEXMLMetadata(omexml));
 
             std::string metadataFile = meta->getBinaryOnlyMetadataFile();
             if (!metadataFile.empty())
@@ -407,7 +407,7 @@ namespace ome
             // This is a companion file.  Read the metadata, get the
             // TIFF for the TiffData for the first image, and then
             // recurse with this file as the id.
-            std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(*currentId));
+            std::shared_ptr<::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(*currentId));
             path firstTIFF(path(meta->getUUIDFileName(0, 0)));
             initFile(canonical(firstTIFF, dir));
             return;
@@ -421,7 +421,7 @@ namespace ome
         // metadata from it.
         std::string omexml;
         getComment(*tiff, omexml);
-        std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(omexml));
+        std::shared_ptr<::ome::xml::meta::OMEXMLMetadata> meta(createOMEXMLMetadata(omexml));
 
         // Is there an associated binary-only metadata file?
         try

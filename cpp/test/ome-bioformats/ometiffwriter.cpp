@@ -141,9 +141,9 @@ TEST_P(TIFFWriterTest, setId)
       seriesList.push_back(c);
     }
 
-  std::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+  std::shared_ptr<::ome::xml::meta::OMEXMLMetadata> meta(std::make_shared<::ome::xml::meta::OMEXMLMetadata>());
   ome::bioformats::fillMetadata(*meta, seriesList);
-  std::shared_ptr< ::ome::xml::meta::MetadataRetrieve> retrieve(std::static_pointer_cast< ::ome::xml::meta::MetadataRetrieve>(meta));
+  std::shared_ptr<::ome::xml::meta::MetadataRetrieve> retrieve(std::static_pointer_cast<::ome::xml::meta::MetadataRetrieve>(meta));
 
   tiffwriter.setMetadataRetrieve(retrieve);
 

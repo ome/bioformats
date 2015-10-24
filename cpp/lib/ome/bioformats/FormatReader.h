@@ -980,7 +980,7 @@ namespace ome
        */
       virtual
       void
-      setMetadataStore(std::shared_ptr< ::ome::xml::meta::MetadataStore>& store) = 0;
+      setMetadataStore(std::shared_ptr<::ome::xml::meta::MetadataStore>& store) = 0;
 
       /**
        * Get the current metadata store for this reader.
@@ -988,7 +988,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      const std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      const std::shared_ptr<::ome::xml::meta::MetadataStore>&
       getMetadataStore() const = 0;
 
       /**
@@ -997,7 +997,7 @@ namespace ome
        * @returns the metadata store, which will never be @c null.
        */
       virtual
-      std::shared_ptr< ::ome::xml::meta::MetadataStore>&
+      std::shared_ptr<::ome::xml::meta::MetadataStore>&
       getMetadataStore() = 0;
 
       /**

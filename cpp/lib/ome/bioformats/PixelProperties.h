@@ -113,8 +113,8 @@ namespace ome
 
     /// Properties of INT8 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT8> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::INT8> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::INT8>>
     {
       /// Pixel type (standard language type).
       typedef int8_t std_type;
@@ -136,8 +136,8 @@ namespace ome
 
     /// Properties of INT16 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT16> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT16>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::INT16> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::INT16>>
     {
       /// Pixel type (standard language type).
       typedef int16_t std_type;
@@ -159,8 +159,8 @@ namespace ome
 
     /// Properties of INT32 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT32> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT32>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::INT32> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::INT32>>
     {
       /// Pixel type (standard language type).
       typedef int32_t std_type;
@@ -182,8 +182,8 @@ namespace ome
 
     /// Properties of UINT8 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::UINT8> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::UINT8>>
     {
       /// Pixel type (standard language type).
       typedef uint8_t std_type;
@@ -205,8 +205,8 @@ namespace ome
 
     /// Properties of UINT16 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
-      public PixelPropertiesBase<struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::UINT16> :
+      public PixelPropertiesBase<struct PixelProperties<::ome::xml::model::enums::PixelType::UINT16>>
     {
       /// Pixel type (standard language type).
       typedef uint16_t std_type;
@@ -228,8 +228,8 @@ namespace ome
 
     /// Properties of UINT32 pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::UINT32> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::UINT32>>
     {
       /// Pixel type (standard language type).
       typedef uint32_t std_type;
@@ -251,8 +251,8 @@ namespace ome
 
     /// Properties of FLOAT pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::FLOAT> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::FLOAT>>
     {
       /// Pixel type (standard language type).
       typedef float std_type;
@@ -274,8 +274,8 @@ namespace ome
 
     /// Properties of DOUBLE pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE>>
     {
       /// Pixel type (standard language type).
       typedef double std_type;
@@ -297,8 +297,8 @@ namespace ome
 
     /// Properties of BIT pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::BIT> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::BIT>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::BIT> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::BIT>>
     {
       /// Pixel type (standard language type).
       typedef bool std_type;
@@ -332,8 +332,8 @@ namespace ome
 
     /// Properties of COMPLEX pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX>>
     {
       /// Pixel type (standard language type).
       typedef std::complex<float> std_type;
@@ -355,8 +355,8 @@ namespace ome
 
     /// Properties of DOUBLECOMPLEX pixels.
     template<>
-    struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
-      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>>
+    struct PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
+      public PixelPropertiesBase<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>>
     {
       /// Pixel type (standard language type).
       typedef std::complex<double> std_type;

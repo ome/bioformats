@@ -171,7 +171,7 @@ namespace ome
 
       bool
       OriginalMetadataAnnotation::link (std::shared_ptr<Reference>&                          reference,
-                                        std::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+                                        std::shared_ptr<::ome::xml::model::OMEModelObject>& object)
       {
         if (XMLAnnotation::link(reference, object))
           {

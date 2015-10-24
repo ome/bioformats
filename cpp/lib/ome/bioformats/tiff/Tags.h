@@ -528,7 +528,7 @@ namespace ome
 
         /// Properties of StringTag1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::StringTag1>
+        struct TagProperties<::ome::bioformats::tiff::StringTag1>
         {
           /// string type.
           typedef std::string value_type;
@@ -536,7 +536,7 @@ namespace ome
 
         /// Properties of StringTagArray1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::StringTagArray1>
+        struct TagProperties<::ome::bioformats::tiff::StringTagArray1>
         {
           /// string type.
           typedef std::vector<std::string> value_type;
@@ -544,7 +544,7 @@ namespace ome
 
         /// Properties of UInt16Tag1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Tag1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Tag1>
         {
           /// uint16_t type.
           typedef uint16_t value_type;
@@ -552,7 +552,7 @@ namespace ome
 
         /// Properties of UInt16TagArray1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16TagArray1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16TagArray1>
         {
           /// uint16_t vector type.
           typedef std::vector<uint16_t> value_type;
@@ -560,7 +560,7 @@ namespace ome
 
         /// Properties of UInt16Compression1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Compression1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Compression1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::Compression value_type;
@@ -568,7 +568,7 @@ namespace ome
 
         /// Properties of UInt16FillOrder1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16FillOrder1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16FillOrder1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::FillOrder value_type;
@@ -576,7 +576,7 @@ namespace ome
 
         /// Properties of UInt16Orientation1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Orientation1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Orientation1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::Orientation value_type;
@@ -584,7 +584,7 @@ namespace ome
 
         /// Properties of UInt16PhotometricInterpretation1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16PhotometricInterpretation1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16PhotometricInterpretation1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::PhotometricInterpretation value_type;
@@ -592,7 +592,7 @@ namespace ome
 
         /// Properties of UInt16PlanarConfiguration1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16PlanarConfiguration1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16PlanarConfiguration1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::PlanarConfiguration value_type;
@@ -600,7 +600,7 @@ namespace ome
 
         /// Properties of UInt16Predictor1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Predictor1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Predictor1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::Predictor value_type;
@@ -608,7 +608,7 @@ namespace ome
 
         /// Properties of UInt16SampleFormat1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16SampleFormat1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16SampleFormat1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::SampleFormat value_type;
@@ -616,7 +616,7 @@ namespace ome
 
         /// Properties of UInt16Threshholding1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Threshholding1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Threshholding1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::Threshholding value_type;
@@ -624,7 +624,7 @@ namespace ome
 
         /// Properties of UInt16YCbCrPosition1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16YCbCrPosition1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16YCbCrPosition1>
         {
           /// uint16_t type.
           typedef ::ome::bioformats::tiff::YCbCrPosition value_type;
@@ -632,7 +632,7 @@ namespace ome
 
         /// Properties of UInt16Tag2 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Tag2>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Tag2>
         {
           /// uint16_t array type.
           typedef ome::compat::array<uint16_t, 2> value_type;
@@ -640,7 +640,7 @@ namespace ome
 
         /// Properties of UInt16Tag6 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16Tag6>
+        struct TagProperties<::ome::bioformats::tiff::UInt16Tag6>
         {
           /// uint16 array type.
           typedef ome::compat::array<uint16_t, 6> value_type;
@@ -648,15 +648,15 @@ namespace ome
 
         /// Properties of UInt16ExtraSamplesArray1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16ExtraSamplesArray1>
+        struct TagProperties<::ome::bioformats::tiff::UInt16ExtraSamplesArray1>
         {
           /// uint16_t vector type.
-          typedef std::vector< ::ome::bioformats::tiff::ExtraSamples> value_type;
+          typedef std::vector<::ome::bioformats::tiff::ExtraSamples> value_type;
         };
 
         /// Properties of UInt16TagArray3 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt16TagArray3>
+        struct TagProperties<::ome::bioformats::tiff::UInt16TagArray3>
         {
           /// uint16_t array type.
           typedef ome::compat::array<std::vector<uint16_t>, 3> value_type;
@@ -664,7 +664,7 @@ namespace ome
 
         /// Properties of UInt32Tag1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt32Tag1>
+        struct TagProperties<::ome::bioformats::tiff::UInt32Tag1>
         {
           /// uint32_t type.
           typedef uint32_t value_type;
@@ -672,7 +672,7 @@ namespace ome
 
         /// Properties of UInt32TagArray1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt32TagArray1>
+        struct TagProperties<::ome::bioformats::tiff::UInt32TagArray1>
         {
           /// uint32_t vector type.
           typedef std::vector<uint32_t> value_type;
@@ -680,7 +680,7 @@ namespace ome
 
         /// Properties of UInt64TagArray1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::UInt64TagArray1>
+        struct TagProperties<::ome::bioformats::tiff::UInt64TagArray1>
         {
           /// uint64_t vector type.
           typedef std::vector<uint64_t> value_type;
@@ -688,7 +688,7 @@ namespace ome
 
         /// Properties of RawDataTag1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::RawDataTag1>
+        struct TagProperties<::ome::bioformats::tiff::RawDataTag1>
         {
           /// uint32_t vector type.
           typedef std::vector<uint8_t> value_type;
@@ -696,7 +696,7 @@ namespace ome
 
         /// Properties of FloatTag1 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::FloatTag1>
+        struct TagProperties<::ome::bioformats::tiff::FloatTag1>
         {
           /// float type.
           typedef float value_type;
@@ -704,7 +704,7 @@ namespace ome
 
         /// Properties of FloatTag2 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::FloatTag2>
+        struct TagProperties<::ome::bioformats::tiff::FloatTag2>
         {
           /// float array type.
           typedef ome::compat::array<float, 2> value_type;
@@ -712,7 +712,7 @@ namespace ome
 
         /// Properties of FloatTag3 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::FloatTag3>
+        struct TagProperties<::ome::bioformats::tiff::FloatTag3>
         {
           /// float array type.
           typedef ome::compat::array<float, 3> value_type;
@@ -720,7 +720,7 @@ namespace ome
 
         /// Properties of FloatTag6 tags.
         template<>
-        struct TagProperties< ::ome::bioformats::tiff::FloatTag6>
+        struct TagProperties<::ome::bioformats::tiff::FloatTag6>
         {
           /// float array type.
           typedef ome::compat::array<float, 6> value_type;

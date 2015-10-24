@@ -74,16 +74,16 @@ namespace ome
           ~OMEModel ();
 
           /// @copydoc ome::xml::model::OMEModel::addModelObject
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          std::shared_ptr<::ome::xml::model::OMEModelObject>
           addModelObject (const std::string&                                   id,
-                          std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+                          std::shared_ptr<::ome::xml::model::OMEModelObject>& object);
 
           // Documented in parent.
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          std::shared_ptr<::ome::xml::model::OMEModelObject>
           removeModelObject (const std::string& id);
 
           // Documented in parent.
-          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          std::shared_ptr<::ome::xml::model::OMEModelObject>
           getModelObject (const std::string& id) const;
 
           // Documented in parent.
@@ -92,7 +92,7 @@ namespace ome
 
           /// @copydoc ome::xml::model::OMEModel::addReference
           bool
-          addReference (std::shared_ptr< ::ome::xml::model::OMEModelObject>& a,
+          addReference (std::shared_ptr<::ome::xml::model::OMEModelObject>& a,
                         std::shared_ptr<Reference>&                          b);
 
           // Documented in parent.

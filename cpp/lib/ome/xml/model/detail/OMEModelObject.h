@@ -109,7 +109,7 @@ namespace ome
           /// @copydoc ome::xml::model::OMEModelObject::link
           virtual bool
           link (std::shared_ptr<Reference>&                          reference,
-                std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+                std::shared_ptr<::ome::xml::model::OMEModelObject>& object);
 
           /**
            * Retrieve all the children of an element that have a given

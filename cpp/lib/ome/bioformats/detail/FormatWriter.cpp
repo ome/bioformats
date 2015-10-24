@@ -339,7 +339,7 @@ namespace ome
       }
 
       void
-      FormatWriter::setMetadataRetrieve(std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve)
+      FormatWriter::setMetadataRetrieve(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve)
       {
         assertId(currentId, false);
 
@@ -349,13 +349,13 @@ namespace ome
         metadataRetrieve = retrieve;
       }
 
-      const std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      const std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve() const
       {
         return metadataRetrieve;
       }
 
-      std::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+      std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
       FormatWriter::getMetadataRetrieve()
       {
         return metadataRetrieve;
