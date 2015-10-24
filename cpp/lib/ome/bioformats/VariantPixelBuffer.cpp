@@ -276,7 +276,7 @@ namespace
         >::value,
       void
       >::type
-    operator() (std::shared_ptr<PixelBuffer<typename PixelProperties<P>::std_type> >& lhs) const
+    operator() (std::shared_ptr<PixelBuffer<typename PixelProperties<P>::std_type>>& lhs) const
     {
       if (!lhs)
         throw std::runtime_error("Null pixel type");

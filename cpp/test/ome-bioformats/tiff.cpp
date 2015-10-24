@@ -95,7 +95,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_integral<T>::value, float
       >::type
-    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T>>& buf,
          const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
     {
       float v = static_cast<float>(buf->at(idx));
@@ -108,7 +108,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_floating_point<T>::value, float
       >::type
-    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T>>& buf,
          const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
     {
       // Assume float is already normalised.
@@ -119,7 +119,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_complex<T>::value, float
       >::type
-    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf,
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<T>>& buf,
          const typename ::ome::bioformats::PixelBuffer<T>::indices_type& idx) const
     {
       // Assume float is already normalised.
@@ -130,7 +130,7 @@ namespace
     // and the upper half being set to true for the destination boolean
     // pixel type.
     float
-    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf,
+    dump(const std::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type>>& buf,
          const ::ome::bioformats::PixelBuffer<bit_type>::indices_type& idx)
     {
       return buf->at(idx) ? 1.0f : 0.0f;
@@ -887,7 +887,7 @@ public:
     pngdata_chunky.setBuffer(shape, PT::UINT8, order_chunky);
     pngdata_planar.setBuffer(shape, PT::UINT8, order_planar);
 
-    std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type> >& uint8_pngdata_chunky(boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type> > >(pngdata_chunky.vbuffer()));
+    std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type>>& uint8_pngdata_chunky(boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PT::UINT8>::std_type>>>(pngdata_chunky.vbuffer()));
     std::vector<png_bytep> row_pointers(pheight);
     for (dimension_size_type y = 0; y < pheight; ++y)
       {

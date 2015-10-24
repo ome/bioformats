@@ -455,7 +455,7 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = "const %s&" % self.langTypeNS
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = "std::vector<std::shared_ptr<%s> >&" % ns_sep
+                itype = "std::vector<std::shared_ptr<%s>>&" % ns_sep
 
         return itype
     argType = property(_get_argType, doc="""The property's argument type.""")
@@ -508,10 +508,10 @@ class OMEModelProperty(OMEModelEntity):
                     itype = {' const': "const %s&" % self.langTypeNS}
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
                 itype = {' const':
-                         "const std::vector<std::shared_ptr<%s> >"
+                         "const std::vector<std::shared_ptr<%s>>"
                          % ns_sep,
                          '':
-                         "std::vector<std::shared_ptr<%s> >"
+                         "std::vector<std::shared_ptr<%s>>"
                          % ns_sep}
 
         return itype
@@ -641,10 +641,10 @@ class OMEModelProperty(OMEModelEntity):
             elif (self.maxOccurs > 1 and
                     not self.parent.isAbstractProprietary):
                 itype = {' const':
-                         "const std::vector<std::shared_ptr<%s> >"
+                         "const std::vector<std::shared_ptr<%s>>"
                          % ns_sep,
                          '':
-                         "std::vector<std::shared_ptr<%s> >"
+                         "std::vector<std::shared_ptr<%s>>"
                          % ns_sep}
 
         return itype
@@ -733,7 +733,7 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     itype = self.langTypeNS
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = "std::vector<std::shared_ptr<%s> >" % ns_sep
+                itype = "std::vector<std::shared_ptr<%s>>" % ns_sep
 
         return itype
     instanceVariableType = property(

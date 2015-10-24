@@ -109,7 +109,7 @@ namespace ome
       {
       protected:
         /// List type for storing CoreMetadata.
-        typedef std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
+        typedef std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata>> coremetadata_list_type;
 
         /// Reader properties specific to the derived file format.
         const ReaderProperties& readerProperties;
@@ -690,7 +690,7 @@ namespace ome
         getZCTModuloCoords(dimension_size_type index) const;
 
         // Documented in superclass.
-        const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&
+        const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata>>&
         getCoreMetadataList() const;
 
         // Documented in superclass.
@@ -714,7 +714,7 @@ namespace ome
         getMetadataStore();
 
         // Documented in superclass.
-        std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >
+        std::vector<std::shared_ptr< ::ome::bioformats::FormatReader>>
         getUnderlyingReaders() const;
 
         // Documented in superclass.

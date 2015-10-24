@@ -56,7 +56,7 @@ namespace ome
         /**
          * Integer (signed 32-bit) value greater than or equal to zero.
          */
-        typedef ConstrainedNumeric<int32_t, NonNegativeIntegerConstraint<int32_t> > NonNegativeInteger;
+        typedef ConstrainedNumeric<int32_t, NonNegativeIntegerConstraint<int32_t>> NonNegativeInteger;
 
       }
     }

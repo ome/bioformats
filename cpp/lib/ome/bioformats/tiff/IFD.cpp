@@ -196,7 +196,7 @@ namespace
 
     // Special case for BIT
     void
-    transfer(std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+    transfer(std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type>>& buffer,
              PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type&             destidx,
              const TileBuffer&                                                                 tilebuf,
              PlaneRegion&                                                                      rfull,
@@ -249,7 +249,7 @@ namespace
 
     // Special case for BIT
     dimension_size_type
-    expected_read(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& /* buffer */,
+    expected_read(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type>>& /* buffer */,
                   const PlaneRegion&                                                                      rclip,
                   uint16_t                                                                                copysamples) const
     {
@@ -448,7 +448,7 @@ namespace
 
     // Special case for BIT
     void
-    transfer(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type> >& buffer,
+    transfer(const std::shared_ptr<PixelBuffer<PixelProperties<PixelType::BIT>::std_type>>& buffer,
              PixelBuffer<PixelProperties<PixelType::BIT>::std_type>::indices_type&                   srcidx,
              TileBuffer&                                                                             tilebuf,
              PlaneRegion&                                                                            rfull,
@@ -1266,8 +1266,8 @@ namespace ome
 
         buf.setBuffer(shape, PixelType::UINT16, order_planar);
 
-        std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > uint16_buffer
-          (boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> > >(buf.vbuffer()));
+        std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>> uint16_buffer
+          (boost::get<std::shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>>>(buf.vbuffer()));
         assert(uint16_buffer);
 
         for (VariantPixelBuffer::size_type s = 0U; s < shape[DIM_SUBCHANNEL]; ++s)

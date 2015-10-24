@@ -57,7 +57,7 @@ namespace ome
          * Long integer (signed 64-bit) value greater than zero.  This
          * value does not include zero.
          */
-        typedef ConstrainedNumeric<int64_t, PositiveIntegerConstraint<int64_t> > PositiveLong;
+        typedef ConstrainedNumeric<int64_t, PositiveIntegerConstraint<int64_t>> PositiveLong;
 
       }
     }

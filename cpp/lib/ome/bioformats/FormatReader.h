@@ -946,7 +946,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<std::shared_ptr<CoreMetadata> >&
+      const std::vector<std::shared_ptr<CoreMetadata>>&
       getCoreMetadataList() const = 0;
 
       /**
@@ -1009,7 +1009,7 @@ namespace ome
        * @returns a list of readers.
        */
       virtual
-      std::vector<std::shared_ptr<FormatReader> >
+      std::vector<std::shared_ptr<FormatReader>>
       getUnderlyingReaders() const = 0;
 
       /**

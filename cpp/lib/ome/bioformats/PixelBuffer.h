@@ -455,7 +455,7 @@ namespace ome
       bool
       managed() const
       {
-        return (boost::get<std::shared_ptr<array_type> >(&multiarray) != 0);
+        return (boost::get<std::shared_ptr<array_type>>(&multiarray) != 0);
       }
 
       /**
@@ -822,7 +822,7 @@ namespace ome
        * C++11 move constructor for @c MultiArray types.
        */
       boost::variant<std::shared_ptr<array_type>,
-                     std::shared_ptr<array_ref_type> > multiarray;
+                     std::shared_ptr<array_ref_type>> multiarray;
     };
 
     namespace detail

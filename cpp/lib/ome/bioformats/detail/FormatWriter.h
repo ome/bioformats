@@ -57,7 +57,7 @@ namespace ome
       {
         /// Map of codec to pixel types.
         typedef std::map<std::string,
-                         std::set<ome::xml::model::enums::PixelType> > codec_pixel_type_map;
+                         std::set<ome::xml::model::enums::PixelType>> codec_pixel_type_map;
 
         /// Format name.
         std::string name;

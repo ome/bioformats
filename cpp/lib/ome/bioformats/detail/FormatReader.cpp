@@ -1050,7 +1050,7 @@ namespace ome
         return getCoreMetadata(getCoreIndex()).seriesMetadata;
       }
 
-      const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> >&
+      const std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata>>&
       FormatReader::getCoreMetadataList() const
       {
         assertId(currentId, true);
@@ -1093,10 +1093,10 @@ namespace ome
         return metadataStore;
       }
 
-      std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >
+      std::vector<std::shared_ptr< ::ome::bioformats::FormatReader>>
       FormatReader::getUnderlyingReaders() const
       {
-        return std::vector<std::shared_ptr< ::ome::bioformats::FormatReader> >();
+        return std::vector<std::shared_ptr< ::ome::bioformats::FormatReader>>();
       }
 
       bool

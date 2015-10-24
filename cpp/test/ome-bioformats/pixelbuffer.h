@@ -198,8 +198,8 @@ void test_operators(const PixelBuffer<T>& buf1,
 }
 
 template<typename T>
-void test_operators(const PixelBuffer<std::complex<T> >& /* buf1 */,
-                    const PixelBuffer<std::complex<T> >& /* buf2 */)
+void test_operators(const PixelBuffer<std::complex<T>>& /* buf1 */,
+                    const PixelBuffer<std::complex<T>>& /* buf2 */)
 {
 }
 

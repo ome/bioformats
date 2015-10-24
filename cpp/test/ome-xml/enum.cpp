@@ -228,7 +228,7 @@ public:
  {}
 };
 
-class LaserTypeValue : public ::testing::TestWithParam<EnumValueParameters<LaserType> >
+class LaserTypeValue : public ::testing::TestWithParam<EnumValueParameters<LaserType>>
 {
 public:
   typedef LaserType enum_type;
