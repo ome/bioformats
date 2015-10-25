@@ -297,16 +297,16 @@ namespace ome
          *
          * @returns a new model object.
          */
-        static std::shared_ptr< ${klass.name}>
+        static std::shared_ptr<${klass.name}>
         create(const common::xml::dom::Element& element,
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr< ${klass.name}>
+      std::shared_ptr<${klass.name}>
       ${klass.name}::create(const common::xml::dom::Element& element,
                               ${lang.omexml_model_package}::OMEModel& model)
       {
-        std::shared_ptr< ${klass.name}> newinstance(std::make_shared< ${klass.name}>());
+        std::shared_ptr<${klass.name}> newinstance(std::make_shared<${klass.name}>());
         newinstance->update(element, model);
         return newinstance;
       }
@@ -413,10 +413,10 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
+            std::shared_ptr<${prop.name}> rcptr(std::make_shared<${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
-            std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
+            std::shared_ptr<${lang.omexml_model_package}::OMEModelObject> optr(std::static_pointer_cast<${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
             model.addReference(optr, rptr);
           }
 {% end %}\
@@ -442,7 +442,7 @@ ${customUpdatePropertyContent[prop.name]}
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
-             std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(std::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
+             std::shared_ptr<${lang.omexml_model_package}::OMEModelObject> thisptr(std::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
              model.addModelObject(getID(), thisptr);
            }
 {% end %}\
@@ -453,7 +453,7 @@ ${customUpdatePropertyContent[prop.name]}
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
             std::string text(element.getAttribute("${prop.name}"));
-            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(text));
+            ${prop.instanceVariableType} nattr(std::make_shared<${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -503,7 +503,7 @@ ${customUpdatePropertyContent[prop.name]}
             // sub-elements)
             std::string text(${prop.name}_nodeList.at(0).getTextContent());
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(text));
+            ${prop.instanceVariableType} ns(std::make_shared<${prop.langTypeNS}>(text));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -593,12 +593,12 @@ ${customUpdatePropertyContent[prop.name]}
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::link
         bool
         link (std::shared_ptr<Reference>& reference,
-              std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object);
+              std::shared_ptr<${lang.omexml_model_package}::OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
       ${klass.name}::link (std::shared_ptr<Reference>& reference,
-                           std::shared_ptr< ${lang.omexml_model_package}::OMEModelObject>& object)
+                           std::shared_ptr<${lang.omexml_model_package}::OMEModelObject>& object)
       {
         if (${klass.parentName}::link(reference, object))
           {
@@ -1273,7 +1273,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 // shared_ptr, but keep compatible with the rest of
                 // the API to allow consistency for future
                 // refactoring.
-                std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
+                std::shared_ptr<${prop.name}> o(std::make_shared<${prop.name}>());
                 std::shared_ptr<${prop.langTypeNS}> is(i->lock());
                 if (is)
                   {
@@ -1290,7 +1290,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // Note that this doesn't strictly need to be a
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
-            std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
+            std::shared_ptr<${prop.name}> o(std::make_shared<${prop.name}>());
             std::shared_ptr<${prop.langTypeNS}> sv(this->impl->${prop.instanceVariableName}.lock());
             if (sv)
               {
