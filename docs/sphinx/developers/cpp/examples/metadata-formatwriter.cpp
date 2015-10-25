@@ -79,7 +79,7 @@ namespace
     // metadata.  This is purely for convenience in this example; a
     // real writer would typically set up the OME-XML metadata from an
     // existing MetadataRetrieve instance or by hand.
-    std::vector<shared_ptr<CoreMetadata> > seriesList;
+    std::vector<shared_ptr<CoreMetadata>> seriesList;
     shared_ptr<CoreMetadata> core(make_shared<CoreMetadata>());
     core->sizeX = 512U;
     core->sizeY = 512U;
@@ -123,8 +123,8 @@ namespace
             // uint16_t.  It uses the native endianness and has a
             // storage order of XYZTC without interleaving
             // (subchannels are planar).
-            shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
-              buffer(make_shared<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
+            shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>>
+              buffer(make_shared<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>>
                      (boost::extents[512][512][1][1][1][3][1][1][1],
                       PixelType::UINT16, ome::bioformats::ENDIAN_NATIVE,
                       PixelBufferBase::make_storage_order(DimensionOrder::XYZTC, false)));
