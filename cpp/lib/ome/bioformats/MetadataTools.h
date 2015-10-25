@@ -254,9 +254,9 @@ namespace ome
      * @param doPlane create Plane elements if @c true.
      */
     void
-    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+    fillMetadata(::ome::xml::meta::MetadataStore&                 store,
                  const std::vector<std::shared_ptr<CoreMetadata>> seriesList,
-                 bool                                                      doPlane = false);
+                 bool                                             doPlane = false);
 
     /**
      * Fill all OME-XML metadata store Pixels elements from reader core metadata.

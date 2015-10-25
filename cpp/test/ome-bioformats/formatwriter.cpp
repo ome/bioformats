@@ -231,8 +231,8 @@ public:
 private:
   void
   makeMetadata(std::shared_ptr<::ome::xml::meta::MetadataStore> store,
-               dimension_size_type                                       series,
-               std::shared_ptr<CoreMetadata>                     core)
+               dimension_size_type                              series,
+               std::shared_ptr<CoreMetadata>                    core)
   {
     store->setImageID(createID("Image", series), series);
     store->setImageAcquisitionDate

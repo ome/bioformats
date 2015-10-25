@@ -268,7 +268,7 @@ The Bio-Formats API **never** passes pointers allocated with
 automatically.
 
 :cpp:class:`std::shared_ptr` as a “smart” pointer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The unsafe example above, has been rewritten to use
 :cpp:class:`std::shared_ptr`:
@@ -286,17 +286,10 @@ The unsafe example above, has been rewritten to use
     }
 
 Rather than managing the memory by hand, responsibility for this is
-delegated to a “smart” pointer, :cpp:class:`std::shared_ptr`.
-The memory is freed by the :cpp:class:`std::shared_ptr`
-destructor which is run at the end of the block scope, on explicit
-:c:type:`return`, or when cleaned up by exception stack unwinding.
-
-.. note::
-
-    :cpp:class:`std::shared_ptr` is either a
-    :cpp:class:`std::shared_ptr` or a :cpp:class:`boost::shared_ptr`,
-    depending upon whether C++11 features are avaiable or not,
-    respectively.
+delegated to a “smart” pointer, :cpp:class:`std::shared_ptr`.  The
+memory is freed by the :cpp:class:`std::shared_ptr` destructor which
+is run at the end of the block scope, on explicit :c:type:`return`, or
+when cleaned up by exception stack unwinding.
 
 - :cpp:class:`shared_ptr` object lifetime manages the resource
 - :cpp:class:`new` replaced with :cpp:class:`std::make_shared`
@@ -340,14 +333,14 @@ C++ reference variants
 
 .. code-block:: cpp
 
-    //              Non-constant                                 Constant
-    // -------------------------------------  ----------------------------------------------
+    //          Non-constant                         Constant
+    // -----------------------------  --------------------------------------
     // Pointer
-                                   Image *i;                                 const Image *i;
-                            Image * const i;                          const Image * const i;
+                           Image *i;                         const Image *i;
+                    Image * const i;                  const Image * const i;
 
     // Reference
-                                   Image& i;                                 const Image& i;
+                           Image& i;                         const Image& i;
 
     // Shared pointer
            std::shared_ptr<Image> i;         std::shared_ptr<const Image> i;
@@ -373,7 +366,7 @@ Class member types:
 
 .. code-block:: cpp
 
-  Image i;                             // Concrete instance
+  Image i;                     // Concrete instance
   std::shared_ptr<Image> i;    // Reference
   std::weak_ptr<Image> i;      // Weak reference
 
@@ -409,12 +402,12 @@ polymorphic types).  Passing by reference avoids the need for any
 copying, and passing by :c:type:`const` reference will prevent the
 callee from modifying the object, also making it clear that there is
 no transfer of ownership.  Passing using an
-:cpp:class:`std::shared_ptr` is possible but not
-recommended---the copy will involve reference counting overhead which
-can kill multi-threaded performance since it requires synchronization
-between all threads; use a :c:type:`const` reference to an
-:cpp:class:`std::shared_ptr` to avoid the overhead.  If
-ownership should be transferred or shared with the callee, use a
+:cpp:class:`std::shared_ptr` is possible but not recommended---the
+copy will involve reference counting overhead which can kill
+multi-threaded performance since it requires synchronization between
+all threads; use a :c:type:`const` reference to an
+:cpp:class:`std::shared_ptr` to avoid the overhead.  If ownership
+should be transferred or shared with the callee, use a
 non-:c:type:`const` reference.
 
 To be absolutely clear, plain pointers are never used and are not
@@ -425,9 +418,9 @@ Return types:
 
 .. code-block:: cpp
 
-                            Image get_image(); // Ownership transferred
-                           Image& get_image(); // Ownership retained
-   std::shared_ptr<Image> get_image(); // Ownership shared/trans
+                    Image get_image(); // Ownership transferred
+                   Image& get_image(); // Ownership retained
+   std::shared_ptr<Image> get_image(); // Ownership shared/transferred
   std::shared_ptr<Image>& get_image(); // Ownership shared
 
 If the callee does not retain a copy of the original object, it can't
@@ -437,10 +430,10 @@ pass by value.  If the callee does retain a copy, it has the option of
 passing by reference.  Passing by reference is preferred when
 possible.  Passing by value implies ownership transfer.  Passing by
 reference implies ownership retention.  Passing an
-:cpp:class:`std::shared_ptr` by value or reference implies
-sharing ownership since the caller can retain a reference; if passing
-by value ownership *may* be transferred since this implies the callee
-is not retaining a reference to it (but this is not guaranteed).
+:cpp:class:`std::shared_ptr` by value or reference implies sharing
+ownership since the caller can retain a reference; if passing by value
+ownership *may* be transferred since this implies the callee is not
+retaining a reference to it (but this is not guaranteed).
 
 Again, to be absolutely clear, plain pointers are never used and are
 not acceptable for ownership transfer.  A plain reference also makes
@@ -514,11 +507,10 @@ Types with a common base
     v.push_back(std::make_shared<Derived>());
 
 This can store any type derived from :cpp:class:`Base`.  An
-:cpp:class:`std::shared_ptr` is **essential**.  Without it,
-bare pointers to the base would be stored, and memory would be leaked
-when elements are removed from the container (unless externally
-managed [generally unsafe]).  The same applies to passing polymorphic
-types.
+:cpp:class:`std::shared_ptr` is **essential**.  Without it, bare
+pointers to the base would be stored, and memory would be leaked when
+elements are removed from the container (unless externally managed
+[generally unsafe]).  The same applies to passing polymorphic types.
 
 Java containers can be problematic:
 
@@ -578,8 +570,8 @@ code to operate on all of the supported types.  The variant type may
 be used as a class member, passed by value, passed by reference or
 stored in a container like any other type.  Due to the way it is
 implemented to store values, it does not necessarily need wrapping in
-an :cpp:class:`std::shared_ptr` since it can behave as a value
-type (depending upon the context).
+an :cpp:class:`std::shared_ptr` since it can behave as a value type
+(depending upon the context).
 
 
 Java uses polymorphism to store and pass the root :cpp:class:`Object`

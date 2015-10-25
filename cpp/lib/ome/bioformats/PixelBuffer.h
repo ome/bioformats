@@ -261,7 +261,7 @@ namespace ome
       explicit PixelBuffer():
         PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, ENDIAN_NATIVE),
         multiarray(std::shared_ptr<array_type>(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
-                                                                      PixelBufferBase::default_storage_order())))
+                                                              PixelBufferBase::default_storage_order())))
       {}
 
       /**

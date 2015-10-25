@@ -65,7 +65,7 @@ namespace ome
         }
 
         std::shared_ptr<::ome::xml::model::OMEModelObject>
-        OMEModel::addModelObject(const std::string&                                   id,
+        OMEModel::addModelObject(const std::string&                                  id,
                                  std::shared_ptr<::ome::xml::model::OMEModelObject>& object)
         {
           // Don't store references.
@@ -116,7 +116,7 @@ namespace ome
 
         bool
         OMEModel::addReference (std::shared_ptr<::ome::xml::model::OMEModelObject>& a,
-                                    std::shared_ptr<Reference>&                      b)
+                                std::shared_ptr<Reference>&                         b)
         {
           reference_map_type::iterator i = references.find(a);
 

@@ -83,8 +83,8 @@ namespace ome
          */
         explicit
         Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                ome::bioformats::dimension_size_type                    series,
-                QObject                                                *parent = 0);
+                ome::bioformats::dimension_size_type            series,
+                QObject                                        *parent = 0);
 
         /// Destructor.
         virtual

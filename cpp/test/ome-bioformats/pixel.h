@@ -67,45 +67,45 @@ pixel_value_complex(uint32_t value)
 template<>
 inline
 ::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                          ::ome::bioformats::ENDIAN_BIG>::type
+                                         ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                                       ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
+                                                     ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
 {
   return pixel_value_complex<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_BIG>::type>(value);
+    ::ome::bioformats::ENDIAN_BIG>::type>(value);
 }
 
 template<>
 inline
 ::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                          ::ome::bioformats::ENDIAN_LITTLE>::type
+                                         ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                                       ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
+                                                     ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
 {
   return pixel_value_complex<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::COMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
+    ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
 }
 
 template<>
 inline
 ::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                          ::ome::bioformats::ENDIAN_BIG>::type
+                                         ::ome::bioformats::ENDIAN_BIG>::type
 pixel_value<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                       ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
+                                                     ::ome::bioformats::ENDIAN_BIG>::type>(uint32_t value)
 {
   return pixel_value_complex<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_BIG>::type>(value);
+    ::ome::bioformats::ENDIAN_BIG>::type>(value);
 }
 
 template<>
 inline
 ::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                          ::ome::bioformats::ENDIAN_LITTLE>::type
+                                         ::ome::bioformats::ENDIAN_LITTLE>::type
 pixel_value<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                       ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
+                                                     ::ome::bioformats::ENDIAN_LITTLE>::type>(uint32_t value)
 {
   return pixel_value_complex<::ome::bioformats::PixelEndianProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX,
-                                                                        ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
+    ::ome::bioformats::ENDIAN_LITTLE>::type>(value);
 }
 
 /*
@@ -289,11 +289,11 @@ namespace std
   {
     os << '(';
     for (uint16_t i = 0; i <::ome::bioformats::PixelBufferBase::dimensions; ++i)
-    {
-      os << order.ordering(i) << '/' << order.ascending(i);
-      if (i + 1 != ::ome::bioformats::PixelBufferBase::dimensions)
-        os << ',';
-    }
+      {
+        os << order.ordering(i) << '/' << order.ascending(i);
+        if (i + 1 != ::ome::bioformats::PixelBufferBase::dimensions)
+          os << ',';
+      }
     os << ')';
     return os;
   }

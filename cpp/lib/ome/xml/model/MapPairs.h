@@ -127,7 +127,7 @@ namespace ome
       public:
         /// @copydoc ome::xml::model::OMEModelObject::link
         bool
-        link (std::shared_ptr<Reference>&                          reference,
+        link (std::shared_ptr<Reference>&                         reference,
               std::shared_ptr<::ome::xml::model::OMEModelObject>& object);
 
         /**

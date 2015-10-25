@@ -66,7 +66,7 @@ namespace ome
          * @param tag the tag identifying this field.
          */
         FieldBase(std::shared_ptr<IFD> ifd,
-                  tag_type                     tag);
+                  tag_type             tag);
 
       public:
         /// Destructor.
@@ -171,7 +171,7 @@ namespace ome
          * @param tag the tag identifying this field.
          */
         Field(std::shared_ptr<IFD> ifd,
-              tag_category                 tag):
+              tag_category         tag):
           FieldBase(ifd, getWrappedTag(tag)),
           tag(tag)
         {}

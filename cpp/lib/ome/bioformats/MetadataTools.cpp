@@ -535,9 +535,9 @@ namespace ome
     }
 
     void
-    fillMetadata(::ome::xml::meta::MetadataStore&                          store,
+    fillMetadata(::ome::xml::meta::MetadataStore&                 store,
                  const std::vector<std::shared_ptr<CoreMetadata>> seriesList,
-                 bool                                                      doPlane)
+                 bool                                             doPlane)
     {
       dimension_size_type s = 0U;
       for (std::vector<std::shared_ptr<CoreMetadata>>::const_iterator i = seriesList.begin();
