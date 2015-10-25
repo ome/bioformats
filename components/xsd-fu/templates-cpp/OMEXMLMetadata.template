@@ -81,7 +81,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
         // DUMMYLINE
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr<${obj.langTypeNS}> o = std::dynamic_pointer_cast<${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
           return ret->getID();
@@ -90,7 +90,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr<${obj.langTypeNS}> o = std::dynamic_pointer_cast<${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
@@ -99,7 +99,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
-        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        std::shared_ptr<${obj.langTypeNS}> o = std::dynamic_pointer_cast<${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
 {% if prop.minOccurs == 0 %}\
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
@@ -123,7 +123,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
-        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
+        std::shared_ptr<${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (annotation)
           return annotation->getID();
         /// @todo: Need an exception for store inconsistency.
@@ -132,7 +132,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
-        std::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}().lock());
+        std::shared_ptr<${prop.langTypeNS}> annotation(${safe_accessor(['root']+accessor(obj.name, parent, prop), getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}->getLinked${prop.methodName}().lock());
         if (annotation)
           return annotation->getID();
         throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
@@ -198,7 +198,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${prop.name} is abstract proprietary and is a reference
-        std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
+        std::shared_ptr<${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared<${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
         std::shared_ptr<::${lang.omexml_model_package}::OMEModelObject> o_base(std::static_pointer_cast<::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
         std::shared_ptr<::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast<::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
@@ -216,7 +216,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            std::shared_ptr< ${v['type']}> value(std::make_shared< ${obj.langTypeNS}>());
+            std::shared_ptr<${v['type']}> value(std::make_shared<${obj.langTypeNS}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
@@ -226,7 +226,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
+            std::shared_ptr<${v['type']}> value(std::make_shared<${v['type']}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
@@ -236,18 +236,18 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
         if (!o${i}->${v['accessor']}) // null
           {
-            std::shared_ptr< ${v['type']}> value(std::make_shared< ${v['type']}>());
+            std::shared_ptr<${v['type']}> value(std::make_shared<${v['type']}>());
             o${i}->set${v['name']}(value);
           }
 {% end %}\
 {% end %}\
-        std::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
+        std::shared_ptr<${v['type']}> o${i + 1} = o${i}->${v['accessor']};
 {% if v['level'] == 2 %}\
 {% if "ID" == prop.name %}\
         std::shared_ptr<::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(std::static_pointer_cast<::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
         model->addModelObject(${prop.argumentName}, o${i + 1}_base);
 {% end %}\
-        std::shared_ptr< ${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast< ${obj.langTypeNS}>(o${i + 1}));
+        std::shared_ptr<${obj.langTypeNS}> o${i + 1}_mostderived(std::static_pointer_cast<${obj.langTypeNS}>(o${i + 1}));
         if (!o${i + 1}_mostderived)
           throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
                                   "Internal metadata store inconsistency: null object");
@@ -256,7 +256,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         o${i + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% if prop.isShared %}\
-        ${prop.instanceVariableType} newval(std::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
+        ${prop.instanceVariableType} newval(std::make_shared<${prop.langTypeNS}>(${prop.argumentName}));
         o${i + 1}_mostderived->set${prop.methodName}(newval);
 {% end %}\
 {% end %}\
@@ -264,7 +264,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs more than once
-        std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
+        std::shared_ptr<${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(std::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
         std::shared_ptr<::${lang.omexml_model_package}::OMEModelObject> modelObject(std::static_pointer_cast<::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
         std::shared_ptr<::${lang.omexml_model_package}::Reference> ref(std::static_pointer_cast<::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
