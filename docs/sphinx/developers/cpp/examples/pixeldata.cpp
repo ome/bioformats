@@ -136,7 +136,7 @@ namespace
   // any pixel type
   // The static_visitor specialization is the required return type of
   // the operator() methods and boost::apply_visitor()
-  struct MinMaxVisitor : public boost::static_visitor<std::pair<double, double> >
+  struct MinMaxVisitor : public boost::static_visitor<std::pair<double, double>>
   {
     // The min and max values will be returned in a pair.  double is
     // used since it can contain the value for any pixel type
@@ -183,7 +183,7 @@ namespace
     typename boost::enable_if_c<
       boost::is_complex<T>::value, result_type
       >::type
-    operator() (const std::shared_ptr<PixelBuffer<T> >& v)
+    operator() (const std::shared_ptr<PixelBuffer<T>>& v)
     {
       typedef T value_type;
 
