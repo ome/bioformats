@@ -49,8 +49,8 @@ namespace ome
     {
 
       Axis2D::Axis2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                     ome::bioformats::dimension_size_type                    series,
-                     QObject                                                *parent):
+                     ome::bioformats::dimension_size_type            series,
+                     QObject                                        *parent):
         QObject(parent),
         xaxis_vertices(QOpenGLBuffer::VertexBuffer),
         yaxis_vertices(QOpenGLBuffer::VertexBuffer),

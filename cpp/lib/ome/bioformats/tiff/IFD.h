@@ -77,7 +77,7 @@ namespace ome
       protected:
         /// Constructor (not public).
         IFD(std::shared_ptr<TIFF>& tiff,
-            offset_type                    offset);
+            offset_type           offset);
 
         /// Constructor (not public).
         IFD(std::shared_ptr<TIFF>& tiff);
@@ -103,7 +103,7 @@ namespace ome
          */
         static std::shared_ptr<IFD>
         openIndex(std::shared_ptr<TIFF>& tiff,
-                  directory_index_type           index);
+                  directory_index_type   index);
 
         /**
          * Open an IFD.
@@ -114,7 +114,7 @@ namespace ome
          */
         static std::shared_ptr<IFD>
         openOffset(std::shared_ptr<TIFF>& tiff,
-                   offset_type                    offset);
+                   offset_type            offset);
 
         /**
          * Get the current IFD.

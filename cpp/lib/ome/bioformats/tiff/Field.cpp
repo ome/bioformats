@@ -129,7 +129,7 @@ namespace ome
          * @param tag the tag identifying this field.
          */
         Impl(std::shared_ptr<IFD>& ifd,
-             tag_type                      tag):
+             tag_type              tag):
           ifd(ifd),
           tag(tag),
           fieldinfo()
@@ -237,7 +237,7 @@ namespace ome
       };
 
       FieldBase::FieldBase(std::shared_ptr<IFD> ifd,
-                           tag_type                     tag):
+                           tag_type             tag):
         impl(std::shared_ptr<Impl>(new Impl(ifd, tag)))
       {
       }
@@ -352,10 +352,10 @@ namespace ome
         template<typename T>
         void
         generic_get1(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* readcount */,
-                     T&                           value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* readcount */,
+                     T&                   value)
         {
           ifd->getRawField(tag, &value);
         }
@@ -363,10 +363,10 @@ namespace ome
         template<typename T>
         void
         generic_set1(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* writecount */,
-                     const T&                     value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* writecount */,
+                     const T&             value)
         {
           ifd->setRawField(tag, value);
         }
@@ -374,10 +374,10 @@ namespace ome
         template<typename T>
         void
         generic_get2(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* readcount */,
-                     T&                           value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* readcount */,
+                     T&                   value)
         {
           ifd->getRawField(tag, &value[0], &value[1]);
         }
@@ -385,10 +385,10 @@ namespace ome
         template<typename T>
         void
         generic_set2(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* writecount */,
-                     const T&                     value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* writecount */,
+                     const T&             value)
         {
           ifd->setRawField(tag, value[0], value[1]);
         }
@@ -396,10 +396,10 @@ namespace ome
         template<typename T>
         void
         generic_get3(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* readcount */,
-                     T&                           value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* readcount */,
+                     T&                   value)
         {
           ifd->getRawField(tag, &value[0], &value[1], &value[2]);
         }
@@ -407,10 +407,10 @@ namespace ome
         template<typename T>
         void
         generic_set3(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* writecount */,
-                     const T&                     value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* writecount */,
+                     const T&             value)
         {
           ifd->setRawField(tag, value[0], value[1], value[2]);
         }
@@ -418,10 +418,10 @@ namespace ome
         template<typename T>
         void
         generic_get6(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* readcount */,
-                     T&                           value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* readcount */,
+                     T&                   value)
         {
           ifd->getRawField(tag, &value[0], &value[1], &value[2], &value[3], &value[4], &value[5]);
         }
@@ -429,10 +429,10 @@ namespace ome
         template<typename T>
         void
         generic_set6(std::shared_ptr<IFD> ifd,
-                     tag_type                     tag,
-                     bool                         /* passcount */,
-                     int                          /* writecount */,
-                     const T&                     value)
+                     tag_type             tag,
+                     bool                 /* passcount */,
+                     int                  /* writecount */,
+                     const T&             value)
         {
           ifd->setRawField(tag, value[0], value[1], value[2], value[3], value[4], value[5]);
         }
@@ -440,11 +440,11 @@ namespace ome
         template<typename T>
         void
         generic_enum16_get1(std::shared_ptr<IFD> ifd,
-                            tag_type                     tag,
-                            Type                         type,
-                            bool                         passcount,
-                            int                          readcount,
-                            T&                           value)
+                            tag_type             tag,
+                            Type                 type,
+                            bool                 passcount,
+                            int                  readcount,
+                            T&                   value)
         {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
           if (type != TYPE_SHORT &&
@@ -461,11 +461,11 @@ namespace ome
         template<typename T>
         void
         generic_enum16_set1(std::shared_ptr<IFD> ifd,
-                            tag_type                     tag,
-                            Type                         type,
-                            bool                         passcount,
-                            int                          writecount,
-                            const T&                     value)
+                            tag_type             tag,
+                            Type                 type,
+                            bool                 passcount,
+                            int                  writecount,
+                            const T&             value)
         {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
           if (type != TYPE_SHORT &&
@@ -481,9 +481,9 @@ namespace ome
         template<typename T>
         void
         generic_array_get1(std::shared_ptr<IFD> ifd,
-                           tag_type                     tag,
-                           int                          readcount,
-                           T&                           value)
+                           tag_type             tag,
+                           int                  readcount,
+                           T&                   value)
         {
           // Special case:
           if (tag == TIFFTAG_IMAGEJ_META_DATA_BYTE_COUNTS ||
@@ -561,9 +561,9 @@ namespace ome
         template<typename T>
         void
         generic_array_set1(std::shared_ptr<IFD> ifd,
-                           tag_type                     tag,
-                           int                          writecount,
-                           const T&                     value)
+                           tag_type             tag,
+                           int                  writecount,
+                           const T&             value)
         {
           if (writecount == TIFF_SPP)
             {
@@ -595,9 +595,9 @@ namespace ome
         template<typename T>
         void
         generic_array_get3(std::shared_ptr<IFD> ifd,
-                           tag_type                     tag,
-                           int                          readcount,
-                           T&                           value)
+                           tag_type             tag,
+                           int                  readcount,
+                           T&                   value)
         {
           bool limit = false; // Special case for TIFFTAG_TRANSFERFUNCTION which can used 1 or 3 vectors.
           typename T::value_type::value_type *valueptr0, *valueptr1, *valueptr2;
@@ -658,9 +658,9 @@ namespace ome
         template<typename T>
         void
         generic_array_set3(std::shared_ptr<IFD> ifd,
-                           tag_type                     tag,
-                           int                          writecount,
-                           const T&                     value)
+                           tag_type             tag,
+                           int                  writecount,
+                           const T&             value)
         {
           if (value[0].size() != value[1].size() ||
               value[0].size() != value[2].size())
@@ -711,9 +711,9 @@ namespace ome
         template<typename T>
         void
         generic_enum16_array_get1(std::shared_ptr<IFD> ifd,
-                                  tag_type                     tag,
-                                  int                          readcount,
-                                  T&                           value)
+                                  tag_type             tag,
+                                  int                  readcount,
+                                  T&                   value)
         {
           std::vector<uint16_t> v;
           generic_array_get1(ifd, tag, readcount, v);
@@ -727,9 +727,9 @@ namespace ome
         template<typename T>
         void
         generic_enum16_array_set1(std::shared_ptr<IFD> ifd,
-                                  tag_type                     tag,
-                                  int                          writecount,
-                                  const T&                     value)
+                                  tag_type             tag,
+                                  int                  writecount,
+                                  const T&             value)
         {
           std::vector<uint16_t> v;
           for(typename T::const_iterator i = value.begin();

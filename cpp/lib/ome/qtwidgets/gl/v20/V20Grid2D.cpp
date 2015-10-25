@@ -51,8 +51,8 @@ namespace ome
       {
 
         Grid2D::Grid2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
-                       ome::bioformats::dimension_size_type                    series,
-                       QObject                                                *parent):
+                       ome::bioformats::dimension_size_type            series,
+                       QObject                                        *parent):
           gl::Grid2D(reader, series, parent),
           grid_shader(new glsl::v110::GLLineShader2D(this))
         {

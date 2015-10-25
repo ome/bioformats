@@ -92,8 +92,8 @@ namespace ome
        */
       void
       setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
-                ome::bioformats::dimension_size_type                   series = 0,
-                ome::bioformats::dimension_size_type                   plane = 0);
+                ome::bioformats::dimension_size_type           series = 0,
+                ome::bioformats::dimension_size_type           plane = 0);
 
       /**
        * Get the current plane for the series.

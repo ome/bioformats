@@ -137,8 +137,8 @@ namespace ome
 
     void
     NavigationDock2D::setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
-                                ome::bioformats::dimension_size_type                   series,
-                                ome::bioformats::dimension_size_type                   plane)
+                                ome::bioformats::dimension_size_type           series,
+                                ome::bioformats::dimension_size_type           plane)
     {
       this->reader = reader;
       this->series = series;

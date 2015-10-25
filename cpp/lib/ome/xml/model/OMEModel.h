@@ -105,7 +105,7 @@ namespace ome
          */
         virtual
         std::shared_ptr<OMEModelObject>
-        addModelObject (const std::string&                       id,
+        addModelObject (const std::string&               id,
                         std::shared_ptr<OMEModelObject>& object) = 0;
 
         /**
