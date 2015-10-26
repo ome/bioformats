@@ -104,13 +104,13 @@ public class Configuration {
   private static final String X_POSITION = "PositionX_";
   private static final String Y_POSITION = "PositionY_";
   private static final String Z_POSITION = "PositionZ_";
-  private static final String TIME_INCREMENT_UNITS = "TimeIncrementUnits";
-  private static final String EXPOSURE_TIME_UNITS = "ExposureTimeUnits";
-  private static final String PHYSICAL_SIZE_Z_UNITS = "PhysicalSizeZUnits";
-  private static final String PHYSICAL_SIZE_Y_UNITS = "PhysicalSizeYUnits";
-  private static final String PHYSICAL_SIZE_X_UNITS = "PhysicalSizeXUnits";
-  private static final String EMISSION_WAVELENGTH_UNITS = "EmissionWavelengthUnits";
-  private static final String EXCITATION_WAVELENGTH_UNITS = "ExcitationWavelengthUnits";
+  private static final String TIME_INCREMENT_UNIT = "TimeIncrementUnit";
+  private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit";
+  private static final String PHYSICAL_SIZE_Z_UNIT = "PhysicalSizeZUnit";
+  private static final String PHYSICAL_SIZE_Y_UNIT = "PhysicalSizeYUnit";
+  private static final String PHYSICAL_SIZE_X_UNIT = "PhysicalSizeXUnit";
+  private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit";
+  private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit";
   
   // -- Fields --
 
@@ -250,7 +250,7 @@ public class Configuration {
   public Length getPhysicalSizeX() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     if (physicalSize == null) return null;
-    String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNITS);
+    String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
     try {
       return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeXUnits);
     }
@@ -261,7 +261,7 @@ public class Configuration {
 
   public Length getPhysicalSizeY() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
-    String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNITS);
+    String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
     try {
       return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeYUnits);
     }
@@ -271,7 +271,7 @@ public class Configuration {
 
   public Length getPhysicalSizeZ() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
-    String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNITS);
+    String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
     try {
       return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeZUnits);
     }
@@ -282,7 +282,7 @@ public class Configuration {
 
   public Time getTimeIncrement() {
     String timeIncrement = currentTable.get(TIME_INCREMENT);
-    String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNITS);
+    String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNIT);
     try {
       return timeIncrement == null ? null : FormatTools.getTime(new Double(timeIncrement), timeIncrementUnits);
     }
@@ -309,7 +309,7 @@ public class Configuration {
 
   public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNITS);
+    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT);
     try {
       return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
     }
@@ -340,7 +340,7 @@ public class Configuration {
 
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNITS);
+    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
     }
@@ -351,7 +351,7 @@ public class Configuration {
 
   public Length getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNITS);
+    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
     }
