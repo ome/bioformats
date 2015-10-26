@@ -54,6 +54,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -1392,6 +1393,48 @@ public final class FormatTools {
       value < Double.POSITIVE_INFINITY);
   }
 
+  /**
+   * Formats the input value for the wavelength into a length of the
+   * given unit.
+   *
+   * @param value  the value of the wavelength
+   * @param unit   the unit of the wavelength
+   *
+   * @return       the wavelength formatted as a {@link Length}
+
+   */
+  public static Length getWavelength(Double value, String unit) {
+    if (unit != null) {
+      try {
+        UnitsLength ul = UnitsLength.fromString(unit);
+        return UnitsLength.create(value, ul);
+      } catch (EnumerationException e) {
+      }
+    }
+    return new Length(value, UNITS.NM);
+  }
+  
+  /**
+   * Formats the input value for the time into a length of the
+   * given unit.
+   *
+   * @param value  the value of the time
+   * @param unit   the unit of the time
+   *
+   * @return       the wavelength formatted as a {@link Length}
+
+   */
+  public static Time getTime(Double value, String unit) {
+    if (unit != null) {
+      try {
+        UnitsTime ut = UnitsTime.fromString(unit);
+        return UnitsTime.create(value, ut);
+      } catch (EnumerationException e) {
+      }
+    }
+    return new Time(value, UNITS.S);
+  }
+  
   public static Length getPhysicalSize(Double value, String unit) {
     if (unit != null) {
       try {

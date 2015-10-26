@@ -104,7 +104,14 @@ public class Configuration {
   private static final String X_POSITION = "PositionX_";
   private static final String Y_POSITION = "PositionY_";
   private static final String Z_POSITION = "PositionZ_";
-
+  private static final String TIME_INCREMENT_UNITS = "TimeIncrementUnits";
+  private static final String EXPOSURE_TIME_UNITS = "ExposureTimeUnits";
+  private static final String PHYSICAL_SIZE_Z_UNITS = "PhysicalSizeZUnits";
+  private static final String PHYSICAL_SIZE_Y_UNITS = "PhysicalSizeYUnits";
+  private static final String PHYSICAL_SIZE_X_UNITS = "PhysicalSizeXUnits";
+  private static final String EMISSION_WAVELENGTH_UNITS = "EmissionWavelengthUnits";
+  private static final String EXCITATION_WAVELENGTH_UNITS = "ExcitationWavelengthUnits";
+  
   // -- Fields --
 
   private String dataFile;
@@ -240,39 +247,48 @@ public class Configuration {
     return currentTable.get(TILE_ALTERNATE_MD5);
   }
 
-  public Double getPhysicalSizeX() {
+  public Length getPhysicalSizeX() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     if (physicalSize == null) return null;
+    String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNITS);
     try {
-      return new Double(physicalSize);
+      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeXUnits);
     }
-    catch (NumberFormatException e) { }
-    return null;
+    catch (NumberFormatException e) {
+      return null;
+    }
   }
 
-  public Double getPhysicalSizeY() {
+  public Length getPhysicalSizeY() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
-    if (physicalSize == null) return null;
+    String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNITS);
     try {
-      return new Double(physicalSize);
+      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeYUnits);
     }
     catch (NumberFormatException e) { }
     return null;
   }
 
-  public Double getPhysicalSizeZ() {
+  public Length getPhysicalSizeZ() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
-    if (physicalSize == null) return null;
+    String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNITS);
     try {
-      return new Double(physicalSize);
+      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeZUnits);
     }
-    catch (NumberFormatException e) { }
-    return null;
+    catch (NumberFormatException e) { 
+      return null;
+    } 
   }
 
   public Time getTimeIncrement() {
-    String physicalSize = currentTable.get(TIME_INCREMENT);
-    return physicalSize == null ? null : new Time(new Double(physicalSize), UNITS.S);
+    String timeIncrement = currentTable.get(TIME_INCREMENT);
+    String timeIncrementUnits = currentTable.get(TIME_INCREMENT_UNITS);
+    try {
+      return timeIncrement == null ? null : FormatTools.getTime(new Double(timeIncrement), timeIncrementUnits);
+    }
+    catch (NumberFormatException e) { 
+      return null; 
+    }
   }
 
   public int getChannelCount() {
@@ -293,7 +309,13 @@ public class Configuration {
 
   public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    return exposure == null ? null : new Time(new Double(exposure), UNITS.S);
+    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNITS);
+    try {
+      return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
+    }
+    catch (NumberFormatException e) { 
+      return null; 
+    }
   }
 
   public Double getDeltaT(int plane) {
@@ -316,14 +338,26 @@ public class Configuration {
     return pos == null ? null : new Double(pos);
   }
 
-  public Double getEmissionWavelength(int channel) {
+  public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Double(wavelength);
+    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNITS);
+    try {
+      return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
+    }
+    catch (NumberFormatException e) { 
+      return null;
+    } 
   }
 
-  public Double getExcitationWavelength(int channel) {
+  public Length getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Double(wavelength);
+    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNITS);
+    try {
+      return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
+    }
+    catch (NumberFormatException e) { 
+      return null;
+    } 
   }
 
   public String getDetector(int channel) {
@@ -491,15 +525,15 @@ public class Configuration {
 
       Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
-        seriesTable.put(PHYSICAL_SIZE_X, physicalX.value(UNITS.MICROM).toString());
+        seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
       }
       Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
-        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value(UNITS.MICROM).toString());
+        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
       }
       Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
-        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value(UNITS.MICROM).toString());
+        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
       }
       Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
@@ -533,12 +567,12 @@ public class Configuration {
 
         Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
-          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value(UNITS.NM).toString());
+          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
         }
         Length exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
-          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value(UNITS.NM).toString());
+          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
         }
         try {
           seriesTable.put(DETECTOR + c,
@@ -597,5 +631,4 @@ public class Configuration {
     }
     ini = newIni;
   }
-
 }

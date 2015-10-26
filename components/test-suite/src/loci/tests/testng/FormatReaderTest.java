@@ -897,34 +897,6 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  public void compareSizes(Double expectedSize, Length realSize, String testName, int i) {
-    if (expectedSize == 0d) {
-      expectedSize = null;
-    }
-
-    Double doubleSize;
-    if (realSize != null) {
-      if (realSize.unit().isConvertible(UNITS.MICROM)) {
-        Number size = realSize.value(UNITS.MICROM);
-        doubleSize = size == null ? null : size.doubleValue();
-      } else {
-        // Handle non-convertible units like reference frame
-        doubleSize = realSize.value().doubleValue();
-      }
-    } else {
-      doubleSize = null;
-    }
-
-    if (expectedSize == null && doubleSize == null) {
-      return;
-    } else {
-      if (expectedSize == null || doubleSize == null || (
-          Math.abs(doubleSize - expectedSize) > Constants.EPSILON)) {
-        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
-      }
-    }
-  }
-
   @Test(groups = {"all", "fast", "automated"})
   public void testPhysicalSizeX() {
     if (config == null) throw new SkipException("No config tree");
@@ -935,9 +907,14 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      Double expectedSize = config.getPhysicalSizeX();
+      Length expectedSize = config.getPhysicalSizeX();
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      compareSizes(expectedSize, realSize, testName, i);
+      
+      if (!(expectedSize == null && realSize == null) &&
+          (expectedSize == null || !expectedSize.equals(realSize)))
+        {
+          result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
+        }
     }
     result(testName, true);
   }
@@ -951,9 +928,14 @@ public class FormatReaderTest {
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
-      Double expectedSize = config.getPhysicalSizeY();
+      Length expectedSize = config.getPhysicalSizeY();
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      compareSizes(expectedSize, realSize, testName, i);
+      
+      if (!(expectedSize == null && realSize == null) &&
+          (expectedSize == null || !expectedSize.equals(realSize)))
+        {
+          result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
+        }
     }
     result(testName, true);
   }
@@ -968,9 +950,14 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      Double expectedSize = config.getPhysicalSizeZ();
+      Length expectedSize = config.getPhysicalSizeZ();
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      compareSizes(expectedSize, realSize, testName, i);
+      
+      if (!(expectedSize == null && realSize == null) &&
+        (expectedSize == null || !expectedSize.equals(realSize)))
+      {
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
+      }
     }
     result(testName, true);
   }
@@ -1226,16 +1213,16 @@ public class FormatReaderTest {
 
       for (int c=0; c<config.getChannelCount(); c++) {
         Length realWavelength = retrieve.getChannelEmissionWavelength(i, c);
-        Double expectedWavelength = config.getEmissionWavelength(c);
+        Length expectedWavelength = config.getEmissionWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
           continue;
         }
 
-        if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
+        if (!(expectedWavelength == null && realWavelength == null) &&
+            (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
+            result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }
@@ -1254,14 +1241,10 @@ public class FormatReaderTest {
 
       for (int c=0; c<config.getChannelCount(); c++) {
         Length realWavelength = retrieve.getChannelExcitationWavelength(i, c);
-        Double expectedWavelength = config.getExcitationWavelength(c);
+        Length expectedWavelength = config.getExcitationWavelength(c);
 
-        if (realWavelength == null && expectedWavelength == null) {
-          continue;
-        }
-
-        if (realWavelength == null || expectedWavelength == null ||
-          Math.abs(expectedWavelength - realWavelength.value(UNITS.NM).doubleValue()) > Constants.EPSILON)
+        if (!(expectedWavelength == null && realWavelength == null) &&
+            (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
