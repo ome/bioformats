@@ -912,9 +912,9 @@ public class FormatReaderTest {
       
       if (!(expectedSize == null && realSize == null) &&
           (expectedSize == null || !expectedSize.equals(realSize)))
-        {
-          result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
-        }
+      {
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
+      }
     }
     result(testName, true);
   }
@@ -933,9 +933,9 @@ public class FormatReaderTest {
       
       if (!(expectedSize == null && realSize == null) &&
           (expectedSize == null || !expectedSize.equals(realSize)))
-        {
-          result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
-        }
+      {
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
+      }
     }
     result(testName, true);
   }
@@ -1222,7 +1222,7 @@ public class FormatReaderTest {
         if (!(expectedWavelength == null && realWavelength == null) &&
             (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
         {
-            result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
         }
       }
     }
