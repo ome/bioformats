@@ -1224,7 +1224,7 @@ public class FormatReaderTest {
         if (!(expectedWavelength == null && realWavelength == null) &&
             (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
       }
     }
@@ -1248,7 +1248,7 @@ public class FormatReaderTest {
         if (!(expectedWavelength == null && realWavelength == null) &&
             (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
         {
-          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength.value(UNITS.NM).doubleValue() + ")");
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
       }
     }
