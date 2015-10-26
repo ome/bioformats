@@ -911,7 +911,8 @@ public class FormatReaderTest {
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
       
       if (!(expectedSize == null && realSize == null) &&
-          (expectedSize == null || !expectedSize.equals(realSize)))
+        (expectedSize == null || !expectedSize.equals(realSize)) &&  
+        !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -932,7 +933,8 @@ public class FormatReaderTest {
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
       
       if (!(expectedSize == null && realSize == null) &&
-          (expectedSize == null || !expectedSize.equals(realSize)))
+        (expectedSize == null || !expectedSize.equals(realSize)) &&  
+        !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -952,9 +954,9 @@ public class FormatReaderTest {
 
       Length expectedSize = config.getPhysicalSizeZ();
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      
-      if (!(expectedSize == null && realSize == null) &&
-        (expectedSize == null || !expectedSize.equals(realSize)))
+      if ((!(expectedSize == null && realSize == null) &&
+        (expectedSize == null || !expectedSize.equals(realSize))) &&  
+        !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
