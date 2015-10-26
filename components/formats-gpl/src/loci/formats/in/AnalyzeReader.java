@@ -351,8 +351,7 @@ public class AnalyzeReader extends FormatReader {
 
       Length sizeX = FormatTools.getPhysicalSizeX(voxelWidth, UNITS.MM);
       Length sizeY = FormatTools.getPhysicalSizeY(voxelHeight, UNITS.MM);
-      Length sizeZ =
-        FormatTools.getPhysicalSizeZ(sliceThickness * 0.001);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(sliceThickness, UNITS.MM);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
