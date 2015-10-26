@@ -33,10 +33,6 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
-    xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0"
-    xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0"
-    xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2016-DEV0"
-    xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     exclude-result-prefixes="OME Bin SPW SA ROI"
@@ -71,32 +67,32 @@
         </OME:OME>
     </xsl:template>
 
-    <xsl:template match="OME:*">
-        <xsl:element name="{name()}" namespace="{$newOMENS}">
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:element>
-    </xsl:template>
-
-    <xsl:template match="Bin:*">
+    <xsl:template match="OME:External | OME:BinData | OME:BinaryFile">
         <xsl:element name="{name()}" namespace="{$newBINNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="SA:*">
+    <xsl:template match="OME:StructuredAnnotations | OME:AnnotationRef | OME:Annotation | OME:FileAnnotation | OME:XMLAnnotation | OME:ListAnnotation | OME:CommentAnnotation | OME:LongAnnotation | OME:DoubleAnnotation | OME:BooleanAnnotation | OME:TimestampAnnotation | OME:TagAnnotation | OME:TermAnnotation | OME:MapAnnotation">
         <xsl:element name="{name()}" namespace="{$newSANS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="SPW:*">
+    <xsl:template match="OME:Plate | OME:Plate/OME:Description | OME:Reagent | OME:Reagent/OME:Description | OME:ReagentRef | OME:Screen | OME:Screen/OME:Description | OME:PlateAcquisition | OME:PlateAcquisition/OME:Description | OME:Well | OME:WellSample | OME:WellSampleRef">
         <xsl:element name="{name()}" namespace="{$newSPWNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="ROI:*">
+    <xsl:template match="OME:ROI | OME:Union | OME:ROI/OME:Description | OME:Shape | OME:Transform | OME:Rectangle | OME:Mask | OME:Point | OME:Ellipse | OME:Line | OME:Polyline | OME:Polygon | OME:Label | OME:ROIRef">
         <xsl:element name="{name()}" namespace="{$newROINS}">
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="OME:*">
+        <xsl:element name="{name()}" namespace="{$newOMENS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>

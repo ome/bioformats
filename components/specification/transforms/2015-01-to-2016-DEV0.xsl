@@ -44,10 +44,10 @@
     extension-element-prefixes="exsl" version="1.0">
 
     <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-    <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0</xsl:variable>
-    <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0</xsl:variable>
-    <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0</xsl:variable>
-    <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2016-DEV0</xsl:variable>
+    <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
 
     <xsl:output method="xml" indent="yes"/>
     <xsl:preserve-space elements="*"/>

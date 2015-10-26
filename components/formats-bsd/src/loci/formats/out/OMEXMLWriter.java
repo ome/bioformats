@@ -157,7 +157,7 @@ public class OMEXMLWriter extends FormatWriter {
     boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
 
     String namespace =
-      "xmlns=\"http://www.openmicroscopy.org/Schemas/BinaryFile/" +
+      "xmlns=\"http://www.openmicroscopy.org/Schemas/OME/" +
       service.getLatestVersion() + "\"";
 
     for (int i=0; i<nChannels; i++) {
