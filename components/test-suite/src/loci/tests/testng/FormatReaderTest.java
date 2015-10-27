@@ -64,6 +64,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
+import ome.units.quantity.Quantity;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -897,6 +898,22 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
+  private boolean isAlmostEqual(Quantity q1, Quantity q2) {
+
+    if (q1 == null && q2 == null) {
+      return true;
+    } else if (q1 == null || q2 == null) {
+      return false;
+    } else if (q1.unit() != q2.unit()) {
+      return false;
+    } else if (Math.abs(q1.value().doubleValue() - q2.value().doubleValue()) > Constants.EPSILON) {
+
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @Test(groups = {"all", "fast", "automated"})
   public void testPhysicalSizeX() {
     if (config == null) throw new SkipException("No config tree");
@@ -910,9 +927,8 @@ public class FormatReaderTest {
       Length expectedSize = config.getPhysicalSizeX();
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
       
-      if (!(expectedSize == null && realSize == null) &&
-        (expectedSize == null || !expectedSize.equals(realSize)) &&  
-        !(realSize == null && expectedSize.value().doubleValue() == 0d))
+      if (!isAlmostEqual(realSize,expectedSize) &&
+          !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -932,9 +948,8 @@ public class FormatReaderTest {
       Length expectedSize = config.getPhysicalSizeY();
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
       
-      if (!(expectedSize == null && realSize == null) &&
-        (expectedSize == null || !expectedSize.equals(realSize)) &&  
-        !(realSize == null && expectedSize.value().doubleValue() == 0d))
+      if (!isAlmostEqual(realSize,expectedSize) &&
+          !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -954,9 +969,8 @@ public class FormatReaderTest {
 
       Length expectedSize = config.getPhysicalSizeZ();
       Length realSize = retrieve.getPixelsPhysicalSizeZ(i);
-      if ((!(expectedSize == null && realSize == null) &&
-        (expectedSize == null || !expectedSize.equals(realSize))) &&  
-        !(realSize == null && expectedSize.value().doubleValue() == 0d))
+      if (!isAlmostEqual(realSize,expectedSize) &&
+          !(realSize == null && expectedSize.value().doubleValue() == 0d))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
@@ -977,8 +991,7 @@ public class FormatReaderTest {
       Time expectedIncrement = config.getTimeIncrement();
       Time realIncrement = retrieve.getPixelsTimeIncrement(i);
 
-      if (!(expectedIncrement == null && realIncrement == null) &&
-        (expectedIncrement == null || !expectedIncrement.equals(realIncrement)))
+      if (!isAlmostEqual(expectedIncrement,realIncrement))
       {
         result(testName, false, "Series " + i + " (expected " + expectedIncrement + ", actual " + realIncrement + ")");
       }
@@ -1221,8 +1234,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!(expectedWavelength == null && realWavelength == null) &&
-            (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
+        if (!isAlmostEqual(expectedWavelength,realWavelength))
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
@@ -1245,8 +1257,7 @@ public class FormatReaderTest {
         Length realWavelength = retrieve.getChannelExcitationWavelength(i, c);
         Length expectedWavelength = config.getExcitationWavelength(c);
 
-        if (!(expectedWavelength == null && realWavelength == null) &&
-            (expectedWavelength == null || !expectedWavelength.equals(realWavelength)))
+        if (!isAlmostEqual(expectedWavelength,realWavelength))
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
