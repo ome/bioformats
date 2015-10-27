@@ -249,7 +249,6 @@ public class Configuration {
 
   public Length getPhysicalSizeX() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
-    if (physicalSize == null) return null;
     String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
     try {
       return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeXUnits);
