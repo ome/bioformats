@@ -1398,7 +1398,7 @@ public final class FormatTools {
    * given unit.
    *
    * @param value  the value of the wavelength
-   * @param unit   the unit of the wavelength
+   * @param unit   the unit of the wavelength. If null will default to Nanometre
    *
    * @return       the wavelength formatted as a {@link Length}
 
@@ -1419,7 +1419,7 @@ public final class FormatTools {
    * given unit.
    *
    * @param value  the value of the time
-   * @param unit   the unit of the time
+   * @param unit   the unit of the time. If null will default to Seconds
    *
    * @return       the wavelength formatted as a {@link Length}
 
