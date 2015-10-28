@@ -25,17 +25,11 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Written by:  Andrew Patterson: ajpatterson at lifesci.dundee.ac.uk
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
-
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
-    exclude-result-prefixes="OME Bin SPW SA ROI"
+    exclude-result-prefixes="OME"
     xmlns:exsl="http://exslt.org/common"
     extension-element-prefixes="exsl" version="1.0">
 
@@ -48,11 +42,7 @@
     <xsl:output method="xml" indent="yes"/>
     <xsl:preserve-space elements="*"/>
 
-    <!-- Actual schema changes -->
-
-        <!-- (none yet) -->
-
-    <!-- Rewriting all namespaces -->
+    <!-- Rewrite all namespaces -->
 
     <xsl:template match="OME:OME">
         <OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
@@ -67,26 +57,32 @@
         </OME:OME>
     </xsl:template>
 
+    <!-- Move all BinaryFile, SA, SPW and ROI elements back into their separate namespaces -->
+
     <xsl:template match="OME:External | OME:BinData | OME:BinaryFile">
-        <xsl:element name="{name()}" namespace="{$newBINNS}">
+        <xsl:element name="Bin:{local-name()}" namespace="{$newBINNS}"
+                     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="OME:StructuredAnnotations | OME:AnnotationRef | OME:Annotation | OME:FileAnnotation | OME:XMLAnnotation | OME:ListAnnotation | OME:CommentAnnotation | OME:LongAnnotation | OME:DoubleAnnotation | OME:BooleanAnnotation | OME:TimestampAnnotation | OME:TagAnnotation | OME:TermAnnotation | OME:MapAnnotation">
-        <xsl:element name="{name()}" namespace="{$newSANS}">
+    <xsl:template match="OME:StructuredAnnotations | OME:AnnotationRef | OME:Annotation | OME:FileAnnotation | OME:XMLAnnotation | OME:ListAnnotation | OME:CommentAnnotation | OME:LongAnnotation | OME:DoubleAnnotation | OME:BooleanAnnotation | OME:TimestampAnnotation | OME:TagAnnotation | OME:TermAnnotation | OME:MapAnnotation"
+                  xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01">
+        <xsl:element name="SA:{local-name()}" namespace="{$newSANS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="OME:Plate | OME:Plate/OME:Description | OME:Reagent | OME:Reagent/OME:Description | OME:ReagentRef | OME:Screen | OME:Screen/OME:Description | OME:PlateAcquisition | OME:PlateAcquisition/OME:Description | OME:Well | OME:WellSample | OME:WellSampleRef">
-        <xsl:element name="{name()}" namespace="{$newSPWNS}">
+    <xsl:template match="OME:Plate | OME:Plate/OME:Description | OME:Reagent | OME:Reagent/OME:Description | OME:ReagentRef | OME:Screen | OME:Screen/OME:Description | OME:PlateAcquisition | OME:PlateAcquisition/OME:Description | OME:Well | OME:WellSample | OME:WellSampleRef"
+                  xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01">
+        <xsl:element name="SPW:{local-name()}" namespace="{$newSPWNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="OME:ROI | OME:Union | OME:ROI/OME:Description | OME:Shape | OME:Transform | OME:Rectangle | OME:Mask | OME:Point | OME:Ellipse | OME:Line | OME:Polyline | OME:Polygon | OME:Label | OME:ROIRef">
-        <xsl:element name="{name()}" namespace="{$newROINS}">
+    <xsl:template match="OME:ROI | OME:Union | OME:ROI/OME:Description | OME:Shape | OME:Transform | OME:Rectangle | OME:Mask | OME:Point | OME:Ellipse | OME:Line | OME:Polyline | OME:Polygon | OME:Label | OME:ROIRef"
+                  xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01">
+        <xsl:element name="ROI:{local-name()}" namespace="{$newROINS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
