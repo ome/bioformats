@@ -69,31 +69,31 @@
     <!-- Move all BinaryFile, SA, SPW and ROI elements into the OME namespace -->
 
     <xsl:template match="OME:*">
-        <xsl:element name="{name()}" namespace="{$newOMENS}">
+        <xsl:element name="{local-name()}" namespace="{$newOMENS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="Bin:*">
-        <xsl:element name="OME:{local-name()}" namespace="{$newBINNS}">
+        <xsl:element name="{local-name()}" namespace="{$newBINNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="SA:*">
-        <xsl:element name="OME:{local-name()}" namespace="{$newSANS}">
+        <xsl:element name="{local-name()}" namespace="{$newSANS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="SPW:*">
-        <xsl:element name="OME:{local-name()}" namespace="{$newSPWNS}">
+        <xsl:element name="{local-name()}" namespace="{$newSPWNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="ROI:*">
-        <xsl:element name="OME:{local-name()}" namespace="{$newROINS}">
+        <xsl:element name="{local-name()}" namespace="{$newROINS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
