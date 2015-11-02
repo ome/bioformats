@@ -86,14 +86,21 @@ public class Configuration {
   private static final String TILE_MD5 = "Tile_MD5";
   private static final String TILE_ALTERNATE_MD5 = "Tile_Alternate_MD5";
   private static final String PHYSICAL_SIZE_X = "PhysicalSizeX";
+  private static final String PHYSICAL_SIZE_X_UNIT = "PhysicalSizeXUnit";
   private static final String PHYSICAL_SIZE_Y = "PhysicalSizeY";
+  private static final String PHYSICAL_SIZE_Y_UNIT = "PhysicalSizeYUnit";
   private static final String PHYSICAL_SIZE_Z = "PhysicalSizeZ";
+  private static final String PHYSICAL_SIZE_Z_UNIT = "PhysicalSizeZUnit";
   private static final String TIME_INCREMENT = "TimeIncrement";
+  private static final String TIME_INCREMENT_UNIT = "TimeIncrementUnit";
   private static final String LIGHT_SOURCE = "LightSource_";
   private static final String CHANNEL_NAME = "ChannelName_";
   private static final String EXPOSURE_TIME = "ExposureTime_";
+  private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit_";
   private static final String EMISSION_WAVELENGTH = "EmissionWavelength_";
+  private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit_";
   private static final String EXCITATION_WAVELENGTH = "ExcitationWavelength_";
+  private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
   private static final String DESCRIPTION = "Description";
@@ -104,13 +111,6 @@ public class Configuration {
   private static final String X_POSITION = "PositionX_";
   private static final String Y_POSITION = "PositionY_";
   private static final String Z_POSITION = "PositionZ_";
-  private static final String TIME_INCREMENT_UNIT = "TimeIncrementUnit";
-  private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit";
-  private static final String PHYSICAL_SIZE_Z_UNIT = "PhysicalSizeZUnit";
-  private static final String PHYSICAL_SIZE_Y_UNIT = "PhysicalSizeYUnit";
-  private static final String PHYSICAL_SIZE_X_UNIT = "PhysicalSizeXUnit";
-  private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit";
-  private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit";
   
   // -- Fields --
 
@@ -308,7 +308,7 @@ public class Configuration {
 
   public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT);
+    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT + channel);
     try {
       return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
     }
@@ -339,7 +339,7 @@ public class Configuration {
 
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT);
+    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
     }
@@ -350,7 +350,7 @@ public class Configuration {
 
   public Length getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT);
+    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT + channel);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
     }
