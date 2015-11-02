@@ -55,11 +55,6 @@ public class writeMapAnnotationsExample {
         // fill with random data
         for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
 
-        // create metadata object with minimum required metadata fields
-        System.out.println("Populating metadata...");
-
-        OMEXMLServiceImpl serviceFactory = new OMEXMLServiceImpl();
-        OMEXMLMetadata metadata;
         //Create MapPair Object and add to List
         ArrayList<MapPair> mapList = new ArrayList<MapPair>();
         MapPair mapPair;
@@ -68,8 +63,12 @@ public class writeMapAnnotationsExample {
         mapPair = new MapPair("Bio-Formats Version", FormatTools.VERSION);
         mapList.add(mapPair);
 
-        // create OMEXMLMetadata object and add (minimum+Map)Annotations to it
-        metadata = serviceFactory.createOMEXMLMetadata();
+        // create metadata object with minimum required metadata fields
+        System.out.println("Populating metadata...");
+        //add (minimum+Map)Annotations to the metadata object
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        IMetadata metadata = service.createOMEXMLMetadata();
         metadata.createRoot();
         MetadataTools.populateMetadata(metadata, 0, null, false, "XYZCT",
                 FormatTools.getPixelTypeString(pixelType), w, h, 1, c, 1, c);
