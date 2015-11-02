@@ -525,18 +525,22 @@ public class Configuration {
       Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
       }
       Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
       }
       Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
       }
       Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
         seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
+        seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
       }
 
       Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
@@ -560,6 +564,8 @@ public class Configuration {
           if (plane < retrieve.getPlaneCount(series)) {
             seriesTable.put(EXPOSURE_TIME + c,
               retrieve.getPlaneExposureTime(series, plane).value().toString());
+            seriesTable.put(EXPOSURE_TIME_UNIT + c,
+              retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
           }
         }
         catch (NullPointerException e) { }
@@ -567,11 +573,13 @@ public class Configuration {
         Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
           seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
+          seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
         }
         Length exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
           seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
+          seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
         }
         try {
           seriesTable.put(DETECTOR + c,
