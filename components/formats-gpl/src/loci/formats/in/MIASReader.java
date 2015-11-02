@@ -44,6 +44,7 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
@@ -66,7 +67,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class MIASReader extends FormatReader {
 
   // -- Fields --

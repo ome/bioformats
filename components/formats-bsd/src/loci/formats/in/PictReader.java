@@ -43,6 +43,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
@@ -57,7 +58,7 @@ import loci.formats.meta.MetadataStore;
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
  * (http://www.imagemagick.org), and Java QuickDraw.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class PictReader extends FormatReader {
 
   // -- Constants --

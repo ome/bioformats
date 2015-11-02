@@ -33,6 +33,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -44,7 +45,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class ARFReader extends FormatReader {
 
   // -- Constants --

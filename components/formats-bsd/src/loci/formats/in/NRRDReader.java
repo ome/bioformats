@@ -43,6 +43,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
@@ -57,7 +58,7 @@ import ome.units.UNITS;
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class NRRDReader extends FormatReader {
 
   // -- Constants --

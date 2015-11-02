@@ -48,6 +48,7 @@ import loci.formats.FileInfo;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatType;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Modulo;
@@ -56,7 +57,7 @@ import loci.formats.meta.MetadataStore;
 /**
  *
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class FilePatternReader extends FormatReader {
 
   // -- Fields --

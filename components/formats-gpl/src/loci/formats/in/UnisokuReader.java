@@ -36,6 +36,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -45,7 +46,7 @@ import ome.units.quantity.Length;
 /**
  * UnisokuReader is the file format reader for Unisoku STM files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class UnisokuReader extends FormatReader {
 
   // -- Constants --

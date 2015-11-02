@@ -53,6 +53,7 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
@@ -71,7 +72,7 @@ import ome.units.UNITS;
  * Much of this code is adapted from ImageJ's DICOM reader; see
  * http://rsb.info.nih.gov/ij/developer/source/ij/plugin/DICOM.java.html
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class DicomReader extends FormatReader {
 
   // -- Constants --

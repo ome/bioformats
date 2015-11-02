@@ -28,6 +28,7 @@ package loci.formats.in;
 import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 
 /**
  * ND2Reader is the file format reader for Nikon ND2 files.
@@ -37,7 +38,7 @@ import loci.formats.FormatTools;
  * @see NativeND2Reader
  * @see LegacyND2Reader
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class ND2Reader extends DelegateReader {
 
   // -- Constructor --

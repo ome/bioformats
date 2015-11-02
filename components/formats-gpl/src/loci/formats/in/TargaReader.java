@@ -34,6 +34,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.TargaRLECodec;
@@ -42,7 +43,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * File format reader for Truevision Targa files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class TargaReader extends FormatReader {
 
   // -- Fields --

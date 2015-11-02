@@ -41,6 +41,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
@@ -54,7 +55,7 @@ import ome.units.quantity.Length;
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class AmiraReader extends FormatReader {
 
   // -- Fields --

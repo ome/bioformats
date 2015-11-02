@@ -32,6 +32,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -46,7 +47,7 @@ import ome.units.UNITS;
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class NikonTiffReader extends BaseTiffReader {
 
   // -- Constants --

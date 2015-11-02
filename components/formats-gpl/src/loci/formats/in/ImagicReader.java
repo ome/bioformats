@@ -35,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -47,7 +48,7 @@ import ome.units.UNITS;
 /**
  * ImagicReader is the file format reader for IMAGIC files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class ImagicReader extends FormatReader {
 
   // -- Fields --

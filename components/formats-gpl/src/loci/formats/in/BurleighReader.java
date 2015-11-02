@@ -33,6 +33,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -42,7 +43,7 @@ import ome.units.quantity.Length;
 /**
  * BurleighReader is the file format reader for Burleigh .img files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class BurleighReader extends FormatReader {
 
   // -- Fields --

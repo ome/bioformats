@@ -35,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -45,7 +46,7 @@ import ome.units.quantity.Length;
  * SBIGReader is the file format reader for SBIG files.
  * See the specification at http://www.sbig.com/pdffiles/file.format.pdf.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class SBIGReader extends FormatReader {
 
   // -- Constants --

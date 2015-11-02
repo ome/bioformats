@@ -34,6 +34,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -48,7 +49,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class AnalyzeReader extends FormatReader {
 
   // -- Constants --

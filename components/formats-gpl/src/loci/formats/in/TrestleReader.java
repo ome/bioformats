@@ -38,6 +38,7 @@ import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
@@ -50,7 +51,7 @@ import loci.formats.tiff.TiffParser;
 /**
  * TrestleReader is the file format reader for Trestle slide datasets.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class TrestleReader extends BaseTiffReader {
 
   // -- Constants --

@@ -37,6 +37,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.JPEG2000BoxType;
 import loci.formats.codec.JPEG2000Codec;
@@ -46,7 +47,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * JPXReader is the file format reader for JPX (3D JPEG-2000) images.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class JPXReader extends FormatReader {
 
   // -- Constants --

@@ -33,13 +33,14 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 /**
  * SMCameraReader is the file format reader for SM camera files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class SMCameraReader extends FormatReader {
 
   // -- Constants --

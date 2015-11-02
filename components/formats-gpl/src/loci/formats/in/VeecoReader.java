@@ -39,6 +39,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -49,7 +50,7 @@ import ome.xml.model.primitives.PositiveFloat;
 /**
  * VeecoReader is the file format reader for Veeco HDF files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class VeecoReader extends FormatReader {
 
   // -- Fields --

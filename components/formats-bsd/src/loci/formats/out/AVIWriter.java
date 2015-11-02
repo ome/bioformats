@@ -40,6 +40,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -50,7 +51,7 @@ import loci.formats.meta.MetadataRetrieve;
  * AVI Movie Writer plugin for ImageJ
  * (available at http://rsb.info.nih.gov/ij/).
  */
-@BioFormatsWriter
+@BioFormatsWriter(FormatType.UNIQUE_EXTENSION)
 public class AVIWriter extends FormatWriter {
 
   // -- Constants --

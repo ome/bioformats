@@ -34,13 +34,14 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 /**
  * JEOLReader is the file format reader for JEOL files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class JEOLReader extends FormatReader {
 
   // -- Fields --

@@ -50,6 +50,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -70,7 +71,7 @@ import ome.units.UNITS;
  *
  * @author Shawn Garbett  Shawn.Garbett a t Vanderbilt.edu
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class BDReader extends FormatReader {
 
   // -- Constants --

@@ -35,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
@@ -48,7 +49,7 @@ import ome.xml.model.primitives.PositiveFloat;
  *
  * See http://bio3d.colorado.edu/imod/doc/binspec.html
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class IMODReader extends FormatReader {
 
   // -- Constants --

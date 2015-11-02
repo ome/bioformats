@@ -37,6 +37,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -51,7 +52,7 @@ import ome.units.UNITS;
 /**
  * BioRadSCNReader is the reader for Bio-Rad .scn files
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class BioRadSCNReader extends FormatReader {
 
   // -- Constants --

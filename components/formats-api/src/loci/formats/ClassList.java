@@ -36,7 +36,10 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -136,8 +139,35 @@ public class ClassList<T> {
   /** Gets the list of classes as an array. */
   @SuppressWarnings("unchecked")
   public Class<? extends T>[] getClasses() {
-    // TODO: sort in a predictable order
-    return classes.toArray(new Class[0]);
+    Class<? extends T>[] sortedClasses = classes.toArray(new Class[0]);
+    Arrays.sort(sortedClasses, new Comparator<Class>() {
+      public int compare(Class o1, Class o2) {
+        Annotation[] a1 = o1.getAnnotations();
+        Annotation[] a2 = o2.getAnnotations();
+
+        if (a1.length != a2.length) {
+          return a1.length - a2.length;
+        }
+
+        for (int i=0; i<a1.length; i++) {
+          FormatType type1 = null, type2 = null;
+          if (a1[i] instanceof BioFormatsReader) {
+            type1 = ((BioFormatsReader) a1[i]).value();
+            type2 = ((BioFormatsReader) a2[i]).value();
+          }
+          else if (a1[i] instanceof BioFormatsWriter) {
+            type1 = ((BioFormatsWriter) a1[i]).value();
+            type2 = ((BioFormatsWriter) a2[i]).value();
+          }
+          if (type1 != type2) {
+            return type1.compareTo(type2);
+          }
+        }
+
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+    return sortedClasses;
   }
 
   // -- Helper methods --

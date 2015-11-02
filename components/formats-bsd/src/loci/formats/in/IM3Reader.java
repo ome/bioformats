@@ -41,6 +41,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -65,7 +66,7 @@ import loci.formats.meta.MetadataStore;
  * dump a per-record description of the file to
  * standard output
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class IM3Reader extends FormatReader {
   /**
    *  Logger for outputting summary diagnostics.

@@ -39,6 +39,7 @@ import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.NikonCodec;
@@ -56,7 +57,7 @@ import loci.formats.tiff.TiffRational;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class NikonReader extends BaseTiffReader {
 
   // -- Constants --

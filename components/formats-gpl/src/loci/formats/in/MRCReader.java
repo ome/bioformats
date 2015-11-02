@@ -35,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -45,7 +46,7 @@ import ome.units.quantity.Length;
  * Specifications available at
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class MRCReader extends FormatReader {
 
   // -- Constants --

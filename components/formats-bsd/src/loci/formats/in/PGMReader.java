@@ -45,6 +45,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -53,7 +54,7 @@ import loci.formats.meta.MetadataStore;
  *
  * Much of this code was adapted from ImageJ (http://rsb.info.nih.gov/ij).
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class PGMReader extends FormatReader {
 
   // -- Constants --

@@ -49,6 +49,7 @@ import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -74,7 +75,7 @@ import ome.units.UNITS;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Sebastien Huart Sebastien dot Huart at curie.fr
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class MetamorphReader extends BaseTiffReader {
 
   // -- Constants --

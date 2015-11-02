@@ -34,6 +34,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
@@ -42,7 +43,7 @@ import loci.formats.meta.MetadataStore;
  * VolocityClippingReader is the file format reader for Volocity library
  * clipping files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class VolocityClippingReader extends FormatReader {
 
   // -- Constants --

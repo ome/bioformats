@@ -37,6 +37,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -48,7 +49,7 @@ import ome.units.UNITS;
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class GatanDM2Reader extends FormatReader {
 
   // -- Constants --

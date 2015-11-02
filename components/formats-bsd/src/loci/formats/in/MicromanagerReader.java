@@ -50,6 +50,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -67,7 +68,7 @@ import ome.units.UNITS;
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class MicromanagerReader extends FormatReader {
 
   // -- Constants --

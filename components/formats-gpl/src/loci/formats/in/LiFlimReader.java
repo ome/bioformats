@@ -51,6 +51,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
@@ -61,7 +62,7 @@ import ome.units.UNITS;
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class LiFlimReader extends FormatReader {
 
   // -- Constants --

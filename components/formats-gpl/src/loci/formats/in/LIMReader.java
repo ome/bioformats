@@ -33,6 +33,7 @@ import loci.formats.FormatException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
@@ -40,7 +41,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * LIMReader is the file format reader for Laboratory Imaging/Nikon LIM files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class LIMReader extends FormatReader {
 
   // -- Constants --

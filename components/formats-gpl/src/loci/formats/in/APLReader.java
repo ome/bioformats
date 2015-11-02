@@ -39,6 +39,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MDBService;
@@ -53,7 +54,7 @@ import ome.units.quantity.Length;
 /**
  * APLReader is the file format reader for Olympus APL files.
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class APLReader extends FormatReader {
 
   // -- Constants --

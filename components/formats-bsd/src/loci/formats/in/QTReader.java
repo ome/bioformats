@@ -35,6 +35,7 @@ package loci.formats.in;
 import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
@@ -44,7 +45,7 @@ import loci.formats.FormatTools;
  * @see NativeQTReader
  * @see LegacyQTReader
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class QTReader extends DelegateReader {
 
   // -- Constructor --

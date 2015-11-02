@@ -40,6 +40,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.MissingLibraryException;
@@ -59,7 +60,7 @@ import org.scijava.nativelib.NativeLibraryUtil;
  * @author Richard Myers, richard at intelligent-imaging.com
  *
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class SlideBook6Reader extends FormatReader {
 
 	// -- Constants --

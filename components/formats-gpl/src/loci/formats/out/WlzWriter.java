@@ -73,6 +73,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -85,7 +86,7 @@ import ome.units.UNITS;
 /**
  * WlzWriter is the file format writer for Woolz files.
  */
-@BioFormatsWriter
+@BioFormatsWriter(FormatType.THIRD_PARTY)
 public class WlzWriter extends FormatWriter {
 
   // -- Fields --

@@ -43,6 +43,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
@@ -61,7 +62,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-@BioFormatsReader
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class PCIReader extends FormatReader {
 
   // -- Constants --
