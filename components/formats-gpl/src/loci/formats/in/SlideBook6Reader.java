@@ -274,9 +274,9 @@ public class SlideBook6Reader  extends FormatReader {
 					double stepSize = 0;
 					if (numZPlanes[capture] > 1) {
 						double plane0 = getZPosition(capture, 0, 0);
-						double plane1 = getZPosition(capture, 0, getNumChannels(capture));
+						double plane1 = getZPosition(capture, 0, 1);
 						// distance between plane 0 and 1 is step size, assume constant for all planes
-						stepSize = plane1 - plane0;
+						stepSize = Math.abs(plane1 - plane0);
 					}
 
 					Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
