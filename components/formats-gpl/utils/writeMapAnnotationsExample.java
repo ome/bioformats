@@ -38,7 +38,7 @@ import loci.formats.services.OMEXMLServiceImpl;
  */
 public class writeMapAnnotationsExample {
 
-    public static void minimumWriterPlusMapAnnotations(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception{
 
         if (args.length < 1) {
             System.out.println("Please specify an output file name.");
@@ -58,7 +58,7 @@ public class writeMapAnnotationsExample {
         // create metadata object with minimum required metadata fields
         System.out.println("Populating metadata...");
 
-        OMEXMLServiceImpl OMEXMLService = new OMEXMLServiceImpl();
+        OMEXMLServiceImpl serviceFactory = new OMEXMLServiceImpl();
         OMEXMLMetadata metadata;
         //Create MapPair Object and add to List
         ArrayList<MapPair> mapList = new ArrayList<MapPair>();
@@ -69,7 +69,7 @@ public class writeMapAnnotationsExample {
         mapList.add(mapPair);
 
         // create OMEXMLMetadata object and add (minimum+Map)Annotations to it
-        metadata = OMEXMLService.createOMEXMLMetadata();
+        metadata = serviceFactory.createOMEXMLMetadata();
         metadata.createRoot();
         MetadataTools.populateMetadata(metadata, 0, null, false, "XYZCT",
                 FormatTools.getPixelTypeString(pixelType), w, h, 1, c, 1, c);
