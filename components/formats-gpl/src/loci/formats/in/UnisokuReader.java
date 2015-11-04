@@ -39,8 +39,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.quantity.Length;
-import ome.units.unit.Unit;
-import ome.units.UNITS;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -160,7 +158,6 @@ public class UnisokuReader extends FormatReader {
 
     String imageName = null, remark = null, date = null;
     double pixelSizeX = 0d, pixelSizeY = 0d;
-    Unit <Length> pixelSizeXUnit = UNITS.MICROM, pixelSizeYUnit = UNITS.MICROM;
 
     for (int i=0; i<lines.length; ) {
       lines[i] = lines[i].trim();
@@ -203,7 +200,6 @@ public class UnisokuReader extends FormatReader {
             String unit = v[0];
             pixelSizeX = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
             pixelSizeX /= getSizeX();
-
             sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, unit);
           }
           else if (key.startsWith(":y_data ->")) {
