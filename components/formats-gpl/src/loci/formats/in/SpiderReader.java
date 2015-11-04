@@ -274,9 +274,9 @@ public class SpiderReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      Double size = new Double(pixelSize * 0.0001);
-      Length sizeX = FormatTools.getPhysicalSizeX(size);
-      Length sizeY = FormatTools.getPhysicalSizeY(size);
+      Double size = new Double(pixelSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(size, UNITS.ANGSTROM);
+      Length sizeY = FormatTools.getPhysicalSizeY(size, UNITS.ANGSTROM);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
