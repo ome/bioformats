@@ -270,6 +270,10 @@ public class OBFReader extends FormatReader
       {
         throw new FormatException( exception ) ;
       }
+      catch (Exception e) {
+        LOGGER.warn("Could not parse OME-XML metadata", e);
+        MetadataTools.populatePixels(ome, this);
+      }
     }
   }
 
