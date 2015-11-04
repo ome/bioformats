@@ -155,6 +155,8 @@ public class UnisokuReader extends FormatReader {
 
     String header = DataTools.readFile(id);
     String[] lines = header.split("\r");
+    Length sizeX = null;
+    Length sizeY = null;
 
     String imageName = null, remark = null, date = null;
     double pixelSizeX = 0d, pixelSizeY = 0d;
@@ -201,18 +203,14 @@ public class UnisokuReader extends FormatReader {
             String unit = v[0];
             pixelSizeX = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
             pixelSizeX /= getSizeX();
-            LOGGER.info("x unit {}", unit);
-            if (unit.equals("nm")) {
-              pixelSizeXUnit = UNITS.NM;
-            }
+
+            sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, unit);
           }
           else if (key.startsWith(":y_data ->")) {
             String unit = v[0];
             pixelSizeY = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
             pixelSizeY /= getSizeY();
-            if (unit.equals("nm")) {
-              pixelSizeYUnit = UNITS.NM;
-            }
+            sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, unit);
           }
         }
       }
@@ -239,8 +237,6 @@ public class UnisokuReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
 
-      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, pixelSizeXUnit);
-      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, pixelSizeYUnit);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
