@@ -38,6 +38,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * MRCReader is the file format reader for MRC files.
@@ -219,10 +220,10 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      // physical sizes are stored in ångströms, we want them in µm
-      xSize = (in.readFloat() / mx) / 10000.0;
-      ySize = (in.readFloat() / my) / 10000.0;
-      zSize = (in.readFloat() / mz) / 10000.0;
+      // physical sizes are stored in ångströms
+      xSize = (in.readFloat() / mx);
+      ySize = (in.readFloat() / my);
+      zSize = (in.readFloat() / mz);
 
       addGlobalMeta("Pixel size (X)", xSize);
       addGlobalMeta("Pixel size (Y)", ySize);
@@ -313,9 +314,9 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
-      Length sizeY = FormatTools.getPhysicalSizeY(ySize);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize, UNITS.ANGSTROM);
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize, UNITS.ANGSTROM);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize, UNITS.ANGSTROM);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
