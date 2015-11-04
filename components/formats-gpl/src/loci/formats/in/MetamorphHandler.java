@@ -134,6 +134,8 @@ public class MetamorphHandler extends BaseHandler {
         if (metadata != null) metadata.remove("Comment");
 
         String k = null, v = null;
+        boolean freeform = true;
+        String freeformDescription = "";
 
         if (value.indexOf(delim) != -1) {
           int currentIndex = -delim.length();
@@ -150,12 +152,31 @@ public class MetamorphHandler extends BaseHandler {
             }
             currentIndex = nextIndex;
 
-            int colon = line.indexOf(":");
-            if (colon != -1) {
-              k = line.substring(0, colon).trim();
-              v = line.substring(colon + 1).trim();
-              if (metadata != null) metadata.put(k, v);
-              checkKey(k, v);
+            if (line.startsWith("Exposure: ")) {
+              freeform = false;
+              if (metadata != null) {
+                metadata.put("User Description", freeformDescription.trim());
+              }
+            }
+
+            if (freeform) {
+              freeformDescription += line;
+              freeformDescription += "\n";
+            }
+            else {
+              int colon = line.indexOf(":");
+              if (colon != -1) {
+                k = line.substring(0, colon).trim();
+                v = line.substring(colon + 1).trim();
+                if (metadata != null) metadata.put(k, v);
+                checkKey(k, v);
+              }
+              else {
+                // prevent non-key/value lines from being lost
+                if (metadata != null) {
+                  metadata.put(k, k);
+                }
+              }
             }
           }
         }
