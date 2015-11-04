@@ -69,7 +69,7 @@ public class ZeissLMSReader extends FormatReader {
     if (!FormatTools.validStream(stream, checkLen, false)) {
       return false;
     }
-    return in.readString(checkLen).indexOf(CHECK) >= 0;
+    return stream.readString(checkLen).indexOf(CHECK) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
