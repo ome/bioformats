@@ -3265,4 +3265,3 @@ Metadata fields
     :hidden:
 
     metadata/*
-    formats/*-metadata
