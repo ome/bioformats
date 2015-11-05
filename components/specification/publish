@@ -153,18 +153,23 @@ contains() {
 }
 
 devmarker="dev"
-root=published
-
+root=${1:-published}
+root=${root%/}
 
 # Clean up
 
-rm -rf "$root"
+rm -rf "$root/*"
 mkdir -p "$root"
 
 for dir in released-schema/20*
 do
-    # Don't copy legacy or other material
-    if [ "$dir" = "released-schema/additions" ]; then
+    rel=$(basename "$dir")
+    year=$(echo "$rel" | sed -e 's;^\([0-9][0-9]*\)-.*$;\1;')
+    month=$(echo "$rel" | sed -e 's;^.*-\([0-9][0-9]*\)$;\1;')
+
+    # Don't copy legacy material
+    if [ "$year" = "2003" ]; then
+        echo "Skipping legacy $rel"
         continue
     fi
 
@@ -183,7 +188,7 @@ do
                 base="OME"
             fi
 
-            path="${root}/Schemas/${base}/${rel}"
+            path="${root}/${base}/${rel}"
 
             # Copy schema
             mkdir -p "$path"
@@ -195,20 +200,11 @@ do
 
     for schema in "$dir"/*.xsd
     do
-        rel=$(basename "$dir")
         base=${schema%.xsd}
         base=$(basename "$base")
         name=$(basename "$schema")
         type="$(schemastatus "$name" "$rel")"
         version="$(schemaversion "$name" "$rel")"
-
-        year=$(echo "$rel" | sed -e 's;^\([0-9][0-9]*\)-.*$;\1;')
-        month=$(echo "$rel" | sed -e 's;^.*-\([0-9][0-9]*\)$;\1;')
-
-        # Skip files only used internally for legacy schema
-        if [ "$rel" = "2003-FC" ] && [ "$base" != "ome" ]; then
-            continue;
-        fi
 
         # For some reason, the OME schema has always been lowercased
         if [ "$base" = "ome" ]; then
@@ -219,15 +215,8 @@ do
             version=1
         fi
 
-        # Special case copying of legacy schemas
-        if [ "$year" = "2003" ]; then
-            path="${root}/XMLschemas/${base}/${month}"
-            path=$(echo "$path" | sed -e 's;/2003-\(.*\);/\1;')
-            reldate="2003 ($month)"
-        else
-            path="${root}/Schemas/${base}/${rel}"
-            reldate=$(parsedate "$rel")
-        fi
+        path="${root}/${base}/${rel}"
+        reldate=$(parsedate "$rel")
 
         # Copy schema
         mkdir -p "$path"
@@ -280,7 +269,7 @@ done
 # Special cases
 
 # Transforms folder
-path="${root}/Schemas/Transforms/"
+path="${root}/Transforms/"
 dir="transforms"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
@@ -289,7 +278,7 @@ do
 done
 
 # Samples folder
-path="${root}/Schemas/Samples/"
+path="${root}/Samples/"
 dir="samples"
 mkdir -p "$path"
 for sample in "$dir"/*
@@ -304,8 +293,6 @@ done
 # $2=year (may be blank)
 # $3=filter (current or legacy)
 # $4=verbose (true or false)
-# $5=schema set (current or legacy)
-# $6=schema location (current=Schemas, legacy=XMLschemas)
 createlink() {
     name=$(basename "$1")
     release="$2"
@@ -313,46 +300,19 @@ createlink() {
     if [ "$shortname" = "ome" ]; then
         shortname="OME"
     fi
-    if [ "$5" = "legacy" ]; then
-        reldate="2003 ($2)"
+    if [ -z "$2" ]; then
+        release=$(mostrecentversion "$name")
+        reldate=$(parsedate "$release")
     else
-        if [ -z "$2" ]; then
-            release=$(mostrecentversion "$name")
-            reldate=$(parsedate "$release")
-        else
-            reldate=$(parsedate "$2")
-        fi
+        reldate=$(parsedate "$2")
     fi
-    if [ "$5" = "current" ]; then
-        relversion=$(schemaversion "$name" "$release")
-    else
-        relversion=$(schemaversion "$name" "2003-$release")
-    fi
+    relversion=$(schemaversion "$name" "$release")
     reldesc=" The $(schemadesc "$name")"
     if [ "$4" = "false" ]; then
         reldesc=""
     fi
-    if [ "$5" = "current" ]; then
-        link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/Schemas/;;')
-        if [ "$6" = "legacy" ]; then
-            if [ -z "$2" ]; then
-                link="../Schemas/$link"
-            else
-                link="../../Schemas/$link"
-            fi
-        fi
-    else
-        link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
-        if [ "$6" = "current" ]; then
-            if [ -z "$2" ]; then
-                link="../XMLschemas/$link"
-            else
-                link="../../XMLschemas/$link"
-            fi
-        fi
-    fi
+    link=$(find $root -name "$name" | grep "$release" | head -n1)
+    link=$(echo "$link" | sed -e "s;$root/;;")
     if [ -n "$2" ]; then
         link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
@@ -420,10 +380,9 @@ EOF
         reldate=$(parsedate "$release")
         echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/*.xsd</li>"
-    done
+
+    # Manually list legacy FC schema
+    echo "<li>2003 (FC) - namespace /FC/</li>"
 
     cat <<EOF
 </ul>
@@ -438,8 +397,8 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
-        createlink "$schema" "" "current" "true" "current" "$1"
+    for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
+        createlink "$schema" "" "current" "true"
     done
 
     cat <<EOF
@@ -448,8 +407,8 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
-        createlink "$schema" "" "legacy" "true" "current" "$1"
+    for schema in $(find $root -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
+        createlink "$schema" "" "legacy" "true"
     done
     cat <<EOF
 </ul>
@@ -505,17 +464,13 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         reldate=$(parsedate "$release")
         echo "<li>$reldate - namespace /$release/</li>"
     done
-    if [ -d "${root}/XMLschemas/$1" ]; then
-        for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-            reldate="2003 ($release)"
-            echo "<li>$reldate - namespace /$release/$schema</li>"
-        done
-    fi
 
+    # Manually list legacy FC schema
+    echo "<li>2003 (FC) - namespace /FC/</li>"
 
     cat <<EOF
 </ul>
@@ -531,26 +486,24 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "current" "false" "current" "$2"
+    for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+        createlink "$schema" "$year" "current" "false"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-        createlink "$schema" "$year" "current" "false" "legacy" "$2"
-    done
-
     cat <<EOF
 </ul>
 <h4>Older schemas</h4>
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "legacy" "false" "current" "$2"
-    done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-        createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
+    for year in $(find $root -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+        createlink "$schema" "$year" "legacy" "false"
     done
 
+    if [ "$1" = "OME" ]; then
+        # Manually list legacy FC OME xsd
+        legacyurl="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
+        echo "<li>ome.xsd - 2003 (FC), version 1 [<a href=\"$legacyurl\">FC</a>]</li>"
+    fi
     cat <<EOF
 </ul>
 </div>
@@ -560,27 +513,12 @@ EOF
 EOF
 }
 
-for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
+for type in $(find ${root} -mindepth 1 -maxdepth 1 -type d | sed -e "s;^${root}/;;"); do
     if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [2] -> $root/Schemas/${type}/index.html"
-        createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
+        echo "HTML [2] -> ${root}/${type}/index.html"
+        createintermediateindex "$type" > "${root}/${type}/index.html"
     fi
 done
 
-for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/XMLschemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [3] -> $root/XMLschemas/${type}/index.html"
-        createintermediateindex "$type" "legacy" > "$root/XMLschemas/${type}/index.html"
-    fi
-done
-
-echo "HTML [4] -> ${root}/Schemas/index.html"
-createmainindex "current" > "${root}/Schemas/index.html"
-echo "HTML [5] -> ${root}/XMLschemas/index.html"
-createmainindex "legacy" > "${root}/XMLschemas/index.html"
-
-echo "Add any web-extras"
-if [ -d "web-extra" ]; then
-    rsync --stats -r -t "web-extra/" "${root}"
-fi
-
+echo "HTML [4] -> ${root}/index.html"
+createmainindex > "${root}/index.html"
