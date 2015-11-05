@@ -1442,6 +1442,10 @@ public final class FormatTools {
         int ordinal = ul.ordinal();
         Length returnLength = UnitsLength.create(value, ul);
 
+        if (returnLength.value().doubleValue() > Constants.EPSILON) {
+          return returnLength;
+        }
+        
         // If the requested unit produces a value less than Constants.EPSILON then we switch to the next smallest unit possible
         // Using UnitsLength.values().length - 2 as a boundary so as not to include Pixel and Reference Frame as convertible units
         while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
@@ -1449,7 +1453,10 @@ public final class FormatTools {
           ul = UnitsLength.values()[ordinal];
           returnLength = UnitsLength.create(value, ul);
         }
-        return returnLength;
+        if (returnLength.value().doubleValue() > Constants.EPSILON) {
+          return returnLength;
+        }
+        else return null;
       } catch (EnumerationException e) {
       }
     }
