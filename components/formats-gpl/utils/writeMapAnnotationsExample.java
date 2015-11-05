@@ -6,6 +6,8 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLServiceImpl;
+import loci.common.services.ServiceFactory;
+import loci.formats.meta.IMetadata;
 
 
 /*
