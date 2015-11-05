@@ -1439,7 +1439,17 @@ public final class FormatTools {
     if (unit != null) {
       try {
         UnitsLength ul = UnitsLength.fromString(unit);
-        return UnitsLength.create(value, ul);
+        int ordinal = ul.ordinal();
+        Length returnLength = UnitsLength.create(value, ul);
+
+        // If the requested unit produces a value less than Constants.EPSILON then we switch to the next smallest unit possible
+        // Using UnitsLength.values().length - 2 as a boundary so as not to include Pixel and Reference Frame as convertible units
+        while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
+          ordinal++;
+          ul = UnitsLength.values()[ordinal];
+          returnLength = UnitsLength.create(value, ul);
+        }
+        return returnLength;
       } catch (EnumerationException e) {
       }
     }
@@ -1490,7 +1500,7 @@ public final class FormatTools {
   public static Length getPhysicalSizeX(Double value, Unit<Length> unit) {
     if (isPositiveValue(value))
     {
-      return createLength(value, unit);
+      return getPhysicalSize(value, unit.getSymbol());
     } else {
       LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
       return null;
@@ -1541,7 +1551,7 @@ public final class FormatTools {
   public static Length getPhysicalSizeY(Double value, Unit<Length> unit) {
     if (isPositiveValue(value))
     {
-      return createLength(value, unit);
+      return getPhysicalSize(value, unit.getSymbol());
     } else {
       LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
       return null;
