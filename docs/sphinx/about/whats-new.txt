@@ -1,6 +1,45 @@
 Version history
 ===============
 
+5.1.5 (2015 October 12)
+-----------------------
+
+* Java bug fixes, including:
+   - ImageJ plugins
+       - fixed use of "Group files..." and "Open files individually" options
+       - fixed placement of ROIs
+       - fixed size of the "About Plugins > Bio-Formats Plugins" window
+   - xsd-fu (code generation)
+       - removed OMERO-specific logic
+   - Metamorph
+       - fixed physical Z size calculation
+   - Gatan DM3/DM4
+       - fixed physical pixel size parsing
+   - BMP
+       - added support for RLE compression
+   - DICOM
+       - updated to respect the WINDOW_CENTER tag
+       - fixed image dimensions when multiple sets of width and height values
+         are present
+   - Fluoview and Andor TIFF
+       - fixed physical Z size calculation
+   - Imspector OBF
+       - updated to parse OME-XML metadata (thanks to Bjoern Thiel)
+* C++ changes:
+   - TIFF strip/tile row and column calulations corrected to compute
+     the correct row and column count
+   - Several compiler warnings removed (false positive warnings in
+     third-party headers disabled, and additional warnings fixed)
+   - It is now possible to build with Boost 1.59 and compile with a
+     C++14 compiler
+* The source release is now provided in both tar.xz and zip formats
+* Documentation updates, including:
+   - substantial updates to the format pages
+       - improved linking of reader/writer classes to each format page
+       - improved supported metadata pages for each format
+       - updated format page formatting for clarity
+       - added developer documentation for adding and modifying format pages
+
 5.1.4 (2015 September 7)
 ------------------------
 

@@ -249,7 +249,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           for (int trow=0; trow<intersection.height; trow++) {
             int realRow = trow + intersection.y - tileBoundary.y;
             int inputOffset =
-              3 * (realRow * tileBoundary.width + intersectionX);
+              3 * (realRow * tileDim + intersectionX);
             System.arraycopy(tile, inputOffset, buf, outputOffset, rowLen);
             outputOffset += outputRowLen;
           }
