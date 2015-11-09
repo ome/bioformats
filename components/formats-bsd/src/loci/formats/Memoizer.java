@@ -738,9 +738,6 @@ public class Memoizer extends ReaderWrapper {
         long start = System.currentTimeMillis();
         super.setId(id);
 
-        // but only persist the minimum information
-        convertMetadata(all, min);
-        reader.setMetadataStore(min);
         try {
           long elapsed = System.currentTimeMillis() - start;
           handleMetadataStore(null); // Between setId and saveMemo
@@ -748,6 +745,9 @@ public class Memoizer extends ReaderWrapper {
             LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
             return; // EARLY EXIT!
           }
+          // but only persist the minimum information
+          convertMetadata(all, min);
+          reader.setMetadataStore(min);
           savedToMemo = saveMemo(); // Should never throw.
         } finally {
           super.setMetadataStore(all);
