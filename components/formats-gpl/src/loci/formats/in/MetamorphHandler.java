@@ -63,6 +63,7 @@ public class MetamorphHandler extends BaseHandler {
   private String channelName;
   private String stageLabel;
   private Double gain;
+  private boolean dualCamera = false;
 
   // -- Constructor --
 
@@ -116,6 +117,8 @@ public class MetamorphHandler extends BaseHandler {
   public double getLensNA() { return lensNA; }
 
   public Vector<Double> getExposures() { return exposures; }
+
+  public boolean hasDualCamera() { return dualCamera; }
 
   // -- DefaultHandler API methods --
 
@@ -261,6 +264,9 @@ public class MetamorphHandler extends BaseHandler {
     }
     else if (key.equals("_MagNA_")) {
       lensNA = Double.parseDouble(value);
+    }
+    else if (key.startsWith("Dual Camera")) {
+      dualCamera = true;
     }
   }
 
