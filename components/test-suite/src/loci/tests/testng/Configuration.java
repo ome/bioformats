@@ -109,8 +109,11 @@ public class Configuration {
   private static final String DATE = "Date";
   private static final String DELTA_T = "DeltaT_";
   private static final String X_POSITION = "PositionX_";
+  private static final String X_POSITION_UNIT = "PositionXUnit_";
   private static final String Y_POSITION = "PositionY_";
+  private static final String Y_POSITION_UNIT = "PositionYUnit_";
   private static final String Z_POSITION = "PositionZ_";
+  private static final String Z_POSITION_UNIT = "PositionZUnit_";
   
   // -- Fields --
 
@@ -596,15 +599,18 @@ public class Configuration {
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {
-            seriesTable.put(X_POSITION + p, xPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(X_POSITION + p, xPos.value().toString());
+            seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, yPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(Y_POSITION + p, yPos.value().toString());
+            seriesTable.put(Y_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, zPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(Z_POSITION + p, zPos.value().toString());
+            seriesTable.put(Z_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
         }
         catch (IndexOutOfBoundsException e) {
