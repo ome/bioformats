@@ -66,10 +66,6 @@
     <xsdfu.schemaver>2016-DEV0</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
-    <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
-    <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
-    <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
-    <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
