@@ -3578,9 +3578,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Shape"> <!-- top level definition -->
+        <xsd:complexType name="Shape"> <!-- top level definition -->
                 <xsd:annotation>
-                        <xsd:appinfo><xsdfu><plural>Shapes</plural><abstractproprietary/></xsdfu></xsd:appinfo>
+                        <xsd:appinfo><xsdfu><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
                         <xsd:documentation>
                                 The shape element contains a single specific ROI shape and links
                                 that to any channels, and a timepoint and a z-section. It also
@@ -3772,7 +3772,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                 </xsd:annotation>
                         </xsd:attribute>
                 </xsd:complexType>
-        </xsd:element>
+        </xsd:complexType>
 
         <xsd:element name="Rectangle"> <!-- top level definition -->
                 <xsd:annotation>
@@ -3783,6 +3783,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3825,6 +3828,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:sequence>
                                 <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
                         </xsd:sequence>
@@ -3864,6 +3870,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         <xsd:appinfo><xsdfu><plural>Points</plural></xsdfu></xsd:appinfo>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3890,6 +3899,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3929,6 +3941,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="X1" use="required" type="xsd:float">
                                 <xsd:annotation>
                                         <xsd:documentation> The X coordinate of the start of the line. [units pixels]
@@ -3968,6 +3983,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="Points" use="required" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation> The points of the polyline are defined as a list of comma
@@ -3990,6 +4008,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="Points" use="required" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation> The points of the Polygon are defined as a list of comma
@@ -4009,6 +4030,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="X" use="required" type="xsd:float">
                                 <xsd:annotation>
                                         <xsd:documentation> This defines the X coordinate of the current text position
