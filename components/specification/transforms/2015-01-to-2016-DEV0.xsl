@@ -25,12 +25,6 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Written by:  Andrew Patterson: ajpatterson at lifesci.dundee.ac.uk
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
-
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
@@ -44,10 +38,10 @@
     extension-element-prefixes="exsl" version="1.0">
 
     <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-    <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0</xsl:variable>
-    <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0</xsl:variable>
-    <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0</xsl:variable>
-    <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2016-DEV0</xsl:variable>
+    <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+    <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
 
     <xsl:output method="xml" indent="yes"/>
     <xsl:preserve-space elements="*"/>
@@ -60,15 +54,11 @@
     <!-- strip Visible from Shape -->
     <xsl:template match="ROI:Shape/@Visible"/>
 
-    <!-- Rewriting all namespaces -->
+    <!-- Rewrite all namespaces -->
 
     <xsl:template match="OME:OME">
         <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
             xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
-            xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0"
-            xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0"
-            xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2016-DEV0"
-            xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
             http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
@@ -76,32 +66,34 @@
         </OME>
     </xsl:template>
 
+    <!-- Move all BinaryFile, SA, SPW and ROI elements into the OME namespace -->
+
     <xsl:template match="OME:*">
-        <xsl:element name="{name()}" namespace="{$newOMENS}">
+        <xsl:element name="{local-name()}" namespace="{$newOMENS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="Bin:*">
-        <xsl:element name="{name()}" namespace="{$newBINNS}">
+        <xsl:element name="{local-name()}" namespace="{$newBINNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="SA:*">
-        <xsl:element name="{name()}" namespace="{$newSANS}">
+        <xsl:element name="{local-name()}" namespace="{$newSANS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="SPW:*">
-        <xsl:element name="{name()}" namespace="{$newSPWNS}">
+        <xsl:element name="{local-name()}" namespace="{$newSPWNS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
 
     <xsl:template match="ROI:*">
-        <xsl:element name="{name()}" namespace="{$newROINS}">
+        <xsl:element name="{local-name()}" namespace="{$newROINS}">
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>

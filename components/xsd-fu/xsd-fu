@@ -571,11 +571,7 @@ def docGenMain(model, opts):
     """
 
     for theSchemas in [
-    ["OME",           "../specification/InProgress/ome.xsd"],
-    ["SPW",           "../specification/InProgress/SPW.xsd"],
-    ["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
-    ["SA",            "../specification/InProgress/SA.xsd"],
-    ["ROI",           "../specification/InProgress/ROI.xsd"]
+    ["OME",           "../specification/InProgress/ome.xsd"]
     ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
@@ -599,16 +595,7 @@ def tabGenMain(model, opts):
 
     for theSchemas in [
             ["OME",       "../specification/InProgress/ome.xsd",
-                [["OME", "OME:"]]],
-            ["ROI",       "../specification/InProgress/ROI.xsd",
-                [["ROI", "OME:ROI:"]]],
-            ["SPW",       "../specification/InProgress/SPW.xsd",
-                [["Plate", "OME:Plate:"],
-                ["Screen", "OME:Screen:"]]],
-            ["SA",        "../specification/InProgress/SA.xsd",
-                [["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
-            ["BinaryFile","../specification/InProgress/BinaryFile.xsd",
-                [["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]
+                [["OME", "OME:"]]]
         ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
