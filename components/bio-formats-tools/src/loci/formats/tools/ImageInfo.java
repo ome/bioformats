@@ -377,6 +377,13 @@ public class ImageInfo {
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
+      if (!(reader instanceof ImageReader)) {
+        // verify format
+        LOGGER.info("Checking {} format [{}]", reader.getFormat(),
+                    reader.isThisType(f) ? "yes" : "no");
+        f.close();
+        f = new RandomAccessInputStream(id);
+      }
       int len = (int) f.length();
       LOGGER.info("Caching {} bytes:", len);
       byte[] b = new byte[len];
