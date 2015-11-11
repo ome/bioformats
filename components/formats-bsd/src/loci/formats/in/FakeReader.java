@@ -47,6 +47,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -998,9 +999,11 @@ public class FakeReader extends FormatReader {
       try {
         l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
       } catch (EnumerationException e) {
-        throw new RuntimeException(String.format(
-                "%s does not match a length unit!", unit));
+        LOGGER.warn("{} does not match a length unit!", unit);
       }
-      return new Length(d, l);
+      if (l != null && d > Constants.EPSILON) {
+        return new Length(d, l);
+      }
+      return null;
   }
 }
