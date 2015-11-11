@@ -381,8 +381,7 @@ public class ImageInfo {
         // verify format
         LOGGER.info("Checking {} format [{}]", reader.getFormat(),
                     reader.isThisType(f) ? "yes" : "no");
-        f.close();
-        f = new RandomAccessInputStream(id);
+        f.seek(0);
       }
       int len = (int) f.length();
       LOGGER.info("Caching {} bytes:", len);
