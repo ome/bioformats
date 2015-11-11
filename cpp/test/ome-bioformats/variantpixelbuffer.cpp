@@ -985,7 +985,7 @@ TEST_P(VariantPixelBufferTest, SetIndex)
 
 TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 {
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(BOOST_DISABLE_ASSERTS)
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -995,7 +995,7 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 
   SetIndexDeathTestVisitor v(buf);
   boost::apply_visitor(v, buf.vbuffer());
-#endif // ! NDEBUG
+#endif // ! NDEBUG && ! BOOST_DISABLE_ASSERTS
 }
 
 TEST_P(VariantPixelBufferTest, StreamInput)
