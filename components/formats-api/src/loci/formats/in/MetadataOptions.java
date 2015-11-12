@@ -33,8 +33,7 @@
 package loci.formats.in;
 
 /**
- * 
- * @author callan
+ *
  */
 public interface MetadataOptions {
 
@@ -45,5 +44,25 @@ public interface MetadataOptions {
    * @return the MetadataLevel associated with this MetadataOptions
    */
   MetadataLevel getMetadataLevel();
+
+  /**
+   * Retrieve a value which may have been set via
+   * {@link #setMetadataOption(String, Object)}. Consumers must be ready for
+   * nulls but an exception will not be thrown.
+   *
+   * @return value or null if the key is not present.
+   */
+  Object getMetadataOption(String key);
+
+  /**
+   * Place an arbitrary key/value pair in this instance for influencing
+   * the behavior of readers. See the individual reader documentation
+   * for details.
+   *
+   * @param key May not be null.
+   * @param value A null value unsets the key.
+   * @return previous value if any.
+   */
+  Object setMetadataOption(String key, Object value);
 
 }

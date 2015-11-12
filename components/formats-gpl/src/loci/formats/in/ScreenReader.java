@@ -51,6 +51,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -76,10 +77,12 @@ public class ScreenReader extends FormatReader {
   // -- Fields --
 
   private String[] plateMetadataFiles;
-  private String[] files;
+  private String[][] files;
   private String[] ordering;
+  private int[][][] fileIndexes;
 
-  private DimensionSwapper reader;
+  private Class<? extends IFormatReader> chosenReader = null;
+  private transient IFormatReader reader;
   private ClassList<IFormatReader> validReaders;
   private int fields, wells;
   private HashMap<Integer, Integer> seriesMap = new HashMap<Integer, Integer>();
@@ -108,10 +111,12 @@ public class ScreenReader extends FormatReader {
 
   @Override
   public void reopenFile() throws IOException {
-    super.reopenFile();
-    if (reader != null) {
-      reader.reopenFile();
-    }
+    ClassList<IFormatReader> classes = new ClassList<IFormatReader>(IFormatReader.class);
+    classes.addClass(chosenReader);
+    reader = new ImageReader(classes);
+    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+    // memoize whatever files are opened internally if possible.
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
@@ -162,8 +167,10 @@ public class ScreenReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int spotIndex = seriesMap.get(getCoreIndex());
-    reader.setId(files[spotIndex]);
-    return reader.openBytes(no, buf, x, y, w, h);
+    int fileIndex = fileIndexes[spotIndex][no][0];
+    int planeIndex = fileIndexes[spotIndex][no][1];
+    reader.setId(files[spotIndex][fileIndex]);
+    return reader.openBytes(planeIndex, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -174,22 +181,24 @@ public class ScreenReader extends FormatReader {
     int spotIndex = seriesMap.get(getCoreIndex());
     final List<String> allFiles = new ArrayList<String>();
     try {
-      reader.setId(files[spotIndex]);
-
-      if (plateMetadataFiles != null) {
-        for (String f : plateMetadataFiles) {
-          allFiles.add(f);
+      for (String file : files[spotIndex]) {
+        reader.close();
+        reader.setId(file);
+        if (plateMetadataFiles != null) {
+          for (String f : plateMetadataFiles) {
+            allFiles.add(f);
+          }
         }
-      }
-      String[] readerFiles = reader.getSeriesUsedFiles(noPixels);
-      if (readerFiles != null) {
-        for (String f : readerFiles) {
-          allFiles.add(f);
+        String[] readerFiles = reader.getSeriesUsedFiles(noPixels);
+        if (readerFiles != null) {
+          for (String f : readerFiles) {
+            allFiles.add(f);
+          }
         }
       }
     }
     catch (Exception e) {
-      LOGGER.info("Could not initialize {}", files[spotIndex], e);
+      LOGGER.info("Could not initialize file for spot {}", spotIndex, e);
     }
 
     return allFiles.toArray(new String[allFiles.size()]);
@@ -211,6 +220,7 @@ public class ScreenReader extends FormatReader {
       spotMap.clear();
       files = null;
       ordering = null;
+      fileIndexes = null;
     }
   }
 
@@ -271,8 +281,9 @@ public class ScreenReader extends FormatReader {
     fields = Integer.parseInt(plateTable.get("Fields"));
 
     wells = maxRow * maxCol;
-    files = new String[wells * fields];
+    files = new String[wells * fields][1];
     ordering = new String[wells * fields];
+    fileIndexes = new int[wells * fields][][];
 
     for (int well=0; well<wells; well++) {
       IniTable wellTable = tables.getTable("Well " + well);
@@ -287,10 +298,10 @@ public class ScreenReader extends FormatReader {
         String file = wellTable.get("Field_" + field);
         if (file != null) {
           if (file.startsWith(File.separator)) {
-            files[index] = file;
+            files[index][0] = file;
           }
           else {
-            files[index] = new Location(parent, file).getAbsolutePath();
+            files[index][0] = new Location(parent, file).getAbsolutePath();
           }
         }
         ordering[index] = wellTable.get("Dimensions");
@@ -325,20 +336,40 @@ public class ScreenReader extends FormatReader {
 
     core.clear();
 
-    FileStitcher stitcher = new FileStitcher(new ImageReader(validReaders), true);
-    stitcher.setReaderClassList(validReaders);
+    ImageReader iReader = new ImageReader(validReaders);
+    FileStitcher stitcher = new FileStitcher(iReader, true);
     stitcher.setCanChangePattern(false);
+    // After setReaderClassList
     reader = new DimensionSwapper(stitcher);
     reader.setMetadataStore(omexmlMeta);
+    // Note: by passing this in we allow lower-level readers
+    // to change our settings here.
+    reader.setMetadataOptions(getMetadataOptions());
 
     for (int well=0; well<files.length; well++) {
-      if (files[well] == null) {
+      if (files[well] == null || files[well][0] == null) {
         continue;
       }
       LOGGER.debug("Initializing pattern {} for spot {}", files[well], well);
-      reader.setId(files[well]);
-      if (ordering[well] != null) {
-        reader.swapDimensions(ordering[well]);
+      reader.close();
+      reader.setId(files[well][0]);
+
+      // At this point, we have a concrete reader. Use it
+      // for all subsequent setId calls.
+      if (chosenReader == null) {
+        chosenReader = stitcher.unwrap().getClass();
+        LOGGER.info("Using {} for all further calls.",
+          chosenReader.getSimpleName());
+        ClassList<IFormatReader> chosenReaders =
+          new ClassList<IFormatReader>(IFormatReader.class);
+        chosenReaders.addClass(chosenReader);
+        stitcher.setReaderClassList(chosenReaders);
+        // Re-initialize
+        reader.setId(files[well][0]);
+      }
+
+      if (ordering[well] != null && reader instanceof DimensionSwapper) {
+        ((DimensionSwapper) reader).swapDimensions(ordering[well]);
       }
       List<CoreMetadata> wcore = reader.getCoreMetadataList();
       core.add(wcore.get(0));
@@ -347,6 +378,13 @@ public class ScreenReader extends FormatReader {
       }
       seriesMap.put(core.size() - 1, well);
       spotMap.put(well, core.size() - 1);
+
+      files[well] = reader.getUsedFiles();
+
+      fileIndexes[well] = new int[wcore.get(0).imageCount][];
+      for (int plane=0; plane<fileIndexes[well].length; plane++) {
+        fileIndexes[well][plane] = stitcher.computeIndices(plane);
+      }
     }
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();

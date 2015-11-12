@@ -43,6 +43,7 @@ import java.util.Set;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
@@ -118,12 +119,16 @@ public class ImageReader implements IFormatReader {
   /** Constructs a new ImageReader from the given list of reader classes. */
   public ImageReader(ClassList<IFormatReader> classList) {
     // add readers to the list
+    MetadataOptions options = new DefaultMetadataOptions();
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     Class<? extends IFormatReader>[] c = classList.getClasses();
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
+        // TODO: this allows each instance to unnecessarily
+        // create its own MetadataOptions instance first.
+        reader.setMetadataOptions(options);
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
@@ -222,7 +227,11 @@ public class ImageReader implements IFormatReader {
     return getReaders()[0].getSupportedMetadataLevels();
   }
 
-  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
+  /**
+   * Assumes that all the readers have the same {@link MetadataOption}
+   * instance set. This <em>may</em> not hold if a caller has actively
+   * retrieved one of the readers and called {@link #setMetadataOptions(MetadataOptions)}.
+   */
   @Override
   public MetadataOptions getMetadataOptions() {
     return getReaders()[0].getMetadataOptions();
@@ -661,7 +670,7 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   @Override
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 2);
+    //FormatTools.assertId(currentId, false, 2);
     for (int i=0; i<readers.length; i++) readers[i].setMetadataStore(store);
   }
 

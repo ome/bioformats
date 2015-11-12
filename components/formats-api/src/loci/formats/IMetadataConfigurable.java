@@ -38,8 +38,9 @@ import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 
 /**
- *
- * @author callan
+ * An attempt should be made by all implementations to propagate calls to
+ * {@link #setMetadataOptions(MetadataOptions)} to dependent internal
+ * instances.
  */
 public interface IMetadataConfigurable{
 

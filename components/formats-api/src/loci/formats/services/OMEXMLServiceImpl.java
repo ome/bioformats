@@ -52,6 +52,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.Modulo;
+import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
@@ -61,16 +62,15 @@ import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Annotation;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
-import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
-import ome.xml.model.Annotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
 
@@ -824,6 +824,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     MetadataConverter.convertMetadata(src, dest);
+  }
+
+  public void convertMetadata(MetadataRetrieve src, MetadataStore dest,
+    MetadataLevel level) {
+    MetadataConverter.convertMetadata(src, dest, level);
   }
 
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */

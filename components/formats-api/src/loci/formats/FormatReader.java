@@ -1189,7 +1189,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   @Override
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 1);
+    //FormatTools.assertId(currentId, false, 1);
     if (store == null) {
       throw new IllegalArgumentException("Metadata object cannot be null; " +
         "use loci.formats.meta.DummyMetadata instead");
