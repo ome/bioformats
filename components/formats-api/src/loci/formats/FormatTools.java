@@ -1451,7 +1451,8 @@ public final class FormatTools {
         while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
           ordinal++;
           ul = UnitsLength.values()[ordinal];
-          returnLength = UnitsLength.create(value, ul);
+          Length tempLength = UnitsLength.create(0, ul);
+          returnLength = UnitsLength.create(returnLength.value(tempLength.unit()), ul);
         }
         if (returnLength.value().doubleValue() > Constants.EPSILON) {
           return returnLength;
