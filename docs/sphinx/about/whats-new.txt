@@ -7,9 +7,7 @@ Version history
 * Java bug fixes, including:
    - Updated to use native units for following formats:
        - IMOD
-       - Alicona AL3D
        - Analyze
-       - FEI TIFF
        - Unisoku
        - Olympus CellR (APL)
    - Metamorph TIFF
