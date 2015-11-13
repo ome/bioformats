@@ -756,6 +756,15 @@ extra-warnings=(ON|OFF)
 fatal-warnings=(ON|OFF)
   Make compiler warnings into fatal errors.  This is disabled by
   default.
+relocatable-install=(ON|OFF)
+  Make the installed libraries, programs and datafiles relocatable;
+  this means that they may be moved from their installation prefix to
+  another location without breaking them.  If OFF, the installation
+  prefix is assumed to contain the libraries and datafiles.  If ON, no
+  assumptions are made, and a slower fallback is used to introspect
+  the location.  In all cases the location may be set in the
+  environment to override the compiled-in defaults.  This is OFF by
+  default for a regular build, and ON by default for a superbuild.
 sphinx=(ON|OFF)
   Build manual pages and HTML documentation with Sphinx.  Enabled by
   default if Sphinx is autodetected.
