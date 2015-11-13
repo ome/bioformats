@@ -50,6 +50,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -319,8 +320,13 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
 
-      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX, UNITS.METRE);
-      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY, UNITS.METRE);
+      boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
+      Unit<Length> unit = UNITS.MICROM;
+      if (helios) {
+        unit = UNITS.METRE;
+      }
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX, unit);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY, unit);
 
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, 0);
