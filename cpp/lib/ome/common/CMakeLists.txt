@@ -35,7 +35,6 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${LibDl_INCLUDE_DIRS}
                     ${XercesC_INCLUDE_DIRS})
 
@@ -119,10 +118,9 @@ else()
 endif()
 
 target_link_libraries(ome-common
-                      ${Boost_LOG_SETUP_LIBRARY_RELEASE}
-                      ${Boost_LOG_LIBRARY_RELEASE}
-                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                      ${Boost_SYSTEM_LIBRARY_RELEASE}
+                      Boost::log_setup
+                      Boost::log
+                      Boost::filesystem
                       ${LibDl_LIBRARIES}
                       ${XercesC_LIBRARIES})
 

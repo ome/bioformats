@@ -35,7 +35,6 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${XercesC_INCLUDE_DIRS})
 
 set(exampledir "${PROJECT_SOURCE_DIR}/docs/sphinx/developers/cpp/examples")

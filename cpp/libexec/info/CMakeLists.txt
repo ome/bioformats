@@ -36,7 +36,6 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
                     ${OME_LIBEXEC_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${XercesC_INCLUDE_DIRS})
 
 set(info_SOURCES
@@ -47,7 +46,7 @@ set(info_SOURCES
     options.cpp)
 
 add_executable(info ${info_SOURCES})
-target_link_libraries(info ome-xml ome-bioformats ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(info ome-xml ome-bioformats Boost::program_options ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS info RUNTIME
         DESTINATION ${OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR}

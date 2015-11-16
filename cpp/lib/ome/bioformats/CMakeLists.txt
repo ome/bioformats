@@ -35,7 +35,6 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${TIFF_INCLUDE_DIR}
                     ${XercesC_INCLUDE_DIRS})
 
@@ -159,9 +158,9 @@ add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
 target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
-                      ${Boost_IOSTREAMS_LIBRARY_RELEASE}
-                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                      ${Boost_SYSTEM_LIBRARY_RELEASE}
+                      Boost::boost
+                      Boost::iostreams
+                      Boost::filesystem
                       ${TIFF_LIBRARIES})
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 

@@ -45,7 +45,6 @@ if (OME_QTOPENGL)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   include_directories(${OME_TOPLEVEL_INCLUDES}
-                      ${Boost_INCLUDE_DIRS}
                       ${OPENGL_INCLUDE_DIR}
                       ${TIFF_INCLUDE_DIR}
                       ${GLM_INCLUDE_DIR}
@@ -111,8 +110,7 @@ if (OME_QTOPENGL)
               ${ome-qtwidgets_RESOURCES})
   qt5_use_modules(ome-qtwidgets Core Gui Widgets Svg)
   target_link_libraries(ome-qtwidgets ome-bioformats
-                        ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                        ${Boost_SYSTEM_LIBRARY_RELEASE}
+                        Boost::filesystem
                         ${OPENGL_gl_LIBRARY} ${TIFF_LIBRARIES})
 
   set_target_properties(ome-qtwidgets PROPERTIES VERSION ${OME_VERSION_SHORT})

@@ -35,7 +35,6 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${XercesC_INCLUDE_DIRS})
 
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
@@ -141,7 +140,7 @@ add_library(ome-xml
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
 target_link_libraries(ome-xml ome-compat ome-common)
-target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
+target_link_libraries(ome-xml Boost::date_time)
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 install(TARGETS ome-xml

@@ -35,7 +35,6 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${GTEST_INCLUDE_DIR})
 
 if(BUILD_TESTS)
@@ -58,7 +57,7 @@ if(BUILD_TESTS)
               ${ome_test_static_headers}
               ${ome_test_generated_headers})
 
-  target_link_libraries(ome-test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(ome-test Boost::boost ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   set_target_properties(ome-test PROPERTIES LINKER_LANGUAGE CXX)
 
   # Dump header list for testing
