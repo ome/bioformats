@@ -361,17 +361,7 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#fileGroupOption() */
   @Override
   public int fileGroupOption(String id) {
-    try {
-      boolean single = isSingleFile(id);
-      return single ? FormatTools.CAN_GROUP : FormatTools.MUST_GROUP;
-    }
-    catch (FormatException e) {
-      LOGGER.debug("", e);
-    }
-    catch (IOException e) {
-      LOGGER.debug("", e);
-    }
-    return FormatTools.CAN_GROUP;
+    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
