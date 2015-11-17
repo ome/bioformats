@@ -277,7 +277,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the image. [plane text multi-line string]
+                                                        A description for the image. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -629,7 +629,7 @@
                         <xsd:attribute name="Name" use="optional" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                A name for the channel that is suitable be presented to the user.
+                                                A name for the channel that is suitable for presentation to the user.
                                         </xsd:documentation>
                                 </xsd:annotation>
                         </xsd:attribute>
@@ -937,7 +937,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the Microbeam Manipulation. [plane text multi-line string]
+                                                        A description for the Microbeam Manipulation. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -1119,7 +1119,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the project. [plane text multi-line string]
+                                                        A description for the project. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -1159,7 +1159,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the group. [plane text multi-line string]
+                                                        A description for the group. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -1222,7 +1222,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the dataset. [plane text multi-line string]
+                                                        A description for the dataset. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -1247,7 +1247,7 @@
                         <xsd:attribute name="Name" use="optional" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                A name for the dataset that is suitable be presented to the user.
+                                                A name for the dataset that is suitable for presentation to the user.
                                         </xsd:documentation>
                                 </xsd:annotation>
                         </xsd:attribute>
@@ -1270,7 +1270,7 @@
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the experiment. [plane text multi-line string]
+                                                        A description for the experiment. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -2598,7 +2598,7 @@
                         <xsd:sequence>
                                 <xsd:element name="RightsHolder" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
-                                                <xsd:documentation> The rights holder for this data. [plane text multi-line string]
+                                                <xsd:documentation> The rights holder for this data. [plain-text multi-line string]
                                                         e.g. "Copyright (C) 2002 - 2015 Open Microscopy Environment"
                                                 </xsd:documentation>
                                         </xsd:annotation>
@@ -2611,7 +2611,7 @@
                                 <xsd:element name="RightsHeld" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        The rights held by the rights holder. [plane text multi-line string]
+                                                        The rights held by the rights holder. [plain-text multi-line string]
                                                         e.g. "All rights reserved" or "Creative Commons Attribution 3.0 Unported License"
                                                 </xsd:documentation>
                                         </xsd:annotation>
@@ -3240,7 +3240,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                A description for the annotation. [plane text multi-line string]
+                                                A description for the annotation. [plain-text multi-line string]
                                         </xsd:documentation>
                                 </xsd:annotation>
                                 <xsd:simpleType>
@@ -3552,7 +3552,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                 <xsd:element name="Description" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
-                                                        A description for the ROI. [plane text multi-line string]
+                                                        A description for the ROI. [plain-text multi-line string]
                                                 </xsd:documentation>
                                         </xsd:annotation>
                                         <xsd:simpleType>
@@ -3566,7 +3566,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         <xsd:attribute name="Name" use="optional" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                The Name identifies the ROI to the user. [plane text string]
+                                                The Name identifies the ROI to the user. [plain-text string]
                                         </xsd:documentation>
                                 </xsd:annotation>
                         </xsd:attribute>
