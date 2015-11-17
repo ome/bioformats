@@ -45,6 +45,7 @@ import loci.common.ZipHandle;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 
 /**
@@ -84,6 +85,12 @@ public class ZipReader extends FormatReader {
   public void setGroupFiles(boolean groupFiles) {
     super.setGroupFiles(groupFiles);
     if (reader != null) reader.setGroupFiles(groupFiles);
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
   }
 
   /**
