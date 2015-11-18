@@ -63,6 +63,7 @@ public class MetamorphHandler extends BaseHandler {
   private String channelName;
   private String stageLabel;
   private Double gain;
+  private boolean dualCamera = false;
 
   // -- Constructor --
 
@@ -117,6 +118,8 @@ public class MetamorphHandler extends BaseHandler {
 
   public Vector<Double> getExposures() { return exposures; }
 
+  public boolean hasDualCamera() { return dualCamera; }
+
   // -- DefaultHandler API methods --
 
   @Override
@@ -134,6 +137,8 @@ public class MetamorphHandler extends BaseHandler {
         if (metadata != null) metadata.remove("Comment");
 
         String k = null, v = null;
+        boolean freeform = true;
+        String freeformDescription = "";
 
         if (value.indexOf(delim) != -1) {
           int currentIndex = -delim.length();
@@ -150,12 +155,31 @@ public class MetamorphHandler extends BaseHandler {
             }
             currentIndex = nextIndex;
 
-            int colon = line.indexOf(":");
-            if (colon != -1) {
-              k = line.substring(0, colon).trim();
-              v = line.substring(colon + 1).trim();
-              if (metadata != null) metadata.put(k, v);
-              checkKey(k, v);
+            if (line.startsWith("Exposure: ")) {
+              freeform = false;
+              if (metadata != null) {
+                metadata.put("User Description", freeformDescription.trim());
+              }
+            }
+
+            if (freeform) {
+              freeformDescription += line;
+              freeformDescription += "\n";
+            }
+            else {
+              int colon = line.indexOf(":");
+              if (colon != -1) {
+                k = line.substring(0, colon).trim();
+                v = line.substring(colon + 1).trim();
+                if (metadata != null) metadata.put(k, v);
+                checkKey(k, v);
+              }
+              else {
+                // prevent non-key/value lines from being lost
+                if (metadata != null) {
+                  metadata.put(k, k);
+                }
+              }
             }
           }
         }
@@ -261,6 +285,9 @@ public class MetamorphHandler extends BaseHandler {
     }
     else if (key.equals("_MagNA_")) {
       lensNA = Double.parseDouble(value);
+    }
+    else if (key.startsWith("Dual Camera")) {
+      dualCamera = true;
     }
   }
 

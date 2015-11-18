@@ -68,11 +68,14 @@ public class Calibrator {
     double zcal = Double.NaN, tcal = Double.NaN;
 
     Length xd = meta.getPixelsPhysicalSizeX(series);
-    if (xd != null) xcal = xd.value(UNITS.MICROM).doubleValue();
+    if (xd != null && xd.unit().isConvertible(UNITS.MICROM))
+        xcal = xd.value(UNITS.MICROM).doubleValue();
     Length yd = meta.getPixelsPhysicalSizeY(series);
-    if (yd != null) ycal = yd.value(UNITS.MICROM).doubleValue();
+    if (yd != null && yd.unit().isConvertible(UNITS.MICROM))
+        ycal = yd.value(UNITS.MICROM).doubleValue();
     Length zd = meta.getPixelsPhysicalSizeZ(series);
-    if (zd != null) zcal = zd.value(UNITS.MICROM).doubleValue();
+    if (zd != null && zd.unit().isConvertible(UNITS.MICROM))
+        zcal = zd.value(UNITS.MICROM).doubleValue();
     Time td = meta.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.value(UNITS.S).doubleValue();
 

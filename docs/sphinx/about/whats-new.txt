@@ -1,6 +1,36 @@
 Version history
 ===============
 
+5.1.6 (2015 November 16)
+------------------------
+
+* Java bug fixes, including:
+   - Updated to use native units for following formats:
+       - IMOD
+       - Analyze
+       - Unisoku
+       - Olympus CellR (APL)
+   - Metamorph TIFF
+       - fixed handling of multi-line descriptions
+       - added support for dual camera acquisitions
+   - Zeiss LMS
+       - fixed exception in type detection
+   - Zeiss CZI
+       - fixed detection of line scan Airyscan data
+   - Slidebook
+       - fixed calculation of physical Z size
+   - ImageJ plugins
+       - fixed handling of non-default units
+       - fixed setting of preferences via macros
+   - Automated testing
+       - fixed handling of non-default units for physical sizes and timings
+* C++ changes, including:
+   - allow relocatable installation on Windows
+   - reduce time required for debug builds
+* Documentation updates, including:
+   - addition of "Multiple Images" column to the supported formats table
+   - addition of a MapAnnotation example
+
 5.1.5 (2015 October 12)
 -----------------------
 

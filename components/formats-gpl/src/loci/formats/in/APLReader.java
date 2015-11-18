@@ -448,14 +448,8 @@ public class APLReader extends FormatReader {
         double px = realWidth / ms.sizeX;
         double py = realHeight / ms.sizeY;
 
-        if (units.equals("mm")) {
-          px *= 1000;
-          py *= 1000;
-        }
-        // TODO : add cases for other units
-
-        Length physicalSizeX = FormatTools.getPhysicalSizeX(px);
-        Length physicalSizeY = FormatTools.getPhysicalSizeY(py);
+        Length physicalSizeX = FormatTools.getPhysicalSizeX(px, units);
+        Length physicalSizeY = FormatTools.getPhysicalSizeY(py, units);
 
         if (physicalSizeX != null) {
           store.setPixelsPhysicalSizeX(physicalSizeX, i);
