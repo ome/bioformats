@@ -31,14 +31,6 @@
         xmlns:xml="http://www.w3.org/XML/1998/namespace"
         version="2"
         elementFormDefault="qualified">
-        <xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0"
-                schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2016-DEV0/BinaryFile.xsd"/>
-        <xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0"
-                schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2016-DEV0/SPW.xsd"/>
-        <xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2016-DEV0"
-                schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2016-DEV0/SA.xsd"/>
-        <xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0"
-                schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2016-DEV0/ROI.xsd"/>
 
         <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
