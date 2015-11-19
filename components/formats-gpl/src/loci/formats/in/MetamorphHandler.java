@@ -287,7 +287,26 @@ public class MetamorphHandler extends BaseHandler {
       lensNA = Double.parseDouble(value);
     }
     else if (key.startsWith("Dual Camera")) {
-      dualCamera = true;
+      // Determine if image has been already split by Metamorph.
+      // Metamorph seems to add the wavelength number to the end
+      // of the Description field when splitting. Example:
+      // Dual Camera Time Difference: 7 msec 561
+      int space = value.lastIndexOf(" ");
+      if(space == -1) {
+            // unknown value format, assume dual camera
+            dualCamera = true;
+      } else {
+          try {
+            Double.parseDouble(value.substring(space));
+            // last number is a wavelength and indicates this dual camera
+            // image has been split
+            dualCamera = false;
+          }
+          catch (NumberFormatException e) {
+            // last token is not a number, so image has not been split
+            dualCamera = true; 
+          }
+      }
     }
   }
 
