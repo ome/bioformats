@@ -54,6 +54,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.Ellipse;
+import ome.xml.model.Label;
 import ome.xml.model.OME;
 import ome.xml.model.Point;
 import ome.xml.model.Polygon;
@@ -113,299 +114,348 @@ public class ROIHandler {
 
       for (int roiNum=0; roiNum<roiCount; roiNum++) {
         Union shapeSet = root.getROI(roiNum).getUnion();
-        int shapeCount = shapeSet.sizeOfShapeList();
-
-        for (int shape=0; shape<shapeCount; shape++) {
-          Shape shapeObject = shapeSet.getShape(shape);
-
+        int lineCount = shapeSet.sizeOfLineList();
+        int rectangleCount = shapeSet.sizeOfRectangleList();
+        int ellipseCount = shapeSet.sizeOfEllipseList();
+        int pointCount = shapeSet.sizeOfPointList();
+        int polylineCount = shapeSet.sizeOfPolylineList();
+        int polygonCount = shapeSet.sizeOfPolygonList();
+        int labelCount = shapeSet.sizeOfLabelList();
+        
+        for (int shape=0; shape<ellipseCount; shape++) {
+          Ellipse ellipse = shapeSet.getEllipse(shape);
+  
           roi = null;
           sw = null;
           sc = null;
           fc = null;
-          int c= 0;
-          int z= 0;
-          int t= 0;
+          int cx = ellipse.getX().intValue();
+          int cy = ellipse.getY().intValue();
+          int rx = ellipse.getRadiusX().intValue();
+          int ry = ellipse.getRadiusY().intValue();
+          roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
+  
+          if (ellipse.getStrokeColor() != null) {
+            ome.xml.model.primitives.Color StrokeColor = ellipse.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(),StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+                  StrokeColor.getAlpha(), StrokeColor.getRed());
+            }
+          }
+          if (ellipse.getFillColor() != null) {
+            ome.xml.model.primitives.Color FillColor = ellipse.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                  FillColor.getBlue(), FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+                    FillColor.getAlpha(), FillColor.getRed());
+            }
+          }
+          if (ellipse.getStrokeWidth() != null) {
+            sw = ellipse.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, ellipse, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
 
-          if (shapeObject instanceof Ellipse) {
-            Ellipse ellipse = (Ellipse) shapeObject;
-            int cx = ellipse.getX().intValue();
-            int cy = ellipse.getY().intValue();
-            int rx = ellipse.getRadiusX().intValue();
-            int ry = ellipse.getRadiusY().intValue();
-            roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
+        for (int shape=0; shape<lineCount; shape++) {
+          ome.xml.model.Line line = shapeSet.getLine(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          int x1 = line.getX1().intValue();
+          int x2 = line.getX2().intValue();
+          int y1 = line.getY1().intValue();
+          int y2 = line.getY2().intValue();
+          roi = new Line(x1, y1, x2, y2);
 
-            if (ellipse.getStrokeColor() != null) {
-              ome.xml.model.primitives.Color StrokeColor = ellipse.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(),StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+          if (line.getStrokeColor() != null) {
+            ome.xml.model.primitives.Color StrokeColor = line.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
                     StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
             }
-            if (ellipse.getFillColor() != null) {
-              ome.xml.model.primitives.Color FillColor = ellipse.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                    FillColor.getBlue(), FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+          }
+          if (line.getFillColor() != null) {
+            ome.xml.model.primitives.Color FillColor = line.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                  FillColor.getBlue(),FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
                       FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (ellipse.getStrokeWidth() != null) {
-              sw = ellipse.getStrokeWidth().value().floatValue();
             }
           }
-          else if (shapeObject instanceof ome.xml.model.Line) {
-            ome.xml.model.Line line = (ome.xml.model.Line) shapeObject;
-            int x1 = line.getX1().intValue();
-            int x2 = line.getX2().intValue();
-            int y1 = line.getY1().intValue();
-            int y2 = line.getY2().intValue();
-            roi = new Line(x1, y1, x2, y2);
+          if (line.getStrokeWidth() != null) {
+            sw = line.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, line, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
 
-            if (line.getStrokeColor() != null) {
-              ome.xml.model.primitives.Color StrokeColor = line.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(), StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
-                      StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
-            }
-            if (line.getFillColor() != null) {
-              ome.xml.model.primitives.Color FillColor = line.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                    FillColor.getBlue(),FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
-                        FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (line.getStrokeWidth() != null) {
-              sw = line.getStrokeWidth().value().floatValue();
+        for (int shape=0; shape<pointCount; shape++) {
+          Point point = shapeSet.getPoint(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          int x = point.getX().intValue();
+          int y = point.getY().intValue();
+          roi = new PointRoi(x, y);
+
+          if (point.getStrokeColor() != null){
+            ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+                    StrokeColor.getAlpha(), StrokeColor.getRed());
             }
           }
-          else if (shapeObject instanceof Point) {
-            Point point = (Point) shapeObject;
-            int x = point.getX().intValue();
-            int y = point.getY().intValue();
-            roi = new PointRoi(x, y);
-
-            if (point.getStrokeColor() != null){
-              ome.xml.model.primitives.Color StrokeColor = point.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(), StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
-                      StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
-            }
-            if (point.getFillColor() != null){
-              ome.xml.model.primitives.Color FillColor = point.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                      FillColor.getBlue(), FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
-                        FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (point.getStrokeWidth() != null){
-              sw = point.getStrokeWidth().value().floatValue();
-            }
-          }
-          else if (shapeObject instanceof Polyline) {
-            Polyline polyline = (Polyline) shapeObject;
-            String points = polyline.getPoints();
-            int[][] coordinates = parsePoints(points);
-            roi = new PolygonRoi(coordinates[0], coordinates[1],
-                coordinates[0].length, Roi.POLYLINE);
-
-            if (polyline.getStrokeColor() != null){
-              ome.xml.model.primitives.Color StrokeColor = polyline.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(), StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
-                      StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
-            }
-            if (polyline.getFillColor() != null){
-              ome.xml.model.primitives.Color FillColor = polyline.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+          if (point.getFillColor() != null){
+            ome.xml.model.primitives.Color FillColor = point.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
                     FillColor.getBlue(), FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
                       FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (polyline.getStrokeWidth() != null){
-              sw = polyline.getStrokeWidth().value().floatValue();
             }
           }
-          else if (shapeObject instanceof Polygon) {
-            Polygon polygon = (Polygon) shapeObject;
-            String points = polygon.getPoints();
-            int[][] coordinates = parsePoints(points);
-            roi = new PolygonRoi(coordinates[0], coordinates[1],
-                coordinates[0].length, Roi.POLYGON);
+          if (point.getStrokeWidth() != null){
+            sw = point.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, point, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
+        
+        for (int shape=0; shape<polylineCount; shape++) {
+          Polyline polyline = shapeSet.getPolyline(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          String points = polyline.getPoints();
+          int[][] coordinates = parsePoints(points);
+          roi = new PolygonRoi(coordinates[0], coordinates[1],
+              coordinates[0].length, Roi.POLYLINE);
 
-            if (polygon.getStrokeColor() != null){
-              ome.xml.model.primitives.Color StrokeColor = polygon.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(), StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+          if (polyline.getStrokeColor() != null){
+            ome.xml.model.primitives.Color StrokeColor = polyline.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+                    StrokeColor.getAlpha(), StrokeColor.getRed());
+            }
+          }
+          if (polyline.getFillColor() != null){
+            ome.xml.model.primitives.Color FillColor = polyline.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                  FillColor.getBlue(), FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+                    FillColor.getAlpha(), FillColor.getRed());
+            }
+          }
+          if (polyline.getStrokeWidth() != null){
+            sw = polyline.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, polyline, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
+        
+        for (int shape=0; shape<polygonCount; shape++) {
+          Polygon polygon = shapeSet.getPolygon(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          String points = polygon.getPoints();
+          int[][] coordinates = parsePoints(points);
+          roi = new PolygonRoi(coordinates[0], coordinates[1],
+              coordinates[0].length, Roi.POLYGON);
+
+          if (polygon.getStrokeColor() != null){
+            ome.xml.model.primitives.Color StrokeColor = polygon.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+                    StrokeColor.getAlpha(), StrokeColor.getRed());
+            }
+          }
+          if (polygon.getFillColor() != null){
+            ome.xml.model.primitives.Color FillColor = polygon.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                  FillColor.getBlue(), FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+                    FillColor.getAlpha(), FillColor.getRed());
+            }
+          }
+          if (polygon.getStrokeWidth() != null){
+            sw = polygon.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, polygon, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
+        
+        for (int shape=0; shape<labelCount; shape++) {
+          Label label = shapeSet.getLabel(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          double x = label.getX().doubleValue();
+          double y = label.getY().doubleValue();
+          String labelText = label.getText();
+
+          int size = label.getFontSize().value().intValue();
+          Font font = new Font(labelText, Font.PLAIN, size);
+          roi = new TextRoi((int) x,(int) y, labelText,font);
+
+          if (label.getStrokeColor() != null) {
+            ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
+                    StrokeColor.getAlpha(), StrokeColor.getRed());
+            }
+          }
+          if (label.getFillColor() != null) {
+            ome.xml.model.primitives.Color FillColor = label.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                    FillColor.getBlue(), FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+                    FillColor.getAlpha(), FillColor.getRed());
+            }
+          }
+          if (label.getStrokeWidth() != null) {
+            sw = label.getStrokeWidth().value().floatValue();
+          }
+          roi = setCommonRoiProps(roi, label, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
+        }
+
+        for (int shape=0; shape<rectangleCount; shape++) {
+          ome.xml.model.Rectangle rectangle = shapeSet.getRectangle(shape);
+  
+          roi = null;
+          sw = null;
+          sc = null;
+          fc = null;
+          int x = rectangle.getX().intValue();
+          int y = rectangle.getY().intValue();
+          int w = rectangle.getWidth().intValue();
+          int h = rectangle.getHeight().intValue();
+
+          roi = new Roi(x, y, w, h);
+
+          if (rectangle.getStrokeColor() != null){
+            ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
+            sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
+                  StrokeColor.getBlue(), StrokeColor.getAlpha());
+            if (isOMERO) {
+              sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
                       StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
-            }
-            if (polygon.getFillColor() != null){
-              ome.xml.model.primitives.Color FillColor = polygon.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                    FillColor.getBlue(), FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
-                      FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (polygon.getStrokeWidth() != null){
-              sw = polygon.getStrokeWidth().value().floatValue();
             }
           }
-          else if (shapeObject instanceof ome.xml.model.Label){
-            //add support for TextROI's
-            ome.xml.model.Label label =
-            (ome.xml.model.Label) shapeObject;
-                double x = label.getX().doubleValue();
-                double y = label.getY().doubleValue();
-                String labelText = label.getText();
-
-                int size = label.getFontSize().value().intValue();
-                Font font = new Font(labelText, Font.PLAIN, size);
-                roi = new TextRoi((int) x,(int) y, labelText,font);
-
-                if (label.getStrokeColor() != null) {
-                  ome.xml.model.primitives.Color StrokeColor = label.getStrokeColor();
-                  sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                        StrokeColor.getBlue(), StrokeColor.getAlpha());
-                  if (isOMERO) {
-                    sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
-                          StrokeColor.getAlpha(), StrokeColor.getRed());
-                  }
-                }
-                if (label.getFillColor() != null) {
-                  ome.xml.model.primitives.Color FillColor = label.getFillColor();
-                  fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                          FillColor.getBlue(), FillColor.getAlpha());
-                  if (isOMERO) {
-                    fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
-                          FillColor.getAlpha(), FillColor.getRed());
-                  }
-                }
-                if (label.getStrokeWidth() != null) {
-                  sw = label.getStrokeWidth().value().floatValue();
-                }
-
-          }
-          else if (shapeObject instanceof ome.xml.model.Rectangle) {
-            ome.xml.model.Rectangle rectangle =
-                (ome.xml.model.Rectangle) shapeObject;
-            int x = rectangle.getX().intValue();
-            int y = rectangle.getY().intValue();
-            int w = rectangle.getWidth().intValue();
-            int h = rectangle.getHeight().intValue();
-
-            roi = new Roi(x, y, w, h);
-
-            if (rectangle.getStrokeColor() != null){
-              ome.xml.model.primitives.Color StrokeColor = rectangle.getStrokeColor();
-              sc = new Color(StrokeColor.getRed(), StrokeColor.getGreen(),
-                    StrokeColor.getBlue(), StrokeColor.getAlpha());
-              if (isOMERO) {
-                sc = new Color(StrokeColor.getGreen(), StrokeColor.getBlue(),
-                        StrokeColor.getAlpha(), StrokeColor.getRed());
-              }
-            }
-            if (rectangle.getFillColor() != null){
-              ome.xml.model.primitives.Color FillColor = rectangle.getFillColor();
-              fc = new Color(FillColor.getRed(), FillColor.getGreen(),
-                    FillColor.getBlue(), FillColor.getAlpha());
-              if (isOMERO) {
-                fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
-                      FillColor.getAlpha(), FillColor.getRed());
-              }
-            }
-            if (rectangle.getStrokeWidth() != null){
-              sw = rectangle.getStrokeWidth().value().floatValue();
+          if (rectangle.getFillColor() != null){
+            ome.xml.model.primitives.Color FillColor = rectangle.getFillColor();
+            fc = new Color(FillColor.getRed(), FillColor.getGreen(),
+                  FillColor.getBlue(), FillColor.getAlpha());
+            if (isOMERO) {
+              fc = new Color(FillColor.getGreen(), FillColor.getBlue(),
+                    FillColor.getAlpha(), FillColor.getRed());
             }
           }
-
-          if (roi != null) {
-            String roiLabel = shapeObject.getText();
-            if (roiLabel == null) {
-              roiLabel = shapeObject.getID();
-            }
-            roi.setName(roiLabel);
-
-            if (Prefs.showAllSliceOnly) {
-              if (shapeObject.getTheC() != null) {
-                c = shapeObject.getTheC().getValue();
-              }
-              if (shapeObject.getTheZ() != null) {
-                z = shapeObject.getTheZ().getValue();
-              }
-              if (shapeObject.getTheT() != null) {
-                t = shapeObject.getTheT().getValue();
-              }
-              // ImageJ expects 1-based indexing, opposed to 
-              // 0-based indexing in OME
-              // Roi positions differ between hyperstacks and normal stacks
-              ImagePlus imp = images[imageNum];
-              if (imp.getNChannels() > 1) {
-                c++;
-              }
-              if (imp.getNSlices() > 1) {
-                z++;
-              }
-              if (imp.getNFrames() > 1) {
-                t++;
-              }
-              if (c == 0) c = 1;
-              if (t == 0) t = 1;
-              if (z == 0) z = 1;
-              if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
-                roi.setPosition(t);
-              } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
-                roi.setPosition(z);
-              } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
-                roi.setPosition(c);
-              } else if (imp.isHyperStack()) {
-                roi.setPosition(c, z, t);
-              }
-            }
-
-            if (sw == null) {
-              roi.setStrokeWidth((float) 1);
-            }
-            if (sw != null) {
-              if (sw == 0) {
-                sw= (float) 1;
-              }
-              roi.setStrokeWidth(sw);
-            }
-            if (sc != null) {
-              roi.setStrokeColor(sc);
-            }
-            manager.add(images[imageNum], roi, nextRoi++);
+          if (rectangle.getStrokeWidth() != null){
+            sw = rectangle.getStrokeWidth().value().floatValue();
           }
+          roi = setCommonRoiProps(roi, rectangle, images, imageNum, sw, sc);
+          manager.add(images[imageNum], roi, nextRoi++);
         }
       }
+      
       if (roiCount > 0 && manager != null) {
         manager.setAlwaysOnTop(true);
         manager.runCommand("show all with labels");
       }
     }
+  }
+  
+  private static Roi setCommonRoiProps (Roi roi, Shape shapeObject, ImagePlus[] images, int imageNum, Float sw, Color sc) {
+    if (roi != null) {
+      String roiLabel = shapeObject.getText();
+      if (roiLabel == null) {
+        roiLabel = shapeObject.getID();
+      }
+      roi.setName(roiLabel);
+      int c = 0;
+      int z = 0;
+      int t = 0;
+      if (Prefs.showAllSliceOnly) {
+        if (shapeObject.getTheC() != null) {
+          c = shapeObject.getTheC().getValue();
+        }
+        if (shapeObject.getTheZ() != null) {
+          z = shapeObject.getTheZ().getValue();
+        }
+        if (shapeObject.getTheT() != null) {
+          t = shapeObject.getTheT().getValue();
+        }
+        // ImageJ expects 1-based indexing, opposed to 
+        // 0-based indexing in OME
+        // Roi positions differ between hyperstacks and normal stacks
+        ImagePlus imp = images[imageNum];
+        if (imp.getNChannels() > 1) {
+          c++;
+        }
+        if (imp.getNSlices() > 1) {
+          z++;
+        }
+        if (imp.getNFrames() > 1) {
+          t++;
+        }
+        if (c == 0) c = 1;
+        if (t == 0) t = 1;
+        if (z == 0) z = 1;
+        if (imp.getNChannels() == 1 && imp.getNSlices() == 1) {
+          roi.setPosition(t);
+        } else if (imp.getNChannels() == 1 && imp.getNFrames() == 1) {
+          roi.setPosition(z);
+        } else if (imp.getNSlices() == 1 && imp.getNFrames() == 1) {
+          roi.setPosition(c);
+        } else if (imp.isHyperStack()) {
+          roi.setPosition(c, z, t);
+        }
+      }
 
+      if (sw == null) {
+        roi.setStrokeWidth((float) 1);
+      }
+      if (sw != null) {
+        if (sw == 0) {
+          sw= (float) 1;
+        }
+        roi.setStrokeWidth(sw);
+      }
+      if (sc != null) {
+        roi.setStrokeColor(sc);
+      }
+    }
+    return roi;
   }
 
   /**
