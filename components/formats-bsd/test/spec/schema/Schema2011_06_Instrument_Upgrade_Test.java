@@ -153,7 +153,11 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(1, instrument0.sizeOfDichroicList());
         Assert.assertEquals(4, instrument0.sizeOfFilterList());
         Assert.assertEquals(1, instrument0.sizeOfFilterSetList());
-        Assert.assertEquals(2, instrument0.sizeOfLightSourceList());
+        Assert.assertEquals(1, instrument0.sizeOfLaserList());
+        Assert.assertEquals(1, instrument0.sizeOfArcList());
+        Assert.assertEquals(0, instrument0.sizeOfFilamentList());
+        Assert.assertEquals(0, instrument0.sizeOfLightEmittingDiodeList());
+        Assert.assertEquals(0, instrument0.sizeOfGenericExcitationSourceList());
         Assert.assertEquals(1, instrument0.sizeOfObjectiveList());
         Microscope microscope0 = instrument0.getMicroscope();
         Assert.assertNotNull(microscope0);
@@ -166,14 +170,12 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource0() {
         Assert.assertNotNull(ome);
-        lightsource0 = instrument0.getLightSource(0);
-        Assert.assertNotNull(lightsource0);
-        Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, lightsource0.getManufacturer());
-        Assert.assertEquals(ref.Instrument0LightSource0Model, lightsource0.getModel());
-        Assert.assertEquals(ref.Instrument0LightSource0SerialNumber, lightsource0.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MW).doubleValue());
-        Assert.assertEquals(Laser.class.getName(), lightsource0.getClass().getName());
-        laser0 = (Laser) lightsource0;
+        laser0 = instrument0.getLaser(0);
+        Assert.assertNotNull(laser0);
+        Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, laser0.getManufacturer());
+        Assert.assertEquals(ref.Instrument0LightSource0Model, laser0.getModel());
+        Assert.assertEquals(ref.Instrument0LightSource0SerialNumber, laser0.getSerialNumber());
+        Assert.assertEquals(ref.Instrument0LightSource0Power, laser0.getPower().value(UNITS.MW).doubleValue());
         Assert.assertEquals(ref.Instrument0LightSource0LaserType, laser0.getType());
         Assert.assertEquals(ref.Instrument0LightSource0LaserLaserMedium, laser0.getLaserMedium());
         Assert.assertNull(laser0.getFrequencyMultiplication());
@@ -187,14 +189,12 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource1() {
         Assert.assertNotNull(ome);
-        lightsource1 = instrument0.getLightSource(1);
-        Assert.assertNotNull(lightsource1);
-        Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, lightsource1.getManufacturer());
-        Assert.assertEquals(ref.Instrument0LightSource1Model, lightsource1.getModel());
-        Assert.assertEquals(ref.Instrument0LightSource1SerialNumber, lightsource1.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MW).doubleValue());
-        Assert.assertEquals(Arc.class.getName(), lightsource1.getClass().getName());
-        arc1 = (Arc) lightsource1;
+        arc1 = instrument0.getArc(0);
+        Assert.assertNotNull(arc1);
+        Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, arc1.getManufacturer());
+        Assert.assertEquals(ref.Instrument0LightSource1Model, arc1.getModel());
+        Assert.assertEquals(ref.Instrument0LightSource1SerialNumber, arc1.getSerialNumber());
+        Assert.assertEquals(ref.Instrument0LightSource1Power, arc1.getPower().value(UNITS.MW).doubleValue());
         Assert.assertEquals(ref.Instrument0LightSource1ArcType, arc1.getType());
     }
 

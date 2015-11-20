@@ -84,7 +84,7 @@ public class GenericExcitationMapTest {
     assertPair(dataMap, 4, "e", "5");
     geSource.setMap(dataMap);
 
-    instrument.addLightSource(geSource);
+    instrument.addGenericExcitationSource(geSource);
     ome.addInstrument(instrument);
     // Add an Image/Pixels with a LightSourceSettings reference to the
     // GenericExcitationSource on one of its channels.
@@ -130,8 +130,8 @@ public class GenericExcitationMapTest {
     assertNotNull(ome); 
     assertEquals(ome.getImage(0).getPixels().getChannel(0).getLightSourceSettings().getID(), "LightSource:0"); 
 
-    assertNotNull(ome.getInstrument(0).getLightSource(0));
-    GenericExcitationSource geSource = (GenericExcitationSource) ome.getInstrument(0).getLightSource(0); 
+    assertNotNull(ome.getInstrument(0).getGenericExcitationSource(0));
+    GenericExcitationSource geSource = ome.getInstrument(0).getGenericExcitationSource(0); 
     Map dataMap = geSource.getMap();
 
     assertEquals(5, dataMap.getPairs().size());

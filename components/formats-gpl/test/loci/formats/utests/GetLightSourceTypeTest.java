@@ -53,10 +53,10 @@ public class GetLightSourceTypeTest {
     metadata = new OMEXMLMetadataImpl();
     OMEXMLMetadataRoot ome = new OMEXMLMetadataRoot();
     Instrument instrument = new Instrument();
-    instrument.addLightSource(new Arc());
-    instrument.addLightSource(new Filament());
-    instrument.addLightSource(new Laser());
-    instrument.addLightSource(new LightEmittingDiode());
+    instrument.addArc(new Arc());
+    instrument.addFilament(new Filament());
+    instrument.addLaser(new Laser());
+    instrument.addLightEmittingDiode(new LightEmittingDiode());
     ome.addInstrument(instrument);
     metadata.setRoot(ome);
   }
@@ -64,11 +64,10 @@ public class GetLightSourceTypeTest {
   @Test
   public void testLightSourceType() throws Exception {
     assertEquals(1, metadata.getInstrumentCount());
-    assertEquals(4, metadata.getLightSourceCount(0));
-    assertEquals("Arc", metadata.getLightSourceType(0, 0));
-    assertEquals("Filament", metadata.getLightSourceType(0, 1));
-    assertEquals("Laser", metadata.getLightSourceType(0, 2));
-    assertEquals("LightEmittingDiode", metadata.getLightSourceType(0, 3));
+    assertEquals(1, metadata.getArcCount(0));
+    assertEquals(1, metadata.getFilamentCount(0));
+    assertEquals(1, metadata.getLaserCount(0));
+    assertEquals(1, metadata.getLightEmittingDiodeCount(0));
   }
 
 }

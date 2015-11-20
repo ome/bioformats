@@ -45,9 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
-
 import static org.testng.AssertJUnit.*;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
@@ -96,7 +94,6 @@ import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
-
 import ome.units.quantity.Power;
 import ome.units.UNITS;
 
@@ -463,7 +460,11 @@ public class InOutCurrentTest {
   public void testValidInstrumentMetadata() {
     assertEquals(1, metadata.getInstrumentCount());
     assertEquals(INSTRUMENT_ID, metadata.getInstrumentID(0));
-    assertEquals(5, metadata.getLightSourceCount(0));
+    assertEquals(1, metadata.getArcCount(0));
+    assertEquals(1, metadata.getFilamentCount(0));
+    assertEquals(1, metadata.getLaserCount(0));
+    assertEquals(1, metadata.getLightEmittingDiodeCount(0));
+    assertEquals(1, metadata.getGenericExcitationSourceCount(0));
     assertEquals(1, metadata.getDetectorCount(0));
     assertEquals(2, metadata.getFilterCount(0));
   }
@@ -507,7 +508,7 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidInstrumentNode"},enabled=false)
   public void testValidLaserNode() {
-    Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
+    Laser laser = (Laser) ome.getInstrument(0).getLaser(0);
     assertNotNull(laser);
     assertEquals(LIGHTSOURCE_LASER_ID, laser.getID());
     assertEquals(LIGHTSOURCE_LASER_MODEL, laser.getModel());
@@ -525,7 +526,7 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidLaserMetadata"},enabled=false)
   public void testValidLaserAnnotation() {
-    Annotation n = ome.getInstrument(0).getLightSource(0).getLinkedAnnotation(0);
+    Annotation n = ome.getInstrument(0).getLaser(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(LIGHTSOURCE_LASER_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
@@ -536,8 +537,8 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidLaserNode"},enabled=false)
   public void testValidPumpNode() {
-    Laser laser = (Laser) ome.getInstrument(0).getLightSource(0);
-    Laser laserPump = (Laser) ome.getInstrument(0).getLightSource(1);
+    Laser laser = ome.getInstrument(0).getLaser(0);
+    Laser laserPump = ome.getInstrument(0).getLaser(1);
     assertNotNull(laserPump);
     assertEquals(LIGHTSOURCE_PUMP_ID, laserPump.getID());
     assertEquals(LIGHTSOURCE_PUMP_MODEL, laserPump.getModel());
@@ -558,7 +559,7 @@ public class InOutCurrentTest {
   // Create <Arc/> under <Instrument/>
   @Test(dependsOnMethods={"testValidInstrumentNode"},enabled=false)
   public void testValidArcNode() {
-    Arc arc = (Arc) ome.getInstrument(0).getLightSource(2);
+    Arc arc = ome.getInstrument(0).getArc(0);
     assertNotNull(arc);
     assertEquals(LIGHTSOURCE_ARC_ID, arc.getID());
     assertEquals(LIGHTSOURCE_ARC_MODEL, arc.getModel());
@@ -576,7 +577,7 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidArcNode"},enabled=false)
   public void testValidArcAnnotation() {
-    Annotation n = ome.getInstrument(0).getLightSource(2).getLinkedAnnotation(0);
+    Annotation n = ome.getInstrument(0).getArc(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(LIGHTSOURCE_ARC_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
@@ -588,7 +589,7 @@ public class InOutCurrentTest {
   // Create <Filament/> under <Instrument/>
   @Test(dependsOnMethods={"testValidInstrumentNode"},enabled=false)
   public void testValidFilamentNode() {
-    Filament filament = (Filament) ome.getInstrument(0).getLightSource(3);
+    Filament filament = ome.getInstrument(0).getFilament(0);
     assertNotNull(filament);
     assertEquals(LIGHTSOURCE_FILAMENT_ID, filament.getID());
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, filament.getModel());
@@ -607,7 +608,7 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidFilamentNode"},enabled=false)
   public void testValidFilamentAnnotation() {
-    Annotation n = ome.getInstrument(0).getLightSource(3).getLinkedAnnotation(0);
+    Annotation n = ome.getInstrument(0).getFilament(0).getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(LIGHTSOURCE_FILAMENT_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
@@ -619,7 +620,7 @@ public class InOutCurrentTest {
   // Create <LightEmittingDiode/> under <Instrument/>
   @Test(dependsOnMethods={"testValidInstrumentNode"},enabled=false)
   public void testValidLightEmittingDiodeNode() {
-    LightEmittingDiode led = (LightEmittingDiode) ome.getInstrument(0).getLightSource(4);
+    LightEmittingDiode led = ome.getInstrument(0).getLightEmittingDiode(0);
     assertNotNull(led);
     assertEquals(LIGHTSOURCE_LED_ID, led.getID());
     assertEquals(LIGHTSOURCE_LED_MODEL, led.getModel());
@@ -628,7 +629,7 @@ public class InOutCurrentTest {
 
   @Test(dependsOnMethods={"testValidLightEmittingDiodeNode"},enabled=false)
   public void testValidLightEmittingDiodeAnnotation() {
-    LightEmittingDiode led = (LightEmittingDiode) ome.getInstrument(0).getLightSource(4);
+    LightEmittingDiode led = ome.getInstrument(0).getLightEmittingDiode(0);
     Annotation n = led.getLinkedAnnotation(0);
     assertNotNull(n);
     assertEquals(LIGHTSOURCE_LED_ANNOTATION_ID, n.getID());
@@ -805,8 +806,8 @@ public class InOutCurrentTest {
 
     Union shapeUnion = roi.getUnion();
     assertNotNull(shapeUnion);
-    assertEquals(1, shapeUnion.sizeOfShapeList());
-    Shape s = shapeUnion.getShape(0);
+    assertEquals(1, shapeUnion.sizeOfRectangleList());
+    Shape s = shapeUnion.getRectangle(0);
     assertNotNull(s);
     assertEquals(SHAPE_ID, s.getID());
     assertTrue(s instanceof Rectangle);
