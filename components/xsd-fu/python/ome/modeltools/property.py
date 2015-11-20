@@ -390,14 +390,14 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 pass
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
                         not self.model.opts.lang.hasPrimitiveType(
                             self.langType) and not self.isEnumeration):
                     shared = True
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 shared = True
 
         return shared
@@ -415,11 +415,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 weak = True
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 pass
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 pass
 
         return weak
@@ -445,7 +445,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = "ome::compat::weak_ptr<%s>&" % ns_sep
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -454,7 +454,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = "ome::compat::shared_ptr<%s>&" % ns_sep
                 else:
                     itype = "const %s&" % self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "std::vector<ome::compat::shared_ptr<%s> >&" % ns_sep
 
         return itype
@@ -492,7 +492,7 @@ class OMEModelProperty(OMEModelEntity):
                 itype = {' const': "const ome::compat::weak_ptr<%s>" % ns_sep,
                          '':       "ome::compat::weak_ptr<%s>" % ns_sep}
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -506,7 +506,7 @@ class OMEModelProperty(OMEModelEntity):
                              % ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS}
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = {' const':
                          "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
@@ -534,11 +534,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = self.argType()
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "ome::compat::shared_ptr<%s>&" % ns_sep
 
         return itype
@@ -570,12 +570,12 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = self.argType()
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
             elif (self.maxOccurs > 1 and
-                  not self.parent.isAbstractProprietary):
+                  not self.parent.isAbstract):
                 itype = {' const': "const ome::compat::shared_ptr<%s>&"
                          % ns_sep,
                          '':       "ome::compat::shared_ptr<%s>&"
@@ -625,7 +625,7 @@ class OMEModelProperty(OMEModelEntity):
                          '':       "ome::compat::shared_ptr<%s>"
                          % ns_sep}
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -639,7 +639,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
             elif (self.maxOccurs > 1 and
-                    not self.parent.isAbstractProprietary):
+                    not self.parent.isAbstract):
                 itype = {' const':
                          "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
@@ -699,11 +699,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 itype = self.langTypeNS
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "List<%s>" % self.langTypeNS
         elif isinstance(self.model.opts.lang, language.CXX):
             ns_sep = self.langTypeNS
@@ -723,7 +723,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 itype = "ome::compat::weak_ptr<%s>" % ns_sep
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -732,7 +732,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = "ome::compat::shared_ptr<%s>" % ns_sep
                 else:
                     itype = self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "std::vector<ome::compat::shared_ptr<%s> >" % ns_sep
 
         return itype
@@ -751,11 +751,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 idefault = None
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 idefault = None
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 idefault = "ArrayList<%s>" % self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
             ns_sep = self.langTypeNS
@@ -779,7 +779,7 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     pass
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.isEnumeration:
@@ -791,7 +791,7 @@ class OMEModelProperty(OMEModelEntity):
                             % (self.langTypeNS, self.defaultValue.upper()))
                 else:
                     pass
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 pass
 
         return idefault
@@ -812,10 +812,10 @@ class OMEModelProperty(OMEModelEntity):
         elif self.isBackReference:
             icomment = "%s back reference" % self.name
         elif self.maxOccurs == 1 and (
-                not self.parent.isAbstractProprietary or self.isAttribute or
+                not self.parent.isAbstract or self.isAttribute or
                 not self.isComplex() or not self.isChoice):
             icomment = "%s property" % self.name
-        elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+        elif self.maxOccurs > 1 and not self.parent.isAbstract:
             icomment = "%s property (occurs more than once)" % self.name
 
         return icomment
@@ -851,12 +851,12 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         header = "ome/xml/model/%s.h" % path
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         header = "ome/xml/model/%s.h" % path
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         pass
             elif (self.model.opts.lang.hasPrimitiveType(self.langType) and
                   not self.model.opts.lang.hasFundamentalType(
@@ -904,12 +904,12 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         deps.add("ome/xml/model/%s.h" % path)
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         deps.add("ome/xml/model/%s.h" % path)
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         deps.add("ome/xml/model/%s.h" % path)
                 if self.isReference:
                     # Make sure that the reference is a real generated object.
@@ -942,12 +942,12 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         pass
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         pass
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         fwd.add(self.langType)
         return fwd
     forward = property(
@@ -968,14 +968,14 @@ class OMEModelProperty(OMEModelEntity):
             return False
         return self.delegate.isComplex()
 
-    def _get_isAbstractProprietary(self):
+    def _get_isAbstract(self):
         o = self.model.getObjectByName(self.name)
         if o is None:
             return False
-        return o.isAbstractProprietary
-    isAbstractProprietary = property(
-        _get_isAbstractProprietary,
-        doc="""Is the property abstract proprietary.""")
+        return o.isAbstract
+    isAbstract = property(
+        _get_isAbstract,
+        doc="""Is the property abstract.""")
 
     def fromAttribute(klass, attribute, parent, model):
         """
