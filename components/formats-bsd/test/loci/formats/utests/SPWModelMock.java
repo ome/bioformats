@@ -345,8 +345,8 @@ public class SPWModelMock implements ModelMock {
 
       laser.linkPump(laserPump);
 
-      instrument.addLightSource(laser);
-      instrument.addLightSource(laserPump);
+      instrument.addLaser(laser);
+      instrument.addLaser(laserPump);
 
       // Create <Arc/> under <Instrument/>
       Arc arc = new Arc();
@@ -354,7 +354,7 @@ public class SPWModelMock implements ModelMock {
       arc.setModel(LIGHTSOURCE_ARC_MODEL);
       arc.setType(ARC_TYPE);
       arc.setPower(new Power(LIGHTSOURCE_ARC_POWER, UNITS.MW));
-      instrument.addLightSource(arc);
+      instrument.addArc(arc);
 
       // Create <Filament/> under <Instrument/>
       Filament filament = new Filament();
@@ -362,14 +362,14 @@ public class SPWModelMock implements ModelMock {
       filament.setModel(LIGHTSOURCE_FILAMENT_MODEL);
       filament.setType(FILAMENT_TYPE);
       filament.setPower(new Power(LIGHTSOURCE_FILAMENT_POWER, UNITS.MW));
-      instrument.addLightSource(filament);
+      instrument.addFilament(filament);
 
       // Create <LightEmittingDiode/> under <Instrument/>
       LightEmittingDiode led = new LightEmittingDiode();
       led.setID(LIGHTSOURCE_LED_ID);
       led.setModel(LIGHTSOURCE_LED_MODEL);
       led.setPower(new Power(LIGHTSOURCE_LED_POWER, UNITS.MW));
-      instrument.addLightSource(led);
+      instrument.addLightEmittingDiode(led);
     }
 
     // Create <Dichroic/> under <Instrument/>

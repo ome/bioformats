@@ -193,13 +193,21 @@ public class SPWModelReaderTest {
   @Test(dependsOnMethods={"testSetId"})
   public void testHasLightSources() {
     assertEquals(1, metadata.getInstrumentCount());
-    assertEquals(5, metadata.getLightSourceCount(0));
+    assertEquals(1, metadataWithNoLightSources.getArcCount(0));
+    assertEquals(1, metadataWithNoLightSources.getFilamentCount(0));
+    assertEquals(1, metadataWithNoLightSources.getLaserCount(0));
+    assertEquals(1, metadataWithNoLightSources.getLightEmittingDiodeCount(0));
+    assertEquals(1, metadataWithNoLightSources.getGenericExcitationSourceCount(0));
   }
 
   @Test(dependsOnMethods={"testSetIdWithNoLightSources"})
   public void testHasNoLightSources() {
     assertEquals(1, metadataWithNoLightSources.getInstrumentCount());
-    assertEquals(0, metadataWithNoLightSources.getLightSourceCount(0));
+    assertEquals(0, metadataWithNoLightSources.getArcCount(0));
+    assertEquals(0, metadataWithNoLightSources.getFilamentCount(0));
+    assertEquals(0, metadataWithNoLightSources.getLaserCount(0));
+    assertEquals(0, metadataWithNoLightSources.getLightEmittingDiodeCount(0));
+    assertEquals(0, metadataWithNoLightSources.getGenericExcitationSourceCount(0));
   }
 
   /**
