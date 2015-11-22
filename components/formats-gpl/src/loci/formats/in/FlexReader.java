@@ -1053,6 +1053,9 @@ public class FlexReader extends FormatReader {
     if (fieldCount == 1) {
       fieldCount *= (nFiles / runCount);
     }
+    if (fieldCount == 0) {
+      fieldCount = 1;
+    }
 
     int seriesCount = runCount * plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {
