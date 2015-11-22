@@ -129,8 +129,8 @@ public final class MetadataConverter {
       convertROIs(src, dest);
     }
 
+    convertInstruments(src, dest);
     if (MetadataLevel.MINIMUM != level) {
-      convertInstruments(src, dest);
       convertExperimenters(src, dest);
       convertExperimenterGroups(src, dest);
       convertExperiments(src, dest);
