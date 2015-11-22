@@ -829,7 +829,7 @@ public class FlexReader extends FormatReader {
    * If the 'firstFile' flag is set, then the core metadata is also
    * populated.
    */
-  private void parseFlexFile(int currentWell, int wellRow, int wellCol,
+  private boolean parseFlexFile(int currentWell, int wellRow, int wellCol,
     int field, boolean firstFile, MetadataStore store)
     throws FormatException, IOException
   {
@@ -838,7 +838,7 @@ public class FlexReader extends FormatReader {
     int fieldIndex = field < 0 || fieldCount == 0 ? 0 : field % fieldCount;
     int runIndex = field < 0 || fieldCount == 0 ? 0 : field / fieldCount;
     FlexFile file = lookupFile(wellRow, wellCol, fieldIndex, runIndex);
-    if (file == null) return;
+    if (file == null) return false;
 
     int originalFieldCount = fieldCount;
 
@@ -966,6 +966,7 @@ public class FlexReader extends FormatReader {
     if (oneFactors) {
       file.factors = null;
     }
+    return true;
   }
 
   /** Populate core metadata using the given list of image names. */
@@ -1406,9 +1407,9 @@ public class FlexReader extends FormatReader {
 
           // setting a negative field index indicates that the field count
           // should be taken from the XML
-          parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
+          boolean parsedXML = parseFlexFile(currentWell, row, col, nFiles == 1 ? -1 : field, firstFile, store);
           s.close();
-          if (firstFile) firstFile = false;
+	  if (firstFile && parsedXML) firstFile = false;
         }
         currentWell++;
       }
@@ -1555,9 +1556,8 @@ public class FlexReader extends FormatReader {
         plateBarcodes.add(value);
         if (plateBarcodes.size() > size) {
           nextPlate++;
-          plateCount++;
         }
-        if (populateCore) {
+        if (populateCore && value != null && nextPlate == 1) {
           store.setPlateExternalIdentifier(value, nextPlate - 1);
         }
       }
