@@ -201,8 +201,7 @@ namespace ome
 {% end %}\
       //
       // Abstract:                  ${klass.isAbstract}
-      // AbstractProprietary:       ${klass.isAbstractProprietary}
-      // ParentAbstractProprietary: ${klass.isParentAbstractProprietary}
+      // ParentAbstract: 			${klass.isParentAbstract}
       // Annotation:                ${klass.isAnnotation}
       // Annotated:                 ${klass.isAnnotated}
       // Described:                 ${klass.isDescribed}
@@ -281,7 +280,7 @@ namespace ome
       }
 {% end source %}\
 
-{% if not klass.isAbstract and not klass.isAbstractProprietary %}\
+{% if not klass.isAbstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Create a ${klass.name} model object from DOM element.
@@ -475,7 +474,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
           }
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or not prop.isAttribute) %}\
         std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
@@ -485,7 +484,7 @@ ${customUpdatePropertyContent[prop.name]}
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
-{% if prop.isComplex() and not klass.isAbstractProprietary %}\
+{% if prop.isComplex() and not klass.isAbstract %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
             common::xml::dom::Element elem(${prop.name}_nodeList.at(0));
@@ -519,8 +518,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
           }
 {% end %}\
-{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstractProprietary %}\
-{% if prop.isAbstractProprietary %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
+{% if prop.isAbstract %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once. The element's model
         // object type is also abstract so we need to have a handler for
@@ -548,7 +547,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
           }
 {% end %}\
-{% if not prop.isAbstractProprietary %}\
+{% if not prop.isAbstract %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once
         std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
@@ -930,7 +929,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 {% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -969,7 +968,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
+{% when prop.maxOccurs > 1 and not klass.isAbstract %}
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get size of linked ${prop.methodName} list.
@@ -1168,7 +1167,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end has parent shape %}\
 
-{% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
         virtual common::xml::dom::Element
@@ -1188,7 +1186,6 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
-{% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
       protected:
@@ -1209,7 +1206,7 @@ ${customUpdatePropertyContent[prop.name]}
         element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
         element.setAttribute("xsi:schemaLocation", getXMLNamespace() + " " + getXMLNamespace() + "/ome.xsd");
 {% end %}\
-{% if klass.isAbstractProprietary %}\
+{% if klass.isAbstract %}\
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
           {
@@ -1250,7 +1247,7 @@ ${customUpdatePropertyContent[prop.name]}
         element = ${klass.parentName}::asXMLElementInternal(document, element);
 {% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
+{% if not klass.isAbstract or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\

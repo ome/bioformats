@@ -59,7 +59,7 @@
         def is_abstract(name):
                 o = model.getObjectByName(name)
                 if o is not None and \
-                   (o.isAbstract or o.isAbstractProprietary):
+                   (o.isAbstract):
                         return True
                 return False
 
@@ -205,15 +205,6 @@ namespace ome
 
 {% end debug %}\
         /**
-         * Get the number of BinData elements in Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @returns the number of BinData elements.
-         */
-        virtual index_type
-        getPixelsBinDataCount(index_type imageIndex) const = 0;
-
-        /**
          * Get the number of links to a BooleanAnnotation.
          *
          * This method returns the number of references to the
@@ -332,32 +323,176 @@ namespace ome
          */
         virtual index_type
         getXMLAnnotationAnnotationCount(index_type xmlAnnotationIndex) const = 0;
-
+        
         /**
-         * Get the type of a LightSource.
+         * Get the number of links to a Line.
          *
-         * @param instrumentIndex the Instrument index.
-         * @param lightSourceIndex the LightSource index.
-         * @returns the LightSource type.
-         *
-         * @todo Can this be a const reference?
-         */
-        virtual const std::string&
-        getLightSourceType(index_type instrumentIndex,
-                           index_type lightSourceIndex) const = 0;
-
-        /**
-         * Get the type of a Shape.
+         * This method returns the number of references to the
+         * specified Line held by all model objects.
          *
          * @param roiIndex the ROI index.
-         * @param shapeIndex the Shape index.
-         * @returns the Shape type.
-         *
-         * @todo Can this be a const reference?
+         * @param lineIndex the Line index.
+         * @returns the number of Line links.
          */
-        virtual const std::string&
-        getShapeType(index_type roiIndex,
-                     index_type shapeIndex) const = 0;
+        virtual index_type
+        getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Rectangle.
+         *
+         * This method returns the number of references to the
+         * specified Rectangle held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param rectangleIndex the Rectangle index.
+         * @returns the number of Rectangle links.
+         */
+        virtual index_type
+        getRectangleAnnotationCount(index_type roiIndex, index_type rectangleIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Mask.
+         *
+         * This method returns the number of references to the
+         * specified Mask held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param maskIndex the Mask index.
+         * @returns the number of Mask links.
+         */
+        virtual index_type
+        getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Ellipse.
+         *
+         * This method returns the number of references to the
+         * specified Ellipse held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param ellipseIndex the Ellipse index.
+         * @returns the number of Ellipse links.
+         */
+        virtual index_type
+        getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Point.
+         *
+         * This method returns the number of references to the
+         * specified Point held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param pointIndex the Point index.
+         * @returns the number of Point links.
+         */
+        virtual index_type
+        getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Polygon.
+         *
+         * This method returns the number of references to the
+         * specified Polygon held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param polygonIndex the Polygon index.
+         * @returns the number of Polygon links.
+         */
+        virtual index_type
+        getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Polyline.
+         *
+         * This method returns the number of references to the
+         * specified Polyline held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param polylineIndex the Polyline index.
+         * @returns the number of Polyline links.
+         */
+        virtual index_type
+        getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Label.
+         *
+         * This method returns the number of references to the
+         * specified Label held by all model objects.
+         *
+         * @param roiIndex the ROI index.
+         * @param labelIndex the Label index.
+         * @returns the number of Label links.
+         */
+        virtual index_type
+        getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Arc.
+         *
+         * This method returns the number of references to the
+         * specified Arc held by all model objects.
+         *
+         * @param instrumentIndex the Instrument index.
+         * @param arcIndex the Arc index.
+         * @returns the number of Arc links.
+         */
+        virtual index_type
+        getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const = 0;
+        
+        /**
+         * Get the number of links to a Filament.
+         *
+         * This method returns the number of references to the
+         * specified Filament held by all model objects.
+         *
+         * @param instrumentIndex the Instrument index.
+         * @param filamentIndex the Filament index.
+         * @returns the number of Filament links.
+         */
+        virtual index_type
+        getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const = 0;      
+        
+        /**
+         * Get the number of links to a Laser.
+         *
+         * This method returns the number of references to the
+         * specified Laser held by all model objects.
+         *
+         * @param instrumentIndex the Instrument index.
+         * @param laserIndex the Laser index.
+         * @returns the number of Laser links.
+         */
+        virtual index_type
+        getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const = 0;
+        
+        /**
+         * Get the number of links to a LightEmittingDiode.
+         *
+         * This method returns the number of references to the
+         * specified LightEmittingDiode held by all model objects.
+         *
+         * @param instrumentIndex the Instrument index.
+         * @param lightEmittingDiodeIndex the LightEmittingDiode index.
+         * @returns the number of LightEmittingDiode links.
+         */
+        virtual index_type
+        getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const = 0;
+        
+        /**
+         * Get the number of links to a GenericExcitationSource.
+         *
+         * This method returns the number of references to the
+         * specified GenericExcitationSource held by all model objects.
+         *
+         * @param instrumentIndex the Instrument index.
+         * @param genericExcitationSourceIndex the GenericExcitationSource index.
+         * @returns the number of GenericExcitationSource links.
+         */
+        virtual index_type
+        getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const = 0;
+
 
 {% end header%}\
 {% if debug %}\
@@ -414,16 +549,6 @@ namespace ome
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-        /**
-         * Get the BigEndian property of Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         * @returns @c true if big endian, or @c false if little endian.
-         */
-        virtual bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const = 0;
 
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
@@ -442,7 +567,7 @@ namespace ome
 {% end header%}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -479,7 +604,7 @@ namespace ome
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
-${getter(k, o, prop, v)}\
+
 {% end %}\
 {% end %}\
 {% end %}\
@@ -495,7 +620,7 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
