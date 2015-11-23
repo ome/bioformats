@@ -549,8 +549,6 @@ ${counter(k, o, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-	// ${prop.name} accessor from parent ${k}    Testing
-
 
 {% end %}\
 {% end %}\
@@ -693,8 +691,6 @@ ${getter(k, o, prop, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-	// ${prop.name} accessor from parent ${k}      Testing
-
 
 {% end %}\
 {% end %}\

@@ -297,8 +297,6 @@ public class FilterMetadata implements MetadataStore
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k} Testing
-
 
 {% end %}\
 {% end %}\
