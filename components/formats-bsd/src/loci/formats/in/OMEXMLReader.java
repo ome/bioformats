@@ -118,6 +118,12 @@ public class OMEXMLReader extends FormatReader {
       FormatTools.NON_SPECIAL_DOMAINS;
   }
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
