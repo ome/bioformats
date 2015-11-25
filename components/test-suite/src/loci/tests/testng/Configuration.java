@@ -86,14 +86,21 @@ public class Configuration {
   private static final String TILE_MD5 = "Tile_MD5";
   private static final String TILE_ALTERNATE_MD5 = "Tile_Alternate_MD5";
   private static final String PHYSICAL_SIZE_X = "PhysicalSizeX";
+  private static final String PHYSICAL_SIZE_X_UNIT = "PhysicalSizeXUnit";
   private static final String PHYSICAL_SIZE_Y = "PhysicalSizeY";
+  private static final String PHYSICAL_SIZE_Y_UNIT = "PhysicalSizeYUnit";
   private static final String PHYSICAL_SIZE_Z = "PhysicalSizeZ";
+  private static final String PHYSICAL_SIZE_Z_UNIT = "PhysicalSizeZUnit";
   private static final String TIME_INCREMENT = "TimeIncrement";
+  private static final String TIME_INCREMENT_UNIT = "TimeIncrementUnit";
   private static final String LIGHT_SOURCE = "LightSource_";
   private static final String CHANNEL_NAME = "ChannelName_";
   private static final String EXPOSURE_TIME = "ExposureTime_";
+  private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit_";
   private static final String EMISSION_WAVELENGTH = "EmissionWavelength_";
+  private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit_";
   private static final String EXCITATION_WAVELENGTH = "ExcitationWavelength_";
+  private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
   private static final String DESCRIPTION = "Description";
@@ -102,15 +109,11 @@ public class Configuration {
   private static final String DATE = "Date";
   private static final String DELTA_T = "DeltaT_";
   private static final String X_POSITION = "PositionX_";
+  private static final String X_POSITION_UNIT = "PositionXUnit_";
   private static final String Y_POSITION = "PositionY_";
+  private static final String Y_POSITION_UNIT = "PositionYUnit_";
   private static final String Z_POSITION = "PositionZ_";
-  private static final String TIME_INCREMENT_UNIT = "TimeIncrementUnit";
-  private static final String EXPOSURE_TIME_UNIT = "ExposureTimeUnit";
-  private static final String PHYSICAL_SIZE_Z_UNIT = "PhysicalSizeZUnit";
-  private static final String PHYSICAL_SIZE_Y_UNIT = "PhysicalSizeYUnit";
-  private static final String PHYSICAL_SIZE_X_UNIT = "PhysicalSizeXUnit";
-  private static final String EMISSION_WAVELENGTH_UNIT = "EmissionWavelengthUnit";
-  private static final String EXCITATION_WAVELENGTH_UNIT = "ExcitationWavelengthUnit";
+  private static final String Z_POSITION_UNIT = "PositionZUnit_";
   
   // -- Fields --
 
@@ -308,7 +311,7 @@ public class Configuration {
 
   public Time getExposureTime(int channel) {
     String exposure = currentTable.get(EXPOSURE_TIME + channel);
-    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT);
+    String exposureUnits = currentTable.get(EXPOSURE_TIME_UNIT + channel);
     try {
       return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
     }
@@ -339,7 +342,7 @@ public class Configuration {
 
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT);
+    String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
     }
@@ -350,7 +353,7 @@ public class Configuration {
 
   public Length getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT);
+    String excitationUnits = currentTable.get(EXCITATION_WAVELENGTH_UNIT + channel);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
     }
@@ -525,18 +528,22 @@ public class Configuration {
       Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
       }
       Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
       }
       Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
+        seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
       }
       Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
         seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
+        seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
       }
 
       Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
@@ -560,6 +567,8 @@ public class Configuration {
           if (plane < retrieve.getPlaneCount(series)) {
             seriesTable.put(EXPOSURE_TIME + c,
               retrieve.getPlaneExposureTime(series, plane).value().toString());
+            seriesTable.put(EXPOSURE_TIME_UNIT + c,
+              retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
           }
         }
         catch (NullPointerException e) { }
@@ -567,11 +576,13 @@ public class Configuration {
         Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
           seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
+          seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
         }
         Length exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
           seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
+          seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
         }
         try {
           seriesTable.put(DETECTOR + c,
@@ -588,15 +599,18 @@ public class Configuration {
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {
-            seriesTable.put(X_POSITION + p, xPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(X_POSITION + p, xPos.value().toString());
+            seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, yPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(Y_POSITION + p, yPos.value().toString());
+            seriesTable.put(Y_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, zPos.value(UNITS.REFERENCEFRAME).toString());
+            seriesTable.put(Z_POSITION + p, zPos.value().toString());
+            seriesTable.put(Z_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
         }
         catch (IndexOutOfBoundsException e) {

@@ -306,7 +306,7 @@ public class ZeissCZIReader extends FormatReader {
     int outputRow = 0, outputCol = 0;
 
     boolean validScanDim =
-      scanDim == (getImageCount() / getSizeC()) && scanDim > 1;
+      scanDim == (getImageCount() / (getSizeC() * phases)) && scanDim > 1;
     if (planes.size() == getImageCount()) {
       validScanDim = false;
     }
