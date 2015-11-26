@@ -1436,32 +1436,39 @@ public final class FormatTools {
   }
   
   public static Length getPhysicalSize(Double value, String unit) {
-    if (unit != null) {
-      try {
-        UnitsLength ul = UnitsLength.fromString(unit);
-        int ordinal = ul.ordinal();
-        Length returnLength = UnitsLength.create(value, ul);
-
-        if (returnLength.value().doubleValue() > Constants.EPSILON) {
-          return returnLength;
+    if (value != null) {
+      if (unit != null) {
+        try {
+          UnitsLength ul = UnitsLength.fromString(unit);
+          int ordinal = ul.ordinal();
+          Length returnLength = UnitsLength.create(value, ul);
+  
+          if (returnLength.value().doubleValue() > Constants.EPSILON) {
+            return returnLength;
+          }
+          
+          // If the requested unit produces a value less than Constants.EPSILON then we switch to the next smallest unit possible
+          // Using UnitsLength.values().length - 2 as a boundary so as not to include Pixel and Reference Frame as convertible units
+          while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
+            ordinal++;
+            ul = UnitsLength.values()[ordinal];
+            Length tempLength = UnitsLength.create(0, ul);
+            returnLength = UnitsLength.create(returnLength.value(tempLength.unit()), ul);
+          }
+          if (returnLength.value().doubleValue() > Constants.EPSILON && returnLength.value().doubleValue() < Double.POSITIVE_INFINITY) {
+            return returnLength;
+          }
+          else {
+            LOGGER.debug("Expected positive value for PhysicalSize; got {}", value);
+            return null;
+          }
+        } catch (EnumerationException e) {
         }
-        
-        // If the requested unit produces a value less than Constants.EPSILON then we switch to the next smallest unit possible
-        // Using UnitsLength.values().length - 2 as a boundary so as not to include Pixel and Reference Frame as convertible units
-        while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
-          ordinal++;
-          ul = UnitsLength.values()[ordinal];
-          Length tempLength = UnitsLength.create(0, ul);
-          returnLength = UnitsLength.create(returnLength.value(tempLength.unit()), ul);
-        }
-        if (returnLength.value().doubleValue() > Constants.EPSILON) {
-          return returnLength;
-        }
-        else return null;
-      } catch (EnumerationException e) {
       }
+      return new Length(value, UNITS.MICROM);
     }
-    return new Length(value, UNITS.MICROM);
+    LOGGER.debug("Expected positive value for PhysicalSize; got {}", value);
+    return null;
   }
 
   /**
@@ -1487,13 +1494,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value, String unit) {
-    if (isPositiveValue(value))
-    {
       return getPhysicalSize(value, unit);
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
-      return null;
-    }
   }
 
   /**
@@ -1506,13 +1507,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value, Unit<Length> unit) {
-    if (isPositiveValue(value))
-    {
       return getPhysicalSize(value, unit.getSymbol());
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
-      return null;
-    }
   }
 
   /**
@@ -1538,13 +1533,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value, String unit) {
-    if (isPositiveValue(value))
-    {
       return getPhysicalSize(value, unit);
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
-      return null;
-    }
   }
 
   /**
@@ -1557,13 +1546,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value, Unit<Length> unit) {
-    if (isPositiveValue(value))
-    {
       return getPhysicalSize(value, unit.getSymbol());
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
-      return null;
-    }
   }
 
   /**
@@ -1589,13 +1572,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeZ(Double value, String unit) {
-    if (isPositiveValue(value))
-    {
       return getPhysicalSize(value, unit);
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
-      return null;
-    }
   }
 
   /**
@@ -1609,13 +1586,7 @@ public final class FormatTools {
 
    */
   public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
-    if (isPositiveValue(value))
-    {
-      return createLength(value, unit);
-    } else {
-      LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
-      return null;
-    }
+      return getPhysicalSize(value, unit.getSymbol());
   }
 
   public static Length getEmissionWavelength(Double value) {
