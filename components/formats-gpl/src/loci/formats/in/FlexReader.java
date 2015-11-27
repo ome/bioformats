@@ -204,13 +204,20 @@ public class FlexReader extends FormatReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
 
-    FlexFile file = lookupFile(0);
-    IFD ifd = file.ifds.get(0);
-    try {
-      return (int) ifd.getTileWidth();
+    int index = 0;
+    FlexFile file = lookupFile(index);
+    while ((file == null || file.ifds == null) && index < getSeriesCount()) {
+      index++;
+      file = lookupFile(index);
     }
-    catch (FormatException e) {
-      LOGGER.debug("Could not retrieve tile width", e);
+    if (file != null && file.ifds != null && file.ifds.size() > 0) {
+      IFD ifd = file.ifds.get(0);
+      try {
+        return (int) ifd.getTileWidth();
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Could not retrieve tile width", e);
+      }
     }
     return super.getOptimalTileWidth();
   }
@@ -220,13 +227,20 @@ public class FlexReader extends FormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
 
-    FlexFile file = lookupFile(0);
-    IFD ifd = file.ifds.get(0);
-    try {
-      return (int) ifd.getTileLength();
+    int index = 0;
+    FlexFile file = lookupFile(index);
+    while ((file == null || file.ifds == null) && index < getSeriesCount()) {
+      index++;
+      file = lookupFile(index);
     }
-    catch (FormatException e) {
-      LOGGER.debug("Could not retrieve tile height", e);
+    if (file != null && file.ifds != null && file.ifds.size() > 0) {
+      IFD ifd = file.ifds.get(0);
+      try {
+        return (int) ifd.getTileLength();
+      }
+      catch (FormatException e) {
+        LOGGER.debug("Could not retrieve tile height", e);
+      }
     }
     return super.getOptimalTileHeight();
   }
