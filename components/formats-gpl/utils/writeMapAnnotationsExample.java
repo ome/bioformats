@@ -86,7 +86,7 @@ public class writeMapAnnotationsExample {
         metadata.setMapAnnotationAnnotator("Example Map Annotation", mapAnnotationIndex);
         metadata.setMapAnnotationDescription("Example Description", mapAnnotationIndex);
         metadata.setMapAnnotationNamespace("Example NameSpace", mapAnnotationIndex);
-        metadata.setImageAnnotationRef("MapAnnotation",0, annotationRefIndex);
+        metadata.setImageAnnotationRef(mapAnnotationID,0, annotationRefIndex);
 
         mapAnnotationIndex = 1;
         annotationRefIndex = 1;
@@ -96,7 +96,7 @@ public class writeMapAnnotationsExample {
         metadata.setMapAnnotationAnnotator("Example Map Annotation 1", mapAnnotationIndex);
         metadata.setMapAnnotationDescription("Example Description 1", mapAnnotationIndex);
         metadata.setMapAnnotationNamespace("Example NameSpace 1", mapAnnotationIndex);
-        metadata.setImageAnnotationRef("MapAnnotation 1",0, annotationRefIndex);
+        metadata.setImageAnnotationRef(mapAnnotationID,0, annotationRefIndex);
         
         //Initialize writer and save file
         ImageWriter writer = new ImageWriter();
