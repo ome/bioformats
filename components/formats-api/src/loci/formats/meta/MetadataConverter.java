@@ -130,12 +130,9 @@ public final class MetadataConverter {
     }
 
     convertInstruments(src, dest);
-    if (MetadataLevel.MINIMUM != level) {
-      convertExperimenters(src, dest);
-      convertExperimenterGroups(src, dest);
-      convertExperiments(src, dest);
-    }
-
+    convertExperimenters(src, dest);
+    convertExperimenterGroups(src, dest);
+    convertExperiments(src, dest);
     convertImages(src, dest, level);
     convertPlates(src, dest);
     convertScreens(src, dest);
