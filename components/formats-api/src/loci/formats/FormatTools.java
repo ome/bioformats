@@ -1436,14 +1436,14 @@ public final class FormatTools {
   }
   
   public static Length getPhysicalSize(Double value, String unit) {
-    if (value != null) {
+    if (value != null && value != 0) {
       if (unit != null) {
         try {
           UnitsLength ul = UnitsLength.fromString(unit);
           int ordinal = ul.ordinal();
           Length returnLength = UnitsLength.create(value, ul);
   
-          if (returnLength.value().doubleValue() > Constants.EPSILON) {
+          if (returnLength.value().doubleValue() > Constants.EPSILON && returnLength.value().doubleValue() < Double.POSITIVE_INFINITY) {
             return returnLength;
           }
           
@@ -1829,5 +1829,4 @@ public final class FormatTools {
     }
     return new Time(value.getNumberValue(), valueUnit);
   }
-
 }
