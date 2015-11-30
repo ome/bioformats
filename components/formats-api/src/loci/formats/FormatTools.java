@@ -1449,7 +1449,7 @@ public final class FormatTools {
           
           // If the requested unit produces a value less than Constants.EPSILON then we switch to the next smallest unit possible
           // Using UnitsLength.values().length - 2 as a boundary so as not to include Pixel and Reference Frame as convertible units
-          while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 2)) { 
+          while (returnLength.value().doubleValue() < Constants.EPSILON && ordinal < (UnitsLength.values().length - 3)) { 
             ordinal++;
             ul = UnitsLength.values()[ordinal];
             Length tempLength = UnitsLength.create(0, ul);
