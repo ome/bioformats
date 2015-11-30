@@ -329,10 +329,18 @@ public class Configuration {
     String pos = currentTable.get(X_POSITION + plane);
     return pos == null ? null : new Double(pos);
   }
+  
+  public String getPositionXUnit(int plane) {
+    return currentTable.get(X_POSITION_UNIT + plane);
+  }
 
   public Double getPositionY(int plane) {
     String pos = currentTable.get(Y_POSITION + plane);
     return pos == null ? null : new Double(pos);
+  }
+  
+  public String getPositionYUnit(int plane) {
+    return currentTable.get(Y_POSITION_UNIT + plane);
   }
 
   public Double getPositionZ(int plane) {
@@ -340,6 +348,10 @@ public class Configuration {
     return pos == null ? null : new Double(pos);
   }
 
+  public String getPositionZUnit(int plane) {
+    return currentTable.get(Z_POSITION_UNIT + plane);
+  }
+  
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
