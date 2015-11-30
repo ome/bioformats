@@ -90,7 +90,7 @@ public class writeMapAnnotationsExample {
 
         mapAnnotationIndex = 1;
         annotationRefIndex = 1;
-        String mapAnnotationID = MetadataTools.createLSID("MapAnnotation", 0, mapAnnotationIndex);
+        mapAnnotationID = MetadataTools.createLSID("MapAnnotation", 0, mapAnnotationIndex);
         metadata.setMapAnnotationID(mapAnnotationID, mapAnnotationIndex);
         metadata.setMapAnnotationValue(mapList, mapAnnotationIndex);
         metadata.setMapAnnotationAnnotator("Example Map Annotation 1", mapAnnotationIndex);
