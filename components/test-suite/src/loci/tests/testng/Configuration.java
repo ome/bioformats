@@ -605,12 +605,12 @@ public class Configuration {
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
             seriesTable.put(Y_POSITION + p, yPos.value().toString());
-            seriesTable.put(Y_POSITION_UNIT + p, xPos.unit().getSymbol());
+            seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
             seriesTable.put(Z_POSITION + p, zPos.value().toString());
-            seriesTable.put(Z_POSITION_UNIT + p, xPos.unit().getSymbol());
+            seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
           }
         }
         catch (IndexOutOfBoundsException e) {
