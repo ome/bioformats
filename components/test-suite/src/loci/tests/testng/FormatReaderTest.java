@@ -59,6 +59,9 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -66,6 +69,7 @@ import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Quantity;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 import org.slf4j.Logger;
@@ -1169,7 +1173,18 @@ public class FormatReaderTest {
           return;
         }
         else if (expectedX != null) {
-          Double x = posX.value(UNITS.REFERENCEFRAME).doubleValue();
+          Unit<Length> xUnit = UNITS.REFERENCEFRAME;
+          if (config.getPositionXUnit(p) != null) {
+            try {
+              UnitsLength unit = UnitsLength.fromString(config.getPositionXUnit(p));
+              xUnit = UnitsLengthEnumHandler.getBaseUnit(unit);
+            }
+            catch (EnumerationException e) {
+              result(testName, false, "Invalid X position unit");
+              return;
+            }
+          }
+          Double x = posX.value(xUnit).doubleValue();
           if (Math.abs(x - expectedX) > Constants.EPSILON) {
             result(testName, false, "X position series " + i + ", plane " + p +
               " (expected " + expectedX + ", actual " + x + ")");
@@ -1184,7 +1199,18 @@ public class FormatReaderTest {
           return;
         }
         else if (expectedY != null) {
-          Double y = posY.value(UNITS.REFERENCEFRAME).doubleValue();
+          Unit<Length> yUnit = UNITS.REFERENCEFRAME;
+          if (config.getPositionYUnit(p) != null) {
+            try {
+              UnitsLength unit = UnitsLength.fromString(config.getPositionYUnit(p));
+              yUnit = UnitsLengthEnumHandler.getBaseUnit(unit);
+            }
+            catch (EnumerationException e) {
+              result(testName, false, "Invalid Y position unit");
+              return;
+            }
+          }
+          Double y = posY.value(yUnit).doubleValue();
           if (Math.abs(y - expectedY) > Constants.EPSILON) {
             result(testName, false, "Y position series " + i + ", plane " + p +
               " (expected " + expectedY + ", actual " + y + ")");
@@ -1199,7 +1225,18 @@ public class FormatReaderTest {
           return;
         }
         else if (expectedZ != null) {
-          Double z = posZ.value(UNITS.REFERENCEFRAME).doubleValue();
+          Unit<Length> zUnit = UNITS.REFERENCEFRAME;
+          if (config.getPositionZUnit(p) != null) {
+            try {
+              UnitsLength unit = UnitsLength.fromString(config.getPositionZUnit(p));
+              zUnit = UnitsLengthEnumHandler.getBaseUnit(unit);
+            }
+            catch (EnumerationException e) {
+              result(testName, false, "Invalid Z position unit");
+              return;
+            }
+          }
+          Double z = posZ.value(zUnit).doubleValue();
           if (Math.abs(z - expectedZ) > Constants.EPSILON) {
             result(testName, false, "Z position series " + i + ", plane " + p +
               " (expected " + expectedZ + ", actual " + z + ")");
