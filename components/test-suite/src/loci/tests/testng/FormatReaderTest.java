@@ -1161,15 +1161,23 @@ public class FormatReaderTest {
         Double expectedX = config.getPositionX(p);
         Double expectedY = config.getPositionY(p);
         Double expectedZ = config.getPositionZ(p);
-
+        String expectedXUnit = config.getPositionXUnit(p);
+        String expectedYUnit = config.getPositionYUnit(p);
+        String expectedZUnit = config.getPositionZUnit(p);
+        
         if (posX == null && expectedX == null) {
         }
         else if (posX == null) {
           result(testName, false, "missing X position for series " + i + ", plane " + p);
           return;
         }
-        else if (expectedX != null) {
-          Double x = posX.value(UNITS.REFERENCEFRAME).doubleValue();
+        else if (expectedX != null && expectedXUnit != null) {
+          Double x = posX.value().doubleValue();
+          if (!expectedXUnit.equals(posX.unit().getSymbol())) {
+            result(testName, false, "X position unit series " + i + ", plane " + p +
+              " (expected " + expectedXUnit + ", actual " + posX.unit().getSymbol() + ")");
+            return;
+          }
           if (Math.abs(x - expectedX) > Constants.EPSILON) {
             result(testName, false, "X position series " + i + ", plane " + p +
               " (expected " + expectedX + ", actual " + x + ")");
@@ -1183,23 +1191,32 @@ public class FormatReaderTest {
           result(testName, false, "missing Y position for series " + i + ", plane " + p);
           return;
         }
-        else if (expectedY != null) {
-          Double y = posY.value(UNITS.REFERENCEFRAME).doubleValue();
+        else if (expectedY != null && expectedYUnit != null) {
+          Double y = posY.value().doubleValue();
+          if (!expectedYUnit.equals(posY.unit().getSymbol())) {
+            result(testName, false, "Y position unit series " + i + ", plane " + p +
+              " (expected " + expectedYUnit + ", actual " + posY.unit().getSymbol() + ")");
+            return;
+          }
           if (Math.abs(y - expectedY) > Constants.EPSILON) {
             result(testName, false, "Y position series " + i + ", plane " + p +
               " (expected " + expectedY + ", actual " + y + ")");
             return;
           }
         }
-
         if (posZ == null && expectedZ == null) {
         }
         else if (posZ == null) {
           result(testName, false, "missing Z position for series " + i + ", plane " + p);
           return;
         }
-        else if (expectedZ != null) {
-          Double z = posZ.value(UNITS.REFERENCEFRAME).doubleValue();
+        else if (expectedZ != null && expectedZUnit != null) {
+          Double z = posZ.value().doubleValue();
+          if (!expectedZUnit.equals(posZ.unit().getSymbol())) {
+            result(testName, false, "Z position unit series " + i + ", plane " + p +
+              " (expected " + expectedZUnit + ", actual " + posZ.unit().getSymbol() + ")");
+            return;
+          }
           if (Math.abs(z - expectedZ) > Constants.EPSILON) {
             result(testName, false, "Z position series " + i + ", plane " + p +
               " (expected " + expectedZ + ", actual " + z + ")");

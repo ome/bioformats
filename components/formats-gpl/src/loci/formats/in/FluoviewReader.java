@@ -326,10 +326,12 @@ public class FluoviewReader extends BaseTiffReader {
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
         if (i > 1) {
           zPositions = stamps[i - 2];
-          for (Double z : zPositions) {
-            BigDecimal bd = new BigDecimal(z);
-            bd = bd.setScale(10, RoundingMode.HALF_UP);
-            if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+          if (zPositions != null) {
+            for (Double z : zPositions) {
+              BigDecimal bd = new BigDecimal(z);
+              bd = bd.setScale(10, RoundingMode.HALF_UP);
+              if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+            }
           }
         }
         if (uniqueZ.size() > 1 && uniqueZ.size() == size) {
@@ -512,7 +514,7 @@ public class FluoviewReader extends BaseTiffReader {
         final Length xl = new Length(posX, UNITS.REFERENCEFRAME);
         final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
         Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
-        if (zPositions != null) {
+        if (zPositions != null && zPositions.length > image) {
           zl = new Length(zPositions[image], UNITS.MICROM);
         }
         store.setPlanePositionX(xl, i, image);
