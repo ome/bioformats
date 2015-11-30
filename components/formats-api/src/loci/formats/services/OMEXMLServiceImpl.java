@@ -60,6 +60,8 @@ import loci.formats.meta.ModuloAnnotation;
 import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
+
+import ome.units.quantity.Length;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -807,7 +809,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         throw new IllegalArgumentException(
             "Expecting OMEXMLMetadata instance.");
       }
-
       dest.setRoot(ome);
     }
     else {
@@ -815,6 +816,25 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       // metadata object and copy it into the destination
       IMetadata src = createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
+
+      // make sure that physical sizes are corrected
+      for (int image=0; image<src.getImageCount(); image++) {
+        Length physicalSizeX = src.getPixelsPhysicalSizeX(image);
+        if (physicalSizeX != null && physicalSizeX.value() != null) {
+          physicalSizeX = FormatTools.getPhysicalSize(physicalSizeX.value().doubleValue(), physicalSizeX.unit().getSymbol());
+          dest.setPixelsPhysicalSizeX(physicalSizeX, image);
+        }
+        Length physicalSizeY = src.getPixelsPhysicalSizeY(image);
+        if (physicalSizeY != null && physicalSizeY.value() != null) {
+          physicalSizeY = FormatTools.getPhysicalSize(physicalSizeY.value().doubleValue(), physicalSizeY.unit().getSymbol());
+          dest.setPixelsPhysicalSizeY(physicalSizeY, image);
+        }
+        Length physicalSizeZ = src.getPixelsPhysicalSizeZ(image);
+        if (physicalSizeZ != null && physicalSizeZ.value() != null) {
+          physicalSizeZ = FormatTools.getPhysicalSize(physicalSizeZ.value().doubleValue(), physicalSizeZ.unit().getSymbol());
+          dest.setPixelsPhysicalSizeZ(physicalSizeZ, image);
+        }
+      }
     }
   }
 
