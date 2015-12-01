@@ -275,7 +275,7 @@ public class FlexReader extends FormatReader {
       ifd = file.ifds.get(imageNumber);
       factor = 1d;
     }
-    else {
+    else if (firstFile != null && firstFile.ifds != null) {
       // Only the first IFD was read. Hack the IFD to adjust the offset.
       final IFD firstIFD = firstFile.ifds.get(0);
       ifd = new IFD(firstIFD);
@@ -297,6 +297,9 @@ public class FlexReader extends FormatReader {
         offsets[i] += offset;
       }
       ifd.putIFDValue(tag, offsets);
+    }
+    else {
+      return buf;
     }
     int nBytes = ifd.getBitsPerSample()[0] / 8;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
