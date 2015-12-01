@@ -1436,7 +1436,7 @@ public final class FormatTools {
   }
   
   public static Length getPhysicalSize(Double value, String unit) {
-    if (value != null && value != 0) {
+    if (value != null && value != 0 && value < Double.POSITIVE_INFINITY) {
       if (unit != null) {
         try {
           UnitsLength ul = UnitsLength.fromString(unit);
