@@ -2396,6 +2396,7 @@ utilityRating = Good
 privateSpecification = true
 reader = ZeissCZIReader
 mif = true
+notes = Bio-Formats does not support CZI files generated using JPEG-XR compression.
 
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm
