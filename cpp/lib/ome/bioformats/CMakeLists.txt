@@ -166,7 +166,7 @@ target_link_libraries(ome-bioformats
                       Boost::boost
                       Boost::iostreams
                       Boost::filesystem
-                      ${TIFF_LIBRARIES})
+                      TIFF::TIFF)
 
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
