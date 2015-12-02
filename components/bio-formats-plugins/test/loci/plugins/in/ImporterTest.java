@@ -182,11 +182,17 @@ public class ImporterTest {
       String.format(template, "2", "5"),
       String.format(template, "3", "5")
     };
-    FAKE_PATTERN = String.format(template, "<1-3>", "<1-5>");
 
     for (String file : FAKE_FILES) {
-      Location.mapId(file, "iThinkI'mImportantButI'mNot");
+      try {
+        (new Location(file)).createNewFile();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
+
+    String FAKE_PATTERN_BASE = String.format(template, "<1-3>", "<1-5>");
+    FAKE_PATTERN = (new Location(FAKE_PATTERN_BASE).getAbsolutePath());
   }
 
   // ** Helper methods *******************************************************************
