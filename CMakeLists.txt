@@ -92,6 +92,7 @@ include(XsdFu)
 include(GTest)
 include(Doxygen)
 include(HeaderTest)
+find_package(OME 5.2.0 REQUIRED Compat Common)
 
 if(MSVC)
   # Debug library suffix.

@@ -157,7 +157,10 @@ set(BIOFORMATS_HEADERS
 add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
+target_link_libraries(ome-bioformats
+                      OME::Compat
+                      OME::Common
+                      ome-xml
                       Boost::boost
                       Boost::iostreams
                       Boost::filesystem

@@ -139,7 +139,7 @@ set(OME_XML_SOURCES
 add_library(ome-xml
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
-target_link_libraries(ome-xml ome-compat ome-common)
+target_link_libraries(ome-xml OME::Compat OME::Common)
 target_link_libraries(ome-xml Boost::date_time)
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
