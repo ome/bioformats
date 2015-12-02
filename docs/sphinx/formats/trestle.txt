@@ -17,7 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Trestle <trestle-metadata>`
+Reader: TrestleReader (:bfreader:`Source Code <TrestleReader.java>`, :doc:`Supported Metadata Fields </metadata/TrestleReader>`)
+
 
 
 Sample Datasets:
@@ -45,12 +46,5 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`TrestleReader.java`
-
-Notes:
 
 

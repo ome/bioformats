@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Andor Bio-Imaging Division (ABD) TIFF <olympus-fluoview-tiff-metadata>`
+Reader: FluoviewReader (:bfreader:`Source Code <FluoviewReader.java>`, :doc:`Supported Metadata Fields </metadata/FluoviewReader>`)
+
 
 
 
@@ -44,13 +45,7 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`FluoviewReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

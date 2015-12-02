@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Leica LCS LEI <leica-lcs-lei-metadata>`
+Reader: LeicaReader (:bfreader:`Source Code <LeicaReader.java>`, :doc:`Supported Metadata Fields </metadata/LeicaReader>`)
+
 
 Freely Available Software:
 
@@ -47,13 +48,7 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`LeicaReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

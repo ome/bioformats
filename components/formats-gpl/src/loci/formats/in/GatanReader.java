@@ -104,7 +104,7 @@ public class GatanReader extends FormatReader {
 
   /** Constructs a new Gatan reader. */
   public GatanReader() {
-    super("Gatan Digital Micrograph", "dm3");
+    super("Gatan Digital Micrograph", new String[] {"dm3", "dm4"});
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixNecessary = false;
   }
@@ -484,7 +484,7 @@ public class GatanReader extends FormatReader {
 
         if (labelString.equals("Scale")) {
           if (value.indexOf(",") == -1) {
-            pixelSizes.add(new Double(value));
+            pixelSizes.add(f.parse(value).doubleValue());
           }
         }
         else if (labelString.equals("Units")) {

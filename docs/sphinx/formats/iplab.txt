@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`IPLab <iplab-metadata>`
+Reader: IPLabReader (:bfreader:`Source Code <IPLabReader.java>`, :doc:`Supported Metadata Fields </metadata/IPLabReader>`)
+
 
 Freely Available Software:
 
@@ -48,13 +49,7 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`IPLabReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

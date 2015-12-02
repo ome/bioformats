@@ -108,10 +108,9 @@ public final class LibraryChecker {
   public static boolean checkJava() {
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
-    if (ver < 1.6) {
+    if (ver < 1.7) {
       IJ.error("Bio-Formats Plugins",
-        "Sorry, the Bio-Formats plugins require Java 1.6 or later." +
-        "\nYou can download ImageJ with JRE 1.6 from the ImageJ web site.");
+        "Sorry, the Bio-Formats plugins require Java 1.7 or later.");
       return false;
     }
     return true;

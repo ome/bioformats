@@ -71,7 +71,7 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6.html";
+			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook.html";
 	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
 			"Please see " + URL_3I_SLD + " for details.";
 	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
@@ -274,9 +274,9 @@ public class SlideBook6Reader  extends FormatReader {
 					double stepSize = 0;
 					if (numZPlanes[capture] > 1) {
 						double plane0 = getZPosition(capture, 0, 0);
-						double plane1 = getZPosition(capture, 0, getNumChannels(capture));
+						double plane1 = getZPosition(capture, 0, 1);
 						// distance between plane 0 and 1 is step size, assume constant for all planes
-						stepSize = plane1 - plane0;
+						stepSize = Math.abs(plane1 - plane0);
 					}
 
 					Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);

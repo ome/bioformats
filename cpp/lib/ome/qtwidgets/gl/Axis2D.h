@@ -39,8 +39,6 @@
 #ifndef OME_QTWIDGETS_GL_AXIS2D_H
 #define OME_QTWIDGETS_GL_AXIS2D_H
 
-#include <glm/glm.hpp>
-
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShader>
@@ -51,6 +49,7 @@
 
 #include <ome/compat/memory.h>
 
+#include <ome/qtwidgets/glm.h>
 #include <ome/qtwidgets/glsl/v110/GLFlatShader2D.h>
 
 namespace ome

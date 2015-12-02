@@ -36,7 +36,7 @@
  * #L%
  */
 
-#include <ome/common/xml/dom/Document.h>
+#include <ome/xml/Document.h>
 #include <ome/xml/OMEEntityResolver.h>
 
 namespace

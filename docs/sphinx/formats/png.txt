@@ -18,7 +18,9 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`PNG (Portable Network Graphics) <png-metadata>`
+Reader: APNGReader (:bsd-reader:`Source Code <APNGReader.java>`, :doc:`Supported Metadata Fields </metadata/APNGReader>`)
+
+Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Freely Available Software:
 
@@ -46,16 +48,10 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
 
 
-Source Code: :bsd-reader:`APNGReader.java`
-
-Notes:
-
-
-Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_  
+Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_
 API to read and write PNG files. 
 
 .. seealso:: 

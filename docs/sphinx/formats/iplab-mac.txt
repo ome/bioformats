@@ -1,7 +1,7 @@
-.. index:: IPLab-Mac
+.. index:: IVision
 .. index:: .ipm
 
-IPLab-Mac
+IVision
 ===============================================================================
 
 Extensions: .ipm
@@ -18,18 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`IPLab-Mac <iplab-mac-metadata>`
+Reader: IvisionReader (:bfreader:`Source Code <IvisionReader.java>`, :doc:`Supported Metadata Fields </metadata/IvisionReader>`)
+
 
 
 
 We currently have:
 
-* a few IPLab-Mac datasets 
+* a few iVision-Mac datasets
 * a specification document
 
 We would like to have:
 
-* more IPLab-Mac datasets
+* more iVision-Mac datasets
 
 **Ratings**
 
@@ -44,14 +45,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`IvisionReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+iVision-Mac was formerly called IPLab for Macintosh.

@@ -62,6 +62,7 @@ if (OME_QTOPENGL)
       GLContainer.h
       GLWindow.h
       GLView2D.h
+      glm.h
       NavigationDock2D.h
       TexelProperties.h)
 
@@ -138,7 +139,7 @@ if (OME_QTOPENGL)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                  ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-qtwidgets)
 
   # Dump header list for testing
   header_include_list_write(QTWIDGETS_HEADERS "" ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)

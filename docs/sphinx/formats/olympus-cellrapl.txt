@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Olympus CellR/APL <olympus-cellrapl-metadata>`
+Reader: APLReader (:bfreader:`Source Code <APLReader.java>`, :doc:`Supported Metadata Fields </metadata/APLReader>`)
+
 
 
 
@@ -44,12 +45,5 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`APLReader.java`
-
-Notes:
 
 

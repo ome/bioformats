@@ -23,7 +23,6 @@
  * #L%
  */
 
-package loci.formats.tools;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -61,9 +60,14 @@ public class MakeDatasetStructureTable {
     out.println("choose if you want");
     out.println("to open/import a dataset in a particular format.");
     out.println();
+    out.println(".. only:: html");
+    out.println();
+    out.println("    You can sort this table by clicking on any of the headings.");
+    out.println();
     out.println(".. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|");
     out.println();
     out.println(".. list-table::");
+    out.println("   :class: sortable");
     out.println("   :header-rows: 1");
     out.println();
     out.println("   * - Format name");
@@ -153,7 +157,10 @@ public class MakeDatasetStructureTable {
     printHeader();
 
     for (IFormatReader reader : allReaders) {
-      printFormatEntry(reader);
+      try {
+        printFormatEntry(reader);
+      } catch (IllegalStateException e) {
+      }
     }
 
     printFooter();

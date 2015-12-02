@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Applied Precision CellWorX <applied-precision-cellworx-metadata>`
+Reader: CellWorxReader (:bfreader:`Source Code <CellWorxReader.java>`, :doc:`Supported Metadata Fields </metadata/CellWorxReader>`)
+
 
 
 
@@ -44,12 +45,5 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`CellWorxReader.java`
-
-Notes:
 
 

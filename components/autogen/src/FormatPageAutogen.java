@@ -115,6 +115,7 @@ public class FormatPageAutogen {
       context.put("utilityRating", table.get("utilityRating"));
       context.put("reader", table.get("reader"));
       context.put("writer", table.get("writer"));
+      context.put("mif", table.get("mif"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
       context.put("readerextlink",
@@ -153,16 +154,15 @@ public class FormatPageAutogen {
       }
       String filename = getPageName(format, table.get("pagename"));
 
-      context.put("metadataPage",
-        filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+
       if (table.containsKey("metadataPage")) {
         String page = table.get("metadataPage");
         if (page.length() > 0) {
-          context.put("metadataPage", table.get("metadataPage"));
+          context.put("metadataPage", page.split(", "));
         }
-        else {
-          context.remove("metadataPage");
-        }
+      } else {
+        String[] page = {filename.substring(filename.indexOf(File.separator) + 1) + "-metadata"};
+        context.put("metadataPage", page);
       }
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,

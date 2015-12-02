@@ -27,6 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -778,6 +781,39 @@ public class MetamorphReader extends BaseTiffReader {
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
+      else {
+        Vector<Double> zPositions = new Vector<Double>();
+        Vector<Double> uniqueZ = new Vector<Double>();
+    	  
+        for (IFD ifd : ifds) {
+          MetamorphHandler zPlaneHandler = new MetamorphHandler();
+
+          String zComment = ifd.getComment();
+          if (zComment != null &&
+              zComment.startsWith("<MetaData>"))
+          {
+            try {
+              XMLTools.parseXML(XMLTools.sanitizeXML(zComment),
+                  zPlaneHandler);
+            }
+            catch (IOException e) { }
+          }
+
+          zPositions = zPlaneHandler.getZPositions();
+          for (Double z : zPositions) {
+            if (!uniqueZ.contains(z)) uniqueZ.add(z);
+          }
+        } 
+        if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          stepSize = zRange.divide(zSize, mc).doubleValue();
+        }
+      }
+      
       Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);

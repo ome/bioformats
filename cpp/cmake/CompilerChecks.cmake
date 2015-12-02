@@ -182,7 +182,6 @@ if (NOT MSVC)
       -Wmissing-declarations
       -Wno-long-long
       -Wnon-virtual-dtor
-      -Wold-style-cast
       -Woverlength-strings
       -Woverloaded-virtual
       -Wredundant-decls
@@ -190,6 +189,9 @@ if (NOT MSVC)
       -Wswitch-default
       -Wunused-variable
       -Wwrite-strings
+      -Wno-variadic-macros
+      -Wno-unused-local-typedef
+      -Wno-language-extension-token
       -fstrict-aliasing)
   if (extra-warnings)
     list(APPEND test_flags
@@ -197,6 +199,7 @@ if (NOT MSVC)
         -Wdocumentation
         -Wfloat-equal
         -Wmissing-prototypes
+        -Wold-style-cast
         -Wunreachable-code)
   endif (extra-warnings)
   if (fatal-warnings)

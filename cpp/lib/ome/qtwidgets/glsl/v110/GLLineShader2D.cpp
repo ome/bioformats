@@ -36,10 +36,9 @@
  * #L%
  */
 
+#include <ome/qtwidgets/glm.h>
 #include <ome/qtwidgets/glsl/v110/GLLineShader2D.h>
 #include <ome/qtwidgets/gl/Util.h>
-
-#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 

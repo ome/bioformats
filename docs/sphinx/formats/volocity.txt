@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
+Reader: VolocityReader (:bfreader:`Source Code <VolocityReader.java>`, :doc:`Supported Metadata Fields </metadata/VolocityReader>`)
+
 
 
 Sample Datasets:
@@ -47,13 +48,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`VolocityReader.java`
-
-Notes:
 
 
 .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.

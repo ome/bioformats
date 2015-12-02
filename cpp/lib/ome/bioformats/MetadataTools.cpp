@@ -139,8 +139,8 @@ namespace
     void
     startElement(const XMLCh* const         uri,
                  const XMLCh* const         localname,
-                 const XMLCh* const         qname,
-                 const xercesc::Attributes& attrs)
+                 const XMLCh* const         /* qname */,
+                 const xercesc::Attributes& /* attrs */)
     {
       if (ome::common::xml::String(localname) == "OME")
         {
