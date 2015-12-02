@@ -46,7 +46,7 @@ set(info_SOURCES
     options.cpp)
 
 add_executable(info ${info_SOURCES})
-target_link_libraries(info ome-xml ome-bioformats Boost::program_options ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(info OME::XML OME::BioFormats Boost::program_options ${CMAKE_THREAD_LIBS_INIT})
 
 install(TARGETS info RUNTIME
         DESTINATION ${OME_BIOFORMATS_INSTALL_FULL_LIBEXECDIR}

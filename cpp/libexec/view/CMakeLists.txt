@@ -63,7 +63,7 @@ if (OME_QTOPENGL)
                  ${view_HEADERS_MOC}
                  ${view_RESOURCES})
   qt5_use_modules(view Core Gui Widgets Svg)
-  target_link_libraries(view ome-bioformats ome-qtwidgets)
+  target_link_libraries(view OME::BioFormats ome-qtwidgets)
 
 
   install(TARGETS view RUNTIME
