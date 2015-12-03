@@ -984,7 +984,6 @@ public class ImporterTest {
 
   /** tests BF's options.setGroupFiles() */
   private void datasetGroupFilesTester(boolean virtual) {
-    String[] fake_files;
     String fake_pattern;
     int fake_plane_count = 7;
     int fake_channel_count = 3;
@@ -997,36 +996,26 @@ public class ImporterTest {
         fake_plane_count, 1, 1, -1, false, -1, false, -1
     );
 
-    fake_files = new String[] {
-      String.format(template, "1", "1"),
-      String.format(template, "2", "1"),
-      String.format(template, "3", "1"),
-      String.format(template, "1", "2"),
-      String.format(template, "2", "2"),
-      String.format(template, "3", "2"),
-      String.format(template, "1", "3"),
-      String.format(template, "2", "3"),
-      String.format(template, "3", "3"),
-      String.format(template, "1", "4"),
-      String.format(template, "2", "4"),
-      String.format(template, "3", "4"),
-      String.format(template, "1", "5"),
-      String.format(template, "2", "5"),
-      String.format(template, "3", "5")
-    };
+    String path = String.format(template, 1, 1);
+    String file;
 
-    for (String file : fake_files) {
-      try {
-        (new Location(file)).createNewFile();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
+    for (int c = 1; c <= fake_channel_count; c++) {
+      for (int t = 1; t <= fake_timepoint_count; t++) {
+        file = String.format(template, c, t);
+        try {
+          (new Location(file)).createNewFile();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
       }
     }
 
-    String fake_pattern_base = String.format(template, "<1-3>", "<1-5>");
+    String fake_pattern_base = String.format(
+        template,
+        String.format("<1-%d>", fake_channel_count),
+        String.format("<1-%d>", fake_timepoint_count)
+    );
     fake_pattern = (new Location(fake_pattern_base).getAbsolutePath());
-
-    String path = fake_files[0];
 
     ImagePlus[] imps = null;
 
