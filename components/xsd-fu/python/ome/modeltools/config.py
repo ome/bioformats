@@ -23,13 +23,18 @@ EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
 # Back references that we do not want in the model either because they
 # conflict with other properties or do not make sense.
-BACK_REFERENCE_OVERRIDE = {'Annotation': ['Annotation'], 'Event': ['Event']}
+BACK_REFERENCE_OVERRIDE = {
+    'Annotation': ['Annotation'],
+    'Event': ['Event'],
+}
 
 # Reference properties of a given type for which back reference link methods
-# should not be code generated for.
+# should not be code generated.
 BACK_REFERENCE_LINK_OVERRIDE = {
+    'AnnotationRef': ['Annotation'],
+    'FolderRef': ['Folder'],
     'Pump': ['Laser'],
-    'AnnotationRef': ['Annotation']}
+}
 
 # Back reference instance variable name overrides which will be used in place
 # of the standard name translation logic.
@@ -38,6 +43,7 @@ BACK_REFERENCE_NAME_OVERRIDE = {
     'FilterSet.EmissionFilter': 'filterSetEmissionFilter',
     'LightPath.ExcitationFilter': 'lightPathExcitationFilter',
     'LightPath.EmissionFilter': 'lightPathEmissionFilter',
+    'Folder.Folder': 'childFolder',
 }
 
 # Back reference class name overrides which will be used when generating
