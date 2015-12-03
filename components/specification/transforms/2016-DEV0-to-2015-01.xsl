@@ -93,6 +93,11 @@
         </xsl:element>
     </xsl:template>
 
+    <!-- Remove Folder elements -->
+
+    <xsl:template match="OME:Folder"/>
+    <xsl:template match="OME:FolderRef"/>
+
     <!-- Default processing -->
 
     <xsl:template match="@*|node()">
