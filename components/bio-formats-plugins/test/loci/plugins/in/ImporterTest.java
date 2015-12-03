@@ -41,6 +41,7 @@ import ij.process.LUT;
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
+import java.io.File;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -998,26 +999,26 @@ public class ImporterTest {
         "test_C%s_TP%s", FormatTools.UINT8, sizeX, sizeY, sizeZ,
         1, 1, -1, false, -1, false, -1
     );
-    String file;
+    File file;
+    String path = "";
     for (int c = 1; c <= sizeC; c++) {
       for (int t = 1; t <= sizeT; t++) {
-        file = String.format(template, c, t);
         try {
-          wd.newFile(file);
+          file = wd.newFile(String.format(template, c, t));
+          if (1 == c && 1 == t) {
+            path = file.getAbsolutePath();
+          }
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       }
     }
-    String path_base = String.format(template, 1, 1);
     String pattern_base = String.format(
         template,
         String.format("<1-%d>", sizeC),
         String.format("<1-%d>", sizeT)
     );
-    String abs_wd = wd.getRoot().getAbsolutePath();
-    String path = String.format("%s/%s", abs_wd, path_base);
-    String pattern = String.format("%s/%s", abs_wd, pattern_base);
+    String pattern = new File(wd.getRoot(), pattern_base).getAbsolutePath();
 
     ImagePlus[] imps = null;
     try {
