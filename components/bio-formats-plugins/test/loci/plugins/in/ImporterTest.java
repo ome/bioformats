@@ -984,23 +984,20 @@ public class ImporterTest {
 
   /** tests BF's options.setGroupFiles() */
   private void datasetGroupFilesTester(boolean virtual) {
-    String fake_pattern;
-    int fake_plane_count = 7;
-    int fake_channel_count = 3;
-    int fake_timepoint_count = 5;
-    int fake_size_x = 50;
-    int fake_size_y = 50;
+    int sizeZ = 7;
+    int sizeC = 3;
+    int sizeT = 5;
+    int sizeX = 50;
+    int sizeY = 50;
 
     String template = constructFakeFilename(
-        "test_C%s_TP%s", FormatTools.UINT8, fake_size_x, fake_size_y,
-        fake_plane_count, 1, 1, -1, false, -1, false, -1
+        "test_C%s_TP%s", FormatTools.UINT8, sizeX, sizeY, sizeZ,
+        1, 1, -1, false, -1, false, -1
     );
-
     String path = String.format(template, 1, 1);
     String file;
-
-    for (int c = 1; c <= fake_channel_count; c++) {
-      for (int t = 1; t <= fake_timepoint_count; t++) {
+    for (int c = 1; c <= sizeC; c++) {
+      for (int t = 1; t <= sizeT; t++) {
         file = String.format(template, c, t);
         try {
           (new Location(file)).createNewFile();
@@ -1009,16 +1006,14 @@ public class ImporterTest {
         }
       }
     }
-
-    String fake_pattern_base = String.format(
+    String pattern_base = String.format(
         template,
-        String.format("<1-%d>", fake_channel_count),
-        String.format("<1-%d>", fake_timepoint_count)
+        String.format("<1-%d>", sizeC),
+        String.format("<1-%d>", sizeT)
     );
-    fake_pattern = (new Location(fake_pattern_base).getAbsolutePath());
+    String pattern = (new Location(pattern_base).getAbsolutePath());
 
     ImagePlus[] imps = null;
-
     try {
       ImporterOptions options = new ImporterOptions();
       options.setAutoscale(false);
@@ -1026,7 +1021,7 @@ public class ImporterTest {
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
-      assertEquals(fake_pattern, options.getId());
+      assertEquals(pattern, options.getId());
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -1034,16 +1029,9 @@ public class ImporterTest {
     catch (FormatException e) {
       fail(e.getMessage());
     }
-
-    impsCountTest(imps,1);
-
-    xyzctTest(
-        imps[0], fake_size_x, fake_size_y, fake_plane_count,
-        fake_channel_count, fake_timepoint_count
-    );
-    groupedFilesTest(
-        imps[0], fake_plane_count, fake_channel_count, fake_timepoint_count
-    );
+    impsCountTest(imps, 1);
+    xyzctTest(imps[0], sizeX, sizeY, sizeZ, sizeC, sizeT);
+    groupedFilesTest(imps[0], sizeZ, sizeC, sizeT);
   }
 
   /** tests BF's options.setUngroupFiles() */
