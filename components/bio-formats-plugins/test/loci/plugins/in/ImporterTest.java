@@ -151,49 +151,6 @@ public class ImporterTest {
 
   private static final int ONE_SERIES = 1;
 
-  private static final String[] FAKE_FILES;
-  private static final String FAKE_PATTERN;
-
-  private static final int FAKE_PLANE_COUNT = 7;
-  private static final int FAKE_CHANNEL_COUNT = 3;
-  private static final int FAKE_TIMEPOINT_COUNT = 5;
-  private static final int FAKE_SIZE_X = 50;
-  private static final int FAKE_SIZE_Y = 50;
-
-  static {
-    //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, 1, 1,
-                        -1, false, -1, false, -1);
-
-    FAKE_FILES = new String[] {
-      String.format(template, "1", "1"),
-      String.format(template, "2", "1"),
-      String.format(template, "3", "1"),
-      String.format(template, "1", "2"),
-      String.format(template, "2", "2"),
-      String.format(template, "3", "2"),
-      String.format(template, "1", "3"),
-      String.format(template, "2", "3"),
-      String.format(template, "3", "3"),
-      String.format(template, "1", "4"),
-      String.format(template, "2", "4"),
-      String.format(template, "3", "4"),
-      String.format(template, "1", "5"),
-      String.format(template, "2", "5"),
-      String.format(template, "3", "5")
-    };
-
-    for (String file : FAKE_FILES) {
-      try {
-        (new Location(file)).createNewFile();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    String FAKE_PATTERN_BASE = String.format(template, "<1-3>", "<1-5>");
-    FAKE_PATTERN = (new Location(FAKE_PATTERN_BASE).getAbsolutePath());
-  }
 
   // ** Helper methods *******************************************************************
 
@@ -1026,9 +983,50 @@ public class ImporterTest {
   }
 
   /** tests BF's options.setGroupFiles() */
-  private void datasetGroupFilesTester(boolean virtual)
-  {
-    String path = FAKE_FILES[0];
+  private void datasetGroupFilesTester(boolean virtual) {
+    String[] fake_files;
+    String fake_pattern;
+    int fake_plane_count = 7;
+    int fake_channel_count = 3;
+    int fake_timepoint_count = 5;
+    int fake_size_x = 50;
+    int fake_size_y = 50;
+
+    String template = constructFakeFilename(
+        "test_C%s_TP%s", FormatTools.UINT8, fake_size_x, fake_size_y,
+        fake_plane_count, 1, 1, -1, false, -1, false, -1
+    );
+
+    fake_files = new String[] {
+      String.format(template, "1", "1"),
+      String.format(template, "2", "1"),
+      String.format(template, "3", "1"),
+      String.format(template, "1", "2"),
+      String.format(template, "2", "2"),
+      String.format(template, "3", "2"),
+      String.format(template, "1", "3"),
+      String.format(template, "2", "3"),
+      String.format(template, "3", "3"),
+      String.format(template, "1", "4"),
+      String.format(template, "2", "4"),
+      String.format(template, "3", "4"),
+      String.format(template, "1", "5"),
+      String.format(template, "2", "5"),
+      String.format(template, "3", "5")
+    };
+
+    for (String file : fake_files) {
+      try {
+        (new Location(file)).createNewFile();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    String fake_pattern_base = String.format(template, "<1-3>", "<1-5>");
+    fake_pattern = (new Location(fake_pattern_base).getAbsolutePath());
+
+    String path = fake_files[0];
 
     ImagePlus[] imps = null;
 
@@ -1039,7 +1037,7 @@ public class ImporterTest {
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
-      assertEquals(FAKE_PATTERN, options.getId());
+      assertEquals(fake_pattern, options.getId());
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -1050,9 +1048,13 @@ public class ImporterTest {
 
     impsCountTest(imps,1);
 
-    xyzctTest(imps[0], FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
-
-    groupedFilesTest(imps[0], FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
+    xyzctTest(
+        imps[0], fake_size_x, fake_size_y, fake_plane_count,
+        fake_channel_count, fake_timepoint_count
+    );
+    groupedFilesTest(
+        imps[0], fake_plane_count, fake_channel_count, fake_timepoint_count
+    );
   }
 
   /** tests BF's options.setUngroupFiles() */
