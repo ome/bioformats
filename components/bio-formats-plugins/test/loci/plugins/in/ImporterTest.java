@@ -49,6 +49,8 @@ import loci.formats.FormatTools;
 import loci.plugins.BF;
 
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,6 +153,8 @@ public class ImporterTest {
 
   private static final int ONE_SERIES = 1;
 
+  @Rule
+  public TemporaryFolder wd = new TemporaryFolder();
 
   // ** Helper methods *******************************************************************
 
@@ -994,24 +998,26 @@ public class ImporterTest {
         "test_C%s_TP%s", FormatTools.UINT8, sizeX, sizeY, sizeZ,
         1, 1, -1, false, -1, false, -1
     );
-    String path = String.format(template, 1, 1);
     String file;
     for (int c = 1; c <= sizeC; c++) {
       for (int t = 1; t <= sizeT; t++) {
         file = String.format(template, c, t);
         try {
-          (new Location(file)).createNewFile();
+          wd.newFile(file);
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       }
     }
+    String path_base = String.format(template, 1, 1);
     String pattern_base = String.format(
         template,
         String.format("<1-%d>", sizeC),
         String.format("<1-%d>", sizeT)
     );
-    String pattern = (new Location(pattern_base).getAbsolutePath());
+    String abs_wd = wd.getRoot().getAbsolutePath();
+    String path = String.format("%s/%s", abs_wd, path_base);
+    String pattern = String.format("%s/%s", abs_wd, pattern_base);
 
     ImagePlus[] imps = null;
     try {
