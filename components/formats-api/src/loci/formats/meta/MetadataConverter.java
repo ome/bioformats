@@ -99,6 +99,7 @@ public final class MetadataConverter {
     convertScreens(src, dest);
     convertDatasets(src, dest);
     convertProjects(src, dest);
+    convertFolders(src, dest);
 
     convertRootAttributes(src, dest);
   }
@@ -689,6 +690,90 @@ public final class MetadataConverter {
         }
         catch (NullPointerException e) { }
       }
+    }
+  }
+
+  /**
+   * Convert all Folder attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
+  private static void convertFolders(MetadataRetrieve src, MetadataStore dest)
+  {
+    int folders = 0;
+    try {
+      folders = src.getFolderCount();
+    }
+    catch (NullPointerException e) { }
+
+    for (int i=0; i<folders; i++) {
+      try {
+        String id = src.getFolderID(i);
+        dest.setFolderID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getFolderDescription(i);
+        dest.setFolderDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getFolderName(i);
+        dest.setFolderName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int folderRefCount = src.getFolderRefCount(i);
+        for (int q=0; q<folderRefCount; q++) {
+          try {
+            String folderRef = src.getFolderFolderRef(i, q);
+            dest.setFolderFolderRef(folderRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int imageRefCount = src.getFolderImageRefCount(i);
+        for (int q=0; q<imageRefCount; q++) {
+          try {
+            String imageRef = src.getFolderImageRef(i, q);
+            dest.setFolderImageRef(imageRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int roiRefCount = src.getFolderROIRefCount(i);
+        for (int q=0; q<roiRefCount; q++) {
+          try {
+            String roiRef = src.getFolderROIRef(i, q);
+            dest.setFolderROIRef(roiRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int annotationRefCount = src.getFolderAnnotationRefCount(i);
+        for (int q=0; q<annotationRefCount; q++) {
+          try {
+            String annotationRef = src.getFolderAnnotationRef(i, q);
+            dest.setFolderAnnotationRef(annotationRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
     }
   }
 
