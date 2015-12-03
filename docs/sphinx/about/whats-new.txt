@@ -5,6 +5,7 @@ Version history
 -----------------------
 
 * Java bug fixes, including:
+   - Prevent physical pixel sizes from being rounded to 0, for all formats
    - Metamorph
        - fixed calculation of Z step size
        - fixed detection of post-processed dual camera acquisitions (thanks to Mark Kittisopikul)
