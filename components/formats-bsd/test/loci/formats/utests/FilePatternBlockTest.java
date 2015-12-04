@@ -49,10 +49,10 @@ public class FilePatternBlockTest {
       {"<9-11>", new String[] {"9", "10", "11"}},
       {"<09-11>", new String[] {"09", "10", "11"}},
       {"<1-5:2>", new String[] {"1", "3", "5"}},
-      // {"<Z>", new String[] {"Z"}},
+      {"<Z>", new String[] {"Z"}},
       {"<A-C>", new String[] {"A", "B", "C"}},
       {"<A-E:2>", new String[] {"A", "C", "E"}},
-      // {"<z>", new String[] {"z"}},
+      {"<z>", new String[] {"z"}},
       {"<a-c>", new String[] {"a", "b", "c"}},
       {"<a-e:2>", new String[] {"a", "c", "e"}}
     };

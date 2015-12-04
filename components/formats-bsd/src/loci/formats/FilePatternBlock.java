@@ -141,9 +141,9 @@ public class FilePatternBlock {
     }
     catch (NumberFormatException exc) {
       numeric = false;
-      begin = new BigInteger(b, 26);
-      end = new BigInteger(e, 26);
-      step = new BigInteger(s, 26);
+      begin = new BigInteger(b, Character.MAX_RADIX);
+      end = new BigInteger(e, Character.MAX_RADIX);
+      step = new BigInteger(s, Character.MAX_RADIX);
     }
 
     fixed = b.length() == e.length();
@@ -157,7 +157,7 @@ public class FilePatternBlock {
 
     for (int i=0; i<count; i++) {
       BigInteger v = begin.add(step.multiply(BigInteger.valueOf(i)));
-      String value = numeric ? v.toString() : v.toString(26);
+      String value = numeric ? v.toString() : v.toString(Character.MAX_RADIX);
       if (!numeric) {
         if (Character.isLowerCase(b.charAt(0))) value = value.toLowerCase();
         else value = value.toUpperCase();
