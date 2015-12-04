@@ -62,22 +62,29 @@ public class FilePatternBlockTest {
   }
 
   @Test(dataProvider = "valid")
-  public void testValidBlocks(String pattern, String[] expElements,
+  public void testValidBlocks(String pattern, String[] elements,
       boolean fixed, boolean numeric) {
     FilePatternBlock block = new FilePatternBlock(pattern);
-    String[] elements = block.getElements();
-    assertEquals(elements.length, expElements.length);
-    for (int i = 0; i < elements.length; i++) {
-      assertEquals(elements[i], expElements[i]);
+    String[] blkElements = block.getElements();
+    assertEquals(blkElements.length, elements.length);
+    for (int i = 0; i < blkElements.length; i++) {
+      assertEquals(blkElements[i], elements[i]);
     }
     assertEquals(block.getBlock(), pattern);
     assertEquals(block.isFixed(), fixed);
     assertEquals(block.isNumeric(), numeric);
     int radix = numeric ? 10 : Character.MAX_RADIX;
-    BigInteger first = new BigInteger(expElements[0], radix);
-    BigInteger last = new BigInteger(expElements[expElements.length-1], radix);
+    BigInteger first = new BigInteger(elements[0], radix);
+    BigInteger last = new BigInteger(elements[elements.length-1], radix);
+    BigInteger step;
+    try {
+      step = new BigInteger(elements[1], radix).subtract(first);
+    } catch (ArrayIndexOutOfBoundsException e) {
+      step = new BigInteger("1");
+    }
     assertTrue(block.getFirst().equals(first));
     assertTrue(block.getLast().equals(last));
+    assertTrue(block.getStep().equals(step));
   }
 
 }
