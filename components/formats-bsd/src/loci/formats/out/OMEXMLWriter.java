@@ -74,7 +74,7 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Constructor --
 
   public OMEXMLWriter() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     compressionTypes =
       new String[] {CompressionType.UNCOMPRESSED.getCompression(),
         CompressionType.ZLIB.getCompression()};
