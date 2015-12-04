@@ -329,10 +329,18 @@ public class Configuration {
     String pos = currentTable.get(X_POSITION + plane);
     return pos == null ? null : new Double(pos);
   }
+  
+  public String getPositionXUnit(int plane) {
+    return currentTable.get(X_POSITION_UNIT + plane);
+  }
 
   public Double getPositionY(int plane) {
     String pos = currentTable.get(Y_POSITION + plane);
     return pos == null ? null : new Double(pos);
+  }
+  
+  public String getPositionYUnit(int plane) {
+    return currentTable.get(Y_POSITION_UNIT + plane);
   }
 
   public Double getPositionZ(int plane) {
@@ -340,6 +348,10 @@ public class Configuration {
     return pos == null ? null : new Double(pos);
   }
 
+  public String getPositionZUnit(int plane) {
+    return currentTable.get(Z_POSITION_UNIT + plane);
+  }
+  
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
@@ -605,12 +617,12 @@ public class Configuration {
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
             seriesTable.put(Y_POSITION + p, yPos.value().toString());
-            seriesTable.put(Y_POSITION_UNIT + p, xPos.unit().getSymbol());
+            seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
             seriesTable.put(Z_POSITION + p, zPos.value().toString());
-            seriesTable.put(Z_POSITION_UNIT + p, xPos.unit().getSymbol());
+            seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
           }
         }
         catch (IndexOutOfBoundsException e) {
