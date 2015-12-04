@@ -32,7 +32,10 @@
 
 package loci.formats.utests;
 
+import java.math.BigInteger;
+
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -44,28 +47,37 @@ public class FilePatternBlockTest {
   @DataProvider(name = "valid")
   public Object[][] validBlocks() {
     return new Object[][] {
-      {"<9>", new String[] {"9"}},
-      {"<0-2>", new String[] {"0", "1", "2"}},
-      {"<9-11>", new String[] {"9", "10", "11"}},
-      {"<09-11>", new String[] {"09", "10", "11"}},
-      {"<1-5:2>", new String[] {"1", "3", "5"}},
-      {"<Z>", new String[] {"Z"}},
-      {"<A-C>", new String[] {"A", "B", "C"}},
-      {"<A-E:2>", new String[] {"A", "C", "E"}},
-      {"<z>", new String[] {"z"}},
-      {"<a-c>", new String[] {"a", "b", "c"}},
-      {"<a-e:2>", new String[] {"a", "c", "e"}}
+      {"<9>", new String[] {"9"}, true, true},
+      {"<0-2>", new String[] {"0", "1", "2"}, true, true},
+      {"<9-11>", new String[] {"9", "10", "11"}, false, true},
+      {"<09-11>", new String[] {"09", "10", "11"}, true, true},
+      {"<1-5:2>", new String[] {"1", "3", "5"}, true, true},
+      {"<Z>", new String[] {"Z"}, true, false},
+      {"<A-C>", new String[] {"A", "B", "C"}, true, false},
+      {"<A-E:2>", new String[] {"A", "C", "E"}, true, false},
+      {"<z>", new String[] {"z"}, true, false},
+      {"<a-c>", new String[] {"a", "b", "c"}, true, false},
+      {"<a-e:2>", new String[] {"a", "c", "e"}, true, false}
     };
   }
 
   @Test(dataProvider = "valid")
-  public void testValidBlocks(String pattern, String[] expElements) {
+  public void testValidBlocks(String pattern, String[] expElements,
+      boolean fixed, boolean numeric) {
     FilePatternBlock block = new FilePatternBlock(pattern);
     String[] elements = block.getElements();
     assertEquals(elements.length, expElements.length);
     for (int i = 0; i < elements.length; i++) {
       assertEquals(elements[i], expElements[i]);
     }
+    assertEquals(block.getBlock(), pattern);
+    assertEquals(block.isFixed(), fixed);
+    assertEquals(block.isNumeric(), numeric);
+    int radix = numeric ? 10 : Character.MAX_RADIX;
+    BigInteger first = new BigInteger(expElements[0], radix);
+    BigInteger last = new BigInteger(expElements[expElements.length-1], radix);
+    assertTrue(block.getFirst().equals(first));
+    assertTrue(block.getLast().equals(last));
   }
 
 }

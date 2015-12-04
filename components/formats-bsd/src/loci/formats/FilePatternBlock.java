@@ -60,6 +60,9 @@ public class FilePatternBlock {
   /** Whether or not this is a fixed-width block. */
   private boolean fixed;
 
+  /** Whether or not this is a numeric block. */
+  private boolean numeric;
+
   /** The number of leading zeroes. */
   private int zeroes;
 
@@ -87,6 +90,10 @@ public class FilePatternBlock {
 
   public boolean isFixed() {
     return fixed;
+  }
+
+  public boolean isNumeric() {
+    return numeric;
   }
 
   public BigInteger getFirst() {
@@ -132,7 +139,7 @@ public class FilePatternBlock {
       }
     }
 
-    boolean numeric = true;
+    numeric = true;
 
     try {
       begin = new BigInteger(b);
