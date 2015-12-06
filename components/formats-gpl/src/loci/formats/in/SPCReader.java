@@ -162,11 +162,11 @@ public class SPCReader extends FormatReader {
 
   /** Constructs a new SPC reader. */
   public SPCReader() {
-    super("SPCImage Data", "spc");
+    super("SPCImage Data", new String[] {"spc", "set"});
     domains = new String[] {FormatTools.FLIM_DOMAIN};
     suffixSufficient = true;
     hasCompanionFiles = true;
-    datasetDescription = "One .spc file and accompanying .set file";
+    datasetDescription = "One .spc file and similarly named .set file";
     frameClockList = new ArrayList<Integer>();
   }
   
@@ -198,18 +198,19 @@ public class SPCReader extends FormatReader {
      * but this could adversely affect performance so is currently checked in initFile
     */
     
-    if (!checkSuffix(name, "spc"))  {
-       return false;
-    }
     
-    Location location = new Location(name);
-    if (!location.exists()) {
-        return false;
-    }
+    if (!(checkSuffix(name, "spc") || checkSuffix(name, "set") )) 
+      return false;
     
-    String setName = name.substring(0, name.lastIndexOf(".spc")) + ".set";
     
-    return new Location(setName).exists(); 
+    String extension = name.substring(name.lastIndexOf(".") + 1);
+    String baseName = name.substring(0, name.lastIndexOf("."));
+    
+    if (!new Location(baseName + ".spc").exists())
+      return false;
+    
+    return new Location(baseName + ".set").exists();
+    
   }
 
   
@@ -350,24 +351,31 @@ public class SPCReader extends FormatReader {
     }
     
     String name = tmpFile.getName();
-    allFiles.add(id);
-    // generate the name of the matching .set file
+    // generate the name of the two matching files
     String setName = null;
+    String spcName = null;
     int pos = name.lastIndexOf(".");
     if (pos != -1) {
       setName = tmpFile.getName().substring(0, pos) + ".set";
+      spcName = tmpFile.getName().substring(0, pos) + ".spc";
       for (String l : ls) {
-        if (l.equalsIgnoreCase(setName)) {
+        if (l.equalsIgnoreCase(setName)) 
           setName = l;
-        }
+        if (l.equalsIgnoreCase(spcName)) 
+          spcName = l;
       }
     }
-    
+      
+     
     if (setName == null)  {
       throw new FormatException("Failed to find a matching .set file!");
     }
+    if (spcName == null)  {
+      throw new FormatException("Failed to find a matching .spc file!");
+    }
      
     allFiles.add(workingDirPath + setName);
+    allFiles.add(workingDirPath + spcName);
     in = new RandomAccessInputStream(workingDirPath + setName);
     
     LOGGER.info("Reading info from .set file");
@@ -427,8 +435,8 @@ public class SPCReader extends FormatReader {
     LOGGER.debug("timeBase = " + Double.toString(timeBase));
     
     // Now read .spc file
-    in = new RandomAccessInputStream(id);
-    in.order(true);
+     in = new RandomAccessInputStream(workingDirPath + spcName);
+     in.order(true);
 
     LOGGER.info("Reading info from .spc file");
     
