@@ -269,6 +269,7 @@ public class FlexReader extends FormatReader {
     RandomAccessInputStream s =
       new RandomAccessInputStream(getFileHandle(file.file));
 
+    TiffParser tp = new TiffParser(s);
     IFD ifd;
     double factor;
     if (file.offsets == null) {
@@ -298,14 +299,18 @@ public class FlexReader extends FormatReader {
       }
       ifd.putIFDValue(tag, offsets);
     }
+    else if (file.offsets != null) {
+      ifd = tp.getIFD(file.offsets[imageNumber]);
+    }
     else {
+      tp.getStream().close();
+      s.close();
       return buf;
     }
     int nBytes = ifd.getBitsPerSample()[0] / 8;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
     // read pixels from the file
-    TiffParser tp = new TiffParser(s);
     tp.fillInIFD(ifd);
     tp.getSamples(ifd, buf, x, y, w, h);
     factor = file.factors == null ? 1d : file.factors[imageNumber];
@@ -1364,7 +1369,7 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          file.field = field / runCount;
+          file.field = field % runCount;
           file.file = files.get(field);
           file.acquisition = runDirs.size() == 0 ? 0:
             runDirs.indexOf(new Location(file.file).getParentFile());
