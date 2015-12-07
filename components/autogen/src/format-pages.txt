@@ -1650,7 +1650,7 @@ indexExtensions = .ome.tiff
 extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
 * many OME-TIFF datasets \n
 * the ability to produce additional datasets
@@ -1673,11 +1673,11 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-indexExtensions = .ome
-extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+indexExtensions = .ome, .ome.xml
+extensions = `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
 * many OME-XML datasets \n
 * the ability to produce more datasets
