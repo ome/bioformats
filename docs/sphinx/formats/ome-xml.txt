@@ -1,10 +1,10 @@
 .. index:: OME-XML
-.. index:: .ome
+.. index:: .ome, .ome.xml
 
 OME-XML
 ===============================================================================
 
-Extensions: `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+Extensions: `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
