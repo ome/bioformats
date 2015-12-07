@@ -73,16 +73,3 @@ if(SPHINX_DEFAULT AND XELATEX AND MAKEINDEX)
   set(SPHINX_PDF_DEFAULT ON)
 endif()
 option(sphinx-pdf "Enable sphinx PDF documentation" ${SPHINX_PDF_DEFAULT})
-
-set(SUPERBUILD_OPTIONS
-    "-Dbioformats-superbuild:BOOL=OFF"
-    "-Dcxxstd-autodetect:BOOL=${cxxstd-autodetect}"
-    "-Dextra-warnings:BOOL=${extra-warnings}"
-    "-Dfatal-warnings:BOOL=${fatal-warnings}"
-    "-Dtest:BOOL=${test}"
-    "-Dextended-tests:BOOL=${extended-tests}"
-    "-Dembedded-gtest:BOOL=${embedded-gtest}"
-    "-Dqtgui:BOOL=${qtgui}"
-    "-Ddoxygen:BOOL=${doxygen}"
-    "-Dsphinx:BOOL=${sphinx}"
-    "-Dsphinx-pdf:BOOL=${sphinx-pdf}")
