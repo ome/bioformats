@@ -124,31 +124,34 @@ public class FilePatternBlock {
     if (!block.startsWith(BLOCK_START) || !block.endsWith(BLOCK_END)) {
       throwBadBlock("\"%s\": missing block delimiter(s)");
     }
-    int dash = block.indexOf("-");
+    String trimmed = block.substring(
+        BLOCK_START.length(), block.length() - BLOCK_END.length()
+    );
+    int dash = trimmed.indexOf("-");
     String b, e, s;
     if (dash < 0) {
       // check if this is an enumerated list
-      int comma = block.indexOf(",");
+      int comma = trimmed.indexOf(",");
       if (comma > 0) {
-        elements = block.substring(1, block.length() - 1).split(",");
+        elements = trimmed.split(",");
         return;
       }
       else {
         // no range and not a list; assume entire block is a single value
-        b = e = block.substring(1, block.length() - 1);
+        b = e = trimmed;
         s = "1";
       }
     }
     else {
-      int colon = block.indexOf(":");
-      b = block.substring(1, dash);
+      int colon = trimmed.indexOf(":");
+      b = trimmed.substring(0, dash);
       if (colon < 0) {
-        e = block.substring(dash + 1, block.length() - 1);
+        e = trimmed.substring(dash + 1);
         s = "1";
       }
       else {
-        e = block.substring(dash + 1, colon);
-        s = block.substring(colon + 1, block.length() - 1);
+        e = trimmed.substring(dash + 1, colon);
+        s = trimmed.substring(colon + 1);
       }
     }
 
