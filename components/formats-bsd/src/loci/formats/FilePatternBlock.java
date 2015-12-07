@@ -114,6 +114,12 @@ public class FilePatternBlock {
     throw new IllegalBlockException(String.format(msgTemplate, block));
   }
 
+  private void throwBadBlock(String msgTemplate, Throwable cause) {
+    throw new IllegalBlockException(
+        String.format(msgTemplate, block), cause
+    );
+  }
+
   private void explode() {
     if (!block.startsWith(BLOCK_START) || !block.endsWith(BLOCK_END)) {
       throwBadBlock("\"%s\": missing block delimiter(s)");
@@ -152,12 +158,15 @@ public class FilePatternBlock {
       begin = new BigInteger(b);
       end = new BigInteger(e);
       step = new BigInteger(s);
-    }
-    catch (NumberFormatException exc) {
+    } catch (NumberFormatException badN) {
       numeric = false;
-      begin = new BigInteger(b, Character.MAX_RADIX);
-      end = new BigInteger(e, Character.MAX_RADIX);
-      step = new BigInteger(s, Character.MAX_RADIX);
+      try {
+        begin = new BigInteger(b, Character.MAX_RADIX);
+        end = new BigInteger(e, Character.MAX_RADIX);
+        step = new BigInteger(s, Character.MAX_RADIX);
+      } catch (NumberFormatException badL) {
+        throwBadBlock("invalid range delimiter(s)", badL);
+      }
     }
 
     fixed = b.length() == e.length();

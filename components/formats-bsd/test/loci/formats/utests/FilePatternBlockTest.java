@@ -65,7 +65,8 @@ public class FilePatternBlockTest {
   @DataProvider(name = "invalid")
   public Object[][] invalidBlocks() {
     return new Object[][] {
-      {""}, {"<"}, {">"}, {"9"}, {"<9"}, {"9>"},  // missing delimiter(s)
+      {""}, {"<"}, {">"}, {"9"}, {"<9"}, {"9>"},  // missing block delimiter(s)
+      {"<!-A>"}, {"<A-~>"}, {"<A-C:!>"}  // invalid range delimiter(s)
     };
   }
 
