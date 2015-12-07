@@ -110,7 +110,14 @@ public class FilePatternBlock {
 
   // -- Helper methods --
 
+  private void throwBadBlock(String msgTemplate) {
+    throw new IllegalBlockException(String.format(msgTemplate, block));
+  }
+
   private void explode() {
+    if (!block.startsWith(BLOCK_START) || !block.endsWith(BLOCK_END)) {
+      throwBadBlock("\"%s\": missing block delimiter(s)");
+    }
     int dash = block.indexOf("-");
     String b, e, s;
     if (dash < 0) {

@@ -40,6 +40,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import loci.formats.FilePatternBlock;
+import loci.formats.IllegalBlockException;
 
 
 public class FilePatternBlockTest {
@@ -58,6 +59,13 @@ public class FilePatternBlockTest {
       {"<z>", new String[] {"z"}, true, false},
       {"<a-c>", new String[] {"a", "b", "c"}, true, false},
       {"<a-e:2>", new String[] {"a", "c", "e"}, true, false}
+    };
+  }
+
+  @DataProvider(name = "invalid")
+  public Object[][] invalidBlocks() {
+    return new Object[][] {
+      {""}, {"<"}, {">"}, {"9"}, {"<9"}, {"9>"},  // missing delimiter(s)
     };
   }
 
@@ -85,6 +93,12 @@ public class FilePatternBlockTest {
     assertTrue(block.getFirst().equals(first));
     assertTrue(block.getLast().equals(last));
     assertTrue(block.getStep().equals(step));
+  }
+
+  @Test(dataProvider = "invalid",
+        expectedExceptions = IllegalBlockException.class)
+  public void testInvalidBlocks(String pattern) {
+    FilePatternBlock block = new FilePatternBlock(pattern);
   }
 
 }
