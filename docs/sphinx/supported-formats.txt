@@ -987,7 +987,7 @@ Supported Formats
      - |yes|
      - |yes|
    * - :doc:`formats/ome-xml`
-     - `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+     - `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|
