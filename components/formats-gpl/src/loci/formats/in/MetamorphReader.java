@@ -57,6 +57,9 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -106,6 +109,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** The TIFF's emWavelength */
   private long[] emWavelength;
 
+  private String[] stageLabels;
   private double[] wave;
 
   private String binning;
@@ -149,7 +153,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
     super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
-    domains = new String[] {FormatTools.LM_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
@@ -339,6 +343,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasChipOffsets = false;
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
+      stageLabels = null;
     }
   }
 
@@ -721,11 +726,57 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
+    // check stage labels for plate data
+
+    ArrayList<String> uniqueWells = new ArrayList<String>();
+    int rows = 0;
+    int cols = 0;
+    for (String label : stageLabels) {
+      if (label != null && label.startsWith("Scan ") &&
+        !uniqueWells.contains(label))
+      {
+        uniqueWells.add(label);
+        int row = getWellRow(label);
+        if (row >= rows) {
+          rows = row + 1;
+        }
+        int col = getWellColumn(label);
+        if (col >= cols) {
+          cols = col + 1;
+        }
+      }
+    }
+
+    // each plane corresponds to a unique well
+    boolean isHCS = uniqueWells.size() == stageLabels.length;
+    if (isHCS) {
+      CoreMetadata c = core.get(0);
+      core.clear();
+      c.sizeZ = 1;
+      c.sizeT = 1;
+      c.imageCount = 1;
+      for (int s=0; s<uniqueWells.size(); s++) {
+        CoreMetadata toAdd = new CoreMetadata(c);
+        if (s > 0) {
+          toAdd.seriesMetadata.clear();
+        }
+        core.add(toAdd);
+      }
+    }
+
     List<String> timestamps = null;
     MetamorphHandler handler = null;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
+
+    if (isHCS) {
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(rows), 0);
+      store.setPlateColumns(new PositiveInteger(cols), 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+    }
 
     int nextObjective = 0;
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -737,16 +788,32 @@ public class MetamorphReader extends BaseTiffReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
-      handler = new MetamorphHandler(getSeriesMetadata());
+      // do not reparse the same XML for every well
+      if (i == 0 || !isHCS) {
+        handler = new MetamorphHandler(getSeriesMetadata());
+      }
+
+      if (isHCS) {
+        String label = stageLabels[i];
+        String wellID = MetadataTools.createLSID("Well", 0, i);
+        store.setWellID(wellID, 0, i);
+        store.setWellColumn(new NonNegativeInteger(getWellColumn(label)), 0, i);
+        store.setWellRow(new NonNegativeInteger(getWellRow(label)), 0, i);
+        store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, i, 0), 0, i, 0);
+        store.setWellSampleImageRef(MetadataTools.createLSID("Image", i), 0, i, 0);
+        store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
+      }
 
       store.setImageInstrumentRef(instrumentID, i);
 
       String comment = getFirstComment(i);
-      if (comment != null && comment.startsWith("<MetaData>")) {
-        try {
-          XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+      if (i == 0 || !isHCS) {
+        if (comment != null && comment.startsWith("<MetaData>")) {
+          try {
+            XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+          }
+          catch (IOException e) { }
         }
-        catch (IOException e) { }
       }
 
       if (creationTime != null) {
@@ -1454,6 +1521,9 @@ public class MetamorphReader extends BaseTiffReader {
         name = name.substring(0, name.length() - 1);
       }
     }
+    if (name.length() == 0) {
+      name = stageLabels[i];
+    }
     return name;
   }
 
@@ -1601,10 +1671,12 @@ public class MetamorphReader extends BaseTiffReader {
   void readStageLabels() throws IOException {
     int strlen;
     String iAsString;
+    stageLabels = new String[mmPlanes];
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
       strlen = in.readInt();
-      addSeriesMeta("stageLabel[" + iAsString + "]", in.readString(strlen));
+      stageLabels[i] = in.readString(strlen);
+      addSeriesMeta("stageLabel[" + iAsString + "]", stageLabels[i]);
     }
   }
 
@@ -2029,6 +2101,14 @@ public class MetamorphReader extends BaseTiffReader {
       case 66: return "OverlayPlaneColor";
     }
     return null;
+  }
+
+  private int getWellRow(String label) {
+    return (int) (label.charAt(5) - 'A');
+  }
+
+  private int getWellColumn(String label) {
+    return Integer.parseInt(label.substring(6, 8)) - 1;
   }
 
 }
