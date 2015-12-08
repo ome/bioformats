@@ -134,11 +134,6 @@ foreach(dir
     TRANSFORMDIR
     )
   mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
-  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
-  else()
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
-  endif()
 endforeach()
 
 add_subdirectory(docs/doxygen)
@@ -158,7 +153,7 @@ file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                  ${PROJECT_BINARY_DIR}/config.bat @ONLY)
@@ -167,7 +162,7 @@ if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
                  ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
   install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 return()
 

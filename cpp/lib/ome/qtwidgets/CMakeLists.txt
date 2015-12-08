@@ -117,15 +117,15 @@ if (OME_QTOPENGL)
 
   install(TARGETS ome-qtwidgets
           EXPORT OMEQtWidgetsInternal
-          RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-          LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
   install(EXPORT OMEQtWidgetsInternal
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/OMEQtWidgets)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEQtWidgets)
   install(FILES OMEQtWidgetsConfig.cmake
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/OMEQtWidgets)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEQtWidgets)
 
-  set(ome_qtwidgets_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/qtwidgets")
+  set(ome_qtwidgets_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/qtwidgets")
 
   install(FILES ${OME_QTWIDGETS_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir})

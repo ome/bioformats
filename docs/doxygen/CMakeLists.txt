@@ -53,5 +53,5 @@ if(BUILD_DOXYGEN)
   add_custom_target(doc DEPENDS doc-api)
 
   install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bioformats/"
-          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/cpp-api")
+          DESTINATION "${CMAKE_INSTALL_DOCDIR}/cpp-api")
 endif(BUILD_DOXYGEN)

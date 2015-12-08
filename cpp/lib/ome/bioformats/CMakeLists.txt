@@ -174,15 +174,15 @@ add_library(OME::BioFormats ALIAS ome-bioformats)
 
 install(TARGETS ome-bioformats
         EXPORT OMEBioFormatsInternal
-        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(EXPORT OMEBioFormatsInternal
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-bioformats)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEBioFormats)
 install(FILES OMEBioFormatsConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-bioformats)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEBioFormats)
 
-set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
+set(ome_bioformats_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/bioformats")
 
 install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
