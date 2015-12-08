@@ -23,6 +23,10 @@ option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 # by the environment.
 option(relocatable-install OFF)
 set(OME_RELOCATABLE_INSTALL "Install tree will be relocatable" ${relocatable-install})
+set(OME_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+if(relocatable-install)
+  set(OME_INSTALL_PREFIX "")
+endif()
 
 # Doxygen documentation
 find_package(Doxygen)

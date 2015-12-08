@@ -40,7 +40,7 @@ set -e
 
 # Installation prefix (if any)
 
-INSTALL_PREFIX="@CMAKE_INSTALL_PREFIX@"
+INSTALL_PREFIX="@OME_INSTALL_PREFIX@"
 
 # Relative installation paths
 
@@ -76,7 +76,12 @@ RELEASE_DATE="@OME_VCS_DATE_S@"
 
 # Program invoked as and command requested (if any)
 
-prog=$0
+if [ "${0%"${0#?}"}" = "/" ]; then
+  prog="$0"
+else
+  prog="$(/bin/pwd)/$0"
+fi
+
 if [ "$#" -gt 0 ]; then
   cmd=$1
   shift
@@ -85,46 +90,40 @@ fi
 # Determine installation prefix if unset, then determine paths for
 # programs, libraries, manpages etc.
 
-if [ -d "$INSTALL_PREFIX" ]; then
-  PATH="${INSTALL_PREFIX}/$INSTALL_BINDIR:$PATH"
-  LIBEXECDIR="${INSTALL_PREFIX}/$BF_INSTALL_LIBEXECDIR"
-  MANDIR="${INSTALL_PREFIX}/$INSTALL_MANDIR"
-  if [ "$(uname -s)" = "Darwin" ]; then
-    if [ -z "$DYLD_FALLBACK_LIBRARY_PATH" ]; then
-      export DYLD_FALLBACK_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR"
-    else
-      export DYLD_FALLBACK_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR:$DYLD_FALLBACK_LIBRARY_PATH"
-    fi
+if [ -n "$INSTALL_PREFIX" ] && [ -d "$INSTALL_PREFIX" ]; then
+    :
+else
+    INSTALL_PREFIX="$(dirname "$prog")"
+    BINPATH="$INSTALL_BINDIR"
+    while [ "$BINPATH" != "." ]; do
+        INSTALL_PREFIX="$INSTALL_PREFIX/.."
+        BINPATH="$(dirname "$BINPATH")"
+    done
+fi
+
+case "$(uname -s)" in
+    Linux)
+        INSTALL_PREFIX="$(readlink -f "$INSTALL_PREFIX")"
+        ;;
+    *BSD*)
+        INSTALL_PREFIX="$(stat -f%R "$INSTALL_PREFIX")"
+        ;;
+esac
+
+PATH="${INSTALL_PREFIX}/$INSTALL_BINDIR:$PATH"
+LIBEXECDIR="${INSTALL_PREFIX}/$BF_INSTALL_LIBEXECDIR"
+MANDIR="${INSTALL_PREFIX}/$INSTALL_MANDIR"
+if [ "$(uname -s)" = "Darwin" ]; then
+  if [ -z "$DYLD_FALLBACK_LIBRARY_PATH" ]; then
+    export DYLD_FALLBACK_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR"
   else
-    if [ -z "$LD_LIBRARY_PATH" ]; then
-      export LD_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR"
-    else
-      export LD_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR:$LD_LIBRARY_PATH"
-    fi
+    export DYLD_FALLBACK_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR:$DYLD_FALLBACK_LIBRARY_PATH"
   fi
 else
-  bindir=$(dirname "$prog")
-  rootdir=$(eval echo "\${bindir%$INSTALL_BINDIR}")
-  rootdir=${rootdir%/}
-  if [ -z "$rootdir" ]; then
-    rootdir=$(pwd)
-  fi
-
-  PATH="${rootdir}${INSTALL_BINDIR}:$PATH"
-  LIBEXECDIR="${rootdir}${BF_INSTALL_LIBEXECDIR}"
-  MANDIR="${rootdir}${INSTALL_MANDIR}"
-  if [ "$(uname -s)" = "Darwin" ]; then
-    if [ -z "$DYLD_FALLBACK_LIBRARY_PATH" ]; then
-      export DYLD_FALLBACK_LIBRARY_PATH="$rootdir$INSTALL_LIBDIR"
-    else
-      export DYLD_FALLBACK_LIBRARY_PATH="$rootdir$INSTALL_LIBDIR:$DYLD_FALLBACK_LIBRARY_PATH"
-    fi
+  if [ -z "$LD_LIBRARY_PATH" ]; then
+    export LD_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR"
   else
-    if [ -z "$LD_LIBRARY_PATH" ]; then
-      export LD_LIBRARY_PATH="$rootdir$INSTALL_LIBDIR"
-    else
-      export LD_LIBRARY_PATH="$rootdir$INSTALL_LIBDIR:$LD_LIBRARY_PATH"
-    fi
+    export LD_LIBRARY_PATH="${INSTALL_PREFIX}/$INSTALL_LIBDIR:$LD_LIBRARY_PATH"
   fi
 fi
 
