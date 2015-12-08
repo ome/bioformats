@@ -146,8 +146,12 @@ public class SPCReader extends FormatReader {
   /*
    * Position of each frame clock in the .spc file.
    */
-  
   List<Integer> frameClockList;
+  
+  /*
+   * Position of the end of each frame in the .spc file.
+   */
+  List<Integer> endOfFrameList;
   
   /*
    * Flag to indicate single-line mode.
@@ -167,7 +171,7 @@ public class SPCReader extends FormatReader {
     suffixSufficient = true;
     hasCompanionFiles = true;
     datasetDescription = "One .spc file and similarly named .set file";
-    frameClockList = new ArrayList<Integer>();
+    
   }
   
 
@@ -237,7 +241,7 @@ public class SPCReader extends FormatReader {
     no -= channel * sizeT;
             
     Integer T = no/nTimebins;
-  
+    
     no -= T * nTimebins;
             
     Integer timebin = no;
@@ -252,19 +256,22 @@ public class SPCReader extends FormatReader {
     }
     int noOfBytes;
     
+    
     // if the pre-stored data doesn't match that requested then read from the file
     if (storedT != T || storedChannel != channel)  {
+      
+      LOGGER.debug("T =  " + Integer.toString(T)   );
+    
       // skip to start of requested frame
       Integer frameClockPos = frameClockList.get(T);
+      Integer endOfFramePos = endOfFrameList.get(T);
+      
+    
+      Integer frameLength = (int) (endOfFramePos - frameClockPos);
     
       in.seek(frameClockPos);
-  
-      Integer frameLength = (int) (frameClockList.get(T + 1) - frameClockList.get(T));
-    
-      rawBuf = new byte[frameLength];
-
-      noOfBytes = in.read(rawBuf);
-   
+      noOfBytes = in.read(rawBuf, 0, frameLength);
+      
       currentLine = -1;
       currentFrame = -1;
     
@@ -373,6 +380,9 @@ public class SPCReader extends FormatReader {
     if (spcName == null)  {
       throw new FormatException("Failed to find a matching .spc file!");
     }
+    
+    frameClockList = new ArrayList<>();
+    endOfFrameList = new ArrayList<>();
      
     allFiles.add(workingDirPath + setName);
     allFiles.add(workingDirPath + spcName);
@@ -397,7 +407,7 @@ public class SPCReader extends FormatReader {
       
     }
     catch (IOException exc) {
-      LOGGER.debug("Failed read header from .set file!", exc);
+      LOGGER.debug("Failed to read header from .set file!", exc);
     }
     
     
@@ -481,11 +491,11 @@ public class SPCReader extends FormatReader {
           // at this point only the various clocks are of interest
           switch (adcLM) { 
             case (byte) 0x90:
-              invalidAndMark(bb, false);
+              invalidAndMarkInit(bb);
               break;
 
             case (byte) 0xd0:         // Invalid, Mark and MTOV all set.
-              invalidAndMark(bb, false);     // Unsure about this-- Not well documented!
+              invalidAndMarkInit(bb);     // Unsure about this-- Not well documented!
               break;
 
             default:
@@ -519,7 +529,18 @@ public class SPCReader extends FormatReader {
       lineMode = true;    // return a single line
        m.sizeY = 1;
     }
-
+    
+    Integer frameLength;
+    Integer maxFrameLength = 0;
+    for (int T = 0; T < nFrames; T++)  {
+      frameLength = (int) (endOfFrameList.get(T) - frameClockList.get(T));
+      if (frameLength > maxFrameLength)
+        maxFrameLength = frameLength;
+    }
+    
+    rawBuf = new byte[maxFrameLength];
+    
+  
     m.sizeX = nPixels;
     m.sizeZ = 1;
     m.sizeT =  nTimebins * nFrames;
@@ -579,11 +600,11 @@ public class SPCReader extends FormatReader {
           break;
 
         case (byte) 0x90:
-          invalidAndMark(bb, true);
+          invalidAndMark(bb);
           break;
           
         case (byte) 0xd0:         // Invalid, Mark and MTOV all set.
-          invalidAndMark(bb, true);     // Unsure about this-- Not well documented!
+          invalidAndMark(bb);     // Unsure about this-- Not well documented!
           break;
 
         case (byte) 0xC0:  // timer overflow  
@@ -601,10 +622,53 @@ public class SPCReader extends FormatReader {
   
  
    
-   private void invalidAndMark(int blockPtr, boolean initialised) {
+   private void invalidAndMark(int blockPtr) {
 
     long sum;
     byte routM = (byte) (rawBuf[blockPtr - 2] & 0xf0);
+    
+    switch (routM) {
+
+      case 0x10:           // pixel clock
+
+        currentPixel++;
+        break;
+
+      case 0x20:          //line clock
+
+        //LOGGER.debug("Line clock");
+        
+        if (endOfFrameFlag) {
+          currentLine = -1;
+          endOfFrameFlag = false;
+          currentFrame++;
+ 
+        }
+        currentLine++;
+        currentPixel = 0;
+        break;
+
+      case 0x40:         // frame clock
+
+        LOGGER.debug("Frame clock!");
+        endOfFrameFlag = true;
+        break;
+
+      case 0x60:			//	fandlClock shouldn't happen
+        //AfxMessageBox(_T(" both frame and line clock!"));
+        break;
+
+      default:
+      //LOGGER.debug( "got unknown mark");
+    }
+
+  }
+   
+    private void invalidAndMarkInit(int blockPtr) {
+
+    long sum;
+    byte routM = (byte) (rawBuf[blockPtr - 2] & 0xf0);
+    Integer position;
 
     switch (routM) {
 
@@ -624,23 +688,26 @@ public class SPCReader extends FormatReader {
           currentLine = -1;
           endOfFrameFlag = false;
           currentFrame++;
+          position = (blockPtr - 3) + (bufLength * nBuffers);
+          endOfFrameList.add(position);
         }
 
         currentLine++;
         currentPixel = 0;
+        
         break;
 
       case 0x40:         // frame clock
 
-        LOGGER.debug("Frame clock!");
-        if (initialised == false)  {
-          if (currentFrame == 0) {
-            nLines = currentLine + 1;
-          }
-          // Store position of start of word containing frame clock for later use
-          Integer position = (blockPtr - 3) + (bufLength * nBuffers);
-          frameClockList.add(position);
+        LOGGER.debug("Frame clock Init!");
+        
+        if (currentFrame == 0) {
+          nLines = currentLine + 1;
         }
+        // Store position of start of word containing frame clock for later use
+        position = (blockPtr - 3) + (bufLength * nBuffers);
+        frameClockList.add(position);
+        
         endOfFrameFlag = true;
         break;
 
@@ -659,14 +726,17 @@ public class SPCReader extends FormatReader {
    
     int adc = rawBuf[blockPtr] & 0x0F;   // 4 MSBs of the ADC 
     int currentChannel = (rawBuf[blockPtr - 2] & 0xF0) >> 4;
+    
+      
+    
     if (currentChannel == channel || nChannels==1) {
-      if (currentPixel < nPixels && currentLine > -1) {  
+      if (currentPixel < nPixels && currentLine > -1  && currentLine < (nLines + 1)) {  
         int pix =  bpp *((currentLine * nPixels) + currentPixel);
         
         int adcM = (rawBuf[blockPtr] & 0x0F)  << 8;        // 4 bottom bits are 4 MSBs of 12- bit ADC 
         adcM = adcM | (rawBuf[blockPtr - 1] & 0x0FF);      // get all 12 bits
         int  microTime = 4095 - adcM;
-        int currentBin = microTime >> adcResShift;     
+        int currentBin = microTime >> adcResShift; 
         pix += currentBin * binSize;
         Short intensity = tstoreb.getShort(pix);
         intensity++;
