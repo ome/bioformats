@@ -217,6 +217,16 @@ public class AxisGuesser {
           axisTypes[i] = C_AXIS;
           continue;
         }
+        else {
+          // look for specific channel names
+          for (String element : elements[i]) {
+            String channelName = element.toLowerCase();
+            if (channelName.equals("dapi") || channelName.equals("fitc")) {
+              axisTypes[i] = C_AXIS;
+              continue;
+            }
+          }
+        }
       }
     }
 
