@@ -3161,11 +3161,6 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         <xsd:attribute name="MIMEType" use="optional" type="xsd:string"/>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:simpleType name = "Hex40">
-                <xsd:restriction base = "xsd:hexBinary">
-                        <xsd:length value = "20"/>
-                </xsd:restriction>
-        </xsd:simpleType>
 
         <!-- SA -->
         <!-- Annotatable objects
