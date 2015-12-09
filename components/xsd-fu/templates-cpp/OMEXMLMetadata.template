@@ -332,7 +332,7 @@ ${customContent[obj.name][prop.name]}
         def is_abstract(name):
                 o = model.getObjectByName(name)
                 if o is not None and \
-                   (o.isAbstract or o.isAbstractProprietary):
+                   (o.isAbstract):
                         return True
                 return False
 
@@ -668,24 +668,10 @@ namespace ome
       }
 {% end source %}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-        // Documented in base class.
-        index_type
-        getPixelsBinDataCount(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      OMEXMLMetadata::index_type
-      OMEXMLMetadata::getPixelsBinDataCount(index_type imageIndex) const
-      {
-        const char * const image_method("getPixelsBinDataCount [getImage]");
-        const char * const pixels_method("getPixelsBinDataCount [getPixels]");
-        return safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->sizeOfBinDataList();
-      }
-{% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
@@ -839,38 +825,207 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        const std::string&
-        getLightSourceType(index_type instrumentIndex,
-                           index_type lightSourceIndex) const;
+        index_type
+        getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      OMEXMLMetadata::getLightSourceType(index_type instrumentIndex,
-                                         index_type lightSourceIndex) const
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const
       {
-        const char * const instrument_method("getLightSourceType [getInstrument]");
-        ome::compat::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightSource(lightSourceIndex);
-        return o->getLightSourceType();
+        const char * const roi_method("getLineAnnotationCount [getROI]");
+        const char * const union_method("getLineAnnotationCount [getUnion]");
+        const char * const shape_method("getLineAnnotationCount [getLine]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getLine(lineIndex), shape_method)->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        const std::string&
-        getShapeType(index_type roiIndex,
-                     index_type shapeIndex) const;
+        index_type
+        getRectangleAnnotationCount(index_type roiIndex, index_type ractangleIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      OMEXMLMetadata::getShapeType(index_type roiIndex,
-                                   index_type shapeIndex) const
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getRectangleAnnotationCount(index_type roiIndex, index_type ractangleIndex) const
       {
-        const char * const roi_method("getShapeType [getROI]");
-        const char * const union_method("getShapeType [getUnion]");
-        const char * const shape_method("getShapeType [getShape]");
-        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getShape(shapeIndex), shape_method)->getShapeType();
+        const char * const roi_method("getRectangleAnnotationCount [getROI]");
+        const char * const union_method("getRectangleAnnotationCount [getUnion]");
+        const char * const shape_method("getRectangleAnnotationCount [getRectangle]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getRectangle(ractangleIndex), shape_method)->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const
+      {
+        const char * const roi_method("getMaskAnnotationCount [getROI]");
+        const char * const union_method("getMaskAnnotationCount [getUnion]");
+        const char * const shape_method("getMaskAnnotationCount [getMask]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getMask(maskIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const
+      {
+        const char * const roi_method("getEllipseAnnotationCount [getROI]");
+        const char * const union_method("getEllipseAnnotationCount [getUnion]");
+        const char * const shape_method("getEllipseAnnotationCount [getEllipse]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getEllipse(ellipseIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const
+      {
+        const char * const roi_method("getPointAnnotationCount [getROI]");
+        const char * const union_method("getPointAnnotationCount [getUnion]");
+        const char * const shape_method("getPointAnnotationCount [getPoint]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getPoint(pointIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const
+      {
+        const char * const roi_method("getPolygonAnnotationCount [getROI]");
+        const char * const union_method("getPolygonAnnotationCount [getUnion]");
+        const char * const shape_method("getPolygonAnnotationCount [getPolygon]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getPolygon(polygonIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const
+      {
+        const char * const roi_method("getPolylineAnnotationCount [getROI]");
+        const char * const union_method("getPolylineAnnotationCount [getUnion]");
+        const char * const shape_method("getPolylineAnnotationCount [getPolyline]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getPolyline(polylineIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const
+      {
+        const char * const roi_method("getLabelAnnotationCount [getROI]");
+        const char * const union_method("getLabelAnnotationCount [getUnion]");
+        const char * const shape_method("getLabelAnnotationCount [getLabel]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getLabel(labelIndex), shape_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const
+      {
+        const char * const instrument_method("getArcAnnotationCount [getInstrument]");
+        const char * const lightsource_method("getArcAnnotationCount [getArc]");
+        return safe_fetch(safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getArc(arcIndex), lightsource_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const
+      {
+        const char * const instrument_method("getFilamentAnnotationCount [getInstrument]");
+        const char * const lightsource_method("getFilamentAnnotationCount [getFilament]");
+        return safe_fetch(safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getFilament(filamentIndex), lightsource_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const
+      {
+        const char * const instrument_method("getLaserAnnotationCount [getInstrument]");
+        const char * const lightsource_method("getLaserAnnotationCount [getLaser]");
+        return safe_fetch(safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLaser(laserIndex), lightsource_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const
+      {
+        const char * const instrument_method("getLightEmittingDiodeAnnotationCount [getInstrument]");
+        const char * const lightsource_method("getLightEmittingDiodeAnnotationCount [getLightEmittingDiode]");
+        return safe_fetch(safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightEmittingDiode(lightEmittingDiodeIndex), lightsource_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const
+      {
+        const char * const instrument_method("getGenericExcitationSourceAnnotationCount [getInstrument]");
+        const char * const lightsource_method("getGenericExcitationSourceAnnotationCount [getGenericExcitationSource]");
+        return safe_fetch(safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getGenericExcitationSource(genericExcitationSourceIndex), lightsource_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
@@ -950,35 +1105,11 @@ ${counter(k, o, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
-{% if fu.SOURCE_TYPE == "header" %}\
+
 {% if debug %}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-        // Documented in base class.
-        bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      bool
-      OMEXMLMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
-                                                index_type binDataIndex) const
-      {
-        const char * const image_method("getPixelsBinDataBigEndian [getImage]");
-        const char * const pixels_method("getPixelsBinDataBigEndian [getPixels]");
-        const char * const bindata_method("getPixelsBinDataBigEndian [getBinData]");
-
-        ome::compat::shared_ptr<bool> bigEndian = safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBigEndian();
-
-        if (bigEndian) { // not null
-          return *bigEndian;
-        }
-
-        // Fall back to BinData
-        return safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBinData(binDataIndex), bindata_method)->getBigEndian();
-      }
-{% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
@@ -1004,7 +1135,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //
@@ -1048,7 +1179,6 @@ ${counter(k, o, v)}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
 {% end header %}\
-${getter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -1065,7 +1195,7 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -1083,41 +1213,11 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
-{% if fu.SOURCE_TYPE == "header" %}\
+
 {% if debug %}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-        // Documented in base class.
-        void
-        setPixelsBinDataBigEndian(bool       bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      OMEXMLMetadata::setPixelsBinDataBigEndian(bool       bigEndian,
-                                                index_type imageIndex,
-                                                index_type /* binDataIndex */)
-      {
-        // Parents: {u'Image': {u'OME': None}}
-        // Type is not a reference
-        if (root->sizeOfImageList() == imageIndex)
-          {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(ome::compat::make_shared< ::${lang.omexml_model_package}::Image>());
-            root->addImage(newImage);
-          }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
-        if (!o1->getPixels()) // null
-          {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(ome::compat::make_shared< ::${lang.omexml_model_package}::Pixels>());
-            o1->setPixels(newPixels);
-          }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
-        ome::compat::shared_ptr<bool> newBool(ome::compat::make_shared<bool>(bigEndian));
-        o2->setBigEndian(newBool);
-      }
-{% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
@@ -1139,7 +1239,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //
@@ -1180,7 +1280,6 @@ ${getter(k, o, prop, v)}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
 {% end header %}\
-${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -1197,7 +1296,7 @@ ${setter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\

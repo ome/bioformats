@@ -176,8 +176,8 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     
     laser.linkPump(laserPump);
     
-    instrument.addLightSource(laser);
-    instrument.addLightSource(laserPump);
+    instrument.addLaser(laser);
+    instrument.addLaser(laserPump);
     
     // Create <Arc/> under <Instrument/>
     Arc arc = new Arc();
@@ -191,7 +191,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     arcAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     arc.linkAnnotation(arcAnnotation);
     annotations.addCommentAnnotation(arcAnnotation);
-    instrument.addLightSource(arc);
+    instrument.addArc(arc);
     
     // Create <Filament/> under <Instrument/>
     Filament filament = new Filament();
@@ -205,7 +205,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     filamentAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     filament.linkAnnotation(filamentAnnotation);
     annotations.addCommentAnnotation(filamentAnnotation);
-    instrument.addLightSource(filament);
+    instrument.addFilament(filament);
 
     // Create <LightEmittingDiode/> under <Instrument/>
     LightEmittingDiode led = new LightEmittingDiode();
@@ -218,7 +218,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ledAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     led.linkAnnotation(ledAnnotation);
     annotations.addCommentAnnotation(ledAnnotation);
-    instrument.addLightSource(led);
+    instrument.addLightEmittingDiode(led);
 
     // Create <Dichroic/> under <Instrument/>
     Dichroic dichroic = new Dichroic();
@@ -348,7 +348,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     rect.setWidth(InOutCurrentTest.RECTANGLE_WIDTH);
     rect.setHeight(InOutCurrentTest.RECTANGLE_HEIGHT);
 
-    shapeUnion.addShape(rect);
+    shapeUnion.addRectangle(rect);
     roi.setUnion(shapeUnion);
 
     return roi;

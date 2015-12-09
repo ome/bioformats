@@ -72,6 +72,7 @@ import ome.xml.model.Filament;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
+import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -248,7 +249,7 @@ public class XMLMockObjects
   /** The light sources to handle. */
   public static final String[] LIGHT_SOURCES = {Laser.class.getName(),
     Arc.class.getName(), Filament.class.getName(),
-    LightEmittingDiode.class.getName(), Laser.class.getName()};
+    LightEmittingDiode.class.getName(), GenericExcitationSource.class.getName()};
 
   /**
    * The shapes to handle.
@@ -581,7 +582,7 @@ public class XMLMockObjects
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
     settings.setWavelength(new Length(200.2, UNITS.NM));
-    settings.setLightSource(instrument.copyLightSourceList().get(0));
+    settings.setLightSource(instrument.copyLaserList().get(0));
     return settings;
   }
 
@@ -797,7 +798,17 @@ public class XMLMockObjects
       j += i;
       Shape shape = createShape(j, SHAPES[i], z, c, t);
       shape.setID("Shape:" + index + ":" + j);
-      union.addShape(shape);
+      if (SHAPES[i].equals(Line.class.getName())) {
+        union.addLine((Line)shape);
+      } else if (SHAPES[i].equals(Polyline.class.getName())) {
+        union.addPolyline((Polyline)shape);
+      } else if (SHAPES[i].equals(Rectangle.class.getName())) {
+        union.addRectangle((Rectangle)shape);
+      } else if (SHAPES[i].equals(Ellipse.class.getName())) {
+        union.addEllipse((Ellipse)shape);
+      } else if (SHAPES[i].equals(Point.class.getName())) {
+        union.addPoint((Point)shape);
+      }
     }
     roi.setUnion(union);
     return roi;
@@ -1164,7 +1175,21 @@ public class XMLMockObjects
         instrument.addDichroic(createDichroic(i));
       }
       for (int i = 0; i < LIGHT_SOURCES.length; i++) {
-        instrument.addLightSource(createLightSource(LIGHT_SOURCES[i], i));
+        if (LIGHT_SOURCES[i].equals(Laser.class.getName())) {
+          instrument.addLaser((Laser)createLightSource(LIGHT_SOURCES[i], i));
+        }
+        else if (LIGHT_SOURCES[i].equals(LightEmittingDiode.class.getName())) {
+          instrument.addLightEmittingDiode((LightEmittingDiode)createLightSource(LIGHT_SOURCES[i], i));
+        }
+        else if (LIGHT_SOURCES[i].equals(Filament.class.getName())) {
+          instrument.addFilament((Filament)createLightSource(LIGHT_SOURCES[i], i));
+        }
+        else if (LIGHT_SOURCES[i].equals(Arc.class.getName())) {
+          instrument.addArc((Arc)createLightSource(LIGHT_SOURCES[i], i));
+        }
+        else if (LIGHT_SOURCES[i].equals(GenericExcitationSource.class.getName())) {
+          instrument.addGenericExcitationSource((GenericExcitationSource)createLightSource(LIGHT_SOURCES[i], i));
+        }
       }
     }
     return instrument;
@@ -1418,7 +1443,17 @@ public class XMLMockObjects
         k.next().setLinkedAnnotation(index, new TermAnnotation());
         index++;
     }
-    List<LightSource> lights = instrument.copyLightSourceList();
+    List<LightSource> lights = new ArrayList<LightSource>();
+    List<Laser> lasers = instrument.copyLaserList();
+    List<Arc> arcs = instrument.copyArcList();
+    List<Filament> filaments = instrument.copyFilamentList();
+    List<GenericExcitationSource> genericExcitationSources = instrument.copyGenericExcitationSourceList();
+    List<LightEmittingDiode> leds = instrument.copyLightEmittingDiodeList();
+    lights.addAll(lasers);
+    lights.addAll(arcs);
+    lights.addAll(filaments);
+    lights.addAll(genericExcitationSources);
+    lights.addAll(leds);
     index = 0;
     Iterator<LightSource> l = lights.iterator();
     while (l.hasNext()) {

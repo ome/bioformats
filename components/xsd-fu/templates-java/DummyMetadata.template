@@ -64,7 +64,7 @@
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
-		   (o.isAbstract or o.isAbstractProprietary):
+		   (o.isAbstract):
 			return True
 		return False
 
@@ -186,11 +186,6 @@ public class DummyMetadata implements IMetadata
 
 	// -- Entity counting (manual definitions) --
 
-	public int getPixelsBinDataCount(int imageIndex)
-	{
-		return -1;
-	}
-
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return -1;
   }
@@ -235,17 +230,59 @@ public class DummyMetadata implements IMetadata
   public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
     return -1;
   }
-
-	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
-	{
-		return null;
-	}
-
-  public String getShapeType(int roiIndex, int shapeIndex)
-  {
-    return null;
+  
+  public int getLineAnnotationCount(int ROIIndex, int lineIndex) {
+    return -1;
+  }
+  
+  public int getRectangleAnnotationCount(int ROIIndex, int rectangleIndex) {
+    return -1;
+  }
+  
+  public int getMaskAnnotationCount(int ROIIndex, int maskIndex) {
+    return -1;
+  }
+  
+  public int getEllipseAnnotationCount(int ROIIndex, int ellipseIndex) {
+    return -1;
+  }
+  
+  public int getPointAnnotationCount(int ROIIndex, int pointIndex) {
+    return -1;
+  }
+  
+  public int getPolylineAnnotationCount(int ROIIndex, int polylineIndex) {
+    return -1;
+  }
+  
+  public int getPolygonAnnotationCount(int ROIIndex, int polygonIndex) {
+    return -1;
+  }
+  
+  public int getLabelAnnotationCount(int ROIIndex, int labelIndex) {
+    return -1;
   }
 
+  public int getArcAnnotationCount(int instrumentIndex, int arcIndex) {
+    return -1;
+  }
+  
+  public int getFilamentAnnotationCount(int instrumentIndex, int filamentIndex) {
+    return -1;
+  }
+  
+  public int getLaserAnnotationCount(int instrumentIndex, int laserIndex) {
+    return -1;
+  }
+  
+  public int getLightEmittingDiodeAnnotationCount(int instrumentIndex, int lightEmittingDiodeIndex) {
+    return -1;
+  }
+  
+  public int getGenericExcitationSourceAnnotationCount(int instrumentIndex, int genericExcitationSourceIndex) {
+    return -1;
+  }
+  
 	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -277,11 +314,6 @@ ${counter(k, o, v)}\
 
 	// -- Entity retrieval (manual definitions) --
 
-	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
-	{
-		return null;
-	}
-
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
@@ -310,7 +342,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\
@@ -355,8 +387,6 @@ ${counter(k, o, v)}\
 {% if debug %}\
 	// MARKER [AAA]
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k}
-${getter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -373,7 +403,7 @@ ${getter(k, o, prop, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -402,11 +432,7 @@ ${getter(k, o, prop, v)}\
 
 	// -- Entity storage (manual definitions) --
 
-	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
-	{
-	}
-
-	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
 	{
 	}
 
@@ -434,7 +460,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
 	//
 	// ${o.name} property storage
 	//
@@ -466,8 +492,6 @@ ${getter(k, o, prop, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-	// ${prop.name} accessor from parent ${k}
-${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -484,7 +508,7 @@ ${setter(k, o, prop, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\

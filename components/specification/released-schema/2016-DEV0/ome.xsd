@@ -1004,7 +1004,13 @@
                 <xsd:complexType>
                         <xsd:sequence>
                                 <xsd:element ref="Microscope" minOccurs="0" maxOccurs="1"/>
-                                <xsd:element ref="LightSource" minOccurs="0" maxOccurs="unbounded"/>
+                                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                                  <xsd:element ref="Laser" minOccurs="0" maxOccurs="unbounded"/>
+                                  <xsd:element ref="Filament" minOccurs="0" maxOccurs="unbounded"/>
+                                  <xsd:element ref="Arc" minOccurs="0" maxOccurs="unbounded"/>
+                                  <xsd:element ref="LightEmittingDiode" minOccurs="0" maxOccurs="unbounded"/>
+                                  <xsd:element ref="GenericExcitationSource" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:choice>
                                 <xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
@@ -2260,9 +2266,9 @@
         </xsd:element>
 
         <!-- Light elements -->
-        <xsd:element name="LightSource"> <!-- top level definition -->
+        <xsd:complexType name="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
-                        <xsd:appinfo><xsdfu><plural>LightSources</plural><abstractproprietary/></xsdfu></xsd:appinfo>
+                        <xsd:appinfo><xsdfu><plural>LightSources</plural><abstract/></xsdfu></xsd:appinfo>
                         <xsd:documentation>
                                 The lightsource for the instrument.  An instrument may have several light sources.
                                 The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
@@ -2274,13 +2280,6 @@
                         <xsd:complexContent>
                                 <xsd:extension base="ManufacturerSpec">
                                         <xsd:sequence>
-                                                <xsd:choice minOccurs="1" maxOccurs="1">
-                                                        <xsd:element ref="Laser" minOccurs="1" maxOccurs="1"/>
-                                                        <xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
-                                                        <xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
-                                                        <xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
-                                                        <xsd:element ref="GenericExcitationSource" minOccurs="1" maxOccurs="1"/>
-                                                </xsd:choice>
                                                 <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
                                                         <xsd:annotation>
                                                                 <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
@@ -2310,7 +2309,7 @@
                                 </xsd:extension>
                         </xsd:complexContent>
                 </xsd:complexType>
-        </xsd:element>
+        </xsd:complexType>
         <xsd:element name="Laser"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Lasers</plural></xsdfu></xsd:appinfo>
@@ -2467,6 +2466,9 @@
                                 </xsd:annotation>
                         </xsd:attribute>
                 </xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="LightSource"/>
+                </xsd:complexContent>
         </xsd:element>
         <xsd:element name="Arc"> <!-- top level definition -->
                 <xsd:annotation>
@@ -2493,6 +2495,9 @@
                                 </xsd:simpleType>
                         </xsd:attribute>
                 </xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="LightSource"/>
+          </xsd:complexContent>
         </xsd:element>
         <xsd:element name="Filament"> <!-- top level definition -->
                 <xsd:annotation>
@@ -2518,6 +2523,9 @@
                                 </xsd:simpleType>
                         </xsd:attribute>
                 </xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="LightSource"/>
+          </xsd:complexContent>
         </xsd:element>
         <xsd:element name="LightEmittingDiode"> <!-- top level definition -->
                 <xsd:annotation>
@@ -2554,6 +2562,9 @@
                                 this topic.
                         </xsd:documentation>
                 </xsd:annotation>
+          <xsd:complexContent>
+            <xsd:extension base="LightSource"/>
+          </xsd:complexContent>
         </xsd:element>
         <xsd:element name="GenericExcitationSource"> <!-- top level definition -->
                 <xsd:annotation>
@@ -2570,6 +2581,9 @@
                                 <xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
                         </xsd:sequence>
                 </xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="LightSource"/>
+          </xsd:complexContent>
         </xsd:element>
         <xsd:element name="Pump"> <!-- top level definition -->
                 <xsd:annotation>
@@ -3539,7 +3553,18 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                         <xsd:element name="Union" minOccurs="1" maxOccurs="1">
                                                 <xsd:complexType>
                                                         <xsd:sequence>
-                                                                <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
+                                                          <!--   <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>-->
+
+                                                          <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                                                            <xsd:element ref="Line" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Rectangle" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Mask" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Ellipse" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Point" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Polyline" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Polygon" minOccurs="0" maxOccurs="unbounded"/>
+                                                            <xsd:element ref="Label" minOccurs="0" maxOccurs="unbounded"/>
+                                                          </xsd:choice>
                                                         </xsd:sequence>
                                                 </xsd:complexType>
                                         </xsd:element>
@@ -3573,9 +3598,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Shape"> <!-- top level definition -->
+        <xsd:complexType name="Shape"> <!-- top level definition -->
                 <xsd:annotation>
-                        <xsd:appinfo><xsdfu><plural>Shapes</plural><abstractproprietary/></xsdfu></xsd:appinfo>
+                        <xsd:appinfo><xsdfu><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
                         <xsd:documentation>
                                 The shape element contains a single specific ROI shape and links
                                 that to any channels, and a timepoint and a z-section. It also
@@ -3584,16 +3609,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:sequence>
-                                <xsd:choice minOccurs="1" maxOccurs="1">
-                                        <xsd:element ref="Line" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Rectangle" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Mask" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Ellipse" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Point" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Polyline" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Polygon" minOccurs="1" maxOccurs="1"/>
-                                        <xsd:element ref="Label" minOccurs="1" maxOccurs="1"/>
-                                </xsd:choice>
+
                                 <xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
                                         <xsd:annotation>
                                                 <xsd:documentation>
@@ -3767,7 +3783,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                 </xsd:annotation>
                         </xsd:attribute>
                 </xsd:complexType>
-        </xsd:element>
+        </xsd:complexType>
 
         <xsd:element name="Rectangle"> <!-- top level definition -->
                 <xsd:annotation>
@@ -3778,6 +3794,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3820,6 +3839,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:sequence>
                                 <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
                         </xsd:sequence>
@@ -3859,6 +3881,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         <xsd:appinfo><xsdfu><plural>Points</plural></xsdfu></xsd:appinfo>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3885,6 +3910,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                                        <xsd:complexContent>
+                                                <xsd:extension base="Shape"/>
+                                        </xsd:complexContent>
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3924,6 +3952,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="X1" use="required" type="xsd:float">
                                 <xsd:annotation>
                                         <xsd:documentation> The X coordinate of the start of the line. [units pixels]
@@ -3963,6 +3994,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="Points" use="required" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation> The points of the polyline are defined as a list of comma
@@ -3985,6 +4019,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="Points" use="required" type="xsd:string">
                                 <xsd:annotation>
                                         <xsd:documentation> The points of the Polygon are defined as a list of comma
@@ -4004,6 +4041,9 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape"/>
+                        </xsd:complexContent>
                         <xsd:attribute name="X" use="required" type="xsd:float">
                                 <xsd:annotation>
                                         <xsd:documentation> This defines the X coordinate of the current text position
@@ -4672,4 +4712,5 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-</xsd:schema>
+
+    </xsd:schema>
