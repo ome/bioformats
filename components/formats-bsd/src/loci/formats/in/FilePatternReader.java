@@ -57,7 +57,9 @@ public class FilePatternReader extends FormatReader {
 
   // -- Fields --
 
-  private FileStitcher helper;
+  private transient FileStitcher helper;
+  private String pattern;
+  private ClassList<IFormatReader> newClasses;
 
   // -- Constructor --
 
@@ -67,8 +69,7 @@ public class FilePatternReader extends FormatReader {
 
     ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
-    ClassList<IFormatReader> newClasses =
-      new ClassList<IFormatReader>(IFormatReader.class);
+    newClasses = new ClassList<IFormatReader>(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
       if (!c.equals(FilePatternReader.class)) {
         newClasses.addClass(c);
@@ -259,6 +260,9 @@ public class FilePatternReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     helper.close(fileOnly);
+    if (!fileOnly) {
+      pattern = null;
+    }
   }
 
   @Override
@@ -488,6 +492,26 @@ public class FilePatternReader extends FormatReader {
     helper.setFlattenedResolutions(flattened);
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    if (helper == null) {
+      helper = new FileStitcher(new ImageReader(newClasses));
+    }
+    else {
+      helper.close();
+    }
+    helper.setMetadataOptions(getMetadataOptions());
+    helper.setUsingPatternIds(true);
+    helper.setCanChangePattern(false);
+    try {
+      helper.setId(pattern);
+    }
+    catch (FormatException e) {
+      throw new IOException("Could not reopen file", e);
+    }
+  }
+
   // -- IFormatHandler API methods --
 
   @Override
@@ -512,15 +536,12 @@ public class FilePatternReader extends FormatReader {
     // absolute file pattern
 
     currentId = new Location(id).getAbsolutePath();
-    String pattern = DataTools.readFile(id).trim();
+    pattern = DataTools.readFile(id).trim();
     String dir = new Location(id).getAbsoluteFile().getParent();
     if (new Location(pattern).getParent() == null) {
       pattern = dir + File.separator + pattern;
     }
-
-    helper.setUsingPatternIds(true);
-    helper.setCanChangePattern(false);
-    helper.setId(pattern);
+    reopenFile();
     core = helper.getCoreMetadataList();
   }
 
