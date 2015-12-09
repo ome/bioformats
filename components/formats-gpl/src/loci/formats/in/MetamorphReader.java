@@ -731,24 +731,26 @@ public class MetamorphReader extends BaseTiffReader {
     ArrayList<String> uniqueWells = new ArrayList<String>();
     int rows = 0;
     int cols = 0;
-    for (String label : stageLabels) {
-      if (label != null && label.startsWith("Scan ") &&
-        !uniqueWells.contains(label))
-      {
-        uniqueWells.add(label);
-        int row = getWellRow(label);
-        if (row >= rows) {
-          rows = row + 1;
-        }
-        int col = getWellColumn(label);
-        if (col >= cols) {
-          cols = col + 1;
+    if (stageLabels != null) {
+      for (String label : stageLabels) {
+        if (label != null && label.startsWith("Scan ") &&
+          !uniqueWells.contains(label))
+        {
+          uniqueWells.add(label);
+          int row = getWellRow(label);
+          if (row >= rows) {
+            rows = row + 1;
+          }
+          int col = getWellColumn(label);
+          if (col >= cols) {
+            cols = col + 1;
+          }
         }
       }
     }
 
     // each plane corresponds to a unique well
-    boolean isHCS = uniqueWells.size() == stageLabels.length;
+    boolean isHCS = stageLabels != null && uniqueWells.size() == stageLabels.length;
     if (isHCS) {
       CoreMetadata c = core.get(0);
       core.clear();
@@ -1521,7 +1523,7 @@ public class MetamorphReader extends BaseTiffReader {
         name = name.substring(0, name.length() - 1);
       }
     }
-    if (name.length() == 0) {
+    if (name.length() == 0 && stageLabels != null) {
       name = stageLabels[i];
     }
     return name;
