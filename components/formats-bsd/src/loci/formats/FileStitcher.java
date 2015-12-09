@@ -831,7 +831,7 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   @Override
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(getCurrentFile(), false, 2);
+    //FormatTools.assertId(getCurrentFile(), false, 2);
     reader.setMetadataStore(store);
     this.store = store;
   }
