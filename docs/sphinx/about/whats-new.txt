@@ -23,6 +23,9 @@ Version history
        - fixed handling of non-default physical size and plane position units
 * Documentation updates, including:
    - updated MapAnnotation example to show linkage of annotations to images
+* C++:
+   - no changes, released to keep version numbers in sync with Bio-Formats Java
+
 
 5.1.6 (2015 November 16)
 ------------------------
