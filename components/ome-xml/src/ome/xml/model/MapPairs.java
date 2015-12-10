@@ -91,7 +91,7 @@ public class MapPairs implements OMEModelObject {
 
     // -- Constants --
 
-    public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
+    public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
     public static final String PAIRSNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
 
     private List<MapPair> pairs;
