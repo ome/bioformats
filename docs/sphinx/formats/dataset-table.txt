@@ -315,7 +315,7 @@ to open/import a dataset in a particular format.
      - .ome.tif, .ome.tiff, .companion.ome
      - One or more .ome.tiff files
    * - OME-XML
-     - .ome
+     - .ome, .ome.xml
      - Single file
    * - Olympus APL
      - .apl, .tnb, .mtb, .tif
