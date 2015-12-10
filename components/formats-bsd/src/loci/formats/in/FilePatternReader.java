@@ -45,6 +45,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
@@ -62,6 +63,8 @@ public class FilePatternReader extends FormatReader {
   private transient IFormatReader helper;
   private String pattern;
   private ClassList<IFormatReader> newClasses;
+  private String[] files;
+  private int[][][] fileIndexes;
 
   // -- Constructor --
 
@@ -86,71 +89,6 @@ public class FilePatternReader extends FormatReader {
   // -- IFormatReader methods --
 
   @Override
-  public int getImageCount() {
-    return helper.getImageCount();
-  }
-
-  @Override
-  public boolean isRGB() {
-    return helper.isRGB();
-  }
-
-  @Override
-  public int getSizeX() {
-    return helper.getSizeX();
-  }
-
-  @Override
-  public int getSizeY() {
-    return helper.getSizeY();
-  }
-
-  @Override
-  public int getSizeZ() {
-    return helper.getSizeZ();
-  }
-
-  @Override
-  public int getSizeC() {
-    return helper.getSizeC();
-  }
-
-  @Override
-  public int getSizeT() {
-    return helper.getSizeT();
-  }
-
-  @Override
-  public int getPixelType() {
-    return helper.getPixelType();
-  }
-
-  @Override
-  public int getBitsPerPixel() {
-    return helper.getBitsPerPixel();
-  }
-
-  @Override
-  public int getEffectiveSizeC() {
-    return helper.getEffectiveSizeC();
-  }
-
-  @Override
-  public int getRGBChannelCount() {
-    return helper.getRGBChannelCount();
-  }
-
-  @Override
-  public boolean isIndexed() {
-    return helper.isIndexed();
-  }
-
-  @Override
-  public boolean isFalseColor() {
-    return helper.isFalseColor();
-  }
-
-  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     if (getCurrentFile() == null) {
       return null;
@@ -167,84 +105,33 @@ public class FilePatternReader extends FormatReader {
   }
 
   @Override
-  public Modulo getModuloZ() {
-    return helper.getModuloZ();
-  }
-
-  @Override
-  public Modulo getModuloC() {
-    return helper.getModuloC();
-  }
-
-  @Override
-  public Modulo getModuloT() {
-    return helper.getModuloT();
-  }
-
-  @Override
-  public int getThumbSizeX() {
-    return helper.getThumbSizeX();
-  }
-
-  @Override
-  public int getThumbSizeY() {
-    return helper.getThumbSizeY();
-  }
-
-  @Override
-  public boolean isLittleEndian() {
-    return helper.isLittleEndian();
-  }
-
-  @Override
-  public String getDimensionOrder() {
-    return helper.getDimensionOrder();
-  }
-
-  @Override
-  public boolean isOrderCertain() {
-    return helper.isOrderCertain();
-  }
-
-  @Override
-  public boolean isThumbnailSeries() {
-    return helper.isThumbnailSeries();
-  }
-
-  @Override
-  public boolean isInterleaved() {
-    return helper.isInterleaved();
-  }
-
-  @Override
-  public boolean isInterleaved(int subC) {
-    return helper.isInterleaved(subC);
-  }
-
-  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
-    return helper.openBytes(no);
+    return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return helper.openBytes(no, x, y, w, h);
+    byte[] buf = new byte[FormatTools.getPlaneSize(this, w, h)];
+    return openBytes(no, buf, x, y, w, h);
   }
 
   @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
-    return helper.openBytes(no, buf);
+    return openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
   }
 
   @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return helper.openBytes(no, buf, x, y, w, h);
+    int fileIndex = fileIndexes[getSeries()][no][0];
+    int planeIndex = fileIndexes[getSeries()][no][1];
+    helper.setId(files[fileIndex]);
+    return helper.openBytes(planeIndex, buf, x, y, w, h);
   }
 
   @Override
@@ -264,22 +151,9 @@ public class FilePatternReader extends FormatReader {
     helper.close(fileOnly);
     if (!fileOnly) {
       pattern = null;
+      files = null;
+      fileIndexes = null;
     }
-  }
-
-  @Override
-  public int getSeriesCount() {
-    return helper.getSeriesCount();
-  }
-
-  @Override
-  public void setSeries(int no) {
-    helper.setSeries(no);
-  }
-
-  @Override
-  public int getSeries() {
-    return helper.getSeries();
   }
 
   @Override
@@ -290,11 +164,6 @@ public class FilePatternReader extends FormatReader {
   @Override
   public boolean isGroupFiles() {
     return helper.isGroupFiles();
-  }
-
-  @Override
-  public boolean isMetadataComplete() {
-    return helper.isMetadataComplete();
   }
 
   @Override
@@ -320,10 +189,9 @@ public class FilePatternReader extends FormatReader {
     if (noPixels) {
       return new String[] {currentId};
     }
-    String[] helperFiles = helper.getSeriesUsedFiles(noPixels);
-    String[] allFiles = new String[helperFiles.length + 1];
+    String[] allFiles = new String[files.length + 1];
     allFiles[0] = currentId;
-    System.arraycopy(helperFiles, 0, allFiles, 1, helperFiles.length);
+    System.arraycopy(files, 0, allFiles, 1, files.length);
     return allFiles;
   }
 
@@ -332,56 +200,10 @@ public class FilePatternReader extends FormatReader {
     if (noPixels) {
       return new String[] {currentId};
     }
-    String[] helperFiles = helper.getUsedFiles(noPixels);
-    String[] allFiles = new String[helperFiles.length + 1];
+    String[] allFiles = new String[files.length + 1];
     allFiles[0] = currentId;
-    System.arraycopy(helperFiles, 0, allFiles, 1, helperFiles.length);
+    System.arraycopy(files, 0, allFiles, 1, files.length);
     return allFiles;
-  }
-
-  @Override
-  public int getIndex(int z, int c, int t) {
-    return helper.getIndex(z, c, t);
-  }
-
-  @Override
-  public int[] getZCTCoords(int index) {
-    return helper.getZCTCoords(index);
-  }
-
-  @Override
-  public Object getMetadataValue(String field) {
-    return helper.getMetadataValue(field);
-  }
-
-  @Override
-  public Object getSeriesMetadataValue(String field) {
-    return helper.getSeriesMetadataValue(field);
-  }
-
-  @Override
-  public Hashtable<String, Object> getGlobalMetadata() {
-    return helper.getGlobalMetadata();
-  }
-
-  @Override
-  public Hashtable<String, Object> getSeriesMetadata() {
-    return helper.getSeriesMetadata();
-  }
-
-  @Override
-  public List<CoreMetadata> getCoreMetadataList() {
-    // Only used for determining the object type.
-    List<CoreMetadata> oldcore = helper.getCoreMetadataList();
-    List<CoreMetadata> newcore = new ArrayList<CoreMetadata>();
-
-    for (int s=0; s<oldcore.size(); s++) {
-      CoreMetadata newMeta = oldcore.get(s).clone(this, s);
-      newMeta.resolutionCount = oldcore.get(s).resolutionCount;
-      newcore.add(newMeta);
-    }
-
-    return newcore;
   }
 
   @Override
@@ -394,17 +216,8 @@ public class FilePatternReader extends FormatReader {
 
   @Override
   public void setMetadataStore(MetadataStore store) {
+    super.setMetadataStore(store);
     helper.setMetadataStore(store);
-  }
-
-  @Override
-  public MetadataStore getMetadataStore() {
-    return helper.getMetadataStore();
-  }
-
-  @Override
-  public Object getMetadataStoreRoot() {
-    return helper.getMetadataStoreRoot();
   }
 
   @Override
@@ -440,51 +253,6 @@ public class FilePatternReader extends FormatReader {
   }
 
   @Override
-  public int getOptimalTileWidth() {
-    return helper.getOptimalTileWidth();
-  }
-
-  @Override
-  public int getOptimalTileHeight() {
-    return helper.getOptimalTileHeight();
-  }
-
-  @Override
-  public int getCoreIndex() {
-    return helper.getCoreIndex();
-  }
-
-  @Override
-  public void setCoreIndex(int no) {
-    helper.setCoreIndex(no);
-  }
-
-  @Override
-  public int seriesToCoreIndex(int series) {
-    return helper.seriesToCoreIndex(series);
-  }
-
-  @Override
-  public int coreIndexToSeries(int index) {
-    return helper.coreIndexToSeries(index);
-  }
-
-  @Override
-  public int getResolutionCount() {
-    return helper.getResolutionCount();
-  }
-
-  @Override
-  public void setResolution(int no) {
-    helper.setResolution(no);
-  }
-
-  @Override
-  public int getResolution() {
-    return helper.getResolution();
-  }
-
-  @Override
   public boolean hasFlattenedResolutions() {
     return helper.hasFlattenedResolutions();
   }
@@ -497,20 +265,36 @@ public class FilePatternReader extends FormatReader {
   /* @see loci.formats.IFormatReader#reopenFile() */
   @Override
   public void reopenFile() throws IOException {
-    if (helper == null) {
+    if (files != null) {
+      IFormatReader r = new ImageReader(newClasses);
+      helper = Memoizer.wrap(getMetadataOptions(), r);
+      stitcher = null;
+    }
+    else if (helper == null) {
       stitcher = new FileStitcher(new ImageReader(newClasses));
-      helper = Memoizer.wrap(getMetadataOptions(), stitcher);
+      IFormatReader r = new ImageReader(newClasses);
+      helper = Memoizer.wrap(getMetadataOptions(), r);
     }
     else {
       helper.close();
     }
-    stitcher.setUsingPatternIds(true);
-    stitcher.setCanChangePattern(false);
-    try {
-      helper.setId(pattern);
+    if (stitcher != null) {
+      stitcher.setUsingPatternIds(true);
+      stitcher.setCanChangePattern(false);
+      try {
+        helper.setId(pattern);
+      }
+      catch (FormatException e) {
+        throw new IOException("Could not reopen file", e);
+      }
     }
-    catch (FormatException e) {
-      throw new IOException("Could not reopen file", e);
+    else {
+      try {
+        helper.setId(files[0]);
+      }
+      catch (FormatException e) {
+        throw new IOException("Could not reopen " + files[0], e);
+      }
     }
   }
 
@@ -533,6 +317,7 @@ public class FilePatternReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+    super.initFile(id);
     // read the pattern from the file
     // the file should just contain a single line with the relative or
     // absolute file pattern
@@ -544,7 +329,21 @@ public class FilePatternReader extends FormatReader {
       pattern = dir + File.separator + pattern;
     }
     reopenFile();
-    core = helper.getCoreMetadataList();
+    core.clear();
+    for (CoreMetadata m : helper.getCoreMetadataList()) {
+      core.add(new CoreMetadata(m));
+    }
+
+    files = stitcher.getUsedFiles();
+    fileIndexes = new int[getSeriesCount()][][];
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+      fileIndexes[s] = new int[core.get(s).imageCount][];
+      for (int p=0; p<fileIndexes[s].length; p++) {
+        fileIndexes[s][p] = stitcher.computeIndices(p);
+      }
+    }
+    setSeries(0);
   }
 
 }
