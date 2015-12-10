@@ -56,10 +56,9 @@ if(BUILD_TESTS)
 
   target_include_directories(ome-test PUBLIC
                              $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/cpp/lib>
-                             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/cpp/lib>
-                             $<BUILD_INTERFACE:${GTEST_INCLUDE_DIR}>)
+                             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/cpp/lib>)
 
-  target_link_libraries(ome-test OME::Common ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  target_link_libraries(ome-test OME::Common GTest::GTest ${CMAKE_THREAD_LIBS_INIT})
   set_target_properties(ome-test PROPERTIES LINKER_LANGUAGE CXX)
 
   add_library(OME::Test ALIAS ome-test)
