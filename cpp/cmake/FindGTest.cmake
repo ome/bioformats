@@ -10,7 +10,8 @@
 # This module defines the following :prop_tgt:`IMPORTED` targets:
 #
 # ``GTest::GTest``
-#   The Google Test ``gtest`` library, if found
+#   The Google Test ``gtest`` library, if found; adds Thread::Thread
+#   automatically
 # ``GTest::Main``
 #   The Google Test ``gtest_main`` library, if found
 #
@@ -29,7 +30,8 @@
 # contain debug/optimized keywords when a debugging library is found.
 #
 # ``GTEST_LIBRARIES``
-#   The Google Test ``gtest`` library
+#   The Google Test ``gtest`` library; note it also requires linking
+#   with an appropriate thread library
 # ``GTEST_MAIN_LIBRARIES``
 #   The Google Test ``gtest_main`` library
 # ``GTEST_BOTH_LIBRARIES``
@@ -55,10 +57,10 @@
 #
 #     enable_testing()
 #     find_package(GTest REQUIRED)
-#     
+#
 #     add_executable(foo foo.cc)
 #     target_link_libraries(foo GTest::GTest GTest::Main)
-#     
+#
 #     add_test(AllTestsInFoo foo)
 #
 #
@@ -208,55 +210,59 @@ if(GTEST_FOUND)
     _gtest_append_debugs(GTEST_MAIN_LIBRARIES GTEST_MAIN_LIBRARY)
     set(GTEST_BOTH_LIBRARIES ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES})
 
-  # For header-only libraries
-  if(NOT TARGET GTest::GTest)
-    add_library(GTest::GTest UNKNOWN IMPORTED)
-    if(GTEST_INCLUDE_DIRS)
-      set_target_properties(GTest::GTest PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${GTEST_INCLUDE_DIRS}")
+    include(CMakeFindDependencyMacro)
+    find_dependency(Threads)
+
+    if(NOT TARGET GTest::GTest)
+        add_library(GTest::GTest UNKNOWN IMPORTED)
+        set_target_properties(GTest::GTest PROPERTIES
+            INTERFACE_LINK_LIBRARIES "Threads::Threads")
+        if(GTEST_INCLUDE_DIRS)
+            set_target_properties(GTest::GTest PROPERTIES
+                INTERFACE_INCLUDE_DIRECTORIES "${GTEST_INCLUDE_DIRS}")
+        endif()
+        if(EXISTS "${GTEST_LIBRARY}")
+            set_target_properties(GTest::GTest PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                IMPORTED_LOCATION "${GTEST_LIBRARY}")
+        endif()
+        if(EXISTS "${GTEST_LIBRARY_DEBUG}")
+            set_property(TARGET GTest::GTest APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS DEBUG)
+            set_target_properties(GTest::GTest PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+                IMPORTED_LOCATION_DEBUG "${GTEST_LIBRARY_DEBUG}")
+        endif()
+        if(EXISTS "${GTEST_LIBRARY_RELEASE}")
+            set_property(TARGET GTest::GTest APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS RELEASE)
+            set_target_properties(GTest::GTest PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+                IMPORTED_LOCATION_RELEASE "${GTEST_LIBRARY_RELEASE}")
+        endif()
+      endif()
+      if(NOT TARGET GTest::Main)
+          add_library(GTest::Main UNKNOWN IMPORTED)
+          set_target_properties(GTest::Main PROPERTIES
+              INTERFACE_LINK_LIBRARIES "GTest::GTest")
+          if(EXISTS "${GTEST_MAIN_LIBRARY}")
+              set_target_properties(GTest::Main PROPERTIES
+                  IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+                  IMPORTED_LOCATION "${GTEST_MAIN_LIBRARY}")
+          endif()
+          if(EXISTS "${GTEST_MAIN_LIBRARY_DEBUG}")
+            set_property(TARGET GTest::Main APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS DEBUG)
+            set_target_properties(GTest::Main PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+                IMPORTED_LOCATION_DEBUG "${GTEST_MAIN_LIBRARY_DEBUG}")
+          endif()
+          if(EXISTS "${GTEST_MAIN_LIBRARY_RELEASE}")
+            set_property(TARGET GTest::Main APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS RELEASE)
+            set_target_properties(GTest::Main PROPERTIES
+                IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+                IMPORTED_LOCATION_RELEASE "${GTEST_MAIN_LIBRARY_RELEASE}")
+          endif()
     endif()
-    if(EXISTS "${GTEST_LIBRARY}")
-      set_target_properties(GTest::GTest PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-        IMPORTED_LOCATION "${GTEST_LIBRARY}")
-    endif()
-    if(EXISTS "${GTEST_LIBRARY_DEBUG}")
-      set_property(TARGET GTest::GTest APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS DEBUG)
-      set_target_properties(GTest::GTest PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-        IMPORTED_LOCATION_DEBUG "${GTEST_LIBRARY_DEBUG}")
-    endif()
-    if(EXISTS "${GTEST_LIBRARY_RELEASE}")
-      set_property(TARGET GTest::GTest APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS RELEASE)
-      set_target_properties(GTest::GTest PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-        IMPORTED_LOCATION_RELEASE "${GTEST_LIBRARY_RELEASE}")
-    endif()
-  endif()
-  if(NOT TARGET GTest::Main)
-    add_library(GTest::Main UNKNOWN IMPORTED)
-    set_target_properties(GTest::Main PROPERTIES
-      INTERFACE_LINK_LIBRARIES "GTest::GTest")
-    if(EXISTS "${GTEST_MAIN_LIBRARY}")
-      set_target_properties(GTest::Main PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
-        IMPORTED_LOCATION "${GTEST_MAIN_LIBRARY}")
-    endif()
-    if(EXISTS "${GTEST_MAIN_LIBRARY_DEBUG}")
-      set_property(TARGET GTest::Main APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS DEBUG)
-      set_target_properties(GTest::Main PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-        IMPORTED_LOCATION_DEBUG "${GTEST_MAIN_LIBRARY_DEBUG}")
-    endif()
-    if(EXISTS "${GTEST_MAIN_LIBRARY_RELEASE}")
-      set_property(TARGET GTest::Main APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS RELEASE)
-      set_target_properties(GTest::Main PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
-        IMPORTED_LOCATION_RELEASE "${GTEST_MAIN_LIBRARY_RELEASE}")
-    endif()
-  endif()
 endif()
