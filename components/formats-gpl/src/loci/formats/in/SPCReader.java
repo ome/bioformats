@@ -158,6 +158,11 @@ public class SPCReader extends FormatReader {
    */
   private boolean lineMode;
   
+  /*
+   * .spc file id 
+   */
+  private String spcId;
+  
   
   
   
@@ -217,7 +222,6 @@ public class SPCReader extends FormatReader {
     
   }
 
-  
    /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
@@ -225,6 +229,17 @@ public class SPCReader extends FormatReader {
     String[] farray = allFiles.toArray(new String[allFiles.size()]);
     return farray;
   } 
+  
+   /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+   
+    in = new RandomAccessInputStream(spcId);
+    in.order(true);
+  }
 
    /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -445,7 +460,8 @@ public class SPCReader extends FormatReader {
     LOGGER.debug("timeBase = " + Double.toString(timeBase));
     
     // Now read .spc file
-     in = new RandomAccessInputStream(workingDirPath + spcName);
+     spcId = workingDirPath + spcName;
+     in = new RandomAccessInputStream(spcId);
      in.order(true);
 
     LOGGER.info("Reading info from .spc file");
