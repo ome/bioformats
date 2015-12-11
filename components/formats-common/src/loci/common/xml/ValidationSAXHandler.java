@@ -61,11 +61,18 @@ class ValidationSAXHandler extends BaseHandler {
     if (!first) return;
     first = false;
 
+    String namespace_attribute = "xmlns" ;
+    final int colon = qName.indexOf( ':' ) ;
+    if (colon > 0)
+    {
+        final String namespace_prefix = qName.substring( 0, colon ) ;
+        namespace_attribute += ':' + namespace_prefix ;
+    }
     int len = attributes.getLength();
     String xmlns = null, xsiSchemaLocation = null;
     for (int i=0; i<len; i++) {
       String name = attributes.getQName(i);
-      if (name.equals("xmlns")) xmlns = attributes.getValue(i);
+      if (name.equals(namespace_attribute)) xmlns = attributes.getValue(i);
       else if (name.equals("schemaLocation") ||
         name.endsWith(":schemaLocation"))
       {

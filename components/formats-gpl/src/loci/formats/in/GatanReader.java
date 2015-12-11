@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
@@ -478,7 +479,7 @@ public class GatanReader extends FormatReader {
         LOGGER.debug("{}{}: unknown type: {}", new Object[] {indent, i, type});
       }
 
-      NumberFormat f = NumberFormat.getInstance();
+      NumberFormat f = NumberFormat.getInstance(Locale.ENGLISH);
       if (value != null) {
         addGlobalMeta(labelString, value);
 
@@ -617,7 +618,7 @@ public class GatanReader extends FormatReader {
 
   private Double correctForUnits(Double value, String units) {
     Double newValue = value;
-    Collator c = Collator.getInstance();
+    Collator c = Collator.getInstance(Locale.ENGLISH);
     if (units != null) {
       if (c.compare("nm", units) == 0) {
         newValue /= 1000;

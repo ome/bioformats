@@ -1,6 +1,29 @@
 Version history
 ===============
 
+5.1.7 (2015 December 7)
+-----------------------
+
+* Java bug fixes, including:
+   - Prevent physical pixel sizes from being rounded to 0, for all formats
+   - Metamorph
+       - fixed calculation of Z step size
+       - fixed detection of post-processed dual camera acquisitions (thanks to Mark Kittisopikul)
+   - OME-XML
+       - fixed XML validation when an 'xmlns' value is not present (thanks to Bjoern Thiel)
+   - MINC
+       - fixed endianness of image data
+   - Andor/Fluoview TIFF
+       - fixed calculation of Z step size
+   - MATLAB
+       - improved performance by reducing static classpath checks (thanks to Mark Kittisopikul)
+   - Gatan
+       - fixed physical size parsing in non-English locales
+   - Automated testing
+       - fixed handling of non-default physical size and plane position units
+* Documentation updates, including:
+   - updated MapAnnotation example to show linkage of annotations to images
+
 5.1.6 (2015 November 16)
 ------------------------
 

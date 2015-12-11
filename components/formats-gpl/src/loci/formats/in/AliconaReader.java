@@ -273,11 +273,11 @@ public class AliconaReader extends FormatReader {
       // populate Dimensions data
 
       if (pntX != null && pntY != null) {
-        double pixelSizeX = Double.parseDouble(pntX) * 1000000;
-        double pixelSizeY = Double.parseDouble(pntY) * 1000000;
+        double pixelSizeX = Double.parseDouble(pntX);
+        double pixelSizeY = Double.parseDouble(pntY);
 
-        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, UNITS.METRE);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, UNITS.METRE);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
