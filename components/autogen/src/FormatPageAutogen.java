@@ -100,6 +100,7 @@ public class FormatPageAutogen {
       context.put("developer", table.get("developer"));
       context.put("bsd", table.get("bsd"));
       context.put("export", table.get("export"));
+      context.put("pyramid", table.get("pyramid"));
 
       if (table.containsKey("versions")) {
         context.put("versions", table.get("versions"));
