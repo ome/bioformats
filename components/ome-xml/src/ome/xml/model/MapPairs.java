@@ -91,8 +91,7 @@ public class MapPairs implements OMEModelObject {
 
     // -- Constants --
 
-    public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
-    public static final String PAIRSNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
+    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
 
     private List<MapPair> pairs;
 
@@ -150,12 +149,12 @@ public class MapPairs implements OMEModelObject {
             // instance of Map (a subclass of MapPairs), in which case it
             // is the subclass' responsibility to ensure that 'pairs' is
             // a node of the correct name/type
-            pairs = document.createElementNS(MAPNAMESPACE, "Value");
+            pairs = document.createElementNS(NAMESPACE, "Value");
         }
 
         for (MapPair entry : this.pairs) {
 
-            Element pair = document.createElementNS(PAIRSNAMESPACE, "M");
+            Element pair = document.createElementNS(NAMESPACE, "M");
             pair.setAttribute("K", entry.getName());
             pair.setTextContent(entry.getValue());
             pairs.appendChild(pair);
