@@ -531,6 +531,12 @@ public class Memoizer extends ReaderWrapper {
     options.setMetadataOption(k + ".cacheDirectory", this.directory);
     options.setMetadataOption(k + ".inPlace", this.doInPlaceCaching);
     options.setMetadataOption(k + ".minimumElapsed", this.minimumElapsed);
+    reader.setMetadataOptions(options);
+  }
+
+  public void setMetadataOptions(MetadataOptions options) {
+    configure(options);
+    reader.setMetadataOptions(options);
   }
 
   /**
@@ -563,7 +569,7 @@ public class Memoizer extends ReaderWrapper {
     }
 
     if (((Boolean) inplace).booleanValue()) {
-      return new Memoizer(r, (Long) inplace);
+      return new Memoizer(r, (Long) elapsed);
     } else{
       return new Memoizer(r, (Long) elapsed, (File) cachedir);
     }
