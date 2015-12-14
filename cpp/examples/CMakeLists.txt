@@ -35,25 +35,24 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
                     ${XercesC_INCLUDE_DIRS})
 
 set(exampledir "${PROJECT_SOURCE_DIR}/docs/sphinx/developers/cpp/examples")
 
 add_executable(model-io "${exampledir}/model-io.cpp")
-target_link_libraries(model-io ome-xml ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(model-io OME::XML ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(metadata-io "${exampledir}/metadata-io.cpp")
-target_link_libraries(metadata-io ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(metadata-io OME::XML OME::BioFormats ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(metadata-formatreader "${exampledir}/metadata-formatreader.cpp")
-target_link_libraries(metadata-formatreader ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(metadata-formatreader OME::XML OME::BioFormats ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(metadata-formatwriter "${exampledir}/metadata-formatwriter.cpp")
-target_link_libraries(metadata-formatwriter ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(metadata-formatwriter OME::XML OME::BioFormats ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(pixeldata "${exampledir}/pixeldata.cpp")
-target_link_libraries(pixeldata ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(pixeldata OME::BioFormats ${CMAKE_THREAD_LIBS_INIT})
 
 if(BUILD_TESTS)
   bf_add_test(examples/model-io model-io "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")

@@ -34,17 +34,13 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${XercesC_INCLUDE_DIRS})
-
 if(BUILD_TESTS)
   add_executable(color color.cpp)
-  target_link_libraries(color ome-xml)
+  target_link_libraries(color OME::XML)
   target_link_libraries(color ome-test)
 
   add_executable(enum enum.cpp)
-  target_link_libraries(enum ome-xml)
+  target_link_libraries(enum OME::XML)
   target_link_libraries(enum ome-test)
 
   if(UNIX)
@@ -65,15 +61,15 @@ if(BUILD_TESTS)
                  positive-float.cpp
                  positive-integer.cpp
                  positive-long.cpp)
-  target_link_libraries(constrained-numeric ome-xml)
+  target_link_libraries(constrained-numeric OME::XML)
   target_link_libraries(constrained-numeric ome-test)
 
   add_executable(timestamp timestamp.cpp)
-  target_link_libraries(timestamp ome-xml)
+  target_link_libraries(timestamp OME::XML)
   target_link_libraries(timestamp ome-test)
 
   add_executable(model model.cpp)
-  target_link_libraries(model ome-xml)
+  target_link_libraries(model OME::XML)
   target_link_libraries(model ome-test)
 
   bf_add_test(ome-xml/color color)
@@ -82,10 +78,8 @@ if(BUILD_TESTS)
   bf_add_test(ome-xml/timestamp timestamp)
   bf_add_test(ome-xml/model model)
 
-
   if(extended-tests)
-    header_test_from_file(ome-xml ome-xml ome/xml)
-    target_link_libraries(ome-xml-headers ome-xml)
+    header_test_from_file(ome-xml OME::XML ome/xml)
     bf_add_test(ome-xml/headers ome-xml-headers)
   endif(extended-tests)
 endif(BUILD_TESTS)

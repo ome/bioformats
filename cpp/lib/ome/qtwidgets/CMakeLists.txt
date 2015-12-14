@@ -45,7 +45,6 @@ if (OME_QTOPENGL)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   include_directories(${OME_TOPLEVEL_INCLUDES}
-                      ${Boost_INCLUDE_DIRS}
                       ${OPENGL_INCLUDE_DIR}
                       ${TIFF_INCLUDE_DIR}
                       ${GLM_INCLUDE_DIR}
@@ -110,19 +109,23 @@ if (OME_QTOPENGL)
               ${ome-qtwidgets_HEADERS_MOC}
               ${ome-qtwidgets_RESOURCES})
   qt5_use_modules(ome-qtwidgets Core Gui Widgets Svg)
-  target_link_libraries(ome-qtwidgets ome-bioformats
-                        ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                        ${Boost_SYSTEM_LIBRARY_RELEASE}
+  target_link_libraries(ome-qtwidgets OME::BioFormats
+                        Boost::filesystem
                         ${OPENGL_gl_LIBRARY} ${TIFF_LIBRARIES})
 
   set_target_properties(ome-qtwidgets PROPERTIES VERSION ${OME_VERSION_SHORT})
 
   install(TARGETS ome-qtwidgets
-          RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-          LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-          ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+          EXPORT OMEQtWidgetsInternal
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(EXPORT OMEQtWidgetsInternal
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEQtWidgets)
+  install(FILES OMEQtWidgetsConfig.cmake
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEQtWidgets)
 
-  set(ome_qtwidgets_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/qtwidgets")
+  set(ome_qtwidgets_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/qtwidgets")
 
   install(FILES ${OME_QTWIDGETS_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir})
@@ -132,14 +135,6 @@ if (OME_QTOPENGL)
           DESTINATION ${ome_qtwidgets_includedir}/gl/v20)
   install(FILES ${OME_QTWIDGETS_GLSL_V110_HEADERS}
           DESTINATION ${ome_qtwidgets_includedir}/glsl/v110)
-
-  set(LIBRARY_PREFIX OME_QTWIDGETS)
-  set(LIBRARY_NAME ome-qtwidgets)
-  set(LIBRARY_HEADER ome/qtwidgets/CoreMetadata.h)
-  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
-                 ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-qtwidgets)
 
   # Dump header list for testing
   header_include_list_write(QTWIDGETS_HEADERS "" ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)

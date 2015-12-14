@@ -16,6 +16,18 @@ option(test "Enable unit tests (requires gtest)" ON)
 option(extended-tests "Enable extended tests (more comprehensive, longer run time)" ON)
 option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 
+# The installation is relocatable; this affects path lookups (if OFF,
+# paths are assumed to be their configured absolute install location;
+# paths will still be introspected as a fallback); if ON paths will be
+# introspected if possible.  In all cases the paths may be overridden
+# by the environment.
+option(relocatable-install OFF)
+set(OME_RELOCATABLE_INSTALL "Install tree will be relocatable" ${relocatable-install})
+set(OME_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+if(relocatable-install)
+  set(OME_INSTALL_PREFIX "")
+endif()
+
 # Doxygen documentation
 find_package(Doxygen)
 set(DOXYGEN_DEFAULT OFF)
@@ -65,16 +77,3 @@ if(SPHINX_DEFAULT AND XELATEX AND MAKEINDEX)
   set(SPHINX_PDF_DEFAULT ON)
 endif()
 option(sphinx-pdf "Enable sphinx PDF documentation" ${SPHINX_PDF_DEFAULT})
-
-set(SUPERBUILD_OPTIONS
-    "-Dbioformats-superbuild:BOOL=OFF"
-    "-Dcxxstd-autodetect:BOOL=${cxxstd-autodetect}"
-    "-Dextra-warnings:BOOL=${extra-warnings}"
-    "-Dfatal-warnings:BOOL=${fatal-warnings}"
-    "-Dtest:BOOL=${test}"
-    "-Dextended-tests:BOOL=${extended-tests}"
-    "-Dembedded-gtest:BOOL=${embedded-gtest}"
-    "-Dqtgui:BOOL=${qtgui}"
-    "-Ddoxygen:BOOL=${doxygen}"
-    "-Dsphinx:BOOL=${sphinx}"
-    "-Dsphinx-pdf:BOOL=${sphinx-pdf}")

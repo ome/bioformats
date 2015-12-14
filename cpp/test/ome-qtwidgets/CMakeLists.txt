@@ -41,7 +41,6 @@ endif(POLICY CMP0043)
 
 if(OME_QTOPENGL AND BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES}
-                      ${Boost_INCLUDE_DIRS}
                       ${OPENGL_INCLUDE_DIR}
                       ${TIFF_INCLUDE_DIR}
                       ${GLM_INCLUDE_DIR}

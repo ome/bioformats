@@ -34,11 +34,6 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${TIFF_INCLUDE_DIR}
-                    ${XercesC_INCLUDE_DIRS})
-
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
     FormatException.cpp
@@ -158,19 +153,36 @@ set(BIOFORMATS_HEADERS
 add_library(ome-bioformats
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-compat ome-common ome-xml
-                      ${Boost_IOSTREAMS_LIBRARY_RELEASE}
-                      ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-                      ${Boost_SYSTEM_LIBRARY_RELEASE}
-                      ${TIFF_LIBRARIES})
+
+target_include_directories(ome-bioformats PUBLIC
+                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/cpp/lib>
+                           $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/cpp/lib>
+                           $<BUILD_INTERFACE:${TIFF_INCLUDE_DIR}>)
+
+target_link_libraries(ome-bioformats
+                      OME::Compat
+                      OME::Common
+                      OME::XML
+                      Boost::boost
+                      Boost::iostreams
+                      Boost::filesystem
+                      TIFF::TIFF)
+
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-bioformats
-        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+add_library(OME::BioFormats ALIAS ome-bioformats)
 
-set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
+install(TARGETS ome-bioformats
+        EXPORT OMEBioFormatsInternal
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(EXPORT OMEBioFormatsInternal
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEBioFormats)
+install(FILES OMEBioFormatsConfig.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEBioFormats)
+
+set(ome_bioformats_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/bioformats")
 
 install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
@@ -182,15 +194,6 @@ install(FILES ${OME_BIOFORMATS_OUT_HEADERS}
         DESTINATION ${ome_bioformats_includedir}/out)
 install(FILES ${OME_BIOFORMATS_TIFF_HEADERS}
         DESTINATION ${ome_bioformats_includedir}/tiff)
-
-
-set(LIBRARY_PREFIX OME_BIOFORMATS)
-set(LIBRARY_NAME ome-bioformats)
-set(LIBRARY_HEADER ome/bioformats/CoreMetadata.h)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-bioformats)
 
 # Dump header list for testing
 header_include_list_write(BIOFORMATS_STATIC_HEADERS BIOFORMATS_GENERATED_HEADERS ome/bioformats ${PROJECT_BINARY_DIR}/cpp/test/ome-bioformats)
