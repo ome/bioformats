@@ -67,7 +67,6 @@ set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} -DBOOST_ALL_DYN_LIN
 set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 
-check_include_file_cxx(boost/array.hpp OME_HAVE_BOOST_ARRAY)
 check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
 check_include_file_cxx(boost/log/core.hpp OME_HAVE_BOOST_LOG)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)

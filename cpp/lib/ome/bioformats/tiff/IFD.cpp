@@ -1206,7 +1206,7 @@ namespace ome
         PlanarConfiguration planarconfig = getPlanarConfiguration();
         uint16_t subC = getSamplesPerPixel();
 
-        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
+        std::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = subC;
@@ -1252,10 +1252,10 @@ namespace ome
       void
       IFD::readLookupTable(VariantPixelBuffer& buf) const
       {
-        ome::compat::array<std::vector<uint16_t>, 3> cmap;
+        std::array<std::vector<uint16_t>, 3> cmap;
         getField(tiff::COLORMAP).get(cmap);
 
-        ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
+        std::array<VariantPixelBuffer::size_type, 9> shape;
         shape[DIM_SPATIAL_X] = cmap.at(0).size();
         shape[DIM_SPATIAL_Y] = 1;
         shape[DIM_SUBCHANNEL] = cmap.size();
@@ -1312,7 +1312,7 @@ namespace ome
         PlanarConfiguration planarconfig = getPlanarConfiguration();
         uint16_t subC = getSamplesPerPixel();
 
-        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
+        std::array<VariantPixelBuffer::size_type, 9> shape, source_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = subC;

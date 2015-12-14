@@ -634,7 +634,7 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
-        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+        std::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
 
         dimension_size_type channel = coords[1];
 
@@ -732,7 +732,7 @@ namespace ome
 
             for (dimension_size_type plane = 0U; plane < imageCount; ++plane)
               {
-                ome::compat::array<dimension_size_type, 3> coords =
+                std::array<dimension_size_type, 3> coords =
                   ome::bioformats::getZCTCoords(dimOrder, sizeZ, effC, sizeT, imageCount, plane);
                 const detail::OMETIFFPlane& planeState(seriesState.at(series).planes.at(plane));
 

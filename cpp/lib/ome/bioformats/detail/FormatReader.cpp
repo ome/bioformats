@@ -359,7 +359,7 @@ namespace ome
                               dimension_size_type scanlinePad,
                               dimension_size_type samples)
       {
-        ome::compat::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
+        std::array<VariantPixelBuffer::size_type, 9> shape, dest_shape;
         shape[DIM_SPATIAL_X] = w;
         shape[DIM_SPATIAL_Y] = h;
         shape[DIM_SUBCHANNEL] = samples;
@@ -628,12 +628,12 @@ namespace ome
         return getCoreMetadata(getCoreIndex()).moduloC;
       }
 
-      ome::compat::array<dimension_size_type, 2>
+      std::array<dimension_size_type, 2>
       FormatReader::getThumbSize() const
       {
         assertId(currentId, true);
 
-        ome::compat::array<dimension_size_type, 2> ret;
+        std::array<dimension_size_type, 2> ret;
         ret[0] = getCoreMetadata(getCoreIndex()).thumbSizeX;
         ret[1] = getCoreMetadata(getCoreIndex()).thumbSizeY;
 
@@ -997,7 +997,7 @@ namespace ome
                                          moduloZ, moduloC, moduloT);
       }
 
-      ome::compat::array<dimension_size_type, 3>
+      std::array<dimension_size_type, 3>
       FormatReader::getZCTCoords(dimension_size_type index) const
       {
         assertId(currentId, true);
@@ -1009,7 +1009,7 @@ namespace ome
                                              index);
       }
 
-      ome::compat::array<dimension_size_type, 6>
+      std::array<dimension_size_type, 6>
       FormatReader::getZCTModuloCoords(dimension_size_type index) const
       {
         assertId(currentId, true);

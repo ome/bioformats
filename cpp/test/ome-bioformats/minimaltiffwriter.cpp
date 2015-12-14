@@ -161,7 +161,7 @@ TEST_P(TIFFWriterTest, setId)
       ifd->readImage(buf);
 
       // Make a second buffer to ensure correct ordering for saveBytes.
-      ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
+      std::array<VariantPixelBuffer::size_type, 9> shape;
       shape[ome::bioformats::DIM_SPATIAL_X] = ifd->getImageWidth();
       shape[ome::bioformats::DIM_SPATIAL_Y] = ifd->getImageHeight();
       shape[ome::bioformats::DIM_SUBCHANNEL] = ifd->getSamplesPerPixel();

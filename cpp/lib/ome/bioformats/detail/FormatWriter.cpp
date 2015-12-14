@@ -484,7 +484,7 @@ namespace ome
                                          z, c, t);
       }
 
-      ome::compat::array<dimension_size_type, 3>
+      std::array<dimension_size_type, 3>
       FormatWriter::getZCTCoords(dimension_size_type index) const
       {
         assertId(currentId, true);

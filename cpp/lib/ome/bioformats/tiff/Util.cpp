@@ -180,7 +180,7 @@ namespace ome
           {
             try
               {
-                ome::compat::array<std::vector<uint16_t>, 3> cmap;
+                std::array<std::vector<uint16_t>, 3> cmap;
                 ifd.getField(tiff::COLORMAP).get(cmap);
                 core.indexed = true;
               }

@@ -787,7 +787,7 @@ namespace ome
                   {
                     try
                       {
-                        ome::compat::array<std::vector<uint16_t>, 3> cmap;
+                        std::array<std::vector<uint16_t>, 3> cmap;
                         pifd->getField(ome::bioformats::tiff::COLORMAP).get(cmap);
                         coreMeta->indexed = true;
                       }
