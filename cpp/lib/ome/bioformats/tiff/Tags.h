@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_TIFF_TAGS_H
 #define OME_BIOFORMATS_TIFF_TAGS_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,7 +46,6 @@
 #include <ome/bioformats/tiff/Types.h>
 
 #include <ome/compat/array.h>
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

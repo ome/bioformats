@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_TIFF_TIFF_H
 #define OME_BIOFORMATS_TIFF_TIFF_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -46,8 +47,6 @@
 #include <ome/bioformats/tiff/Types.h>
 
 #include <ome/common/filesystem.h>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

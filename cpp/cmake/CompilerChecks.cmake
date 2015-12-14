@@ -244,11 +244,6 @@ int main() { std::tr1::tuple<int,double> t; }
 " OME_HAVE_TR1_TUPLE)
 
 check_cxx_source_compiles("
-#include <cstdint>
-int main() { uint16_t test(134); }
-" OME_HAVE_CSTDINT)
-
-check_cxx_source_compiles("
 #include <memory>
 struct foo : public std::enable_shared_from_this<foo>
 {

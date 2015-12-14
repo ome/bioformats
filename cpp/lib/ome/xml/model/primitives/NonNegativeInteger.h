@@ -39,10 +39,10 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_NONNEGATIVEINTEGER_H
 #define OME_XML_MODEL_PRIMITIVES_NONNEGATIVEINTEGER_H
 
-#include <ome/compat/cstdint.h>
-
 #include <ome/xml/model/primitives/ConstrainedNumeric.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+
+#include <cstdint>
 
 namespace ome
 {
