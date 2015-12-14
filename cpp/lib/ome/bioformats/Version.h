@@ -41,8 +41,6 @@
 #include <cstdint>
 #include <string>
 
-#include <ome/compat/tuple.h>
-
 #include <ome/xml/model/primitives/Timestamp.h>
 
 namespace ome

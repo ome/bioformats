@@ -71,7 +71,6 @@ check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
 check_include_file_cxx(boost/log/core.hpp OME_HAVE_BOOST_LOG)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
 check_include_file_cxx(boost/smart_ptr/owner_less.hpp OME_HAVE_BOOST_OWNER_LESS)
-check_include_file_cxx(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)
 check_include_file_cxx(boost/type_traits.hpp OME_HAVE_BOOST_TYPE_TRAITS_HPP)
 check_include_file_cxx(boost/geometry/index/rtree.hpp OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
 
