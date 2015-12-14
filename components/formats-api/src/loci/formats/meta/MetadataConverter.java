@@ -4263,7 +4263,8 @@ public final class MetadataConverter {
     for (int lightSource=0; lightSource<lightEmittingDiodeCount; lightSource++) {
       try {
         String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-        if (id != null) {
+        if (id != null && id.trim().length() > 0) {
+          lightSourceIds.add(id);
           dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
         }
       }
@@ -4274,8 +4275,7 @@ public final class MetadataConverter {
       try {
         String lotNumber =
           src.getLightEmittingDiodeLotNumber(instrumentIndex, lightSource);
-        if (id != null && id.trim().length() > 0) {
-          lightSourceIds.add(id);
+        if (lotNumber != null) {
           dest.setLightEmittingDiodeLotNumber(
             lotNumber, instrumentIndex, lightSource);
         }
