@@ -40,6 +40,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <iomanip>
 #include <map>
 #include <ostream>
@@ -47,7 +48,6 @@
 #include <string>
 #include <vector>
 
-#include <ome/compat/cstdint.h>
 #include <ome/common/variant.h>
 
 namespace ome

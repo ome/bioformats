@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_PIXELBUFFER_H
 #define OME_BIOFORMATS_PIXELBUFFER_H
 
+#include <cstdint>
 #include <istream>
 #include <limits>
 #include <memory>
@@ -54,7 +55,6 @@
 #include <ome/common/variant.h>
 
 #include <ome/compat/array.h>
-#include <ome/compat/cstdint.h>
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 

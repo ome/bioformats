@@ -43,7 +43,7 @@
 #include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/VariantPixelBuffer.h>
 
-#include <ome/compat/cstdint.h>
+#include <cstdint>
 
 /// Helpers to create pixel values of all supported types from integers.
 

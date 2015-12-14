@@ -38,11 +38,10 @@
 #ifndef OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
 #define OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
 
-#include <ome/compat/cstdint.h>
-
 #include <ome/xml/meta/MetadataRoot.h>
 #include <ome/xml/model/OME.h>
 
+#include <cstdint>
 
 namespace ome
 {

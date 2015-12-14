@@ -39,12 +39,11 @@
 #define OME_BIOFORMATS_TIFF_SENTRY_H
 
 #include <cstdarg>
+#include <cstdint>
 #include <memory>
 #include <string>
 
 #include <boost/thread.hpp>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

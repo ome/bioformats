@@ -38,9 +38,9 @@
 #ifndef OME_BIOFORMATS_VERSION_H
 #define OME_BIOFORMATS_VERSION_H
 
+#include <cstdint>
 #include <string>
 
-#include <ome/compat/cstdint.h>
 #include <ome/compat/tuple.h>
 
 #include <ome/xml/model/primitives/Timestamp.h>

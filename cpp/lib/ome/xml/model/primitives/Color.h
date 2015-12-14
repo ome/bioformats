@@ -39,10 +39,9 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_COLOR_H
 #define OME_XML_MODEL_PRIMITIVES_COLOR_H
 
+#include <cstdint>
 #include <limits>
 #include <string>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

@@ -38,11 +38,10 @@
 #ifndef OME_BIOFORMATS_MODULO_H
 #define OME_BIOFORMATS_MODULO_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <sstream>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {
