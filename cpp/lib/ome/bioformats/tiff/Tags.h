@@ -38,14 +38,13 @@
 #ifndef OME_BIOFORMATS_TIFF_TAGS_H
 #define OME_BIOFORMATS_TIFF_TAGS_H
 
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <ome/bioformats/tiff/Types.h>
-
-#include <ome/compat/array.h>
 
 namespace ome
 {
@@ -635,7 +634,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::UInt16Tag2>
         {
           /// uint16_t array type.
-          typedef ome::compat::array<uint16_t, 2> value_type;
+          typedef std::array<uint16_t, 2> value_type;
         };
 
         /// Properties of UInt16Tag6 tags.
@@ -643,7 +642,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::UInt16Tag6>
         {
           /// uint16 array type.
-          typedef ome::compat::array<uint16_t, 6> value_type;
+          typedef std::array<uint16_t, 6> value_type;
         };
 
         /// Properties of UInt16ExtraSamplesArray1 tags.
@@ -659,7 +658,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::UInt16TagArray3>
         {
           /// uint16_t array type.
-          typedef ome::compat::array<std::vector<uint16_t>, 3> value_type;
+          typedef std::array<std::vector<uint16_t>, 3> value_type;
         };
 
         /// Properties of UInt32Tag1 tags.
@@ -707,7 +706,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::FloatTag2>
         {
           /// float array type.
-          typedef ome::compat::array<float, 2> value_type;
+          typedef std::array<float, 2> value_type;
         };
 
         /// Properties of FloatTag3 tags.
@@ -715,7 +714,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::FloatTag3>
         {
           /// float array type.
-          typedef ome::compat::array<float, 3> value_type;
+          typedef std::array<float, 3> value_type;
         };
 
         /// Properties of FloatTag6 tags.
@@ -723,7 +722,7 @@ namespace ome
         struct TagProperties<::ome::bioformats::tiff::FloatTag6>
         {
           /// float array type.
-          typedef ome::compat::array<float, 6> value_type;
+          typedef std::array<float, 6> value_type;
         };
 
       }

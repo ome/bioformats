@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_PIXELBUFFER_H
 #define OME_BIOFORMATS_PIXELBUFFER_H
 
+#include <array>
 #include <cstdint>
 #include <istream>
 #include <limits>
@@ -53,8 +54,6 @@
 #include <ome/bioformats/PixelProperties.h>
 
 #include <ome/common/variant.h>
-
-#include <ome/compat/array.h>
 
 #include <ome/xml/model/enums/DimensionOrder.h>
 
@@ -114,8 +113,8 @@ namespace ome
       typedef boost::multi_array_types::index index;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef ome::compat::array<boost::multi_array_types::index,
-                                 PixelBufferBase::dimensions> indices_type;
+      typedef std::array<boost::multi_array_types::index,
+                         PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;

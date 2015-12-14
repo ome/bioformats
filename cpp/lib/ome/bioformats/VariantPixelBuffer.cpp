@@ -235,7 +235,7 @@ namespace
     void
     operator() (T& lhs, const T& rhs) const
     {
-      ome::compat::array<VariantPixelBuffer::size_type, 9> source_shape, dest_shape;
+      std::array<VariantPixelBuffer::size_type, 9> source_shape, dest_shape;
 
       const VariantPixelBuffer::size_type *source_shape_ptr(rhs->shape());
       std::copy(source_shape_ptr, source_shape_ptr + T::element_type::dimensions,

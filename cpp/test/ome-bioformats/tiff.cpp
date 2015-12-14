@@ -535,7 +535,7 @@ TEST(TIFFTest, FieldWrapUInt16Pair)
   ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
   ASSERT_TRUE(static_cast<bool>(ifd));
 
-  ome::compat::array<uint16_t, 2> value;
+  std::array<uint16_t, 2> value;
 
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::DOTRANGE).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::HALFTONEHINTS).get(value), ome::bioformats::tiff::Exception);
@@ -573,7 +573,7 @@ TEST(TIFFTest, FieldWrapFloat2)
   ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
   ASSERT_TRUE(static_cast<bool>(ifd));
 
-  ome::compat::array<float, 2> value;
+  std::array<float, 2> value;
 
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::WHITEPOINT).get(value), ome::bioformats::tiff::Exception);
 }
@@ -588,7 +588,7 @@ TEST(TIFFTest, FieldWrapFloat3)
   ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
   ASSERT_TRUE(static_cast<bool>(ifd));
 
-  ome::compat::array<float, 3> value;
+  std::array<float, 3> value;
 
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::YCBCRCOEFFICIENTS).get(value), ome::bioformats::tiff::Exception);
 }
@@ -604,7 +604,7 @@ TEST(TIFFTest, FieldWrapFloat6)
   ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
   ASSERT_TRUE(static_cast<bool>(ifd));
 
-  ome::compat::array<float, 6> value;
+  std::array<float, 6> value;
 
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::PRIMARYCHROMATICITIES).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::REFERENCEBLACKWHITE).get(value), ome::bioformats::tiff::Exception);
@@ -634,7 +634,7 @@ TEST(TIFFTest, FieldWrapUInt16Array3)
   ASSERT_NO_THROW(ifd = t->getDirectoryByIndex(0));
   ASSERT_TRUE(static_cast<bool>(ifd));
 
-  ome::compat::array<std::vector<uint16_t>, 3> value;
+  std::array<std::vector<uint16_t>, 3> value;
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::COLORMAP).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::TRANSFERFUNCTION).get(value), ome::bioformats::tiff::Exception);
 }
@@ -874,7 +874,7 @@ public:
     png_set_interlace_handling(pngptr);
     png_read_update_info(pngptr, infoptr);
 
-    ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
+    std::array<VariantPixelBuffer::size_type, 9> shape;
     shape[::ome::bioformats::DIM_SPATIAL_X] = pwidth;
     shape[::ome::bioformats::DIM_SPATIAL_Y] = pheight;
     shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;
@@ -1456,7 +1456,7 @@ TEST_P(PixelTest, WriteTIFF)
       {
         const PlaneRegion& r = *i;
 
-        ome::compat::array<VariantPixelBuffer::size_type, 9> shape;
+        std::array<VariantPixelBuffer::size_type, 9> shape;
         shape[::ome::bioformats::DIM_SPATIAL_X] = r.w;
         shape[::ome::bioformats::DIM_SPATIAL_Y] = r.h;
         shape[::ome::bioformats::DIM_SUBCHANNEL] = 3U;

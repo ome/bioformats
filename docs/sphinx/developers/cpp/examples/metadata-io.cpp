@@ -50,7 +50,7 @@
 #include <ome/bioformats/MetadataTools.h>
 
 using boost::filesystem::path;
-using ome::compat::array;
+using std::array;
 using std::make_shared;
 using std::shared_ptr;
 using ome::bioformats::dimension_size_type;

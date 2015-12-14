@@ -360,7 +360,7 @@ namespace ome
          * @copydoc ome::bioformats::FormatReader::getZCTCoords(dimension_size_type) const
          */
         virtual
-        ome::compat::array<dimension_size_type, 3>
+        std::array<dimension_size_type, 3>
         getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.

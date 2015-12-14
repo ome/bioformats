@@ -68,8 +68,8 @@ using ome::xml::meta::OMEXMLMetadata;
 using ome::xml::model::enums::PixelType;
 
 typedef ome::xml::model::enums::PixelType PT;
-typedef ome::compat::array<dimension_size_type, 3> dim;
-typedef ome::compat::array<dimension_size_type, 6> moddim;
+typedef std::array<dimension_size_type, 3> dim;
+typedef std::array<dimension_size_type, 6> moddim;
 
 class FormatReaderTestParameters
 {
@@ -585,9 +585,9 @@ struct dims
     z(z), t(t), c(c)
   {}
 
-  operator ome::compat::array<dimension_size_type, 3>() const
+  operator std::array<dimension_size_type, 3>() const
   {
-    ome::compat::array<dimension_size_type, 3> ret;
+    std::array<dimension_size_type, 3> ret;
     ret[0] = z;
     ret[1] = c;
     ret[2] = t;
@@ -613,9 +613,9 @@ struct moddims
     z(z), t(t), c(c), mz(mz), mt(mt), mc(mc)
   {}
 
-  operator ome::compat::array<dimension_size_type, 6>() const
+  operator std::array<dimension_size_type, 6>() const
   {
-    ome::compat::array<dimension_size_type, 6> ret;
+    std::array<dimension_size_type, 6> ret;
     ret[0] = z;
     ret[1] = c;
     ret[2] = t;
@@ -737,9 +737,9 @@ TEST_P(FormatReaderTest, SubresolutionFlattenedSeries)
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
-  ome::compat::array<dimension_size_type, 3> coords;
+  std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
-  ome::compat::array<dimension_size_type, 6> modcoords;
+  std::array<dimension_size_type, 6> modcoords;
   modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works
@@ -768,9 +768,9 @@ TEST_P(FormatReaderTest, SubresolutionUnflattenedSeries)
 
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   EXPECT_EQ(0U, r.getIndex(0, 0, 0, 0, 0, 0));
-  ome::compat::array<dimension_size_type, 3> coords;
+  std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
-  ome::compat::array<dimension_size_type, 6> modcoords;
+  std::array<dimension_size_type, 6> modcoords;
   modcoords[0] = modcoords[1] = modcoords[2] = modcoords[3] = modcoords[4] = modcoords[5] = 0;
 
   // EXPECT_EQ should work here, but fails for Boost 1.42; works

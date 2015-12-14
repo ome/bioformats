@@ -235,7 +235,7 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
-        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+        std::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
 
         dimension_size_type channel = coords[1];
 

@@ -52,8 +52,6 @@
 #include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Types.h>
 
-#include <ome/compat/array.h>
-
 #include <ome/xml/meta/MetadataRetrieve.h>
 
 namespace ome

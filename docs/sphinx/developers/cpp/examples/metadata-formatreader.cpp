@@ -97,7 +97,7 @@ namespace
           {
             // Print plane position (for this image index and plane
             // index)
-            ome::compat::array<dimension_size_type, 3> coords =
+            std::array<dimension_size_type, 3> coords =
               reader.getZCTCoords(p);
             stream << "\tPosition of Plane " << p << ':'
                    << "\n\t\tTheZ = " << coords[0]
