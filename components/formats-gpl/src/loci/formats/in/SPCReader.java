@@ -277,22 +277,25 @@ public class SPCReader extends FormatReader {
       
       LOGGER.debug("T =  " + Integer.toString(T)   );
     
-      // skip to start of requested frame
+      // skip to first data after start of requested frame
       Integer frameClockPos = frameClockList.get(T);
-      Integer endOfFramePos = endOfFrameList.get(T);
+      Integer endOfFramePos = endOfFrameList.get(T + 1);
       
     
       Integer frameLength = (int) (endOfFramePos - frameClockPos);
-    
+       
       in.seek(frameClockPos);
       noOfBytes = in.read(rawBuf, 0, frameLength);
       
-      currentLine = -1;
-      currentFrame = -1;
-    
+      
       if (noOfBytes == frameLength) {
+        
+        currentLine = -1;
+        currentFrame = -1;
+        endOfFrameFlag = false;
+        
         processBuffer(noOfBytes);
-        storedT = T ;
+        storedT = T;
         storedChannel = channel;
       }
     }
@@ -549,7 +552,7 @@ public class SPCReader extends FormatReader {
     Integer frameLength;
     Integer maxFrameLength = 0;
     for (int T = 0; T < nFrames; T++)  {
-      frameLength = (int) (endOfFrameList.get(T) - frameClockList.get(T));
+      frameLength = (int) (endOfFrameList.get(T + 1) - frameClockList.get(T));
       if (frameLength > maxFrameLength)
         maxFrameLength = frameLength;
     }
@@ -666,7 +669,7 @@ public class SPCReader extends FormatReader {
 
       case 0x40:         // frame clock
 
-        LOGGER.debug("Frame clock!");
+        //LOGGER.debug("Frame clock!");
         endOfFrameFlag = true;
         break;
 
@@ -695,7 +698,7 @@ public class SPCReader extends FormatReader {
 
       case 0x20:          //line clock
 
-        //LOGGER.debug("Line clock");
+        //LOGGER.debug("Line clock Init");
         if (currentFrame == 0 && currentLine == 1) {
           nPixels = currentPixel;
         }
@@ -743,7 +746,7 @@ public class SPCReader extends FormatReader {
     int adc = rawBuf[blockPtr] & 0x0F;   // 4 MSBs of the ADC 
     int currentChannel = (rawBuf[blockPtr - 2] & 0xF0) >> 4;
     
-      
+   
     
     if (currentChannel == channel || nChannels==1) {
       if (currentPixel < nPixels && currentLine > -1  && currentLine < (nLines + 1)) {  
