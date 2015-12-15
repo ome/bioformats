@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # Script for increasing versions numbers across the code
 
+import sys
 import glob
 import re
 import argparse
@@ -12,51 +13,68 @@ def check_version_format(version):
     return re.match(pattern, version) is not None
 
 
-def replace_file(input_path, pattern, version):
-    """Substitute a pattern with version in a file"""
-    with open(input_path, "r") as infile:
-        regexp = re.compile(pattern)
-        new_content = regexp.sub(r"\g<1>%s\g<2>" % version, infile.read())
-        with open(input_path, "w") as output:
-            output.write(new_content)
-            output.close()
-        infile.close()
+class Replacer(object):
 
-artifact_pattern = r"(<groupId>ome</groupId>\n.*\n.*<version>).*(</version>)"
-release_version_pattern = r"(<release.version>).*(</release.version>)"
+    def __init__(self, old_group="ome", new_group="ome"):
+        self.old_group = old_group
+        self.new_group = new_group
+        self.group_pattern = \
+            r"(<groupId>)%s(</groupId>)" % \
+            old_group
+        self.artifact_pattern = \
+            r"(<groupId>%s</groupId>\n.*\n.*<version>).*(</version>)" % \
+            old_group
+        self.release_version_pattern = \
+            r"(<release.version>).*(</release.version>)"
+        self.stableversion_pattern = \
+            r"(STABLE_VERSION = \").*(\";)"
+        self.upgradecheck = \
+            "components/formats-bsd/src/loci/formats/UpgradeChecker.java"
 
+    def replace_file(self, input_path, pattern, version):
+        """Substitute a pattern with version in a file"""
+        with open(input_path, "r") as infile:
+            regexp = re.compile(pattern)
+            new_content = regexp.sub(r"\g<1>%s\g<2>" % version, infile.read())
+            with open(input_path, "w") as output:
+                output.write(new_content)
+                output.close()
+            infile.close()
 
-def bump_pom_versions(version):
-    """Replace versions in pom.xml files"""
+    def bump_pom_versions(self, version):
+        """Replace versions in pom.xml files"""
 
-    # Replace versions in components pom.xml
-    for pomfile in (glob.glob("*/*/pom.xml") + glob.glob("*/*/*/pom.xml")):
-        replace_file(pomfile, artifact_pattern, version)
+        # Replace versions in components pom.xml
+        for pomfile in (glob.glob("*/*/pom.xml") + glob.glob("*/*/*/pom.xml")):
+            self.replace_file(pomfile, self.artifact_pattern, version)
+            self.replace_file(pomfile, self.group_pattern, self.new_group)
 
-    # Replace versions in top-level pom.xml
-    toplevelpomfile = "pom.xml"
-    replace_file(toplevelpomfile, artifact_pattern, version)
-    replace_file(toplevelpomfile, release_version_pattern, version)
+        # Replace versions in top-level pom.xml
+        toplevelpomfile = "pom.xml"
+        self.replace_file(
+            toplevelpomfile, self.artifact_pattern, version)
+        self.replace_file(
+            toplevelpomfile, self.release_version_pattern, version)
 
-stableversion_pattern = r"(STABLE_VERSION = \").*(\";)"
-upgradecheck = "components/formats-bsd/src/loci/formats/UpgradeChecker.java"
-
-
-def bump_stable_version(version):
-    """Replace UpgradeChecker stable version"""
-
-    replace_file(upgradecheck, stableversion_pattern, version)
+    def bump_stable_version(self, version):
+        """Replace UpgradeChecker stable version"""
+        self.replace_file(
+            self.upgradecheck, self.stableversion_pattern, version)
 
 
 if __name__ == "__main__":
     # Input check
     parser = argparse.ArgumentParser()
+    parser.add_argument("--old-group", type=str, default="ome")
+    parser.add_argument("--new-group", type=str, default="ome")
     parser.add_argument("version", type=str)
     ns = parser.parse_args()
 
     if not check_version_format(ns.version):
         print "Invalid version format"
-    else:
-        bump_pom_versions(ns.version)
-        if not ns.version.endswith('SNAPSHOT'):
-            bump_stable_version(ns.version)
+        sys.exit(1)
+
+    replacer = Replacer(old_group=ns.old_group, new_group=ns.new_group)
+    replacer.bump_pom_versions(ns.version)
+    if not ns.version.endswith('SNAPSHOT'):
+        replacer.bump_stable_version(ns.version)
