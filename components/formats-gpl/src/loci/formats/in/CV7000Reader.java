@@ -47,6 +47,7 @@ import ome.units.UNITS;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -74,6 +75,7 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<Channel> channels;
   private int fields;
   private int realRows, realCols;
+  private String startTime, endTime;
 
   // -- Constructor --
 
@@ -161,6 +163,8 @@ public class CV7000Reader extends FormatReader {
       realRows = 0;
       realCols = 0;
       channels = null;
+      startTime = null;
+      endTime = null;
     }
   }
 
@@ -316,6 +320,13 @@ public class CV7000Reader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
+    if (startTime != null) {
+      store.setPlateAcquisitionStartTime(new Timestamp(startTime), 0, 0);
+    }
+    if (endTime != null) {
+      store.setPlateAcquisitionEndTime(new Timestamp(endTime), 0, 0);
+    }
+
     int nextWell = 0;
     int nextImage = 0;
     for (int row=0; row<plate.getPlateRows(); row++) {
@@ -437,12 +448,6 @@ public class CV7000Reader extends FormatReader {
       return description;
     }
 
-
-    @Override
-    public void characters(char[] ch, int start, int length) {
-
-    }
-
     @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
@@ -453,11 +458,6 @@ public class CV7000Reader extends FormatReader {
         plateRows = Integer.parseInt(attributes.getValue("bts:Rows"));
         plateColumns = Integer.parseInt(attributes.getValue("bts:Columns"));
       }
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) {
-
     }
 
   }
@@ -517,22 +517,13 @@ public class CV7000Reader extends FormatReader {
   }
 
   class MeasurementDetailHandler extends BaseHandler {
-    private StringBuffer currentValue = new StringBuffer();
 
     // -- DefaultHandler API methods --
-
-    @Override
-    public void characters(char[] ch, int start, int length) {
-      String value = new String(ch, start, length);
-      currentValue.append(value);
-    }
 
     @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      currentValue.setLength(0);
-
       if (qName.equals("bts:MeasurementSamplePlate")) {
         wppPath = attributes.getValue("bts:WellPlateProductFileName");
       }
@@ -546,18 +537,9 @@ public class CV7000Reader extends FormatReader {
         channels.add(c);
       }
       else if (qName.equals("bts:MeasurementDetail")) {
-        // bts:OperatorName
-        // bts:Title
-        // bts:BeginTime
-        // bts:EndTime
-        // bts:MeasurementSettingFileName
-        // bts:TargetSystem
+        startTime = attributes.getValue("bts:BeginTime");
+        endTime = attributes.getValue("bts:EndTime");
       }
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) {
-      String value = currentValue.toString();
     }
 
   }
