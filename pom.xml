@@ -5,7 +5,7 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ome</groupId>
+  <groupId>idr</groupId>
   <artifactId>pom-bio-formats</artifactId>
   <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>

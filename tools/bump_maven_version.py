@@ -55,6 +55,8 @@ class Replacer(object):
             toplevelpomfile, self.artifact_pattern, version)
         self.replace_file(
             toplevelpomfile, self.release_version_pattern, version)
+        self.replace_file(
+            toplevelpomfile, self.group_pattern, self.new_group)
 
     def bump_stable_version(self, version):
         """Replace UpgradeChecker stable version"""
