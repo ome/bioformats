@@ -117,9 +117,8 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
+#include <memory>
 #include <string>
-
-#include <ome/compat/memory.h>
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/AffineTransform.h>

@@ -38,14 +38,13 @@
 #ifndef SHOWINF_IMAGEINFO_H
 #define SHOWINF_IMAGEINFO_H
 
+#include <memory>
 #include <string>
 #include <stdexcept>
 
 #include <boost/program_options.hpp>
 
 #include <ome/common/log.h>
-
-#include <ome/compat/memory.h>
 
 #include <ome/bioformats/FormatReader.h>
 #include <ome/bioformats/Types.h>
@@ -69,7 +68,7 @@ namespace info
     virtual ~ImageInfo ();
 
     void
-    setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader>& reader);
+    setReader(std::shared_ptr<ome::bioformats::FormatReader>& reader);
 
     void
     testRead(std::ostream& stream);
@@ -137,7 +136,7 @@ namespace info
     /// Command-line options.
     options opts;
     /// FormatReader instance.
-    ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
+    std::shared_ptr<ome::bioformats::FormatReader> reader;
   };
 
 }

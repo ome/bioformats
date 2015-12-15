@@ -38,10 +38,10 @@
 #ifndef OME_BIOFORMATS_TILECOVERAGE_H
 #define OME_BIOFORMATS_TILECOVERAGE_H
 
+#include <memory>
+
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/PlaneRegion.h>
-
-#include <ome/compat/memory.h>
 
 namespace ome
 {
@@ -147,7 +147,7 @@ namespace ome
     protected:
       class Impl;
       /// Private implementation details.
-      ome::compat::shared_ptr<Impl> impl;
+      std::shared_ptr<Impl> impl;
     };
 
   }

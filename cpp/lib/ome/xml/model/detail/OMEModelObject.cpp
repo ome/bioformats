@@ -87,15 +87,15 @@ namespace ome
         }
 
         bool
-        OMEModelObject::link (ome::compat::shared_ptr<Reference>&                          /* reference */,
-                              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
+        OMEModelObject::link (std::shared_ptr<Reference>&                         /* reference */,
+                              std::shared_ptr<::ome::xml::model::OMEModelObject>& /* object */)
         {
           return false;
         }
 
         std::vector<common::xml::dom::Element>
         OMEModelObject::getChildrenByTagName (const common::xml::dom::Element& parent,
-                                              const std::string&          name)
+                                              const std::string&               name)
         {
           // TODO: May need to be a shared_ptr<element> if element is not refcounting.
           std::vector<common::xml::dom::Element> ret;

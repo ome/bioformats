@@ -40,6 +40,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <stdexcept>
 #include <string>
@@ -47,8 +48,6 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

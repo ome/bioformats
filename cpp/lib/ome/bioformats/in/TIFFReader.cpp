@@ -109,7 +109,7 @@ namespace ome
       void
       TIFFReader::readIFDs()
       {
-        ome::compat::shared_ptr<IFD> ifd0 = *(tiff->begin());
+        std::shared_ptr<IFD> ifd0 = *(tiff->begin());
 
         if (ifd0)
           {
@@ -119,7 +119,7 @@ namespace ome
               {
                 tiff::ImageJMetadata ijmeta(*ifd0);
 
-                ome::compat::shared_ptr<CoreMetadata> ijm(tiff::makeCoreMetadata(*ifd0));
+                std::shared_ptr<CoreMetadata> ijm(tiff::makeCoreMetadata(*ifd0));
 
                 ijm->sizeZ = ijmeta.slices;
                 ijm->sizeT = ijmeta.frames;

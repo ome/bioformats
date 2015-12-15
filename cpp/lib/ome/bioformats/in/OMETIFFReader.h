@@ -81,7 +81,7 @@ namespace ome
         typedef std::map<boost::filesystem::path, boost::filesystem::path> invalid_file_map;
 
         /// Map filename to open TIFF handle.
-        typedef std::map<boost::filesystem::path, ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> > tiff_map;
+        typedef std::map<boost::filesystem::path, std::shared_ptr<ome::bioformats::tiff::TIFF>> tiff_map;
 
         /// UUID to filename mapping.
         uuid_file_map files;
@@ -145,7 +145,7 @@ namespace ome
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
-        const ome::compat::shared_ptr<const tiff::IFD>
+        const std::shared_ptr<const tiff::IFD>
         ifdAtIndex(dimension_size_type plane) const;
 
         /**
@@ -167,7 +167,7 @@ namespace ome
          * @returns the open TIFF.
          * @throws FormatException if invalid.
          */
-        const ome::compat::shared_ptr<const ome::bioformats::tiff::TIFF>
+        const std::shared_ptr<const ome::bioformats::tiff::TIFF>
         getTIFF(const boost::filesystem::path& tiff) const;
 
         /**
@@ -235,8 +235,8 @@ namespace ome
          * @param timestamps the acquisition dates, indexed by image.
          */
         void
-        getAcquisitionDates(const ome::xml::meta::OMEXMLMetadata&                                  meta,
-                            std::vector<boost::optional<ome::xml::model::primitives::Timestamp> >& timestamps);
+        getAcquisitionDates(const ome::xml::meta::OMEXMLMetadata&                                 meta,
+                            std::vector<boost::optional<ome::xml::model::primitives::Timestamp>>& timestamps);
 
         /**
          * Clean up OME-XML metadata.
@@ -340,7 +340,7 @@ namespace ome
          *
          * @returns the metadata store.
          */
-        ome::compat::shared_ptr< ome::xml::meta::MetadataStore>
+        std::shared_ptr< ome::xml::meta::MetadataStore>
         getMetadataStoreForConversion();
 
         /**
@@ -352,7 +352,7 @@ namespace ome
          *
          * @returns the metadata store.
          */
-        ome::compat::shared_ptr< ome::xml::meta::MetadataStore>
+        std::shared_ptr< ome::xml::meta::MetadataStore>
         getMetadataStoreForDisplay();
       };
 

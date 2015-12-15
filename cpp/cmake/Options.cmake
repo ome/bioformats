@@ -1,8 +1,3 @@
-# Try to put the compiler into the most recent standard mode.  This
-# will generally have the most features, and will remove the need for
-# Boost fallbacks if native implementations are available.
-option(cxxstd-autodetect "Enable C++14 features if possible, otherwise fall back to C++11, C++03 or C++98" OFF)
-
 # These are annoyingly verbose, produce false positives or don't work
 # nicely with all supported compiler versions, so are disabled unless
 # explicitly enabled.

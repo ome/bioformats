@@ -39,10 +39,10 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_NONNEGATIVEINTEGER_H
 #define OME_XML_MODEL_PRIMITIVES_NONNEGATIVEINTEGER_H
 
-#include <ome/compat/cstdint.h>
-
 #include <ome/xml/model/primitives/ConstrainedNumeric.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+
+#include <cstdint>
 
 namespace ome
 {
@@ -56,7 +56,7 @@ namespace ome
         /**
          * Integer (signed 32-bit) value greater than or equal to zero.
          */
-        typedef ConstrainedNumeric<int32_t, NonNegativeIntegerConstraint<int32_t> > NonNegativeInteger;
+        typedef ConstrainedNumeric<int32_t, NonNegativeIntegerConstraint<int32_t>> NonNegativeInteger;
 
       }
     }

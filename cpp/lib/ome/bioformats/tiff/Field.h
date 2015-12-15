@@ -38,8 +38,7 @@
 #ifndef OME_BIOFORMATS_TIFF_FIELD_H
 #define OME_BIOFORMATS_TIFF_FIELD_H
 
-#include <ome/compat/memory.h>
-
+#include <memory>
 #include <string>
 
 #include <ome/bioformats/tiff/Tags.h>
@@ -66,8 +65,8 @@ namespace ome
          * @param ifd the directory the field belongs to.
          * @param tag the tag identifying this field.
          */
-        FieldBase(ome::compat::shared_ptr<IFD> ifd,
-                  tag_type                     tag);
+        FieldBase(std::shared_ptr<IFD> ifd,
+                  tag_type             tag);
 
       public:
         /// Destructor.
@@ -141,13 +140,13 @@ namespace ome
          *
          * @returns the directory.
          */
-        ome::compat::shared_ptr<IFD>
+        std::shared_ptr<IFD>
         getIFD() const;
 
       protected:
         class Impl;
         /// Private implementation details.
-        ome::compat::shared_ptr<Impl> impl;
+        std::shared_ptr<Impl> impl;
       };
 
       /**
@@ -171,8 +170,8 @@ namespace ome
          * @param ifd the directory the field belongs to.
          * @param tag the tag identifying this field.
          */
-        Field(ome::compat::shared_ptr<IFD> ifd,
-              tag_category                 tag):
+        Field(std::shared_ptr<IFD> ifd,
+              tag_category         tag):
           FieldBase(ifd, getWrappedTag(tag)),
           tag(tag)
         {}

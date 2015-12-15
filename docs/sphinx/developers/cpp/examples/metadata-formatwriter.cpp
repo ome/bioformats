@@ -36,6 +36,7 @@
  */
 
 #include <iostream>
+#include <memory>
 
 #include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/MetadataTools.h>
@@ -43,13 +44,11 @@
 #include <ome/bioformats/out/OMETIFFWriter.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
-#include <ome/compat/memory.h>
-
 #include <ome/common/filesystem.h>
 
 using boost::filesystem::path;
-using ome::compat::make_shared;
-using ome::compat::shared_ptr;
+using std::make_shared;
+using std::shared_ptr;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::fillMetadata;
 using ome::bioformats::CoreMetadata;
@@ -70,17 +69,17 @@ namespace
 {
 
   /* write-example-start */
-  shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
+  shared_ptr<::ome::xml::meta::OMEXMLMetadata>
   createMetadata()
   {
     // OME-XML metadata store.
-    shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(make_shared< ::ome::xml::meta::OMEXMLMetadata>());
+    shared_ptr<::ome::xml::meta::OMEXMLMetadata> meta(make_shared<::ome::xml::meta::OMEXMLMetadata>());
 
     // Create simple CoreMetadata and use this to set up the OME-XML
     // metadata.  This is purely for convenience in this example; a
     // real writer would typically set up the OME-XML metadata from an
     // existing MetadataRetrieve instance or by hand.
-    std::vector<shared_ptr<CoreMetadata> > seriesList;
+    std::vector<shared_ptr<CoreMetadata>> seriesList;
     shared_ptr<CoreMetadata> core(make_shared<CoreMetadata>());
     core->sizeX = 512U;
     core->sizeY = 512U;
@@ -124,8 +123,8 @@ namespace
             // uint16_t.  It uses the native endianness and has a
             // storage order of XYZTC without interleaving
             // (subchannels are planar).
-            shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
-              buffer(make_shared<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
+            shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>>
+              buffer(make_shared<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type>>
                      (boost::extents[512][512][1][1][1][3][1][1][1],
                       PixelType::UINT16, ome::bioformats::ENDIAN_NATIVE,
                       PixelBufferBase::make_storage_order(DimensionOrder::XYZTC, false)));
@@ -178,7 +177,7 @@ main(int argc, char *argv[])
 
           /* writer-example-start */
           // Create metadata for the file to be written.
-          shared_ptr< ::ome::xml::meta::MetadataRetrieve> meta(createMetadata());
+          shared_ptr<::ome::xml::meta::MetadataRetrieve> meta(createMetadata());
 
           // Create TIFF writer
           shared_ptr<FormatWriter> writer(make_shared<OMETIFFWriter>());

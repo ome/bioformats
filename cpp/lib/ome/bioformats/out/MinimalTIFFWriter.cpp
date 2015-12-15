@@ -140,7 +140,7 @@ namespace ome
         std::string flags("w");
 
         // Get expected size of pixel data.
-        ome::compat::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
+        std::shared_ptr<const ::ome::xml::meta::MetadataRetrieve> mr(getMetadataRetrieve());
         storage_size_type pixelSize = significantPixelSize(*mr);
 
         if (enableBigTIFF(bigTIFF, pixelSize, *currentId, logger))
@@ -235,7 +235,7 @@ namespace ome
         ifd->setTileWidth(getSizeX());
         ifd->setTileHeight(1U);
 
-        ome::compat::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
+        std::array<dimension_size_type, 3> coords = getZCTCoords(getPlane());
 
         dimension_size_type channel = coords[1];
 

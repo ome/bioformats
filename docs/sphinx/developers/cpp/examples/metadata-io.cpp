@@ -36,8 +36,7 @@
  */
 
 #include <iostream>
-
-#include <ome/compat/memory.h>
+#include <memory>
 
 #include <ome/common/filesystem.h>
 #include <ome/common/xml/Platform.h>
@@ -51,9 +50,9 @@
 #include <ome/bioformats/MetadataTools.h>
 
 using boost::filesystem::path;
-using ome::compat::array;
-using ome::compat::make_shared;
-using ome::compat::shared_ptr;
+using std::array;
+using std::make_shared;
+using std::shared_ptr;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::addMetadataOnly;
 using ome::bioformats::createOMEXMLMetadata;
