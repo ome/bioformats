@@ -85,7 +85,7 @@ Shows how to convert a file one tile at a time, instead of one plane at a time (
 File compression:
 ^^^^^^^^^^^^^^^^^
 
-:source:`makeLZW <components/formats-gpl/utils/makeLZW.java>` -
+:source:`makeLZW <components/formats-gpl/utils/MakeLZW.java>` -
 Converts the given image file to an LZW-compressed TIFF.
 
 Metadata extract/print:
@@ -120,7 +120,7 @@ Edits the given file's image name (but does not save back to disk).
 :source:`EditTiffComment <components/formats-gpl/utils/EditTiffComment.java>` -
 Allows raw user TIFF comment editing for the given TIFF files.
 
-:source:`writeMapAnnotations <components/formats-gpl/utils/writeMapAnnotations.java>` -
+:source:`writeMapAnnotations <components/formats-gpl/utils/writeMapAnnotationsExample.java>` -
 Example method to write MapAnnotations to the ome-xml.
 
 :source:`CommentSurgery <components/formats-gpl/utils/CommentSurgery.java>` -
@@ -132,7 +132,7 @@ Image converters:
 :source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` -
 A simple command line tool for converting between formats.
 
-:source:`ConvertToOmeTiff <components/bio-formats-tools/src/loci/formats/tools/ConvertToOmeTiff.java>` -
+:source:`ConvertToOmeTiff <components/formats-gpl/utils/ConvertToOmeTiff.java>` -
 Converts the given files to OME-TIFF format.
 
 :source:`WritePreCompressedPlanes <components/formats-gpl/utils/WritePrecompressedPlanes.java>` -
