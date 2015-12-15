@@ -176,7 +176,7 @@
                     failifexecutionfails:"true",
                     failonerror:"false",
                     executable: 'git') {
-                      arg(line:"describe --match=v[0-9]* --exact")
+                      arg(line:"describe --match=IDR-[0-9]* --exact")
                   }
                 }
                 catch (Exception e) {
@@ -188,7 +188,7 @@
                   ant.exec(outputproperty:"describe",
                     failifexecutionfails:"true",
                     executable: 'git') {
-                      arg(line:"describe --match=v[0-9]*")
+                      arg(line:"describe --match=IDR-[0-9]*")
                   }
                 }
                 catch (Exception e) {
@@ -209,7 +209,7 @@
                   // then use the last known tag's number to set a snapshot
                   // version
                   try {
-                    def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                    def regex = Pattern.compile("IDR-([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
                     def groups = regex.matcher(ant.project.properties.describe)
                     groups.matches()
                     def major = groups.group(1)
