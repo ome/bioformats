@@ -60,6 +60,9 @@ public class FilePatternBlock {
   /** Whether or not this is a fixed-width block. */
   private boolean fixed;
 
+  /** Whether or not this is a numeric block. */
+  private boolean numeric;
+
   /** The number of leading zeroes. */
   private int zeroes;
 
@@ -89,6 +92,10 @@ public class FilePatternBlock {
     return fixed;
   }
 
+  public boolean isNumeric() {
+    return numeric;
+  }
+
   public BigInteger getFirst() {
     return begin;
   }
@@ -103,47 +110,66 @@ public class FilePatternBlock {
 
   // -- Helper methods --
 
+  private void throwBadBlock(String msgTemplate) {
+    throw new IllegalBlockException(String.format(msgTemplate, block));
+  }
+
+  private void throwBadBlock(String msgTemplate, Throwable cause) {
+    throw new IllegalBlockException(
+        String.format(msgTemplate, block), cause
+    );
+  }
+
   private void explode() {
-    int dash = block.indexOf("-");
+    if (!block.startsWith(BLOCK_START) || !block.endsWith(BLOCK_END)) {
+      throwBadBlock("\"%s\": missing block delimiter(s)");
+    }
+    String trimmed = block.substring(
+        BLOCK_START.length(), block.length() - BLOCK_END.length()
+    );
+    int dash = trimmed.indexOf("-");
     String b, e, s;
     if (dash < 0) {
       // check if this is an enumerated list
-      int comma = block.indexOf(",");
+      int comma = trimmed.indexOf(",");
       if (comma > 0) {
-        elements = block.substring(1, block.length() - 1).split(",");
+        elements = trimmed.split(",");
         return;
       }
       else {
         // no range and not a list; assume entire block is a single value
-        b = e = block.substring(1, block.length() - 1);
+        b = e = trimmed;
         s = "1";
       }
     }
     else {
-      int colon = block.indexOf(":");
-      b = block.substring(1, dash);
+      int colon = trimmed.indexOf(":");
+      b = trimmed.substring(0, dash);
       if (colon < 0) {
-        e = block.substring(dash + 1, block.length() - 1);
+        e = trimmed.substring(dash + 1);
         s = "1";
       }
       else {
-        e = block.substring(dash + 1, colon);
-        s = block.substring(colon + 1, block.length() - 1);
+        e = trimmed.substring(dash + 1, colon);
+        s = trimmed.substring(colon + 1);
       }
     }
 
-    boolean numeric = true;
+    numeric = true;
 
     try {
       begin = new BigInteger(b);
       end = new BigInteger(e);
       step = new BigInteger(s);
-    }
-    catch (NumberFormatException exc) {
+    } catch (NumberFormatException badN) {
       numeric = false;
-      begin = new BigInteger(b, 26);
-      end = new BigInteger(e, 26);
-      step = new BigInteger(s, 26);
+      try {
+        begin = new BigInteger(b, Character.MAX_RADIX);
+        end = new BigInteger(e, Character.MAX_RADIX);
+        step = new BigInteger(s, Character.MAX_RADIX);
+      } catch (NumberFormatException badL) {
+        throwBadBlock("invalid range delimiter(s)", badL);
+      }
     }
 
     fixed = b.length() == e.length();
@@ -157,7 +183,7 @@ public class FilePatternBlock {
 
     for (int i=0; i<count; i++) {
       BigInteger v = begin.add(step.multiply(BigInteger.valueOf(i)));
-      String value = numeric ? v.toString() : v.toString(26);
+      String value = numeric ? v.toString() : v.toString(Character.MAX_RADIX);
       if (!numeric) {
         if (Character.isLowerCase(b.charAt(0))) value = value.toLowerCase();
         else value = value.toUpperCase();
