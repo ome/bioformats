@@ -78,7 +78,17 @@ include(XsdFu)
 include(GTest)
 include(Doxygen)
 include(HeaderTest)
-find_package(OME 5.2.0 REQUIRED Compat Common)
+
+# This is a hack to generate the model sources without having to have
+# ome-common available.  It will be removed or moved once the model
+# has been split out.
+option(model-source-only "Generate model source only" OFF)
+if(NOT model-source-only)
+  find_package(OME 5.2.0 REQUIRED Compat Common)
+else()
+  add_library(OME::Compat INTERFACE IMPORTED)
+  add_library(OME::Common INTERFACE IMPORTED)
+endif()
 
 if(MSVC)
   # Debug library suffix.
