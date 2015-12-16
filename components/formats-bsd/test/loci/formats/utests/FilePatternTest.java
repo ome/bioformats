@@ -154,11 +154,22 @@ public class FilePatternTest {
     assertTrue(fp.isRegex());
     assertEquals(fp.getPattern(), pattern);
     if (!createFiles) {
-      assertEquals(fp.getFiles().length, 0);
+      // pattern matches a single (nonexistent) file with name == pattern
+      assertEquals(fp.getFiles(), new String[] {pattern});
       return;
     }
     String[] fullNames = mkFiles(wd, names);
     assertEqualsNoOrder(new FilePattern(pattern).getFiles(), fullNames);
+  }
+
+  @Test
+  public void testSingleFile() {
+    String pattern = "test.fake";
+    FilePattern fp = new FilePattern(pattern);
+    assertTrue(fp.isValid());
+    assertTrue(fp.isRegex());
+    assertEquals(fp.getPattern(), pattern);
+    assertEquals(fp.getFiles(), new String[] {pattern});
   }
 
   @Test(dataProvider = "booleanStates")

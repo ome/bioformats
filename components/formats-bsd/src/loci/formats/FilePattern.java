@@ -169,7 +169,7 @@ public class FilePattern {
     buildFiles("", num, fileList);
     files = fileList.toArray(new String[0]);
 
-    if (files.length == 0 && new Location(pattern).exists()) {
+    if (files.length == 0) {
       files = new String[] {pattern};
     }
 
