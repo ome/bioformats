@@ -703,51 +703,6 @@ public class FilePattern {
     return files.toArray(new String[files.size()]);
   }
 
-  // -- Main method --
-
-  /** Method for testing file pattern logic. */
-  public static void main(String[] args) {
-    String pat = null;
-    if (args.length > 0) {
-      // test file pattern detection based on the given file on disk
-      Location file = new Location(args[0]);
-      LOGGER.info("File = {}", file.getAbsoluteFile());
-      pat = findPattern(file);
-    }
-    else {
-      // test file pattern detection from a virtual file list
-      String[] nameList = new String[2 * 4 * 3 * 12 + 1];
-      nameList[0] = "outlier.ext";
-      int count = 1;
-      for (int i=1; i<=2; i++) {
-        for (int j=1; j<=4; j++) {
-          for (int k=0; k<=2; k++) {
-            for (int l=1; l<=12; l++) {
-              String sl = (l < 10 ? "0" : "") + l;
-              nameList[count++] =
-                "hypothetical" + sl + k + j + "c" + i + ".ext";
-            }
-          }
-        }
-      }
-      pat = findPattern(nameList[1], null, nameList);
-    }
-    if (pat == null) LOGGER.info("No pattern found.");
-    else {
-      LOGGER.info("Pattern = {}", pat);
-      FilePattern fp = new FilePattern(pat);
-      if (fp.isValid()) {
-        LOGGER.info("Pattern is valid.");
-        LOGGER.info("Files:");
-        String[] ids = fp.getFiles();
-        for (int i=0; i<ids.length; i++) {
-          LOGGER.info("  #{}: {}", i, ids[i]);
-        }
-      }
-      else LOGGER.info("Pattern is invalid: {}", fp.getErrorMessage());
-    }
-  }
-
   // -- Deprecated methods --
 
   /* @deprecated */
