@@ -34,6 +34,7 @@ loci.formats.in.LIFReader             # lif
 loci.formats.in.AVIReader             # avi
 loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt
+loci.formats.in.SPCReader             # spc
 loci.formats.in.EPSReader             # eps, epsi
 loci.formats.in.SlideBook6Reader      # sld
 loci.formats.in.SlidebookReader       # sld
