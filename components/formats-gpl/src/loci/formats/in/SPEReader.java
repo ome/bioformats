@@ -43,6 +43,10 @@ import loci.formats.meta.MetadataStore;
 /**
  * SPEReader is the file format reader for Princeton Instruments SPE .spe files.
  * XML Footer introduced in Princeton Instruments SPE Ver 3.0 not supported
+ *
+ * See public specification document:
+ * ftp://ftp.princetoninstruments.com/public/Manuals/Princeton%20Instruments/SPE%203.0%20File%20Format%20Specification.pdf
+ *
  * @author David Gault d.gault at dundee.ac.uk
  */
 public class SPEReader extends FormatReader {
