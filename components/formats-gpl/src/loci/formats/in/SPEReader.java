@@ -132,23 +132,18 @@ public class SPEReader extends FormatReader {
     switch (speType) {
       case FLOAT:
         m.pixelType = FormatTools.FLOAT;
-        m.bitsPerPixel = 4;
         break;
       case INT32:
         m.pixelType = FormatTools.INT32;
-        m.bitsPerPixel = 4;
         break;
       case INT16:
-        m.pixelType = FormatTools.INT16; 
-        m.bitsPerPixel = 2;
+        m.pixelType = FormatTools.INT16;
         break;
       case UNINT16:
-        m.pixelType = FormatTools.UINT16; 
-        m.bitsPerPixel = 2;
+        m.pixelType = FormatTools.UINT16;
         break;
       case UNINT32:
-        m.pixelType = FormatTools.UINT32; 
-        m.bitsPerPixel = 4;
+        m.pixelType = FormatTools.UINT32;
         break;
       default:
         throw new FormatException("Invalid pixel type");
