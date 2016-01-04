@@ -105,24 +105,19 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    int index = no;
+    int index = -1;
 
-    if (getSeriesCount() == 1) {
-      int[] coords = getZCTCoords(no);
-      for (int q=0; q<coordinates.length; q++) {
-        if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
-          coordinates[q][2] == coords[2])
-        {
-          index = q;
-          break;
-        }
+    int[] coords = getZCTCoords(no);
+    for (int q=0; q<coordinates.length; q++) {
+      if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
+        coordinates[q][2] == coords[2] && coordinates[q][3] == getSeries())
+      {
+        index = q;
+        break;
       }
     }
-    else {
-      index += getSeries() * getImageCount();
-    }
 
-    if (index >= imageFiles.length) {
+    if (index < 0 || index >= imageFiles.length) {
       return buf;
     }
 
@@ -190,10 +185,35 @@ public class ZeissZVIReader extends BaseZeissReader {
     for (int i=0; i<coordinates.length; i++) {
       valid.put(i, false);
     }
+
+    boolean equalZ = true, equalC = true, equalT = true;
+    for (int[] coord : coordinates) {
+      if (coord[0] != coordinates[0][0]) {
+        equalZ = false;
+      }
+      if (coord[1] != coordinates[0][1]) {
+        equalC = false;
+      }
+      if (coord[2] != coordinates[0][2]) {
+        equalT = false;
+      }
+    }
+    for (int[] coord : coordinates) {
+      if (equalZ) {
+        coord[0] = 0;
+      }
+      if (equalC) {
+        coord[1] = 0;
+      }
+      if (equalT) {
+        coord[2] = 0;
+      }
+    }
+
     for (int i=0; i<coordinates.length; i++) {
       try {
-        int index =
-          getIndex(coordinates[i][0], coordinates[i][1], coordinates[i][2]);
+        int index = FormatTools.positionToRaster(
+          new int[] {getSizeZ(), getSizeC(), getSizeT(), getSeriesCount()}, coordinates[i]);
         valid.put(index, true);
       }
       catch (IllegalArgumentException e) {
@@ -281,23 +301,22 @@ public class ZeissZVIReader extends BaseZeissReader {
         int zidx = s.readInt();
         int cidx = s.readInt();
         int tidx = s.readInt();
+        s.skipBytes(4);
+        int tileIndex = s.readInt();
 
         zIndices.add(zidx);
         timepointIndices.add(tidx);
         channelIndices.add(cidx);
 
-        s.skipBytes(len);
+        s.skipBytes(len - 8);
 
         for (int q=0; q<5; q++) {
           getNextTag(s);
         }
 
         s.skipBytes(4);
-        //if (getSizeX() == 0) {
         core.get(0).sizeX = s.readInt();
         core.get(0).sizeY = s.readInt();
-        //}
-        //else s.skipBytes(8);
         s.skipBytes(4);
 
         if (bpp == 0) {
@@ -320,6 +339,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         coordinates[imageNum][0] = zidx;
         coordinates[imageNum][1] = cidx;
         coordinates[imageNum][2] = tidx;
+        coordinates[imageNum][3] = tileIndex;
         imageFiles[imageNum] = name;
         s.close();
       }
@@ -397,6 +417,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
     }
     super.countImages();
+    coordinates = new int[getSeriesCount() * getImageCount()][4];
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
