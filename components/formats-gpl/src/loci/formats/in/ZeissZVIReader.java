@@ -105,7 +105,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    int index = no;
+    int index = -1;
 
     int[] coords = getZCTCoords(no);
     for (int q=0; q<coordinates.length; q++) {
@@ -181,71 +181,27 @@ public class ZeissZVIReader extends BaseZeissReader {
     // double-check that the coordinates are valid
     // all of the image numbers must be accounted for
 
-    HashMap<Integer, Boolean> valid = new HashMap<Integer, Boolean>();
-    for (int i=0; i<coordinates.length; i++) {
-      valid.put(i, false);
-    }
-
-    boolean equalZ = true, equalC = true, equalT = true;
-    int minZ = Integer.MAX_VALUE, minC = Integer.MAX_VALUE, minT = Integer.MAX_VALUE;
-    int minTile = Integer.MAX_VALUE;
-    for (int[] coord : coordinates) {
-      if (coord[0] != coordinates[0][0]) {
-        equalZ = false;
-      }
-      if (coord[0] < minZ) {
-        minZ = coord[0];
-      }
-      if (coord[1] != coordinates[0][1]) {
-        equalC = false;
-      }
-      if (coord[1] < minC) {
-        minC = coord[1];
-      }
-      if (coord[2] != coordinates[0][2]) {
-        equalT = false;
-      }
-      if (coord[2] < minT) {
-        minT = coord[2];
-      }
-      if (coord[3] < minTile) {
-        minTile = coord[3];
-      }
-    }
-    for (int[] coord : coordinates) {
-      if (equalZ) {
-        coord[0] = 0;
-      }
-      else {
-        coord[0] -= minZ;
-      }
-      if (equalC) {
-        coord[1] = 0;
-      }
-      else {
-        coord[1] -= minC;
-      }
-      if (equalT) {
-        coord[2] = 0;
-      }
-      else {
-        coord[2] -= minT;
-      }
-      coord[3] -= minTile;
-    }
+    Integer[] zs = zIndices.toArray(new Integer[zIndices.size()]);
+    Integer[] cs = channelIndices.toArray(new Integer[channelIndices.size()]);
+    Integer[] ts = timepointIndices.toArray(new Integer[timepointIndices.size()]);
+    Integer[] tiles = tileIndices.toArray(new Integer[tileIndices.size()]);
+    Arrays.sort(zs);
+    Arrays.sort(cs);
+    Arrays.sort(ts);
+    Arrays.sort(tiles);
 
     for (int i=0; i<coordinates.length; i++) {
+      coordinates[i][0] = Arrays.binarySearch(zs, coordinates[i][0]);
+      coordinates[i][1] = Arrays.binarySearch(cs, coordinates[i][1]);
+      coordinates[i][2] = Arrays.binarySearch(ts, coordinates[i][2]);
+      coordinates[i][3] = Arrays.binarySearch(tiles, coordinates[i][3]);
       try {
         int index = FormatTools.positionToRaster(
           new int[] {getSizeZ(), getEffectiveSizeC(), getSizeT(), getSeriesCount()}, coordinates[i]);
-        valid.put(index, true);
       }
       catch (IllegalArgumentException e) {
         LOGGER.trace("Found invalid coordinates", e);
       }
-    }
-    if (valid.containsValue(false)) {
-      coordinates = new int[0][0];
     }
   }
 
@@ -331,6 +287,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         zIndices.add(zidx);
         timepointIndices.add(tidx);
         channelIndices.add(cidx);
+        tileIndices.add(tileIndex);
 
         s.skipBytes(len - 8);
 
