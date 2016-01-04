@@ -187,27 +187,51 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     boolean equalZ = true, equalC = true, equalT = true;
+    int minZ = Integer.MAX_VALUE, minC = Integer.MAX_VALUE, minT = Integer.MAX_VALUE;
+    int minTile = Integer.MAX_VALUE;
     for (int[] coord : coordinates) {
       if (coord[0] != coordinates[0][0]) {
         equalZ = false;
       }
+      if (coord[0] < minZ) {
+        minZ = coord[0];
+      }
       if (coord[1] != coordinates[0][1]) {
         equalC = false;
       }
+      if (coord[1] < minC) {
+        minC = coord[1];
+      }
       if (coord[2] != coordinates[0][2]) {
         equalT = false;
+      }
+      if (coord[2] < minT) {
+        minT = coord[2];
+      }
+      if (coord[3] < minTile) {
+        minTile = coord[3];
       }
     }
     for (int[] coord : coordinates) {
       if (equalZ) {
         coord[0] = 0;
       }
+      else {
+        coord[0] -= minZ;
+      }
       if (equalC) {
         coord[1] = 0;
+      }
+      else {
+        coord[1] -= minC;
       }
       if (equalT) {
         coord[2] = 0;
       }
+      else {
+        coord[2] -= minT;
+      }
+      coord[3] -= minTile;
     }
 
     for (int i=0; i<coordinates.length; i++) {
