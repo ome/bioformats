@@ -237,7 +237,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     for (int i=0; i<coordinates.length; i++) {
       try {
         int index = FormatTools.positionToRaster(
-          new int[] {getSizeZ(), getSizeC(), getSizeT(), getSeriesCount()}, coordinates[i]);
+          new int[] {getSizeZ(), getEffectiveSizeC(), getSizeT(), getSeriesCount()}, coordinates[i]);
         valid.put(index, true);
       }
       catch (IllegalArgumentException e) {
