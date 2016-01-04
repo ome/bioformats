@@ -105,7 +105,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    int index = -1;
+    int index = no;
 
     int[] coords = getZCTCoords(no);
     for (int q=0; q<coordinates.length; q++) {
