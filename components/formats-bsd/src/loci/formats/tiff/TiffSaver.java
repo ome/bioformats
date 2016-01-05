@@ -501,9 +501,10 @@ public class TiffSaver {
     long fp = out.getFilePointer();
     writeIFD(ifd, 0);
 
+    int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
     for (int i=0; i<strips.length; i++) {
       out.seek(out.length());
-      int thisOffset = firstOffset + i;
+      int thisOffset = firstOffset + i * tileCount;
       offsets.set(thisOffset, out.getFilePointer());
       byteCounts.set(thisOffset, new Long(strips[i].length));
       if (LOGGER.isDebugEnabled()) {
