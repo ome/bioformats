@@ -43,6 +43,10 @@ import loci.formats.meta.MetadataStore;
 /**
  * SPEReader is the file format reader for Princeton Instruments SPE .spe files.
  * XML Footer introduced in Princeton Instruments SPE Ver 3.0 not supported
+ *
+ * See public specification document:
+ * ftp://ftp.princetoninstruments.com/public/Manuals/Princeton%20Instruments/SPE%203.0%20File%20Format%20Specification.pdf
+ *
  * @author David Gault d.gault at dundee.ac.uk
  */
 public class SPEReader extends FormatReader {
@@ -128,23 +132,18 @@ public class SPEReader extends FormatReader {
     switch (speType) {
       case FLOAT:
         m.pixelType = FormatTools.FLOAT;
-        m.bitsPerPixel = 4;
         break;
       case INT32:
         m.pixelType = FormatTools.INT32;
-        m.bitsPerPixel = 4;
         break;
       case INT16:
-        m.pixelType = FormatTools.INT16; 
-        m.bitsPerPixel = 2;
+        m.pixelType = FormatTools.INT16;
         break;
       case UNINT16:
-        m.pixelType = FormatTools.UINT16; 
-        m.bitsPerPixel = 2;
+        m.pixelType = FormatTools.UINT16;
         break;
       case UNINT32:
-        m.pixelType = FormatTools.UINT32; 
-        m.bitsPerPixel = 4;
+        m.pixelType = FormatTools.UINT32;
         break;
       default:
         throw new FormatException("Invalid pixel type");
@@ -255,40 +254,37 @@ public class SPEReader extends FormatReader {
     int numROIs = header.getShort(SpeHeaderEntry.NUM_ROIS);
     if (numROIs > 0) {
       SpeROI[] rois = header.getROIs();
-      int count = 1;
       int roiIndex = 0;
       for (SpeROI roi : rois) {
-        addGlobalMeta("ROI " + count + " Start X", roi.getStartX());
-        addGlobalMeta("ROI " + count + " End X", roi.getEndX());
-        addGlobalMeta("ROI " + count + " Group X", roi.getGroupX());
-        addGlobalMeta("ROI " + count + " Start Y", roi.getStartY());
-        addGlobalMeta("ROI " + count + " End Y", roi.getEndY());
-        addGlobalMeta("ROI " + count + " Group Y", roi.getGroupY());
-        
+        String prefix = "ROI " + (roiIndex + 1);
+        addGlobalMeta(prefix + " Start X", roi.getStartX());
+        addGlobalMeta(prefix + " End X", roi.getEndX());
+        addGlobalMeta(prefix + " Group X", roi.getGroupX());
+        addGlobalMeta(prefix + " Start Y", roi.getStartY());
+        addGlobalMeta(prefix + " End Y", roi.getEndY());
+        addGlobalMeta(prefix + " Group Y", roi.getGroupY());
+
         String roiID = MetadataTools.createLSID("ROI", roiIndex);
+        store.setROIID(roiID, roiIndex);
         for (int i=0; i<core.size(); i++) {
           store.setImageROIRef(roiID, i, roiIndex);
         }
-        int shapeIndex = roiIndex * 2;
-        store.setROIID(roiID, count-1);
-        store.setLabelID(MetadataTools.createLSID("Shape", roiIndex, shapeIndex), roiIndex, shapeIndex);
-        store.setLabelText("ROI " + count + ", X-Binning = " + roi.getGroupX() + ", Y-Binning = " + roi.getGroupY(), roiIndex, shapeIndex);
-        store.setLabelX((double)roi.getStartX(), roiIndex, shapeIndex);
-        store.setLabelY((double)roi.getStartY(), roiIndex, shapeIndex);
-        shapeIndex++;
-            
-        store.setRectangleID(MetadataTools.createLSID("Shape", roiIndex, 1), roiIndex, shapeIndex);
-        store.setRectangleX((double)roi.getStartX(), roiIndex, shapeIndex);
-        store.setRectangleY((double)roi.getStartY(), roiIndex, shapeIndex);
-        store.setRectangleWidth((double)roi.getEndX() - (double)roi.getStartX(), roiIndex, shapeIndex);
-        store.setRectangleHeight((double)roi.getEndY() - (double)roi.getStartY(), roiIndex, shapeIndex);
-            
+        store.setLabelID(MetadataTools.createLSID("Shape", roiIndex, 0), roiIndex, 0);
+        store.setLabelText(prefix + ", X-Binning = " + roi.getGroupX() + ", Y-Binning = " + roi.getGroupY(), roiIndex, 0);
+        store.setLabelX((double)roi.getStartX(), roiIndex, 0);
+        store.setLabelY((double)roi.getStartY(), roiIndex, 0);
+
+        store.setRectangleID(MetadataTools.createLSID("Shape", roiIndex, 1), roiIndex, 1);
+        store.setRectangleX((double)roi.getStartX(), roiIndex, 1);
+        store.setRectangleY((double)roi.getStartY(), roiIndex, 1);
+        store.setRectangleWidth((double)roi.getEndX() - (double)roi.getStartX(), roiIndex, 1);
+        store.setRectangleHeight((double)roi.getEndY() - (double)roi.getStartY(), roiIndex, 1);
+
         roiIndex++;
-        count ++;
       }
     }
   }
-  
+
   // -- Private classes --
   /** SpeHeaderType is an Enum representing the available data types stored in the SPE header  */
   private enum SpeHeaderType {
