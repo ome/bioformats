@@ -145,8 +145,8 @@ namespace ome
       }
 
       bool
-      MapPairs::link (ome::compat::shared_ptr<Reference>&                          reference,
-                      ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+      MapPairs::link (std::shared_ptr<Reference>&                         reference,
+                      std::shared_ptr<::ome::xml::model::OMEModelObject>& object)
       {
         if (detail::OMEModelObject::link(reference, object))
           {

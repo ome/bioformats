@@ -1593,10 +1593,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = OME_HAVE_MEMORY \
-                         OME_HAVE_TUPLE \
-                         OME_HAVE_NOEXCEPT \
-                         OME_HAVE_BOOST_FORMAT \
+PREDEFINED             = OME_HAVE_BOOST_FORMAT \
                          OME_HAVE_BOOST_LOG \
                          OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP
 

@@ -38,12 +38,11 @@
 #ifndef OME_BIOFORMATS_TILECACHE_H
 #define OME_BIOFORMATS_TILECACHE_H
 
+#include <map>
+#include <memory>
+
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/TileBuffer.h>
-
-#include <ome/compat/memory.h>
-
-#include <map>
 
 namespace ome
 {
@@ -62,7 +61,7 @@ namespace ome
       /// Tile index type.
       typedef dimension_size_type key_type;
       /// Tile buffer type.
-      typedef ome::compat::shared_ptr<TileBuffer> value_type;
+      typedef std::shared_ptr<TileBuffer> value_type;
 
       /// Constructor.
       TileCache();

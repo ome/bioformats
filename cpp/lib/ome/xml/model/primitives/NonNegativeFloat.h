@@ -54,7 +54,7 @@ namespace ome
         /**
          * Double-precision floating point value greater than or equal to zero.
          */
-        typedef ConstrainedNumeric<double, NonNegativeFloatConstraint<double> > NonNegativeFloat;
+        typedef ConstrainedNumeric<double, NonNegativeFloatConstraint<double>> NonNegativeFloat;
 
       }
     }

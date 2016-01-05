@@ -70,7 +70,7 @@ namespace ome
       {
       protected:
         /// Underlying TIFF file.
-        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+        std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Mapping between series index and start and end IFD as a half-open range.
         tiff::SeriesIFDRange seriesIFDRange;
@@ -109,7 +109,7 @@ namespace ome
          * @returns the IFD index.
          * @throws FormatException if out of range.
          */
-        const ome::compat::shared_ptr<const tiff::IFD>
+        const std::shared_ptr<const tiff::IFD>
         ifdAtIndex(dimension_size_type plane) const;
 
       public:
@@ -140,7 +140,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
+        std::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF();
 
         /**
@@ -150,7 +150,7 @@ namespace ome
          *
          * @returns a reference to the TIFF file.
          */
-        const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
+        const std::shared_ptr<ome::bioformats::tiff::TIFF>
         getTIFF() const;
       };
 

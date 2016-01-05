@@ -38,7 +38,7 @@
 #ifndef OME_BIOFORMATS_META_METADATAROOT_H
 #define OME_BIOFORMATS_META_METADATAROOT_H
 
-#include <ome/compat/cstdint.h>
+#include <cstdint>
 
 namespace ome
 {

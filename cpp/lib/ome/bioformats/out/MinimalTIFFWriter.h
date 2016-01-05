@@ -73,10 +73,10 @@ namespace ome
         ome::common::Logger logger;
 
         /// Underlying TIFF file.
-        mutable ome::compat::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
+        mutable std::shared_ptr<ome::bioformats::tiff::TIFF> tiff;
 
         /// Current IFD.
-        mutable ome::compat::shared_ptr<ome::bioformats::tiff::IFD> ifd;
+        mutable std::shared_ptr<ome::bioformats::tiff::IFD> ifd;
 
         /// Current plane.
         mutable dimension_size_type ifdIndex;

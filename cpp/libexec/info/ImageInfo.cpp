@@ -78,7 +78,7 @@ namespace info
   }
 
   void
-  ImageInfo::setReader(ome::compat::shared_ptr<FormatReader>& reader)
+  ImageInfo::setReader(std::shared_ptr<FormatReader>& reader)
   {
     this->reader = reader;
   }
@@ -87,7 +87,7 @@ namespace info
   ImageInfo::testRead(std::ostream& stream)
   {
     if (!reader)
-      reader = ome::compat::make_shared<in::OMETIFFReader>();
+      reader = std::make_shared<in::OMETIFFReader>();
 
     preInit(stream);
 
@@ -127,12 +127,12 @@ namespace info
     if (opts.showomexml)
       {
         reader->setOriginalMetadataPopulated(opts.showsa);
-        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> store(ome::compat::make_shared<ome::xml::meta::OMEXMLMetadata>());
+        std::shared_ptr<ome::xml::meta::MetadataStore> store(std::make_shared<ome::xml::meta::OMEXMLMetadata>());
         reader->setMetadataStore(store);
       }
 
     /// @todo ImageReader format detection.
-    ome::compat::shared_ptr<ome::bioformats::detail::FormatReader> detail = ome::compat::dynamic_pointer_cast<ome::bioformats::detail::FormatReader>(reader);
+    std::shared_ptr<ome::bioformats::detail::FormatReader> detail = std::dynamic_pointer_cast<ome::bioformats::detail::FormatReader>(reader);
     if (detail)
       stream << "Using reader: " << detail->getFormat()
              << " (" << detail->getFormatDescription() << ")\n";
@@ -303,15 +303,15 @@ namespace info
   {
     try
       {
-        ome::compat::shared_ptr<ome::xml::meta::MetadataStore> ms(reader->getMetadataStore());
-        ome::compat::shared_ptr<ome::xml::meta::MetadataRetrieve> mr(ome::compat::dynamic_pointer_cast<ome::xml::meta::MetadataRetrieve>(ms));
+        std::shared_ptr<ome::xml::meta::MetadataStore> ms(reader->getMetadataStore());
+        std::shared_ptr<ome::xml::meta::MetadataRetrieve> mr(std::dynamic_pointer_cast<ome::xml::meta::MetadataRetrieve>(ms));
       }
     catch (const std::exception& e)
       {
         std::cerr << "Failed to get metadata: " << e.what() << '\n';
       }
 
-    ome::compat::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(ome::compat::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
+    std::shared_ptr<ome::xml::meta::OMEXMLMetadata> omemeta(std::dynamic_pointer_cast<ome::xml::meta::OMEXMLMetadata>(reader->getMetadataStore()));
     if (omemeta)
       {
         ome::common::xml::Platform xmlplat;

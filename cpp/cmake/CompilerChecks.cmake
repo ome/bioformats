@@ -114,34 +114,7 @@ int main()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
 
-if (cxxstd-autodetect)
-  if (NOT MSVC)
-    cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
-    if (CXX_FLAG_CXX14)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-    else()
-      cxx_std_check(-std=c++11 CXX_FLAG_CXX11)
-      if (CXX_FLAG_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-      else()
-        cxx_std_check(-std=c++03 CXX_FLAG_CXX03)
-        if (CXX_FLAG_CXX03)
-          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
-        else()
-          cxx_std_check(-std=c++98 CXX_FLAG_CXX98)
-          if (CXX_FLAG_CXX98)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-          else()
-            cxx_std_check("" CXX_FLAG_NONE)
-            if (NOT CXX_FLAG_NONE)
-              message(WARNING "Could not determine compiler options for enabling the most recent C++ standard; this might be expected for your compiler")
-            endif (NOT CXX_FLAG_NONE)
-          endif(CXX_FLAG_CXX98)
-        endif(CXX_FLAG_CXX03)
-      endif(CXX_FLAG_CXX11)
-    endif(CXX_FLAG_CXX14)
-  endif (NOT MSVC)
-endif (cxxstd-autodetect)
+set(CMAKE_CXX_STANDARD 11)
 
 # Try to enable the -pedantic flag.  This one needs special casing
 # since it may break building with older compilers where int64_t (long
@@ -230,40 +203,6 @@ foreach(flag ${test_flags})
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
   endif (${test_cxx_flag})
 endforeach(flag ${test_flags})
-
-check_cxx_source_compiles("
-#include <tuple>
-int main() { std::tuple<int,double> t; }
-" OME_HAVE_TUPLE)
-
-check_cxx_source_compiles("
-#include <tr1/tuple>
-int main() { std::tr1::tuple<int,double> t; }
-" OME_HAVE_TR1_TUPLE)
-
-check_cxx_source_compiles("
-#include <cstdint>
-int main() { uint16_t test(134); }
-" OME_HAVE_CSTDINT)
-
-check_cxx_source_compiles("
-#include <memory>
-struct foo : public ome::compat::enable_shared_from_this<foo>
-{
-        foo() {}
-};
-int main() { ome::compat::shared_ptr<foo> f(new foo()); }
-" OME_HAVE_MEMORY)
-
-check_cxx_source_compiles("
-void foo() noexcept{}
-int main() { foo(); }
-" OME_HAVE_NOEXCEPT)
-
-check_cxx_source_compiles("
-#include <array>
-int main() { std::array<int,3> a; a[0] = 5; }
-" OME_HAVE_ARRAY)
 
 check_cxx_source_compiles("
 #include <cstdarg>

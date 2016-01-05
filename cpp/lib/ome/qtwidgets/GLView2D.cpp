@@ -74,7 +74,7 @@ namespace ome
   namespace qtwidgets
   {
 
-    GLView2D::GLView2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
+    GLView2D::GLView2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
                        ome::bioformats::dimension_size_type                    series,
                        QWidget                                                * /* parent */):
       GLWindow(),
@@ -109,7 +109,7 @@ namespace ome
       return QSize(800, 600);
     }
 
-    ome::compat::shared_ptr<ome::bioformats::FormatReader>
+    std::shared_ptr<ome::bioformats::FormatReader>
     GLView2D::getReader()
     {
       return reader;

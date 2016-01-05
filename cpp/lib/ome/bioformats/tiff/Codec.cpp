@@ -35,9 +35,9 @@
  * #L%
  */
 
-#include <ome/bioformats/tiff/Codec.h>
+#include <memory>
 
-#include <ome/compat/memory.h>
+#include <ome/bioformats/tiff/Codec.h>
 
 #include <tiffio.h>
 
@@ -53,7 +53,7 @@ namespace ome
       {
         std::vector<Codec> ret;
 
-        ome::compat::shared_ptr<TIFFCodec> codecs(TIFFGetConfiguredCODECs(), _TIFFfree);
+        std::shared_ptr<TIFFCodec> codecs(TIFFGetConfiguredCODECs(), _TIFFfree);
         if (codecs)
           {
             for (const TIFFCodec *c = &*codecs; c->name != 0; ++c)

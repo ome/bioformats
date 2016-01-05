@@ -55,7 +55,7 @@ namespace ome
          * Double-precision floating point value between 0.0 minimum
          * and 1.0 maximum.
          */
-        typedef ConstrainedNumeric<float, PercentFractionConstraint<float> > PercentFraction;
+        typedef ConstrainedNumeric<float, PercentFractionConstraint<float>> PercentFraction;
 
       }
     }
