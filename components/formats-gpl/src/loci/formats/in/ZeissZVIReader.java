@@ -116,6 +116,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         break;
       }
     }
+    LOGGER.trace("no = " + no + ", index = " + index);
 
     if (index < 0 || index >= imageFiles.length) {
       return buf;
@@ -195,13 +196,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       coordinates[i][1] = Arrays.binarySearch(cs, coordinates[i][1]);
       coordinates[i][2] = Arrays.binarySearch(ts, coordinates[i][2]);
       coordinates[i][3] = Arrays.binarySearch(tiles, coordinates[i][3]);
-      try {
-        int index = FormatTools.positionToRaster(
-          new int[] {getSizeZ(), getEffectiveSizeC(), getSizeT(), getSeriesCount()}, coordinates[i]);
-      }
-      catch (IllegalArgumentException e) {
-        LOGGER.trace("Found invalid coordinates", e);
-      }
+      LOGGER.trace("corrected coordinate #{} = {}", i, coordinates[i]);
     }
   }
 
@@ -321,6 +316,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         coordinates[imageNum][1] = cidx;
         coordinates[imageNum][2] = tidx;
         coordinates[imageNum][3] = tileIndex;
+        LOGGER.trace("imageNum = {}, coordinate = {}", imageNum, coordinates[imageNum]);
         imageFiles[imageNum] = name;
         s.close();
       }
