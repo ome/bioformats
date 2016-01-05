@@ -232,6 +232,9 @@ namespace
 int
 main()
 {
+  // This is the default, but needs setting manually on Windows.
+  ome::common::setLogLevel(ome::logging::trivial::warning);
+
   try
     {
       createPixelBuffer();

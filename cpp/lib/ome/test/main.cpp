@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <ome/common/log.h>
+
 #include <ome/test/test.h>
 
 int
@@ -43,6 +45,10 @@ main (int   argc,
       char *argv[])
 {
   testing::InitGoogleTest(&argc, argv);
+
+  // This is the default, but needs setting manually on Windows.
+  ome::common::setLogLevel(ome::logging::trivial::warning);
+
   return RUN_ALL_TESTS();
 }
 

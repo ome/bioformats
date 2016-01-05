@@ -185,6 +185,9 @@ namespace
 int
 main(int argc, char *argv[])
 {
+  // This is the default, but needs setting manually on Windows.
+  ome::common::setLogLevel(ome::logging::trivial::warning);
+
   try
     {
       if (argc > 1)
