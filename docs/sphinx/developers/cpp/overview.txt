@@ -721,9 +721,12 @@ Run :program:`cmake` from the temporary build directory::
 
   % mkdir build
   % cd build
-  % cmake -G <generator> <options> /path/to/source
+  % cmake [-G <generator>] [<options>] /path/to/source
 
-See below for information about the different generators.
+Where ``<generator>`` is the platform-specific build system to
+generate files for, and ``<options>`` are any additional options to
+configure the build to your requirements.  See below for information
+about the different generators.
 
 Run ``cmake -LH`` to see the configurable project options; use
 ``-LAH`` to see advanced options.  The following basic options are
@@ -822,7 +825,7 @@ additional ``-I`` and ``-L`` include and library search paths, for
 example.
 
 An alternative generator to consider is ``Ninja``.  It is recommended
-for parallel builds.  This is similar ``Unix Makefiles``, but allows
+for parallel builds.  This is similar to ``Unix Makefiles`` but allows
 building with the :program:`ninja` tool in place of :program:`make`.
 It is, in general, faster than :program:`make`, and it is also much
 nicer when building in parallel since it will automatically adjust the
@@ -847,11 +850,14 @@ opening in the Visual Studio application.
 An alternative generator to consider is ``Ninja``.  It is much faster
 than building the Visual Studio project and solution files with
 :program:`msbuild` due to being much more effective at running jobs in
-parallel--it will automatically adjust the number of jobs being run,
-and will also buffer the output for each job to allow the build log to
-be readable.  The build log is also much less verbose than the output
-from :program:`msbuild`.  However, solution and project files for use
-within the Visual Studio application are not generated.
+parallel, since :program:`msbuild` only runs project builds in parallel
+while :program:`ninja` will run everything in parallel.
+:program:`ninja` will also automatically adjust the number of jobs
+being run, and will also buffer the output for each job to allow the
+build log to be readable.  The build log is also much less verbose
+than the output from :program:`msbuild`.  However, solution and
+project files for use within the Visual Studio application are not
+generated.
 
 .. note::
 
