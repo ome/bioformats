@@ -947,7 +947,7 @@ Additional flags allow specification of the build configuration to
 use, logging, parallel building and other options.  Please see the
 :program:`ctest` documentation for further details.  Running
 :program:`ctest` directly is preferred over the methods detailed below
-since passing options works in all cases, and it's also possible to
+since passing options works in all cases, and it is also possible to
 specify the build configuration (used on Windows).
 
 Individual test programs may be run by hand if required.
