@@ -57,6 +57,7 @@ Using Bio-Formats as a native C++ library
     cpp/commands/bf-test
     cpp/commands/bf-test-info
     cpp/commands/bf-test-view
+    cpp/maintenance
 
 Contributing to Bio-Formats
 ===========================
