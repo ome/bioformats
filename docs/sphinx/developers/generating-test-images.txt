@@ -39,68 +39,105 @@ global metadata map:
     echo "my.key=some.value" >> my-special-test-file.fake.ini
 
 
-There are a few other keys that can be added as well:
+There are several other keys that can be added as well, these are listed below
+with their default values.
 
 .. tabularcolumns:: |p{3cm}|p{11cm}|
 
 .. list-table::
     :header-rows: 1
-    :widths: 30, 70
+    :widths: 30, 70, 10
 
     - * Key
       * Value
-    - * thumbSizeX
-      * number of pixels wide, for the thumbnail
-    - * thumbSizeY
-      * number of pixels tall, for the thumbnail
-    - * physicalSizeX
-      * real width of the pixels, supports units defaulting to microns
-    - * physicalSizeY
-      * real height of the pixels, supports units defaulting to microns
-    - * physicalSizeZ
-      * real depth of the pixels, supports units defaulting to microns
+      * Default
+    - * sizeX
+      * number of pixels wide
+      * 512
+    - * sizeY
+      * number of pixels tall
+      * 512
     - * sizeZ
       * number of Z sections
+      * 1
     - * sizeC
       * number of channels
+      * 1
     - * sizeT
       * number of timepoints
+      * 1
+    - * thumbSizeX
+      * number of pixels wide, for the thumbnail
+      * 0
+    - * thumbSizeY
+      * number of pixels tall, for the thumbnail
+      * 0
+    - * pixelType
+      * pixel type
+      * uint8
     - * bitsPerPixel
       * number of valid bits (<= number of bits implied by pixel type)
+      * 0
+    - * physicalSizeX
+      * real width of the pixels, supports units defaulting to microns
+      *
+    - * physicalSizeY
+      * real height of the pixels, supports units defaulting to microns
+      *
+    - * physicalSizeZ
+      * real depth of the pixels, supports units defaulting to microns
+      *
     - * acquisitionDate
       * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"
+      *
     - * rgb
       * number of channels that are merged together
+      * 1
     - * dimOrder
       * dimension order (e.g. XYZCT)
+      * XYZCT
     - * little
       * whether or not the pixel data should be little-endian
+      * true
     - * interleaved
       * whether or not merged channels are interleaved
+      * false
     - * indexed
       * whether or not a color lookup table is present
+      * false
     - * falseColor
       * whether or not the color lookup table is just for making the image look pretty
+      * false
     - * series
       * number of series (Images)
+      * 1
     - * lutLength
       * number of entries in the color lookup table
+      * 3
     - * exposureTime
       * time of exposure, supports units defaulting to seconds
+      * 0
     - * screens
-      * number of screens, if omitted the default is 1
+      * number of screens
+      * 1
     - * plates
       * number of plates to generate
+      * 0
     - * plateAcqs
       * number of plate runs
+      * 0
     - * plateRows
       * number of rows per plate
+      * 0
     - * plateCols
       * number of rows per plate
+      * 0
     - * fields
       * number of fields per well
+      * 0
     - * annLong, annDouble, annMap, annComment, annBool, annTime, annTag, annTerm, annXml
       * number of annotations of the given type to generate
+      * 0
 
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
