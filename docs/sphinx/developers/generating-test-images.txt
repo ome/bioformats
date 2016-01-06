@@ -87,6 +87,8 @@ There are a few other keys that can be added as well:
       * number of entries in the color lookup table
     - * exposureTime
       * time of exposure, supports units defaulting to seconds
+    - * screens
+      * number of screens, if omitted the default is 1
     - * plates
       * number of plates to generate
     - * plateAcqs
