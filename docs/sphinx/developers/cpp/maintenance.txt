@@ -4,7 +4,7 @@ Maintenance
 ===========
 
 This section describes various tasks which are performed on a periodic
-basis to keep the codebase up-to-date with various third-party
+basis to keep the codebase up to date with various third-party
 packages.  This includes the versions used for the superbuild, and
 ensuring that the code will compile against various upstream releases,
 from the latest stable release to the versions in common use over a
@@ -19,25 +19,25 @@ General
 ^^^^^^^
 
 Keep up to date with all new upstream releases of third-party
-packages, in particular for security updates.  zlib and png are
-notable here, but this applies to all packages.  Check all packages
-are the current stable version before making a new release.  In the
-case of a security vulnerability, it is possible to release and
+packages, in particular for security updates.  ``zlib`` and ``png``
+are notable here, but this applies to all packages.  Check all
+packages are the current stable version before making a new release.
+In the case of a security vulnerability, it is possible to release and
 provide builds with just the vulnerable package updated.
 
 In the simple case of a package which requires no special additional
 patching, for example ``png`` or ``zlib``, updating is as simple as
 editing :file:`packages/<package>/superbuild.cmake`:
 
-- Update the source URL
-- Update the source hash
+- update the source URL
+- update the source hash
 
 For a point release, this is typically sufficient.  For a major
 release, also:
 
-- Check for any changes in the package prerequisites
-- Add or update missing prerequisites if required
-- Update the prerequisites if required
+- check for any changes in the package prerequisites
+- add or update missing prerequisites if required
+- update the prerequisites if required
 
 boost
 ^^^^^
@@ -45,12 +45,12 @@ boost
 Boost releases are approximately every six months.  In addition to the
 general steps:
 
-- Update `FindBoost.cmake
+- update `FindBoost.cmake
   <https://github.com/Kitware/CMake/blob/master/Modules/FindBoost.cmake>`__;
   this includes the supported versions and the dependency information;
   instructions are in the comments in :file:`FindBoost.cmake`
-- Open a PR against `cmake.git <https://github.com/Kitware/CMake>`__
-- Update the embedded copy of :file:`FindBoost.cmake` in all OME
+- open a PR against `cmake.git <https://github.com/Kitware/CMake>`__
+- update the embedded copy of :file:`FindBoost.cmake` in all OME
   components so that they can detect and use the new Boost version
 
 Updating the upstream version is needed to keep our code in sync with
@@ -64,29 +64,30 @@ dependency information; at this point the embedded
 bzip2
 ^^^^^
 
-Not released very frequently.  In addition to the general steps:
+Not released very frequently.  In addition to the general steps, we
+use a custom CMake build under :file:`packages/bzip2/files` which
+requires updating:
 
-- We use a custom cmake build under :file:`packages/bzip2/files`
-- Update the release version and shared library version in
+- update the release version and shared library version in
   :file:`CMakeLists.txt`
-- Check that the source file list in :file:`CMakeLists.txt` is
-  up-to-date (a diff of the old and new bzip2 sources will show the
+- check that the source file list in :file:`CMakeLists.txt` is
+  up to date (a diff of the old and new bzip2 sources will show the
   changes in the upstream build files)
 
 icu
 ^^^
 
-Releases are approximately six monthly to annually.  In addition to
+Releases are approximately six-monthly to annually.  In addition to
 the general steps, the Windows solution and project files require
 creating for the supported versions of Visual Studio.  For each Visual
 Studio version:
 
-- Start the Visual Studio application
-- Open :file:`source/allinone/allinone.sln`, and allow Visual Studio
+- start the Visual Studio application
+- open :file:`source/allinone/allinone.sln`, and allow Visual Studio
   to upgrade the projects to the current version
-- Save the solution (you must Save As to overwrite the existing
+- save the solution (you must Save As to overwrite the existing
   solution; Save is insufficient)
-- Copy the solution and project files under
+- copy the solution and project files under
   :file:`packages/icu/files/VC<ver>`, replacing the existing contents
 
 xerces
@@ -94,13 +95,14 @@ xerces
 
 Releases are infrequent.  In addition to the general steps, the
 Windows solution and project files require creating for the supported
-versions of Visual Studio.  For each Visual Studio version:
+versions of Visual Studio.  Also, the project files at the time of
+writing have broken ICU support and require manual fixing; the ICU
+libraries are either missing entirely or the debug and release
+variants are mixed up.  For each Visual Studio version:
 
-- The project files at the time of writing have broken ICU support and
-  require manual fixing.  The ICU libraries are either missing
-  entirely or the debug and release variants are mixed up.  Apply the
-  following patch, shown here for VC11 but applies to all versions.
-  If your version doesn't exist, make this change to the VC12 version.
+- apply the following patch, shown here for VC11 but applies to all
+  versions; if your version does not exist, make this change to the
+  VC12 version
 
   ::
 
@@ -134,21 +136,21 @@ versions of Visual Studio.  For each Visual Studio version:
            <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
            <GenerateDebugInformation>true</GenerateDebugInformation>
 
-- Check for a supported set of project files under
-  :file:`projects/Win32/VC<ver>`.  If a suitable version does not
+- check for a supported set of project files under
+  :file:`projects/Win32/VC<ver>`; if a suitable version does not
   exist:
 
   - copy :file:`projects/Win32/VC12` (the latest at the time of
     writing) to :file:`projects/Win32/VC<ver>`; make sure you applied
     the patch in the previous step beforehand
-  - Start the Visual Studio application
-  - Open the :file:`projects/Win32/VC<ver>/xerces-all/xerces-all.sln`,
+  - start the Visual Studio application
+  - open the :file:`projects/Win32/VC<ver>/xerces-all/xerces-all.sln`,
     and allow Visual Studio to upgrade the projects to the current
     version
-  - Save the solution (you must Save As to overwrite the existing
+  - save the solution (you must Save As to overwrite the existing
     solution; Save is insufficient)
     
-- Copy the solution and project files under
+- copy the solution and project files under
   :file:`packages/xerces/files/projects/Win32/VC<ver>`, replacing the
   existing contents
 
@@ -166,18 +168,18 @@ including:
 
 Testing on a range of version combinations of compilers and platforms
 is helpful in picking up bugs which would otherwise go undiagnosed
-until encountered by an end user.  For example, the FreeBSD builds
+until encountered by an end-user.  For example, the FreeBSD builds
 pick up problems which are not noticed on MacOS X by default, though
 they could still occur in practice (e.g. since MacOS X has a
 non-standard clang++ and libc++ which have a number of odd quirks).
 There are also differences between compiler versions e.g. GCC on Linux
 and clang++ on MacOS, making testing multiple versions useful to pick
-up portability issues as early as practical.  We can't test every
+up portability issues as early as practical.  We cannot test every
 compiler and OS version, along with all the different versions of
 third-party libraries we depend upon, so this is a best effort to test
-as wide a range of what's in common use as possible.  Inevitably, some
-issues will remain undiscovered if they are only seen with an untested
-set of combinations.
+as wide a range of what is in common use as possible.  Inevitably,
+some issues will remain undiscovered if they are only seen with an
+untested set of combinations.
 
 Over time, OS releases will reach their end of life, and new
 replacements will appear.  The test matrix will require adjusting to
@@ -196,16 +198,16 @@ Feature testing and compatibility code
 Currently, we support and test two separate sets of third-party
 library versions for each supported platform:
 
-- The libraries provided by the distribution's package management
+- the libraries provided by the distribution's package management
   system, where applicable (includes homebrew on MacOS X)
-- The libraries provided by the superbuild
+- the libraries provided by the superbuild
 
 The first ensures compatibility of our libraries and headers with the
 system as a whole; this is necessary to allow use of our libraries
 with all the libraries provided by the system.  The second ensures
 that the current version of each library is buildable and usable
 across all the supported platforms, and this allows for the use of
-more up-to-date libraries on older systems such as enterprise Linux
+more up to date libraries on older systems such as enterprise Linux
 distributions.  This also means we test up to several versions of each
 library, increasing our test coverage for portability and correctness
 purposes.
@@ -213,23 +215,23 @@ purposes.
 Over time, portability workarounds we have put in place may be
 dropped.  Examples include:
 
-- Dropping support for older versions of libraries, e.g. we have
+- dropping support for older versions of libraries, e.g. we have
   extensive workarounds to support older libtiff releases which can be
   removed entirely once all the Linux distribution versions we support
   are 4.0.0 or later, or 4.0.4 or later (there are two sets of
   workarounds); this will simplify the code, and also allow
   assumptions to be made regarding the availability of BigTIFF support
-- Dropping functionality checks and workarounds for functionality and
+- dropping functionality checks and workarounds for functionality and
   behaviour differences, e.g. missing filesystem functions and
-  geometry and endian libraries in older Boost releases)
-- Using the standard implementation of various functions,
+  geometry and endian libraries in older Boost releases
+- using the standard implementation of various functions,
   e.g. :cpp:class:`std::shared_ptr` and :cpp:class:`std::regex` in
   C++11, :cpp:func:`std::make_unique` in C++14, ``filesystem``
   functions in C++17, where the Boost equivalents are currently used;
   this will reduce our dependency upon Boost over time, once the set
   of platforms we support all support the functionality we require;
-  note that having the functionality doesn't make it usable, e.g. GCC
-  has :cpp:class:`std::regex` but it's broken until 5.1 meaning that
+  note that having the functionality does not make it usable, e.g. GCC
+  has :cpp:class:`std::regex` but it is broken until 5.1 meaning that
   we need to use :cpp:class:`boost::regex` for the time being; use
   CMake feature tests to test that each feature is functional as well
   as present
