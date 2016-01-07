@@ -1369,7 +1369,7 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          file.field = field % runCount;
+          file.field = field % (nFiles / (wellCount * runCount));
           file.file = files.get(field);
           file.acquisition = runDirs.size() == 0 ? 0:
             runDirs.indexOf(new Location(file.file).getParentFile());
