@@ -42,11 +42,11 @@ global metadata map:
 There are several other keys that can be added as well, these are listed below
 with their default values.
 
-.. tabularcolumns:: |p{3cm}|p{11cm}|
+.. tabularcolumns:: |p{3cm}|p{9cm}|p{2cm}|
 
 .. list-table::
     :header-rows: 1
-    :widths: 30, 70, 10
+    :widths: 30, 60, 10
 
     - * Key
       * Value
