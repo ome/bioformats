@@ -42,7 +42,7 @@ global metadata map:
 There are several other keys that can be added as well, these are listed below
 with their default values.
 
-.. tabularcolumns:: |p{3cm}|p{9cm}|p{2cm}|
+.. tabularcolumns:: |p{3cm}|p{11cm}|p{2cm}|
 
 .. list-table::
     :header-rows: 1
@@ -139,9 +139,9 @@ with their default values.
       * number of annotations of the given type to generate
       * 0
 
-To generate a valid plate the values of `plates`, `plateAcqs`, `plateRows`,
-`plateCols` and `fields` must all be greater than zero. If this condition is
-not met then an image will be generated instead of a plate.
+To generate a valid plate the values of ``plates``, ``plateAcqs``,
+``plateRows``, ``plateCols`` and ``fields`` must all be greater than zero. If
+this condition is not met then an image will be generated instead of a plate.
 
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
