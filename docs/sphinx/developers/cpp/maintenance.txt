@@ -79,8 +79,11 @@ icu
 
 Releases are approximately six-monthly to annually.  In addition to
 the general steps, the Windows solution and project files require
-creating for the supported versions of Visual Studio.  For each Visual
-Studio version:
+creating for the supported versions of Visual Studio.
+
+- delete all files and directories under :file:`packages/icu/files`
+
+For each Visual Studio version:
 
 - start the Visual Studio application
 - open :file:`source/allinone/allinone.sln`, and allow Visual Studio
@@ -98,13 +101,15 @@ Windows solution and project files require creating for the supported
 versions of Visual Studio.  Also, the project files at the time of
 writing have broken ICU support and require manual fixing; the ICU
 libraries are either missing entirely or the debug and release
-variants are mixed up.  For each Visual Studio version:
+variants are mixed up.
+
+- delete all files and directories under :file:`packages/xerces/files`
+
+For each Visual Studio version:
 
 - apply the following patch, shown here for VC11 but applies to all
   versions; if your version does not exist, make this change to the
-  VC12 version
-
-  ::
+  VC12 version::
 
     --- a/projects/Win32/VC11/xerces-all/XercesLib/XercesLib.vcxproj
     +++ b/projects/Win32/VC11/xerces-all/XercesLib/XercesLib.vcxproj
@@ -144,15 +149,13 @@ variants are mixed up.  For each Visual Studio version:
     writing) to :file:`projects/Win32/VC<ver>`; make sure you applied
     the patch in the previous step beforehand
   - start the Visual Studio application
-  - open the :file:`projects/Win32/VC<ver>/xerces-all/xerces-all.sln`,
-    and allow Visual Studio to upgrade the projects to the current
-    version
+  - open :file:`projects/Win32/VC<ver>/xerces-all/xerces-all.sln`, and
+    allow Visual Studio to upgrade the projects to the current version
   - save the solution (you must Save As to overwrite the existing
     solution; Save is insufficient)
     
 - copy the solution and project files under
-  :file:`packages/xerces/files/projects/Win32/VC<ver>`, replacing the
-  existing contents
+  :file:`packages/xerces/files/projects/Win32/VC<ver>`
 
 
 Toolchain support and standards conformance
