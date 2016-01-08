@@ -12,7 +12,7 @@ Whatever is before the first ``&`` is the image name; the remaining key-value
 pairs, each preceded with ``&``, set the pixel type and image dimensions. Just
 replace the values with whatever you need for testing.
 
-Additionally, you can put such values in a separate .ini file:
+Additionally, you can put such values in a separate :file:`.ini` file:
 
 ::
 
@@ -21,7 +21,7 @@ Additionally, you can put such values in a separate .ini file:
     echo "sizeX=8192" >> my-special-test-file.fake.ini
     echo "sizeY=8192" >> my-special-test-file.fake.ini
 
-In fact, just the .fake.ini file alone suffices:
+In fact, just the :file:`.fake.ini` file alone suffices:
 
 ::
 
@@ -46,7 +46,8 @@ To generate a simple plate file:
 
 This will create a single plate which is, by default, within a containing
 screen. To create a plate with no containing screen add ``&screens=0`` to the
-key-value pairs in the file name. As above a .fake.ini file can be used.
+key-value pairs in the file name. As above a :file:`.fake.ini` file can be
+used.
 
 To generate a valid plate the values of ``plates``, ``plateAcqs``,
 ``plateRows``, ``plateCols`` and ``fields`` must **all** be greater than zero.
