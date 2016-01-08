@@ -146,7 +146,8 @@ this condition is not met then an image will be generated instead of a plate.
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
 file to something else. Make sure that you have Bio-Formats built and
-the JARs in your :envvar:`CLASSPATH` (individual JARs or just bioformats_package.jar):
+the JARs in your :envvar:`CLASSPATH` (individual JARs or just
+:file:`bioformats_package.jar`):
 
 ::
 
@@ -154,4 +155,4 @@ the JARs in your :envvar:`CLASSPATH` (individual JARs or just bioformats_package
 
 If you do not have the command line tools installed, substitute
 :source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>`
-for `bfconvert`.
+for :program:`bfconvert`.
