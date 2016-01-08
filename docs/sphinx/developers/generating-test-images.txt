@@ -25,9 +25,9 @@ In fact, just the .fake.ini file alone suffices:
 
 ::
 
-    echo "pixelType=uint8" >> my-special-test-file.fake
-    echo "sizeX=8192" >> my-special-test-file.fake
-    echo "sizeY=8192" >> my-special-test-file.fake
+    echo "pixelType=uint8" >> my-special-test-file.fake.ini
+    echo "sizeX=8192" >> my-special-test-file.fake.ini
+    echo "sizeY=8192" >> my-special-test-file.fake.ini
 
 If you include a "[GlobalMetadata]" section to the ini file,
 then all the included values will be accessible from the
