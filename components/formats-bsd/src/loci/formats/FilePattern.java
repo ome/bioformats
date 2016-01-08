@@ -452,7 +452,7 @@ public class FilePattern {
    * @param dir The directory prefix to use for matching files.
    * @param nameList The names through which to search for matching files.
    * @param excludeAxes The list of axis types which should be
-   * excluded from the pattern (see {@see AxisGuesser}).
+   * excluded from the pattern (see {@link AxisGuesser}).
    * @return the identified pattern.
    */
   public static String findPattern(String name, String dir, String[] nameList,

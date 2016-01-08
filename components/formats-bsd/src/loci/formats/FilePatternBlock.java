@@ -71,7 +71,7 @@ public class FilePatternBlock {
   /**
    * Builds a FilePatternBlock from a block string.
    *
-   * See {@see FilePattern} for block string syntax.
+   * See {@link FilePattern} for block string syntax.
    *
    * @param block the block string.
    */
