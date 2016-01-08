@@ -253,7 +253,7 @@ system as a whole; this is necessary to allow use of our libraries
 with all the libraries provided by the system.  The second ensures
 that the current version of each library is buildable and usable
 across all the supported platforms, and this allows for the use of
-more up to date libraries on older systems such as enterprise Linux
+current libraries on older systems such as enterprise Linux
 distributions.  This also means we test up to several versions of each
 library, increasing our test coverage for portability and correctness
 purposes.
