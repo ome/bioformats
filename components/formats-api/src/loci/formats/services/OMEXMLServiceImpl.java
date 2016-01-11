@@ -33,10 +33,13 @@
 package loci.formats.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,6 +63,8 @@ import loci.formats.meta.ModuloAnnotation;
 import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
+
+import ome.units.quantity.Length;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -91,7 +96,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
 
   /** Latest OME-XML version namespace. */
-  public static final String LATEST_VERSION = "2015-01";
+  public static final String LATEST_VERSION = "2016-DEV0";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -124,6 +129,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     XSLT_PATH + "2012-06-to-2013-06.xsl";
   private static final String XSLT_201306 =
     XSLT_PATH + "2013-06-to-2015-01.xsl";
+  private static final String XSLT_201501 =
+    XSLT_PATH + "2015-01-to-2016-DEV0.xsl";
 
   // -- Cached stylesheets --
 
@@ -141,9 +148,35 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static Templates update201106;
   private static Templates update201206;
   private static Templates update201306;
+  private static Templates update201501;
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
+
+  /**
+   * The pattern of system ID URLs for OME-XML schema definitions.
+   */
+  private static final Pattern SCHEMA_URL_PATTERN = Pattern.compile(
+      "http://www.openmicroscopy.org/Schemas/" +
+      "\\p{Alpha}+/(\\w+-\\w+)/(\\p{Alpha}+)\\.xsd");
+
+  /**
+   * Finds OME-XML schema definitions in specifications.jar.
+   */
+  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+      new XMLTools.SchemaReader() {
+        @Override
+        public InputStream getSchemaAsStream(String url) {
+          final Matcher matcher = SCHEMA_URL_PATTERN.matcher(url);
+          if (matcher.matches()) {
+            /* from specification.jar */
+            return getClass().getResourceAsStream("/released-schema/" +
+                 matcher.group(1) + "/" + matcher.group(2) + ".xsd");
+          } else {
+            return null;
+          }
+        }
+      };
 
   /**
    * Default constructor.
@@ -199,11 +232,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2008-09");
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
-      if (!version.equals("2009-09") && !version.equals("2010-04") &&
-        !version.equals("2010-06") && !version.equals("2011-06") &&
-        !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+      if (version.compareTo("2009-09") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200809 stylesheet.");
         if (update200809 == null) {
@@ -214,11 +243,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
-      if (!version.equals("2010-04") && !version.equals("2010-06") &&
-        !version.equals("2011-06") && !version.equals("2012-06") &&
-        !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+
+      if (version.compareTo("2010-04") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200909 stylesheet.");
         if (update200909 == null) {
@@ -231,10 +257,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
 
-      if (!version.equals("2010-06") && !version.equals("2011-06") &&
-        !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+      if (version.compareTo("2010-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
         if (update201004 == null) {
@@ -246,9 +269,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
 
-      if (!version.equals("2011-06") && !version.equals("2012-06") &&
-        !version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2011-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201006 stylesheet.");
         if (update201006 == null) {
@@ -260,8 +281,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2011-06");
 
-      if (!version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2012-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201106 stylesheet.");
         if (update201106 == null) {
@@ -273,8 +293,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2012-06");
 
-      if (!version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2013-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201206 stylesheet.");
         if (update201206 == null) {
@@ -286,7 +305,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2013-06");
 
-      if (!version.equals("2015-01") ) {
+      if (version.compareTo("2015-01") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201306 stylesheet.");
         if (update201306 == null) {
@@ -298,6 +317,17 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2015-01");
 
+      if (version.compareTo("2016-DEV0") < 0) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201501 stylesheet.");
+        if (update201501 == null) {
+          update201501 =
+            XMLTools.getStylesheet(XSLT_201501, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update201501);
+      }
+      else transformed = xml;
+      LOGGER.debug("XML updated to at least 2016-DEV0");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
@@ -522,7 +552,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         return false;
       }
     }
-    return XMLTools.validateXML(xml, "OME-XML");
+    return XMLTools.validateXML(xml, "OME-XML", SCHEMA_CLASSPATH_READER);
   }
 
   /**
@@ -807,7 +837,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         throw new IllegalArgumentException(
             "Expecting OMEXMLMetadata instance.");
       }
-
       dest.setRoot(ome);
     }
     else {
@@ -815,6 +844,25 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       // metadata object and copy it into the destination
       IMetadata src = createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
+
+      // make sure that physical sizes are corrected
+      for (int image=0; image<src.getImageCount(); image++) {
+        Length physicalSizeX = src.getPixelsPhysicalSizeX(image);
+        if (physicalSizeX != null && physicalSizeX.value() != null) {
+          physicalSizeX = FormatTools.getPhysicalSize(physicalSizeX.value().doubleValue(), physicalSizeX.unit().getSymbol());
+          dest.setPixelsPhysicalSizeX(physicalSizeX, image);
+        }
+        Length physicalSizeY = src.getPixelsPhysicalSizeY(image);
+        if (physicalSizeY != null && physicalSizeY.value() != null) {
+          physicalSizeY = FormatTools.getPhysicalSize(physicalSizeY.value().doubleValue(), physicalSizeY.unit().getSymbol());
+          dest.setPixelsPhysicalSizeY(physicalSizeY, image);
+        }
+        Length physicalSizeZ = src.getPixelsPhysicalSizeZ(image);
+        if (physicalSizeZ != null && physicalSizeZ.value() != null) {
+          physicalSizeZ = FormatTools.getPhysicalSize(physicalSizeZ.value().doubleValue(), physicalSizeZ.unit().getSymbol());
+          dest.setPixelsPhysicalSizeZ(physicalSizeZ, image);
+        }
+      }
     }
   }
 

@@ -88,7 +88,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
     suffixNecessary = false;
   }

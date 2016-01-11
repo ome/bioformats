@@ -52,6 +52,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -228,9 +229,9 @@ public class FEITiffReader extends BaseTiffReader {
           }
 
           IniTable scanTable = ini.getTable("Scan");
-          // physical sizes are stored in meters
-          sizeX = new Double(scanTable.get("PixelWidth")) * 1000000;
-          sizeY = new Double(scanTable.get("PixelHeight")) * 1000000;
+ 
+          sizeX = new Double(scanTable.get("PixelWidth"));
+          sizeY = new Double(scanTable.get("PixelHeight"));
           timeIncrement = new Double(scanTable.get("FrameTime"));
         }
       }
@@ -322,8 +323,13 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
 
-      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
-      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
+      Unit<Length> unit = UNITS.MICROM;
+      if (helios) {
+        unit = UNITS.METRE;
+      }
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX, unit);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY, unit);
 
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, 0);
@@ -396,12 +402,12 @@ public class FEITiffReader extends BaseTiffReader {
         else if (key.equals("Magnification")) {
           magnification = new Double(value);
         }
-        // physical sizes stored in meters, but usually too small to be used without converting
+
         else if (key.endsWith("X") && "PixelSize".equals(parent)) {
-          sizeX = new Double(value) * 1000000;
+          sizeX = new Double(value);
         }
         else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
-          sizeY = new Double(value) * 1000000;
+          sizeY = new Double(value);
         }
       }
     }

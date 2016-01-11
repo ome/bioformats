@@ -13,6 +13,7 @@ opennessRating = Fair
 presenceRating = Very good
 utilityRating = Fair
 reader = SlidebookReader, SlideBook6Reader
+mif = true
 notes = We strongly encourage users to export their .sld files to OME-TIFF \n
 using the SlideBook software.  Bio-Formats is not likely to support the full \n
 range of metadata that is included in .sld files, and so exporting to \n
@@ -92,6 +93,7 @@ opennessRating = Good
 presenceRating = Poor
 utilityRating = Fair
 reader = FlowSightReader
+mif = true
 
 [Amersham Biosciences Gel]
 extensions = .gel
@@ -151,6 +153,7 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = FluoviewReader
+mif = true
 notes = With a few minor exceptions, the ABD-TIFF format is identical to the \n
 Fluoview TIFF format.
 
@@ -182,7 +185,9 @@ metadataRating = Very good
 opennessRating = Very good
 presenceRating = Good
 utilityRating = Good
+pyramid = yes
 reader = AFIReader
+mif = true
 notes = .. seealso:: \n
   `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
 
@@ -200,7 +205,9 @@ opennessRating = Very good
 presenceRating = Good
 utilityRating = Good
 privateSpecification = true
+pyramid = yes
 reader = SVSReader
+mif = true
 notes = .. seealso:: \n
   `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
 
@@ -217,6 +224,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
 reader = CellWorxReader
+mif = true
 
 [AVI (Audio Video Interleave)]
 pagename = avi
@@ -276,6 +284,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
 reader = BDReader
+mif = true
 
 [Becker & Hickl SPCImage]
 extensions = .sdt
@@ -293,6 +302,7 @@ presenceRating = Poor
 utilityRating = Fair
 privateSpecification = true
 reader = SDTReader
+mif = true
 
 [Bio-Rad Gel]
 extensions = .1sc
@@ -362,7 +372,9 @@ metadataRating = Very good
 opennessRating = Very good
 presenceRating = Fair
 utilityRating = Fair
+pyramid = yes
 reader = ImarisHDFReader, ImarisTiffReader, ImarisReader
+mif = true
 notes = - There are three distinct Imaris formats: \n
     #. the old binary format (introduced in Imaris version 2.7) \n
     #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
@@ -380,6 +392,7 @@ opennessRating = Fair
 presenceRating = Good
 utilityRating = Fair
 reader = BrukerReader
+mif = true
 
 [Burleigh]
 extensions = .img
@@ -422,6 +435,7 @@ opennessRating = Outstanding
 presenceRating = Fair
 utilityRating = Good
 reader = MicromanagerReader
+mif = true
 
 [CellH5]
 extensions = .ch5
@@ -436,6 +450,7 @@ presenceRating = Fair
 utilityRating = Very good
 reader = CellH5Reader
 writer = CellH5Writer
+mif = true
 
 [Cellomics]
 extensions = .c01
@@ -450,6 +465,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Poor
 reader = CellomicsReader
+mif = true
 
 [cellSens VSI]
 extensions = .vsi
@@ -462,7 +478,9 @@ metadataRating = Good
 opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
+pyramid = yes
 reader = CellSensReader
+mif = true
 
 [CellVoyager]
 extensions = .xml, .tif
@@ -475,6 +493,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
 reader = CellVoyagerReader
+mif = true
 
 [DeltaVision]
 extensions = .dv, .r3d
@@ -489,6 +508,7 @@ opennessRating = Good
 presenceRating = Good
 utilityRating = Good
 reader = DeltavisionReader
+mif = true
 privateSpecification = true
 notes = - The Deltavision format is based on the Medical Research Council (MRC) file format. \n
 - Commercial applications that support DeltaVision include: \n
@@ -515,6 +535,7 @@ opennessRating = Very good
 presenceRating = Good
 utilityRating = Fair
 reader = DicomReader
+mif = true
 notes = * DICOM stands for "Digital Imaging and Communication in Medicine". \n
 * Bio-Formats supports both compressed and uncompressed DICOM files. \n
 \n
@@ -569,6 +590,7 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Poor
 reader = FlexReader
+mif = true
 notes = The LuraWave LWF decoder library (i.e. lwf\_jsdk2.6.jar) with \n
 license code is required to decode wavelet-compressed Flex files. \n
 \n
@@ -683,6 +705,7 @@ opennessRating = Poor
 presenceRating = Fair
 utilityRating = Fair
 reader = NAFReader
+mif = true
 
 [Hamamatsu HIS]
 extensions = .his
@@ -698,9 +721,10 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = HISReader
+mif = true
 
 [Hamamatsu ndpi]
-extensions = .ndpi
+extensions = .ndpi, .ndpis
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
 software = `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
@@ -712,7 +736,9 @@ metadataRating = Good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
-reader = NDPIReader
+reader = NDPIReader, NDPISReader
+mif = true
+pyramid = yes
 
 [Hamamatsu VMS]
 extensions = .vms
@@ -729,6 +755,7 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = HamamatsuVMSReader
+mif = true
 
 [Hitachi S-4800]
 extensions = .txt, .tif, .bmp, .jpg
@@ -796,6 +823,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Good
 reader = ImaconReader
+mif = true
 
 [ImagePro Sequence]
 extensions = .seq
@@ -882,6 +910,7 @@ presenceRating = Good
 utilityRating = Fair
 privateSpecification = true
 reader = OpenlabReader
+mif = true
 notes = .. seealso:: \n
   `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
@@ -931,6 +960,7 @@ opennessRating = Very good
 presenceRating = Poor
 utilityRating = Fair
 reader = OBFReader
+mif = true
 
 [InCell 1000]
 extensions = .xdce, .tif
@@ -945,6 +975,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
 reader = InCellReader
+mif = true
 
 [InCell 3000]
 extensions = .frm
@@ -981,6 +1012,7 @@ opennessRating = Good
 presenceRating = Poor
 utilityRating = Fair
 reader = InveonReader
+mif = true
 
 [IVision]
 pagename = iplab-mac
@@ -1050,8 +1082,10 @@ metadataRating = Poor
 opennessRating = Outstanding
 presenceRating = Good
 utilityRating = Poor
+pyramid = yes
 reader = JPEG2000Reader
 writer = JPEG2000Writer
+mif = true
 notes = Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. \n
 JPEG stands for "Joint Photographic Experts Group".
 
@@ -1070,7 +1104,7 @@ utilityRating = Poor
 reader = JPEGReader
 writer = JPEGWriter
 notes = Bio-Formats can save individual planes as JPEG. \n
-Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. \n
+Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. \n
 JPEG stands for "Joint Photographic Experts Group". \n
 \n
 .. seealso:: \n
@@ -1090,6 +1124,7 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = JPKReader
+mif = true
 
 [JPX]
 extensions = .jpx
@@ -1102,6 +1137,7 @@ opennessRating = Outstanding
 presenceRating = Good
 utilityRating = Fair
 reader = JPXReader
+mif = true
 
 [Khoros VIFF (Visualization Image File Format) Bitmap]
 pagename = khoros-viff-bitmap
@@ -1146,6 +1182,7 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = LiFlimReader
+mif = true
 
 [Leica LAS AF LIF (Leica Image File Format)]
 pagename = leica-lif
@@ -1165,6 +1202,7 @@ presenceRating = Good
 utilityRating = Very good
 privateSpecification = true
 reader = LIFReader
+mif = true
 notes = LAS stands for "Leica Application Suite". \n
 AF stands for "Advanced Fluorescence". \n
 \n
@@ -1185,6 +1223,7 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Fair
 reader = ImspectorReader
+mif = true
 
 [Leica LCS LEI]
 extensions = .lei, .tif
@@ -1201,6 +1240,7 @@ presenceRating = Very good
 utilityRating = Very good
 privateSpecification = true
 reader = LeicaReader
+mif = true
 notes = LCS stands for "Leica Confocal Software". \n
 LEI presumably stands for "Leica Experimental Information". \n
 \n
@@ -1223,7 +1263,9 @@ metadataRating = Good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
+pyramid = yes
 reader = LeicaSCNReader
+mif = true
 
 [LEO]
 extensions = .sxm
@@ -1253,6 +1295,7 @@ opennessRating = Good
 presenceRating = Good
 utilityRating = Good
 reader = L2DReader
+mif = true
 notes = L2D datasets cannot be imported into OME using server-side import. \n
 They can, however, be imported from ImageJ, or using the omeul utility.
 
@@ -1287,6 +1330,7 @@ opennessRating = Very good
 presenceRating = Fair
 utilityRating = Good
 reader = MetamorphTiffReader
+mif = true
 
 [MetaMorph Stack (STK)]
 extensions = .stk, .nd
@@ -1323,6 +1367,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Poor
 reader = MIASReader
+mif = true
 
 [MINC MRI]
 extensions = .mnc
@@ -1365,6 +1410,7 @@ opennessRating = Outstanding
 presenceRating = Fair
 utilityRating = Poor
 reader = MNGReader
+mif = true
 notes = .. seealso:: \n
   `MNG homepage <http://www.libpng.org/pub/mng/>`_  \n
   `MNG specification <http://www.libpng.org/pub/mng/spec>`_
@@ -1475,7 +1521,8 @@ metadataRating = Very good
 opennessRating = Fair
 presenceRating = Very good
 utilityRating = Very good
-reader = NativeND2Reader
+reader = NativeND2Reader, LegacyND2Reader
+mif = true
 notes = There are two distinct versions of ND2: an old version, which uses \n
 JPEG-2000 compression, and a new version which is either uncompressed or \n
 Zip-compressed.  We are not aware of the version number or release date \n
@@ -1520,6 +1567,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = APLReader
+mif = true
 
 [Olympus FluoView FV1000]
 extensions = .oib, .oif
@@ -1540,6 +1588,7 @@ presenceRating = Good
 utilityRating = Very good
 privateSpecification = true
 reader = FV1000Reader
+mif = true
 notes = Bio-Formats uses a modified version of the `Apache Jakarta POI \n
 <http://jakarta.apache.org/poi/>`_ library to read OIB files. \n
 OIF stands for "Original Imaging Format". \n
@@ -1571,6 +1620,7 @@ presenceRating = Good
 utilityRating = Good
 privateSpecification = true
 reader = FluoviewReader
+mif = true
 notes = Commercial applications that support this format include: \n
 \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
@@ -1588,6 +1638,7 @@ opennessRating = Good
 presenceRating = Poor
 utilityRating = Fair
 reader = ScanrReader
+mif = true
 
 [Olympus SIS TIFF]
 extensions = .tiff
@@ -1606,7 +1657,7 @@ indexExtensions = .ome.tiff
 extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
 * many OME-TIFF datasets \n
 * the ability to produce additional datasets
@@ -1617,6 +1668,7 @@ presenceRating = Fair
 utilityRating = Outstanding
 reader = OMETiffReader
 writer = OMETiffWriter
+mif = true
 notes = Bio-Formats can save image stacks as OME-TIFF. \n
 \n
 Commercial applications that support OME-TIFF include: \n
@@ -1628,11 +1680,11 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-indexExtensions = .ome
-extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+indexExtensions = .ome, .ome.xml
+extensions = `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
 * many OME-XML datasets \n
 * the ability to produce more datasets
@@ -1643,6 +1695,7 @@ presenceRating = Fair
 utilityRating = Outstanding
 reader = OMEXMLReader
 writer = OMEXMLWriter
+mif = true
 notes = Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` \n
 to read OME-XML files. \n
 \n
@@ -1730,6 +1783,7 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Fair
 reader = IM3Reader
+mif = true
 
 [PerkinElmer Operetta]
 extensions = .tiff, .xml
@@ -1744,6 +1798,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
 reader = OperettaReader
+mif = true
 
 [PerkinElmer UltraView]
 indexExtensions = .tif, .2, .3, .4
@@ -1795,6 +1850,7 @@ opennessRating = Good
 presenceRating = Good
 utilityRating = Good
 reader = PhotoshopTiffReader
+mif = true
 
 [PICT (Macintosh Picture)]
 extensions = .pict
@@ -1830,7 +1886,7 @@ presenceRating = Outstanding
 utilityRating = Poor
 reader = APNGReader
 writer = APNGWriter
-notes = Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_  \n
+notes = Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_  \n
 API to read and write PNG files. \n
 \n
 .. seealso:: \n
@@ -1848,6 +1904,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Good
 reader = PrairieReader
+mif = true
 
 [Quesant]
 extensions = .afm
@@ -2052,8 +2109,10 @@ metadataRating = Very good
 opennessRating = Outstanding
 presenceRating = Outstanding
 utilityRating = Fair
+pyramid = yes
 reader = TiffReader
 writer = TiffWriter
+mif = true
 notes = Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). \n
 Bio-Formats can save image stacks as TIFF or BigTIFF. \n
 \n
@@ -2073,6 +2132,7 @@ opennessRating = Poor
 presenceRating = Poor
 utilityRating = Fair
 reader = TillVisionReader
+mif = true
 
 [Topometrix]
 extensions = .tfr, .ffr, .zfr, .zfp, .2fl
@@ -2100,7 +2160,9 @@ metadataRating = Good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
+pyramid = yes
 reader = TrestleReader
+mif = true
 
 [UBM]
 extensions = .pr3
@@ -2182,6 +2244,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Good
 reader = VisitechReader
+mif = true
 
 [Volocity Library Clipping]
 extensions = .acff
@@ -2212,6 +2275,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = VolocityReader
+mif = true
 notes = .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.
 
 [WA-TOP]
@@ -2291,6 +2355,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
 reader = ZeissTIFFReader
+mif = true
 
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
 pagename = zeiss-axiovision-zvi
@@ -2339,6 +2404,8 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = ZeissCZIReader
+mif = true
+notes = Bio-Formats does not support CZI files generated using JPEG-XR compression.
 
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm
@@ -2360,6 +2427,7 @@ presenceRating = Very good
 utilityRating = Good
 privateSpecification = true
 reader = ZeissLSMReader
+mif = true
 notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.net/>`_ \n
 \n
 Commercial applications that support this format include: \n

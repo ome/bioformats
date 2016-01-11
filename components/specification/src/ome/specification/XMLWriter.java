@@ -134,24 +134,17 @@ public class XMLWriter
 	/** Identifies the <code>BinData</code> tag. */
 	public static final String BIN_DATA_TAG = "BinData";
 	
-	/** Identifies the <code>BinData</code> tag. */
-	public static final String BIN_DATA_NS = "BIN";
-
 	/** The schema language. */
 	private static final String JAXP_SCHEMA_LANGUAGE =
 	    "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2015-01";
-
-	/** The XML namespace. */
-	private static final String BIN_NS =
-		"http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01";
+		"http://www.openmicroscopy.org/Schemas/OME/2016-DEV0";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -159,7 +152,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =
@@ -222,16 +215,12 @@ public class XMLWriter
 		Element root = ome.asXMLElement(document);
 		root.setAttribute("xmlns", XML_NS);
 		root.setAttribute("xmlns:xsi", XSI_NS);
-		root.setAttribute("xmlns:BIN", BIN_NS);
 		root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
 		document.appendChild(root);
 
 		//Add Planar data
 		if (binaryData) {
-			NodeList nodes = document.getElementsByTagName(BIN_DATA_NS + ":" + BIN_DATA_TAG);
-			if (nodes == null || nodes.getLength() == 0) {
-			    nodes = document.getElementsByTagName(BIN_DATA_TAG);
-			}
+			NodeList nodes = document.getElementsByTagName(BIN_DATA_TAG);
 			for (int i = 0; i < nodes.getLength(); i++) {
 				nodes.item(i).setTextContent(PLANE);
 			}

@@ -100,6 +100,7 @@ public class FormatPageAutogen {
       context.put("developer", table.get("developer"));
       context.put("bsd", table.get("bsd"));
       context.put("export", table.get("export"));
+      context.put("pyramid", table.get("pyramid"));
 
       if (table.containsKey("versions")) {
         context.put("versions", table.get("versions"));
@@ -115,6 +116,7 @@ public class FormatPageAutogen {
       context.put("utilityRating", table.get("utilityRating"));
       context.put("reader", table.get("reader"));
       context.put("writer", table.get("writer"));
+      context.put("mif", table.get("mif"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
       context.put("readerextlink",

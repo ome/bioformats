@@ -35,3 +35,6 @@ do
         fi
     done
 done
+
+echo "Updating pom.xml"
+inplace_sed "s/<year>${YEAR}/<year>${CURRENT_YEAR}/" pom.xml

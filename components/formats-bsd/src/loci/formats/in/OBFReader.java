@@ -194,10 +194,36 @@ public class OBFReader extends FormatReader
     }
 
     MetadataStore ome = makeFilterMetadata();
-    if (fileVersion <= 1)
+
+    boolean parsedXML = false;
+    if (fileVersion > 1) {
+     try
+      {
+        ServiceFactory factory = new ServiceFactory() ;
+        OMEXMLService service = factory.getInstance( OMEXMLService.class ) ;
+
+        if (service.validateOMEXML(ome_xml)) {
+          service.convertMetadata( ome_xml, ome ) ;
+          parsedXML = true;
+          MetadataTools.populatePixels(ome, this, false, false);
+        }
+      }
+      catch (DependencyException exception) 
+      {
+        throw new MissingLibraryException( OMEXMLServiceImpl.NO_OME_XML_MSG, exception ) ;
+      }
+      catch (ServiceException exception) 
+      {
+        throw new FormatException( exception ) ;
+      }
+      catch (Exception e) {
+        LOGGER.warn("Could not parse OME-XML metadata", e);
+      }
+    }
+
+    if (fileVersion <= 1 || !parsedXML)
     {
       MetadataTools.populatePixels(ome, this);
-
       for (int series = 0; series != core.size(); ++ series)
       {
         CoreMetadata obf = core.get(series);
@@ -253,24 +279,6 @@ public class OBFReader extends FormatReader
             }
           }
         }
-      }
-    }
-    else
-    {
-      try
-      {
-        ServiceFactory factory = new ServiceFactory() ;
-        OMEXMLService service = factory.getInstance( OMEXMLService.class ) ;
-
-        service.convertMetadata( ome_xml, ome ) ;
-      }
-      catch (DependencyException exception) 
-      {
-        throw new MissingLibraryException( OMEXMLServiceImpl.NO_OME_XML_MSG, exception ) ;
-      }
-      catch (ServiceException exception) 
-      {
-        throw new FormatException( exception ) ;
       }
     }
   }
@@ -405,10 +413,10 @@ public class OBFReader extends FormatReader
           xml = true;
         }
         catch (ParserConfigurationException e) {
-          LOGGER.warn("Could parse description as XML", e);
+          LOGGER.warn("Could not parse description as XML", e);
         }
         catch (SAXException e) {
-          LOGGER.warn("Could parse description as XML", e);
+          LOGGER.warn("Could not parse description as XML", e);
         }
 
         if (!xml) {
