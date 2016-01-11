@@ -35,21 +35,16 @@ package loci.formats;
 import java.math.BigInteger;
 
 /**
- * FilePatternBlock represents a single block in a {@link loci.formats.FilePattern}.
- *
- * Examples:
- * <ul>
- *   <li>&lt;1-12&gt;</li>
- *   <li>&lt;A-H&gt;</li>
- *   <li>&lt;R,G,B&gt;</li>
- * </ul>
- *
+ * FilePatternBlock represents a single block in a {@link FilePattern}.
  */
 public class FilePatternBlock {
 
   // -- Constants --
 
+  /** Identifies the start of a block. */
   public static final String BLOCK_START = "<";
+
+  /** Identifies the end of a block. */
   public static final String BLOCK_END = ">";
 
   // -- Fields --
@@ -73,6 +68,13 @@ public class FilePatternBlock {
 
   // -- Constructor --
 
+  /**
+   * Builds a FilePatternBlock from a block string.
+   *
+   * See {@link FilePattern} for block string syntax.
+   *
+   * @param block the block string.
+   */
   public FilePatternBlock(String block) {
     this.block = block;
     explode();
@@ -80,30 +82,72 @@ public class FilePatternBlock {
 
   // -- FilePatternBlock API methods --
 
+  /**
+   * Gets all block elements.
+   *
+   * @return an array containing all block elements.
+   */
   public String[] getElements() {
     return elements;
   }
 
+  /**
+   * Gets the block string.
+   *
+   * @return the block string.
+   */
   public String getBlock() {
     return block;
   }
 
+  /**
+   * Whether or not this is a fixed-width block.
+   *
+   * All elements in a fixed-width block have the same length (numbers
+   * are zero-padded as needed).
+   *
+   * @return true if this is a fixed-width block, false otherwise.
+   */
   public boolean isFixed() {
     return fixed;
   }
 
+  /**
+   * Whether or not this is a numeric block.
+   *
+   * All elements in a numeric block consist of digit characters.  For
+   * instance, <code>&lt;10-15:2&gt;</code> expands to <code>10, 13,
+   * 15</code>, all of which consist only of digits.
+   *
+   * @return true if this is a numeric block, false otherwise.
+   */
   public boolean isNumeric() {
     return numeric;
   }
 
+  /**
+   * Gets the first element in a range block.
+   *
+   * @return the first block element
+   */
   public BigInteger getFirst() {
     return begin;
   }
 
+  /**
+   * Gets the last element in a range block.
+   *
+   * @return the last block element
+   */
   public BigInteger getLast() {
     return end;
   }
 
+  /**
+   * Gets the difference between consecutive elements in a range block.
+   *
+   * @return the step element as defined above.
+   */
   public BigInteger getStep() {
     return step;
   }
