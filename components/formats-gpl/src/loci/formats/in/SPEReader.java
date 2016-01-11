@@ -33,10 +33,12 @@ import java.util.List;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -49,6 +51,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author David Gault d.gault at dundee.ac.uk
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class SPEReader extends FormatReader {
 
   // -- Constants --
