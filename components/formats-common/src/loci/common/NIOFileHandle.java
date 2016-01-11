@@ -198,8 +198,10 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /* @see AbstractNIOHandle.setLength(long) */
   @Override
   public void setLength(long length) throws IOException {
+    if (raf.length() < length) {
+      raf.setLength(length);
+    }
     raf.seek(length - 1);
-    raf.write((byte) 0);
     buffer = null;
   }
 
