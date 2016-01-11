@@ -54,8 +54,8 @@ To generate a valid plate the values of ``plates``, ``plateAcqs``,
 If this condition is not met then an image will be generated instead of a
 plate.
 
-There are several other keys that can be added as well, these are listed below
-with their default values.
+There are several other keys that can be added, a complete list of these,
+with their default values, is shown below.
 
 .. tabularcolumns:: |p{3cm}|p{11cm}|p{2cm}|
 
@@ -93,24 +93,15 @@ with their default values.
     - * bitsPerPixel
       * number of valid bits (<= number of bits implied by pixel type)
       * 0
-    - * physicalSizeX
-      * real width of the pixels, supports units defaulting to microns
-      *
-    - * physicalSizeY
-      * real height of the pixels, supports units defaulting to microns
-      *
-    - * physicalSizeZ
-      * real depth of the pixels, supports units defaulting to microns
-      *
-    - * acquisitionDate
-      * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"
-      *
     - * rgb
       * number of channels that are merged together
       * 1
     - * dimOrder
       * dimension order (e.g. XYZCT)
       * XYZCT
+    - * orderCertain
+      *
+      * true
     - * little
       * whether or not the pixel data should be little-endian
       * true
@@ -123,15 +114,27 @@ with their default values.
     - * falseColor
       * whether or not the color lookup table is just for making the image look pretty
       * false
+    - * metadataComplete
+      *
+      * true
+    - * thumbnail
+      *
+      * false
     - * series
       * number of series (Images)
       * 1
     - * lutLength
       * number of entries in the color lookup table
       * 3
+    - * scaleFactor
+      *
+      * 1
     - * exposureTime
       * time of exposure, supports units defaulting to seconds
-      * 0
+      * null
+    - * acquisitionDate
+      * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"
+      * null
     - * screens
       * number of screens
       * 1
@@ -153,6 +156,24 @@ with their default values.
     - * annLong, annDouble, annMap, annComment, annBool, annTime, annTag, annTerm, annXml
       * number of annotations of the given type to generate
       * 0
+    - * physicalSizeX
+      * real width of the pixels, supports units defaulting to microns
+      *
+    - * physicalSizeY
+      * real height of the pixels, supports units defaulting to microns
+      *
+    - * physicalSizeZ
+      * real depth of the pixels, supports units defaulting to microns
+      *
+    - * color
+      *
+      * null
+    - * color_*
+      *
+      *
+
+For full details of these keys, how unset and default values are handled and
+further examples see :source:`loci.formats.in.FakeReader <components/formats-bsd/src/loci/formats/in/FakeReader.java>`.
 
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
