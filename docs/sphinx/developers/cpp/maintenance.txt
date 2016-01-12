@@ -104,13 +104,29 @@ build ICU support even when ICU support is not configured (see the
 `JIRA bug <https://issues.apache.org/jira/browse/XALANC-767>`__).
 
 - delete all files and directories under :file:`packages/xalan/files`
+- apply this change to xalan :file:`c/Makefile.incl.in` (prevents
+  overriding of system libraries causing breakage due to link
+  failures)::
+
+    --- a/c/Makefile.incl.in
+    +++ b/c/Makefile.incl.in
+       MAKE_SHARED = ${CXX} $(CXXFLAGS) -D${PLATFORM} -dynamiclib -prebind -seg1addr 0x38000000  -compatibility_version 1 -current_version $(LIB_MAJOR_DOT_VER) -install_name ${LINK_NAME} ${LDFLAGS}
+       LINK = ${CXX} $(CXXFLAGS) ${PLATFORM_COMPILE_OPTIONS} ${LDFLAGS}
+    
+    -  export DYLD_LIBRARY_PATH := $(XERCESCROOT)/lib:$(ICULIB_LOC):$(DYLD_LIBRARY_PATH)
+    +  export DYLD_FALLBACK_LIBRARY_PATH := $(XERCESCROOT)/lib:$(ICULIB_LOC):$(DYLD_FALLBACK_LIBRARY_PATH)
+       LOC_LIB = ${LOC_LIBNAME}.${LIB_MAJOR_VER}.${LIB_MINOR_VER}$(SHLIBSUFFIX)
+       LOC_SONAME = ${LOC_LIBNAME}.${LIB_MAJOR_VER}${SHLIBSUFFIX}
+       MAKE_SHARED_LOC= ${CXX} $(CXXFLAGS) -D${PLATFORM} -dynamiclib -prebind -seg1addr 0x40000000  -compatibility_version 1 -current_version $(LIB_MAJOR_DOT_VER) -install_name ${LOC_LIBNAME}${SHLIBSUFFIX} ${LDFLAGS}
+
+- copy xalan :file:`c/Makefile.incl.in` to :file:`packages/xalan/files/c`
 
 For each Visual Studio version:
 
-- copy :file:`c/Projects/Win32/VC10` (the latest at the time of
+- copy xalan :file:`c/Projects/Win32/VC10` (the latest at the time of
   writing) to :file:`c/Projects/Win32/VC<ver>`
 - start the Visual Studio application
-- open :file:`c/Projects/Win32/VC<ver>/Xalan.sln`, and allow Visual
+- open xalan :file:`c/Projects/Win32/VC<ver>/Xalan.sln`, and allow Visual
   Studio to upgrade the projects to the current version
 - save the solution (you must Save As to overwrite the existing
   solution; Save is insufficient)
@@ -133,8 +149,8 @@ For each Visual Studio version:
            <Project>{755ad11c-80b9-4e33-9d3d-9a68884a3ec8}</Project>
            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
          </ProjectReference>
-- copy the solution and project files under
-  :file:`packages/xerces/files/projects/Win32/VC<ver>`
+- copy the xalan solution and project files under
+  :file:`packages/xalan/c/files/projects/Win32/VC<ver>`
 
 xerces
 ^^^^^^
