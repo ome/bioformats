@@ -50,7 +50,7 @@ import ome.units.UNITS;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class NiftiReader extends FormatReader {
 
   // -- Constants --
