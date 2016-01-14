@@ -353,14 +353,14 @@ public class TiffSaver {
                   }
                   else {
                     off = c * blockSize + ndx + n;
+                    int realStrip = c * (nStrips / nChannels) + strip;
                     if (row >= h || col >= w) {
-                      stripOut[strip].writeByte(0);
+                      stripOut[realStrip].writeByte(0);
                     } else if (off < buf.length) {
-                      stripOut[c * (nStrips / nChannels) + strip].writeByte(
-                          buf[off]);
+                      stripOut[realStrip].writeByte(buf[off]);
                     }
                     else {
-                      stripOut[strip].writeByte(0);
+                      stripOut[realStrip].writeByte(0);
                     }
                   }
                 }
@@ -504,7 +504,9 @@ public class TiffSaver {
     int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
     for (int i=0; i<strips.length; i++) {
       out.seek(out.length());
-      int thisOffset = firstOffset + i * tileCount;
+      int index = interleaved ? i : i / nChannels;
+      int c = interleaved ? 0 : i % nChannels;
+      int thisOffset = firstOffset + index + c * tileCount;
       offsets.set(thisOffset, out.getFilePointer());
       byteCounts.set(thisOffset, new Long(strips[i].length));
       if (LOGGER.isDebugEnabled()) {
