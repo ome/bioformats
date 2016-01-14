@@ -115,6 +115,24 @@ public class ClassList<T> {
     Set<Class<?>> readerClasses = reflections.getTypesAnnotatedWith((Class) location);
     for (Class c : readerClasses) {
       Class<? extends T> toAdd = cast(c);
+
+      // make sure the class wasn't disabled before adding
+      Annotation[] annotations = c.getAnnotations();
+      for (Annotation a : annotations) {
+        FormatType type = null;
+        if (a instanceof BioFormatsReader) {
+          type = ((BioFormatsReader) a).value();
+        }
+        else if (a instanceof BioFormatsWriter) {
+          type = ((BioFormatsWriter) a).value();
+        }
+        if (type != null) {
+          if (type == FormatType.DISABLED) {
+            toAdd = null;
+          }
+          break;
+        }
+      }
       if (toAdd != null) {
         classes.add(toAdd);
       }

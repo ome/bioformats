@@ -40,8 +40,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import loci.common.Location;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MinMaxCalculator;
 import loci.formats.in.FakeReader;
 import loci.formats.meta.IMinMaxStore;
@@ -239,6 +241,7 @@ public class MinMaxCalculatorTest {
    * @author Chris Allan <callan at blackcat dot ca>
    *
    */
+  @BioFormatsReader(FormatType.DISABLED)
   class MinMaxCalculatorTestReader extends FakeReader {
 
     /**
