@@ -599,10 +599,15 @@ public class FakeReader extends FormatReader {
 
     // populate SPW metadata
     MetadataStore store = makeFilterMetadata();
-    boolean hasSPW = plates > 0 && plateRows > 0 &&
-      plateCols > 0 && fields > 0 && plateAcqs > 0;
+    boolean hasSPW = plates > 0 || plateRows > 0 ||
+      plateCols > 0 || fields > 0 || plateAcqs > 0;
     if (hasSPW) {
       if (screens<0) screens = 0;
+      if (plates<=0) plates = 1;
+      if (plateRows<=0) plateRows = 1;
+      if (plateCols<=0) plateCols = 1;
+      if (fields<=0) fields = 1;
+      if (plateAcqs<=0) plateAcqs = 1;
       // generate SPW metadata and override series count to match
       int imageCount =
         populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs);
