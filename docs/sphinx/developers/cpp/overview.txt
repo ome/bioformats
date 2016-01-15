@@ -92,7 +92,7 @@ will also be provided by the super-build.
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
 | Qt5           | 5.2          | 5.0          |    \*    | \*            | \*           | \*     |
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
-| CMake         | 3.0          | 2.8.12       |    \•    | \•            |              |        |
+| CMake         | 3.4          | 3.2          |    \•    | \•            |              |        |
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
 | Python        | 2.7          | 2.6          |    \•    | \•            |              |        |
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
@@ -108,7 +108,7 @@ will also be provided by the super-build.
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
 | Python Sphinx | 1.2.x        | 1.1.x        |    ‡§    | ‡§            |              |        |
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
-| TeX (XeLaTeX) | TeXLive 2014 | TeXLive 2012 |    §     | §             |              |        |
+| TeX (XeLaTeX) | TeXLive 2015 | TeXLive 2012 |    §     | §             |              |        |
 +---------------+--------------+--------------+----------+---------------+--------------+--------+
 
 \•
@@ -761,6 +761,10 @@ extra-warnings=(ON|OFF)
 fatal-warnings=(ON|OFF)
   Make compiler warnings into fatal errors.  This is disabled by
   default.
+qtgui=(ON|OFF)
+  Enable building of the Qt5 widget library ome-qtwidgets and a simple
+  Qt5 OpenGL image viewer.  This is enabled by default if the needed
+  libraries are available.
 relocatable-install=(ON|OFF)
   Make the installed libraries, programs and datafiles relocatable;
   this means that they may be moved from their installation prefix to
@@ -778,6 +782,8 @@ sphinx-pdf=(ON|OFF)
   and XeLaTeX are autodetected.
 test=(ON|OFF)
   Enable unit tests.  Tests are enabled by default.
+xsdfu-debug=(ON|OFF)
+  Enable debugging output for the model code generator.
 
 For example, to disable tests, run ``cmake -Dtest=OFF``.  Options will
 typically be enabled by default if the prerequisites are available.
@@ -788,17 +794,47 @@ may also be specified.  Please see the :program:`cmake` documentation
 for further details of all configurable options, and run ``cmake
 --help`` to list the available generators for your platform.
 
-If using the superbuild:
+If using the superbuild, most of the options above will be available,
+and will be passed to the bioformats build.  In addition, the
+following options are provided:
 
+build-packages=packages
+  Build the specified list of packages (semicolon-separated).
+  Defaults to ``bioformats``.  This can include any OME or third-party
+  packages provided by the superbuild.
+build-prerequisites=(ON|OFF)
+  Build third-party prerequisites in addition to OME prerequisites
+  such as ome-common and bioformats.  Enabled by default.  Disable to
+  build against system libraries, with system python modules and
+  system tools.
 source-cache=directory
   Specify a directory in which to store downloaded source files; this
   is useful if you need to repeat the build since the source files
   will not need downloading again.
-bioformats-superbuild_USE_SYSTEM_${package}=(ON|OFF)
-  Disable the building of particular components, in order to use the
-  system version of these components.  By default, building of all
-  components is enabled. `${package}` is the component name.  Look in
-  the :file:`packages` directory for a full list of components.
+build-cache=directory
+  Specify a directory from which to source pre-built third-party
+  prerequisites.  Useful to save time when rebuilding if the
+  content of the :file:`superbuild-install` directory is placed
+  here after building ``third-party-prerequisites``.
+python-cache=directory
+  Specify a directory from which to source pre-built third-party
+  python prerequisites.  Useful to save time when rebuilding if the
+  content of the :file:`python` directory is placed here after
+  building ``third-party-prerequisites``.
+ome-superbuild_USE_SYSTEM_${package}=(ON|OFF)
+  Use when ``build-prerequisites`` is enabled.  This permits the
+  selective disabling of the building of particular components, in
+  order to use the system version of these components.  By default,
+  building of all components is enabled. `${package}` is the component
+  name.  Look in the :file:`packages` directory for a full list of
+  components.
+ome-superbuild_BUILD_${package}=(ON|OFF)
+  Use when ``build-prerequisites`` is disabled.  This permits the
+  selective enabling of the building of particular components, in
+  order to use the superbuild version of these components.  By
+  default, building of all components is disabled. `${package}` is the
+  component name.  Look in the :file:`packages` directory for a full
+  list of components.
 
 C++11
 ^^^^^
