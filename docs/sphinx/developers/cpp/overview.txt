@@ -721,7 +721,12 @@ Run :program:`cmake` from the temporary build directory::
 
   % mkdir build
   % cd build
-  % cmake /path/to/bioformats
+  % cmake [-G <generator>] [<options>] /path/to/source
+
+Where ``<generator>`` is the platform-specific build system to
+generate files for, and ``<options>`` are any additional options to
+configure the build to your requirements.  See below for information
+about the different generators.
 
 Run ``cmake -LH`` to see the configurable project options; use
 ``-LAH`` to see advanced options.  The following basic options are
@@ -809,8 +814,8 @@ imported into the :cpp:class:`ome::compat` namespace, for example as
 should be used for portability when using any part of the API which
 use types from this namespace.
 
-Linux and MacOS X
-^^^^^^^^^^^^^^^^^
+Unix, Linux and MacOS X
+^^^^^^^^^^^^^^^^^^^^^^^
 
 The default generator is ``Unix Makefiles``, and the standard
 :envvar:`CXX`, :envvar:`CXXFLAGS` and :envvar:`LDFLAGS` environment
@@ -819,23 +824,51 @@ flags and linker flags, respectively.  These may be useful for adding
 additional ``-I`` and ``-L`` include and library search paths, for
 example.
 
-If you wish to use an IDE such as Eclipse or KDevelop, an alternative
-generator may be used.
+An alternative generator to consider is ``Ninja``.  It is recommended
+for parallel builds.  This is similar to ``Unix Makefiles`` but allows
+building with the :program:`ninja` tool in place of :program:`make`.
+It is, in general, faster than :program:`make`, and it is also much
+nicer when building in parallel since it will automatically adjust the
+number of jobs being run, and will also buffer the output for each job
+to allow the build log to be readable, rather than interleaving the
+output from concurrently running jobs.
+
+If you wish to use an IDE such as Eclipse or KDevelop, alternative
+generators are also available, but are not actively tested by the OME
+continuous integration system.
 
 Windows
 ^^^^^^^
 
 On Windows, the generator will require specifying by hand, and this
 will configure the version of Visual Studio (or other compiler) to
-use.  For example, ``-G "Visual Studio 11 Win64"`` will configure for
-generating Visual Studio 2012 64-bit build files for use with the
-Visual C++ compiler.
+use.  For example, ``-G "Visual Studio 12 Win64"`` will configure for
+generating Visual Studio 2013 64-bit solution and project files for
+use with the Visual C++ compiler tool :program:`msbuild` or for
+opening in the Visual Studio application.
+
+An alternative generator to consider is ``Ninja``.  It is much faster
+than building the Visual Studio project and solution files with
+:program:`msbuild` due to being much more effective at running jobs in
+parallel, since :program:`msbuild` only runs project builds in parallel
+while :program:`ninja` will run everything in parallel.
+:program:`ninja` will also automatically adjust the number of jobs
+being run, and will also buffer the output for each job to allow the
+build log to be readable.  The build log is also much less verbose
+than the output from :program:`msbuild`.  However, solution and
+project files for use within the Visual Studio application are not
+generated.
 
 .. note::
 
     There is no need to use the Visual Studio command shell when
-    running :program:`cmake`.
-
+    running :program:`cmake` with ``Visual Studio`` generators since
+    the generator specifies the version of Visual Studio to use.
+    However, the Visual Studio command shell must be used (or a
+    command shell with the appropriate environment set used) when
+    using the ``Ninja`` generator, since the same generator is used
+    for all Visual Studio versions and the specific compiler to use
+    must be specified.
 
 Building
 --------
@@ -853,8 +886,8 @@ To build the API reference documentation, run::
   % cmake --build . --target doc
 
 
-Linux and MacOS X
-^^^^^^^^^^^^^^^^^
+Unix, Linux and MacOS X
+^^^^^^^^^^^^^^^^^^^^^^^
 
 If using ``Unix Makefiles``, simply run::
 
@@ -868,19 +901,41 @@ To build the API reference documentation, run::
 
   % make doc
 
+Similarly, if using ``Ninja``, simply run::
+
+  % ninja
+
+or to build the API reference, run::
+
+  % ninja doc
+
+
 If using an IDE, open the generated project file and proceed using the
 IDE to build the project.
 
 Windows
 ^^^^^^^
 
-If using Visual Studio, the generated project files may be opened
-using the IDE and then built within the IDE.  Alternatively, the
-project files may be built directly using the :program:`msbuild`
-command-line tool inside a Visual Studio command prompt (or an
-appropriately configured command prompt which has run
-:program:`VCVARSALL.BAT` or equivalent to configure the environment).
+If using one of the ``Visual Studio`` generators, the generated solution
+and project files may be opened using the IDE and then built within
+the IDE.  Alternatively, the solution or project files may be built
+directly using the :program:`msbuild` command-line tool inside a
+Visual Studio command prompt (or an appropriately configured command
+prompt which has run :program:`VCVARSALL.BAT` or equivalent to
+configure the environment).  Run::
 
+  > msbuild <project>.sln /p:Configuration=<configuration>
+
+Where ``<project>`` is the specific package being built, and
+``<configuration>`` is the build type, usually ``Debug`` or
+``Release``.
+
+If using the ``Ninja`` generator, run the :program:`ninja` command-line
+tool inside a Visual Studio command prompt (or an appropriately
+configured command prompt which has run :program:`VCVARSALL.BAT` or
+equivalent to configure the environment).  Run::
+
+  > ninja
 
 Testing
 -------
@@ -888,28 +943,27 @@ Testing
 For all platforms and generators, it should usually be possible to run
 all tests using :program:`ctest`.  Run::
 
-  % ctest
+  % ctest [-C <configuration>]
 
 or to run verbosely::
 
-  % ctest -V
+  % ctest -V [-C <configuration>]
 
 Additional flags allow specification of the build configuration to
 use, logging, parallel building and other options.  Please see the
-:program:`ctest` documentation for further details.
+:program:`ctest` documentation for further details.  Running
+:program:`ctest` directly is preferred over the methods detailed below
+since passing options works in all cases, and it is also possible to
+specify the build configuration (used on Windows).
 
 Individual test programs may be run by hand if required.
 
-Linux and MacOS X
-^^^^^^^^^^^^^^^^^
+Unix, Linux and MacOS X
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To run all tests, run::
 
   % cmake --build . --target test
-
-or verbosely::
-
-  % cmake --build . --target test -- ARGS=-V
 
 If using ``Unix Makefiles``, simply run::
 
@@ -919,18 +973,27 @@ or verbosely::
 
   % make test ARGS=-V
 
+If using ``Ninja``, simply run::
+
+  % ninja test
+
 Windows
 ^^^^^^^
-To run all tests, run::
+
+To run all tests, if using a ``Visual Studio`` generator, run::
 
   > msbuild RUN_TESTS.vcproj
+
+If using ``Ninja``, simply run::
+
+  > ninja test
 
 
 Installation
 ------------
 
-Linux and MacOS X
-^^^^^^^^^^^^^^^^^
+Unix, Linux and MacOS X
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To install the headers and libraries directly on the system into the
 configured prefix::
@@ -949,13 +1012,25 @@ Alternatively, to install into a staging directory::
 
   % make DESTDIR=/path/to/staging/directory install
 
+If using ``Ninja``, simply run::
+
+  % ninja install
+
 Windows
 ^^^^^^^
 
-When using Visual Studio, there should be an :file:`INSTALL.vcxproj`
-project which may be run using :program:`msbuild`, for example::
+When using a ``Visual Studio`` generator, there should be an
+:file:`INSTALL.vcxproj` project which may be run using
+:program:`msbuild`, for example::
 
   > msbuild INSTALL.vcxproj /p:platform=x64
+
+The ``INSTALL`` project may also be built within the Visual Studio
+application.
+
+If using ``Ninja``, simply run::
+
+  > ninja install
 
 Installation layout
 ^^^^^^^^^^^^^^^^^^^
