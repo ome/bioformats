@@ -197,6 +197,7 @@ owner = `Aperio <http://www.aperio.com/>`_
 bsd = no
 versions = 8.0, 8.2, 9.0
 weHave = * many SVS datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__ \n
 * an SVS specification document \n
 * the ability to generate additional SVS datasets
 pixelsRating = Very good
@@ -453,10 +454,11 @@ writer = CellH5Writer
 mif = true
 
 [Cellomics]
-extensions = .c01
+extensions = .c01, .dib
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 bsd = no
-weHave = * a few Cellomics .c01 datasets
+weHave = * a few Cellomics .c01 datasets /n
+* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_ \n
 weWant = * a Cellomics .c01 specification document \n
 * more Cellomics .c01 datasets
 pixelsRating = Very good
@@ -501,7 +503,8 @@ owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.c
 bsd = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
-* numerous DV datasets
+* numerous DV datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__ \n
 pixelsRating = Outstanding
 metadataRating = Good
 opennessRating = Good
@@ -962,11 +965,12 @@ utilityRating = Fair
 reader = OBFReader
 mif = true
 
-[InCell 1000]
+[InCell 1000/2000]
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
 weHave = * a few InCell 1000 datasets
+* `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_ \n
 weWant = * an InCell 1000 specification document \n
 * more InCell 1000 datasets
 pixelsRating = Very good
@@ -1658,8 +1662,9 @@ extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/om
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
-weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
+weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` \n
 * many OME-TIFF datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__ \n
 * the ability to produce additional datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1687,6 +1692,7 @@ bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
 * many OME-XML datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__ \n
 * the ability to produce more datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1789,7 +1795,8 @@ mif = true
 extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * a few sample datasets
+weHave = * a few sample datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__ \n
 weWant = * an official specification document \n
 * more sample datasets
 pixelsRating = Very good
