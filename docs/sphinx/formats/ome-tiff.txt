@@ -26,8 +26,9 @@ Writer: OMETiffWriter (:bsd-writer:`Source Code <OMETiffWriter.java>`)
 
 We currently have:
 
-* an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) 
-* many OME-TIFF datasets 
+* an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>`
+* many OME-TIFF datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__
 * the ability to produce additional datasets
 
 We would like to have:

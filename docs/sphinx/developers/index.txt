@@ -65,7 +65,6 @@ Contributing to Bio-Formats
     :maxdepth: 1
 
     commit-testing
-    testing-notes
     generating-test-images
     reader-guide
     format-documentation
