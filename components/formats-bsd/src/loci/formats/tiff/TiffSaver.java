@@ -504,7 +504,7 @@ public class TiffSaver {
     int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
     for (int i=0; i<strips.length; i++) {
       out.seek(out.length());
-      int index = interleaved ? i : i / nChannels;
+      int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
       int thisOffset = firstOffset + index + c * tileCount;
       offsets.set(thisOffset, out.getFilePointer());
