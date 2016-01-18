@@ -966,6 +966,7 @@ reader = OBFReader
 mif = true
 
 [InCell 1000/2000]
+pagename = incell-1000
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
