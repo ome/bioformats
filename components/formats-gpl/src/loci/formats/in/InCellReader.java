@@ -520,16 +520,8 @@ public class InCellReader extends FormatReader {
     store.setPlateName(plateName, 0);
     store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
     store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
-
-    for (int r=0; r<wellRows; r++) {
-      for (int c=0; c<wellCols; c++) {
-        int well = r * wellCols + c;
-        String wellID = MetadataTools.createLSID("Well", 0, well);
-        store.setWellID(wellID, 0, well);
-        store.setWellRow(new NonNegativeInteger(r), 0, well);
-        store.setWellColumn(new NonNegativeInteger(c), 0, well);
-      }
-    }
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
+    store.setPlateColumns(new PositiveInteger(wellCols), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
@@ -552,6 +544,7 @@ public class InCellReader extends FormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
 
+    int prevWell = -1;
     for (int i=0; i<seriesCount; i++) {
       store.setObjectiveSettingsID(objectiveID, i);
 
@@ -578,6 +571,14 @@ public class InCellReader extends FormatReader {
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
+
+      if (well != prevWell) {
+        String wellID = MetadataTools.createLSID("Well", 0, well);
+        store.setWellID(wellID, 0, well);
+        store.setWellRow(new NonNegativeInteger(wellRow), 0, well);
+        store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
+        prevWell = well;
+      }
 
       char rowChar = rowName.charAt(rowName.length() - 1);
       char colChar = colName.charAt(colName.length() - 1);
