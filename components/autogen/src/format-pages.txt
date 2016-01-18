@@ -457,8 +457,8 @@ mif = true
 extensions = .c01, .dib
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 bsd = no
-weHave = * a few Cellomics .c01 datasets /n
-* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_ \n
+weHave = * a few Cellomics .c01 datasets \n
+* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
 weWant = * a Cellomics .c01 specification document \n
 * more Cellomics .c01 datasets
 pixelsRating = Very good
@@ -504,7 +504,7 @@ bsd = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
 * numerous DV datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__ \n
+* `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__
 pixelsRating = Outstanding
 metadataRating = Good
 opennessRating = Good
@@ -969,8 +969,8 @@ mif = true
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
-weHave = * a few InCell 1000 datasets
-* `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_ \n
+weHave = * a few InCell 1000 datasets \n
+* `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_
 weWant = * an InCell 1000 specification document \n
 * more InCell 1000 datasets
 pixelsRating = Very good
@@ -1796,7 +1796,7 @@ extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 weHave = * a few sample datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__ \n
+* `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__
 weWant = * an official specification document \n
 * more sample datasets
 pixelsRating = Very good
