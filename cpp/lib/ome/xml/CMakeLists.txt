@@ -51,6 +51,7 @@ endforeach(hdr)
 set(OME_XML_STATIC_SOURCES
   Document.cpp
   OMEEntityResolver.cpp
+  OMETransformResolver.cpp
   meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
@@ -83,7 +84,8 @@ set(OME_XML_META_STATIC_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     Document.h
-    OMEEntityResolver.h)
+    OMEEntityResolver.h
+    OMETransformResolver.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
