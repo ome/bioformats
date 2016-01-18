@@ -41,10 +41,9 @@
 
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <ome/compat/memory.h>
 
 #include <ome/common/xml/dom/Document.h>
 #include <ome/common/xml/dom/Element.h>
@@ -128,8 +127,8 @@ namespace ome
       public:
         /// @copydoc ome::xml::model::OMEModelObject::link
         bool
-        link (ome::compat::shared_ptr<Reference>&                          reference,
-              ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+        link (std::shared_ptr<Reference>&                         reference,
+              std::shared_ptr<::ome::xml::model::OMEModelObject>& object);
 
         /**
          * Get the key-value pair mappings.

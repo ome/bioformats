@@ -136,9 +136,9 @@ namespace ome
     }
 
     void
-    NavigationDock2D::setReader(ome::compat::shared_ptr<ome::bioformats::FormatReader> reader,
-                                ome::bioformats::dimension_size_type                   series,
-                                ome::bioformats::dimension_size_type                   plane)
+    NavigationDock2D::setReader(std::shared_ptr<ome::bioformats::FormatReader> reader,
+                                ome::bioformats::dimension_size_type           series,
+                                ome::bioformats::dimension_size_type           plane)
     {
       this->reader = reader;
       this->series = series;
@@ -228,7 +228,7 @@ namespace ome
               dimension_size_type mt = reader->getModuloT().size();
               dimension_size_type mc = reader->getModuloC().size();
 
-              ome::compat::array<dimension_size_type, 3> coords(reader->getZCTCoords(plane));
+              std::array<dimension_size_type, 3> coords(reader->getZCTCoords(plane));
               reader->setSeries(oldseries);
 
               // Effective and modulo dimension positions

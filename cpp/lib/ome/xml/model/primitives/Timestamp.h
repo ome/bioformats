@@ -39,13 +39,12 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
 #define OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
 
+#include <cstdint>
 #include <string>
 #include <sstream>
 #include <stdexcept>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

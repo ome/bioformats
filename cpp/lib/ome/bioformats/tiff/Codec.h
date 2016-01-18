@@ -38,10 +38,9 @@
 #ifndef OME_BIOFORMATS_TIFF_CODEC_H
 #define OME_BIOFORMATS_TIFF_CODEC_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {

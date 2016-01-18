@@ -124,11 +124,11 @@ namespace ome
         return static_cast<bool>(TIFF::open(name, "r"));
       }
 
-      const ome::compat::shared_ptr<const tiff::IFD>
+      const std::shared_ptr<const tiff::IFD>
       MinimalTIFFReader::ifdAtIndex(dimension_size_type plane) const
       {
         dimension_size_type ifdidx = tiff::ifdIndex(seriesIFDRange, getSeries(), plane);
-        const ome::compat::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
+        const std::shared_ptr<const IFD>& ifd(tiff->getDirectoryByIndex(static_cast<tiff::directory_index_type>(ifdidx)));
 
         return ifd;
       }
@@ -185,8 +185,8 @@ namespace ome
       {
         core.clear();
 
-        ome::compat::shared_ptr<const tiff::IFD> prev_ifd;
-        ome::compat::shared_ptr<CoreMetadata> prev_core;
+        std::shared_ptr<const tiff::IFD> prev_ifd;
+        std::shared_ptr<CoreMetadata> prev_core;
 
         dimension_size_type current_ifd = 0U;
 
@@ -227,7 +227,7 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
+        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         try
           {
@@ -251,18 +251,18 @@ namespace ome
       {
         assertId(currentId, true);
 
-        const ome::compat::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
+        const std::shared_ptr<const IFD>& ifd(ifdAtIndex(plane));
 
         ifd->readImage(buf, x, y, w, h);
       }
 
-      ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
+      std::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF()
       {
         return tiff;
       }
 
-      const ome::compat::shared_ptr<ome::bioformats::tiff::TIFF>
+      const std::shared_ptr<ome::bioformats::tiff::TIFF>
       MinimalTIFFReader::getTIFF() const
       {
         return tiff;

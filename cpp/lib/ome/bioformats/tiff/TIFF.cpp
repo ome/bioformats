@@ -191,7 +191,7 @@ namespace ome
       // Note boost::make_shared can't be used here.
       TIFF::TIFF(const boost::filesystem::path& filename,
                  const std::string&             mode):
-        impl(ome::compat::shared_ptr<Impl>(new Impl(filename, mode)))
+        impl(std::shared_ptr<Impl>(new Impl(filename, mode)))
       {
         registerImageJTags();
       }
@@ -206,15 +206,15 @@ namespace ome
         return reinterpret_cast<wrapped_type *>(impl->tiff);
       }
 
-      ome::compat::shared_ptr<TIFF>
+      std::shared_ptr<TIFF>
       TIFF::open(const boost::filesystem::path& filename,
                  const std::string& mode)
       {
-        ome::compat::shared_ptr<TIFF> ret;
+        std::shared_ptr<TIFF> ret;
         try
           {
             // Note boost::make_shared can't be used here.
-            ret = ome::compat::shared_ptr<TIFF>(new TIFFConcrete(filename, mode));
+            ret = std::shared_ptr<TIFF>(new TIFFConcrete(filename, mode));
           }
         catch (const std::exception& e)
           {
@@ -249,7 +249,7 @@ namespace ome
         return impl->directoryCount;
       }
 
-      ome::compat::shared_ptr<IFD>
+      std::shared_ptr<IFD>
       TIFF::getDirectoryByIndex(directory_index_type index) const
       {
         Sentry sentry;
@@ -257,11 +257,11 @@ namespace ome
         if (!TIFFSetDirectory(impl->tiff, index))
           sentry.error();
 
-        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
+        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openIndex(t, index);
       }
 
-      ome::compat::shared_ptr<IFD>
+      std::shared_ptr<IFD>
       TIFF::getDirectoryByOffset(offset_type offset) const
       {
         Sentry sentry;
@@ -274,14 +274,14 @@ namespace ome
           sentry.error();
 #endif // TIFF_HAVE_BIGTIFF
 
-        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
+        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openOffset(t, offset);
       }
 
-      ome::compat::shared_ptr<IFD>
+      std::shared_ptr<IFD>
       TIFF::getCurrentDirectory() const
       {
-        ome::compat::shared_ptr<TIFF> t(ome::compat::const_pointer_cast<TIFF>(shared_from_this()));
+        std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::current(t);
       }
 
@@ -300,14 +300,14 @@ namespace ome
       TIFF::iterator
       TIFF::begin()
       {
-        ome::compat::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
+        std::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
         return iterator(ifd);
       }
 
       TIFF::const_iterator
       TIFF::begin() const
       {
-        ome::compat::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
+        std::shared_ptr<IFD> ifd(getDirectoryByIndex(0U));
         return const_iterator(ifd);
       }
 
@@ -352,7 +352,7 @@ namespace ome
             }
           };
 
-        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(getWrapped());
 
         Sentry sentry;
 

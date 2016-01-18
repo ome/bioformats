@@ -39,14 +39,13 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_CONSTRAINEDNUMERIC_H
 #define OME_XML_MODEL_PRIMITIVES_CONSTRAINEDNUMERIC_H
 
+#include <cstdint>
 #include <limits>
 #include <string>
 #include <sstream>
 
 #include <boost/format.hpp>
 #include <boost/operators.hpp>
-
-#include <ome/compat/cstdint.h>
 
 namespace ome
 {
@@ -129,7 +128,7 @@ namespace ome
                                            boost::multipliable2<ConstrainedNumeric<N, C, E>, N,
                                            boost::multipliable<ConstrainedNumeric<N, C, E>,
                                            boost::incrementable<ConstrainedNumeric<N, C, E>,
-                                           boost::decrementable<ConstrainedNumeric<N, C, E> > > > > > > > > > > > > > >
+                                           boost::decrementable<ConstrainedNumeric<N, C, E>>>>>>>>>>>>>>>
         {
         public:
           /// The type to constrain.

@@ -57,7 +57,7 @@ namespace ome
       {
         /// Map of codec to pixel types.
         typedef std::map<std::string,
-                         std::set<ome::xml::model::enums::PixelType> > codec_pixel_type_map;
+                         std::set<ome::xml::model::enums::PixelType>> codec_pixel_type_map;
 
         /// Format name.
         std::string name;
@@ -116,7 +116,7 @@ namespace ome
         boost::optional<boost::filesystem::path> currentId;
 
         /// Current output.
-        ome::compat::shared_ptr<std::ostream> out;
+        std::shared_ptr<std::ostream> out;
 
         /// Current series.
         mutable dimension_size_type series;
@@ -140,7 +140,7 @@ namespace ome
          * Current metadata store. Should never be accessed directly as the
          * semantics of getMetadataRetrieve() prevent "null" access.
          */
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
+        std::shared_ptr<::ome::xml::meta::MetadataRetrieve> metadataRetrieve;
 
       protected:
         /// Constructor.
@@ -210,14 +210,14 @@ namespace ome
 
         // Documented in superclass.
         void
-        setMetadataRetrieve(ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>& retrieve);
+        setMetadataRetrieve(std::shared_ptr<::ome::xml::meta::MetadataRetrieve>& retrieve);
 
         // Documented in superclass.
-        const ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        const std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve() const;
 
         // Documented in superclass.
-        ome::compat::shared_ptr< ::ome::xml::meta::MetadataRetrieve>&
+        std::shared_ptr<::ome::xml::meta::MetadataRetrieve>&
         getMetadataRetrieve();
 
         /**
@@ -360,7 +360,7 @@ namespace ome
          * @copydoc ome::bioformats::FormatReader::getZCTCoords(dimension_size_type) const
          */
         virtual
-        ome::compat::array<dimension_size_type, 3>
+        std::array<dimension_size_type, 3>
         getZCTCoords(dimension_size_type index) const;
 
         // Documented in superclass.

@@ -35,6 +35,7 @@
  * #L%
  */
 
+#include <array>
 #include <stdexcept>
 
 #include <boost/format.hpp>
@@ -418,7 +419,7 @@ namespace ome
 
     }
 
-    ome::compat::array<dimension_size_type, 3>
+    std::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -436,7 +437,7 @@ namespace ome
       dimension_size_type v1 = index / len0 % len1;
       dimension_size_type v2 = index / len0 / len1;
 
-      ome::compat::array<dimension_size_type, 3> ret;
+      std::array<dimension_size_type, 3> ret;
       ret[0] = iz == 0 ? v0 : (iz == 1 ? v1 : v2); // z
       ret[1] = ic == 0 ? v0 : (ic == 1 ? v1 : v2); // c
       ret[2] = it == 0 ? v0 : (it == 1 ? v1 : v2); // t
@@ -444,7 +445,7 @@ namespace ome
       return ret;
     }
 
-    ome::compat::array<dimension_size_type, 6>
+    std::array<dimension_size_type, 6>
     getZCTCoords(const std::string& order,
                  dimension_size_type zSize,
                  dimension_size_type cSize,
@@ -455,7 +456,7 @@ namespace ome
                  dimension_size_type num,
                  dimension_size_type index)
     {
-      ome::compat::array<dimension_size_type, 3> coords
+      std::array<dimension_size_type, 3> coords
         (getZCTCoords(order,
                       zSize,
                       cSize,
@@ -463,7 +464,7 @@ namespace ome
                       num,
                       index));
 
-      ome::compat::array<dimension_size_type, 6> ret;
+      std::array<dimension_size_type, 6> ret;
       ret[0] = coords[0] / moduloZSize;
       ret[1] = coords[1] / moduloCSize;
       ret[2] = coords[2] / moduloTSize;

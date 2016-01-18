@@ -108,8 +108,8 @@ namespace ome
 
           /// @copydoc ome::xml::model::OMEModelObject::link
           virtual bool
-          link (ome::compat::shared_ptr<Reference>&                          reference,
-                ome::compat::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
+          link (std::shared_ptr<Reference>&                         reference,
+                std::shared_ptr<::ome::xml::model::OMEModelObject>& object);
 
           /**
            * Retrieve all the children of an element that have a given
@@ -149,7 +149,7 @@ namespace ome
           {
           private:
             /// The element to compare other elements with.
-            const ome::compat::shared_ptr<const T>& cmp;
+            const std::shared_ptr<const T>& cmp;
 
           public:
             /**
@@ -157,7 +157,7 @@ namespace ome
              *
              * @param cmp the element to compare other elements with.
              */
-            compare_element(const ome::compat::shared_ptr<const T>& cmp):
+            compare_element(const std::shared_ptr<const T>& cmp):
               cmp(cmp)
             {}
 
@@ -169,7 +169,7 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const ome::compat::shared_ptr<T>& element)
+            operator () (const std::shared_ptr<T>& element)
             {
               return cmp && element && cmp == element;
             }
@@ -181,7 +181,7 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const ome::compat::shared_ptr<const T>& element)
+            operator () (const std::shared_ptr<const T>& element)
             {
               return cmp && element && cmp == element;
             }
@@ -193,9 +193,9 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const ome::compat::weak_ptr<T>& element)
+            operator () (const std::weak_ptr<T>& element)
             {
-              ome::compat::shared_ptr<const T> shared_element(element);
+              std::shared_ptr<const T> shared_element(element);
               return cmp && shared_element && cmp == shared_element;
             }
 
@@ -206,9 +206,9 @@ namespace ome
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (const ome::compat::weak_ptr<const T>& element)
+            operator () (const std::weak_ptr<const T>& element)
             {
-              ome::compat::shared_ptr<const T> shared_element(element);
+              std::shared_ptr<const T> shared_element(element);
               return cmp && shared_element && cmp == shared_element;
             }
           };
@@ -226,7 +226,7 @@ namespace ome
           template<class C, typename T>
           bool
           contains(const C&                  container,
-                   const ome::compat::shared_ptr<T>& element)
+                   const std::shared_ptr<T>& element)
           {
             return (std::find_if(container.begin(),
                                  container.end(),

@@ -39,6 +39,8 @@
 #ifndef OME_QTWIDGETS_GL_IMAGE2D_H
 #define OME_QTWIDGETS_GL_IMAGE2D_H
 
+#include <memory>
+
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShader>
@@ -46,8 +48,6 @@
 
 #include <ome/bioformats/Types.h>
 #include <ome/bioformats/FormatReader.h>
-
-#include <ome/compat/memory.h>
 
 #include <ome/qtwidgets/glm.h>
 
@@ -82,9 +82,9 @@ namespace ome
          * @param parent the parent of this object.
          */
         explicit
-        Image2D(ome::compat::shared_ptr<ome::bioformats::FormatReader>  reader,
-                ome::bioformats::dimension_size_type                    series,
-                QObject                                                *parent = 0);
+        Image2D(std::shared_ptr<ome::bioformats::FormatReader>  reader,
+                ome::bioformats::dimension_size_type            series,
+                QObject                                        *parent = 0);
 
         /// Destructor.
         virtual
@@ -219,7 +219,7 @@ namespace ome
         /// Linear contrast correction multipliers.
         glm::vec3 texcorr;
         /// The image reader.
-        ome::compat::shared_ptr<ome::bioformats::FormatReader> reader;
+        std::shared_ptr<ome::bioformats::FormatReader> reader;
         /// The image series.
         ome::bioformats::dimension_size_type series;
         /// The current image plane.

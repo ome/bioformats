@@ -39,10 +39,10 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_NONNEGATIVELONG_H
 #define OME_XML_MODEL_PRIMITIVES_NONNEGATIVELONG_H
 
-#include <ome/compat/cstdint.h>
-
 #include <ome/xml/model/primitives/ConstrainedNumeric.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+
+#include <cstdint>
 
 namespace ome
 {
@@ -56,7 +56,7 @@ namespace ome
         /**
          * Long integer (signed 64-bit) value greater than or equal to zero.
          */
-        typedef ConstrainedNumeric<int64_t, NonNegativeIntegerConstraint<int64_t> > NonNegativeLong;
+        typedef ConstrainedNumeric<int64_t, NonNegativeIntegerConstraint<int64_t>> NonNegativeLong;
 
       }
     }

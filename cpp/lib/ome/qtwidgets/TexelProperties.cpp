@@ -60,37 +60,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::internal_format;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          internal_format = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::internal_format;
+          internal_format = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::internal_format;
           break;
         }
 
@@ -105,37 +105,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::external_format;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          external_format = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::external_format;
+          external_format = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::external_format;
           break;
         }
 
@@ -150,37 +150,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::external_type;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          external_type = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::external_type;
+          external_type = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::external_type;
           break;
         }
 
@@ -195,37 +195,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::fallback_pixeltype;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          fallback_pixeltype = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::fallback_pixeltype;
+          fallback_pixeltype = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::fallback_pixeltype;
           break;
         }
 
@@ -240,37 +240,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::conversion_required;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          conversion_required = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::conversion_required;
+          conversion_required = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::conversion_required;
           break;
         }
 
@@ -285,37 +285,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::normalization_required;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          normalization_required = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::normalization_required;
+          normalization_required = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::normalization_required;
           break;
         }
 
@@ -329,37 +329,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::minification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          minification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::minification_filter;
+          minification_filter = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::minification_filter;
           break;
         }
 
@@ -373,37 +373,37 @@ namespace ome
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT8>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT8>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT16>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT16>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::INT32>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::INT32>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT8>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT8>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT16>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT16>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::UINT32>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::UINT32>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::FLOAT>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::BIT>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::BIT>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::magnification_filter;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          magnification_filter = TexelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::magnification_filter;
+          magnification_filter = TexelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::magnification_filter;
           break;
         }
 

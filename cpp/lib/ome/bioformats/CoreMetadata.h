@@ -38,12 +38,11 @@
 #ifndef OME_BIOFORMATS_COREMETADATA_H
 #define OME_BIOFORMATS_COREMETADATA_H
 
+#include <cstdint>
 #include <map>
 #include <numeric>
 #include <string>
 #include <vector>
-
-#include <ome/compat/cstdint.h>
 
 #include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Modulo.h>

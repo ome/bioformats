@@ -38,12 +38,13 @@
 #ifndef OME_BIOFORMATS_VARIANTPIXELBUFFER_H
 #define OME_BIOFORMATS_VARIANTPIXELBUFFER_H
 
+#include <array>
+#include <memory>
+
 #include <ome/bioformats/PixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 
 #include <ome/common/variant.h>
-
-#include <ome/compat/memory.h>
 
 namespace ome
 {
@@ -92,19 +93,19 @@ namespace ome
        */
 
       /// Integer pixel types.
-      typedef boost::mpl::vector<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::INT16>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::INT32>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>,
-                                 PixelProperties< ::ome::xml::model::enums::PixelType::BIT> > integer_pixel_types;
+      typedef boost::mpl::vector<PixelProperties<::ome::xml::model::enums::PixelType::INT8>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::INT16>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::INT32>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::UINT8>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::UINT16>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::UINT32>,
+                                 PixelProperties<::ome::xml::model::enums::PixelType::BIT>> integer_pixel_types;
 
       /// Floating-point pixel types.
-      typedef boost::mpl::vector< PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>,
-                                  PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>,
-                                  PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>,
-                                  PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> > float_pixel_types;
+      typedef boost::mpl::vector< PixelProperties<::ome::xml::model::enums::PixelType::FLOAT>,
+                                  PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE>,
+                                  PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX>,
+                                  PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>> float_pixel_types;
 
       /// Aggregate view of all numeric types.
       typedef boost::mpl::joint_view<integer_pixel_types,
@@ -115,11 +116,11 @@ namespace ome
       struct make_buffer
       {
         /// Buffer type.
-        typedef ome::compat::shared_ptr<PixelBuffer<typename T::std_type> > type;
+        typedef std::shared_ptr<PixelBuffer<typename T::std_type>> type;
       };
 
       /// Aggregate view of all buffer types.
-      typedef boost::mpl::transform_view<basic_pixel_types_view, make_buffer<boost::mpl::_1> >::type pixel_buffer_types_view;
+      typedef boost::mpl::transform_view<basic_pixel_types_view, make_buffer<boost::mpl::_1>>::type pixel_buffer_types_view;
 
       /// Empty vector placeholder.
       typedef boost::mpl::vector<> empty_types;
@@ -132,13 +133,13 @@ namespace ome
       typedef boost::make_variant_over<pixel_buffer_types>::type variant_buffer_type;
 
       /// Raw pixel type used in public interfaces.
-      typedef PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type raw_type;
+      typedef PixelProperties<::ome::xml::model::enums::PixelType::UINT8>::std_type raw_type;
 
       /// Size type.
       typedef boost::multi_array_types::size_type size_type;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef ome::compat::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
+      typedef std::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef PixelBufferBase::storage_order_type storage_order_type;
@@ -215,7 +216,7 @@ namespace ome
        */
       template<typename T>
       explicit
-      VariantPixelBuffer(ome::compat::shared_ptr<PixelBuffer<T> >& buffer):
+      VariantPixelBuffer(std::shared_ptr<PixelBuffer<T>>& buffer):
         buffer(buffer)
       {
       }
@@ -265,7 +266,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage)));
+        return variant_buffer_type(std::shared_ptr<PixelBuffer<T>>(new PixelBuffer<T>(extents, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       /**
@@ -285,7 +286,7 @@ namespace ome
                  const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype)
       {
-        return variant_buffer_type(ome::compat::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage)));
+        return variant_buffer_type(std::shared_ptr<PixelBuffer<T>>(new PixelBuffer<T>(range, pixeltype, ENDIAN_NATIVE, storage)));
       }
 
       // No switch default to avoid -Wunreachable-code errors.
@@ -318,37 +319,37 @@ namespace ome
         switch(pixeltype)
           {
           case ::ome::xml::model::enums::PixelType::INT8:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT8>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT16:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT16>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT32:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT32>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT8:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT8>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT16:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT16>::std_type>(extents, storage, pixeltype);
             break;
           case :: ome::xml::model::enums::PixelType::UINT32:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT32>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::FLOAT:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::FLOAT>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLE:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::BIT:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::BIT>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::COMPLEX:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(extents, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(extents, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(extents, storage, pixeltype);
             break;
           }
 
@@ -376,37 +377,37 @@ namespace ome
         switch(pixeltype)
           {
           case ::ome::xml::model::enums::PixelType::INT8:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT8>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT16:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT16>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::INT32:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::INT32>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT8:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT8>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::UINT16:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT16>::std_type>(range, storage, pixeltype);
             break;
           case :: ome::xml::model::enums::PixelType::UINT32:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::UINT32>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::FLOAT:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::FLOAT>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLE:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLE>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::BIT:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::BIT>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::COMPLEX:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::COMPLEX>::std_type>(range, storage, pixeltype);
             break;
           case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-            buf = makeBuffer<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(range, storage, pixeltype);
+            buf = makeBuffer<PixelProperties<::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::std_type>(range, storage, pixeltype);
             break;
           }
 
@@ -709,7 +710,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         PixelBuffer<T>&
-        operator() (ome::compat::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (std::shared_ptr<PixelBuffer<T>>& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -742,7 +743,7 @@ namespace ome
          * @throws if the PixelBuffer is null.
          */
         const PixelBuffer<T>&
-        operator() (const ome::compat::shared_ptr<PixelBuffer<T> >& v) const
+        operator() (const std::shared_ptr<PixelBuffer<T>>& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -789,7 +790,7 @@ namespace ome
          * @throws if the PixelBuffer is null or the PixelBuffer's data array is null.
          */
         void
-        operator() (ome::compat::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type> >& v) const
+        operator() (std::shared_ptr<PixelBuffer<typename std::iterator_traits<InputIterator>::value_type>>& v) const
         {
           if (!v)
             throw std::runtime_error("Null pixel type");
@@ -901,7 +902,7 @@ namespace ome
         operator()(const T& v)
         {
           // Shape is the same as the source buffer, but with one subchannel.
-          ome::compat::array<VariantPixelBuffer::size_type, 9> dest_shape;
+          std::array<VariantPixelBuffer::size_type, 9> dest_shape;
           const VariantPixelBuffer::size_type *shape_ptr(v->shape());
           std::copy(shape_ptr, shape_ptr + PixelBufferBase::dimensions,
                     dest_shape.begin());

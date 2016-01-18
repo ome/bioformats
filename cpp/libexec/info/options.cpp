@@ -164,7 +164,7 @@ namespace info
       ("no-used", "Do not display used files");
 
     hidden.add_options()
-      ("files", opt::value<std::vector<std::string> >(&this->files),
+      ("files", opt::value<std::vector<std::string>>(&this->files),
        "Files to read");
 
     positional.add("files", -1);

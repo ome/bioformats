@@ -385,7 +385,7 @@ TYPED_TEST_P(NumericTest, OperatorEqual)
        i != this->ops.end();
        ++i)
     if (i->op == EQUAL)
-      compare_test<CompareEqual<TypeParam> >(*this, *i);
+      compare_test<CompareEqual<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorNotEqual)
@@ -394,7 +394,7 @@ TYPED_TEST_P(NumericTest, OperatorNotEqual)
        i != this->ops.end();
        ++i)
     if (i->op == NOT_EQUAL)
-      compare_test<CompareNotEqual<TypeParam> >(*this, *i);
+      compare_test<CompareNotEqual<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorLess)
@@ -403,7 +403,7 @@ TYPED_TEST_P(NumericTest, OperatorLess)
        i != this->ops.end();
        ++i)
     if (i->op == LESS)
-      compare_test<CompareLess<TypeParam> >(*this, *i);
+      compare_test<CompareLess<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorLessOrEqual)
@@ -412,7 +412,7 @@ TYPED_TEST_P(NumericTest, OperatorLessOrEqual)
        i != this->ops.end();
        ++i)
     if (i->op == LESS_OR_EQUAL)
-      compare_test<CompareLessOrEqual<TypeParam> >(*this, *i);
+      compare_test<CompareLessOrEqual<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorGreater)
@@ -421,7 +421,7 @@ TYPED_TEST_P(NumericTest, OperatorGreater)
        i != this->ops.end();
        ++i)
     if (i->op == GREATER)
-      compare_test<CompareGreater<TypeParam> >(*this, *i);
+      compare_test<CompareGreater<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorGreaterOrEqual)
@@ -430,7 +430,7 @@ TYPED_TEST_P(NumericTest, OperatorGreaterOrEqual)
        i != this->ops.end();
        ++i)
     if (i->op == GREATER_OR_EQUAL)
-      compare_test<CompareGreaterOrEqual<TypeParam> >(*this, *i);
+      compare_test<CompareGreaterOrEqual<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorAdd)
@@ -439,7 +439,7 @@ TYPED_TEST_P(NumericTest, OperatorAdd)
        i != this->ops.end();
        ++i)
     if (i->op == ADD)
-      operation_test<OperationAdd<TypeParam> >(*this, *i);
+      operation_test<OperationAdd<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorAddAssign)
@@ -448,7 +448,7 @@ TYPED_TEST_P(NumericTest, OperatorAddAssign)
        i != this->ops.end();
        ++i)
     if (i->op == ADD_ASSIGN)
-      operation_test<OperationAddAssign<TypeParam> >(*this, *i);
+      operation_test<OperationAddAssign<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorSubtract)
@@ -457,7 +457,7 @@ TYPED_TEST_P(NumericTest, OperatorSubtract)
        i != this->ops.end();
        ++i)
     if (i->op == SUBTRACT)
-      operation_test<OperationSubtract<TypeParam> >(*this, *i);
+      operation_test<OperationSubtract<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorSubtractAssign)
@@ -466,7 +466,7 @@ TYPED_TEST_P(NumericTest, OperatorSubtractAssign)
        i != this->ops.end();
        ++i)
     if (i->op == SUBTRACT_ASSIGN)
-      operation_test<OperationSubtractAssign<TypeParam> >(*this, *i);
+      operation_test<OperationSubtractAssign<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorMultiply)
@@ -475,7 +475,7 @@ TYPED_TEST_P(NumericTest, OperatorMultiply)
        i != this->ops.end();
        ++i)
     if (i->op == MULTIPLY)
-      operation_test<OperationMultiply<TypeParam> >(*this, *i);
+      operation_test<OperationMultiply<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorMultiplyAssign)
@@ -484,7 +484,7 @@ TYPED_TEST_P(NumericTest, OperatorMultiplyAssign)
        i != this->ops.end();
        ++i)
     if (i->op == MULTIPLY_ASSIGN)
-      operation_test<OperationMultiplyAssign<TypeParam> >(*this, *i);
+      operation_test<OperationMultiplyAssign<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorDivide)
@@ -493,7 +493,7 @@ TYPED_TEST_P(NumericTest, OperatorDivide)
        i != this->ops.end();
        ++i)
     if (i->op == DIVIDE)
-      operation_test<OperationDivide<TypeParam> >(*this, *i);
+      operation_test<OperationDivide<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorDivideAssign)
@@ -502,7 +502,7 @@ TYPED_TEST_P(NumericTest, OperatorDivideAssign)
        i != this->ops.end();
        ++i)
     if (i->op == DIVIDE_ASSIGN)
-      operation_test<OperationDivideAssign<TypeParam> >(*this, *i);
+      operation_test<OperationDivideAssign<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorModulo)
@@ -511,7 +511,7 @@ TYPED_TEST_P(NumericTest, OperatorModulo)
        i != this->ops.end();
        ++i)
     if (i->op == MODULO)
-      operation_test<OperationModulo<TypeParam> >(*this, *i);
+      operation_test<OperationModulo<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorModuloAssign)
@@ -520,7 +520,7 @@ TYPED_TEST_P(NumericTest, OperatorModuloAssign)
        i != this->ops.end();
        ++i)
     if (i->op == MODULO_ASSIGN)
-      operation_test<OperationModuloAssign<TypeParam> >(*this, *i);
+      operation_test<OperationModuloAssign<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorIncrement)
@@ -529,7 +529,7 @@ TYPED_TEST_P(NumericTest, OperatorIncrement)
        i != this->ops.end();
        ++i)
     if (i->op == INCREMENT)
-      operation_test<OperationIncrement<TypeParam> >(*this, *i);
+      operation_test<OperationIncrement<TypeParam>>(*this, *i);
 }
 
 TYPED_TEST_P(NumericTest, OperatorDecrement)
@@ -538,7 +538,7 @@ TYPED_TEST_P(NumericTest, OperatorDecrement)
        i != this->ops.end();
        ++i)
     if (i->op == DECREMENT)
-      operation_test<OperationDecrement<TypeParam> >(*this, *i);
+      operation_test<OperationDecrement<TypeParam>>(*this, *i);
 }
 
 REGISTER_TYPED_TEST_CASE_P(NumericTest,

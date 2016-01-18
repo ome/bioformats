@@ -40,7 +40,7 @@
 
 #include <ome/bioformats/Types.h>
 
-#include <ome/compat/cstdint.h>
+#include <cstdint>
 
 namespace ome
 {

@@ -267,17 +267,17 @@ The Bio-Formats API **never** passes pointers allocated with
 “smart” pointers are used throughout to manage memory safely and
 automatically.
 
-:cpp:class:`ome::compat::shared_ptr` as a “smart” pointer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:cpp:class:`std::shared_ptr` as a “smart” pointer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The unsafe example above, has been rewritten to use
-:cpp:class:`ome::compat::shared_ptr`:
+:cpp:class:`std::shared_ptr`:
 
 .. code-block:: cpp
 
     // Start of block
     {
-      ome::compat::shared_ptr<Image> i(ome::compat::make_shared<Image>(filename));
+      std::shared_ptr<Image> i(std::make_shared<Image>(filename));
 
       i->read_plane(); // throws exception
 
@@ -286,20 +286,13 @@ The unsafe example above, has been rewritten to use
     }
 
 Rather than managing the memory by hand, responsibility for this is
-delegated to a “smart” pointer, :cpp:class:`ome::compat::shared_ptr`.
-The memory is freed by the :cpp:class:`ome::compat::shared_ptr`
-destructor which is run at the end of the block scope, on explicit
-:c:type:`return`, or when cleaned up by exception stack unwinding.
-
-.. note::
-
-    :cpp:class:`ome::compat::shared_ptr` is either a
-    :cpp:class:`std::shared_ptr` or a :cpp:class:`boost::shared_ptr`,
-    depending upon whether C++11 features are avaiable or not,
-    respectively.
+delegated to a “smart” pointer, :cpp:class:`std::shared_ptr`.  The
+memory is freed by the :cpp:class:`std::shared_ptr` destructor which
+is run at the end of the block scope, on explicit :c:type:`return`, or
+when cleaned up by exception stack unwinding.
 
 - :cpp:class:`shared_ptr` object lifetime manages the resource
-- :cpp:class:`new` replaced with :cpp:class:`ome::compat::make_shared`
+- :cpp:class:`new` replaced with :cpp:class:`std::make_shared`
 - May be used as class members; lifetime is tied to class instance
 - Clean up for all exit points is automatic and safe
 - Allows ownership transfer and sharing
@@ -340,30 +333,30 @@ C++ reference variants
 
 .. code-block:: cpp
 
-    //              Non-constant                                 Constant
-    // -------------------------------------  ----------------------------------------------
+    //          Non-constant                         Constant
+    // -----------------------------  --------------------------------------
     // Pointer
-                                   Image *i;                                 const Image *i;
-                            Image * const i;                          const Image * const i;
+                           Image *i;                         const Image *i;
+                    Image * const i;                  const Image * const i;
 
     // Reference
-                                   Image& i;                                 const Image& i;
+                           Image& i;                         const Image& i;
 
     // Shared pointer
-           ome::compat::shared_ptr<Image> i;         ome::compat::shared_ptr<const Image> i;
-     const ome::compat::shared_ptr<Image> i;   const ome::compat::shared_ptr<const Image> i;
+           std::shared_ptr<Image> i;         std::shared_ptr<const Image> i;
+     const std::shared_ptr<Image> i;   const std::shared_ptr<const Image> i;
 
     // Shared pointer reference
-          ome::compat::shared_ptr<Image>& i;        ome::compat::shared_ptr<const Image>& i;
-    const ome::compat::shared_ptr<Image>& i;  const ome::compat::shared_ptr<const Image>& i;
+          std::shared_ptr<Image>& i;        std::shared_ptr<const Image>& i;
+    const std::shared_ptr<Image>& i;  const std::shared_ptr<const Image>& i;
 
     // Weak pointer
-             ome::compat::weak_ptr<Image> i;           ome::compat::weak_ptr<const Image> i;
-       const ome::compat::weak_ptr<Image> i;     const ome::compat::weak_ptr<const Image> i;
+             std::weak_ptr<Image> i;           std::weak_ptr<const Image> i;
+       const std::weak_ptr<Image> i;     const std::weak_ptr<const Image> i;
 
    // Weak pointer reference
-            ome::compat::weak_ptr<Image>& i;          ome::compat::weak_ptr<const Image>& i;
-      const ome::compat::weak_ptr<Image>& i;    const ome::compat::weak_ptr<const Image>& i;
+            std::weak_ptr<Image>& i;          std::weak_ptr<const Image>& i;
+      const std::weak_ptr<Image>& i;    const std::weak_ptr<const Image>& i;
 
 Java has one reference type.  Here, we have **22**.  Clearly, not all
 of these will typically be used.  Below, a subset of these are shown
@@ -373,16 +366,16 @@ Class member types:
 
 .. code-block:: cpp
 
-  Image i;                             // Concrete instance
-  ome::compat::shared_ptr<Image> i;    // Reference
-  ome::compat::weak_ptr<Image> i;      // Weak reference
+  Image i;                     // Concrete instance
+  std::shared_ptr<Image> i;    // Reference
+  std::weak_ptr<Image> i;      // Weak reference
 
 Wherever possible, a concrete instance should be preferred.  This is
 not possible for polymorphic types, where a reference is required.  In
-this situation, an :cpp:class:`ome::compat::shared_ptr` is preferred
+this situation, an :cpp:class:`std::shared_ptr` is preferred
 if the class owns the member and/or needs control over its lifetime.
 If the class does not have ownership then an
-:cpp:class:`ome::compat::weak_ptr` will allow safe access to the
+:cpp:class:`std::weak_ptr` will allow safe access to the
 object if it still exists.  In circumstances where manual lifetime
 management is required, e.g. for performance, and the member is
 guaranteed to exist for the duration of the object's lifetime, a plain
@@ -399,7 +392,7 @@ Argument types:
   // Ownership retained
   void read_plane(const Image& image);
   // Ownership shared or transferred
-  void read_plane(const ome::compat::shared_ptr<Image>& image);
+  void read_plane(const std::shared_ptr<Image>& image);
 
 Passing primitive types by value is acceptable.  However, passing a
 struct or class by value will implicitly copy the object into the
@@ -409,12 +402,12 @@ polymorphic types).  Passing by reference avoids the need for any
 copying, and passing by :c:type:`const` reference will prevent the
 callee from modifying the object, also making it clear that there is
 no transfer of ownership.  Passing using an
-:cpp:class:`ome::compat::shared_ptr` is possible but not
-recommended---the copy will involve reference counting overhead which
-can kill multi-threaded performance since it requires synchronization
-between all threads; use a :c:type:`const` reference to an
-:cpp:class:`ome::compat::shared_ptr` to avoid the overhead.  If
-ownership should be transferred or shared with the callee, use a
+:cpp:class:`std::shared_ptr` is possible but not recommended---the
+copy will involve reference counting overhead which can kill
+multi-threaded performance since it requires synchronization between
+all threads; use a :c:type:`const` reference to an
+:cpp:class:`std::shared_ptr` to avoid the overhead.  If ownership
+should be transferred or shared with the callee, use a
 non-:c:type:`const` reference.
 
 To be absolutely clear, plain pointers are never used and are not
@@ -425,10 +418,10 @@ Return types:
 
 .. code-block:: cpp
 
-                            Image get_image(); // Ownership transferred
-                           Image& get_image(); // Ownership retained
-   ome::compat::shared_ptr<Image> get_image(); // Ownership shared/trans
-  ome::compat::shared_ptr<Image>& get_image(); // Ownership shared
+                    Image get_image(); // Ownership transferred
+                   Image& get_image(); // Ownership retained
+   std::shared_ptr<Image> get_image(); // Ownership shared/transferred
+  std::shared_ptr<Image>& get_image(); // Ownership shared
 
 If the callee does not retain a copy of the original object, it can't
 pass by reference since it can't guarantee the object remaining in
@@ -437,10 +430,10 @@ pass by value.  If the callee does retain a copy, it has the option of
 passing by reference.  Passing by reference is preferred when
 possible.  Passing by value implies ownership transfer.  Passing by
 reference implies ownership retention.  Passing an
-:cpp:class:`ome::compat::shared_ptr` by value or reference implies
-sharing ownership since the caller can retain a reference; if passing
-by value ownership *may* be transferred since this implies the callee
-is not retaining a reference to it (but this is not guaranteed).
+:cpp:class:`std::shared_ptr` by value or reference implies sharing
+ownership since the caller can retain a reference; if passing by value
+ownership *may* be transferred since this implies the callee is not
+retaining a reference to it (but this is not guaranteed).
 
 Again, to be absolutely clear, plain pointers are never used and are
 not acceptable for ownership transfer.  A plain reference also makes
@@ -481,22 +474,20 @@ is not known unless passed separately.
 C++ arrays “decay” to “bare” pointers, and pointers have no associated
 size information.
 
-:cpp:class:`ome::compat::array` is a safe alternative.  This is either
-a C++11 :cpp:class:`std::array` or :cpp:class:`boost::array` with
-older compilers.
+:cpp:class:`std::array` is a safe alternative.
 
 .. code-block:: cpp
 
   class Image
   {
-    typedef ome::compat::array<uint8_t, 256> LUT;
+    typedef std::array<uint8_t, 256> LUT;
 
     // Safe; size defined
     const LUT& getLUT() const;
           void setLUT(const LUT&);
   };
 
-:cpp:class:`ome::compat::array` is a array-like object (a class which
+:cpp:class:`std::array` is an array-like object (a class which
 behaves like an array).  Its type and size are defined in the
 template, and it may be passed around like any other object.  Its
 :cpp:func:`array::at()` method provides strict bounds checking, while
@@ -510,15 +501,14 @@ Types with a common base
 
 .. code-block:: cpp
 
-    std::vector<ome::compat::shared_ptr<Base> > v;
-    v.push_back(ome::compat::make_shared<Derived>());
+    std::vector<std::shared_ptr<Base>> v;
+    v.push_back(std::make_shared<Derived>());
 
 This can store any type derived from :cpp:class:`Base`.  An
-:cpp:class:`ome::compat::shared_ptr` is **essential**.  Without it,
-bare pointers to the base would be stored, and memory would be leaked
-when elements are removed from the container (unless externally
-managed [generally unsafe]).  The same applies to passing polymorphic
-types.
+:cpp:class:`std::shared_ptr` is **essential**.  Without it, bare
+pointers to the base would be stored, and memory would be leaked when
+elements are removed from the container (unless externally managed
+[generally unsafe]).  The same applies to passing polymorphic types.
 
 Java containers can be problematic:
 
@@ -578,8 +568,8 @@ code to operate on all of the supported types.  The variant type may
 be used as a class member, passed by value, passed by reference or
 stored in a container like any other type.  Due to the way it is
 implemented to store values, it does not necessarily need wrapping in
-an :cpp:class:`ome::compat::shared_ptr` since it can behave as a value
-type (depending upon the context).
+an :cpp:class:`std::shared_ptr` since it can behave as a value type
+(depending upon the context).
 
 
 Java uses polymorphism to store and pass the root :cpp:class:`Object`
@@ -766,7 +756,7 @@ integer, floating point, complex floating point and bitmask cases.
 
     struct TypeCategoryVisitor : public boost::static_visitor<>
     {
-      typedef ::ome::bioformats::PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
+      typedef ::ome::bioformats::PixelProperties<::ome::xml::model::enums::PixelType::BIT>::std_type bit_type;
 
       TypeCategoryVisitor()
       {}
@@ -776,7 +766,7 @@ integer, floating point, complex floating point and bitmask cases.
       typename boost::enable_if_c<
         boost::is_integral<T>::value, void
         >::type
-      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      operator() (std::shared_ptr<::ome::bioformats::PixelBuffer<T>>& buf)
       {
         // Integer algorithm.
       }
@@ -786,7 +776,7 @@ integer, floating point, complex floating point and bitmask cases.
       typename boost::enable_if_c<
         boost::is_floating_point<T>::value, void
         >::type
-      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      operator() (std::shared_ptr<::ome::bioformats::PixelBuffer<T>>& buf)
       {
         // Floating point algorithm.
       }
@@ -796,7 +786,7 @@ integer, floating point, complex floating point and bitmask cases.
       typename boost::enable_if_c<
         boost::is_complex<T>::value, void
         >::type
-      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<T> >& buf)
+      operator() (std::shared_ptr<::ome::bioformats::PixelBuffer<T>>& buf)
       {
         // Complex floating point algorithm.
       }
@@ -804,7 +794,7 @@ integer, floating point, complex floating point and bitmask cases.
       // BIT/bool pixel type.  Note this is a simple overload since it is
       // a simple type, not a category of different types.
       void
-      operator() (ome::compat::shared_ptr< ::ome::bioformats::PixelBuffer<bit_type> >& buf)
+      operator() (std::shared_ptr<::ome::bioformats::PixelBuffer<bit_type>>& buf)
       {
         // Boolean algorithm.
       }
