@@ -292,7 +292,7 @@ Supported Formats
      - |yes|
      - |no|
    * - :doc:`formats/cellomics`
-     - .c01
+     - .c01, .dib
      - |Very good|
      - |Poor|
      - |Fair|
