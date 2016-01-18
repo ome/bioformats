@@ -197,3 +197,12 @@ foreach(schema ${OME_SCHEMAS})
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
           DESTINATION "${OME_BIOFORMATS_INSTALL_SCHEMADIR}/${SCHEMA_RELEASE}")
 endforeach(schema)
+
+# Find and install all transforms
+file(GLOB OME_TRANSFORMS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/transforms/"
+     "${PROJECT_SOURCE_DIR}/components/specification/transforms/*.xsl")
+foreach(transform ${OME_TRANSFORMS})
+  get_filename_component(TRANSFORM ${transform} PATH)
+  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/transforms/${transform}"
+          DESTINATION "${OME_BIOFORMATS_INSTALL_TRANSFORMDIR}/${TRANSFORM}")
+endforeach(transform)
