@@ -566,7 +566,7 @@ public class InCellReader extends FormatReader {
       }
 
       int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i) + 1;
+      int field = getFieldFromSeries(i);
       int totalTimepoints =
         oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
       int timepoint = oneTimepointPerSeries ? (i % totalTimepoints) + 1 : -1;
@@ -594,7 +594,7 @@ public class InCellReader extends FormatReader {
       }
       else col += (char) (colChar + wellCol);
 
-      String imageName = "Well " + row + "-" + col + ", Field #" + field;
+      String imageName = "Well " + row + "-" + col + ", Field #" + (field + 1);
       if (timepoint >= 0) {
         imageName += ", Timepoint #" + timepoint;
       }
@@ -606,7 +606,7 @@ public class InCellReader extends FormatReader {
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
-      int sampleIndex = (field - 1) * totalTimepoints + timepoint;
+      int sampleIndex = field * totalTimepoints + timepoint;
 
       String wellSampleID =
         MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
