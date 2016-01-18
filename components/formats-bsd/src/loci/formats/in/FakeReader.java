@@ -432,7 +432,7 @@ public class FakeReader extends FormatReader {
 
     String acquisitionDate = null;
 
-    int screens = 1;
+    int screens = 0;
     int plates = 0;
     int plateRows = 0;
     int plateCols = 0;
@@ -599,7 +599,7 @@ public class FakeReader extends FormatReader {
 
     // populate SPW metadata
     MetadataStore store = makeFilterMetadata();
-    boolean hasSPW = plates > 0 || plateRows > 0 ||
+    boolean hasSPW = screens > 0 || plates > 0 || plateRows > 0 ||
       plateCols > 0 || fields > 0 || plateAcqs > 0;
     if (hasSPW) {
       if (screens<0) screens = 0;
