@@ -42,17 +42,18 @@ To generate a simple plate file:
 
 ::
 
-    touch "plate-test-file&plates=1&plateAcqs=1&plateRows=1&plateCols=1&fields=1.fake"
+    touch "simple-plate&plates=1&plateAcqs=1&plateRows=1&plateCols=1&fields=1.fake"
+    touch "default-plate&plates=1.fake"
+    touch "default-screen&screens=1.fake"
 
-This will create a single plate which is, by default, within a containing
-screen. To create a plate with no containing screen add ``&screens=0`` to the
-key-value pairs in the file name. As above a :file:`.fake.ini` file can be
-used.
+These will each create a single plate which is within a containing screen,
+by default in the first two cases. To create a plate with no containing screen
+add ``&screens=0`` to the key-value pairs in the file name. As above a
+:file:`.fake.ini` file can be used.
 
-To generate a valid plate the values of ``plates``, ``plateAcqs``,
-``plateRows``, ``plateCols`` and ``fields`` must **all** be greater than zero.
-If this condition is not met then an image will be generated instead of a
-plate.
+To generate a valid plate at least one of ``screens``, ``plates``,
+``plateAcqs``, ``plateRows``, ``plateCols`` and ``fields`` must be greater
+than zero.
 
 There are several other keys that can be added, a complete list of these,
 with their default values, is shown below.
