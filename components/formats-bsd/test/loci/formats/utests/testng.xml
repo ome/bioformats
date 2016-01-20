@@ -114,4 +114,10 @@
         <class name="loci.formats.utests.MemoizerTest"/>
       </classes>
     </test>
+    <test name="AxisGuesserTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.AxisGuesserTest"/>
+      </classes>
+    </test>
 </suite>
