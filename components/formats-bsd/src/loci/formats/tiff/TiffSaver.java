@@ -353,7 +353,7 @@ public class TiffSaver {
                   }
                   else {
                     off = c * blockSize + ndx + n;
-                    int realStrip = c * (nStrips / nChannels) + strip;
+                    int realStrip = (c * (nStrips / nChannels)) + strip;
                     if (row >= h || col >= w) {
                       stripOut[realStrip].writeByte(0);
                     } else if (off < buf.length) {
@@ -501,12 +501,31 @@ public class TiffSaver {
     long fp = out.getFilePointer();
     writeIFD(ifd, 0);
 
+    // strips.length is the total number of strips being written during
+    // this method call, which is no more than the total number of
+    // strips in the image
+    //
+    // for single-channel or interleaved image data, the strips are written
+    // in order
+    // for multi-channel non-interleaved image data, the strip indexing has
+    // to correct for the fact that each strip represents a single channel
+    //
+    // for example, in a 3 channel non-interleaved image with 2 calls to
+    // writeImageIFD each of which writes half of the image:
+    //  - we expect 6 strips to be written in total; the first call writes
+    //    {0, 2, 4}, the second writes {1, 3, 5}
+    //  - in each call to writeImageIFD:
+    //      * strips.length is 3
+    //      * interleaved is false
+    //      * nChannels is 3
+    //      * tileCount is 2
+
     int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
     for (int i=0; i<strips.length; i++) {
       out.seek(out.length());
       int index = interleaved ? i : (i / nChannels) * nChannels;
       int c = interleaved ? 0 : i % nChannels;
-      int thisOffset = firstOffset + index + c * tileCount;
+      int thisOffset = firstOffset + index + (c * tileCount);
       offsets.set(thisOffset, out.getFilePointer());
       byteCounts.set(thisOffset, new Long(strips[i].length));
       if (LOGGER.isDebugEnabled()) {
