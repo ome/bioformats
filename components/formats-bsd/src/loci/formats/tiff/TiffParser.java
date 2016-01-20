@@ -672,15 +672,11 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
-        counts.setStream(in);
-      }
+      counts.setStream(in);
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
-        counts.setStream(in);
-      }
+      counts.setStream(in);
     }
 
     long[] stripByteCounts = ifd.getStripByteCounts();
@@ -707,9 +703,7 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
-      if (stripOffsets.getStream() == null) {
-        stripOffsets.setStream(in);
-      }
+      stripOffsets.setStream(in);
       stripOffset = stripOffsets.get(offsetIndex);
       nStrips = stripOffsets.size();
     }
@@ -852,9 +846,7 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray offsets = ifd.getOnDemandStripOffsets();
-      if (offsets.getStream() == null) {
-        offsets.setStream(in);
-      }
+      offsets.setStream(in);
       stripOffsets = offsets.toArray();
     }
     else {
@@ -863,15 +855,11 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
-        counts.setStream(in);
-      }
+      counts.setStream(in);
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
-        counts.setStream(in);
-      }
+      counts.setStream(in);
     }
 
     long[] stripByteCounts = ifd.getStripByteCounts();
