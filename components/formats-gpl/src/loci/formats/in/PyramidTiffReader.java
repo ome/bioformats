@@ -86,6 +86,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int index = getCoreIndex();
+    tiffParser.setAssumeEqualStrips(equalStrips);
     tiffParser.getSamples(ifds.get(index), buf, x, y, w, h);
     return buf;
   }
