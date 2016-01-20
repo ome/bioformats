@@ -46,6 +46,7 @@ import static loci.formats.AxisGuesser.Z_AXIS;
 import static loci.formats.AxisGuesser.T_AXIS;
 import static loci.formats.AxisGuesser.C_AXIS;
 import static loci.formats.AxisGuesser.S_AXIS;
+import static loci.formats.AxisGuesser.UNKNOWN_AXIS;
 
 
 public class AxisGuesserTest {
@@ -172,6 +173,7 @@ public class AxisGuesserTest {
     assertEquals(ag.getAxisCountC(), countC);
     assertEquals(ag.getAxisCount(S_AXIS), countS);
     assertEquals(ag.getAxisCountS(), countS);
+    assertEquals(ag.getAxisCount(UNKNOWN_AXIS), 0);
   }
 
   @Test(dataProvider = "prefixCases")
