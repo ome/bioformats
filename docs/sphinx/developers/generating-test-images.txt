@@ -101,7 +101,7 @@ with their default values, is shown below.
       * dimension order (e.g. XYZCT)
       * XYZCT
     - * orderCertain
-      *
+      * whether or not the dimension order is certain
       * true
     - * little
       * whether or not the pixel data should be little-endian
@@ -116,7 +116,7 @@ with their default values, is shown below.
       * whether or not the color lookup table is just for making the image look pretty
       * false
     - * metadataComplete
-      *
+      * whether or not the metadata is complete
       * true
     - * thumbnail
       *
