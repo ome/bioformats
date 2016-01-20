@@ -365,6 +365,16 @@ public class FEITiffReader extends BaseTiffReader {
     @Override
     public void endElement(String uri, String localName, String qName)
     {
+      processElement(qName);
+      if (parentNames.size() > 0) {
+        String name = parentNames.peek();
+        if (qName.equals(name)) {
+          parentNames.pop();
+        }
+      }
+    }
+
+    private void processElement(String qName) {
       String d = sb.toString().trim();
       if (d.isEmpty()) {
         return;
@@ -392,15 +402,15 @@ public class FEITiffReader extends BaseTiffReader {
       if (key != null && value != null) {
         addGlobalMeta(key, value);
 
-        if (key.equals("Stage X") || ("StagePosition".equals(parent) && key.equals("X"))) {
+        if (key.equals("Stage X") || key.equals("StagePosition X")) {
           final Double number = Double.valueOf(value);
           stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Y") || ("StagePosition".equals(parent) && key.equals("Y"))) {
+        else if (key.equals("Stage Y") || key.equals("StagePosition Y")) {
           final Double number = Double.valueOf(value);
           stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Z") || ("StagePosition".equals(parent) && key.equals("Z"))) {
+        else if (key.equals("Stage Z") || key.equals("StagePosition Z")) {
           final Double number = Double.valueOf(value);
           stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
@@ -419,13 +429,6 @@ public class FEITiffReader extends BaseTiffReader {
         }
         else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
           sizeY = new Double(value);
-        }
-      }
-
-      if (parentNames.size() > 0) {
-        String name = parentNames.peek();
-        if (qName.equals(name)) {
-          parentNames.pop();
         }
       }
     }
