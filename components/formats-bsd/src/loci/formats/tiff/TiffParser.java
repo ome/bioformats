@@ -672,11 +672,15 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      counts.setStream(in);
+      if (counts != null) {
+        counts.setStream(in);
+      }
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      counts.setStream(in);
+      if (counts != null) {
+        counts.setStream(in);
+      }
     }
 
     long[] stripByteCounts = ifd.getStripByteCounts();
@@ -855,11 +859,15 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      counts.setStream(in);
+      if (counts != null) {
+        counts.setStream(in);
+      }
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      counts.setStream(in);
+      if (counts != null) {
+        counts.setStream(in);
+      }
     }
 
     long[] stripByteCounts = ifd.getStripByteCounts();
