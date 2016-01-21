@@ -98,6 +98,7 @@ Numerical data processing applications
     :maxdepth: 1
     :titlesonly:
 
+    octave/index
     idl/index
     knime/index
     matlab/index
