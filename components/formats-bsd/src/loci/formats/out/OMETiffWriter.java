@@ -97,8 +97,9 @@ public class OMETiffWriter extends TiffWriter {
       if (currentId != null) {
         setupServiceAndMetadata();
 
-        // remove any BinData elements from the OME-XML
+        // remove any BinData and old TiffData elements from the OME-XML
         service.removeBinData(omeMeta);
+        service.removeTiffData(omeMeta);
 
         for (int series=0; series<omeMeta.getImageCount(); series++) {
           setSeries(series);
