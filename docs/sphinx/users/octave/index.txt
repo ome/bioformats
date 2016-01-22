@@ -15,24 +15,25 @@ the only difference being the installation steps.
 Installation
 ------------
 
-Download `bioformats_package.jar` from the Bio-Formats
-:downloads:`downloads page <>` and place it somewhere sensible for
-your system (in Linux, this will probably be `/usr/local/share/java` or
-`~/.local/share/java` for a system-wide or user installation respectively).
+#. Download :downloads:`bioformats_package.jar <artifacts/bioformats_package.jar>`
+   and place it somewhere sensible for your system (in Linux, this will
+   probably be `/usr/local/share/java` or `~/.local/share/java` for a
+   system-wide or user installation respectively).
+#. Add `bioformats_package.jar` to Octave's *static* javaclasspath (see
+   `Octave's documentation <https://www.gnu.org/software/octave/doc/interpreter/How-to-make-Java-classes-available_003f.html>`_).
+#. Download the Octave package from the :downloads:`downloads page <>`.
+#. Start octave and install the package with::
 
-Add `bioformats_package.jar` to Octave's *static* javaclasspath (see
-`Octave's documentation <https://www.gnu.org/software/octave/doc/interpreter/How-to-make-Java-classes-available_003f.html>`_).
-
-Download the Octave package from the Bio-Formats
-:downloads:`downloads page <>`.  Start octave and install the package
-with `pkg install path-to-bioformats-octave-version.tar.gz`.
+      >> pkg install path-to-bioformats-octave-version.tar.gz
 
 Usage
 -----
 
 Usage instructions are the same as Matlab.  The only difference is that
-you need to explicitly load the package.  This is done by running
-`pkg load bioformats` at the Octave prompt.
+you need to explicitly load the package.  This is done by running at the
+Octave prompt::
+
+    >> pkg load bioformats
 
 Upgrading
 ---------
