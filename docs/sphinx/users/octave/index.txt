@@ -12,6 +12,18 @@ portable.
 Indeed, the Octave bioformats package is exactly the same as Matlab's,
 the only difference being the installation steps.
 
+Requirements
+------------
+
+The bioformats package requires Octave version 4.0.0 or later with
+support for java::
+
+    $ octave
+    >> OCTAVE_VERSION
+    ans = 4.0.0
+    >> octave_config_info ("features").JAVA
+    ans =  1
+
 Installation
 ------------
 
