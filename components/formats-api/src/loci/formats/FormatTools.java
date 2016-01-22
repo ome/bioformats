@@ -199,6 +199,8 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
+  public static final String CREATOR = "OME Bio-Formats";
+
   public static final Properties VERSION_PROPERTIES = loadProperties();
 
   /** Current VCS revision. */

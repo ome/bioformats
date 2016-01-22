@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -250,6 +251,9 @@ public class OMETiffWriter extends TiffWriter {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
+
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMeta.getRoot();
+    root.setCreator(FormatTools.CREATOR);
 
     String xml;
     try {
