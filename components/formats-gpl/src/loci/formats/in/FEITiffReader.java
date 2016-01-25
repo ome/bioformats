@@ -343,15 +343,29 @@ public class FEITiffReader extends BaseTiffReader {
   // -- Helper class --
 
   class FEIHandler extends BaseHandler {
+    private StringBuilder sb;
     private String key, value;
-    private String qName;
     private Deque<String> parentNames = new ArrayDeque<String>();
 
     // -- DefaultHandler API methods --
 
     @Override
     public void characters(char[] data, int start, int len) {
-      String d = new String(data, start, len).trim();
+      sb.append(data, start, len);
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      parentNames.push(qName);
+      sb = new StringBuilder();
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+    {
+      String d = sb.toString().trim();
       if (d.isEmpty()) {
         return;
       }
@@ -407,19 +421,7 @@ public class FEITiffReader extends BaseTiffReader {
           sizeY = new Double(value);
         }
       }
-    }
 
-    @Override
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      this.qName = qName;
-      parentNames.push(qName);
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName)
-    {
       if (parentNames.size() > 0) {
         String name = parentNames.peek();
         if (qName.equals(name)) {
