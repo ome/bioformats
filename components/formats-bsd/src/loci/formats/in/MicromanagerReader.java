@@ -343,9 +343,15 @@ public class MicromanagerReader extends FormatReader {
             store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MS), i, q);
           }
           if (p.positions != null && q < p.positions.length) {
-            store.setPlanePositionX(new Length(p.positions[q][0], UNITS.MICROM), i, q);
-            store.setPlanePositionY(new Length(p.positions[q][1], UNITS.MICROM), i, q);
-            store.setPlanePositionZ(new Length(p.positions[q][2], UNITS.MICROM), i, q);
+            if (p.positions[q][0] != null) {
+              store.setPlanePositionX(new Length(p.positions[q][0], UNITS.MICROM), i, q);
+            }
+            if (p.positions[q][1] != null) {
+              store.setPlanePositionY(new Length(p.positions[q][1], UNITS.MICROM), i, q);
+            }
+            if (p.positions[q][2] != null) {
+              store.setPlanePositionZ(new Length(p.positions[q][2], UNITS.MICROM), i, q);
+            }
           }
         }
 
