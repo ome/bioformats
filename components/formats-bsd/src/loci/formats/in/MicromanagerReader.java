@@ -51,6 +51,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -74,6 +76,8 @@ public class MicromanagerReader extends FormatReader {
 
   /** File containing extra metadata. */
   private static final String METADATA = "metadata.txt";
+
+  private static final int JSON_TAG = 50839;
 
   /**
    * Optional file containing additional acquisition parameters.
@@ -338,6 +342,11 @@ public class MicromanagerReader extends FormatReader {
           {
             store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MS), i, q);
           }
+          if (p.positions != null && q < p.positions.length) {
+            store.setPlanePositionX(new Length(p.positions[q][0], UNITS.MICROM), i, q);
+            store.setPlanePositionY(new Length(p.positions[q][1], UNITS.MICROM), i, q);
+            store.setPlanePositionZ(new Length(p.positions[q][2], UNITS.MICROM), i, q);
+          }
         }
 
         String serialNumber = p.detectorID;
@@ -401,6 +410,46 @@ public class MicromanagerReader extends FormatReader {
     parsePosition(s, posIndex);
 
     buildTIFFList(posIndex);
+
+    // parse original metadata from each TIFF's JSON
+    p.positions = new Double[p.tiffs.size()][3];
+    int digits = String.valueOf(p.tiffs.size() - 1).length();
+    for (int plane=0; plane<p.tiffs.size(); plane++) {
+      String path = p.tiffs.get(plane);
+      try {
+        TiffParser parser = new TiffParser(path);
+        IFD firstIFD = parser.getFirstIFD();
+        parser.fillInIFD(firstIFD);
+        String json = firstIFD.getIFDTextValue(JSON_TAG);
+        String[] lines = json.split("\n");
+        for (String line : lines) {
+          String toSplit = line.trim();
+          toSplit = toSplit.substring(0, toSplit.length() - 1);
+          String[] values = toSplit.split("\": ");
+          if (values.length < 2) {
+            continue;
+          }
+          String key = values[0].replaceAll("\"", "");
+          String value = values[1].replaceAll("\"", "");
+          if (key.length() > 0 && value.length() > 0) {
+            // using key alone will result in conflicts with metadata.txt values
+            addSeriesMeta(String.format("Plane #%0" + digits + "d %s", plane, key), value);
+            if (key.equals("XPositionUm")) {
+              p.positions[plane][0] = new Double(value);
+            }
+            else if (key.equals("YPositionUm")) {
+              p.positions[plane][1] = new Double(value);
+            }
+            else if (key.equals("ZPositionUm")) {
+              p.positions[plane][2] = new Double(value);
+            }
+          }
+        }
+      }
+      catch (IOException e) {
+        LOGGER.debug("Failed to read metadata from " + path, e);
+      }
+    }
   }
 
   private void buildTIFFList(int posIndex) throws FormatException {
@@ -433,7 +482,8 @@ public class MicromanagerReader extends FormatReader {
           if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
           if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
 
-          p.tiffs.add(new Location(dir, f).getAbsolutePath());
+          String path = new Location(dir, f).getAbsolutePath();
+          p.tiffs.add(path);
         }
       }
 
@@ -861,6 +911,8 @@ public class MicromanagerReader extends FormatReader {
     public Vector<Double> voltage;
     public String cameraRef;
     public String cameraMode;
+
+    public Double[][] positions;
 
     public String getFile(int no) {
       return getFile(getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
