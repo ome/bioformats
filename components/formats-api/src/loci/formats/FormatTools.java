@@ -219,6 +219,9 @@ public final class FormatTools {
   public static final String VERSION =
     VERSION_PROPERTIES.getProperty("release.version");
 
+  /** Value to use when setting creator/software fields in exported files. */
+  public static final String CREATOR = "OME Bio-Formats " + VERSION;
+
   public static final String PROPERTY_FILE = "version.properties";
 
   static Properties loadProperties() {

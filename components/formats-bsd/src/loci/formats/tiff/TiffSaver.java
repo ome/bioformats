@@ -963,7 +963,7 @@ public class TiffSaver {
       ifd.putIFDValue(IFD.Y_RESOLUTION, new TiffRational(1, 1));
     }
     if (ifd.get(IFD.SOFTWARE) == null) {
-      ifd.putIFDValue(IFD.SOFTWARE, "OME Bio-Formats");
+      ifd.putIFDValue(IFD.SOFTWARE, FormatTools.CREATOR);
     }
     if (ifd.get(IFD.ROWS_PER_STRIP) == null &&
       ifd.get(IFD.TILE_WIDTH) == null && ifd.get(IFD.TILE_LENGTH) == null)

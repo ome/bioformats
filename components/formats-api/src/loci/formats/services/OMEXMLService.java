@@ -263,6 +263,11 @@ public interface OMEXMLService extends Service {
   public void removeBinData(OMEXMLMetadata omexmlMeta);
 
   /**
+   * Remove all of the TiffData elements from the given OME-XML metadata object.
+   */
+  public void removeTiffData(OMEXMLMetadata omexmlMeta);
+
+  /**
    * Remove all but the first sizeC valid Channel elements from the given
    * OME-XML metadata object.
    */

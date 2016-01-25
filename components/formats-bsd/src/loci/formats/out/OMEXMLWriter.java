@@ -57,6 +57,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -100,6 +102,9 @@ public class OMEXMLWriter extends FormatWriter {
       xml = service.getOMEXML(retrieve);
       OMEXMLMetadata noBin = service.createOMEXMLMetadata(xml);
       service.removeBinData(noBin);
+
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) noBin.getRoot();
+      root.setCreator(FormatTools.CREATOR);
       xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {
