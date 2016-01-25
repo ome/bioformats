@@ -101,13 +101,14 @@
         <directory>${project.basedir}/src</directory>
         <includes>
           <include>**/*.properties</include>
+          <include>**/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
       <resource>
         <directory>${project.basedir}</directory>
         <includes>
-          <include>**/*.cpp</include>
+          <include>utils/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
