@@ -427,6 +427,10 @@ public class MicromanagerReader extends FormatReader {
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
         String json = firstIFD.getIFDTextValue(JSON_TAG);
+        parser.getStream().close();
+        if (json == null) {
+          continue;
+        }
         String[] lines = json.split("\n");
         for (String line : lines) {
           String toSplit = line.trim();
