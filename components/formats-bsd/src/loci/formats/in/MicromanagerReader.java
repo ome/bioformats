@@ -445,13 +445,22 @@ public class MicromanagerReader extends FormatReader {
             // using key alone will result in conflicts with metadata.txt values
             addSeriesMeta(String.format("Plane #%0" + digits + "d %s", plane, key), value);
             if (key.equals("XPositionUm")) {
-              p.positions[plane][0] = new Double(value);
+              try {
+                p.positions[plane][0] = new Double(value);
+              }
+              catch (NumberFormatException e) { }
             }
             else if (key.equals("YPositionUm")) {
-              p.positions[plane][1] = new Double(value);
+              try {
+                p.positions[plane][1] = new Double(value);
+              }
+              catch (NumberFormatException e) { }
             }
             else if (key.equals("ZPositionUm")) {
-              p.positions[plane][2] = new Double(value);
+              try {
+                p.positions[plane][2] = new Double(value);
+              }
+              catch (NumberFormatException e) { }
             }
           }
         }
