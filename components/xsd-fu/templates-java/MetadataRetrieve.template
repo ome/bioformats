@@ -53,15 +53,20 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+       (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -276,164 +281,54 @@ public interface MetadataRetrieve extends BaseMetadata {
    * @return the number of XMLAnnotation links.
    */
   int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex);
-  
-  /**
-   * Get the number of links to a Line.
-   *
-   * This method returns the number of references to the
-   * specified Line held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param lineIndex the Line index.
-   * @return the number of Line links.
-   */
-  int getLineAnnotationCount(int ROIIndex, int lineIndex);
-  
-  /**
-   * Get the number of links to a Rectangle.
-   *
-   * This method returns the number of references to the
-   * specified Rectangle held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param rectangleIndex the Rectangle index.
-   * @return the number of Rectangle links.
-   */
-  int getRectangleAnnotationCount(int ROIIndex, int rectangleIndex);
-  
-  /**
-   * Get the number of links to a Mask.
-   *
-   * This method returns the number of references to the
-   * specified Mask held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param maskIndex the Mask index.
-   * @return the number of Mask links.
-   */
-  int getMaskAnnotationCount(int ROIIndex, int maskIndex);
-  
-  /**
-   * Get the number of links to a Ellipse.
-   *
-   * This method returns the number of references to the
-   * specified Ellipse held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param ellipseIndex the Ellipse index.
-   * @return the number of Ellipse links.
-   */
-  int getEllipseAnnotationCount(int ROIIndex, int ellipseIndex);
-  
-  /**
-   * Get the number of links to a Point.
-   *
-   * This method returns the number of references to the
-   * specified Point held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param pointIndex the Point index.
-   * @return the number of Point links.
-   */
-  int getPointAnnotationCount(int ROIIndex, int pointIndex);
-  
-  /**
-   * Get the number of links to a Polyline.
-   *
-   * This method returns the number of references to the
-   * specified Polyline held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param polylineIndex the Polyline index.
-   * @return the number of Polyline links.
-   */
-  int getPolylineAnnotationCount(int ROIIndex, int polylineIndex);
-  
-  /**
-   * Get the number of links to a Polygon.
-   *
-   * This method returns the number of references to the
-   * specified Polygon held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param polygonIndex the Polygon index.
-   * @return the number of Polygon links.
-   */
-  int getPolygonAnnotationCount(int ROIIndex, int polygonIndex);
-  
-  /**
-   * Get the number of links to a Label.
-   *
-   * This method returns the number of references to the
-   * specified Label held by all model objects.
-   *
-   * @param ROIIndex the ROI index.
-   * @param labelIndex the Label index.
-   * @return the number of Label links.
-   */
-  int getLabelAnnotationCount(int ROIIndex, int labelIndex);
-  
-  /**
-   * Get the number of links to an Arc.
-   *
-   * This method returns the number of references to the
-   * specified Arc held by all model objects.
-   *
-   * @param instrumentIndex the Instrument index.
-   * @param arcIndex the Arc index.
-   * @return the number of Arc links.
-   */
-  int getArcAnnotationCount(int instrumentIndex, int arcIndex);
-  
-  /**
-   * Get the number of links to a Filament.
-   *
-   * This method returns the number of references to the
-   * specified Filament held by all model objects.
-   *
-   * @param instrumentIndex the Instrument index.
-   * @param filamentIndex the Filament index.
-   * @return the number of Filament links.
-   */
-  int getFilamentAnnotationCount(int instrumentIndex, int filamentIndex);
-  
-  /**
-   * Get the number of links to a Laser.
-   *
-   * This method returns the number of references to the
-   * specified Laser held by all model objects.
-   *
-   * @param instrumentIndex the Instrument index.
-   * @param laserIndex the Laser index.
-   * @return the number of Laser links.
-   */
-  int getLaserAnnotationCount(int instrumentIndex, int laserIndex);
-  
-  /**
-   * Get the number of links to a LightEmittingDiode.
-   *
-   * This method returns the number of references to the
-   * specified LightEmittingDiode held by all model objects.
-   *
-   * @param lightEmittingDiodeIndex the Instrument index.
-   * @param arcIndex the LightEmittingDiode index.
-   * @return the number of LightEmittingDiode links.
-   */
-  int getLightEmittingDiodeAnnotationCount(int instrumentIndex, int lightEmittingDiodeIndex);
-  
-  /**
-   * Get the number of links to a GenericExcitationSource.
-   *
-   * This method returns the number of references to the
-   * specified GenericExcitationSource held by all model objects.
-   *
-   * @param instrumentIndex the Instrument index.
-   * @param genericExcitationSourceIndex the GenericExcitationSource index.
-   * @return the number of GenericExcitationSource links.
-   */
-  int getGenericExcitationSourceAnnotationCount(int instrumentIndex, int genericExcitationSourceIndex);
 
-	// -- Entity counting (code generated definitions) --
+  /**
+   * Get the BigEndian property of Pixels.
+   *
+   * @param imageIndex the Image index.
+   * @param binDataIndex BinData index (unused).
+   * @return true if big endian, or false if little endian.
+   */
+  Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
+
+  /**
+   * Get the number of BinData elements in Pixels.
+   *
+   * @param imageIndex the Image index.
+   * @return the number of BinData elements.
+   */
+  int getPixelsBinDataCount(int imageIndex);
+  
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+/**
+     * Get the type of a ${abstractClass}.
+     *
+{% for param in v %}\
+     * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+     * @return the Shape type.
+     */
+    String get${abstractClass}Type(${indexes_string(v)});
+    
+    
+
+        /**
+         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
+         *
+{% for param in v[:-1] %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @return the number of ${abstractClass} elements.
+         */
+  int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])});
+    
+    
+    
+{% end %}\
+{% end %}\
+
+
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -445,15 +340,18 @@ public interface MetadataRetrieve extends BaseMetadata {
         /**
          * Get the text value of ${o.name}.
          *
-{% for param in indexes[o.name].items()[0][1] %}\
+{% for param in indexes[getParent(o)].items()[0][1] %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @return the text value.
          */
-	${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
+	${o.langBaseType} get${getParent(o)}Value(${indexes_string(indexes[getParent(o)].items()[0][1])});
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+
+  // -- Entity counting (code generated definitions) --
+  
+{% if parents[o.name] is not None and not o.isAbstract %}
 {% if debug %}\
 	// ${o.name} entity counting
 {% end debug %}\
@@ -513,7 +411,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
 	// MARKER [EEE]
 	//
@@ -536,7 +434,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -573,7 +471,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -585,7 +483,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\

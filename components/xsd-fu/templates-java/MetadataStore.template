@@ -53,15 +53,21 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
+  def is_abstract(name):
+	  o = model.getObjectByName(name)
+	  if o is not None and \
 		   (o.isAbstract):
-			return True
-		return False
+		  return True
+	  return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
+
 %}\
 \
 \
@@ -200,7 +206,7 @@ public interface MetadataStore extends BaseMetadata
          * @param ROIIndex the ROI index.
          * @param maskIndex the Mask index.
          */
-	void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex);
+  void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex);
 
         /**
          * Set the values of a MapAnnotation.
@@ -228,13 +234,22 @@ public interface MetadataStore extends BaseMetadata
 
 	// -- Entity storage (code generated definitions) --
 
-	/**
+  /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
          */
 	void setUUID(String uuid);
 
+  /**
+   * Set the BigEndian property of Pixels.
+         *
+         * @param bigEndian true if big endian, or false if little endian.
+         * @param imageIndex the Image index.
+         * @param binDataIndex BinData index (unused).
+         */
+   void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+ 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
@@ -253,17 +268,38 @@ public interface MetadataStore extends BaseMetadata
 	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+
+
+
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}\
 {% if debug %}\
 	// MARKER [EEE]
-	//
+	//parents = ${parents[o.name]} and ${o.isAbstract}
 	// ${o.name} property storage
-	//
+	// ${o.parentName}
+	{% if o.name == 'Rectangle' %}\
+	{% for k, v in indexes[o.parentName].items() %}\
+	// Indexes K = ${k}
+	// Indexes V = ${v}
+	 // Get Parent  = ${getParent(o)}
+	{% with test = 7 %}\
+	 // Indexes test = ${test}
+	 {% end %}\
+	 
+	{% end %}\
+{% end %}\
+	{% for prop in sorted(o.baseObjectProperties) %}\
+	// BaseObjectProperties:  ${prop.name}
+	{% end %}\
+
+
+  // ${indexes[o.name].items()}
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 {% end debug %}\
 
 {% choose %}\
+
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
@@ -274,12 +310,17 @@ public interface MetadataStore extends BaseMetadata
 {% end debug %}\
 {% end %}\
 {% end %}\
+
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+
+{% for k, v in indexes[getParent(o)].items() %}\
+// K = ${k}      V = ${v}
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
+
+
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
 	// MARKER [CCC]
@@ -288,6 +329,7 @@ public interface MetadataStore extends BaseMetadata
 	// Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
@@ -297,10 +339,11 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
+  // ${prop.name} accessor from parent ${k}
+{% end %}\
+{% end %}\
+{% end %}\
 
-{% end %}\
-{% end %}\
-{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -313,7 +356,7 @@ public interface MetadataStore extends BaseMetadata
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE)%}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE)%}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -327,19 +370,23 @@ public interface MetadataStore extends BaseMetadata
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\
+// V = ${ v }
 ${setter(k, o, prop, v)}
+{% end %}\
+{% end %}\
+{% end %}\
+
 
 {% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
-{% end %}\
-{% end %}\
-{% end %}\
+
+
 {% end %}\
 {% end %}\
 }

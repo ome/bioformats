@@ -61,40 +61,45 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+       (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-	def accessor_string(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level)['accessor']
 
-	def accessor_string_complex(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-		if max_occurs == 1:
-			to_return['accessor'] = "get%s()" % (name)
-			return to_return
-		if name[:2].isupper():
-			to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-			return to_return
-		to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-		return to_return
+  def accessor_string_complex(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-	def accessor(name, parent, prop, func=accessor_string):
-		results = dict()
-		fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-		if parent not in results.keys():
-			raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		if len(results.keys()) == 0:
-			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -186,6 +191,11 @@ public class DummyMetadata implements IMetadata
 
 	// -- Entity counting (manual definitions) --
 
+  public int getPixelsBinDataCount(int imageIndex)
+  {
+    return -1;
+  }
+ 
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return -1;
   }
@@ -230,60 +240,24 @@ public class DummyMetadata implements IMetadata
   public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
     return -1;
   }
-  
-  public int getLineAnnotationCount(int ROIIndex, int lineIndex) {
-    return -1;
-  }
-  
-  public int getRectangleAnnotationCount(int ROIIndex, int rectangleIndex) {
-    return -1;
-  }
-  
-  public int getMaskAnnotationCount(int ROIIndex, int maskIndex) {
-    return -1;
-  }
-  
-  public int getEllipseAnnotationCount(int ROIIndex, int ellipseIndex) {
-    return -1;
-  }
-  
-  public int getPointAnnotationCount(int ROIIndex, int pointIndex) {
-    return -1;
-  }
-  
-  public int getPolylineAnnotationCount(int ROIIndex, int polylineIndex) {
-    return -1;
-  }
-  
-  public int getPolygonAnnotationCount(int ROIIndex, int polygonIndex) {
-    return -1;
-  }
-  
-  public int getLabelAnnotationCount(int ROIIndex, int labelIndex) {
-    return -1;
-  }
 
-  public int getArcAnnotationCount(int instrumentIndex, int arcIndex) {
-    return -1;
-  }
-  
-  public int getFilamentAnnotationCount(int instrumentIndex, int filamentIndex) {
-    return -1;
-  }
-  
-  public int getLaserAnnotationCount(int instrumentIndex, int laserIndex) {
-    return -1;
-  }
-  
-  public int getLightEmittingDiodeAnnotationCount(int instrumentIndex, int lightEmittingDiodeIndex) {
-    return -1;
-  }
-  
-  public int getGenericExcitationSourceAnnotationCount(int instrumentIndex, int genericExcitationSourceIndex) {
-    return -1;
-  }
   
 	// -- Entity counting (code generated definitions) --
+
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+  public String get${abstractClass}Type(${indexes_string(v)})
+  {
+    return null;
+  }    
+    
+  public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
+  {
+    return -1;
+  } 
+     
+{% end %}\
+{% end %}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -300,9 +274,9 @@ public class DummyMetadata implements IMetadata
 	}
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
-	// ${o.name} entity counting
-{% for k, v in indexes[o.name].items() %}\
+{% if parents[getParent(o)] is not None and not o.isAbstract %}\
+	// ${getParent(o)} entity counting
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
@@ -320,6 +294,11 @@ ${counter(k, o, v)}\
 		return null;
 	}
 
+  public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+  {
+    return null;
+  }
+ 
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
@@ -342,7 +321,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\
@@ -366,7 +345,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -403,7 +382,7 @@ ${counter(k, o, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -414,7 +393,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if debug %}\
 	// MARKER [HHH-AGG]
 {% end debug %}\
@@ -441,6 +420,10 @@ ${getter(k, o, prop, v)}\
 	{
 	}
 
+  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+  {
+  }
+ 
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
@@ -460,7 +443,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 	//
 	// ${o.name} property storage
 	//
@@ -480,7 +463,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -508,7 +491,7 @@ ${getter(k, o, prop, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -519,7 +502,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

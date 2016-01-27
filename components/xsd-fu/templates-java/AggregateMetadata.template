@@ -138,40 +138,45 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+      (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-	def accessor_string(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level)['accessor']
 
-	def accessor_string_complex(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-		if max_occurs == 1:
-			to_return['accessor'] = "get%s()" % (name)
-			return to_return
-		if name[:2].isupper():
-			to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-			return to_return
-		to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-		return to_return
+  def accessor_string_complex(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-	def accessor(name, parent, prop, func=accessor_string):
-		results = dict()
-		fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-		if parent not in results.keys():
-			raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		if len(results.keys()) == 0:
-			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -306,6 +311,21 @@ public class AggregateMetadata implements IMetadata
 
 	// -- Entity counting (manual definitions) --
 
+  public int getPixelsBinDataCount(int imageIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve)
+      {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getPixelsBinDataCount(imageIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+ 
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
@@ -449,177 +469,43 @@ public class AggregateMetadata implements IMetadata
     }
     return -1;
   }
-  
-  public int getLineAnnotationCount(int ROIIndex, int lineIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getLineAnnotationCount(ROIIndex, lineIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getRectangleAnnotationCount(int ROIIndex, int rectangleIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getRectangleAnnotationCount(ROIIndex, rectangleIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getMaskAnnotationCount(int ROIIndex, int maskIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getMaskAnnotationCount(ROIIndex, maskIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getEllipseAnnotationCount(int ROIIndex, int ellipseIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getEllipseAnnotationCount(ROIIndex, ellipseIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getPointAnnotationCount(int ROIIndex, int pointIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getPointAnnotationCount(ROIIndex, pointIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getPolylineAnnotationCount(int ROIIndex, int polylineIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getPolylineAnnotationCount(ROIIndex, polylineIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getPolygonAnnotationCount(int ROIIndex, int polygonIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getPolygonAnnotationCount(ROIIndex, polygonIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getLabelAnnotationCount(int ROIIndex, int labelIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getLabelAnnotationCount(ROIIndex, labelIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getArcAnnotationCount(int instrumentIndex, int arcIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getArcAnnotationCount(instrumentIndex, arcIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getFilamentAnnotationCount(int instrumentIndex, int filamentIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getFilamentAnnotationCount(instrumentIndex, filamentIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getLaserAnnotationCount(int instrumentIndex, int laserIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getLaserAnnotationCount(instrumentIndex, laserIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getLightEmittingDiodeAnnotationCount(int instrumentIndex, int lightEmittingDiodeIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getLightEmittingDiodeAnnotationCount(instrumentIndex, lightEmittingDiodeIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
-  
-  public int getGenericExcitationSourceAnnotationCount(int instrumentIndex, int genericExcitationSourceIndex) {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve) {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result =
-          retrieve.getGenericExcitationSourceAnnotationCount(instrumentIndex, genericExcitationSourceIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
+
 
 	// -- Entity counting (code generated definitions) --
+
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+  public String get${abstractClass}Type(${indexes_string(v)})
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve)
+      {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        String result = retrieve.get${abstractClass}Type(${indexes_name_string(v)});
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }    
+    
+  public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_name_string(v[:-1])});
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  } 
+     
+{% end %}\
+{% end %}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -685,6 +571,21 @@ ${counter(k, o, v)}\
 		return null;
 	}
 	
+	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve)
+      {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        Boolean result = retrieve.getPixelsBinDataBigEndian(imageIndex, binDataIndex);
+        if (result != null) return result;
+      }
+    }
+    return null;
+  }
+	
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
@@ -737,7 +638,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 	//
 	// ${o.name} property storage
 	//
@@ -758,7 +659,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -789,7 +690,7 @@ ${counter(k, o, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -800,7 +701,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if debug %}\
 	// MARKER [HHH-AGG]
 {% end debug %}\
@@ -818,19 +719,6 @@ ${getter(k, o, prop, v)}\
 
 	// -- Entity storage (manual definitions) --
 
-	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setMaskBinData(binData, ROIIndex, maskIndex);
-			}
-		}
-	}
-
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
@@ -843,6 +731,32 @@ ${getter(k, o, prop, v)}\
 			}
 		}
 	}
+	
+	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataStore)
+      {
+        MetadataStore store = (MetadataStore) o;
+        store.setMaskBinData(binData, ROIIndex, maskIndex);
+      }
+    }
+  }
+	
+  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataStore)
+      {
+        MetadataStore store = (MetadataStore) o;
+        store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+      }
+    }
+  }
 
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
@@ -890,7 +804,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 	//
 	// ${o.name} property storage
 	//
@@ -910,7 +824,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -938,7 +852,7 @@ ${getter(k, o, prop, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -949,7 +863,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

@@ -60,6 +60,21 @@
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
 		return o.get${prop.methodName}();
 {% end %}\
+{% when o.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference and prop.maxOccurs > 1 %}\
+    // ${o.parentName} is abstract, is reference and occurs more than once 
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+    return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+{% end %}\
+{% when o.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference  %}\
+    // ${o.parentName} is abstract 
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+    return o.getLinked${prop.methodName}().getID();
+{% end %}\
+{% when o.parentName in fu.ABSTRACT_OVERRIDE %}\
+    // ${o.parentName} is abstract and not a reference
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+    return o.get${prop.methodName}();
+{% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 		// ${prop.name} is reference and occurs more than once
 		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
@@ -106,7 +121,7 @@
 {% when is_abstract(parent) %}\
 		// ${parent} is abstract and not a reference
 		OME o0 = root;
-{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)[:-1]) %}\
+{% for i, v in enumerate(accessor(obj.name, getParent(obj), prop, accessor_string_complex)[:-1]) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
@@ -182,40 +197,65 @@ ${customContent[obj.name][prop.name]}
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+       (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-	def accessor_string(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level)['accessor']
 
-	def accessor_string_complex(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-		if max_occurs == 1:
-			to_return['accessor'] = "get%s()" % (name)
-			return to_return
-		if name[:2].isupper():
-			to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-			return to_return
-		to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-		return to_return
+  def accessor_string_complex(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-	def accessor(name, parent, prop, func=accessor_string):
-		results = dict()
-		fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-		if parent not in results.keys():
-			raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		if len(results.keys()) == 0:
-			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    o = model.getObjectByName(name)
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
+      parentObj = model.getObjectByName(o.parentName)
+      if len(results.keys()) == 0:
+        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (o.name, parents[parentObj.name].keys()[0], prop.name, results))
+      if parents[parentObj.name].keys()[0] not in results.keys():
+        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (o.name, parents[parentObj.name].keys()[0], prop.name, results))
+      return results[parents[parentObj.name].keys()[0]]
+    else:
+      fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+      if len(results.keys()) == 0:
+        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+      if parent not in results.keys():
+        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop.name, results))
+      return results[parent]
+      
+  def basic_accessor(name):
+    results = dict()
+    o = model.getObjectByName(name)
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, accessor_string, min_occurs=1)
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parents[name].keys()[0], prop, results))
+    if parents[name].keys()[0] not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
+    return results[parents[name].keys()[0]]
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -331,6 +371,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// -- Entity counting (manual definitions) --
 
+  public int getPixelsBinDataCount(int imageIndex)
+  {
+    return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+  }
+ 
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).sizeOfLinkedAnnotationList();
   }
@@ -375,61 +420,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
   public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
     return root.getStructuredAnnotations().getXMLAnnotation(xmlAnnotationIndex).sizeOfLinkedAnnotationList();
   }
-  
-  public int getLineAnnotationCount(int ROIIndex, int lineIndex) {
-    return root.getROI(ROIIndex).getUnion().getLine(lineIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getRectangleAnnotationCount(int ROIIndex, int rectangleIndex) {
-    return root.getROI(ROIIndex).getUnion().getRectangle(rectangleIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getMaskAnnotationCount(int ROIIndex, int maskIndex) {
-    return root.getROI(ROIIndex).getUnion().getMask(maskIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getEllipseAnnotationCount(int ROIIndex, int ellipseIndex) {
-    return root.getROI(ROIIndex).getUnion().getEllipse(ellipseIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getPointAnnotationCount(int ROIIndex, int pointIndex) {
-    return root.getROI(ROIIndex).getUnion().getPoint(pointIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getPolylineAnnotationCount(int ROIIndex, int polylineIndex) {
-    return root.getROI(ROIIndex).getUnion().getPolyline(polylineIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getPolygonAnnotationCount(int ROIIndex, int polygonIndex) {
-    return root.getROI(ROIIndex).getUnion().getPolygon(polygonIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getLabelAnnotationCount(int ROIIndex, int labelIndex) {
-    return root.getROI(ROIIndex).getUnion().getLabel(labelIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getArcAnnotationCount(int instrumentIndex, int arcIndex) {
-    return root.getInstrument(instrumentIndex).getArc(arcIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getFilamentAnnotationCount(int instrumentIndex, int filamentIndex) {
-    return root.getInstrument(instrumentIndex).getFilament(filamentIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getLaserAnnotationCount(int instrumentIndex, int laserIndex) {
-    return root.getInstrument(instrumentIndex).getLaser(laserIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getLightEmittingDiodeAnnotationCount(int instrumentIndex, int lightEmittingDiodeAnnotationIndex) {
-    return root.getInstrument(instrumentIndex).getLightEmittingDiode(lightEmittingDiodeAnnotationIndex).sizeOfLinkedAnnotationList();
-  }
-  
-  public int getGenericExcitationSourceAnnotationCount(int instrumentIndex, int genericExcitationSourceIndex) {
-    return root.getInstrument(instrumentIndex).getGenericExcitationSource(genericExcitationSourceIndex).sizeOfLinkedAnnotationList();
-  }
 
-	// -- Entity counting (code generated definitions) --
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+  public String get${abstractClass}Type(${indexes_string(v)})
+  {
+    ${abstractClass} o = (${abstractClass}) root.${".".join(basic_accessor(abstractClass))};   
+    String className = o.getClass().getName();
+    return className.substring(
+      className.lastIndexOf('.') + 1, className.length());  
+  }
+{% end %}\
+{% end %}\
 
+  // -- Entity counting (code generated definitions) --
+  
+  
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
@@ -467,7 +473,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.name in fu.ABSTRACT_OVERRIDE %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
@@ -487,6 +493,15 @@ ${counter(k, o, v)}\
 		return root.getUUID();
 	}
 
+  public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+  {
+    Boolean bigEndian = root.getImage(imageIndex).getPixels().getBigEndian();
+    if (bigEndian != null) {
+      return bigEndian;
+    }
+    return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
+  }
+ 
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
@@ -496,13 +511,13 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int genericExcitationSourceIndex)
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
-		GenericExcitationSource o = root.getInstrument(instrumentIndex).getGenericExcitationSource(genericExcitationSourceIndex);
-		// The first getMap returns an ${lang.omexml_model_package}.Map which
-		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
-		// the java.util.Map holding the MapPairs
-		return o.getMap().getPairs();
+    GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
+    // The first getMap returns an ome.xml.model.Map which
+    // extends ome.xml.model.MapPairs, the second getMap returns
+    // the java.util.Map holding the MapPairs
+    return o.getMap().getPairs();
 	}
 
 	/** Gets the Map value associated with this imaging environment */
@@ -518,7 +533,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 	//
 	// ${o.name} property storage
 	//
@@ -537,7 +552,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -549,7 +564,7 @@ ${counter(k, o, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-
+${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -565,7 +580,7 @@ ${counter(k, o, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -576,7 +591,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -591,10 +606,28 @@ ${getter(k, o, prop, v)}\
 
 	// -- Entity storage (manual definitions) --
 
-	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
+  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+  {
+    // Parents: {u'Image': {u'OME': None}}
+    // Type is not a reference
+    OME o0 = root;
+    if (o0.sizeOfImageList() == imageIndex)
+    {
+      o0.addImage(new Image());
+    }
+    Image o1 = o0.getImage(imageIndex);
+    if (o1.getPixels() == null)
+    {
+      o1.setPixels(new Pixels());
+    }
+    Pixels o2 = o1.getPixels();
+    o2.setBigEndian(bigEndian);
+  }
+ 
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
 	{
 		// TODO: To implement
-		//root.getROI(ROIIndex).getUnion().getMask(maskIndex).setBinData(binData);
+		//root.getROI(ROIIndex).getUnion().getMask(shapeIndex).setBinData(binData);
 	}
 
 	/** Sets the UUID associated with this collection of metadata. */
@@ -622,21 +655,21 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int genericExcitationSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfGenericExcitationSourceList() == genericExcitationSourceIndex)
-		{
-			o1.addGenericExcitationSource(new GenericExcitationSource());
-		}
-		GenericExcitationSource o2 = o1.getGenericExcitationSource(genericExcitationSourceIndex);
-		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map(map);
-		o2.setMap(mapAsOmeMap);
+    OME o0 = root;
+    if (o0.sizeOfInstrumentList() == instrumentIndex)
+    {
+      o0.addInstrument(new Instrument());
+    }
+    Instrument o1 = o0.getInstrument(instrumentIndex);
+    if (o1.sizeOfLightSourceList() == lightSourceIndex)
+    {
+      o1.addLightSource(new GenericExcitationSource());
+    }
+    LightSource o2 = o1.getLightSource(lightSourceIndex);
+    ome.xml.model.Map mapAsOmeMap = new ome.xml.model.Map(map);
+    ((GenericExcitationSource)o2).setMap(mapAsOmeMap);
 	}
 
 	/** Sets the Map value associated with this imaging environment */
@@ -661,7 +694,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 	//
 	// ${o.name} property storage
 	//
@@ -679,7 +712,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -691,7 +724,7 @@ ${getter(k, o, prop, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-
+${setter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -707,7 +740,7 @@ ${getter(k, o, prop, v)}\
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -718,7 +751,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\
