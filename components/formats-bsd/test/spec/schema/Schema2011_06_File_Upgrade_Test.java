@@ -494,12 +494,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(0, instrument0.sizeOfDichroicList());
         Assert.assertEquals(0, instrument0.sizeOfFilterList());
         Assert.assertEquals(0, instrument0.sizeOfFilterSetList());
-        Assert.assertEquals(0, instrument0.sizeOfArcList());
-        Assert.assertEquals(0, instrument0.sizeOfLaserList());
-        Assert.assertEquals(0, instrument0.sizeOfLightEmittingDiodeList());
-        Assert.assertEquals(0, instrument0.sizeOfFilamentList());
-        Assert.assertEquals(0, instrument0.sizeOfGenericExcitationSourceList());
-        Assert.assertEquals(1, instrument0.sizeOfObjectiveList());
+        Assert.assertEquals(0, instrument0.sizeOfLightSourceList());
         /* Perhaps: Assert.assertEquals(1, instrument1()); */
     }
 
@@ -689,7 +684,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertNull(roi0.getName());
         union0 = roi0.getUnion();
         Assert.assertNotNull(union0);
-        Assert.assertEquals(1, union0.sizeOfPointList());
+        Assert.assertEquals(1, union0.sizeOfShapeList());
     }
 
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testOmeNode"})
@@ -700,12 +695,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertNull(roi1.getName());
         union1 = roi1.getUnion();
         Assert.assertNotNull(union1);
-        Assert.assertEquals(1, union1.sizeOfPointList());
-        Assert.assertEquals(0, union2.sizeOfRectangleList());
-        Assert.assertEquals(0, union3.sizeOfLabelList());
-        Assert.assertEquals(0, union3.sizeOfPolygonList());
-        Assert.assertEquals(0, union3.sizeOfPolylineList());
-        Assert.assertEquals(0, union3.sizeOfLineList());
+        Assert.assertEquals(1, union1.sizeOfShapeList());
     }
 
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testOmeNode"})
@@ -716,12 +706,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertNull(roi2.getName());
         union2 = roi2.getUnion();
         Assert.assertNotNull(union2);
-        Assert.assertEquals(0, union2.sizeOfPointList());
-        Assert.assertEquals(1, union2.sizeOfRectangleList());
-        Assert.assertEquals(1, union3.sizeOfLabelList());
-        Assert.assertEquals(1, union3.sizeOfPolygonList());
-        Assert.assertEquals(2, union3.sizeOfPolylineList());
-        Assert.assertEquals(3, union3.sizeOfLineList());
+        Assert.assertEquals(8, union2.sizeOfShapeList());
     }
 
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testOmeNode"})
@@ -732,12 +717,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertNull(roi3.getName());
         union3 = roi3.getUnion();
         Assert.assertNotNull(union3);
-        Assert.assertEquals(1, union3.sizeOfLabelList());
-        Assert.assertEquals(0, union1.sizeOfPointList());
-        Assert.assertEquals(0, union2.sizeOfRectangleList());
-        Assert.assertEquals(0, union3.sizeOfPolygonList());
-        Assert.assertEquals(0, union3.sizeOfPolylineList());
-        Assert.assertEquals(0, union3.sizeOfLineList());
+        Assert.assertEquals(1, union3.sizeOfShapeList());
     }
 
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testOmeNode"})
@@ -748,18 +728,15 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertNull(roi4.getName());
         union4 = roi4.getUnion();
         Assert.assertNotNull(union4);
-        Assert.assertEquals(2, union4.sizeOfLabelList());
-        Assert.assertEquals(0, union1.sizeOfPointList());
-        Assert.assertEquals(0, union2.sizeOfRectangleList());
-        Assert.assertEquals(0, union3.sizeOfPolygonList());
-        Assert.assertEquals(0, union3.sizeOfPolylineList());
-        Assert.assertEquals(0, union3.sizeOfLineList());
+        Assert.assertEquals(2, union4.sizeOfShapeList());
     }
 
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI0AndUnion"})
     public void testShape0() {
         Assert.assertNotNull(union0);
-        Point point0 = union0.getPoint(0);
+        shape0 = union0.getShape(0);
+        Assert.assertEquals(Point.class.getName(), shape0.getClass().getName());    
+        Point point0 = (Point) shape0;
         Assert.assertEquals(ref.ROI0Shape0TheC, point0.getTheC());
         Assert.assertEquals(ref.ROI0Shape0PointX, point0.getX());
         Assert.assertEquals(ref.ROI0Shape0PointY, point0.getY());
@@ -768,7 +745,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI1AndUnion"})
     public void testShape1() {
         Assert.assertNotNull(union1);
-        Point point1 = union1.getPoint(0);
+        shape1 = union1.getShape(0);
+        Assert.assertEquals(Point.class.getName(), shape1.getClass().getName());    
+        Point point1 = (Point) shape1;
         Assert.assertEquals(ref.ROI1Shape1TheC, point1.getTheC());
         Assert.assertEquals(ref.ROI1Shape1PointX, point1.getX());
         Assert.assertEquals(ref.ROI1Shape1PointY, point1.getY());
@@ -787,7 +766,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (enabled=false, groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape2() {
         Assert.assertNotNull(union2);
-        Rectangle rectangle2 = union2.getRectangle(0);
+        shape2 = union2.getShape(0);
+        Assert.assertEquals(Rectangle.class.getName(), shape2.getClass().getName());    
+        Rectangle rectangle2 = (Rectangle) shape2;
         Assert.assertEquals(ref.ROI2Shape2FillRule, rectangle2.getFillRule());
         Assert.assertEquals(ref.ROI2Shape2Label, rectangle2.getText());
         Assert.assertEquals(ref.ROI2Shape2RectangleX, rectangle2.getX());
@@ -806,7 +787,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape3() {
         Assert.assertNotNull(union2);
-        Label label3 = union2.getLabel(0);
+        shape3 = union2.getShape(1);
+        Assert.assertEquals(Label.class.getName(), shape3.getClass().getName());    
+        Label label3 = (Label) shape3;
         Assert.assertEquals(ref.ROI2Shape3FillRule, label3.getFillRule());
         Assert.assertEquals(ref.ROI2Shape3FontFamily, label3.getFontFamily());
         Assert.assertEquals(ref.ROI2Shape3FontStyle, label3.getFontStyle());
@@ -818,7 +801,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape4() {
         Assert.assertNotNull(union2);
-        Polygon polygon4 = union2.getPolygon(0);
+        shape4 = union2.getShape(2);
+        Assert.assertEquals(Polygon.class.getName(), shape4.getClass().getName());    
+        Polygon polygon4 = (Polygon) shape4;
         Assert.assertEquals(ref.ROI2Shape4Stroke, polygon4.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape4StrokeWidth, polygon4.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape4PolylinePoints, polygon4.getPoints());
@@ -827,7 +812,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape5() {
         Assert.assertNotNull(union2);
-        Polyline polyline5 = union2.getPolyline(0);
+        shape5 = union2.getShape(3);
+        Assert.assertEquals(Polyline.class.getName(), shape5.getClass().getName());   
+        Polyline polyline5 = (Polyline) shape5;
         Assert.assertEquals(ref.ROI2Shape5Stroke, polyline5.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape5StrokeWidth, polyline5.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape5PolylinePoints, polyline5.getPoints());
@@ -838,7 +825,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape6() {
         Assert.assertNotNull(union2);
-        Polyline polyline6 = union2.getPolyline(1);
+        shape6 = union2.getShape(4);
+        Assert.assertEquals(Polyline.class.getName(), shape6.getClass().getName());   
+        Polyline polyline6 = (Polyline) shape6;
         Assert.assertEquals(ref.ROI2Shape6Stroke, polyline6.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape6StrokeWidth, polyline6.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape6PolylinePoints, polyline6.getPoints());
@@ -848,7 +837,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape7() {
         Assert.assertNotNull(union2);
-        Line line7 = union2.getLine(0);
+        shape7 = union2.getShape(5);
+        Assert.assertEquals(Line.class.getName(), shape7.getClass().getName());   
+        Line line7 = (Line) shape7;
         Assert.assertEquals(ref.ROI2Shape7Stroke, line7.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape7StrokeWidth, line7.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape7MarkerStart, line7.getMarkerStart());
@@ -862,7 +853,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape8() {
         Assert.assertNotNull(union2);
-        Line line8 = union2.getLine(1);
+        shape8 = union2.getShape(6);
+        Assert.assertEquals(Line.class.getName(), shape8.getClass().getName());   
+        Line line8 = (Line) shape8;
         Assert.assertEquals(ref.ROI2Shape8Stroke, line8.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape8StrokeWidth, line8.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape8MarkerEnd, line8.getMarkerEnd());
@@ -875,7 +868,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape9() {
         Assert.assertNotNull(union2);
-        Line line9 = union2.getLine(2);
+        shape9 = union2.getShape(7);
+        Assert.assertEquals(Line.class.getName(), shape9.getClass().getName());   
+        Line line9 = (Line) shape9;
         Assert.assertEquals(ref.ROI2Shape9Stroke, line9.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape9StrokeWidth, line9.getStrokeWidth());
         Assert.assertEquals(ref.ROI2Shape9MarkerEnd, line9.getMarkerEnd());
@@ -893,7 +888,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI3AndUnion"})
     public void testShape11() {
         Assert.assertNotNull(union3);
-        Label label11 = union3.getLabel(0);
+        shape11 = union3.getShape(0);
+        Assert.assertEquals(Label.class.getName(), shape11.getClass().getName());   
+        Label label11 = (Label) shape11;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label11.getText());
         Assert.assertEquals(Double.valueOf(0), label11.getX());
         Assert.assertEquals(Double.valueOf(0), label11.getY());
@@ -902,7 +899,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI4AndUnion"})
     public void testShape12() {
         Assert.assertNotNull(union4);
-        Label label12 = union4.getLabel(0);
+        shape12 = union4.getShape(0);
+        Assert.assertEquals(Label.class.getName(), shape12.getClass().getName());   
+        Label label12 = (Label) shape12;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label12.getText());
         Assert.assertEquals(Double.valueOf(0), label12.getX());
         Assert.assertEquals(Double.valueOf(0), label12.getY());
@@ -910,7 +909,9 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI4AndUnion"})
     public void testShape13() {
         Assert.assertNotNull(union4);
-        Label label13 = union4.getLabel(1);
+        shape13 = union4.getShape(1);
+        Assert.assertEquals(Label.class.getName(), shape13.getClass().getName());   
+        Label label13 = (Label) shape13;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label13.getText());
         Assert.assertEquals(Double.valueOf(0), label13.getX());
         Assert.assertEquals(Double.valueOf(0), label13.getY());

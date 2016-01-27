@@ -89,8 +89,8 @@ public class Upgrade201106Test {
     assertEquals(1, ome.sizeOfROIList());
     ROI roi = ome.getROI(0);
     Union union = roi.getUnion();
-    assertEquals(1, union.sizeOfLabelList());
-    Shape shape = union.getLabel(0);
+    assertEquals(1, union.sizeOfShapeList());
+    Shape shape = union.getShape(0);
     assertTrue(shape instanceof Label);
     assertNotNull(shape.getText());
   }

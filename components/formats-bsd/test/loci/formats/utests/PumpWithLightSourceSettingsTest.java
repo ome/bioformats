@@ -72,8 +72,8 @@ public class PumpWithLightSourceSettingsTest {
     Arc pump = new Arc();
     pump.setID("Arc:0");
     laser.linkPump(pump);
-    instrument.addLaser(laser);
-    instrument.addArc(pump);
+    instrument.addLightSource(laser);
+    instrument.addLightSource(pump);
     ome.addInstrument(instrument);
     // Add an Image/Pixels with a LightSourceSettings reference to the Pump
     // on one of its channels.
