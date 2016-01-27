@@ -34,6 +34,7 @@ loci.formats.in.LIFReader             # lif
 loci.formats.in.AVIReader             # avi
 loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt
+loci.formats.in.SPCReader             # spc
 loci.formats.in.EPSReader             # eps, epsi
 loci.formats.in.SlideBook6Reader      # sld
 loci.formats.in.SlidebookReader       # sld
@@ -93,6 +94,7 @@ loci.formats.in.PQBinReader           # bin
 loci.formats.in.FlowSightReader       # cif
 loci.formats.in.IM3Reader             # im3
 loci.formats.in.I2IReader             # i2i
+loci.formats.in.SPEReader             # spe
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par

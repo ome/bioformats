@@ -69,6 +69,10 @@ settings, and re-select the windowless option.
 Group files with similar names
 ------------------------------
 
+.. note:: The functionality described below is also available outside
+    ImageJ, by using a pattern file to tell Bio-Formats how to group the
+    files. See :doc:`/formats/pattern-file` for more information.
+
 One of the most important features of Bio-Formats is to combine multiple
 files from a data set into one coherent, multi-dimensional image.
 
@@ -154,7 +158,6 @@ There are three basic forms to the “< >” blocks:
 It can also accept a
 `Java regular expression
 <http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html>`_.
-
 
 Autoscale
 ---------

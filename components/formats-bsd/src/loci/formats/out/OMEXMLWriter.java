@@ -57,6 +57,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -74,7 +76,7 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Constructor --
 
   public OMEXMLWriter() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     compressionTypes =
       new String[] {CompressionType.UNCOMPRESSED.getCompression(),
         CompressionType.ZLIB.getCompression()};
@@ -100,6 +102,9 @@ public class OMEXMLWriter extends FormatWriter {
       xml = service.getOMEXML(retrieve);
       OMEXMLMetadata noBin = service.createOMEXMLMetadata(xml);
       service.removeBinData(noBin);
+
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) noBin.getRoot();
+      root.setCreator(FormatTools.CREATOR);
       xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {
@@ -157,7 +162,7 @@ public class OMEXMLWriter extends FormatWriter {
     boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
 
     String namespace =
-      "xmlns=\"http://www.openmicroscopy.org/Schemas/BinaryFile/" +
+      "xmlns=\"http://www.openmicroscopy.org/Schemas/OME/" +
       service.getLatestVersion() + "\"";
 
     for (int i=0; i<nChannels; i++) {

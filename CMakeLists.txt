@@ -34,24 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2.0)
 
-# Default policy is from 2.8.12
-cmake_policy(VERSION 2.8.12)
-# Set MacOSX @rpath usage globally.
-if (POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW)
-endif(POLICY CMP0020)
-if (POLICY CMP0042)
-  cmake_policy(SET CMP0042 NEW)
-endif(POLICY CMP0042)
-# Use new variable expansion policy.
-if (POLICY CMP0053)
-  cmake_policy(SET CMP0053 NEW)
-endif(POLICY CMP0053)
-if (POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif(POLICY CMP0054)
+# Default policy is from 3.2.0
+cmake_policy(VERSION 3.2.0)
 
 # For MSVC
 enable_language(CXX)
@@ -92,6 +78,17 @@ include(XsdFu)
 include(GTest)
 include(Doxygen)
 include(HeaderTest)
+
+# This is a hack to generate the model sources without having to have
+# ome-common available.  It will be removed or moved once the model
+# has been split out.
+option(model-source-only "Generate model source only" OFF)
+if(NOT model-source-only)
+  find_package(OME 5.2.0 REQUIRED Compat Common)
+else()
+  add_library(OME::Compat INTERFACE IMPORTED)
+  add_library(OME::Common INTERFACE IMPORTED)
+endif()
 
 if(MSVC)
   # Debug library suffix.
@@ -147,11 +144,6 @@ foreach(dir
     TRANSFORMDIR
     )
   mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
-  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
-  else()
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
-  endif()
 endforeach()
 
 add_subdirectory(docs/doxygen)
@@ -171,7 +163,7 @@ file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                  ${PROJECT_BINARY_DIR}/config.bat @ONLY)
@@ -180,7 +172,7 @@ if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
                  ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
   install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 return()
 

@@ -73,6 +73,11 @@ public class SpiderReader extends FormatReader {
     final int blockLen = 104;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     int size = (int) stream.readFloat() * 4;
+    if (size == 0) {
+      stream.seek(0);
+      stream.order(false);
+      size = (int) stream.readFloat() * 4;
+    }
     stream.skipBytes(4);
     size *= (int) stream.readFloat();
     stream.seek(44);
@@ -84,7 +89,7 @@ public class SpiderReader extends FormatReader {
     if (slices > 0) {
       size *= slices;
     }
-    return size + headerSize == stream.length();
+    return size + headerSize == stream.length() || size == stream.length();
   }
 
   /**
@@ -130,6 +135,13 @@ public class SpiderReader extends FormatReader {
     in.order(isLittleEndian());
 
     int nSlice = (int) in.readFloat();
+    m.littleEndian = nSlice > 0;
+    if (!isLittleEndian()) {
+      in.order(isLittleEndian());
+      in.seek(0);
+      nSlice = (int) in.readFloat();
+    }
+
     int nRow = (int) in.readFloat();
     int irec = (int) in.readFloat();
     in.skipBytes(4);

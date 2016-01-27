@@ -158,7 +158,7 @@
     <resource>
       <directory>${project.basedir}</directory>
       <includes>
-        <include>**/*.cpp</include>
+        <include>cppwrap/*.cpp</include>
       </includes>
       <filtering>true</filtering>
     </resource>

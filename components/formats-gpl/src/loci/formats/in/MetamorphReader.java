@@ -28,6 +28,8 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -807,7 +809,8 @@ public class MetamorphReader extends BaseTiffReader {
           BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
           BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
           BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
-          stepSize = zRange.divide(zSize).doubleValue();
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          stepSize = zRange.divide(zSize, mc).doubleValue();
         }
       }
       

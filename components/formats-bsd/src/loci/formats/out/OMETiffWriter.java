@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -96,8 +97,9 @@ public class OMETiffWriter extends TiffWriter {
       if (currentId != null) {
         setupServiceAndMetadata();
 
-        // remove any BinData elements from the OME-XML
+        // remove any BinData and old TiffData elements from the OME-XML
         service.removeBinData(omeMeta);
+        service.removeTiffData(omeMeta);
 
         for (int series=0; series<omeMeta.getImageCount(); series++) {
           setSeries(series);
@@ -250,6 +252,9 @@ public class OMETiffWriter extends TiffWriter {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
+
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMeta.getRoot();
+    root.setCreator(FormatTools.CREATOR);
 
     String xml;
     try {

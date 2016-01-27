@@ -1,19 +1,6 @@
-import java.util.ArrayList;
-
-import ome.xml.model.MapPair;
-import loci.formats.FormatTools;
-import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.services.OMEXMLService;
-import loci.common.services.ServiceFactory;
-import loci.formats.meta.IMetadata;
-
-
 /*
  *------------------------------------------------------------------------------
- *  Copyright (C) 2014 University of Dundee. All rights reserved.
+ *  Copyright (C) 2015 University of Dundee. All rights reserved.
  *
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -39,6 +26,20 @@ import loci.formats.meta.IMetadata;
  * <a href="mailto:b.ramalingam@dundee.ac.uk">b.ramalingam@dundee.ac.uk</a>
  * @since 5.1
  */
+
+import java.util.ArrayList;
+
+import ome.xml.model.MapPair;
+import loci.formats.FormatTools;
+import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLServiceImpl;
+import loci.formats.services.OMEXMLService;
+import loci.common.services.ServiceFactory;
+import loci.formats.meta.IMetadata;
+
+
 public class writeMapAnnotationsExample {
 
     public static void main(String[] args) throws Exception{
@@ -77,6 +78,7 @@ public class writeMapAnnotationsExample {
                 FormatTools.getPixelTypeString(pixelType), w, h, 1, c, 1, c);
         
         int mapAnnotationIndex = 0;
+        int annotationRefIndex = 0;
         String mapAnnotationID = MetadataTools.createLSID("MapAnnotation", 0, mapAnnotationIndex);
         
         metadata.setMapAnnotationID(mapAnnotationID, mapAnnotationIndex);
@@ -84,6 +86,17 @@ public class writeMapAnnotationsExample {
         metadata.setMapAnnotationAnnotator("Example Map Annotation", mapAnnotationIndex);
         metadata.setMapAnnotationDescription("Example Description", mapAnnotationIndex);
         metadata.setMapAnnotationNamespace("Example NameSpace", mapAnnotationIndex);
+        metadata.setImageAnnotationRef(mapAnnotationID,0, annotationRefIndex);
+
+        mapAnnotationIndex = 1;
+        annotationRefIndex = 1;
+        mapAnnotationID = MetadataTools.createLSID("MapAnnotation", 0, mapAnnotationIndex);
+        metadata.setMapAnnotationID(mapAnnotationID, mapAnnotationIndex);
+        metadata.setMapAnnotationValue(mapList, mapAnnotationIndex);
+        metadata.setMapAnnotationAnnotator("Example Map Annotation 1", mapAnnotationIndex);
+        metadata.setMapAnnotationDescription("Example Description 1", mapAnnotationIndex);
+        metadata.setMapAnnotationNamespace("Example NameSpace 1", mapAnnotationIndex);
+        metadata.setImageAnnotationRef(mapAnnotationID,0, annotationRefIndex);
         
         //Initialize writer and save file
         ImageWriter writer = new ImageWriter();

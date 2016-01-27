@@ -110,7 +110,8 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** Timestamps for each plane, in seconds. */
   private double[][] stamps = null;
-
+  private double[] zPositions = null;
+  
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
   private String mag, detectorManufacturer, objectiveManufacturer, comment;
@@ -324,13 +325,15 @@ public class FluoviewReader extends BaseTiffReader {
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
         if (i > 1) {
-          double[] zPositions = stamps[i - 2];
-          for (Double z : zPositions) {
-            BigDecimal bd = new BigDecimal(z);
-            bd = bd.setScale(10, RoundingMode.HALF_UP);
-            if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+          zPositions = stamps[i - 2];
+          if (zPositions != null) {
+            for (Double z : zPositions) {
+              BigDecimal bd = new BigDecimal(z);
+              bd = bd.setScale(10, RoundingMode.HALF_UP);
+              if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+            }
           }
-          }
+        }
         if (uniqueZ.size() > 1 && uniqueZ.size() == size) {
           BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
           BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
@@ -510,7 +513,10 @@ public class FluoviewReader extends BaseTiffReader {
       for (int image=0; image<getImageCount(); image++) {
         final Length xl = new Length(posX, UNITS.REFERENCEFRAME);
         final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
-        final Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        if (zPositions != null && zPositions.length > image) {
+          zl = new Length(zPositions[image], UNITS.MICROM);
+        }
         store.setPlanePositionX(xl, i, image);
         store.setPlanePositionY(yl, i, image);
         store.setPlanePositionZ(zl, i, image);

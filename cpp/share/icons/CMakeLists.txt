@@ -39,5 +39,5 @@ file(GLOB_RECURSE OME_ICONS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ome-*.svg")
 foreach(icon ${OME_ICONS})
   get_filename_component(ICON_PATH ${icon} PATH)
   install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${icon}"
-          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_ICONDIR}/${ICON_PATH}")
+          DESTINATION "${OME_BIOFORMATS_INSTALL_ICONDIR}/${ICON_PATH}")
 endforeach(icon)
