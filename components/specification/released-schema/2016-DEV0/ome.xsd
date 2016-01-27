@@ -1004,13 +1004,7 @@
                 <xsd:complexType>
                         <xsd:sequence>
                                 <xsd:element ref="Microscope" minOccurs="0" maxOccurs="1"/>
-                                <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                                  <xsd:element ref="Laser" minOccurs="0" maxOccurs="unbounded"/>
-                                  <xsd:element ref="Filament" minOccurs="0" maxOccurs="unbounded"/>
-                                  <xsd:element ref="Arc" minOccurs="0" maxOccurs="unbounded"/>
-                                  <xsd:element ref="LightEmittingDiode" minOccurs="0" maxOccurs="unbounded"/>
-                                  <xsd:element ref="GenericExcitationSource" minOccurs="0" maxOccurs="unbounded"/>
-                                </xsd:choice>
+                                <xsd:element ref="LightSource" minOccurs="1" maxOccurs="unbounded"/>
                                 <xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
@@ -3553,18 +3547,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                         <xsd:element name="Union" minOccurs="1" maxOccurs="1">
                                                 <xsd:complexType>
                                                         <xsd:sequence>
-                                                          <!--   <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>-->
-
-                                                          <xsd:choice minOccurs="1" maxOccurs="unbounded">
-                                                            <xsd:element ref="Line" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Rectangle" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Mask" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Ellipse" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Point" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Polyline" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Polygon" minOccurs="0" maxOccurs="unbounded"/>
-                                                            <xsd:element ref="Label" minOccurs="0" maxOccurs="unbounded"/>
-                                                          </xsd:choice>
+                                                          <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
                                                         </xsd:sequence>
                                                 </xsd:complexType>
                                         </xsd:element>
