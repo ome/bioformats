@@ -39,7 +39,6 @@ import java.util.Map;
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -699,7 +698,8 @@ public final class MetadataConverter {
    * @param dest the MetadataStore to which to copy
    * @param lightSourceIds the collection of light source identifiers.
    */
-  private static void convertImages(MetadataRetrieve src, MetadataStore dest, List<String> lightSourceIds) {
+  private static void convertImages(MetadataRetrieve src, MetadataStore dest,
+    List<String> lightSourceIds) {
     int imageCount = 0;
     try {
       imageCount = src.getImageCount();
@@ -2375,1083 +2375,1065 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
-      int lineCount = 0;
-      int rectangleCount = 0;
-      int maskCount = 0;
-      int ellipseCount = 0;
-      int pointCount = 0;
-      int polylineCount = 0;
-      int polygonCount = 0;
-      int labelCount = 0;
+      int shapeCount = 0;
       try {
-        lineCount = src.getLineCount(i);
-        rectangleCount = src.getRectangleCount(i);
-        maskCount = src.getMaskCount(i);
-        ellipseCount = src.getEllipseCount(i);
-        pointCount = src.getPointCount(i);
-        polylineCount = src.getPolylineCount(i);
-        polygonCount = src.getPolygonCount(i);
-        labelCount = src.getLabelCount(i);
+        shapeCount = src.getShapeCount(i);
       }
       catch (NullPointerException e) { }
-      for (int q=0; q<ellipseCount; q++) {
-        try {
-          String shapeID = src.getEllipseID(i, q);
-          dest.setEllipseID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
+      for (int q=0; q<shapeCount; q++) {
+        String type = src.getShapeType(i, q);
 
-        try {
-          Color fillColor = src.getEllipseFillColor(i, q);
-          dest.setEllipseFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getEllipseFillRule(i, q);
-          dest.setEllipseFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getEllipseFontFamily(i, q);
-          dest.setEllipseFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getEllipseFontSize(i, q);
-          dest.setEllipseFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getEllipseFontStyle(i, q);
-          dest.setEllipseFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getEllipseLineCap(i, q);
-          dest.setEllipseLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getEllipseLocked(i, q);
-          dest.setEllipseLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getEllipseStrokeColor(i, q);
-          dest.setEllipseStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getEllipseStrokeDashArray(i, q);
-          dest.setEllipseStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getEllipseStrokeWidth(i, q);
-          dest.setEllipseStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getEllipseText(i, q);
-          dest.setEllipseText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getEllipseTheC(i, q);
-          dest.setEllipseTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getEllipseTheT(i, q);
-          dest.setEllipseTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getEllipseTheZ(i, q);
-          dest.setEllipseTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getEllipseTransform(i, q);
-          dest.setEllipseTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-        Double radiusX = src.getEllipseRadiusX(i, q);
-        dest.setEllipseRadiusX(radiusX, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double radiusY = src.getEllipseRadiusY(i, q);
-          dest.setEllipseRadiusY(radiusY, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x = src.getEllipseX(i, q);
-          dest.setEllipseX(x, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y = src.getEllipseY(i, q);
-          dest.setEllipseY(y, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getEllipseAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
+        if (type.equals("Ellipse")) {
           try {
-            String shapeAnnotationRef = src.getEllipseAnnotationRef(i, q, r);
-            dest.setEllipseAnnotationRef(shapeAnnotationRef, i, q, r);
+            String shapeID = src.getEllipseID(i, q);
+            dest.setEllipseID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getEllipseFillColor(i, q);
+            dest.setEllipseFillColor(fillColor, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<labelCount; q++) {
-        try {
-          String shapeID = src.getLabelID(i, q);
-          dest.setLabelID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getLabelFillColor(i, q);
-          dest.setLabelFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getLabelFillRule(i, q);
-          dest.setLabelFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getLabelFontFamily(i, q);
-          dest.setLabelFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getLabelFontSize(i, q);
-          dest.setLabelFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getLabelFontStyle(i, q);
-          dest.setLabelFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getLabelLineCap(i, q);
-          dest.setLabelLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getLabelLocked(i, q);
-          dest.setLabelLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getLabelStrokeColor(i, q);
-          dest.setLabelStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getLabelStrokeDashArray(i, q);
-          dest.setLabelStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getLabelStrokeWidth(i, q);
-          dest.setLabelStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getLabelText(i, q);
-          dest.setLabelText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getLabelTheC(i, q);
-          dest.setLabelTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getLabelTheT(i, q);
-          dest.setLabelTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getLabelTheZ(i, q);
-          dest.setLabelTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getLabelTransform(i, q);
-          dest.setLabelTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x = src.getLabelX(i, q);
-          dest.setLabelX(x, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y = src.getLabelY(i, q);
-          dest.setLabelY(y, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getLabelAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getLabelAnnotationRef(i, q, r);
-            dest.setLabelAnnotationRef(shapeAnnotationRef, i, q, r);
+            FillRule fillRule = src.getEllipseFillRule(i, q);
+            dest.setEllipseFillRule(fillRule, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<lineCount; q++) {
-        try {
-          String shapeID = src.getLineID(i, q);
-          dest.setLineID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getLineFillColor(i, q);
-          dest.setLineFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getLineFillRule(i, q);
-          dest.setLineFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getLineFontFamily(i, q);
-          dest.setLineFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getLineFontSize(i, q);
-          dest.setLineFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getLineFontStyle(i, q);
-          dest.setLineFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getLineLineCap(i, q);
-          dest.setLineLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getLineLocked(i, q);
-          dest.setLineLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getLineStrokeColor(i, q);
-          dest.setLineStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getLineStrokeDashArray(i, q);
-          dest.setLineStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getLineStrokeWidth(i, q);
-          dest.setLineStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getLineText(i, q);
-          dest.setLineText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getLineTheC(i, q);
-          dest.setLineTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getLineTheT(i, q);
-          dest.setLineTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getLineTheZ(i, q);
-          dest.setLineTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getLineTransform(i, q);
-          dest.setLineTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Marker end = src.getLineMarkerEnd(i, q);
-          dest.setLineMarkerEnd(end, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Marker start = src.getLineMarkerStart(i, q);
-          dest.setLineMarkerStart(start, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x1 = src.getLineX1(i, q);
-          dest.setLineX1(x1, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x2 = src.getLineX2(i, q);
-          dest.setLineX2(x2, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y1 = src.getLineY1(i, q);
-          dest.setLineY1(y1, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y2 = src.getLineY2(i, q);
-          dest.setLineY2(y2, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getLineAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getLineAnnotationRef(i, q, r);
-            dest.setLineAnnotationRef(shapeAnnotationRef, i, q, r);
+            FontFamily fontFamily = src.getEllipseFontFamily(i, q);
+            dest.setEllipseFontFamily(fontFamily, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<maskCount; q++) {
-        try {
-          String shapeID = src.getMaskID(i, q);
-          dest.setMaskID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getMaskFillColor(i, q);
-          dest.setMaskFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getMaskFillRule(i, q);
-          dest.setMaskFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getMaskFontFamily(i, q);
-          dest.setMaskFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getMaskFontSize(i, q);
-          dest.setMaskFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getMaskFontStyle(i, q);
-          dest.setMaskFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getMaskLineCap(i, q);
-          dest.setMaskLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getMaskLocked(i, q);
-          dest.setMaskLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getMaskStrokeColor(i, q);
-          dest.setMaskStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getMaskStrokeDashArray(i, q);
-          dest.setMaskStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getMaskStrokeWidth(i, q);
-          dest.setMaskStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getMaskText(i, q);
-          dest.setMaskText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getMaskTheC(i, q);
-          dest.setMaskTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getMaskTheT(i, q);
-          dest.setMaskTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getMaskTheZ(i, q);
-          dest.setMaskTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getMaskTransform(i, q);
-          dest.setMaskTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double height = src.getMaskHeight(i, q);
-          dest.setMaskHeight(height, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double width = src.getMaskWidth(i, q);
-          dest.setMaskWidth(width, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x = src.getMaskX(i, q);
-          dest.setMaskX(x, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y = src.getMaskY(i, q);
-          dest.setMaskY(y, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getMaskAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getMaskAnnotationRef(i, q, r);
-            dest.setMaskAnnotationRef(shapeAnnotationRef, i, q, r);
+            Length fontSize = src.getEllipseFontSize(i, q);
+            dest.setEllipseFontSize(fontSize, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
 
-      for (int q=0; q<pointCount; q++) {
-        try {
-          String shapeID = src.getPointID(i, q);
-          dest.setPointID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
-
-        try {
-          Color fillColor = src.getPointFillColor(i, q);
-          dest.setPointFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getPointFillRule(i, q);
-          dest.setPointFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getPointFontFamily(i, q);
-          dest.setPointFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getPointFontSize(i, q);
-          dest.setPointFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getPointFontStyle(i, q);
-          dest.setPointFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getPointLineCap(i, q);
-          dest.setPointLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getPointLocked(i, q);
-          dest.setPointLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getPointStrokeColor(i, q);
-          dest.setPointStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getPointStrokeDashArray(i, q);
-          dest.setPointStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getPointStrokeWidth(i, q);
-          dest.setPointStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getPointText(i, q);
-          dest.setPointText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getPointTheC(i, q);
-          dest.setPointTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getPointTheT(i, q);
-          dest.setPointTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getPointTheZ(i, q);
-          dest.setPointTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getPointTransform(i, q);
-          dest.setPointTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x = src.getPointX(i, q);
-          dest.setPointX(x, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y = src.getPointY(i, q);
-          dest.setPointY(y, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getPointAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getPointAnnotationRef(i, q, r);
-            dest.setPointAnnotationRef(shapeAnnotationRef, i, q, r);
+            FontStyle fontStyle = src.getEllipseFontStyle(i, q);
+            dest.setEllipseFontStyle(fontStyle, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<polygonCount; q++) {
-        try {
-          String shapeID = src.getPolygonID(i, q);
-          dest.setPolygonID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getPolygonFillColor(i, q);
-          dest.setPolygonFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getPolygonFillRule(i, q);
-          dest.setPolygonFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getPolygonFontFamily(i, q);
-          dest.setPolygonFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getPolygonFontSize(i, q);
-          dest.setPolygonFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getPolygonFontStyle(i, q);
-          dest.setPolygonFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getPolygonLineCap(i, q);
-          dest.setPolygonLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getPolygonLocked(i, q);
-          dest.setPolygonLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getPolygonStrokeColor(i, q);
-          dest.setPolygonStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getPolygonStrokeDashArray(i, q);
-          dest.setPolygonStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getPolygonStrokeWidth(i, q);
-          dest.setPolygonStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getPolygonText(i, q);
-          dest.setPolygonText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getPolygonTheC(i, q);
-          dest.setPolygonTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getPolygonTheT(i, q);
-          dest.setPolygonTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getPolygonTheZ(i, q);
-          dest.setPolygonTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getPolygonTransform(i, q);
-          dest.setPolygonTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String points = src.getPolygonPoints(i, q);
-          dest.setPolygonPoints(points, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getPolygonAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getPolygonAnnotationRef(i, q, r);
-            dest.setPolygonAnnotationRef(shapeAnnotationRef, i, q, r);
+            LineCap lineCap = src.getEllipseLineCap(i, q);
+            dest.setEllipseLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<polylineCount; q++) {
-        try {
-          String shapeID = src.getPolylineID(i, q);
-          dest.setPolylineID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getPolylineFillColor(i, q);
-          dest.setPolylineFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getPolylineFillRule(i, q);
-          dest.setPolylineFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getPolylineFontFamily(i, q);
-          dest.setPolylineFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getPolylineFontSize(i, q);
-          dest.setPolylineFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getPolylineFontStyle(i, q);
-          dest.setPolylineFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getPolylineLineCap(i, q);
-          dest.setPolylineLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getPolylineLocked(i, q);
-          dest.setPolylineLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getPolylineStrokeColor(i, q);
-          dest.setPolylineStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getPolylineStrokeDashArray(i, q);
-          dest.setPolylineStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getPolylineStrokeWidth(i, q);
-          dest.setPolylineStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getPolylineText(i, q);
-          dest.setPolylineText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getPolylineTheC(i, q);
-          dest.setPolylineTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getPolylineTheT(i, q);
-          dest.setPolylineTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getPolylineTheZ(i, q);
-          dest.setPolylineTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getPolylineTransform(i, q);
-          dest.setPolylineTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Marker end = src.getPolylineMarkerEnd(i, q);
-          dest.setPolylineMarkerEnd(end, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Marker start = src.getPolylineMarkerStart(i, q);
-          dest.setPolylineMarkerStart(start, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String points = src.getPolylinePoints(i, q);
-          dest.setPolylinePoints(points, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getPolylineAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getPolylineAnnotationRef(i, q, r);
-            dest.setPolylineAnnotationRef(shapeAnnotationRef, i, q, r);
+            Boolean locked = src.getEllipseLocked(i, q);
+            dest.setEllipseLocked(locked, i, q);
           }
           catch (NullPointerException e) { }
-        }
-      }
-      
-      for (int q=0; q<rectangleCount; q++) {
-        try {
-          String shapeID = src.getRectangleID(i, q);
-          dest.setRectangleID(shapeID, i, q);
-        }
-        catch (NullPointerException e) {
-          continue;
-        }
 
-        try {
-          Color fillColor = src.getRectangleFillColor(i, q);
-          dest.setRectangleFillColor(fillColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FillRule fillRule = src.getRectangleFillRule(i, q);
-          dest.setRectangleFillRule(fillRule, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontFamily fontFamily = src.getRectangleFontFamily(i, q);
-          dest.setRectangleFontFamily(fontFamily, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length fontSize = src.getRectangleFontSize(i, q);
-          dest.setRectangleFontSize(fontSize, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          FontStyle fontStyle = src.getRectangleFontStyle(i, q);
-          dest.setRectangleFontStyle(fontStyle, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          LineCap lineCap = src.getRectangleLineCap(i, q);
-          dest.setRectangleLineCap(lineCap, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Boolean locked = src.getRectangleLocked(i, q);
-          dest.setRectangleLocked(locked, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Color strokeColor = src.getRectangleStrokeColor(i, q);
-          dest.setRectangleStrokeColor(strokeColor, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String dashArray = src.getRectangleStrokeDashArray(i, q);
-          dest.setRectangleStrokeDashArray(dashArray, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Length strokeWidth = src.getRectangleStrokeWidth(i, q);
-          dest.setRectangleStrokeWidth(strokeWidth, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          String text = src.getRectangleText(i, q);
-          dest.setRectangleText(text, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theC = src.getRectangleTheC(i, q);
-          dest.setRectangleTheC(theC, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theT = src.getRectangleTheT(i, q);
-          dest.setRectangleTheT(theT, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          NonNegativeInteger theZ = src.getRectangleTheZ(i, q);
-          dest.setRectangleTheZ(theZ, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          AffineTransform transform = src.getRectangleTransform(i, q);
-          dest.setRectangleTransform(transform, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double height = src.getRectangleHeight(i, q);
-          dest.setRectangleHeight(height, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double width = src.getRectangleWidth(i, q);
-          dest.setRectangleWidth(width, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double x = src.getRectangleX(i, q);
-          dest.setRectangleX(x, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        try {
-          Double y = src.getRectangleY(i, q);
-          dest.setRectangleY(y, i, q);
-        }
-        catch (NullPointerException e) { }
-
-        int shapeAnnotationRefCount = 0;
-        try {
-          shapeAnnotationRefCount = src.getRectangleAnnotationCount(i, q);
-        }
-        catch (NullPointerException e) { }
-        for (int r=0; r<shapeAnnotationRefCount; r++) {
           try {
-            String shapeAnnotationRef = src.getRectangleAnnotationRef(i, q, r);
-            dest.setRectangleAnnotationRef(shapeAnnotationRef, i, q, r);
+            Color strokeColor = src.getEllipseStrokeColor(i, q);
+            dest.setEllipseStrokeColor(strokeColor, i, q);
           }
           catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getEllipseStrokeDashArray(i, q);
+            dest.setEllipseStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getEllipseStrokeWidth(i, q);
+            dest.setEllipseStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getEllipseText(i, q);
+            dest.setEllipseText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getEllipseTheC(i, q);
+            dest.setEllipseTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getEllipseTheT(i, q);
+            dest.setEllipseTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getEllipseTheZ(i, q);
+            dest.setEllipseTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getEllipseTransform(i, q);
+            dest.setEllipseTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+          Double radiusX = src.getEllipseRadiusX(i, q);
+          dest.setEllipseRadiusX(radiusX, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double radiusY = src.getEllipseRadiusY(i, q);
+            dest.setEllipseRadiusY(radiusY, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getEllipseX(i, q);
+            dest.setEllipseX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getEllipseY(i, q);
+            dest.setEllipseY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getEllipseAnnotationRef(i, q, r);
+              dest.setEllipseAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Label")) {
+          try {
+            String shapeID = src.getLabelID(i, q);
+            dest.setLabelID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getLabelFillColor(i, q);
+            dest.setLabelFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getLabelFillRule(i, q);
+            dest.setLabelFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getLabelFontFamily(i, q);
+            dest.setLabelFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getLabelFontSize(i, q);
+            dest.setLabelFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getLabelFontStyle(i, q);
+            dest.setLabelFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getLabelLineCap(i, q);
+            dest.setLabelLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getLabelLocked(i, q);
+            dest.setLabelLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getLabelStrokeColor(i, q);
+            dest.setLabelStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getLabelStrokeDashArray(i, q);
+            dest.setLabelStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getLabelStrokeWidth(i, q);
+            dest.setLabelStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getLabelText(i, q);
+            dest.setLabelText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getLabelTheC(i, q);
+            dest.setLabelTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getLabelTheT(i, q);
+            dest.setLabelTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getLabelTheZ(i, q);
+            dest.setLabelTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getLabelTransform(i, q);
+            dest.setLabelTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getLabelX(i, q);
+            dest.setLabelX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getLabelY(i, q);
+            dest.setLabelY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getLabelAnnotationRef(i, q, r);
+              dest.setLabelAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Line")) {
+          try {
+            String shapeID = src.getLineID(i, q);
+            dest.setLineID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getLineFillColor(i, q);
+            dest.setLineFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getLineFillRule(i, q);
+            dest.setLineFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getLineFontFamily(i, q);
+            dest.setLineFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getLineFontSize(i, q);
+            dest.setLineFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getLineFontStyle(i, q);
+            dest.setLineFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getLineLineCap(i, q);
+            dest.setLineLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getLineLocked(i, q);
+            dest.setLineLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getLineStrokeColor(i, q);
+            dest.setLineStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getLineStrokeDashArray(i, q);
+            dest.setLineStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getLineStrokeWidth(i, q);
+            dest.setLineStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getLineText(i, q);
+            dest.setLineText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getLineTheC(i, q);
+            dest.setLineTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getLineTheT(i, q);
+            dest.setLineTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getLineTheZ(i, q);
+            dest.setLineTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getLineTransform(i, q);
+            dest.setLineTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker end = src.getLineMarkerEnd(i, q);
+            dest.setLineMarkerEnd(end, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker start = src.getLineMarkerStart(i, q);
+            dest.setLineMarkerStart(start, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x1 = src.getLineX1(i, q);
+            dest.setLineX1(x1, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x2 = src.getLineX2(i, q);
+            dest.setLineX2(x2, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y1 = src.getLineY1(i, q);
+            dest.setLineY1(y1, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y2 = src.getLineY2(i, q);
+            dest.setLineY2(y2, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getLineAnnotationRef(i, q, r);
+              dest.setLineAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Mask")) {
+          try {
+            String shapeID = src.getMaskID(i, q);
+            dest.setMaskID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getMaskFillColor(i, q);
+            dest.setMaskFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getMaskFillRule(i, q);
+            dest.setMaskFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getMaskFontFamily(i, q);
+            dest.setMaskFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getMaskFontSize(i, q);
+            dest.setMaskFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getMaskFontStyle(i, q);
+            dest.setMaskFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getMaskLineCap(i, q);
+            dest.setMaskLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getMaskLocked(i, q);
+            dest.setMaskLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getMaskStrokeColor(i, q);
+            dest.setMaskStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getMaskStrokeDashArray(i, q);
+            dest.setMaskStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getMaskStrokeWidth(i, q);
+            dest.setMaskStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getMaskText(i, q);
+            dest.setMaskText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getMaskTheC(i, q);
+            dest.setMaskTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getMaskTheT(i, q);
+            dest.setMaskTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getMaskTheZ(i, q);
+            dest.setMaskTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getMaskTransform(i, q);
+            dest.setMaskTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double height = src.getMaskHeight(i, q);
+            dest.setMaskHeight(height, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double width = src.getMaskWidth(i, q);
+            dest.setMaskWidth(width, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getMaskX(i, q);
+            dest.setMaskX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getMaskY(i, q);
+            dest.setMaskY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getMaskAnnotationRef(i, q, r);
+              dest.setMaskAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Point")) {
+          try {
+            String shapeID = src.getPointID(i, q);
+            dest.setPointID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPointFillColor(i, q);
+            dest.setPointFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPointFillRule(i, q);
+            dest.setPointFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPointFontFamily(i, q);
+            dest.setPointFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getPointFontSize(i, q);
+            dest.setPointFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPointFontStyle(i, q);
+            dest.setPointFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPointLineCap(i, q);
+            dest.setPointLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPointLocked(i, q);
+            dest.setPointLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPointStrokeColor(i, q);
+            dest.setPointStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPointStrokeDashArray(i, q);
+            dest.setPointStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getPointStrokeWidth(i, q);
+            dest.setPointStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPointText(i, q);
+            dest.setPointText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPointTheC(i, q);
+            dest.setPointTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPointTheT(i, q);
+            dest.setPointTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPointTheZ(i, q);
+            dest.setPointTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPointTransform(i, q);
+            dest.setPointTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getPointX(i, q);
+            dest.setPointX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getPointY(i, q);
+            dest.setPointY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPointAnnotationRef(i, q, r);
+              dest.setPointAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Polygon")) {
+          try {
+            String shapeID = src.getPolygonID(i, q);
+            dest.setPolygonID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPolygonFillColor(i, q);
+            dest.setPolygonFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPolygonFillRule(i, q);
+            dest.setPolygonFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPolygonFontFamily(i, q);
+            dest.setPolygonFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getPolygonFontSize(i, q);
+            dest.setPolygonFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPolygonFontStyle(i, q);
+            dest.setPolygonFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPolygonLineCap(i, q);
+            dest.setPolygonLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPolygonLocked(i, q);
+            dest.setPolygonLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPolygonStrokeColor(i, q);
+            dest.setPolygonStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPolygonStrokeDashArray(i, q);
+            dest.setPolygonStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getPolygonStrokeWidth(i, q);
+            dest.setPolygonStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPolygonText(i, q);
+            dest.setPolygonText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPolygonTheC(i, q);
+            dest.setPolygonTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPolygonTheT(i, q);
+            dest.setPolygonTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPolygonTheZ(i, q);
+            dest.setPolygonTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPolygonTransform(i, q);
+            dest.setPolygonTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String points = src.getPolygonPoints(i, q);
+            dest.setPolygonPoints(points, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPolygonAnnotationRef(i, q, r);
+              dest.setPolygonAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Polyline")) {
+          try {
+            String shapeID = src.getPolylineID(i, q);
+            dest.setPolylineID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPolylineFillColor(i, q);
+            dest.setPolylineFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPolylineFillRule(i, q);
+            dest.setPolylineFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPolylineFontFamily(i, q);
+            dest.setPolylineFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getPolylineFontSize(i, q);
+            dest.setPolylineFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPolylineFontStyle(i, q);
+            dest.setPolylineFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPolylineLineCap(i, q);
+            dest.setPolylineLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPolylineLocked(i, q);
+            dest.setPolylineLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPolylineStrokeColor(i, q);
+            dest.setPolylineStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPolylineStrokeDashArray(i, q);
+            dest.setPolylineStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getPolylineStrokeWidth(i, q);
+            dest.setPolylineStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPolylineText(i, q);
+            dest.setPolylineText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPolylineTheC(i, q);
+            dest.setPolylineTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPolylineTheT(i, q);
+            dest.setPolylineTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPolylineTheZ(i, q);
+            dest.setPolylineTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPolylineTransform(i, q);
+            dest.setPolylineTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker end = src.getPolylineMarkerEnd(i, q);
+            dest.setPolylineMarkerEnd(end, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker start = src.getPolylineMarkerStart(i, q);
+            dest.setPolylineMarkerStart(start, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String points = src.getPolylinePoints(i, q);
+            dest.setPolylinePoints(points, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPolylineAnnotationRef(i, q, r);
+              dest.setPolylineAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        else if (type.equals("Rectangle")) {
+          try {
+            String shapeID = src.getRectangleID(i, q);
+            dest.setRectangleID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getRectangleFillColor(i, q);
+            dest.setRectangleFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getRectangleFillRule(i, q);
+            dest.setRectangleFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getRectangleFontFamily(i, q);
+            dest.setRectangleFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length fontSize = src.getRectangleFontSize(i, q);
+            dest.setRectangleFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getRectangleFontStyle(i, q);
+            dest.setRectangleFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getRectangleLineCap(i, q);
+            dest.setRectangleLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getRectangleLocked(i, q);
+            dest.setRectangleLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getRectangleStrokeColor(i, q);
+            dest.setRectangleStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getRectangleStrokeDashArray(i, q);
+            dest.setRectangleStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Length strokeWidth = src.getRectangleStrokeWidth(i, q);
+            dest.setRectangleStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getRectangleText(i, q);
+            dest.setRectangleText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getRectangleTheC(i, q);
+            dest.setRectangleTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getRectangleTheT(i, q);
+            dest.setRectangleTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getRectangleTheZ(i, q);
+            dest.setRectangleTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getRectangleTransform(i, q);
+            dest.setRectangleTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double height = src.getRectangleHeight(i, q);
+            dest.setRectangleHeight(height, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double width = src.getRectangleWidth(i, q);
+            dest.setRectangleWidth(width, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getRectangleX(i, q);
+            dest.setRectangleX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getRectangleY(i, q);
+            dest.setRectangleY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getRectangleAnnotationRef(i, q, r);
+              dest.setRectangleAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
       }
 
@@ -3866,474 +3848,465 @@ public final class MetadataConverter {
   private static void convertLightSources(MetadataRetrieve src,
     MetadataStore dest, int instrumentIndex, List<String> lightSourceIds)
   {
-    int arcCount = 0;
-    int filamentCount = 0;
-    int laserCount = 0;
-    int lightEmittingDiodeCount = 0;
-    int genericExcitationSourceCount = 0;
+    int lightSourceCount = 0;
     try {
-    	arcCount = src.getArcCount(instrumentIndex);
-    	filamentCount = src.getFilamentCount(instrumentIndex);
-    	laserCount = src.getLaserCount(instrumentIndex);
-    	lightEmittingDiodeCount = src.getLightEmittingDiodeCount(instrumentIndex);
-    	genericExcitationSourceCount = src.getGenericExcitationSourceCount(instrumentIndex);
+      lightSourceCount = src.getLightSourceCount(instrumentIndex);
     }
     catch (NullPointerException e) { }
 
-    for (int lightSource=0; lightSource<arcCount; lightSource++) {
-      try {
-        String id = src.getArcID(instrumentIndex, lightSource);
-        if (id != null && id.trim().length() > 0) {
-          lightSourceIds.add(id);
-          dest.setArcID(id, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) {
-        continue;
-      }
-
-      try {
-        String lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
-        if (lotNumber != null) {
-          dest.setArcLotNumber(lotNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String manufacturer =
-          src.getArcManufacturer(instrumentIndex, lightSource);
-        if (manufacturer != null) {
-          dest.setArcManufacturer(manufacturer, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String model = src.getArcModel(instrumentIndex, lightSource);
-        if (model != null) {
-          dest.setArcModel(model, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Power power = src.getArcPower(instrumentIndex, lightSource);
-        if (power != null) {
-          dest.setArcPower(power, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String serialNumber =
-          src.getArcSerialNumber(instrumentIndex, lightSource);
-        if (serialNumber != null) {
-          dest.setArcSerialNumber(serialNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        ArcType arcType = src.getArcType(instrumentIndex, lightSource);
-        if (arcType != null) {
-          dest.setArcType(arcType, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      int lightSourceAnnotationRefCount = 0;
-      try {
-        lightSourceAnnotationRefCount = src.getArcAnnotationCount(instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-      for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+    for (int lightSource=0; lightSource<lightSourceCount; lightSource++) {
+      String type = src.getLightSourceType(instrumentIndex, lightSource);
+      if (type.equals("Arc")) {
         try {
-          String lightSourceAnnotationRef = src.getArcAnnotationRef(instrumentIndex, lightSource, r);
-          dest.setArcAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          String id = src.getArcID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setArcID(id, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setArcLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) { }
-      }
-    }
-      
-    for (int lightSource=0; lightSource<filamentCount; lightSource++) {
-      try {
-        String id = src.getFilamentID(instrumentIndex, lightSource);
-        if (id != null && id.trim().length() > 0) {
-          lightSourceIds.add(id);
-          dest.setFilamentID(id, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) {
-        continue;
-      }
 
-      try {
-        String lotNumber =
-          src.getFilamentLotNumber(instrumentIndex, lightSource);
-        if (lotNumber != null) {
-          dest.setFilamentLotNumber(lotNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String manufacturer =
-          src.getFilamentManufacturer(instrumentIndex, lightSource);
-        if (manufacturer != null) {
-          dest.setFilamentManufacturer(
-            manufacturer, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String model = src.getFilamentModel(instrumentIndex, lightSource);
-        if (model != null) {
-          dest.setFilamentModel(model, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Power power = src.getFilamentPower(instrumentIndex, lightSource);
-        if (power != null) {
-          dest.setFilamentPower(power, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String serialNumber =
-          src.getFilamentSerialNumber(instrumentIndex, lightSource);
-        if (serialNumber != null) {
-          dest.setFilamentSerialNumber(
-            serialNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        FilamentType filamentType =
-          src.getFilamentType(instrumentIndex, lightSource);
-        if (filamentType != null) {
-          dest.setFilamentType(filamentType, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      int lightSourceAnnotationRefCount = 0;
-      try {
-        lightSourceAnnotationRefCount = src.getFilamentAnnotationCount(instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-      for (int r=0; r<lightSourceAnnotationRefCount; r++) {
         try {
-          String lightSourceAnnotationRef = src.getFilamentAnnotationRef(instrumentIndex, lightSource, r);
-          dest.setFilamentAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          String manufacturer =
+            src.getArcManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setArcManufacturer(manufacturer, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) { }
+
+        try {
+          String model = src.getArcModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setArcModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Power power = src.getArcPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setArcPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getArcSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setArcSerialNumber(serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          ArcType arcType = src.getArcType(instrumentIndex, lightSource);
+          if (arcType != null) {
+            dest.setArcType(arcType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getArcAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setArcAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
-    }
-    
-    for (int lightSource=0; lightSource<genericExcitationSourceCount; lightSource++) {
-      try {
-        String id =
-          src.getGenericExcitationSourceID(instrumentIndex, lightSource);
+      else if (type.equals("Filament")) {
+        try {
+          String id = src.getFilamentID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setFilamentID(id, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String lotNumber =
+            src.getFilamentLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setFilamentLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getFilamentManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setFilamentManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getFilamentModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setFilamentModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Power power = src.getFilamentPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setFilamentPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getFilamentSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setFilamentSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          FilamentType filamentType =
+            src.getFilamentType(instrumentIndex, lightSource);
+          if (filamentType != null) {
+            dest.setFilamentType(filamentType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getFilamentAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setFilamentAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      else if (type.equals("GenericExcitationSource")) {
+        try {
+          String id =
+            src.getGenericExcitationSourceID(instrumentIndex, lightSource);
           if (id != null && id.trim().length() > 0) {
             lightSourceIds.add(id);
             dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
           }
-      }
-      catch (NullPointerException e) {
-        continue;
-      }
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
 
-      try {
-        List<MapPair> map =
-          src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
-        dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String lotNumber = src.getGenericExcitationSourceLotNumber(
-          instrumentIndex, lightSource);
-        dest.setGenericExcitationSourceLotNumber(lotNumber,
-          instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String manufacturer = src.getGenericExcitationSourceManufacturer(
-          instrumentIndex, lightSource);
-        dest.setGenericExcitationSourceManufacturer(manufacturer,
-          instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String model =
-          src.getGenericExcitationSourceModel(instrumentIndex, lightSource);
-        dest.setGenericExcitationSourceModel(model,
-          instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Power power =
-          src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
-        dest.setGenericExcitationSourcePower(power,
-          instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String serialNumber = src.getGenericExcitationSourceSerialNumber(
-          instrumentIndex, lightSource);
-        dest.setGenericExcitationSourceSerialNumber(serialNumber,
-          instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-
-      int lightSourceAnnotationRefCount = 0;
-      try {
-        lightSourceAnnotationRefCount = src.getGenericExcitationSourceAnnotationCount(instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-      for (int r=0; r<lightSourceAnnotationRefCount; r++) {
         try {
-          String lightSourceAnnotationRef = src.getGenericExcitationSourceAnnotationRef(instrumentIndex, lightSource, r);
-          dest.setGenericExcitationSourceAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          List<MapPair> map =
+            src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
         }
         catch (NullPointerException e) { }
-      }
-    }
-    
-    for (int lightSource=0; lightSource<laserCount; lightSource++) {
-      try {
-        String id = src.getLaserID(instrumentIndex, lightSource);
-        if (id != null && id.trim().length() > 0) {
-          lightSourceIds.add(id);
-          dest.setLaserID(id, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) {
-        continue;
-      }
 
-      try {
-        String lotNumber =
-          src.getLaserLotNumber(instrumentIndex, lightSource);
-        if (lotNumber != null) {
-          dest.setLaserLotNumber(lotNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String manufacturer =
-          src.getLaserManufacturer(instrumentIndex, lightSource);
-        if (manufacturer != null) {
-          dest.setLaserManufacturer(
-            manufacturer, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String model = src.getLaserModel(instrumentIndex, lightSource);
-        if (model != null) {
-          dest.setLaserModel(model, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Power power = src.getLaserPower(instrumentIndex, lightSource);
-        if (power != null) {
-          dest.setLaserPower(power, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String serialNumber =
-          src.getLaserSerialNumber(instrumentIndex, lightSource);
-        if (serialNumber != null) {
-          dest.setLaserSerialNumber(
-            serialNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        LaserType laserType = src.getLaserType(instrumentIndex, lightSource);
-        if (laserType != null) {
-          dest.setLaserType(laserType, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger frequencyMultiplication =
-          src.getLaserFrequencyMultiplication(instrumentIndex, lightSource);
-        if (frequencyMultiplication != null) {
-          dest.setLaserFrequencyMultiplication(
-            frequencyMultiplication, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        LaserMedium medium =
-          src.getLaserLaserMedium(instrumentIndex, lightSource);
-        if (medium != null) {
-          dest.setLaserLaserMedium(medium, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Boolean pockelCell =
-          src.getLaserPockelCell(instrumentIndex, lightSource);
-        if (pockelCell != null) {
-          dest.setLaserPockelCell(pockelCell, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Pulse pulse = src.getLaserPulse(instrumentIndex, lightSource);
-        if (pulse != null) {
-          dest.setLaserPulse(pulse, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String pump = src.getLaserPump(instrumentIndex, lightSource);
-        if (pump != null) {
-          dest.setLaserPump(pump, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Frequency repetitionRate =
-          src.getLaserRepetitionRate(instrumentIndex, lightSource);
-        if (repetitionRate != null) {
-          dest.setLaserRepetitionRate(
-            repetitionRate, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Boolean tuneable = src.getLaserTuneable(instrumentIndex, lightSource);
-        if (tuneable != null) {
-          dest.setLaserTuneable(tuneable, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Length wavelength =
-          src.getLaserWavelength(instrumentIndex, lightSource);
-        if (wavelength != null) {
-          dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      int lightSourceAnnotationRefCount = 0;
-      try {
-        lightSourceAnnotationRefCount = src.getLaserAnnotationCount(instrumentIndex, lightSource);
-      }
-      catch (NullPointerException e) { }
-      for (int r=0; r<lightSourceAnnotationRefCount; r++) {
         try {
-          String lightSourceAnnotationRef = src.getLaserAnnotationRef(instrumentIndex, lightSource, r);
-          dest.setLaserAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          String lotNumber = src.getGenericExcitationSourceLotNumber(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceLotNumber(lotNumber,
+            instrumentIndex, lightSource);
         }
         catch (NullPointerException e) { }
-      }
-    }
-    
-    for (int lightSource=0; lightSource<lightEmittingDiodeCount; lightSource++) {
-      try {
-        String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-        if (id != null && id.trim().length() > 0) {
-          lightSourceIds.add(id);
-          dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
+
+        try {
+          String manufacturer = src.getGenericExcitationSourceManufacturer(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceManufacturer(manufacturer,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model =
+            src.getGenericExcitationSourceModel(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceModel(model,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Power power =
+            src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourcePower(power,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getGenericExcitationSourceSerialNumber(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceSerialNumber(serialNumber,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getGenericExcitationSourceAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setGenericExcitationSourceAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
         }
       }
-      catch (NullPointerException e) {
-        continue;
-      }
+      else if (type.equals("Laser")) {
+        try {
+          String id = src.getLaserID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setLaserID(id, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
 
-      try {
-        String lotNumber =
-          src.getLightEmittingDiodeLotNumber(instrumentIndex, lightSource);
-        if (lotNumber != null) {
-          dest.setLightEmittingDiodeLotNumber(
-            lotNumber, instrumentIndex, lightSource);
+        try {
+          String lotNumber =
+            src.getLaserLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setLaserLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getLaserManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setLaserManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getLaserModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setLaserModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Power power = src.getLaserPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setLaserPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getLaserSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setLaserSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          LaserType laserType = src.getLaserType(instrumentIndex, lightSource);
+          if (laserType != null) {
+            dest.setLaserType(laserType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger frequencyMultiplication =
+            src.getLaserFrequencyMultiplication(instrumentIndex, lightSource);
+          if (frequencyMultiplication != null) {
+            dest.setLaserFrequencyMultiplication(
+              frequencyMultiplication, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          LaserMedium medium =
+            src.getLaserLaserMedium(instrumentIndex, lightSource);
+          if (medium != null) {
+            dest.setLaserLaserMedium(medium, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean pockelCell =
+            src.getLaserPockelCell(instrumentIndex, lightSource);
+          if (pockelCell != null) {
+            dest.setLaserPockelCell(pockelCell, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Pulse pulse = src.getLaserPulse(instrumentIndex, lightSource);
+          if (pulse != null) {
+            dest.setLaserPulse(pulse, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String pump = src.getLaserPump(instrumentIndex, lightSource);
+          if (pump != null) {
+            dest.setLaserPump(pump, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Frequency repetitionRate =
+            src.getLaserRepetitionRate(instrumentIndex, lightSource);
+          if (repetitionRate != null) {
+            dest.setLaserRepetitionRate(
+              repetitionRate, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean tuneable = src.getLaserTuneable(instrumentIndex, lightSource);
+          if (tuneable != null) {
+            dest.setLaserTuneable(tuneable, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Length wavelength =
+            src.getLaserWavelength(instrumentIndex, lightSource);
+          if (wavelength != null) {
+            dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getLaserAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setLaserAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
         }
       }
-      catch (NullPointerException e) { }
+      else if (type.equals("LightEmittingDiode")) {
+        try {
+          String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
 
-      try {
-        String manufacturer =
-          src.getLightEmittingDiodeManufacturer(instrumentIndex, lightSource);
-        if (manufacturer != null) {
-          dest.setLightEmittingDiodeManufacturer(
-            manufacturer, instrumentIndex, lightSource);
+        try {
+          String lotNumber =
+            src.getLightEmittingDiodeLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setLightEmittingDiodeLotNumber(
+              lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getLightEmittingDiodeManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setLightEmittingDiodeManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model =
+            src.getLightEmittingDiodeModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setLightEmittingDiodeModel(
+              model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Power power =
+            src.getLightEmittingDiodePower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setLightEmittingDiodePower(
+              power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getLightEmittingDiodeSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setLightEmittingDiodeSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getLightEmittingDiodeAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setLightEmittingDiodeAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
         }
       }
-      catch (NullPointerException e) { }
-
-      try {
-        String model =
-          src.getLightEmittingDiodeModel(instrumentIndex, lightSource);
-        if (model != null) {
-          dest.setLightEmittingDiodeModel(
-            model, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Power power =
-          src.getLightEmittingDiodePower(instrumentIndex, lightSource);
-        if (power != null) {
-          dest.setLightEmittingDiodePower(
-            power, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        String serialNumber =
-          src.getLightEmittingDiodeSerialNumber(instrumentIndex, lightSource);
-        if (serialNumber != null) {
-          dest.setLightEmittingDiodeSerialNumber(
-            serialNumber, instrumentIndex, lightSource);
-        }
-      }
-      catch (NullPointerException e) { }
-
-      int lightSourceAnnotationRefCount = 0;
-      try {
-        lightSourceAnnotationRefCount = src.getLightEmittingDiodeAnnotationCount(instrumentIndex, lightSource);
-      }
-	    catch (NullPointerException e) { }
-	    for (int r=0; r<lightSourceAnnotationRefCount; r++) {
-	      try {
-	        String lightSourceAnnotationRef = src.getLightEmittingDiodeAnnotationRef(instrumentIndex, lightSource, r);
-	        dest.setLightEmittingDiodeAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
-	      }
-	      catch (NullPointerException e) { }
-  	  }
     }
   }
 
