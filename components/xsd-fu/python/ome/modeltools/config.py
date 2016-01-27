@@ -8,12 +8,12 @@ import re
 # Types which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_OBJECT_IGNORE = ('MapPairs', 'M')
+METADATA_OBJECT_IGNORE = ('MapPairs', 'M', 'BinData')
 
 # Type counts which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef'], 'Shape': ['AnnotationRef'], 'LightSource': ['AnnotationRef']}
+METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that
@@ -23,7 +23,7 @@ EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
 # Back references that we do not want in the model either because they
 # conflict with other properties or do not make sense.
-BACK_REFERENCE_OVERRIDE = {'Annotation': ['Annotation'], 'Event': ['Event'], 'Shape': ['Shape']}
+BACK_REFERENCE_OVERRIDE = {'Annotation': ['Annotation'], 'Event': ['Event']}
 
 # Reference properties of a given type for which back reference link methods
 # should not be code generated for.
@@ -51,7 +51,9 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 
 # Properties within abstract proprietary types that should be code generated
 # for.
-SHAPE_OVERRIDE = ('Transform',)
+COMPLEX_OVERRIDE = ('Transform')
+ABSTRACT_OVERRIDE = ('Shape','LightSource')
+SHAPE_OVERRIDE = ('Line','Rectangle','Mask','Ellipse','Point','Polyline','Polygon','Label')
 ANNOTATION_OVERRIDE = ('AnnotationRef',)
 
 # The list of properties not to process.
