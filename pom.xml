@@ -101,13 +101,14 @@
         <directory>${project.basedir}/src</directory>
         <includes>
           <include>**/*.properties</include>
+          <include>**/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
       <resource>
         <directory>${project.basedir}</directory>
         <includes>
-          <include>**/*.cpp</include>
+          <include>utils/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
@@ -718,23 +719,6 @@
     <profile>
       <id>merge-build</id>
 
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-
-      <pluginRepositories>
-        <pluginRepository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-
       <distributionManagement>
         <repository>
           <id>ome.unstable</id>
@@ -754,23 +738,6 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-
-      <pluginRepositories>
-        <pluginRepository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
 
       <distributionManagement>
         <repository>

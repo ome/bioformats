@@ -75,6 +75,7 @@ import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
+import ome.xml.model.TiffData;
 import ome.xml.model.Annotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
@@ -885,6 +886,23 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       List<BinData> binData = pix.copyBinDataList();
       for (BinData bin : binData) {
         pix.removeBinData(bin);
+      }
+      pix.setMetadataOnly(null);
+    }
+    omexmlMeta.setRoot(root);
+  }
+
+  /** @see OMEXMLService#removeTiffData(OMEXMLMetadata) */
+  @Override
+  public void removeTiffData(OMEXMLMetadata omexmlMeta) {
+    omexmlMeta.resolveReferences();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
+    List<Image> images = root.copyImageList();
+    for (Image img : images) {
+      Pixels pix = img.getPixels();
+      List<TiffData> tiffData = pix.copyTiffDataList();
+      for (TiffData tiff : tiffData) {
+        pix.removeTiffData(tiff);
       }
       pix.setMetadataOnly(null);
     }

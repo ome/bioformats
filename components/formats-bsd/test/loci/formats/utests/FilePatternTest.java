@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.FileSystems;
 import java.io.IOException;
 import java.io.File;
 import java.math.BigInteger;
@@ -55,6 +56,9 @@ import loci.common.Location;
 
 public class FilePatternTest {
 
+  private static final String SEPARATOR =
+    FileSystems.getDefault().getSeparator();
+
   @DataProvider(name = "booleanStates")
   public Object[][] createBooleans() {
     return new Object[][] {{true}, {false}};
@@ -66,6 +70,13 @@ public class FilePatternTest {
       {"<0-2><3-4"}, {"0-2><3-4>"},  // mismatch
       {"<<0-2>>"}, {"<0-2<3-4>>"},  // wrong order
     };
+  }
+
+  // We can't use Path.resolve for patterns: on Windows, illegal
+  // characters would lead to InvalidPathException
+  private static String resolveToString(Path head, String tail) {
+    // Assumes head is a dir and tail does not contain the separator
+    return head.toString() + SEPARATOR + tail;
   }
 
   private static String mkPattern(
@@ -105,7 +116,7 @@ public class FilePatternTest {
   private static String[] resolveAll(Path dir, String[] basenames) {
     String[] resolved = new String[basenames.length];
     for (int i = 0; i < basenames.length; i++) {
-      resolved[i] = dir.resolve(basenames[i]).toString();
+      resolved[i] = resolveToString(dir, basenames[i]);
     }
     return resolved;
   }
@@ -161,7 +172,7 @@ public class FilePatternTest {
     String[] names = {"z0.tif", "z1.tif"};
     Path wd = Files.createTempDirectory("");
     wd.toFile().deleteOnExit();
-    String pattern = wd.resolve("z.*.tif").toString();
+    String pattern = resolveToString(wd, "z.*.tif");
     FilePattern fp = new FilePattern(pattern);
     assertTrue(fp.isValid());
     assertTrue(fp.isRegex());
@@ -227,7 +238,7 @@ public class FilePatternTest {
     }
     Path wd = Files.createTempDirectory("");
     wd.toFile().deleteOnExit();
-    String absPattern = wd.resolve(pattern).toString();
+    String absPattern = resolveToString(wd, pattern);
     String[] fullNames = mkFiles(wd, namesA);
     assertEquals(FilePattern.findPattern(fullNames[1]), absPattern);
     assertEquals(FilePattern.findPattern(namesA[1], wd.toString()), absPattern);

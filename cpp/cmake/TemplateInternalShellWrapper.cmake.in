@@ -5,6 +5,7 @@ set -e
 export BIOFORMATS_ICONDIR="@PROJECT_SOURCE_DIR@/cpp/share/icons"
 export BIOFORMATS_MANDIR="@PROJECT_BINARY_DIR@/cpp/man"
 export BIOFORMATS_SCHEMADIR="@PROJECT_SOURCE_DIR@/components/specification/released-schema"
+export BIOFORMATS_TRANSFORMDIR="@PROJECT_SOURCE_DIR@/components/specification/transforms"
 
 cmd=$1
 shift
