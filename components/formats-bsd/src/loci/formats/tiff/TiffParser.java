@@ -571,10 +571,10 @@ public class TiffParser {
     else if (type == IFDType.RATIONAL || type == IFDType.SRATIONAL) {
       // Two LONGs or SLONGs: the first represents the numerator
       // of a fraction; the second, the denominator
-      if (count == 1) return new TiffRational(in.readInt(), in.readInt());
+      if (count == 1) return new TiffRational(in.readInt() & 0xffffffffL, in.readInt() & 0xffffffffL);
       TiffRational[] rationals = new TiffRational[count];
       for (int j=0; j<count; j++) {
-        rationals[j] = new TiffRational(in.readInt(), in.readInt());
+        rationals[j] = new TiffRational(in.readInt() & 0xffffffffL, in.readInt() & 0xffffffffL);
       }
       return rationals;
     }
