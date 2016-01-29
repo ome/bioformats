@@ -40,6 +40,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import loci.common.Location;
 import loci.formats.in.FakeReader;
@@ -50,20 +52,24 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+
 public class FakeReaderTest {
 
+  private static Location mkSubd(Path parent, String name) throws Exception {
+    return new Location(Files.createDirectory(parent.resolve(name)).toFile());
+  }
+
   private File fake, fakeIni, fourChannelFake;
-
   private Location oneWell, twoWells, twoFields, twoPlates;
-
   private FakeReader reader;
 
   @BeforeMethod
   public void setUp() throws Exception {
-    fake = File.createTempFile(this.getClass().getName(), ".fake");
-    fourChannelFake = File.createTempFile("&sizeC=4&"
-        + this.getClass().getName(), ".fake");
+    Path wd = Files.createTempDirectory(this.getClass().getName());
+    wd.toFile().deleteOnExit();
+    fake = Files.createFile(wd.resolve("foo.fake")).toFile();
     fake.deleteOnExit();
+    fourChannelFake = Files.createFile(wd.resolve("foo&sizeC=4.fake")).toFile();
     fourChannelFake.deleteOnExit();
     fakeIni = new File(fake.getAbsolutePath() + ".ini");
     RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
@@ -73,28 +79,18 @@ public class FakeReaderTest {
         raf.close();
     }
     fakeIni.deleteOnExit();
-
-    // With JDK 7 this code can be simplified (using New I/O)
-    oneWell = new FakeImage(new Location(fake.getParent() + File.separator
-        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
-    .generateScreen(1, 1, 1, 1, 1);
+    oneWell = new FakeImage(
+        mkSubd(wd, "1W.fake")).generateScreen(1, 1, 1, 1, 1);
     deleteTemporaryDirectoryOnExit(oneWell);
-
-    twoWells = new FakeImage(new Location(fake.getParent() + File.separator
-        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
-    .generateScreen(1, 1, 1, 2, 1);
+    twoWells = new FakeImage(
+        mkSubd(wd, "2W.fake")).generateScreen(1, 1, 1, 2, 1);
     deleteTemporaryDirectoryOnExit(twoWells);
-
-    twoFields = new FakeImage(new Location(fake.getParent() + File.separator
-        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
-    .generateScreen(1, 1, 1, 1, 2);
+    twoFields = new FakeImage(
+        mkSubd(wd, "2F.fake")).generateScreen(1, 1, 1, 1, 2);
     deleteTemporaryDirectoryOnExit(twoFields);
-
-    twoPlates = new FakeImage(new Location(fake.getParent() + File.separator
-        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
-    .generateScreen(2, 2, 2, 2, 4);
+    twoPlates = new FakeImage(
+        mkSubd(wd, "2P.fake")).generateScreen(2, 2, 2, 2, 4);
     deleteTemporaryDirectoryOnExit(twoPlates);
-
     reader = new FakeReader();
   }
 
