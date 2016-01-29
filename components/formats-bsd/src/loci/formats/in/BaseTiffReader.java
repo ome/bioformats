@@ -230,8 +230,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     putInt("Model", firstIFD, IFD.MODEL);
     putInt("MinSampleValue", firstIFD, IFD.MIN_SAMPLE_VALUE);
     putInt("MaxSampleValue", firstIFD, IFD.MAX_SAMPLE_VALUE);
-    put("XResolution", firstIFD.getIFDRationalValue(IFD.X_RESOLUTION).doubleValue());
-    put("YResolution", firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION).doubleValue());
+
+    TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
+    TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
+
+    if (xResolution != null) {
+      put("XResolution", xResolution.doubleValue());
+    }
+    if (yResolution != null) {
+      put("YResolution", yResolution.doubleValue());
+    }
 
     int planar = firstIFD.getIFDIntValue(IFD.PLANAR_CONFIGURATION);
     String planarConfig = null;
