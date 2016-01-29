@@ -133,4 +133,10 @@
         <class name="loci.formats.utests.FileStitcherTest"/>
       </classes>
     </test>
+    <test name="FakeReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.FakeReaderTest"/>
+      </classes>
+    </test>
 </suite>
