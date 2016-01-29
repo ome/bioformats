@@ -48,15 +48,20 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+        (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+		
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -240,7 +245,17 @@ namespace ome
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-
+        /**
+         * Set the BigEndian property of Pixels.
+         *
+         * @param bigEndian @c true if big endian, or @c false if little endian.
+         * @param imageIndex the Image index.
+         * @param binDataIndex BinData index (unused).
+         */
+        virtual void
+        setPixelsBinDataBigEndian(bool bigEndian,
+                                  index_type imageIndex,
+                                  index_type binDataIndex = 0) = 0;
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -271,7 +286,7 @@ namespace ome
 
 {% end header%}\
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}\
 {% if debug %}\
 	//
 	// ${o.name} property storage
@@ -293,7 +308,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -305,9 +320,6 @@ namespace ome
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
-{% if debug %}\
-	// ${prop.name} accessor from parent ${k}
-{% end debug %}\
 
 {% end %}\
 {% end %}\
@@ -324,13 +336,13 @@ namespace ome
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 {% end %}\
 {% end %}\

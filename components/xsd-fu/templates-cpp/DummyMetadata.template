@@ -116,40 +116,45 @@
 {% end %}\
 \
 {% python
-        def is_abstract(name):
-                o = model.getObjectByName(name)
-                if o is not None and \
-                   (o.isAbstract):
-                        return True
-                return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+      (o.isAbstract):
+        return True
+    return False
 
-        def sorted_properties(o):
-                return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-        def accessor_string(name, max_occurs, level):
-                """Makes a Java method accessor string from an index name."""
-                return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level)['accessor']
 
-        def accessor_string_complex(name, max_occurs, level):
-                """Makes a Java method accessor string from an index name."""
-                to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-                if max_occurs == 1:
-                        to_return['accessor'] = "get%s()" % (name)
-                        return to_return
-                if name[:2].isupper():
-                        to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-                        return to_return
-                to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-                return to_return
+  def accessor_string_complex(name, max_occurs, level):
+    """Makes a Java method accessor string from an index name."""
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-        def accessor(name, parent, prop, func=accessor_string):
-                results = dict()
-                fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-                if parent not in results.keys():
-                        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-                if len(results.keys()) == 0:
-                        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-                return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
+                
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -298,6 +303,20 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
+        getPixelsBinDataCount(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      BaseMetadata::index_type
+      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
         getBooleanAnnotationAnnotationCount(index_type booleanAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -435,192 +454,51 @@ namespace ome
       }
 {% end source %}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getLineAnnotationCount(index_type /* roiIndex */, index_type /* lineIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLineAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getRectangleAnnotationCount(index_type roiIndex, index_type rectangleIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getRectangleAnnotationCount(index_type /* roiIndex */, index_type /* rectangleIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getRectangleAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getMaskAnnotationCount(index_type /* roiIndex */, index_type /* maskIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getMaskAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getEllipseAnnotationCount(index_type /* roiIndex */, index_type /* ellipseIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getEllipseAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getPointAnnotationCount(index_type /* roiIndex */, index_type /* pointIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPointAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getPolylineAnnotationCount(index_type /* roiIndex */, index_type /* polylineIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPolylineAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getPolygonAnnotationCount(index_type /* roiIndex */, index_type /* polygonIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPolygonAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getLabelAnnotationCount(index_type /* roiIndex */, index_type /* labelIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLabelAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getArcAnnotationCount(index_type /* instrumentIndex */, index_type /* arcIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getArcAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getFilamentAnnotationCount(index_type /* instrumentIndex */, index_type /* filamentIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getFilamentAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getLaserAnnotationCount(index_type /* instrumentIndex */, index_type /* laserIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLaserAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getLightEmittingDiodeAnnotationCount(index_type /* instrumentIndex */, index_type /* lightEmittingDiodeIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLightEmittingDiodeAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getGenericExcitationSourceAnnotationCount(index_type /* instrumentIndex */, index_type /* genericExcitationSourceIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getGenericExcitationSourceAnnotationCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
 
 {% end debug %}\
+
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+  public String get${abstractClass}Type(${indexes_string(v)})
+  {
+    return null;
+  }    
+    
+  public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
+  {
+    return -1;
+  } 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const std::string&
+        get${abstractClass}Type(${indexes_string(v)}) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const;
+      {
+        throw MetadataException("AggregateMetadata", "get${abstractClass}Type",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        get${abstractClass}Count(${indexes_string(v)}) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      AggregateMetadata::index_type
+      AggregateMetadata::get${abstractClass}Count(${indexes_string(v)}) const;
+      {
+        throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
+                                "intentionally not implemented");
+      }
+{% end source %}\     
+{% end %}\
+{% end %}\
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -655,11 +533,11 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if parents[getParent(o)] is not None and not o.isAbstract %}\
 {% if debug %}\
-        // ${o.name} entity counting
+        // ${getParent(o)} entity counting
 {% end debug %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
@@ -673,7 +551,21 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        bool
+        getPixelsBinDataBigEndian(index_type imageIndex,
+                                  index_type binDataIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      bool
+      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
+                                               index_type /* binDataIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
+                                "intentionally not implemented");
+      }
+{% end source %}\
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -694,7 +586,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -717,7 +609,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -748,13 +640,13 @@ ${counter(k, o, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -771,7 +663,21 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setPixelsBinDataBigEndian(bool       bigEndian,
+                                  index_type imageIndex,
+                                  index_type binDataIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,
+                                               index_type /* imageIndex */,
+                                               index_type /* binDataIndex */)
+      {
+      }
+{% end source %}\
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -790,7 +696,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -812,7 +718,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -843,13 +749,13 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

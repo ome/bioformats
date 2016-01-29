@@ -185,40 +185,45 @@
 {% end %}\
 \
 {% python
-        def is_abstract(name):
-                o = model.getObjectByName(name)
-                if o is not None and \
-                   (o.isAbstract):
-                        return True
-                return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+      (o.isAbstract):
+        return True
+    return False
 
-        def sorted_properties(o):
-                return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-        def accessor_string(name, max_occurs, level):
-                """Makes a C++ method accessor string from an index name."""
-                return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level):
+    """Makes a C++ method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level)['accessor']
 
-        def accessor_string_complex(name, max_occurs, level):
-                """Makes a C++ method accessor string from an index name."""
-                to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-                if max_occurs == 1:
-                        to_return['accessor'] = "get%s()" % (name)
-                        return to_return
-                if name[:2].isupper():
-                        to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-                        return to_return
-                to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-                return to_return
+  def accessor_string_complex(name, max_occurs, level):
+    """Makes a C++ method accessor string from an index name."""
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-        def accessor(name, parent, prop, func=accessor_string):
-                results = dict()
-                fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-                if parent not in results.keys():
-                        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-                if len(results.keys()) == 0:
-                        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-                return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
+
+  def getParent(o):
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      return o.parentName
+    return o.name
 %}\
 \
 \
@@ -397,7 +402,28 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getPixelsBinDataCount(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      AggregateMetadata::index_type
+      AggregateMetadata::getPixelsBinDataCount(index_type imageIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getPixelsBinDataCount(imageIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataCount",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+ 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -618,296 +644,58 @@ namespace ome
       }
 {% end source %}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getLineAnnotationCount(index_type roiIndex, index_type lineIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getLineAnnotationCount(roiIndex, lineIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getLineAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getRectangleAnnotationCount(index_type roiIndex, index_type rectangleIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getRectangleAnnotationCount(index_type roiIndex, index_type rectangleIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getRectangleAnnotationCount(roiIndex, rectangleIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getRectangleAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getMaskAnnotationCount(index_type roiIndex, index_type maskIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getMaskAnnotationCount(roiIndex, maskIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getMaskAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getEllipseAnnotationCount(index_type roiIndex, index_type ellipseIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getEllipseAnnotationCount(roiIndex, ellipseIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getEllipseAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getPointAnnotationCount(index_type roiIndex, index_type pointIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getPointAnnotationCount(roiIndex, pointIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getPointAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getPolylineAnnotationCount(index_type roiIndex, index_type polylineIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getPolylineAnnotationCount(roiIndex, polylineIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getPolylineAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getPolygonAnnotationCount(index_type roiIndex, index_type polygonIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getPolygonAnnotationCount(roiIndex, polygonIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getPolygonAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getLabelAnnotationCount(index_type roiIndex, index_type labelIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getLabelAnnotationCount(roiIndex, labelIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getLabelAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getArcAnnotationCount(index_type instrumentIndex, index_type arcIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getArcAnnotationCount(instrumentIndex, arcIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getArcAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getFilamentAnnotationCount(index_type instrumentIndex, index_type filamentIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getFilamentAnnotationCount(instrumentIndex, filamentIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getFilamentAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getLaserAnnotationCount(index_type instrumentIndex, index_type laserIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getLaserAnnotationCount(instrumentIndex, laserIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getLaserAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getLightEmittingDiodeAnnotationCount(index_type instrumentIndex, index_type lightEmittingDiodeIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getLightEmittingDiodeAnnotationCount(instrumentIndex, lightEmittingDiodeIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getLightEmittingDiodeAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getGenericExcitationSourceAnnotationCount(index_type instrumentIndex, index_type genericExcitationSourceIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getGenericExcitationSourceAnnotationCount(instrumentIndex, genericExcitationSourceIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getGenericExcitationSourceAnnotationCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
 
 {% end debug %}\
+
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const std::string&
+        get${abstractClass}Type(${indexes_string(v)}) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const;
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->get${abstractClass}Type(${indexes_name_string(v)});
+          }
+        throw MetadataException("AggregateMetadata", "get${abstractClass}Type",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        get${abstractClass}Count(${indexes_string(v)}) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      AggregateMetadata::index_type
+      AggregateMetadata::get${abstractClass}Count(${indexes_string(v)}) const;
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->get${abstractClass}Count(${indexes_name_string(v)});
+          }
+        throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+{% end %}\
+{% end %}\
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -978,6 +766,30 @@ ${counter(k, o, v)}\
 
 {% end debug %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        bool
+        getPixelsBinDataBigEndian(index_type imageIndex,
+                                  index_type binDataIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      bool
+      AggregateMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
+                                                   index_type binDataIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getPixelsBinDataBigEndian(imageIndex, binDataIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataBigEndian",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+ 
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -1006,7 +818,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract%}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -1029,7 +841,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -1060,13 +872,13 @@ ${counter(k, o, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE)%}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE)%}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -1083,7 +895,32 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setPixelsBinDataBigEndian(bool bigEndian,
+                                  index_type imageIndex,
+                                  index_type binDataIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      AggregateMetadata::setPixelsBinDataBigEndian(bool bigEndian,
+                                                   index_type imageIndex,
+                                                   index_type binDataIndex)
+      {
+        for (delegate_list_type::iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
+            if (store)
+              store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+          }
+        throw MetadataException("AggregateMetadata", "setPixelsBinDataBigEndian",
+                                "no delegate MetadataStore implementation");
+      }
+{% end source %}\
+ 
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -1112,7 +949,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -1134,7 +971,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -1165,13 +1002,13 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.SHAPE_OVERRIDE) %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\
