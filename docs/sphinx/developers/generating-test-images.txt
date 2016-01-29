@@ -134,7 +134,7 @@ with their default values, is shown below.
       * whether or not the metadata is complete
       * true
     - * thumbnail
-      *
+      * whether or not ``CoreMetadata.thumbnail`` is set
       * false
     - * series
       * number of series (Images)
@@ -143,7 +143,7 @@ with their default values, is shown below.
       * number of entries in the color lookup table
       * 3
     - * scaleFactor
-      *
+      * the scaling factor for the pixel values on each plane
       * 1
     - * exposureTime
       * time of exposure, supports units defaulting to seconds
@@ -182,10 +182,10 @@ with their default values, is shown below.
       * real depth of the pixels, supports units defaulting to microns
       *
     - * color
-      *
+      * the default color for all channels
       * null
-    - * color_*
-      *
+    - * color_x
+      * the color for channel x, overrides the default color for that channel
       *
 
 For full details of these keys, how unset and default values are handled and
