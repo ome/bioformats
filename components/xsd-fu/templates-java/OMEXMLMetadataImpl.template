@@ -60,19 +60,20 @@
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
 		return o.get${prop.methodName}();
 {% end %}\
-{% when o.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference and prop.maxOccurs > 1 %}\
-    // ${o.parentName} is abstract, is reference and occurs more than once 
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+{% when obj.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference and prop.maxOccurs > 1 %}\
+    // ${obj.parentName} is abstract, is reference and occurs more than once 
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
 {% when o.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference  %}\
     // ${o.parentName} is abstract 
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.getLinked${prop.methodName}().getID();
-{% end %}\
-{% when o.parentName in fu.ABSTRACT_OVERRIDE %}\
-    // ${o.parentName} is abstract and not a reference
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${o.parentName}(${index_name_string(o.parentName)});
+{% end %}
+// ${o.parent}
+{% when obj.parentName in fu.ABSTRACT_OVERRIDE or o.name in fu.ABSTRACT_OVERRIDE %}\
+    // ${obj.parentName} is abstract and not a reference
+    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\

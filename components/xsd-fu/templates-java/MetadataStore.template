@@ -274,26 +274,8 @@ public interface MetadataStore extends BaseMetadata
 {% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}\
 {% if debug %}\
 	// MARKER [EEE]
-	//parents = ${parents[o.name]} and ${o.isAbstract}
 	// ${o.name} property storage
-	// ${o.parentName}
-	{% if o.name == 'Rectangle' %}\
-	{% for k, v in indexes[o.parentName].items() %}\
-	// Indexes K = ${k}
-	// Indexes V = ${v}
-	 // Get Parent  = ${getParent(o)}
-	{% with test = 7 %}\
-	 // Indexes test = ${test}
-	 {% end %}\
-	 
-	{% end %}\
-{% end %}\
-	{% for prop in sorted(o.baseObjectProperties) %}\
-	// BaseObjectProperties:  ${prop.name}
-	{% end %}\
-
-
-  // ${indexes[o.name].items()}
+	// 
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 {% end debug %}\
@@ -315,7 +297,6 @@ public interface MetadataStore extends BaseMetadata
 \
 
 {% for k, v in indexes[getParent(o)].items() %}\
-// K = ${k}      V = ${v}
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -339,7 +320,7 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-  // ${prop.name} accessor from parent ${k}
+ 
 {% end %}\
 {% end %}\
 {% end %}\
@@ -374,19 +355,14 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\
-// V = ${ v }
 ${setter(k, o, prop, v)}
 {% end %}\
 {% end %}\
 {% end %}\
-
-
 {% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
-
-
 {% end %}\
 {% end %}\
 }

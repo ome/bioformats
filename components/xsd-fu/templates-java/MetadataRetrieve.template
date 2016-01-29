@@ -307,7 +307,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% for param in v %}\
      * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
-     * @return the Shape type.
+     * @return the ${abstractClass} type.
      */
     String get${abstractClass}Type(${indexes_string(v)});
     
@@ -351,11 +351,11 @@ public interface MetadataRetrieve extends BaseMetadata {
 
   // -- Entity counting (code generated definitions) --
   
-{% if parents[o.name] is not None and not o.isAbstract %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
 {% if debug %}\
 	// ${o.name} entity counting
 {% end debug %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[getParent(o)].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
         /**
          * Get the number of ${o.name} elements{% if is_multi_path[o.name] %} in ${k}{% end %}.
