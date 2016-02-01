@@ -122,8 +122,9 @@ public class MicromanagerReader extends FormatReader {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
         String data = stream.readString((int) Math.min(blockSize, length));
+        data = data.toLowerCase();
         stream.close();
-        return length > 0 && (data.indexOf("Micro-Manager") >= 0 ||
+        return length > 0 && (data.indexOf("micro-manager") >= 0 ||
           data.indexOf("micromanager") >= 0);
       }
       catch (IOException e) {
@@ -426,6 +427,14 @@ public class MicromanagerReader extends FormatReader {
         TiffParser parser = new TiffParser(path);
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
+
+        if (getSizeX() == 0 || getSizeY() == 0) {
+          CoreMetadata ms = core.get(posIndex);
+          ms.sizeX = (int) firstIFD.getImageWidth();
+          ms.sizeY = (int) firstIFD.getImageLength();
+          ms.pixelType = firstIFD.getPixelType();
+        }
+
         String json = firstIFD.getIFDTextValue(JSON_TAG);
         parser.getStream().close();
         if (json == null) {
@@ -483,7 +492,9 @@ public class MicromanagerReader extends FormatReader {
 
     // build list of TIFF files
 
-    buildTIFFList(posIndex, parent + File.separator + p.baseTiff);
+    if (p.baseTiff != null) {
+      buildTIFFList(posIndex, parent + File.separator + p.baseTiff);
+    }
 
     if (p.tiffs.size() == 0) {
       Vector<String> uniqueZ = new Vector<String>();
@@ -506,9 +517,11 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      ms.sizeZ = uniqueZ.size();
-      ms.sizeC = uniqueC.size();
-      ms.sizeT = uniqueT.size();
+      if (getSizeZ() * getSizeC() * getSizeT() != uniqueZ.size() * uniqueC.size() * uniqueT.size()) {
+        ms.sizeZ = uniqueZ.size();
+        ms.sizeC = uniqueC.size();
+        ms.sizeT = uniqueT.size();
+      }
 
       if (p.tiffs.size() == 0) {
         throw new FormatException("Could not find TIFF files.");
@@ -732,6 +745,39 @@ public class MicromanagerReader extends FormatReader {
 
           token = st.nextToken().trim();
         }
+      }
+      else if (token.startsWith("\"Coords-")) {
+        String path = token.substring(token.indexOf("-") + 1, token.lastIndexOf("\""));
+
+        int[] zct = new int[3];
+        int position = 0;
+        while (!token.startsWith("}")) {
+          int sep = token.indexOf(":");
+          if (sep > 0) {
+            String key = token.substring(0, sep);
+            String value = token.substring(sep + 1);
+            key = key.replaceAll("\"", "").trim();
+            value = value.replaceAll(",", "").trim();
+
+            if (key.equals("position")) {
+              position = Integer.parseInt(value);
+            }
+            else if (key.equals("time")) {
+              zct[2] = Integer.parseInt(value);
+            }
+            else if (key.equals("z")) {
+              zct[0] = Integer.parseInt(value);
+            }
+            else if (key.equals("channel")) {
+              zct[1] = Integer.parseInt(value);
+            }
+          }
+
+          token = st.nextToken().trim();
+        }
+        Index idx = new Index(zct);
+        idx.position = position;
+        p.fileNameMap.put(idx, path);
       }
     }
 
@@ -962,11 +1008,17 @@ public class MicromanagerReader extends FormatReader {
     public int z;
     public int c;
     public int t;
+    public int position;
 
     public Index(int[] zct) {
       z = zct[0];
       c = zct[1];
       t = zct[2];
+    }
+
+    @Override
+    public String toString() {
+      return "[position = " + position + ", z = "+ z + ", c = " + c + ", t = " + t + "]";
     }
   }
 
