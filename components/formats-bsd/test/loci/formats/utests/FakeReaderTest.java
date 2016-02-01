@@ -130,22 +130,32 @@ public class FakeReaderTest {
 
   @Test
   public void testDefaultValues() throws Exception {
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(512, reader.getSizeX());
+    reader.setId("foo.fake");
+    assertEquals(reader.getSizeX(), FakeReader.DEFAULT_SIZE_X);
+    assertEquals(reader.getSizeY(), FakeReader.DEFAULT_SIZE_Y);
+    assertEquals(reader.getSizeZ(), FakeReader.DEFAULT_SIZE_Z);
+    assertEquals(reader.getSizeC(), FakeReader.DEFAULT_SIZE_C);
+    assertEquals(reader.getSizeT(), FakeReader.DEFAULT_SIZE_T);
+    assertEquals(reader.getPixelType(), FakeReader.DEFAULT_PIXEL_TYPE);
+    assertEquals(reader.getRGBChannelCount(),
+                 FakeReader.DEFAULT_RGB_CHANNEL_COUNT);
+    assertEquals(reader.getDimensionOrder(),
+                 FakeReader.DEFAULT_DIMENSION_ORDER);
   }
 
   @Test
   public void testValuesFromFilename() throws Exception {
-    addToFileName("sizeX", "256");
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(256, reader.getSizeX());
+    int sizeX = FakeReader.DEFAULT_SIZE_X + 1;
+    reader.setId(String.format("foo&sizeX=%d.fake", sizeX));
+    assertEquals(reader.getSizeX(), sizeX);
   }
 
   @Test
   public void testValuesFromIni() throws Exception {
-    addToIniFile("sizeX", "128");
+    int sizeX = FakeReader.DEFAULT_SIZE_X + 1;
+    addToIniFile("sizeX", String.format("%d", sizeX));
     reader.setId(fake.getAbsolutePath());
-    assertEquals(128, reader.getSizeX());
+    assertEquals(reader.getSizeX(), sizeX);
   }
 
   @Test
@@ -253,30 +263,6 @@ public class FakeReaderTest {
     } else if (args.length % 2 != 0) {
       throw new IllegalArgumentException("Args must come in pairs");
     }
-  }
-
-  void addToFileName(String...args) {
-    checkArgs(args);
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < args.length / 2; i++) {
-      sb.append("&");
-      sb.append(args[i]);
-      i++;
-      sb.append("=");
-      sb.append(args[i]);
-    }
-
-    String fakePrefix = stripSuffix(fake, ".fake");
-
-    File newFake = new File(fakePrefix + sb.toString() + ".fake");
-    assertEquals(true, fake.renameTo(newFake));
-    fake = newFake;
-    fake.deleteOnExit();
-
-    File newProp = new File(fakePrefix + sb.toString() + ".fake.ini");
-    assertEquals(true, fakeIni.renameTo(newProp));
-    fakeIni = newProp;
-    fakeIni.deleteOnExit();
   }
 
   void addToIniFile(String... args) throws Exception {
