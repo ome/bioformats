@@ -216,7 +216,11 @@ public class OMETiffReader extends FormatReader {
 
       try {
         String metadataFile = meta.getBinaryOnlyMetadataFile();
-        if (metadataFile != null) {
+        // check the suffix to make sure that the MetadataFile is not
+        // referencing the current OME-TIFF
+        if (metadataFile != null && !checkSuffix(metadataFile, "ome.tiff") &&
+          !checkSuffix(metadataFile, "ome.tif"))
+        {
           return true;
         }
       }
