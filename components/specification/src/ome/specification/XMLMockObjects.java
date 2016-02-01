@@ -28,7 +28,7 @@
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
- * 	This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -582,7 +582,7 @@ public class XMLMockObjects
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
     settings.setWavelength(new Length(200.2, UNITS.NM));
-    settings.setLightSource(instrument.copyLaserList().get(0));
+    settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
 
@@ -798,17 +798,7 @@ public class XMLMockObjects
       j += i;
       Shape shape = createShape(j, SHAPES[i], z, c, t);
       shape.setID("Shape:" + index + ":" + j);
-      if (SHAPES[i].equals(Line.class.getName())) {
-        union.addLine((Line)shape);
-      } else if (SHAPES[i].equals(Polyline.class.getName())) {
-        union.addPolyline((Polyline)shape);
-      } else if (SHAPES[i].equals(Rectangle.class.getName())) {
-        union.addRectangle((Rectangle)shape);
-      } else if (SHAPES[i].equals(Ellipse.class.getName())) {
-        union.addEllipse((Ellipse)shape);
-      } else if (SHAPES[i].equals(Point.class.getName())) {
-        union.addPoint((Point)shape);
-      }
+      union.addShape(shape);
     }
     roi.setUnion(union);
     return roi;
@@ -1155,7 +1145,7 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-	PositiveFloat emWave = new PositiveFloat(300.3);
+  PositiveFloat emWave = new PositiveFloat(300.3);
     channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
     PositiveFloat exWave = new PositiveFloat(400.3);
     channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
@@ -1204,21 +1194,7 @@ public class XMLMockObjects
         instrument.addDichroic(createDichroic(i));
       }
       for (int i = 0; i < LIGHT_SOURCES.length; i++) {
-        if (LIGHT_SOURCES[i].equals(Laser.class.getName())) {
-          instrument.addLaser((Laser)createLightSource(LIGHT_SOURCES[i], i));
-        }
-        else if (LIGHT_SOURCES[i].equals(LightEmittingDiode.class.getName())) {
-          instrument.addLightEmittingDiode((LightEmittingDiode)createLightSource(LIGHT_SOURCES[i], i));
-        }
-        else if (LIGHT_SOURCES[i].equals(Filament.class.getName())) {
-          instrument.addFilament((Filament)createLightSource(LIGHT_SOURCES[i], i));
-        }
-        else if (LIGHT_SOURCES[i].equals(Arc.class.getName())) {
-          instrument.addArc((Arc)createLightSource(LIGHT_SOURCES[i], i));
-        }
-        else if (LIGHT_SOURCES[i].equals(GenericExcitationSource.class.getName())) {
-          instrument.addGenericExcitationSource((GenericExcitationSource)createLightSource(LIGHT_SOURCES[i], i));
-        }
+        instrument.addLightSource(createLightSource(LIGHT_SOURCES[i], i));
       }
     }
     return instrument;
@@ -1472,17 +1448,7 @@ public class XMLMockObjects
         k.next().setLinkedAnnotation(index, new TermAnnotation());
         index++;
     }
-    List<LightSource> lights = new ArrayList<LightSource>();
-    List<Laser> lasers = instrument.copyLaserList();
-    List<Arc> arcs = instrument.copyArcList();
-    List<Filament> filaments = instrument.copyFilamentList();
-    List<GenericExcitationSource> genericExcitationSources = instrument.copyGenericExcitationSourceList();
-    List<LightEmittingDiode> leds = instrument.copyLightEmittingDiodeList();
-    lights.addAll(lasers);
-    lights.addAll(arcs);
-    lights.addAll(filaments);
-    lights.addAll(genericExcitationSources);
-    lights.addAll(leds);
+    List<LightSource> lights = instrument.copyLightSourceList();
     index = 0;
     Iterator<LightSource> l = lights.iterator();
     while (l.hasNext()) {
