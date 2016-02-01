@@ -59,18 +59,16 @@ public class FakeReaderTest {
     return new Location(Files.createDirectory(parent.resolve(name)).toFile());
   }
 
+  private Path wd;
   private File fake, fakeIni, fourChannelFake;
   private Location oneWell, twoWells, twoFields, twoPlates;
   private FakeReader reader;
 
   @BeforeMethod
   public void setUp() throws Exception {
-    Path wd = Files.createTempDirectory(this.getClass().getName());
-    wd.toFile().deleteOnExit();
+    wd = Files.createTempDirectory(this.getClass().getName());
     fake = Files.createFile(wd.resolve("foo.fake")).toFile();
-    fake.deleteOnExit();
     fourChannelFake = Files.createFile(wd.resolve("foo&sizeC=4.fake")).toFile();
-    fourChannelFake.deleteOnExit();
     fakeIni = new File(fake.getAbsolutePath() + ".ini");
     RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
     try {
@@ -78,31 +76,21 @@ public class FakeReaderTest {
     } finally {
         raf.close();
     }
-    fakeIni.deleteOnExit();
     oneWell = new FakeImage(
         mkSubd(wd, "1W.fake")).generateScreen(1, 1, 1, 1, 1);
-    deleteTemporaryDirectoryOnExit(oneWell);
     twoWells = new FakeImage(
         mkSubd(wd, "2W.fake")).generateScreen(1, 1, 1, 2, 1);
-    deleteTemporaryDirectoryOnExit(twoWells);
     twoFields = new FakeImage(
         mkSubd(wd, "2F.fake")).generateScreen(1, 1, 1, 1, 2);
-    deleteTemporaryDirectoryOnExit(twoFields);
     twoPlates = new FakeImage(
         mkSubd(wd, "2P.fake")).generateScreen(2, 2, 2, 2, 4);
-    deleteTemporaryDirectoryOnExit(twoPlates);
     reader = new FakeReader();
   }
 
   @AfterMethod
   public void tearDown() throws Exception {
-    if (fake.exists()) {
-        fake.delete();
-    }
-    if (fakeIni.exists()) {
-      fakeIni.delete();
-    }
     reader.close();
+    deleteTemporaryDirectoryOnExit(new Location(wd.toFile()));
   }
 
   @Test
