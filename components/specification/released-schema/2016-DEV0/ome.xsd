@@ -70,6 +70,7 @@
                                         <xsd:sequence>
                                                 <xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
                                                 <xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+                                                <xsd:element ref="Folder" minOccurs="0" maxOccurs="unbounded"/>
                                                 <xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
                                                 <xsd:element ref="Plate" minOccurs="0" maxOccurs="unbounded"/>
                                                 <xsd:element ref="Screen" minOccurs="0" maxOccurs="unbounded"/>
@@ -142,6 +143,7 @@
                 <xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
+                <xsd:key name="FolderIDKey"><xsd:selector xpath="OME:Folder"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ExperimenterGroupIDKey"><xsd:selector xpath="OME:ExperimenterGroup"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
@@ -173,6 +175,9 @@
                 <xsd:keyref name="ExperimenterExperimenterGroupIDKeyRef" refer="OME:ExperimenterGroupIDKey" ><xsd:selector xpath="OME:Experimenter/OME:ExperimenterGroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
                 <xsd:keyref name="ExperimenterGroupContactExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:ExperimenterGroup/OME:Contact"/><xsd:field xpath="@ID"/></xsd:keyref>
                 <xsd:keyref name="ExperimenterGroupLeaderExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:ExperimenterGroup/OME:Leader"/><xsd:field xpath="@ID"/></xsd:keyref>
+                <xsd:keyref name="FolderFolderIDKeyRef" refer="OME:FolderIDKey" ><xsd:selector xpath="OME:Folder/OME:FolderRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+                <xsd:keyref name="FolderImageIDKeyRef" refer="OME:ImageIDKey" ><xsd:selector xpath="OME:Folder/OME:ImageRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+                <xsd:keyref name="FolderROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Folder/OME:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
                 <xsd:keyref name="ImageDatasetIDKeyRef" refer="OME:DatasetIDKey" ><xsd:selector xpath="OME:Image/OME:DatasetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
                 <xsd:keyref name="ImageExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
                 <xsd:keyref name="ImageExperimentIDKeyRef" refer="OME:ExperimentIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -1368,6 +1373,56 @@
                                 <xsd:annotation>
                     <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
                                         <xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense). [plain text string]</xsd:documentation>
+                                </xsd:annotation>
+                        </xsd:attribute>
+                </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Folder"> <!-- top level definition -->
+                <xsd:annotation>
+                        <xsd:appinfo><xsdfu><plural>Folders</plural></xsdfu></xsd:appinfo>
+                        <xsd:documentation>
+                                An element specifying a possibly heterogeneous collection of data.
+                                Folders may contain Folders so that data may be organized within a tree of Folders.
+                                Data may be in multiple Folders but a Folder may not be in more than one other Folder.
+                        </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                        <xsd:sequence>
+                                <xsd:element name="Description" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                                <xsd:documentation>
+                                                        A description for the folder. [plain-text multi-line string]
+                                                </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:simpleType>
+                                                <xsd:restriction base="xsd:string">
+                                                        <xsd:whiteSpace value="preserve"/>
+                                                </xsd:restriction>
+                                        </xsd:simpleType>
+                                </xsd:element>
+                                <xsd:element ref="FolderRef" minOccurs="0" maxOccurs="unbounded"/>
+                                <xsd:element ref="ImageRef" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                                        </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="ROIRef" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                                        </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                                        </xsd:annotation>
+                                </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="ID" use="required" type="FolderID"/>
+                        <xsd:attribute name="Name" use="optional" type="xsd:string">
+                                <xsd:annotation>
+                                        <xsd:documentation>
+                                                A name for the folder that is suitable for presentation to the user.
+                                        </xsd:documentation>
                                 </xsd:annotation>
                         </xsd:attribute>
                 </xsd:complexType>
@@ -2750,6 +2805,22 @@
                         </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
+        <xsd:element name="FolderRef"> <!-- top level definition -->
+                <xsd:annotation>
+                        <xsd:documentation>
+                                The FolderRef element refers to a Folder by specifying the Folder ID attribute.
+                                One or more FolderRef elements may be listed within the Folder element to specify what Folders
+                                the Folder contains. This tree hierarchy must be acyclic.
+                        </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="Reference">
+                                        <xsd:attribute name="ID" use="required" type="FolderID"/>
+                                </xsd:extension>
+                        </xsd:complexContent>
+                </xsd:complexType>
+        </xsd:element>
         <xsd:element name="FilterSetRef"> <!-- top level definition -->
                 <xsd:complexType>
                         <xsd:complexContent>
@@ -2986,6 +3057,11 @@
                         <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Image:\S+)|(Image:\S+)"/>
                 </xsd:restriction>
         </xsd:simpleType>
+        <xsd:simpleType name="FolderID">
+                <xsd:restriction base="LSID">
+                        <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Folder:\S+)|(Folder:\S+)"/>
+                </xsd:restriction>
+        </xsd:simpleType>
         <xsd:simpleType name="ExperimenterID">
                 <xsd:restriction base="LSID">
                         <xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Experimenter:\S+)|(Experimenter:\S+)"/>
@@ -3161,6 +3237,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 Dataset
                 Experimenter
                 ExperimenterGroup
+                Folder
                 Image
                 Node
                 OriginalFile
