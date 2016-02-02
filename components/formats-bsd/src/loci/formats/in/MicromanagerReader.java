@@ -115,7 +115,7 @@ public class MicromanagerReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
-      name.equals(XML) || name.endsWith(File.separator + XML))
+      name.equals(XML) || name.endsWith(File.separator + XML) || name.endsWith("_" + METADATA))
     {
       final int blockSize = 1048576;
       try {
@@ -138,8 +138,12 @@ public class MicromanagerReader extends FormatReader {
       return false;
     }
     try {
-      Location parent = new Location(name).getAbsoluteFile().getParentFile();
+      Location thisFile = new Location(name).getAbsoluteFile();
+      Location parent = thisFile.getParentFile();
       Location metaFile = new Location(parent, METADATA);
+      if (!metaFile.exists()) {
+        metaFile = new Location(parent, getPrefixMetadataName(thisFile.getName()));
+      }
       RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
       s.close();
@@ -251,10 +255,7 @@ public class MicromanagerReader extends FormatReader {
 
     Location file = new Location(currentId).getAbsoluteFile();
     Location parentFile = file.getParentFile();
-    String metadataFile = METADATA;
     if (file.exists()) {
-      metadataFile = new Location(parentFile, METADATA).getAbsolutePath();
-
       // look for other positions
 
       if (parentFile.getName().indexOf("Pos_") >= 0) {
@@ -272,7 +273,16 @@ public class MicromanagerReader extends FormatReader {
       }
       else {
         Position pos = new Position();
-        pos.metadataFile = metadataFile;
+        Location metadata = new Location(parentFile, METADATA);
+        if (!metadata.exists()) {
+          if (file.getName().endsWith(METADATA)) {
+            metadata = file;
+          }
+          else {
+            metadata = new Location(parentFile, getPrefixMetadataName(file.getName()));
+          }
+        }
+        pos.metadataFile = metadata.getAbsolutePath();
         positions.add(pos);
       }
     }
@@ -433,6 +443,7 @@ public class MicromanagerReader extends FormatReader {
           ms.sizeX = (int) firstIFD.getImageWidth();
           ms.sizeY = (int) firstIFD.getImageLength();
           ms.pixelType = firstIFD.getPixelType();
+          ms.littleEndian = firstIFD.isLittleEndian();
         }
 
         String json = firstIFD.getIFDTextValue(JSON_TAG);
@@ -443,6 +454,9 @@ public class MicromanagerReader extends FormatReader {
         String[] lines = json.split("\n");
         for (String line : lines) {
           String toSplit = line.trim();
+          if (toSplit.length() == 0) {
+            continue;
+          }
           toSplit = toSplit.substring(0, toSplit.length() - 1);
           String[] values = toSplit.split("\": ");
           if (values.length < 2) {
@@ -488,7 +502,9 @@ public class MicromanagerReader extends FormatReader {
     LOGGER.info("Finding image file names");
 
     // find the name of a TIFF file
-    p.tiffs = new Vector<String>();
+    if (p.tiffs == null) {
+      p.tiffs = new Vector<String>();
+    }
 
     // build list of TIFF files
 
@@ -738,6 +754,13 @@ public class MicromanagerReader extends FormatReader {
           }
           else if (key.equals("FileName")) {
             p.fileNameMap.put(new Index(slice), value);
+            Location realFile = new Location(parent, value);
+            if (realFile.exists()) {
+              if (p.tiffs == null) {
+                p.tiffs = new Vector<String>();
+              }
+              p.tiffs.add(realFile.getAbsolutePath());
+            }
             if (p.baseTiff == null) {
               p.baseTiff = value;
             }
@@ -810,6 +833,12 @@ public class MicromanagerReader extends FormatReader {
   private void buildTIFFList(int posIndex, String baseTiff) {
     LOGGER.info("Building list of TIFFs");
     Position p = positions.get(posIndex);
+
+    if ((p.tiffs.size() > 0 && p.tiffs.size() == p.fileNameMap.size()) || baseTiff == null) {
+      return;
+    }
+    p.tiffs.clear();
+
     String prefix = "";
     if (baseTiff.indexOf(File.separator) != -1) {
       prefix = baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) + 1);
@@ -936,6 +965,10 @@ public class MicromanagerReader extends FormatReader {
     catch (Exception e) {
       LOGGER.warn("", e);
     }
+  }
+
+  private String getPrefixMetadataName(String baseName) {
+    return baseName.substring(0, baseName.indexOf(".")) + "_" + METADATA;
   }
 
   // -- Helper classes --
