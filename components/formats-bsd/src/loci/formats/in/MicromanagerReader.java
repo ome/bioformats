@@ -180,7 +180,7 @@ public class MicromanagerReader extends FormatReader {
       }
       if (!noPixels) {
         for (String tiff : pos.tiffs) {
-          if (new Location(tiff).exists()) {
+          if (new Location(tiff).exists() && !files.contains(tiff)) {
             files.add(tiff);
           }
         }
@@ -204,7 +204,8 @@ public class MicromanagerReader extends FormatReader {
 
     if (file != null && new Location(file).exists()) {
       tiffReader.setId(file);
-      return tiffReader.openBytes(0, buf, x, y, w, h);
+      int index = no % tiffReader.getImageCount();
+      return tiffReader.openBytes(index, buf, x, y, w, h);
     }
     LOGGER.warn("File for image #{} ({}) is missing.", no, file);
     return buf;
@@ -438,13 +439,12 @@ public class MicromanagerReader extends FormatReader {
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
 
-        if (getSizeX() == 0 || getSizeY() == 0) {
-          CoreMetadata ms = core.get(posIndex);
-          ms.sizeX = (int) firstIFD.getImageWidth();
-          ms.sizeY = (int) firstIFD.getImageLength();
-          ms.pixelType = firstIFD.getPixelType();
-          ms.littleEndian = firstIFD.isLittleEndian();
-        }
+        // ensure that the plane dimensions and pixel type are correct
+        CoreMetadata ms = core.get(posIndex);
+        ms.sizeX = (int) firstIFD.getImageWidth();
+        ms.sizeY = (int) firstIFD.getImageLength();
+        ms.pixelType = firstIFD.getPixelType();
+        ms.littleEndian = firstIFD.isLittleEndian();
 
         String json = firstIFD.getIFDTextValue(JSON_TAG);
         parser.getStream().close();
