@@ -52,6 +52,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
@@ -78,6 +79,7 @@ public class MicromanagerReader extends FormatReader {
   private static final String METADATA = "metadata.txt";
 
   private static final int JSON_TAG = 50839;
+  private static final int MM_JSON_TAG = 51123;
 
   /**
    * Optional file containing additional acquisition parameters.
@@ -432,10 +434,17 @@ public class MicromanagerReader extends FormatReader {
     // parse original metadata from each TIFF's JSON
     p.positions = new Double[p.tiffs.size()][3];
     int digits = String.valueOf(p.tiffs.size() - 1).length();
-    for (int plane=0; plane<p.tiffs.size(); plane++) {
+
+    boolean parseMMJSONTag = true;
+    for (int plane=0; plane<p.tiffs.size(); ) {
       String path = p.tiffs.get(plane);
+      if (!new Location(path).exists()) {
+        plane++;
+        continue;
+      }
       try {
         TiffParser parser = new TiffParser(path);
+        int nIFDs = parser.getIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
 
@@ -447,49 +456,98 @@ public class MicromanagerReader extends FormatReader {
         ms.littleEndian = firstIFD.isLittleEndian();
 
         String json = firstIFD.getIFDTextValue(JSON_TAG);
+        if (json != null) {
+          String[] lines = json.split("\n");
+          for (String line : lines) {
+            String toSplit = line.trim();
+            if (toSplit.length() == 0) {
+              continue;
+            }
+            toSplit = toSplit.substring(0, toSplit.length() - 1);
+            String[] values = toSplit.split("\": ");
+            if (values.length < 2) {
+              continue;
+            }
+            String key = values[0].replaceAll("\"", "");
+            String value = values[1].replaceAll("\"", "");
+            if (key.length() > 0 && value.length() > 0) {
+              parseKeyAndValue(key, value, digits, plane * nIFDs, nIFDs);
+            }
+          }
+        }
+
+        IFDList ifds = parser.getIFDs();
+        for (int i=0; i<ifds.size(); i++) {
+          if (!parseMMJSONTag) {
+            break;
+          }
+          IFD ifd = ifds.get(i);
+          parser.fillInIFD(ifd);
+          json = ifd.getIFDTextValue(MM_JSON_TAG);
+          if (json == null) {
+            // if one of the files is missing the per-plane JSON tag,
+            // assume all files are missing it (for performance)
+            parseMMJSONTag = false;
+            break;
+          }
+          String[] tokens = json.split("[\\{\\}:,\"]");
+          String key = null, value = null, propType = null;
+          for (String token : tokens) {
+            if (token.length() == 0) {
+              continue;
+            }
+            if (key == null && value == null && propType == null) {
+              key = token;
+            }
+            else if (token.equals("PropVal")) {
+              value = token;
+            }
+            else if (value != null && value.equals("PropVal")) {
+              value = token;
+            }
+            else if (token.equals("PropType")) {
+              propType = token;
+            }
+            else if (propType != null && propType.equals("PropType")) {
+              parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
+              propType = null;
+              key = null;
+              value = null;
+            }
+          }
+        }
+        plane += ifds.size();
         parser.getStream().close();
-        if (json == null) {
-          continue;
-        }
-        String[] lines = json.split("\n");
-        for (String line : lines) {
-          String toSplit = line.trim();
-          if (toSplit.length() == 0) {
-            continue;
-          }
-          toSplit = toSplit.substring(0, toSplit.length() - 1);
-          String[] values = toSplit.split("\": ");
-          if (values.length < 2) {
-            continue;
-          }
-          String key = values[0].replaceAll("\"", "");
-          String value = values[1].replaceAll("\"", "");
-          if (key.length() > 0 && value.length() > 0) {
-            // using key alone will result in conflicts with metadata.txt values
-            addSeriesMeta(String.format("Plane #%0" + digits + "d %s", plane, key), value);
-            if (key.equals("XPositionUm")) {
-              try {
-                p.positions[plane][0] = new Double(value);
-              }
-              catch (NumberFormatException e) { }
-            }
-            else if (key.equals("YPositionUm")) {
-              try {
-                p.positions[plane][1] = new Double(value);
-              }
-              catch (NumberFormatException e) { }
-            }
-            else if (key.equals("ZPositionUm")) {
-              try {
-                p.positions[plane][2] = new Double(value);
-              }
-              catch (NumberFormatException e) { }
-            }
-          }
-        }
       }
       catch (IOException e) {
         LOGGER.debug("Failed to read metadata from " + path, e);
+      }
+    }
+  }
+
+  private void parseKeyAndValue(String key, String value, int digits, int plane, int nPlanes) {
+    Position p = positions.get(getCoreIndex());
+
+    // using key alone will result in conflicts with metadata.txt values
+    for (int i=plane; i<plane+nPlanes; i++) {
+      addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
+      if (key.equals("XPositionUm")) {
+        try {
+          p.positions[i][0] = new Double(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (key.equals("YPositionUm")) {
+        try {
+          p.positions[i][1] = new Double(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+      else if (key.equals("ZPositionUm")) {
+        try {
+          p.positions[i][2] = new Double(value);
+        }
+        catch (NumberFormatException e) { }
       }
     }
   }
