@@ -35,10 +35,12 @@ package loci.formats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Arrays;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -1041,17 +1043,16 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles() */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
+    if (getSeriesCount() == 1) {
+      return getSeriesUsedFiles(noPixels);
+    }
     int oldSeries = getSeries();
-    Vector<String> files = new Vector<String>();
+    Set<String> files = new LinkedHashSet<String>();
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       String[] s = getSeriesUsedFiles(noPixels);
       if (s != null) {
-        for (String file : s) {
-          if (getSeriesCount() == 1 || !files.contains(file)) {
-            files.add(file);
-          }
-        }
+        files.addAll(Arrays.asList(s));
       }
     }
     setSeries(oldSeries);
