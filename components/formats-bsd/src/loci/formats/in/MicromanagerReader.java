@@ -438,7 +438,12 @@ public class MicromanagerReader extends FormatReader {
     boolean parseMMJSONTag = true;
     for (int plane=0; plane<p.tiffs.size(); ) {
       String path = p.tiffs.get(plane);
-      if (!new Location(path).exists()) {
+      // use getFile(...) lookup if possible, to make sure that
+      // file ordering is correct
+      if (p.tiffs.size() == p.fileNameMap.size() && plane < getImageCount()) {
+        path = p.getFile(plane);
+      }
+      if (path == null || !new Location(path).exists()) {
         plane++;
         continue;
       }
