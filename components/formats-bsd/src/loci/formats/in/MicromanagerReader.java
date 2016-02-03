@@ -513,7 +513,12 @@ public class MicromanagerReader extends FormatReader {
             else if (token.equals("PropType")) {
               propType = token;
             }
-            else if (propType != null && propType.equals("PropType")) {
+            else if ((propType != null && propType.equals("PropType")) ||
+              (key != null && value == null))
+            {
+              if (value == null) {
+                value = token;
+              }
               parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
               propType = null;
               key = null;
