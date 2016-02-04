@@ -173,20 +173,29 @@ namespace ome
       void
       MinimalTIFFWriter::close(bool fileOnly)
       {
-        if (tiff)
+        try
           {
-            // Flush last IFD.
-            nextIFD();
-            tiff->close();
+            if (tiff)
+              {
+                // Flush last IFD if unwritten.
+                nextIFD();
+                tiff->close();
+              }
+
             ifd.reset();
             tiff.reset();
+            ifdIndex = 0;
+            seriesIFDRange.clear();
+            bigTIFF = boost::none;
+
+            detail::FormatWriter::close(fileOnly);
           }
-
-        ifdIndex = 0;
-        seriesIFDRange.clear();
-        bigTIFF = boost::none;
-
-        detail::FormatWriter::close(fileOnly);
+        catch (const std::exception&)
+          {
+            tiff.reset(); // Ensure we only flush the last IFD once.
+            detail::FormatWriter::close(fileOnly);
+            throw;
+          }
       }
 
       void
