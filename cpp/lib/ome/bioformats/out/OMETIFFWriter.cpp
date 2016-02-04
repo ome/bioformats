@@ -572,17 +572,15 @@ namespace ome
              t != tiffs.end();
              ++t)
           t->second.tiff->close();
-        if (!fileOnly)
-          {
-            files.clear();
-            tiffs.clear();
-            currentTIFF = tiffs.end();
-            flags.clear();
-            seriesState.clear();
-            originalMetadataRetrieve.reset();
-            omeMeta.reset();
-            bigTIFF = boost::none;
-          }
+
+        files.clear();
+        tiffs.clear();
+        currentTIFF = tiffs.end();
+        flags.clear();
+        seriesState.clear();
+        originalMetadataRetrieve.reset();
+        omeMeta.reset();
+        bigTIFF = boost::none;
 
         ome::bioformats::detail::FormatWriter::close(fileOnly);
       }

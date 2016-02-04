@@ -181,12 +181,11 @@ namespace ome
             ifd.reset();
             tiff.reset();
           }
-        if (!fileOnly)
-          {
-            ifdIndex = 0;
-            seriesIFDRange.clear();
-            bigTIFF = boost::none;
-          }
+
+        ifdIndex = 0;
+        seriesIFDRange.clear();
+        bigTIFF = boost::none;
+
         detail::FormatWriter::close(fileOnly);
       }
 
