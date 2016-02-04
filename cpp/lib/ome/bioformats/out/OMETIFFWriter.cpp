@@ -714,7 +714,6 @@ namespace ome
 
         dimension_size_type seriesCount = getSeriesCount();
 
-        dimension_size_type nextPlane = 0U;
         for (dimension_size_type series = 0U; series < seriesCount; ++series)
           {
             DimensionOrder dimOrder = metadataRetrieve->getPixelsDimensionOrder(series);
@@ -740,8 +739,8 @@ namespace ome
                     path relative(make_relative(baseDir, planeState.id));
                     std::string uuid("urn:uuid:");
                     uuid += t->second.uuid;
-                    omeMeta->setUUIDFileName(relative.generic_string(), series, nextPlane);
-                    omeMeta->setUUIDValue(uuid, series, nextPlane);
+                    omeMeta->setUUIDFileName(relative.generic_string(), series, plane);
+                    omeMeta->setUUIDValue(uuid, series, plane);
 
                     // Fill in non-default TiffData attributes.
                     omeMeta->setTiffDataFirstZ(coords[0], series, plane);
@@ -749,10 +748,6 @@ namespace ome
                     omeMeta->setTiffDataFirstC(coords[1], series, plane);
                     omeMeta->setTiffDataIFD(planeState.ifd, series, plane);
                     omeMeta->setTiffDataPlaneCount(1, series, plane);
-
-                    // The Java writer updates the TIFF IFD count
-                    // here, but not sure it's appropriate for us.
-                    ++nextPlane;
                   }
                 else
                   {
