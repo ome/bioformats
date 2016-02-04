@@ -1036,7 +1036,11 @@ public class MicromanagerReader extends FormatReader {
   }
 
   private String getPrefixMetadataName(String baseName) {
-    return baseName.substring(0, baseName.indexOf(".")) + "_" + METADATA;
+    int dot = baseName.indexOf(".");
+    if (dot > 0) {
+      return baseName.substring(0, dot) + "_" + METADATA;
+    }
+    return baseName + "_" + METADATA;
   }
 
   // -- Helper classes --
