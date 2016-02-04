@@ -20,6 +20,9 @@ Version history
        - fixed to ignore invalid BinaryOnly elements
    - TIFF
        - fixed caching of BigTIFF files
+   - Slidebook
+       - fixed handling of montages in Slidebook6Reader (thanks to Richard Myers)
+   - Performance improvement for writing files to disk (thanks to Stephane Dallongeville)
    - Build system
        - fixed Maven POMs to reduce calls to artifacts.openmicroscopy.org
        - fixed bioformats_package.jar to include the loci.formats.tools
