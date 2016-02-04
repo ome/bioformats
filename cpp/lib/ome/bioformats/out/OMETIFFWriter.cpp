@@ -543,46 +543,59 @@ namespace ome
       void
       OMETIFFWriter::close(bool fileOnly)
       {
-        if (currentId)
+        try
           {
-            // Flush last IFD.
-            nextIFD();
+            if (currentId)
+              {
+                // Flush last IFD if unwritten.
+                if(currentTIFF != tiffs.end())
+                  {
+                    nextIFD();
+                    currentTIFF = tiffs.end();
+                  }
 
-            // Remove any BinData elements.
-            removeBinData(*omeMeta);
-            // Create UUID and TiffData elements for each series.
-            fillMetadata();
+                // Remove any BinData elements.
+                removeBinData(*omeMeta);
+                // Create UUID and TiffData elements for each series.
+                fillMetadata();
 
+                for (tiff_map::const_iterator t = tiffs.begin();
+                     t != tiffs.end();
+                     ++t)
+                  {
+                    // Get OME-XML for this TIFF file.
+                    std::string xml = getOMEXML(t->first);
+                    // Make sure file is closed before we modify it outside libtiff.
+                    t->second.tiff->close();
+
+                    // Save OME-XML in the TIFF.
+                    saveComment(t->first, xml);
+                  }
+              }
+
+            // Close any open TIFFs.
             for (tiff_map::const_iterator t = tiffs.begin();
                  t != tiffs.end();
                  ++t)
-              {
-                // Get OME-XML for this TIFF file.
-                std::string xml = getOMEXML(t->first);
-                // Make sure file is closed before we modify it outside libtiff.
-                t->second.tiff->close();
+              t->second.tiff->close();
 
-                // Save OME-XML in the TIFF.
-                saveComment(t->first, xml);
-              }
+            files.clear();
+            tiffs.clear();
+            currentTIFF = tiffs.end();
+            flags.clear();
+            seriesState.clear();
+            originalMetadataRetrieve.reset();
+            omeMeta.reset();
+            bigTIFF = boost::none;
+
+            ome::bioformats::detail::FormatWriter::close(fileOnly);
           }
-
-        // Close any open TIFFs.
-        for (tiff_map::const_iterator t = tiffs.begin();
-             t != tiffs.end();
-             ++t)
-          t->second.tiff->close();
-
-        files.clear();
-        tiffs.clear();
-        currentTIFF = tiffs.end();
-        flags.clear();
-        seriesState.clear();
-        originalMetadataRetrieve.reset();
-        omeMeta.reset();
-        bigTIFF = boost::none;
-
-        ome::bioformats::detail::FormatWriter::close(fileOnly);
+        catch (const std::exception&)
+          {
+            currentTIFF = tiffs.end(); // Ensure we only flush the last IFD once.
+            ome::bioformats::detail::FormatWriter::close(fileOnly);
+            throw;
+          }
       }
 
       void

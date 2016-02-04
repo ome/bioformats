@@ -151,8 +151,21 @@ namespace ome
       /**
        * Close the currently open file.
        *
+       * An exception may be thrown when closing the file, for example
+       * if there are problems flushing any pending writes, or if
+       * there are any inconsistencies in the metadata which prevent
+       * completing any final writes.  The causes are reader- or
+       * writer-dependent, and the exception type is dependent upon
+       * the implementation details of the reader or writer in use.
+       * It is advised to always explicitly close writers, since if
+       * this is automatically called at destruction time, any errors
+       * will be lost.  If an exception is thrown, the object may be
+       * left in an inconsistent state and should not be reused.
+       *
        * @param fileOnly close the open file only if @c true, or else
-       * free all internal state if @c false.
+       * free all internal state if @c false; only meaningful for
+       * readers, since writers will always free all internal state.
+       * @throws On error; exception type may vary.
        */
       virtual
       void
