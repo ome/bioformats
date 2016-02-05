@@ -48,6 +48,59 @@
 
     <!-- Actual schema changes -->
 
+    <!-- Rewrite abstract elements for Shape and LightSource -->
+  
+    <xsl:template match="OME:LightSource">
+ 	     <xsl:variable name="lightSources" select="'Laser', 'Arc', 'Filament', 'LightEmittingDiode', 'GenericExcitationSource'"/>
+        <xsl:variable name="lightSourceRoot" select="." />
+        <xsl:variable name="lightSourceType"  >
+    	      <xsl:for-each select="$lightSources">
+                <xsl:variable name="lightSource" select="." />
+                <xsl:if test="$lightSourceRoot/*[name()= $lightSource]">
+                    <xsl:value-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:element name="{$lightSourceType}">
+            <xsl:apply-templates select="@*|*[name()=$lightSourceType]/@*"/>
+            <xsl:apply-templates select="node()"/>
+            <xsl:apply-templates select="*[name()=$lightSourceType]/node()"/>
+        </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="OME:Laser"/>
+    <xsl:template match="OME:Arc"/>
+    <xsl:template match="OME:Filament"/>
+    <xsl:template match="OME:LightEmittingDiode"/>
+    <xsl:template match="OME:GenericExcitationSource"/>
+    
+    <xsl:template match="ROI:Shape">
+ 	     <xsl:variable name="shapes" select="'Line', 'Rectangle', 'Mask', 'Ellipse', 'Point', 'Polyline', 'Polygon', 'Label'"/>
+        <xsl:variable name="shapeRoot" select="." />
+        <xsl:variable name="shapeType"  >
+    	      <xsl:for-each select="$shapes">
+                <xsl:variable name="shape" select="." />
+                <xsl:if test="$shapeRoot/*[name()= $shape]">
+                    <xsl:value-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:element name="{$shapeType}">
+            <xsl:apply-templates select="@*|*[name()=$shapeType]/@*"/>
+            <xsl:apply-templates select="node()"/>
+            <xsl:apply-templates select="*[name()=$shapeType]/node()"/>
+        </xsl:element>
+    </xsl:template>  
+    
+    <xsl:template match="ROI:Line"/>
+    <xsl:template match="ROI:Rectangle"/>
+    <xsl:template match="ROI:Mask"/>
+    <xsl:template match="ROI:Ellipse"/>
+    <xsl:template match="ROI:Point"/>
+    <xsl:template match="ROI:Polyline"/>
+    <xsl:template match="ROI:Polygon"/>
+    <xsl:template match="ROI:Label"/>
+    
     <!-- strip Namespace from ROI -->
     <xsl:template match="ROI:ROI/@Namespace"/>
 
