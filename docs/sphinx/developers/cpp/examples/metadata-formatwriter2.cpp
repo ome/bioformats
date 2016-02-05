@@ -1,39 +1,39 @@
 /*
- * #%L
- * OME-BIOFORMATS C++ library for image IO.
- * Copyright Â© 2015 Open Microscopy Environment:
- *   - Massachusetts Institute of Technology
- *   - National Institutes of Health
- *   - University of Dundee
- *   - Board of Regents of the University of Wisconsin-Madison
- *   - Glencoe Software, Inc.
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
- * #L%
- */
+* #%L
+* OME-BIOFORMATS C++ library for image IO.
+* Copyright © 2015 Open Microscopy Environment:
+*   - Massachusetts Institute of Technology
+*   - National Institutes of Health
+*   - University of Dundee
+*   - Board of Regents of the University of Wisconsin-Madison
+*   - Glencoe Software, Inc.
+* %%
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*
+* The views and conclusions contained in the software and documentation are
+* those of the authors and should not be interpreted as representing official
+* policies, either expressed or implied, of any organization.
+* #L%
+*/
 
 #include <iostream>
 
@@ -55,7 +55,7 @@ using ome::bioformats::fillMetadata;
 using ome::bioformats::CoreMetadata;
 using ome::bioformats::DIM_SPATIAL_X;
 using ome::bioformats::DIM_SPATIAL_Y;
-using ome::bioformats::DIM_SUBCHANNEL;
+using ome::bioformats::DIM_CHANNEL;
 using ome::bioformats::FormatWriter;
 using ome::bioformats::MetadataMap;
 using ome::bioformats::out::OMETIFFWriter;
@@ -85,7 +85,9 @@ namespace
     core->sizeX = 512U;
     core->sizeY = 512U;
     core->sizeC.clear(); // defaults to 1 channel with 1 subchannel; clear this
-    core->sizeC.push_back(3U); // replace with single RGB channel
+    core->sizeC.push_back(1);
+    core->sizeC.push_back(1);
+    core->sizeC.push_back(1);
     core->pixelType = ome::xml::model::enums::PixelType::UINT16;
     core->interleaved = false;
     core->bitsPerPixel = 12U;
@@ -124,13 +126,16 @@ namespace
         // Loop over planes (for this image index)
         for (dimension_size_type p = 0 ; p < pc; ++p)
           {
-            // Pixel buffer; size 512 Ã— 512 with 3 subchannels of type
+            // Change the current plane to this index.
+            writer.setPlane(p);
+
+            // Pixel buffer; size 512 × 512 with 3 channels of type
             // uint16_t.  It uses the native endianness and has a
             // storage order of XYZTC without interleaving
             // (subchannels are planar).
             shared_ptr<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
               buffer(make_shared<PixelBuffer<PixelProperties<PixelType::UINT16>::std_type> >
-                     (boost::extents[512][512][1][1][1][3][1][1][1],
+                     (boost::extents[512][512][1][1][1][1][1][1][1],
                       PixelType::UINT16, ome::bioformats::ENDIAN_NATIVE,
                       PixelBufferBase::make_storage_order(DimensionOrder::XYZTC, false)));
 
@@ -145,13 +150,23 @@ namespace
                   std::fill(idx.begin(), idx.end(), 0);
                   idx[DIM_SPATIAL_X] = x;
                   idx[DIM_SPATIAL_Y] = y;
-                  
-                  idx[DIM_SUBCHANNEL] = 0;
-                  buffer->at(idx) = (static_cast<float>(x) / 512.0f) * 4096.0f;
-                  idx[DIM_SUBCHANNEL] = 1;
-                  buffer->at(idx) = (static_cast<float>(y) / 512.0f) * 4096.0f;
-                  idx[DIM_SUBCHANNEL] = 2;
-                  buffer->at(idx) = (static_cast<float>(x+y) / 1024.0f) * 4096.0f;
+
+                  idx[DIM_CHANNEL] = 0;
+
+                  switch(p)
+                    {
+                    case 0:
+                      buffer->at(idx) = (static_cast<float>(x) / 512.0f) * 4096.0f;
+                      break;
+                    case 1:
+                      buffer->at(idx) = (static_cast<float>(y) / 512.0f) * 4096.0f;
+                      break;
+                    case 2:
+                      buffer->at(idx) = (static_cast<float>(x+y) / 1024.0f) * 4096.0f;
+                      break;
+                    default:
+                      break;
+                    }
                 }
 
             VariantPixelBuffer vbuffer(buffer);
