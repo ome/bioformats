@@ -11,7 +11,7 @@ Version history
        - fixed tile reading when a cache (.bfmemo) file is present
    - MicroManager
        - updated to parse JSON data from tags 50839 and 51123
-       - fixed to detect *_metadata.txt files in addition to metadata.txt
+       - fixed to detect :file:`*_metadata.txt` files in addition to metadata.txt
          files
        - fixed to handle datasets with each stack in a single file
    - OME-XML
@@ -32,7 +32,9 @@ Version history
    - clarified description of Qu for MATLAB (thanks to Carnë Draug)
    - added installation instructions for Octave (thanks to Carnë Draug)
 * C++:
-   - no changes, released to keep version numbers in sync with Bio-Formats Java
+   - Bugfixes to the OME-TIFF writer to correct use of the metadata store with
+     multiple series
+   - Ensure file and writer state consistency upon close failure
 
 5.1.7 (2015 December 7)
 -----------------------
