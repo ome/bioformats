@@ -543,37 +543,42 @@ namespace ome
       void
       OMETIFFWriter::close(bool fileOnly)
       {
-        if (currentId)
+        try
           {
-            // Flush last IFD.
-            nextIFD();
+            if (currentId)
+              {
+                // Flush last IFD if unwritten.
+                if(currentTIFF != tiffs.end())
+                  {
+                    nextIFD();
+                    currentTIFF = tiffs.end();
+                  }
 
-            // Remove any BinData elements.
-            removeBinData(*omeMeta);
-            // Create UUID and TiffData elements for each series.
-            fillMetadata();
+                // Remove any BinData elements.
+                removeBinData(*omeMeta);
+                // Create UUID and TiffData elements for each series.
+                fillMetadata();
 
+                for (tiff_map::const_iterator t = tiffs.begin();
+                     t != tiffs.end();
+                     ++t)
+                  {
+                    // Get OME-XML for this TIFF file.
+                    std::string xml = getOMEXML(t->first);
+                    // Make sure file is closed before we modify it outside libtiff.
+                    t->second.tiff->close();
+
+                    // Save OME-XML in the TIFF.
+                    saveComment(t->first, xml);
+                  }
+              }
+
+            // Close any open TIFFs.
             for (tiff_map::const_iterator t = tiffs.begin();
                  t != tiffs.end();
                  ++t)
-              {
-                // Get OME-XML for this TIFF file.
-                std::string xml = getOMEXML(t->first);
-                // Make sure file is closed before we modify it outside libtiff.
-                t->second.tiff->close();
+              t->second.tiff->close();
 
-                // Save OME-XML in the TIFF.
-                saveComment(t->first, xml);
-              }
-          }
-
-        // Close any open TIFFs.
-        for (tiff_map::const_iterator t = tiffs.begin();
-             t != tiffs.end();
-             ++t)
-          t->second.tiff->close();
-        if (!fileOnly)
-          {
             files.clear();
             tiffs.clear();
             currentTIFF = tiffs.end();
@@ -582,9 +587,15 @@ namespace ome
             originalMetadataRetrieve.reset();
             omeMeta.reset();
             bigTIFF = boost::none;
-          }
 
-        ome::bioformats::detail::FormatWriter::close(fileOnly);
+            ome::bioformats::detail::FormatWriter::close(fileOnly);
+          }
+        catch (const std::exception&)
+          {
+            currentTIFF = tiffs.end(); // Ensure we only flush the last IFD once.
+            ome::bioformats::detail::FormatWriter::close(fileOnly);
+            throw;
+          }
       }
 
       void
@@ -716,7 +727,6 @@ namespace ome
 
         dimension_size_type seriesCount = getSeriesCount();
 
-        dimension_size_type nextPlane = 0U;
         for (dimension_size_type series = 0U; series < seriesCount; ++series)
           {
             DimensionOrder dimOrder = metadataRetrieve->getPixelsDimensionOrder(series);
@@ -742,8 +752,8 @@ namespace ome
                     path relative(make_relative(baseDir, planeState.id));
                     std::string uuid("urn:uuid:");
                     uuid += t->second.uuid;
-                    omeMeta->setUUIDFileName(relative.generic_string(), series, nextPlane);
-                    omeMeta->setUUIDValue(uuid, series, nextPlane);
+                    omeMeta->setUUIDFileName(relative.generic_string(), series, plane);
+                    omeMeta->setUUIDValue(uuid, series, plane);
 
                     // Fill in non-default TiffData attributes.
                     omeMeta->setTiffDataFirstZ(coords[0], series, plane);
@@ -751,10 +761,6 @@ namespace ome
                     omeMeta->setTiffDataFirstC(coords[1], series, plane);
                     omeMeta->setTiffDataIFD(planeState.ifd, series, plane);
                     omeMeta->setTiffDataPlaneCount(1, series, plane);
-
-                    // The Java writer updates the TIFF IFD count
-                    // here, but not sure it's appropriate for us.
-                    ++nextPlane;
                   }
                 else
                   {
