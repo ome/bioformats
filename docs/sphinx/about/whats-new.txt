@@ -11,7 +11,7 @@ Version history
        - fixed tile reading when a cache (.bfmemo) file is present
    - MicroManager
        - updated to parse JSON data from tags 50839 and 51123
-       - fixed to detect :file:`*_metadata.txt` files in addition to metadata.txt
+       - fixed to detect :file:`*_metadata.txt` files in addition to :file:`metadata.txt`
          files
        - fixed to handle datasets with each stack in a single file
    - OME-XML
