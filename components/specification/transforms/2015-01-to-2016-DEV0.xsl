@@ -33,6 +33,7 @@
     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    xmlns:str="http://exslt.org/strings"
     exclude-result-prefixes="OME Bin SPW SA ROI"
     xmlns:exsl="http://exslt.org/common"
     extension-element-prefixes="exsl" version="1.0">
@@ -49,12 +50,11 @@
     <!-- Actual schema changes -->
 
     <!-- Rewrite abstract elements for Shape and LightSource -->
-  
+
     <xsl:template match="OME:LightSource">
- 	     <xsl:variable name="lightSources" select="'Laser', 'Arc', 'Filament', 'LightEmittingDiode', 'GenericExcitationSource'"/>
         <xsl:variable name="lightSourceRoot" select="." />
         <xsl:variable name="lightSourceType"  >
-    	      <xsl:for-each select="$lightSources">
+    	      <xsl:for-each select="str:tokenize('Laser,Arc,Filament,LightEmittingDiode,GenericExcitationSource', ',')">
                 <xsl:variable name="lightSource" select="." />
                 <xsl:if test="$lightSourceRoot/*[name()= $lightSource]">
                     <xsl:value-of select="."/>
@@ -75,10 +75,9 @@
     <xsl:template match="OME:GenericExcitationSource"/>
     
     <xsl:template match="ROI:Shape">
- 	     <xsl:variable name="shapes" select="'Line', 'Rectangle', 'Mask', 'Ellipse', 'Point', 'Polyline', 'Polygon', 'Label'"/>
         <xsl:variable name="shapeRoot" select="." />
         <xsl:variable name="shapeType"  >
-    	      <xsl:for-each select="$shapes">
+    	      <xsl:for-each select="str:tokenize('Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label', ',')">
                 <xsl:variable name="shape" select="." />
                 <xsl:if test="$shapeRoot/*[name()= $shape]">
                     <xsl:value-of select="."/>
