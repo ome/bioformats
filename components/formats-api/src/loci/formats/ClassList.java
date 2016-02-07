@@ -36,10 +36,16 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import loci.common.Constants;
+
+import org.reflections.Reflections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +87,14 @@ public class ClassList<T> {
    * @param base Base class to which all classes are assignable.
    * @throws IOException if the file cannot be read.
    */
+  @Deprecated
   public ClassList(String file, Class<T> base) throws IOException {
-    this(file, base, ClassList.class);
+    this(file, base, base.equals(IFormatReader.class) ? BioFormatsReader.class :
+      base.equals(IFormatWriter.class) ? BioFormatsWriter.class : null);
+  }
+
+  public ClassList(Class<T> base, Class<?> location) throws IOException {
+    this("loci.formats", base, location);
   }
 
   /**
@@ -98,57 +110,33 @@ public class ClassList<T> {
   {
     this.base = base;
     classes = new ArrayList<Class<? extends T>>();
-    if (file == null) return;
 
-    // read classes from file
-    BufferedReader in = null;
-    if (location == null) {
-      in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(file), Constants.ENCODING));
-    }
-    else {
-      in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file), Constants.ENCODING));
-    }
-    while (true) {
-      String line = null;
-      line = in.readLine();
-      if (line == null) break;
+    Reflections reflections = new Reflections(file);
+    Set<Class<?>> readerClasses = reflections.getTypesAnnotatedWith((Class) location);
+    for (Class c : readerClasses) {
+      Class<? extends T> toAdd = cast(c);
 
-      // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
-      if (ndx >= 0) line = line.substring(0, ndx);
-      line = line.trim();
-      if (line.equals("")) continue;
-
-      // load class
-      Class<? extends T> c = null;
-      try {
-        Class<?> rawClass = Class.forName(line);
-        c = cast(rawClass);
+      // make sure the class wasn't disabled before adding
+      Annotation[] annotations = c.getAnnotations();
+      for (Annotation a : annotations) {
+        FormatType type = null;
+        if (a instanceof BioFormatsReader) {
+          type = ((BioFormatsReader) a).value();
+        }
+        else if (a instanceof BioFormatsWriter) {
+          type = ((BioFormatsWriter) a).value();
+        }
+        if (type != null) {
+          if (type == FormatType.DISABLED) {
+            toAdd = null;
+          }
+          break;
+        }
       }
-      catch (ClassNotFoundException exc) {
-        LOGGER.debug("Could not find {}", line, exc);
+      if (toAdd != null) {
+        classes.add(toAdd);
       }
-      catch (NoClassDefFoundError err) {
-        LOGGER.debug("Could not find {}", line, err);
-      }
-      catch (ExceptionInInitializerError err) {
-        LOGGER.debug("Failed to create an instance of {}", line, err);
-      }
-      catch (RuntimeException exc) {
-        // HACK: workaround for bug in Apache Axis2
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("ClassNotFound") < 0) throw exc;
-        LOGGER.debug("", exc);
-      }
-      if (c == null) {
-        LOGGER.error("\"{}\" is not valid.", line);
-        continue;
-      }
-      classes.add(c);
     }
-    in.close();
   }
 
   // -- ClassList API methods --
@@ -169,7 +157,35 @@ public class ClassList<T> {
   /** Gets the list of classes as an array. */
   @SuppressWarnings("unchecked")
   public Class<? extends T>[] getClasses() {
-    return classes.toArray(new Class[0]);
+    Class<? extends T>[] sortedClasses = classes.toArray(new Class[0]);
+    Arrays.sort(sortedClasses, new Comparator<Class>() {
+      public int compare(Class o1, Class o2) {
+        Annotation[] a1 = o1.getAnnotations();
+        Annotation[] a2 = o2.getAnnotations();
+
+        if (a1.length != a2.length) {
+          return a1.length - a2.length;
+        }
+
+        for (int i=0; i<a1.length; i++) {
+          FormatType type1 = null, type2 = null;
+          if (a1[i] instanceof BioFormatsReader) {
+            type1 = ((BioFormatsReader) a1[i]).value();
+            type2 = ((BioFormatsReader) a2[i]).value();
+          }
+          else if (a1[i] instanceof BioFormatsWriter) {
+            type1 = ((BioFormatsWriter) a1[i]).value();
+            type2 = ((BioFormatsWriter) a2[i]).value();
+          }
+          if (type1 != type2) {
+            return type1.compareTo(type2);
+          }
+        }
+
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
+    return sortedClasses;
   }
 
   // -- Helper methods --

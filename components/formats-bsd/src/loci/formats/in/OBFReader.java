@@ -48,10 +48,12 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
@@ -72,7 +74,7 @@ import org.w3c.dom.NodeList;
  *
  * @author Bjoern Thiel bjoern.thiel at mpibpc.mpg.de
  */
-
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class OBFReader extends FormatReader
 {
   private static final boolean LITTLE_ENDIAN = true;

@@ -38,8 +38,10 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
@@ -52,6 +54,7 @@ import loci.formats.services.POIService;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class ZeissZVIReader extends BaseZeissReader {
 
   // -- Constants --

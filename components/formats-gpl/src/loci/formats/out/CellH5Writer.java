@@ -44,8 +44,10 @@ import java.util.Locale;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.MissingLibraryException;
 import loci.formats.in.CellH5Reader;
@@ -64,6 +66,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 /**
  * CellH5Writer is the file format writer for CellH5 format.
  */
+@BioFormatsWriter(FormatType.THIRD_PARTY)
 public class CellH5Writer extends FormatWriter {
 
   // -- Constants --

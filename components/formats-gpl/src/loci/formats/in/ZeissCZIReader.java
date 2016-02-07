@@ -43,10 +43,12 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
@@ -82,6 +84,7 @@ import org.w3c.dom.NodeList;
 /**
  * ZeissCZIReader is the file format reader for Zeiss .czi files.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class ZeissCZIReader extends FormatReader {
 
   // -- Constants --

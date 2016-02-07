@@ -41,9 +41,11 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
@@ -52,6 +54,7 @@ import loci.formats.meta.MetadataStore;
  * MNGReader is the file format reader for Multiple-image Network Graphics
  * (MNG) files.  Does not support JNG (JPEG Network Graphics).
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class MNGReader extends BIFormatReader {
 
   // -- Constants --

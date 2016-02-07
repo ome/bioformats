@@ -29,10 +29,12 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -43,6 +45,7 @@ import ome.units.quantity.Length;
  * TopometrixReader is the file format reader for TopoMetrix .tfr, .ffr,
  * .zfr, .zfp, and .2fl files.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class TopometrixReader extends FormatReader {
 
   // -- Fields --

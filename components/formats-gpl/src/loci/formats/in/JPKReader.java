@@ -27,9 +27,11 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -37,6 +39,7 @@ import loci.formats.tiff.PhotoInterp;
 /**
  * JPKReader is the file format reader for JPK Instruments files.
  */
+@BioFormatsReader(FormatType.TIFF_UNIQUE_EXTENSION)
 public class JPKReader extends BaseTiffReader {
 
   // -- Constructor --

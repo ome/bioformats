@@ -36,9 +36,11 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -56,6 +58,7 @@ import ome.units.UNITS;
  * SimplePCITiffReader is the file format reader for TIFF files produced by
  * SimplePCI software.
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class SimplePCITiffReader extends BaseTiffReader {
 
   // -- Constants --

@@ -37,11 +37,13 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.AxisGuesser;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -57,6 +59,7 @@ import ome.units.quantity.Length;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class TCSReader extends FormatReader {
 
   // -- Constants --

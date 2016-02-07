@@ -30,10 +30,12 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -44,6 +46,7 @@ import ome.units.UNITS;
 /**
  * PCORAWReader is the file format reader for PCORAW files.
  */
+@BioFormatsReader(FormatType.TIFF_UNIQUE_EXTENSION)
 public class PCORAWReader extends FormatReader {
 
   // -- Fields --

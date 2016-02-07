@@ -33,8 +33,10 @@
 package loci.formats.out;
 
 import java.io.IOException;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
@@ -44,6 +46,7 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * JPEG2000Writer is the file format writer for JPEG2000 files.
  */
+@BioFormatsWriter(FormatType.UNIQUE_EXTENSION)
 public class JPEG2000Writer extends FormatWriter {
 
   // -- Fields --

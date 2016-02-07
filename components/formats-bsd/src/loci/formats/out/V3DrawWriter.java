@@ -38,8 +38,10 @@ package loci.formats.out;
 import java.io.IOException;
 import loci.common.Constants;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.meta.MetadataRetrieve;
 import static loci.common.DataTools.unpackBytes;
@@ -52,6 +54,7 @@ import static loci.common.DataTools.unpackBytes;
  * <dd><a
  * <a
  */
+@BioFormatsWriter(FormatType.UNIQUE_EXTENSION)
 public class V3DrawWriter extends FormatWriter {
 
   // -- Fields --

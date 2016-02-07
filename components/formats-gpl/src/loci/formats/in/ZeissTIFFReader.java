@@ -115,8 +115,10 @@ import loci.common.DataTools;
 import loci.common.CaseInsensitiveLocation;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -127,6 +129,7 @@ import loci.formats.tiff.IFDList;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com and Roger Leigh r.leigh at dundee.ac.uk
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class ZeissTIFFReader extends BaseZeissReader {
 
   // -- Constants --

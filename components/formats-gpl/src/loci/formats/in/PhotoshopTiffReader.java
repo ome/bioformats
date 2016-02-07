@@ -30,9 +30,11 @@ import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -49,6 +51,7 @@ import loci.formats.tiff.TiffParser;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class PhotoshopTiffReader extends BaseTiffReader {
 
   // -- Constants --

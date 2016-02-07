@@ -35,9 +35,11 @@ import java.util.List;
 import loci.common.Location;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatType;
 
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -56,6 +58,7 @@ import loci.formats.meta.MetadataStore;
  * Note that this code assumes the presence of pixel clock events and 
  * therefore the MacroTime information is not used.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class SPCReader extends FormatReader {
   
   // -- Constants --

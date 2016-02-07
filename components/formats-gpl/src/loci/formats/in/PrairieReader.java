@@ -36,10 +36,12 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.in.PrairieMetadata.Frame;
 import loci.formats.in.PrairieMetadata.PFile;
@@ -66,6 +68,7 @@ import org.xml.sax.SAXException;
  * @author Curtis Rueden
  * @author Melissa Linkert
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class PrairieReader extends FormatReader {
 
   // -- Constants --

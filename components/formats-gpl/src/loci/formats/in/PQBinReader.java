@@ -28,10 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -49,6 +51,7 @@ import ome.units.UNITS;
  * This is in the interest of significantly improved  performance when all the planes are requested one after another.
  * There will be a performance cost if a single plane is requested but this is highly unlikely for FLIM data.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class PQBinReader extends FormatReader {
 
   // -- Constants --

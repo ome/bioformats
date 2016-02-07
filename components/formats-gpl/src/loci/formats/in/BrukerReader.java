@@ -37,10 +37,12 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -49,6 +51,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class BrukerReader extends FormatReader {
 
   // -- Constants --

@@ -73,10 +73,10 @@ public class ImageReader implements IFormatReader {
 
   public static ClassList<IFormatReader> getDefaultReaderClasses() {
     if (defaultClasses == null) {
-      // load built-in reader classes from readers.txt file
+      // load built-in reader classes from BioFormatsReader annotations
       try {
         defaultClasses =
-          new ClassList<IFormatReader>("readers.txt", IFormatReader.class);
+          new ClassList<IFormatReader>(IFormatReader.class, BioFormatsReader.class);
       }
       catch (IOException exc) {
         defaultClasses = new ClassList<IFormatReader>(IFormatReader.class);

@@ -64,10 +64,12 @@ import java.io.IOException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
@@ -82,6 +84,7 @@ import ome.units.UNITS;
  * WlzReader is a file format reader for Woolz files.
  * Woolz is available from: https://github.com/ma-tech/Woolz
  */
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class WlzReader extends FormatReader {
 
   // -- Constants --

@@ -40,6 +40,7 @@ import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.formats.BioFormatsReader;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.DelegateReader;
@@ -47,6 +48,7 @@ import loci.formats.FileInfo;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.FormatType;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Modulo;
@@ -55,6 +57,7 @@ import loci.formats.meta.MetadataStore;
 /**
  *
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class FilePatternReader extends FormatReader {
 
   // -- Fields --

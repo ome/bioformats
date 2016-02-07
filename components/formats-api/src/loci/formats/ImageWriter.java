@@ -69,10 +69,10 @@ public class ImageWriter implements IFormatWriter {
 
   public static ClassList<IFormatWriter> getDefaultWriterClasses() {
     if (defaultClasses == null) {
-      // load built-in writer classes from writers.txt file
+      // load built-in writer classes from BioFormatsWriter annotations
       try {
         defaultClasses =
-          new ClassList<IFormatWriter>("writers.txt", IFormatWriter.class);
+          new ClassList<IFormatWriter>(IFormatWriter.class, BioFormatsWriter.class);
       }
       catch (IOException exc) {
         defaultClasses = new ClassList<IFormatWriter>(IFormatWriter.class);

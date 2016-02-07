@@ -34,9 +34,11 @@ import org.slf4j.LoggerFactory;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
@@ -49,6 +51,7 @@ import loci.formats.tiff.TiffParser;
 /**
  * TrestleReader is the file format reader for Trestle slide datasets.
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class TrestleReader extends BaseTiffReader {
 
   // -- Constants --

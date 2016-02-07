@@ -37,11 +37,13 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
@@ -59,6 +61,7 @@ import ome.units.quantity.Length;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@BioFormatsReader(FormatType.OTHER_SLOW)
 public class HitachiReader extends FormatReader {
 
   // -- Constants --

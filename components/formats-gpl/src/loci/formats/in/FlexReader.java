@@ -41,10 +41,12 @@ import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -69,6 +71,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * and a LuraWave license key must be specified in the lurawave.license system
  * property (e.g., <code>-Dlurawave.license=XXXX</code> on the command line).
  */
+@BioFormatsReader(FormatType.TIFF_UNIQUE_EXTENSION)
 public class FlexReader extends FormatReader {
 
   // -- Constants --

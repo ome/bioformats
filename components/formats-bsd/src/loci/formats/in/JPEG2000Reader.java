@@ -39,10 +39,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.codec.JPEG2000BoxType;
 import loci.formats.codec.JPEG2000Codec;
@@ -52,6 +54,7 @@ import loci.formats.meta.MetadataStore;
 /**
  * JPEG2000Reader is the file format reader for JPEG-2000 images.
  */
+@BioFormatsReader(FormatType.THIRD_PARTY)
 public class JPEG2000Reader extends FormatReader {
 
   // -- Constants --

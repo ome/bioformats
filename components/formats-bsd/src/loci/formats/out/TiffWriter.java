@@ -36,8 +36,10 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.BioFormatsWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
 import loci.formats.codec.CompressionType;
@@ -58,6 +60,7 @@ import ome.units.UNITS;
 /**
  * TiffWriter is the file format writer for TIFF files.
  */
+@BioFormatsWriter(FormatType.TIFF_SLOW)
 public class TiffWriter extends FormatWriter {
 
   // -- Constants --

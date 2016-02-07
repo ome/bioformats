@@ -32,7 +32,9 @@
 
 package loci.formats.in;
 
+import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
+import loci.formats.FormatType;
 
 /**
  * TiffDelegateReader is a file format reader for TIFF files.
@@ -42,6 +44,7 @@ import loci.formats.DelegateReader;
  * @see TiffReader
  * @see TiffJAIReader
  */
+@BioFormatsReader(FormatType.OTHER_SLOW) // not a typo
 public class TiffDelegateReader extends DelegateReader {
 
   // -- Constructor --

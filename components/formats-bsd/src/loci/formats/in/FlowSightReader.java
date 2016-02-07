@@ -39,10 +39,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -64,6 +66,7 @@ import org.w3c.dom.NodeList;
  * the TIFF standard, so we use the TiffParser where we can, 
  * but do not use the TiffReader hierarchy.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class FlowSightReader extends FormatReader {
   final private static int CHANNEL_COUNT_TAG = 33000;
   final private static int ACQUISITION_TIME_TAG = 33004;

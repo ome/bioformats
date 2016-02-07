@@ -28,10 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -40,6 +42,7 @@ import loci.formats.meta.MetadataStore;
  *
  * @see <a href=http://www.povray.org/documentation/view/3.6.1/374/>http://www.povray.org/documentation/view/3.6.1/374/<a>
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class PovrayReader extends FormatReader {
 
   // -- Constants --

@@ -28,10 +28,12 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -42,6 +44,7 @@ import loci.formats.tiff.TiffParser;
 /**
  * MRWReader is the file format reader for Minolta MRW files.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class MRWReader extends FormatReader {
 
   // -- Constants --

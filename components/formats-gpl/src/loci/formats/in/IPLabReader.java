@@ -29,10 +29,12 @@ import java.io.IOException;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -48,6 +50,7 @@ import ome.units.UNITS;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class IPLabReader extends FormatReader {
 
   // -- Fields --

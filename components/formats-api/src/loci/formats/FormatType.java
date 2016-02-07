@@ -30,30 +30,8 @@
  * #L%
  */
 
-package loci.formats.out;
+package loci.formats;
 
-import loci.formats.BioFormatsWriter;
-import loci.formats.FormatTools;
-import loci.formats.FormatType;
-
-/**
- * JPEGWriter is the file format writer for JPEG files.
- */
-@BioFormatsWriter(FormatType.UNIQUE_EXTENSION)
-public class JPEGWriter extends ImageIOWriter {
-
-  // -- Constructor --
-
-  public JPEGWriter() {
-    super("JPEG", new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
-  }
-
-  // -- IFormatWriter API methods --
-
-  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  @Override
-  public int[] getPixelTypes(String codec) {
-    return new int[] {FormatTools.UINT8};
-  }
-
+public enum FormatType {
+  UNIQUE_EXTENSION, MULTIPLE_EXTENSIONS, THIRD_PARTY, TIFF_UNIQUE_EXTENSION, TIFF_SLOW, OTHER_SLOW, DISABLED;
 }

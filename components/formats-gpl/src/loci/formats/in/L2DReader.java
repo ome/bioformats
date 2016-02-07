@@ -34,10 +34,12 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
@@ -48,6 +50,7 @@ import ome.xml.model.primitives.Timestamp;
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class L2DReader extends FormatReader {
 
   // -- Constants --

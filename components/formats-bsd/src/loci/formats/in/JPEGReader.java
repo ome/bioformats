@@ -44,9 +44,11 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.BioFormatsReader;
 import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.services.EXIFService;
 
 import java.util.Date;
@@ -61,6 +63,7 @@ import ome.xml.model.primitives.Timestamp;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@BioFormatsReader(FormatType.UNIQUE_EXTENSION)
 public class JPEGReader extends DelegateReader {
 
   // -- Constants --

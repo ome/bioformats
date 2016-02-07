@@ -43,10 +43,12 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
@@ -107,6 +109,7 @@ import org.xml.sax.SAXException;
  * @author Jean-Yves Tinevez <jeanyves.tinevez@gmail.com> Oct-Nov 2013
  * @author Melissa Linkert
  */
+@BioFormatsReader(FormatType.MULTIPLE_EXTENSIONS)
 public class CellVoyagerReader extends FormatReader
 {
 

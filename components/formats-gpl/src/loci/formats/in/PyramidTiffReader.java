@@ -31,9 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.BioFormatsReader;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.FormatType;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -42,6 +44,7 @@ import loci.formats.tiff.TiffParser;
 /**
  * PyramidTiffReader is the file format reader for pyramid TIFFs.
  */
+@BioFormatsReader(FormatType.TIFF_SLOW)
 public class PyramidTiffReader extends BaseTiffReader {
 
   // -- Constants --
