@@ -37,9 +37,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -55,249 +53,30 @@ import org.testng.annotations.Test;
 
 public class FakeReaderTest {
 
+  private Path wd;
+  private FakeReader reader;
+
+  /** Create a directory under wd */
   private static Location mkSubd(Path parent, String name) throws Exception {
     return new Location(Files.createDirectory(parent.resolve(name)).toFile());
   }
 
-  private File fake, fakeIni, fourChannelFake;
-  private Location oneWell, twoWells, twoFields, twoPlates;
-  private FakeReader reader;
-
-  @BeforeMethod
-  public void setUp() throws Exception {
-    Path wd = Files.createTempDirectory(this.getClass().getName());
-    wd.toFile().deleteOnExit();
-    fake = Files.createFile(wd.resolve("foo.fake")).toFile();
-    fake.deleteOnExit();
-    fourChannelFake = Files.createFile(wd.resolve("foo&sizeC=4.fake")).toFile();
-    fourChannelFake.deleteOnExit();
-    fakeIni = new File(fake.getAbsolutePath() + ".ini");
-    RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
+  /** Create a text file under wd with the given basename and content */
+  private File mkIni(String basename, String... lines) throws Exception {
+    File fakeIni = wd.resolve(basename).toFile();
+    PrintWriter pw = new PrintWriter(fakeIni);
     try {
-        raf.write(new byte[0]);
-    } finally {
-        raf.close();
-    }
-    fakeIni.deleteOnExit();
-    oneWell = new FakeImage(
-        mkSubd(wd, "1W.fake")).generateScreen(1, 1, 1, 1, 1);
-    deleteTemporaryDirectoryOnExit(oneWell);
-    twoWells = new FakeImage(
-        mkSubd(wd, "2W.fake")).generateScreen(1, 1, 1, 2, 1);
-    deleteTemporaryDirectoryOnExit(twoWells);
-    twoFields = new FakeImage(
-        mkSubd(wd, "2F.fake")).generateScreen(1, 1, 1, 1, 2);
-    deleteTemporaryDirectoryOnExit(twoFields);
-    twoPlates = new FakeImage(
-        mkSubd(wd, "2P.fake")).generateScreen(2, 2, 2, 2, 4);
-    deleteTemporaryDirectoryOnExit(twoPlates);
-    reader = new FakeReader();
-  }
-
-  @AfterMethod
-  public void tearDown() throws Exception {
-    if (fake.exists()) {
-        fake.delete();
-    }
-    if (fakeIni.exists()) {
-      fakeIni.delete();
-    }
-    reader.close();
-  }
-
-  @Test
-  public void testCompanionFile() throws Exception {
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(2, reader.getUsedFiles().length);
-    assertEquals(2, reader.getSeriesUsedFiles().length);
-    assertEquals(2, reader.getUsedFiles(false).length);
-    assertEquals(2, reader.getSeriesUsedFiles(false).length);
-    assertEquals(1, reader.getUsedFiles(true).length);
-    assertEquals(1, reader.getSeriesUsedFiles(true).length);
-  }
-
-  @Test
-  public void testNoCompanionFile() throws Exception {
-    fakeIni.delete();
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(1, reader.getUsedFiles().length);
-    assertEquals(1, reader.getSeriesUsedFiles().length);
-    assertEquals(1, reader.getUsedFiles(false).length);
-    assertEquals(1, reader.getSeriesUsedFiles(false).length);
-    assertEquals(0, reader.getUsedFiles(true).length);
-    assertEquals(0, reader.getSeriesUsedFiles(true).length);
-  }
-
-  @Test
-  public void testDefaultValues() throws Exception {
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(512, reader.getSizeX());
-  }
-
-  @Test
-  public void testValuesFromFilename() throws Exception {
-    addToFileName("sizeX", "256");
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(256, reader.getSizeX());
-  }
-
-  @Test
-  public void testValuesFromIni() throws Exception {
-    addToIniFile("sizeX", "128");
-    reader.setId(fake.getAbsolutePath());
-    assertEquals(128, reader.getSizeX());
-  }
-
-  @Test
-  public void testGetSizeCWithFakeFile() throws Exception {
-    reader.setId(fake.getAbsolutePath());
-    int expectedChannelCount = 1;
-    assertEquals(reader.getSizeC(), expectedChannelCount);
-  }
-
-  @Test
-  public void testGetSizeCWithFourChannelFake() throws Exception {
-    reader.setId(fourChannelFake.getAbsolutePath());
-    int expectedChannelCount = 4;
-    assertEquals(reader.getSizeC(), expectedChannelCount);
-  }
-
-  @Test
-  public void testIsSingleFileReturnsTrueForOneWell() throws Exception {
-    assertTrue(reader.isSingleFile(oneWell.getAbsolutePath()));
-  }
-
-  @Test
-  public void testIsSingleFileReturnsFalseForTwoWells() throws Exception {
-    assertFalse(reader.isSingleFile(twoWells.getAbsolutePath()));
-  }
-
-  @Test
-  public void testIsThisTypeReturnsTrueForOneWell() {
-    assertTrue(reader.isThisType(oneWell.getAbsolutePath()));
-  }
-
-  @Test
-  public void testGetSeriesUsedFilesReturnsOneForOneWell() throws Exception {
-    reader.setId(oneWell.getAbsolutePath());
-    assertEquals(1, reader.getSeriesUsedFiles(false).length);
-    assertEquals(0, reader.getSeriesUsedFiles(true).length);
-  }
-
-  @Test
-  public void testGetSeriesUsedFilesReturnsTwoForTwoWells() throws Exception {
-    reader.setId(twoWells.getAbsolutePath());
-    assertEquals(2, reader.getSeriesUsedFiles(false).length);
-    assertEquals(0, reader.getSeriesUsedFiles(true).length);
-  }
-
-  @Test
-  public void testSetIdWithOneWell() throws Exception {
-    reader.setId(oneWell.getAbsolutePath());
-    assertEquals(1, reader.getOmeXmlMetadata().getWellCount(0));
-    assertEquals(1, reader.getUsedFiles().length);
-  }
-
-  @Test
-  public void testSetIdWithTwoWells() throws Exception {
-    reader.setId(twoWells.getAbsolutePath());
-    assertEquals(2, reader.getOmeXmlMetadata().getWellCount(0));
-    assertEquals(2, reader.getUsedFiles().length);
-  }
-
-  @Test
-  public void testGetSeriesCountWithTwoFields() throws Exception {
-    reader.setId(twoFields.getAbsolutePath());
-    assertEquals(2, reader.getSeriesCount());
-  }
-
-  @Test
-  public void testGetOmeXmlMetadataWithTwoPlates() throws Exception {
-    reader.setId(twoPlates.getAbsolutePath());
-    OMEXMLMetadata metadata = reader.getOmeXmlMetadata();
-    int i = reader.getImageCount();
-    while (i >= 0) {
-        assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
-    }
-  }
-
-  @Test
-  public void testExtraMetadata() throws Exception {
-    RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
-    try {
-      StringBuilder sb = new StringBuilder();
-      sb.append("\n[GlobalMetadata]\nfoo=bar\n");
-      raf.writeUTF(sb.toString());
-    } finally {
-      raf.close();
-    }
-    reader.setId(fakeIni.getAbsolutePath());
-    assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
-  }
-
-  //
-  // HELPERS
-  //
-
-  String stripSuffix(File f, String suffix) {
-    String abs = f.getAbsolutePath();
-    if (!abs.endsWith(suffix)) {
-      throw new IllegalArgumentException(abs + " doesn't end with " + suffix);
-    }
-    return abs.substring(0, abs.length() - suffix.length());
-  }
-
-  void checkArgs(String... args) {
-    if (args == null || args.length == 0) {
-      throw new IllegalArgumentException("Nothing to do");
-    } else if (args.length % 2 != 0) {
-      throw new IllegalArgumentException("Args must come in pairs");
-    }
-  }
-
-  void addToFileName(String...args) {
-    checkArgs(args);
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < args.length / 2; i++) {
-      sb.append("&");
-      sb.append(args[i]);
-      i++;
-      sb.append("=");
-      sb.append(args[i]);
-    }
-
-    String fakePrefix = stripSuffix(fake, ".fake");
-
-    File newFake = new File(fakePrefix + sb.toString() + ".fake");
-    assertEquals(true, fake.renameTo(newFake));
-    fake = newFake;
-    fake.deleteOnExit();
-
-    File newProp = new File(fakePrefix + sb.toString() + ".fake.ini");
-    assertEquals(true, fakeIni.renameTo(newProp));
-    fakeIni = newProp;
-    fakeIni.deleteOnExit();
-  }
-
-  void addToIniFile(String... args) throws Exception {
-    checkArgs(args);
-    FileOutputStream fos = new FileOutputStream(fakeIni);
-    PrintWriter pw = new PrintWriter(fos, true);
-    try {
-      for (int i = 0; i < args.length / 2; i++) {
-        pw.print(args[i]);
-        pw.print("=");
-        i++;
-        pw.println(args[i]);
+      for (String l: lines) {
+        pw.println(l);
       }
     } finally {
-      fos.close();
       pw.close();
     }
+    return fakeIni;
   }
 
-  /** Removes fake SPW folders - deleteOnExit() has to be called on each. */
-  void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
+  /** Recursively set delete-on-exit for a directory tree. */
+  private void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
     directoryRoot.deleteOnExit();
     Location[] children = directoryRoot.listFiles();
     if (children != null) {
@@ -309,6 +88,128 @@ public class FakeReaderTest {
         }
       }
     }
+  }
+
+  @BeforeMethod
+  public void setUp() throws Exception {
+    wd = Files.createTempDirectory(this.getClass().getName());
+    reader = new FakeReader();
+  }
+
+  @AfterMethod
+  public void tearDown() throws Exception {
+    reader.close();
+    deleteTemporaryDirectoryOnExit(new Location(wd.toFile()));
+  }
+
+  @Test
+  public void testCompanionFile() throws Exception {
+    Files.createFile(wd.resolve("foo.fake.ini"));
+    reader.setId(Files.createFile(wd.resolve("foo.fake")).toString());
+    assertEquals(2, reader.getUsedFiles().length);
+    assertEquals(2, reader.getSeriesUsedFiles().length);
+    assertEquals(2, reader.getUsedFiles(false).length);
+    assertEquals(2, reader.getSeriesUsedFiles(false).length);
+    assertEquals(1, reader.getUsedFiles(true).length);
+    assertEquals(1, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testNoCompanionFile() throws Exception {
+    reader.setId(Files.createFile(wd.resolve("foo.fake")).toString());
+    assertEquals(1, reader.getUsedFiles().length);
+    assertEquals(1, reader.getSeriesUsedFiles().length);
+    assertEquals(1, reader.getUsedFiles(false).length);
+    assertEquals(1, reader.getSeriesUsedFiles(false).length);
+    assertEquals(0, reader.getUsedFiles(true).length);
+    assertEquals(0, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testDefaultValues() throws Exception {
+    reader.setId("foo.fake");
+    assertEquals(reader.getSizeX(), FakeReader.DEFAULT_SIZE_X);
+    assertEquals(reader.getSizeY(), FakeReader.DEFAULT_SIZE_Y);
+    assertEquals(reader.getSizeZ(), FakeReader.DEFAULT_SIZE_Z);
+    assertEquals(reader.getSizeC(), FakeReader.DEFAULT_SIZE_C);
+    assertEquals(reader.getSizeT(), FakeReader.DEFAULT_SIZE_T);
+    assertEquals(reader.getPixelType(), FakeReader.DEFAULT_PIXEL_TYPE);
+    assertEquals(reader.getRGBChannelCount(),
+                 FakeReader.DEFAULT_RGB_CHANNEL_COUNT);
+    assertEquals(reader.getDimensionOrder(),
+                 FakeReader.DEFAULT_DIMENSION_ORDER);
+  }
+
+  @Test
+  public void testValuesFromFilename() throws Exception {
+    int sizeX = FakeReader.DEFAULT_SIZE_X + 1;
+    reader.setId(String.format("foo&sizeX=%d.fake", sizeX));
+    assertEquals(reader.getSizeX(), sizeX);
+  }
+
+  @Test
+  public void testValuesFromIni() throws Exception {
+    int sizeX = FakeReader.DEFAULT_SIZE_X + 1;
+    mkIni("foo.fake.ini", String.format("sizeX = %d", sizeX));
+    reader.setId(wd.resolve("foo.fake").toString());
+    assertEquals(reader.getSizeX(), sizeX);
+  }
+
+  @Test
+  public void testOneWell() throws Exception {
+    Location oneWell = new FakeImage(
+        mkSubd(wd, "1W.fake")
+    ).generateScreen(1, 1, 1, 1, 1);
+    assertTrue(reader.isSingleFile(oneWell.getAbsolutePath()));
+    assertTrue(reader.isThisType(oneWell.getAbsolutePath()));
+    reader.setId(oneWell.getAbsolutePath());
+    assertEquals(reader.getOmeXmlMetadata().getWellCount(0), 1);
+    assertEquals(reader.getUsedFiles().length, 1);
+    assertEquals(reader.getSeriesUsedFiles(false).length, 1);
+    assertEquals(reader.getSeriesUsedFiles(true).length, 0);
+  }
+
+  @Test
+  public void testTwoWells() throws Exception {
+    Location twoWells = new FakeImage(
+        mkSubd(wd, "2W.fake")
+    ).generateScreen(1, 1, 1, 2, 1);
+    assertFalse(reader.isSingleFile(twoWells.getAbsolutePath()));
+    assertTrue(reader.isThisType(twoWells.getAbsolutePath()));
+    reader.setId(twoWells.getAbsolutePath());
+    assertEquals(reader.getOmeXmlMetadata().getWellCount(0), 2);
+    assertEquals(reader.getUsedFiles().length, 2);
+    assertEquals(reader.getSeriesUsedFiles(false).length, 2);
+    assertEquals(reader.getSeriesUsedFiles(true).length, 0);
+  }
+
+  @Test
+  public void testTwoFields() throws Exception {
+    Location twoFields = new FakeImage(
+        mkSubd(wd, "2F.fake")
+    ).generateScreen(1, 1, 1, 1, 2);
+    reader.setId(twoFields.getAbsolutePath());
+    assertEquals(reader.getSeriesCount(), 2);
+  }
+
+  @Test
+  public void testTwoPlates() throws Exception {
+    Location twoPlates = new FakeImage(
+        mkSubd(wd, "2P.fake")
+    ).generateScreen(2, 2, 2, 2, 4);
+    reader.setId(twoPlates.getAbsolutePath());
+    OMEXMLMetadata metadata = reader.getOmeXmlMetadata();
+    int i = reader.getImageCount();
+    while (i >= 0) {
+        assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
+    }
+  }
+
+  @Test
+  public void testExtraMetadata() throws Exception {
+    File fakeIni = mkIni("foo.fake.ini", "[GlobalMetadata]", "foo=bar");
+    reader.setId(fakeIni.getAbsolutePath());
+    assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
 }
