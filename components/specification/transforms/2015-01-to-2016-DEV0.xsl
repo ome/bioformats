@@ -56,18 +56,19 @@
         <xsl:variable name="lightSourceType"  >
     	      <xsl:for-each select="str:tokenize('Laser,Arc,Filament,LightEmittingDiode,GenericExcitationSource', ',')">
                 <xsl:variable name="lightSource" select="." />
-                <xsl:if test="$lightSourceRoot/*[name()= $lightSource]">
+                <xsl:if test="($lightSourceRoot/*[name()= $lightSource]) or ($lightSourceRoot/*[name()= concat('OME:',$lightSource)])">
                     <xsl:value-of select="."/>
                 </xsl:if>
             </xsl:for-each>
         </xsl:variable>
-        <xsl:element name="{$lightSourceType}">
-            <xsl:apply-templates select="@*|*[name()=$lightSourceType]/@*"/>
+        <xsl:element name="{$lightSourceType}"  namespace="{$newOMENS}">
+            <xsl:apply-templates select="@*|*[name()=$lightSourceType]/@*|*[name()=concat('OME:',$lightSourceType)]/@*"/>
             <xsl:apply-templates select="node()"/>
             <xsl:apply-templates select="*[name()=$lightSourceType]/node()"/>
+            <xsl:apply-templates select="*[name()=concat('OME:',$lightSourceType)]/node()"/>
         </xsl:element>
     </xsl:template>
-
+    
     <xsl:template match="OME:Laser"/>
     <xsl:template match="OME:Arc"/>
     <xsl:template match="OME:Filament"/>
@@ -79,15 +80,16 @@
         <xsl:variable name="shapeType"  >
     	      <xsl:for-each select="str:tokenize('Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label', ',')">
                 <xsl:variable name="shape" select="." />
-                <xsl:if test="$shapeRoot/*[name()= $shape]">
+                <xsl:if test="($shapeRoot/*[name()= $shape]) or ($shapeRoot/*[name()= concat('ROI:',$shape)])">
                     <xsl:value-of select="."/>
                 </xsl:if>
             </xsl:for-each>
         </xsl:variable>
-        <xsl:element name="{$shapeType}">
-            <xsl:apply-templates select="@*|*[name()=$shapeType]/@*"/>
+        <xsl:element name="{$shapeType}" namespace="{$newROINS}">
+            <xsl:apply-templates select="@*|*[name()=$shapeType]/@*|*[name()=concat('ROI:',$shapeType)]/@*"/>
             <xsl:apply-templates select="node()"/>
             <xsl:apply-templates select="*[name()=$shapeType]/node()"/>
+            <xsl:apply-templates select="*[name()=concat('ROI:',$shapeType)]/node()"/>
         </xsl:element>
     </xsl:template>  
     
