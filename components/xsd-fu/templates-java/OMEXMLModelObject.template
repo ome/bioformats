@@ -1,3 +1,12 @@
+{% python
+  def getConcreteClasses(abstractClass):
+    returnList = []
+    if abstractClass in fu.ABSTRACT_OVERRIDE:
+      for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)):
+          if o.parentName == abstractClass:
+            returnList.append(o.name)  
+    return returnList
+%}\
 /*
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
@@ -328,27 +337,44 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if prop.isAbstract %}\
+{% if prop.name in fu.ABSTRACT_OVERRIDE %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
 		// each "subclass".
-		List<Element> ${prop.name}_nodeList =
-				getChildrenByTagName(element, "${prop.name}");
-		for (Element ${prop.name}_element : ${prop.name}_nodeList)
+{% for subClass in getConcreteClasses(prop.name) %}\
+		List<Element> ${subClass}_nodeList =
+				getChildrenByTagName(element, "${subClass}");
+		for (Element ${subClass}_element : ${subClass}_nodeList)
 		{
+      add${prop.methodName}(
+          new ${subClass}(${subClass}_element, model));
+     }
+{% end %}\
+{% end %}\
+{% if prop.name not in fu.ABSTRACT_OVERRIDE %}\
+    // Element property ${prop.name} which is complex (has
+    // sub-elements) and occurs more than once. The element's model
+    // object type is also abstract so we need to have a handler for
+    // each "subclass".
+    List<Element> ${prop.name}_nodeList =
+        getChildrenByTagName(element, "${prop.name}");
+    for (Element ${prop.name}_element : ${prop.name}_nodeList)
+    {
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-			List<Element> ${inner_prop.name}_nodeList =
-					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
-			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
-			{
-				${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
-				o.update(${inner_prop.name}_element, model);
-				add${prop.methodName}(o);
-			}
+      List<Element> ${inner_prop.name}_nodeList =
+          getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
+      for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
+      {
+        ${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
+        o.update(${inner_prop.name}_element, model);
+        add${prop.methodName}(o);
+      }
 {% end %}\
 {% end %}\
-		}
+    }
+{% end %}\
 {% end %}\
 {% if not prop.isAbstract %}\
 		// Element property ${prop.name} which is complex (has
@@ -596,16 +622,7 @@ ${customUpdatePropertyContent[prop.name]}
 	{
 		// Creating XML block for ${klass.name}
 
-{% if klass.isAbstract %}\
-		// Class is abstract so we may need to create its "container" element
-		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
-		{
-			Element abstractElement =
-					document.createElementNS(NAMESPACE, "${klass.name}");
-			abstractElement.appendChild(${klass.name}_element);
-			${klass.name}_element = abstractElement;
-		}
-{% end if Abstract %}\
+
 		if (${klass.name}_element == null)
 		{
 			${klass.name}_element =

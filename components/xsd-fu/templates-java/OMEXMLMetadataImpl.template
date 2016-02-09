@@ -152,6 +152,44 @@
 {% end %}\
 {% end %}\
 {% end %}\
+{% when (obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE) and prop.isReference %}\
+    // ${prop.name} is abstract and is a reference
+    ${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+    ${prop.instanceVariableName}_reference.setID(${prop.argumentName});
+    model.addReference(
+        (${obj.name})root.${".".join(accessor(obj.name, getParent(obj), prop))}.get${obj.parentName}(${index_name_string(obj.parentName)}),
+        ${prop.instanceVariableName}_reference);
+{% end %}\
+{% when obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE %}\
+    // ${obj.parentName} is abstract and not a reference
+    OME o0 = root;
+{% for i, v in enumerate(accessor(obj.name, getParent(obj), prop, accessor_string_complex)) %}\
+{% choose %}\
+{% when v['max_occurs'] > 1 %}\
+    if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
+    {
+      o${i}.add${v['name']}(new ${v['name']}());
+    }
+{% end %}\
+{% when v['max_occurs'] == 1 %}\
+    if (o${i}.${v['accessor']} == null)
+    {
+      o${i}.set${v['name']}(new ${v['name']}());
+    }
+{% end %}\
+{% end %}\
+    ${v['name']} o${i + 1} = o${i}.${v['accessor']};
+{% end %}\
+    if (o${getAbstractDepth(obj.name)}.sizeOf${obj.parentName}List() == ${index_name_string(obj.parentName)})
+    {
+      o${getAbstractDepth(obj.name)}.add${obj.parentName}(new ${obj.name}());
+    }
+    ${obj.name} o${getAbstractDepth(obj.name) + 1} = (${obj.name})o${getAbstractDepth(obj.name)}.get${obj.parentName}(${index_name_string(obj.parentName)});
+    {% if "ID" == prop.name %}\
+    model.addModelObject(${prop.argumentName}, o${getAbstractDepth(obj.name) + 1});
+{% end %}\
+    ((${obj.name})o${getAbstractDepth(obj.name) + 1}).set${prop.methodName}(${prop.argumentName});
+{% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs more than once
 		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
@@ -252,6 +290,14 @@ ${customContent[obj.name][prop.name]}
     if parents[name].keys()[0] not in results.keys():
       raise Exception("Invalid KEY No accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
     return results[parents[name].keys()[0]]
+    
+  def getAbstractDepth(name, func=accessor_string):
+    results = dict()
+    o = model.getObjectByName(name)
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
+      parentObj = model.getObjectByName(o.parentName)
+      return len(results[parents[parentObj.name].keys()[0]])
 
   def getParent(o):
     if o.parentName in fu.ABSTRACT_OVERRIDE:
