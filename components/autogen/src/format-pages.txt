@@ -2065,11 +2065,11 @@ reader = SMCameraReader
 
 [SPIDER]
 extensions = .spi, .stk
-developer = `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+developer = `Wadsworth Center <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 bsd = no
-software = `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+software = `SPIDER <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 weHave = * a few example datasets \n
-* `official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+* `official file format documentation <http://spider.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
