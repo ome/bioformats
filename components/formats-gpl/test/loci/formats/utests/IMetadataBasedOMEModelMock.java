@@ -120,7 +120,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 1);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE, 1);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 0, 0, 0);
+    store.setLaserAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 0, 0, 0);
 
     // with a Pump>
     store.setLaserID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID, 0, 1);
@@ -139,7 +139,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 2);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE, 2);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 0, 2, 0);
+    store.setArcAnnotationRef(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 0, 2, 0);
     
     // Create <Filament/> under <Instrument/>
     store.setFilamentID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ID, 0, 3);
@@ -150,7 +150,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 3);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 3);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE, 3);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 0, 3, 0);
+    store.setFilamentAnnotationRef(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 0, 3, 0);
 
     // Create <LightEmittingDiode/> under <Instrument/>
     store.setLightEmittingDiodeID(InOutCurrentTest.LIGHTSOURCE_LED_ID, 0, 4);
