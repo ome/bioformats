@@ -1,8 +1,8 @@
 Version history
 ===============
 
-5.1.8 (2016 February 8)
------------------------
+5.1.8 (2016 February 11)
+------------------------
 
 * Java bug fixes, including:
    - FEI TIFF
