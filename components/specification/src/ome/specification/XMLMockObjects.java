@@ -249,7 +249,7 @@ public class XMLMockObjects
   /** The light sources to handle. */
   public static final String[] LIGHT_SOURCES = {Laser.class.getName(),
     Arc.class.getName(), Filament.class.getName(),
-    LightEmittingDiode.class.getName(), GenericExcitationSource.class.getName()};
+    LightEmittingDiode.class.getName(), Laser.class.getName()};
 
   /**
    * The shapes to handle.
@@ -1145,7 +1145,7 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-  PositiveFloat emWave = new PositiveFloat(300.3);
+    PositiveFloat emWave = new PositiveFloat(300.3);
     channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
     PositiveFloat exWave = new PositiveFloat(400.3);
     channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
