@@ -429,7 +429,8 @@ extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
 software = `Micro-Manager <http://micro-manager.org/>`_
-weHave = * many Micro-manager datasets
+weHave = * many Micro-manager datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Outstanding
