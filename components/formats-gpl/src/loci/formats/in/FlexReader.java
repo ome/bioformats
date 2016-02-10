@@ -1356,6 +1356,9 @@ public class FlexReader extends FormatReader {
           continue;
         }
 
+        // 'files' represents all of the files for a specific well
+        // this can be a combination of runs and fields
+
         nFiles = files.size();
 
         String[] sortedFiles = files.toArray(new String[files.size()]);
@@ -1369,7 +1372,7 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          file.field = field % (nFiles / (wellCount * runCount));
+          file.field = field % (nFiles / runCount);
           file.file = files.get(field);
           file.acquisition = runDirs.size() == 0 ? 0:
             runDirs.indexOf(new Location(file.file).getParentFile());
