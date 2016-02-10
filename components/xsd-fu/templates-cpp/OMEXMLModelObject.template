@@ -1,3 +1,12 @@
+{% python
+  def getConcreteClasses(abstractClass):
+    returnList = []
+    if abstractClass in fu.ABSTRACT_OVERRIDE:
+      for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)):
+          if o.parentName == abstractClass:
+            returnList.append(o.name)  
+    return returnList
+%}\
 /*
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
@@ -520,6 +529,21 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if prop.isAbstract %}\
+{% if prop.name in fu.ABSTRACT_OVERRIDE %}\
+      // Element property ${prop.name} which is complex (has
+      // sub-elements) and occurs more than once. The element's model
+      // object type is also abstract so we need to have a handler for
+      // each "subclass".
+{% for subClass in getConcreteClasses(prop.name) %}\
+      std::vector<common::xml::dom::Element> ${subClass}_nodeList(getChildrenByTagName(element, "${subClass}"));
+      for (std::vector<common::xml::dom::Element>::iterator elem = ${subClass}_nodeList.begin();
+           elem != ${prop.name}_nodeList.end();++elem)
+         ome::compat::shared_ptr<${prop.methodName}> object(${subClass}::create(*elem, model));
+         add${prop.methodName}(object);
+       }
+{% end %}\
+{% end %}\
+{% if prop.name not in fu.ABSTRACT_OVERRIDE %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once. The element's model
         // object type is also abstract so we need to have a handler for
@@ -546,6 +570,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
           }
+{% end %}\
 {% end %}\
 {% if not prop.isAbstract %}\
         // Element property ${prop.name} which is complex (has
@@ -1205,16 +1230,6 @@ ${customUpdatePropertyContent[prop.name]}
         static const std::string XSI_NAMESPACE("http://www.w3.org/2001/XMLSchema-instance");
         element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
         element.setAttribute("xsi:schemaLocation", getXMLNamespace() + " " + getXMLNamespace() + "/ome.xsd");
-{% end %}\
-{% if klass.isAbstract %}\
-        // Class is abstract so we may need to create its "container" element
-        if (std::string(element.getTagName()) != "${klass.name}")
-          {
-            common::xml::dom::Element abstractElement =
-              document.createElementNS(getXMLNamespace(), "${klass.name}");
-            abstractElement.appendChild(element);
-            element = abstractElement;
-          }
 {% end %}\
         if (!element)
           {

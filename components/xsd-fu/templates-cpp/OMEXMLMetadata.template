@@ -253,7 +253,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         // ${parent} is abstract proprietary
 {% end %}\
 {% when is_abstract(parent) %}\
-        // ${parent} is abstract proprietary and not a reference
+        // ${parent} is abstract and not a reference
 {% for i, v in enumerate(accessor(obj.name, getParent(o), prop, accessor_string_complex)[:-1]) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
@@ -308,11 +308,81 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% end %}\
 {% end %}\
+{% when (obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE) and prop.isReference %}\
+    // ${prop.name} is abstract and is a reference
+  
+    ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
+    ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
+    ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
+    ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), setPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}.set${obj.parentName}(${index_name_string(obj.parentName)}), "${setPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [set${obj.parentName}(${index_name_string(obj.parentName)})]"));
+    ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
+
+    model->addReference(modelObject, ref);
+{% end %}\
+{% when obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE %}\
+        // ${obj.parentName} is abstract proprietary
+
+{% for i, v in enumerate(accessor(obj.name, getParent(o), prop, accessor_string_complex)) %}\
+{% choose %}\
+{% when v['level'] == 2 %}\
+{% if i == 0 %}\
+        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+{% end %}\
+        if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
+          {
+            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
+            o${i}->add${v['name']}(value);
+          }
+{% end %}\
+{% when v['max_occurs'] > 1 %}\
+{% if i == 0 %}\
+        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+{% end %}\
+        if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
+          {
+            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            o${i}->add${v['name']}(value);
+          }
+{% end %}\
+{% when v['max_occurs'] == 1 %}\
+{% if i == 0 %}\
+        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+{% end %}\
+        if (!o${i}->${v['accessor']}) // null
+          {
+            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            o${i}->set${v['name']}(value);
+          }
+{% end %}\
+{% end %}\
+        ome::compat::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
+{% end %}\
+        if (o${getAbstractDepth(obj.name)}->sizeOf${obj.parentName}List() == ${index_name_string(obj.parentName)})
+          {
+            ome::compat::shared_ptr< ${obj.parentName}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
+            o${getAbstractDepth(obj.name)}->add${obj.parentName}(value);
+          }
+        ome::compat::shared_ptr< ${obj.name}> o${getAbstractDepth(obj.name) + 1} = o${getAbstractDepth(obj.name)}->get${obj.parentName}(${index_name_string(obj.parentName)});
+{% if "ID" == prop.name %}\
+        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${getAbstractDepth(obj.name) + 1}_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${getAbstractDepth(obj.name) + 1}));
+        model->addModelObject(${prop.argumentName}, o${getAbstractDepth(obj.name) + 1}_base);
+{% end %}\
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o${getAbstractDepth(obj.name) + 1}_mostderived(ome::compat::static_pointer_cast< ${obj.langTypeNS}>(o${getAbstractDepth(obj.name) + 1}));
+        if (!o${getAbstractDepth(obj.name) + 1}_mostderived)
+          throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${gatParent(o.name)}{% end %}${obj.name}${prop.name}",
+                                  "Internal metadata store inconsistency: null object");
+{% if not prop.isShared %}\
+        o${getAbstractDepth(obj.name) + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
+{% end %}\
+{% if prop.isShared %}\
+        ${prop.instanceVariableType} newval(ome::compat::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
+        o${getAbstractDepth(obj.name) + 1}_mostderived->set${prop.methodName}(newval);
+{% end %}\
+{% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs more than once
         ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
         ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(modelObject, ref);
@@ -434,7 +504,15 @@ ${customContent[obj.name][prop.name]}
     if o.parentName in fu.ABSTRACT_OVERRIDE:
       return o.parentName
     return o.name
-    
+
+  def getAbstractDepth(name, func=accessor_string):
+    results = dict()
+    o = model.getObjectByName(name)
+    if o.parentName in fu.ABSTRACT_OVERRIDE:
+      fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
+      parentObj = model.getObjectByName(o.parentName)
+      return len(results[parents[parentObj.name].keys()[0]])
+          
   def safe_accessor(calls, method):
     ret = None
     if len(calls) == 1:
