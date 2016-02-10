@@ -48,11 +48,12 @@ Utility: |Good|
 
 **Additional Information**
 
-- Bio-Formats will recognize a *metadata.txt file as a Micro-Manager format if
-  pointed at it and will load the fileset including the companion TIFF files.
-- If pointed at a companion .ome.tif file, Bio-Formats will recognize an
+- Bio-Formats will recognize a :file:`*metadata.txt` file as part of a
+  Micro-Manager fileset if pointed at it and will load the fileset including
+  the companion TIFF files.
+- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize an
   OME-TIFF format instead. This means it may load the fileset if there are
-  multiple .ome.tif but it will not include *metadata.txt in this fileset and
-  therefore the extended Micro-Manager metadata will be skipped.
+  multiple .ome.tif but it will not include :file:`*metadata.txt` in this
+  fileset and therefore the extended Micro-Manager metadata will be skipped.
 
 
