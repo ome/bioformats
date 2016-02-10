@@ -437,6 +437,12 @@ presenceRating = Fair
 utilityRating = Good
 reader = MicromanagerReader
 mif = true
+notes = - Bio-Formats will recognize a *metadata.txt file as a Micro-Manager format if \n
+pointed at it and will load the fileset including the companion TIFF files.\n
+- If pointed at a companion .ome.tif file, Bio-Formats will recognize an \n
+OME-TIFF format instead. This means it may load the fileset if there are \n
+multiple .ome.tif but it will not include *metadata.txt in this fileset and \n
+therefore the extended Micro-Manager metadata will be skipped.
 
 [CellH5]
 extensions = .ch5
