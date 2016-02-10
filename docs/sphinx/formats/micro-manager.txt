@@ -29,6 +29,7 @@ Freely Available Software:
 We currently have:
 
 * many Micro-manager datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 
 We would like to have:
 
