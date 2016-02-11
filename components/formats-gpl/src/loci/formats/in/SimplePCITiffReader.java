@@ -176,15 +176,28 @@ public class SimplePCITiffReader extends BaseTiffReader {
     binning = cameraTable.get("Binning") + "x" + cameraTable.get("Binning");
     cameraType = cameraTable.get("Camera Type");
     cameraName = cameraTable.get("Camera Name");
-    m.bitsPerPixel = Integer.parseInt(cameraTable.get("Display Depth"));
+    String displayDepth = cameraTable.get("Display Depth");
+    if (displayDepth != null) {
+      m.bitsPerPixel = Integer.parseInt(displayDepth);
+    } else {
+      String bitDepth = cameraTable.get("Bit Depth");
+      if (bitDepth != null && bitDepth.length() > "-bit".length()) {
+        bitDepth = bitDepth.substring(0, bitDepth.length() - "-bit".length());
+        m.bitsPerPixel = Integer.parseInt(bitDepth);
+      } else {
+        throw new FormatException("Could not find bits per pixels");
+      }
+    }
 
     IniTable captureTable = ini.getTable(" CAPTURE ");
-    int index = 1;
-    for (int i=0; i<getSizeC(); i++) {
-      if (captureTable.get("c_Filter" + index) != null) {
-        exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
+    if (captureTable != null) {
+      int index = 1;
+      for (int i=0; i<getSizeC(); i++) {
+        if (captureTable.get("c_Filter" + index) != null) {
+          exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
+        }
+        index++;
       }
-      index++;
     }
 
     IniTable calibrationTable = ini.getTable(" CALIBRATION ");

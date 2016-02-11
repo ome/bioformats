@@ -323,14 +323,14 @@ TEST_P(FormatReaderTest, IsThisType)
   EXPECT_TRUE(r.isThisType("valid.test.gz", true));
   EXPECT_TRUE(r.isThisType("valid.test.gz", false));
 
-  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
-                            reinterpret_cast<uint8_t *>(&*icontent.end())));
+  EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&icontent[0]),
+                            reinterpret_cast<uint8_t *>(&icontent[0] + icontent.size())));
   EXPECT_FALSE(r.isThisType(reinterpret_cast<uint8_t *>(&*icontent.begin()),
                             icontent.size()));
   EXPECT_FALSE(r.isThisType(isicontent));
 
-  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
-                           reinterpret_cast<uint8_t *>(&*vcontent.end())));
+  EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&vcontent[0]),
+                           reinterpret_cast<uint8_t *>(&vcontent[0] + vcontent.size())));
   EXPECT_TRUE(r.isThisType(reinterpret_cast<uint8_t *>(&*vcontent.begin()),
                            vcontent.size()));
   EXPECT_TRUE(r.isThisType(isvcontent));

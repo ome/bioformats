@@ -49,6 +49,7 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/Document.h>
 #include <ome/xml/model/enums/EnumerationException.h>
 
 using boost::filesystem::path;
@@ -128,7 +129,7 @@ TEST(MetadataToolsTest, ModelVersionFromDocument)
   std::string xml;
   readFile(PROJECT_SOURCE_DIR "/components/specification/samples/2013-06/18x24y5z5t2c8b-text.ome", xml);
 
-  ome::common::xml::dom::Document doc = ome::common::xml::dom::createDocument(xml);
+  ome::common::xml::dom::Document doc = ome::xml::createDocument(xml);
   ASSERT_TRUE(doc);
 
   ASSERT_EQ(std::string("2013-06"), ome::bioformats::getModelVersion(doc));
@@ -493,7 +494,7 @@ TEST_P(CorrectionTest, ValidateAndCorrectModel)
   const Corrections& current(GetParam());
   const dimension_size_type idx(current.imageIndex);
 
-  ome::common::xml::dom::Document doc = ome::common::xml::dom::createDocument(current.filename);
+  ome::common::xml::dom::Document doc = ome::xml::createDocument(current.filename);
   ASSERT_TRUE(doc);
 
   ASSERT_EQ(std::string("2013-06"), ome::bioformats::getModelVersion(doc));

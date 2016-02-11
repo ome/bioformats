@@ -147,7 +147,7 @@ namespace ome
                   is.exceptions(std::ios::failbit);
                   is >> value;
                 }
-              catch (const std::ios_base::failure& e)
+              catch (const std::ios_base::failure&)
                 {
                   parse_value_error(key, i->second);
                 }

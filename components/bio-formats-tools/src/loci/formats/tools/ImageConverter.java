@@ -37,7 +37,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -61,10 +60,8 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
-import loci.formats.ReaderWrapper;
 import loci.formats.UpgradeChecker;
 import loci.formats.gui.Index16ColorModel;
-import loci.formats.in.OMETiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;

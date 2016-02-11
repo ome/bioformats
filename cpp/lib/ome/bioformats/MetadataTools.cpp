@@ -38,7 +38,6 @@
 #include <string>
 
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <ome/bioformats/FormatException.h>
 #include <ome/bioformats/FormatTools.h>
@@ -55,6 +54,8 @@
 #include <ome/common/xml/dom/Document.h>
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/NodeList.h>
+
+#include <ome/xml/Document.h>
 
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/MetadataException.h>
@@ -77,6 +78,9 @@
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
+
+// Include last due to side effect of MPL vector limit setting which can change the default
+#include <boost/lexical_cast.hpp>
 
 using boost::format;
 
@@ -135,8 +139,8 @@ namespace
     void
     startElement(const XMLCh* const         uri,
                  const XMLCh* const         localname,
-                 const XMLCh* const         qname,
-                 const xercesc::Attributes& attrs)
+                 const XMLCh* const         /* qname */,
+                 const xercesc::Attributes& /* attrs */)
     {
       if (ome::common::xml::String(localname) == "OME")
         {
@@ -236,14 +240,14 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(file);
+          doc = ome::xml::createDocument(file);
         }
       catch (const std::runtime_error&)
         {
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(file, params);
+          doc = ome::xml::createDocument(file, params);
         }
       return createOMEXMLMetadata(doc);
     }
@@ -256,7 +260,7 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(text, ome::common::xml::dom::ParseParameters(),
+          doc = ome::xml::createDocument(text, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
@@ -264,7 +268,7 @@ namespace ome
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(text, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(text, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -277,7 +281,7 @@ namespace ome
       ome::common::xml::dom::Document doc;
       try
         {
-          doc = ome::common::xml::dom::createDocument(stream, ome::common::xml::dom::ParseParameters(),
+          doc = ome::xml::createDocument(stream, ome::common::xml::dom::ParseParameters(),
                                                  "OME-XML");
         }
       catch (const std::runtime_error&)
@@ -285,7 +289,7 @@ namespace ome
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::common::xml::dom::createDocument(stream, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(stream, params, "Broken OME-XML");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -405,7 +409,7 @@ namespace ome
                   samples = meta.getChannelSamplesPerPixel(series, c);
                   realSizeC += samples;
                 }
-              catch (const MetadataException& e)
+              catch (const MetadataException&)
                 {
                   badChannels.push_back(c);
                 }
@@ -488,7 +492,7 @@ namespace ome
           std::ostringstream nos;
           if (doImageName && !!cfile)
             {
-              nos << (*cfile).native();
+              nos << (*cfile).string();
               if (reader.getSeriesCount() > 1)
                 nos << " #" << (s + 1);
             }
@@ -508,7 +512,7 @@ namespace ome
               OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
               addMetadataOnly(omexml, s);
             }
-          catch (const std::bad_cast& e)
+          catch (const std::bad_cast&)
             {
             }
 
@@ -551,7 +555,7 @@ namespace ome
               OMEXMLMetadata& omexml(dynamic_cast<OMEXMLMetadata&>(store));
               addMetadataOnly(omexml, s);
             }
-          catch (const std::bad_cast& e)
+          catch (const std::bad_cast&)
             {
             }
 
@@ -731,7 +735,7 @@ namespace ome
               try
                 {
                   ome::common::xml::Platform xmlplat;
-                  ::ome::common::xml::dom::Document xmlroot(::ome::common::xml::dom::createDocument(xmlannotation->getValue()));
+                  ::ome::common::xml::dom::Document xmlroot(::ome::xml::createDocument(xmlannotation->getValue()));
                   ::ome::common::xml::dom::NodeList nodes(xmlroot.getElementsByTagName(tag));
 
                   Modulo m(tag.substr(tag.size() ? tag.size() - 1 : 0));
@@ -795,7 +799,7 @@ namespace ome
           if (!store.getRoot())
             throw FormatException("Metadata object has null root; call createRoot() first");
         }
-      catch (const std::bad_cast& e)
+      catch (const std::bad_cast&)
         {
         }
 
@@ -917,7 +921,7 @@ namespace ome
                       common::xml::Platform xmlplat;
                       common::xml::dom::ParseParameters params;
                       params.validationScheme = xercesc::XercesDOMParser::Val_Never;
-                      common::xml::dom::Document doc(ome::common::xml::dom::createDocument(wrappedValue));
+                      common::xml::dom::Document doc(ome::xml::createDocument(wrappedValue));
 
                       std::vector<common::xml::dom::Element> OriginalMetadataValue_nodeList = ome::xml::model::detail::OMEModelObject::getChildrenByTagName(doc.getDocumentElement(), "OriginalMetadata");
                       if (OriginalMetadataValue_nodeList.size() > 1)
@@ -955,7 +959,7 @@ namespace ome
                           continue;
                         }
                     }
-                  catch (const std::exception& /* e */)
+                  catch (const std::exception&)
                     {
                       /// @todo log error
                     }
@@ -1082,7 +1086,7 @@ namespace ome
           std::cerr << "SAXParseException parsing schema version: " << message << '\n';
           return "";
         }
-      catch (const xercesc::SAXException& e)
+      catch (const xercesc::SAXException&)
         {
           // Early termination (expected).
         }

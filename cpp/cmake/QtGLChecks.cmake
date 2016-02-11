@@ -34,14 +34,4 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-find_package(Qt5 5.2.0 COMPONENTS Core Gui Widgets Svg)
-
-find_package(OpenGL)
-find_package(GLM)
-
-set(qtgui_default OFF)
-if (Qt5Core_FOUND AND Qt5Gui_FOUND AND Qt5Widgets_FOUND AND Qt5Svg_FOUND AND OPENGL_FOUND AND GLM_FOUND)
-  set(qtgui_default ON)
-endif()
-option(qtgui "Build Qt GUI widgets and image viewer" ${qtgui_default})
 set(OME_QTOPENGL ${qtgui})

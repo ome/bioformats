@@ -429,7 +429,7 @@ TYPED_TEST_P(PixelBufferType, SetIndex)
 
 TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
 {
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(BOOST_DISABLE_ASSERTS)
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
@@ -442,7 +442,7 @@ TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
 
   ASSERT_DEATH_IF_SUPPORTED(buf.at(badidx) = 4U, "Assertion.*failed");
   ASSERT_DEATH_IF_SUPPORTED(cbuf.at(badidx), "Assertion.*failed");
-#endif // ! NDEBUG
+#endif // ! NDEBUG && ! BOOST_DISABLE_ASSERTS
 }
 
 TYPED_TEST_P(PixelBufferType, StreamInput)

@@ -306,7 +306,7 @@ public class ZeissCZIReader extends FormatReader {
     int outputRow = 0, outputCol = 0;
 
     boolean validScanDim =
-      scanDim == (getImageCount() / getSizeC()) && scanDim > 1;
+      scanDim == (getImageCount() / (getSizeC() * phases)) && scanDim > 1;
     if (planes.size() == getImageCount()) {
       validScanDim = false;
     }
@@ -326,6 +326,10 @@ public class ZeissCZIReader extends FormatReader {
             if (validScanDim) {
               tile.y += (no / getSizeC());
               image.height = scanDim;
+            }
+            if (prestitched != null && prestitched && realX == getSizeX() && realY == getSizeY()) {
+              tile.x = 0;
+              tile.y = 0;
             }
 
             if (tile.intersects(image)) {
@@ -917,8 +921,11 @@ public class ZeissCZIReader extends FormatReader {
           String color = channels.get(c).color;
           if (color != null) {
             color = color.replaceAll("#", "");
-            color = color.substring(2, color.length());
+            if (color.length() > 6) {
+              color = color.substring(2, color.length());
+            }
             try {
+              // shift by 8 to allow alpha in the final byte
               store.setChannelColor(
                 new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
             }

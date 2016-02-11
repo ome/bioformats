@@ -1,3 +1,7 @@
+
+.. deprecated:: 5.1.5
+    See the Supported Metadata Fields links under :doc:`/formats/cellh5`
+
 *******************************************************************************
 CellH5Reader
 *******************************************************************************
@@ -10,8 +14,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 31 of them (6%).
-  * Of those, Bio-Formats fully or partially converts 31 (100%).
+  * The file format itself supports 41 of them (8%).
+  * Of those, Bio-Formats fully or partially converts 41 (100%).
 
 Supported fields
 ===============================================================================
@@ -37,18 +41,28 @@ These fields are fully supported by the Bio-Formats CellH5 (HDF) format reader:
   * :schema:`Plane : TheC <OME-2015-01/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2015-01/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2015-01/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Plate : ID <OME-2015-01/SPW_xsd.html#Plate_ID>`
+  * :schema:`Plate : Name <OME-2015-01/SPW_xsd.html#Plate_Name>`
   * :schema:`ROI : ID <OME-2015-01/ROI_xsd.html#ROI_ID>`
   * :schema:`ROI : Name <OME-2015-01/ROI_xsd.html#ROI_Name>`
   * :schema:`Rectangle : Height <OME-2015-01/ROI_xsd.html#Rectangle_Height>`
   * :schema:`Rectangle : ID <OME-2015-01/ROI_xsd.html#Shape_ID>`
   * :schema:`Rectangle : StrokeColor <OME-2015-01/ROI_xsd.html#Shape_StrokeColor>`
+  * :schema:`Rectangle : Text <OME-2015-01/ROI_xsd.html#Shape_Text>`
   * :schema:`Rectangle : TheC <OME-2015-01/ROI_xsd.html#Shape_TheC>`
   * :schema:`Rectangle : TheT <OME-2015-01/ROI_xsd.html#Shape_TheT>`
   * :schema:`Rectangle : TheZ <OME-2015-01/ROI_xsd.html#Shape_TheZ>`
   * :schema:`Rectangle : Width <OME-2015-01/ROI_xsd.html#Rectangle_Width>`
   * :schema:`Rectangle : X <OME-2015-01/ROI_xsd.html#Rectangle_X>`
   * :schema:`Rectangle : Y <OME-2015-01/ROI_xsd.html#Rectangle_Y>`
+  * :schema:`Well : Column <OME-2015-01/SPW_xsd.html#Well_Column>`
+  * :schema:`Well : ExternalIdentifier <OME-2015-01/SPW_xsd.html#Well_ExternalIdentifier>`
+  * :schema:`Well : ID <OME-2015-01/SPW_xsd.html#Well_ID>`
+  * :schema:`Well : Row <OME-2015-01/SPW_xsd.html#Well_Row>`
+  * :schema:`WellSample : ID <OME-2015-01/SPW_xsd.html#WellSample_ID>`
+  * :schema:`WellSample : ImageRef <OME-2015-01/ome_xsd.html#ImageRef_ID>`
+  * :schema:`WellSample : Index <OME-2015-01/SPW_xsd.html#WellSample_Index>`
 
-**Total supported: 31**
+**Total supported: 41**
 
-**Total unknown or missing: 444**
+**Total unknown or missing: 434**

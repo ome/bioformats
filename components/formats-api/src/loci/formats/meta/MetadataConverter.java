@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,9 +32,12 @@
 
 package loci.formats.meta;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import loci.formats.in.MetadataLevel;
+
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -129,11 +132,11 @@ public final class MetadataConverter {
       convertROIs(src, dest);
     }
 
-    convertInstruments(src, dest);
+    List<String> lightSourceIds = convertInstruments(src, dest);
     convertExperimenters(src, dest);
     convertExperimenterGroups(src, dest);
     convertExperiments(src, dest);
-    convertImages(src, dest, level);
+    convertImages(src, dest, level, lightSourceIds);
     convertPlates(src, dest);
     convertScreens(src, dest);
     convertDatasets(src, dest);
@@ -735,8 +738,10 @@ public final class MetadataConverter {
    * Convert all Image attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
+   * @param lightSourceIds the collection of light source identifiers.
    */
-  private static void convertImages(MetadataRetrieve src, MetadataStore dest, MetadataLevel level) {
+  private static void convertImages(MetadataRetrieve src, MetadataStore dest, MetadataLevel level,
+    List<String> lightSourceIds) {
     int imageCount = 0;
     try {
       imageCount = src.getImageCount();
@@ -1143,7 +1148,7 @@ public final class MetadataConverter {
 
         try {
           String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
-          if (lightSourceID != null) {
+          if (lightSourceID != null && lightSourceIds.contains(lightSourceID)) {
             dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
 
             try {
@@ -1372,10 +1377,12 @@ public final class MetadataConverter {
    * Convert all Instrument attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
+   * @return Collection of light source identifiers.
    */
-  private static void convertInstruments(MetadataRetrieve src,
+  private static List<String> convertInstruments(MetadataRetrieve src,
     MetadataStore dest)
   {
+    List<String> lightSourceIds = new ArrayList<String>();
     int instrumentCount = 0;
     try {
       instrumentCount = src.getInstrumentCount();
@@ -1820,7 +1827,7 @@ public final class MetadataConverter {
         }
       }
 
-      convertLightSources(src, dest, i);
+      convertLightSources(src, dest, i, lightSourceIds);
 
       int instrumentRefCount = 0;
       try {
@@ -1835,6 +1842,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
     }
+    return lightSourceIds;
   }
 
   /**
@@ -3933,9 +3941,10 @@ public final class MetadataConverter {
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
    * @param instrumentIndex the index of the Instrument to convert
+   * @param lightSourceIds the collection of light source to populate
    */
   private static void convertLightSources(MetadataRetrieve src,
-    MetadataStore dest, int instrumentIndex)
+    MetadataStore dest, int instrumentIndex, List<String> lightSourceIds)
   {
     int lightSourceCount = 0;
     try {
@@ -3948,7 +3957,10 @@ public final class MetadataConverter {
       if (type.equals("Arc")) {
         try {
           String id = src.getArcID(instrumentIndex, lightSource);
-          if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setArcID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4020,7 +4032,10 @@ public final class MetadataConverter {
       else if (type.equals("Filament")) {
         try {
           String id = src.getFilamentID(instrumentIndex, lightSource);
-          if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setFilamentID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4097,7 +4112,10 @@ public final class MetadataConverter {
         try {
           String id =
             src.getGenericExcitationSourceID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4166,7 +4184,10 @@ public final class MetadataConverter {
       else if (type.equals("Laser")) {
         try {
           String id = src.getLaserID(instrumentIndex, lightSource);
-          if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setLaserID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4312,7 +4333,8 @@ public final class MetadataConverter {
       else if (type.equals("LightEmittingDiode")) {
         try {
           String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-          if (id != null) {
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
           }
         }

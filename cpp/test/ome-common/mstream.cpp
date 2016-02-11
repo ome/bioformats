@@ -45,7 +45,7 @@ using ome::common::imstream;
 TEST(Imstream, CreateFromIterator)
 {
   std::string src("43 992.82 objective");
-  imstream is(&*src.begin(), &*src.end());
+  imstream is(&src[0], src.size());
 
   int i;
   double d;

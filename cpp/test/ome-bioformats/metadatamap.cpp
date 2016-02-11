@@ -42,9 +42,10 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <boost/lexical_cast.hpp>
-
 #include <ome/test/test.h>
+
+// Include last due to side effect of MPL vector limit setting which can change the default
+#include <boost/lexical_cast.hpp>
 
 using ome::bioformats::MetadataMap;
 using boost::lexical_cast;

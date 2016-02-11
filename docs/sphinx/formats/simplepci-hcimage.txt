@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`SimplePCI & HCImage <simplepci-hcimage-metadata>`
+Reader: PCIReader (:bfreader:`Source Code <PCIReader.java>`, :doc:`Supported Metadata Fields </metadata/PCIReader>`)
+
 
 
 
@@ -42,13 +43,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`PCIReader.java`
-
-Notes:
 
 
 Bio-Formats uses a modified version of the `Apache Jakarta 

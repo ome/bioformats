@@ -43,9 +43,9 @@
 #include <QOpenGLBuffer>
 #include <QtGui/QOpenGLFunctions>
 
-#include <glm/glm.hpp>
-
 #include <ome/bioformats/Types.h>
+
+#include <ome/qtwidgets/glm.h>
 
 namespace ome
 {

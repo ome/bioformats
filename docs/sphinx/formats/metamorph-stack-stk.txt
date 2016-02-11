@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`MetaMorph Stack (STK) <metamorph-stack-stk-metadata>`
+Reader: MetamorphReader (:bfreader:`Source Code <MetamorphReader.java>`, :doc:`Supported Metadata Fields </metadata/MetamorphReader>`)
+
 
 
 
@@ -45,13 +46,7 @@ Presence: |Very good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`MetamorphReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

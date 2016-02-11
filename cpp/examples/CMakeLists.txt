@@ -35,7 +35,8 @@
 # #L%
 
 include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 set(exampledir "${PROJECT_SOURCE_DIR}/docs/sphinx/developers/cpp/examples")
 
@@ -51,6 +52,9 @@ target_link_libraries(metadata-formatreader ome-xml ome-bioformats ${CMAKE_THREA
 add_executable(metadata-formatwriter "${exampledir}/metadata-formatwriter.cpp")
 target_link_libraries(metadata-formatwriter ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
 
+add_executable(metadata-formatwriter2 "${exampledir}/metadata-formatwriter2.cpp")
+target_link_libraries(metadata-formatwriter2 ome-xml ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
+
 add_executable(pixeldata "${exampledir}/pixeldata.cpp")
 target_link_libraries(pixeldata ome-bioformats ${CMAKE_THREAD_LIBS_INIT})
 
@@ -59,5 +63,6 @@ if(BUILD_TESTS)
   bf_add_test(examples/metadata-io metadata-io "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")
   bf_add_test(examples/metadata-formatreader metadata-formatreader "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/set-1-meta-companion/18x24y5z1t1c8b-text-split-Z1.ome.tiff")
   bf_add_test(examples/metadata-formatwriter metadata-formatwriter "${CMAKE_CURRENT_BINARY_DIR}/test-write.ome.tiff")
+  bf_add_test(examples/metadata-formatwriter2 metadata-formatwriter2 "${CMAKE_CURRENT_BINARY_DIR}/test-write2.ome.tiff")
   bf_add_test(examples/pixeldata pixeldata "${PROJECT_SOURCE_DIR}/components/specification/samples/${MODEL_VERSION}/18x24y1z5t1c8b-text.ome")
 endif(BUILD_TESTS)

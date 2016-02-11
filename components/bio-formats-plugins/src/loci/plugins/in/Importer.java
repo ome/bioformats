@@ -29,6 +29,7 @@ package loci.plugins.in;
 
 import ij.ImageJ;
 import ij.ImagePlus;
+import ij.Macro;
 
 import java.io.IOException;
 
@@ -108,7 +109,9 @@ public class Importer {
   /** Parses core options. */
   public ImporterOptions parseOptions(String arg) throws IOException {
     ImporterOptions options = new ImporterOptions();
-    options.loadOptions();
+    if (Macro.getOptions() == null) {
+      options.loadOptions();
+    }
     options.parseArg(arg);
     options.checkObsoleteOptions();
     return options;

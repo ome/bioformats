@@ -18,7 +18,9 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`JPEG <jpeg-metadata>`
+Reader: JPEGReader (:bsd-reader:`Source Code <JPEGReader.java>`, :doc:`Supported Metadata Fields </metadata/JPEGReader>`)
+
+Writer: JPEGWriter (:bsd-writer:`Source Code <JPEGWriter.java>`)
 
 
 
@@ -44,14 +46,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Source Code: :bsd-reader:`JPEGReader.java`
-Source Code: :bsd-writer:`JPEGWriter.java`
-
-Notes:
 
 
 Bio-Formats can save individual planes as JPEG. 

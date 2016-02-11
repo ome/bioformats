@@ -39,8 +39,6 @@
 #ifndef OME_QTWIDGETS_GL_IMAGE2D_H
 #define OME_QTWIDGETS_GL_IMAGE2D_H
 
-#include <glm/glm.hpp>
-
 #include <QtCore/QObject>
 #include <QtGui/QOpenGLBuffer>
 #include <QtGui/QOpenGLShader>
@@ -50,6 +48,8 @@
 #include <ome/bioformats/FormatReader.h>
 
 #include <ome/compat/memory.h>
+
+#include <ome/qtwidgets/glm.h>
 
 namespace ome
 {

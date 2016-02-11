@@ -43,6 +43,8 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/String.h>
 
+#include <ome/xml/Document.h>
+
 namespace xml = ome::common::xml;
 
 namespace
@@ -135,9 +137,9 @@ namespace ome
       try
         {
           ome::common::xml::Platform xmlplat;
-          ome::common::xml::dom::createDocument(s);
+          ome::xml::createDocument(s);
         }
-      catch (const std::runtime_error& e)
+      catch (const std::runtime_error&)
         {
           valid = false;
         }

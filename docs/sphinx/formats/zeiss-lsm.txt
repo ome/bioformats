@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss LSM (Laser Scanning Microscope) 510/710 <zeiss-lsm-metadata>`
+Reader: ZeissLSMReader (:bfreader:`Source Code <ZeissLSMReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissLSMReader>`)
+
 
 Freely Available Software:
 
@@ -51,13 +52,7 @@ Presence: |Very good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`ZeissLSMReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

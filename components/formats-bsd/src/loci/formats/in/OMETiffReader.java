@@ -216,7 +216,11 @@ public class OMETiffReader extends FormatReader {
 
       try {
         String metadataFile = meta.getBinaryOnlyMetadataFile();
-        if (metadataFile != null) {
+        // check the suffix to make sure that the MetadataFile is not
+        // referencing the current OME-TIFF
+        if (metadataFile != null && !checkSuffix(metadataFile, "ome.tiff") &&
+          !checkSuffix(metadataFile, "ome.tif"))
+        {
           return true;
         }
       }
@@ -278,6 +282,22 @@ public class OMETiffReader extends FormatReader {
     }
     info[series][lastPlane].reader.setId(info[series][lastPlane].id);
     return info[series][lastPlane].reader.get16BitLookupTable();
+  }
+
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    for (int s=0; s<info.length; s++) {
+      for (int q=0; q<info[s].length; q++) {
+        // only reopen readers that had previously been initialized
+        if (info[s][q] != null && info[s][q].reader != null &&
+          info[s][q].reader.getCurrentFile() != null)
+        {
+          info[s][q].reader.reopenFile();
+        }
+      }
+    }
   }
 
   /*

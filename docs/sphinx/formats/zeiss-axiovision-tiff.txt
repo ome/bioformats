@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss AxioVision TIFF <zeiss-axiovision-tiff-metadata>`
+Reader: ZeissTIFFReader (:bfreader:`Source Code <ZeissTIFFReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissTIFFReader>`)
+
 
 Freely Available Software:
 
@@ -47,12 +48,5 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`ZeissTIFFReader.java`
-
-Notes:
 
 

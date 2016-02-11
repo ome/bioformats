@@ -43,7 +43,7 @@
 #include <QOpenGLBuffer>
 #include <QtGui/QOpenGLFunctions>
 
-#include <glm/glm.hpp>
+#include <ome/qtwidgets/glm.h>
 
 namespace ome
 {

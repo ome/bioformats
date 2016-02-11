@@ -27,6 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -530,8 +533,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (nstages > 0) numFiles *= nstages;
 
       // determine series count
-
-      int seriesCount = nstages == 0 ? 1 : nstages;
+      int stagesCount = nstages == 0 ? 1 : nstages;
+      int seriesCount = stagesCount;
       firstSeriesChannels = new boolean[cc];
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
@@ -549,7 +552,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (hasZ.get(i).booleanValue()) channelsInFirstSeries++;
+          if ((!hasZ.get(0) && i == 0) ||
+            (hasZ.get(0) && hasZ.get(i).booleanValue()))
+          {
+            channelsInFirstSeries++;
+          }
           else firstSeriesChannels[i] = false;
         }
       }
@@ -557,8 +564,7 @@ public class MetamorphReader extends BaseTiffReader {
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else if (differentZs) {
-        int stages = nstages == 0 ? 1 : nstages;
-        for (int i=0; i<stages; i++) {
+        for (int i=0; i<stagesCount; i++) {
           stks[i * 2] = new String[channelsInFirstSeries * tc];
           stks[i * 2 + 1] = new String[(cc - channelsInFirstSeries) * tc];
         }
@@ -578,13 +584,13 @@ public class MetamorphReader extends BaseTiffReader {
       boolean anyZ = hasZ.contains(Boolean.TRUE);
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
-        int ns = nstages == 0 ? 1 : nstages;
-        for (int s=0; s<ns; s++) {
+        for (int s=0; s<stagesCount; s++) {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
-            int seriesNdx = s * (seriesCount / ns);
+            int seriesNdx = s * (seriesCount / stagesCount);
 
-            if ((seriesCount != 1 && !validZ) ||
+            if ((seriesCount != 1 &&
+              (!validZ || (hasZ.size() > 0  && !hasZ.get(0)))) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
               if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
@@ -682,8 +688,7 @@ public class MetamorphReader extends BaseTiffReader {
           ms.orderCertain = true;
         }
         if (stks.length > nstages) {
-          int ns = nstages == 0 ? 1 : nstages;
-          for (int j=0; j<ns; j++) {
+          for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
             CoreMetadata midx = newCore.get(idx);
             CoreMetadata pmidx = newCore.get(j * 2);
@@ -847,6 +852,39 @@ public class MetamorphReader extends BaseTiffReader {
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
+      else {
+        Vector<Double> zPositions = new Vector<Double>();
+        Vector<Double> uniqueZ = new Vector<Double>();
+    	  
+        for (IFD ifd : ifds) {
+          MetamorphHandler zPlaneHandler = new MetamorphHandler();
+
+          String zComment = ifd.getComment();
+          if (zComment != null &&
+              zComment.startsWith("<MetaData>"))
+          {
+            try {
+              XMLTools.parseXML(XMLTools.sanitizeXML(zComment),
+                  zPlaneHandler);
+            }
+            catch (IOException e) { }
+          }
+
+          zPositions = zPlaneHandler.getZPositions();
+          for (Double z : zPositions) {
+            if (!uniqueZ.contains(z)) uniqueZ.add(z);
+          }
+        } 
+        if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          stepSize = zRange.divide(zSize, mc).doubleValue();
+        }
+      }
+      
       Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
@@ -986,10 +1024,19 @@ public class MetamorphReader extends BaseTiffReader {
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
-              lastFile = fileIndex;
-              lastIFDs = tp.getIFDs();
+              IFDList f = tp.getIFDs();
+              if (f.size() > 0) {
+                lastFile = fileIndex;
+                lastIFDs = f;
+              }
+              else {
+                file = null;
+                stks[i][fileIndex] = null;
+              }
             }
+          }
 
+          if (file != null) {
             lastIFD = lastIFDs.get(p % lastIFDs.size());
             Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {

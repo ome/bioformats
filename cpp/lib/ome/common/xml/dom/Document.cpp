@@ -73,14 +73,14 @@ namespace
   }
 
   void
-  read_source(xercesc::XercesDOMParser& parser,
-              xercesc::InputSource&     source)
+  read_source(xercesc::XercesDOMParser&         parser,
+              ome::common::xml::EntityResolver& resolver,
+              xercesc::InputSource&             source)
   {
     ome::common::xml::ErrorReporter er;
     parser.setErrorHandler(&er);
 
-    ome::common::xml::EntityResolver res;
-    parser.setXMLEntityResolver(&res);
+    parser.setXMLEntityResolver(&resolver);
 
     parser.parse(source);
 
@@ -223,6 +223,7 @@ namespace ome
 
         Document
         createDocument(const boost::filesystem::path& file,
+                       EntityResolver&                resolver,
                        const ParseParameters&         params)
         {
           Platform xmlplat;
@@ -231,13 +232,14 @@ namespace ome
 
           xercesc::XercesDOMParser parser;
           setup_parser(parser, params);
-          read_source(parser, source);
+          read_source(parser, resolver, source);
 
           return Document(parser.adoptDocument(), true);
         }
 
         Document
         createDocument(const std::string&     text,
+                       EntityResolver&        resolver,
                        const ParseParameters& params,
                        const std::string&     id)
         {
@@ -249,13 +251,14 @@ namespace ome
 
           xercesc::XercesDOMParser parser;
           setup_parser(parser, params);
-          read_source(parser, source);
+          read_source(parser, resolver, source);
 
           return Document(parser.adoptDocument(), true);
         }
 
         Document
         createDocument(std::istream&          stream,
+                       EntityResolver&        resolver,
                        const ParseParameters& params,
                        const std::string&     id)
         {
@@ -281,7 +284,7 @@ namespace ome
 
           xercesc::XercesDOMParser parser;
           setup_parser(parser, params);
-          read_source(parser, source);
+          read_source(parser, resolver, source);
 
           return Document(parser.adoptDocument(), true);
         }

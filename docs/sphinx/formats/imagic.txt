@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`IMAGIC <imagic-metadata>`
+Reader: ImagicReader (:bfreader:`Source Code <ImagicReader.java>`, :doc:`Supported Metadata Fields </metadata/ImagicReader>`)
+
 
 Freely Available Software:
 
@@ -47,13 +48,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`ImagicReader.java`
-
-Notes:
 
 
 .. seealso:: 

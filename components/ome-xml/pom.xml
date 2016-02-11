@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.1.3-SNAPSHOT</version>
+    <version>5.1.8-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -70,8 +70,8 @@
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
     <xsdfu.script>../xsd-fu/xsd-fu</xsdfu.script>
-    <xsdfu.modelpath>${basedir}/target/generated-sources</xsdfu.modelpath>
-    <xsdfu.metadatapath>${basedir}/target/generated-sources</xsdfu.metadatapath>
+    <xsdfu.modelpath>${basedir}/target/generated-sources/xsd-fu</xsdfu.modelpath>
+    <xsdfu.metadatapath>${basedir}/target/generated-sources/xsd-fu</xsdfu.metadatapath>
   </properties>
 
   <build>
@@ -140,7 +140,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>target/generated-sources</source>
+                <source>target/generated-sources/xsd-fu</source>
               </sources>
             </configuration>
           </execution>
@@ -204,6 +204,21 @@
                     <execute>
                       <runOnIncremental>false</runOnIncremental>
                     </execute>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>
+                      build-helper-maven-plugin
+                    </artifactId>
+                    <versionRange>[1.4,)</versionRange>
+                    <goals>
+                      <goal>add-source</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

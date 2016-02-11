@@ -1,3 +1,7 @@
+
+.. deprecated:: 5.1.5
+    See the Supported Metadata Fields links under :doc:`/formats/simplepci-hcimage`
+
 *******************************************************************************
 PCIReader
 *******************************************************************************
