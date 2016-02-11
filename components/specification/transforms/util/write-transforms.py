@@ -141,7 +141,7 @@ print """<?xml version = "1.0" encoding = "UTF-8"?>
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2012-2014 Open Microscopy Environment
+	# Copyright (C) 2012 - 2016 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
