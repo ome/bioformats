@@ -101,7 +101,7 @@ public class MicromanagerReader extends FormatReader {
     super("Micro-Manager", new String[] {"tif", "tiff", "txt", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
-    datasetDescription = "A 'metadata.txt' or '\*metadata.txt' file plus one or more .tif files";
+    datasetDescription = "A file ending in 'metadata.txt' plus one or more .tif files";
   }
 
   // -- IFormatReader API methods --
