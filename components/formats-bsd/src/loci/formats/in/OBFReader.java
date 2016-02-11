@@ -5,7 +5,7 @@
  * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
  * Goettingen, 2014 - 2015
  *
- * Copyright (C) 2014 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
