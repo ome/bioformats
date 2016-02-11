@@ -497,7 +497,7 @@ public class BDReader extends FormatReader {
         long firstPlane = 0;
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.S), i, p);
+          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.SECOND), i, p);
           String file = getFilename(i, p);
           if (file != null) {
             long plane = getTimestamp(file);
@@ -505,7 +505,7 @@ public class BDReader extends FormatReader {
               firstPlane = plane;
             }
             double timestamp = (plane - firstPlane) / 1000.0;
-            store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, p);
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, p);
           }
         }
       }

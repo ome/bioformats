@@ -229,13 +229,13 @@ public class ImarisReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(1.0, UNITS.S), 0);
+      store.setPixelsTimeIncrement(new Time(1.0, UNITS.SECOND), 0);
 
       // populate LogicalChannel data
 
       for (int i=0; i<getSizeC(); i++) {
         if (pinholes[i] > 0) {
-          store.setChannelPinholeSize(new Length(pinholes[i], UNITS.MICROM), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes[i], UNITS.MICROMETER), 0, i);
         }
       }
 

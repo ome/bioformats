@@ -296,23 +296,23 @@ public class SlideBook6Reader  extends FormatReader {
 							for (int zplane = 0; zplane < numZPlanes[capture]; zplane++) {
 								for (int channel = 0; channel < numChannels[capture]; channel++, imageIndex++) {
 									// set elapsed time
-									store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
+									store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set exposure time
 									int expTime = getExposureTime(capture, channel);
-									store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(expTime, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = getXPosition(capture, position);
-									Length positionX = new Length(numberX, UNITS.MICROM);
+									Length positionX = new Length(numberX, UNITS.MICROMETER);
 									store.setPlanePositionX(positionX, capture, imageIndex);
 									double numberY = getYPosition(capture, position);
-									Length positionY = new Length(numberY, UNITS.MICROM);
+									Length positionY = new Length(numberY, UNITS.MICROMETER);
 									store.setPlanePositionY(positionY, capture, imageIndex);
 
 									// set tile z position
 									double positionZ = getZPosition(capture, position, zplane);
-									Length zPos = new Length(positionZ, UNITS.MICROM);
+									Length zPos = new Length(positionZ, UNITS.MICROMETER);
 									store.setPlanePositionZ(zPos, capture, imageIndex);
 								}
 							}

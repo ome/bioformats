@@ -1329,7 +1329,7 @@ public class ZeissLSMReader extends FormatReader {
 
         if (getSizeT() > 1 && zct[2] < timestamps.size() - stampIndex) {
           double thisStamp = timestamps.get(stampIndex + zct[2]).doubleValue();
-          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.S), series, i);
+          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.SECOND), series, i);
         }
         if (xCoordinates.size() > series) {
           final Double xCoord = xCoordinates.get(series);
@@ -1417,7 +1417,7 @@ public class ZeissLSMReader extends FormatReader {
       if (track.acquire) {
         if (track.timeIncrement != null)
         {
-          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.SECOND), series);
         }
       }
     }
@@ -1426,7 +1426,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
-        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROM), series, nextDetectChannel);
+        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROMETER), series, nextDetectChannel);
       }
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", instrument, nextFilter);

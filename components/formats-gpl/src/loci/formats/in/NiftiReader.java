@@ -290,7 +290,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.S), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.SECOND), 0);
     }
   }
 

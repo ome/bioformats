@@ -523,7 +523,7 @@ public class PrairieReader extends FormatReader {
       final String laserID = MetadataTools.createLSID("LightSource", 0, 0);
       store.setLaserID(laserID, 0, 0);
 
-      store.setLaserPower(new Power(laserPower, UNITS.MW), 0, 0);
+      store.setLaserPower(new Power(laserPower, UNITS.MILLIWATT), 0, 0);
     }
 
     String objectiveID = null;
@@ -539,18 +539,18 @@ public class PrairieReader extends FormatReader {
       final PositiveFloat physicalSizeX =
         pf(firstFrame.getMicronsPerPixelX(), "PhysicalSizeX");
       if (physicalSizeX != null) {
-        store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROM), s);
+        store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROMETER), s);
       }
     
       // populate PhysicalSizeY
       final PositiveFloat physicalSizeY =
         pf(firstFrame.getMicronsPerPixelY(), "PhysicalSizeY");
       if (physicalSizeY != null) {
-        store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROM), s);
+        store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROMETER), s);
       }
       // populate TimeIncrement
       final Double waitTime = meta.getWaitTime();
-      if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.S), s);
+      if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.SECOND), s);
 
       final String[] detectorIDs = new String[channels.length];
 
@@ -651,7 +651,7 @@ public class PrairieReader extends FormatReader {
             if (posX != null) store.setPlanePositionX(posX, s, i);
             if (posY != null) store.setPlanePositionY(posY, s, i);
             if (posZ != null) store.setPlanePositionZ(posZ, s, i);
-            if (deltaT != null) store.setPlaneDeltaT(new Time(deltaT, UNITS.S), s, i);
+            if (deltaT != null) store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), s, i);
           }
         }
       }

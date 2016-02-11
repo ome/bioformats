@@ -658,9 +658,9 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.SECOND), 0, i);
         if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
-          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.S), 0, i);
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.SECOND), 0, i);
         }
 
         if (zct[0] < zPositions.size()) {

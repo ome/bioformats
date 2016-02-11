@@ -136,7 +136,7 @@ public class LiFlimReader extends FormatReader {
   private Map<Integer, ROI> rois;
   private Map<Integer, String> stampValues;
   private Double exposureTime;
-  private Unit<Time> exposureTimeUnit = UNITS.S;
+  private Unit<Time> exposureTimeUnit = UNITS.SECOND;
 
   /** True if gzip compression was used to deflate the pixels. */
   private boolean gzip;
@@ -236,7 +236,7 @@ public class LiFlimReader extends FormatReader {
       rois = null;
       stampValues = null;
       exposureTime = null;
-      exposureTimeUnit = UNITS.S;
+      exposureTimeUnit = UNITS.SECOND;
     }
   }
 
@@ -337,9 +337,9 @@ public class LiFlimReader extends FormatReader {
             double expTime = Double.parseDouble(value.substring(0, space));
             String units = value.substring(space + 1).toLowerCase();
             if (units.equals("ms")) {
-              exposureTimeUnit = UNITS.MS;
+              exposureTimeUnit = UNITS.MILLISECOND;
             } else {
-              exposureTimeUnit = UNITS.S;
+              exposureTimeUnit = UNITS.SECOND;
             }
             exposureTime = new Double(expTime);
           }
@@ -464,7 +464,7 @@ public class LiFlimReader extends FormatReader {
         for (int z=0; z<getSizeZ(); z++) {
           int index = getIndex(z, c, t);
           if (deltaT != null) {
-            store.setPlaneDeltaT(new Time(deltaT, UNITS.S), 0, index);
+            store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), 0, index);
           }
           if (exposureTime != null) {
             store.setPlaneExposureTime(new Time(exposureTime, exposureTimeUnit), 0, index);

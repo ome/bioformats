@@ -151,7 +151,7 @@ public class ND2Handler extends BaseHandler {
 
         int fontSize = Integer.parseInt(roi.get("fHeight"));
         if (fontSize >= 0) {
-          store.setLabelFontSize(new Length(fontSize, UNITS.PT), r, 0);
+          store.setLabelFontSize(new Length(fontSize, UNITS.POINT), r, 0);
         }
         store.setLabelText(roi.get("eval-text"), r, 0);
         Length l = new Length(new Double(roi.get("line-width")), UNITS.PIXEL);

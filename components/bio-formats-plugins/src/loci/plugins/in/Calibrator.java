@@ -68,16 +68,16 @@ public class Calibrator {
     double zcal = Double.NaN, tcal = Double.NaN;
 
     Length xd = meta.getPixelsPhysicalSizeX(series);
-    if (xd != null && xd.unit().isConvertible(UNITS.MICROM)) 
-        xcal = xd.value(UNITS.MICROM).doubleValue();
+    if (xd != null && xd.unit().isConvertible(UNITS.MICROMETER))
+        xcal = xd.value(UNITS.MICROMETER).doubleValue();
     Length yd = meta.getPixelsPhysicalSizeY(series);
-    if (yd != null && yd.unit().isConvertible(UNITS.MICROM)) 
-        ycal = yd.value(UNITS.MICROM).doubleValue();
+    if (yd != null && yd.unit().isConvertible(UNITS.MICROMETER))
+        ycal = yd.value(UNITS.MICROMETER).doubleValue();
     Length zd = meta.getPixelsPhysicalSizeZ(series);
-    if (zd != null && zd.unit().isConvertible(UNITS.MICROM)) 
-        zcal = zd.value(UNITS.MICROM).doubleValue();
+    if (zd != null && zd.unit().isConvertible(UNITS.MICROMETER))
+        zcal = zd.value(UNITS.MICROMETER).doubleValue();
     Time td = meta.getPixelsTimeIncrement(series);
-    if (td != null) tcal = td.value(UNITS.S).doubleValue();
+    if (td != null) tcal = td.value(UNITS.SECOND).doubleValue();
 
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);
@@ -134,7 +134,7 @@ public class Calibrator {
     final int tSize = sizeT == null ? 1 : sizeT.getValue();
     final int planeCount = meta.getPlaneCount(series);
     final Time[] deltas = new Time[tSize];
-    Arrays.fill(deltas, new Time(Double.NaN, UNITS.S));
+    Arrays.fill(deltas, new Time(Double.NaN, UNITS.SECOND));
     for (int p=0; p<planeCount; p++) {
       final NonNegativeInteger theZ = meta.getPlaneTheZ(series, p);
       final NonNegativeInteger theC = meta.getPlaneTheC(series, p);
@@ -152,8 +152,8 @@ public class Calibrator {
     double tiTotal = 0;
     int tiCount = 0;
     for (int t=1; t<tSize; t++) {
-      double delta1 = deltas[t - 1].value(UNITS.S).doubleValue();;
-      double delta2 = deltas[t].value(UNITS.S).doubleValue();;
+      double delta1 = deltas[t - 1].value(UNITS.SECOND).doubleValue();;
+      double delta2 = deltas[t].value(UNITS.SECOND).doubleValue();;
       if (Double.isNaN(delta1) || Double.isNaN(delta2)) continue;
       tiTotal += delta2 - delta1;
       tiCount++;
