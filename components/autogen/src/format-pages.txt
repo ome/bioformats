@@ -196,8 +196,8 @@ extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
 bsd = no
 versions = 8.0, 8.2, 9.0
-weHave = * many SVS datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__ \n
+weHave = * many SVS datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__\n
 * an SVS specification document \n
 * the ability to generate additional SVS datasets
 pixelsRating = Very good
@@ -429,7 +429,7 @@ extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
 software = `Micro-Manager <http://micro-manager.org/>`_
-weHave = * many Micro-manager datasets \n
+weHave = * many Micro-manager datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 pixelsRating = Outstanding
 metadataRating = Very good
@@ -438,15 +438,13 @@ presenceRating = Fair
 utilityRating = Good
 reader = MicromanagerReader
 mif = true
-notes = - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a \n
-  Micro-Manager fileset if pointed at it and will load the fileset including \n
+notes = - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a\n
+  Micro-Manager fileset if pointed at it and will load the fileset including\n
   the companion TIFF files.\n
-- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize
-  an \n
-  OME-TIFF format instead. This means it may load the fileset if there are \n
-  multiple .ome.tif but it will not include :file:`*metadata.txt` in this
-  fileset and \n
-  therefore the extended Micro-Manager metadata will be skipped.
+- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize\n
+  an OME-TIFF format instead. This means it may load the fileset if there are\n
+  multiple .ome.tif but it will not include :file:`*metadata.txt` in this\n
+  fileset and therefore the extended Micro-Manager metadata will be skipped.
 
 [CellH5]
 extensions = .ch5
@@ -467,7 +465,7 @@ mif = true
 extensions = .c01, .dib
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 bsd = no
-weHave = * a few Cellomics .c01 datasets \n
+weHave = * a few Cellomics .c01 datasets\n
 * `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
 weWant = * a Cellomics .c01 specification document \n
 * more Cellomics .c01 datasets
@@ -513,7 +511,7 @@ owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.c
 bsd = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
-* numerous DV datasets \n
+* numerous DV datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__
 pixelsRating = Outstanding
 metadataRating = Good
@@ -980,7 +978,7 @@ pagename = incell-1000
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
-weHave = * a few InCell 1000 datasets \n
+weHave = * a few InCell 1000 datasets\n
 * `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_
 weWant = * an InCell 1000 specification document \n
 * more InCell 1000 datasets
@@ -1673,9 +1671,9 @@ extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/om
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
-weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` \n
-* many OME-TIFF datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__ \n
+weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>`\n
+* many OME-TIFF datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__\n
 * the ability to produce additional datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1701,9 +1699,9 @@ extensions = `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-mod
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
-weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
-* many OME-XML datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__ \n
+weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_\n
+* many OME-XML datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__\n
 * the ability to produce more datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1806,7 +1804,7 @@ mif = true
 extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * a few sample datasets \n
+weHave = * a few sample datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__
 weWant = * an official specification document \n
 * more sample datasets
