@@ -472,10 +472,10 @@ Format readers
      - 0
      - 437
    * - :doc:`MicromanagerReader <metadata/MicromanagerReader>`
-     - 38
+     - 41
      - 0
      - 0
-     - 437
+     - 434
    * - :doc:`MinimalTiffReader <metadata/MinimalTiffReader>`
      - 19
      - 0
@@ -2349,20 +2349,20 @@ Metadata fields
      - 0
      - 168
    * - :schema:`Plane - PositionX <OME-2015-01/ome_xsd.html#Plane_PositionX>`
-     - 29
+     - 30
      - 0
      - 0
-     - 139
+     - 138
    * - :schema:`Plane - PositionY <OME-2015-01/ome_xsd.html#Plane_PositionY>`
-     - 29
+     - 30
      - 0
      - 0
-     - 139
+     - 138
    * - :schema:`Plane - PositionZ <OME-2015-01/ome_xsd.html#Plane_PositionZ>`
-     - 22
+     - 23
      - 0
      - 0
-     - 146
+     - 145
    * - :schema:`Plane - TheC <OME-2015-01/ome_xsd.html#Plane_TheC>`
      - 168
      - 0

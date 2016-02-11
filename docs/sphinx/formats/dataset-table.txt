@@ -277,7 +277,7 @@ to open/import a dataset in a particular format.
      - One or more .tif/.tiff files
    * - Micro-Manager
      - .tif, .tiff, .txt, .xml
-     - A 'metadata.txt' file plus or or more .tif files
+     - A file ending in 'metadata.txt' plus one or more .tif files
    * - Minolta MRW
      - .mrw
      - Single file
