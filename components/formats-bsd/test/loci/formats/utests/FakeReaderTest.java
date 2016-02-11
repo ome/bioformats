@@ -54,6 +54,7 @@ import ome.units.quantity.Length;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 
@@ -62,6 +63,17 @@ public class FakeReaderTest {
   private Path wd;
   private FakeReader reader;
   private OMEXMLService service;
+
+  @DataProvider(name = "physical sizes")
+  public Object[][] physicalSizes() {
+    return new Object[][] {
+      {"1", new Length(1.0, UNITS.MICROM)},
+      {"1.0", new Length(1.0, UNITS.MICROM)},
+      {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
+      {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
 
   /** Create a directory under wd */
   private static Location mkSubd(Path parent, String name) throws Exception {
@@ -221,11 +233,11 @@ public class FakeReaderTest {
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
-  @Test
-  public void testPhysicalSizeX() throws Exception {
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeX(String value, Length length) throws Exception {
     reader.setMetadataStore(service.createOMEXMLMetadata());
-    reader.setId("foo&physicalSizeX=1.fake");
+    reader.setId("foo&physicalSizeX=" + value + ".fake");
     MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getPixelsPhysicalSizeX(0), new Length(1.0, UNITS.MICROM));
+    assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
 }
