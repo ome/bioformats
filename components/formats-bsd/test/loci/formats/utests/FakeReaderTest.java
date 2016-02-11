@@ -45,6 +45,12 @@ import loci.common.Location;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tools.FakeImage;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
+import loci.common.services.ServiceFactory;
+
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -55,6 +61,7 @@ public class FakeReaderTest {
 
   private Path wd;
   private FakeReader reader;
+  private OMEXMLService service;
 
   /** Create a directory under wd */
   private static Location mkSubd(Path parent, String name) throws Exception {
@@ -94,6 +101,8 @@ public class FakeReaderTest {
   public void setUp() throws Exception {
     wd = Files.createTempDirectory(this.getClass().getName());
     reader = new FakeReader();
+    ServiceFactory sf = new ServiceFactory();
+    service = sf.getInstance(OMEXMLService.class);
   }
 
   @AfterMethod
@@ -212,4 +221,11 @@ public class FakeReaderTest {
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
+  @Test
+  public void testPhysicalSizeX() throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeX=1.fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeX(0), new Length(1.0, UNITS.MICROM));
+  }
 }
