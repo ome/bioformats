@@ -242,9 +242,27 @@ public class FakeReaderTest {
   }
   
   @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeXIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeX = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeX(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeY(String value, Length length) throws Exception {
     reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&physicalSizeY=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeY(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeYIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeY = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
     MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
@@ -253,6 +271,15 @@ public class FakeReaderTest {
   public void testPhysicalSizeZ(String value, Length length) throws Exception {
     reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&physicalSizeZ=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeZIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeZ = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
     MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
