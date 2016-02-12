@@ -41,7 +41,7 @@ global metadata map:
 
 Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` where ``UNIT`` is the symbol of the desired unit::
 
-    touch "physicalSizesUnits&physicalSizeX=1 nm&physicalSizeY=1 nm&physicalSizeZ=1.5 km.fake"
+    touch "physicalSizesUnits&physicalSizeX=1nm&physicalSizeY=1nm&physicalSizeZ=1.5km.fake"
     echo "physicalSizeX=1 nm" >> physicalSizes.fake.ini
     echo "physicalSizeY=10 Å" >> physicalSizes.fake.ini
 
