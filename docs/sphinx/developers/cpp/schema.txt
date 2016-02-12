@@ -14,8 +14,3 @@ interfaces.
 
 The implementation will be updated to use a newer version of the OME-XML
 schema in a future release.
-
-XSL transforms to convert between different model versions are
-currently unimplemented.  This means that only OME-TIFF files using
-the 2013-06 schema may be reliably read and written at present.  This
-will be implemented in a future 5.2 release.

@@ -101,7 +101,7 @@ namespace
 
 }
 
-std::vector<ModelTestParameters> tile_params(find_model_tests());
+std::vector<ModelTestParameters> model_params(find_model_tests());
 
 class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
 {
@@ -209,4 +209,4 @@ TEST(ModelObject, StripNamespacePrefix)
 #  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
-INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(tile_params));
+INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(model_params));

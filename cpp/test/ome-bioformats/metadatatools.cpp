@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/range/size.hpp>
 
 #include <ome/bioformats/FormatException.h>
@@ -50,9 +52,12 @@
 #include <ome/common/xml/dom/Document.h>
 
 #include <ome/xml/Document.h>
+#include <ome/xml/OMETransformResolver.h>
+#include <ome/xml/OMETransformResolver.h>
 #include <ome/xml/model/enums/EnumerationException.h>
 
 using boost::filesystem::path;
+using boost::filesystem::directory_iterator;
 using ome::bioformats::dimension_size_type;
 using ome::bioformats::createID;
 using ome::bioformats::createDimensionOrder;
@@ -553,6 +558,128 @@ TEST_P(CorrectionTest, ValidateAndCorrectModel)
   }
 }
 
+struct ModelTestParameters
+{
+  path file;
+};
+
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const ModelTestParameters& p)
+{
+  return os << p.file;
+}
+
+namespace
+{
+
+  std::vector<ModelTestParameters>
+  find_model_tests()
+  {
+    std::vector<ModelTestParameters> params;
+
+    ome::xml::OMETransformResolver tr;
+    std::set<std::string> versions = tr.schema_versions();
+
+    path samplesdir(PROJECT_SOURCE_DIR "/components/specification/samples");
+    if (exists(samplesdir) && is_directory(samplesdir))
+      {
+        for (directory_iterator si(samplesdir); si != directory_iterator(); ++si)
+          {
+            if (versions.find(si->path().filename().string()) == versions.end())
+              continue; // Not a schema directory with transforms.
+            path schemadir(si->path());
+            if (exists(schemadir) && is_directory(schemadir))
+              {
+                for (directory_iterator fi(schemadir); fi != directory_iterator(); ++fi)
+                  {
+                    ModelTestParameters p;
+                    p.file = *fi;
+
+                    // 2003-FC/Iron-Plate.ome.tiff.xml
+                    if (schemadir.filename() == path("2003-FC") &&
+                        p.file.filename() == path("Iron-Plate.ome.tiff.xml"))
+                      continue;
+                    // 2003-FC/single-channel.ome.tif.xml
+                    if (schemadir.filename() == path("2003-FC") &&
+                        p.file.filename() == path("single-channel.ome.tif.xml"))
+                      continue;
+                    // 2008-09/6x4y1z1t1c8b-swatch-instrument.ome
+                    if (schemadir.filename() == path("2008-09") &&
+                        p.file.filename() == path("6x4y1z1t1c8b-swatch-instrument.ome"))
+                      continue;
+                    // 2010-06/one-of-everything.xml - parse error
+                    if (schemadir.filename() == path("2010-06") &&
+                        p.file.filename() == path("one-of-everything.xml"))
+                      continue;
+                    // 2010-06/one-of-everything-no-problems.xml - parse error
+                    if (schemadir.filename() == path("2010-06") &&
+                        p.file.filename() == path("one-of-everything-no-problems.xml"))
+                      continue;
+                    // 2013-06/2013-06-datetests.ome - Contains non-POSIX timestamps.
+                    if (schemadir.filename() == path("2013-06") &&
+                        p.file.filename() == path("2013-06-datetests.ome"))
+                      continue;
+                    // 2015-01/2013-06-datetests.ome - Contains non-POSIX timestamps.
+                    if (schemadir.filename() == path("2015-01") &&
+                        p.file.filename() == path("2013-06-datetests.ome"))
+                      continue;
+
+                    if (p.file.extension() == path(".ome") ||
+                        p.file.extension() == path(".xml"))
+                      params.push_back(p);
+                  }
+              }
+          }
+      }
+
+    return params;
+  }
+
+}
+
+std::vector<ModelTestParameters> model_params(find_model_tests());
+
+class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
+{
+public:
+  void SetUp()
+  {
+    const ModelTestParameters& params = GetParam();
+    std::cout << "Source file " << params.file << '\n';
+  }
+};
+
+TEST_P(ModelTest, CreateMetadataFromFile)
+{
+  const ModelTestParameters& params = GetParam();
+
+  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta;
+  ASSERT_NO_THROW(meta = createOMEXMLMetadata(params.file));
+}
+
+TEST_P(ModelTest, CreateMetadataFromStream)
+{
+  const ModelTestParameters& params = GetParam();
+
+  boost::filesystem::ifstream input(params.file);
+
+  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta;
+  ASSERT_NO_THROW(meta = createOMEXMLMetadata(input));
+}
+
+TEST_P(ModelTest, CreateMetadataFromString)
+{
+  const ModelTestParameters& params = GetParam();
+
+  std::string input;
+  readFile(params.file, input);
+
+  ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta;
+  ASSERT_NO_THROW(meta = createOMEXMLMetadata(input));
+}
+
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.
 #ifdef __GNUC__
@@ -563,3 +690,4 @@ TEST_P(CorrectionTest, ValidateAndCorrectModel)
 #endif
 
 INSTANTIATE_TEST_CASE_P(CorrectionVariants, CorrectionTest, ::testing::ValuesIn(corrections));
+INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(model_params));

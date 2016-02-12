@@ -1012,9 +1012,20 @@ namespace ome
                           }
                         else
                           {
-                            boost::format fmt("Unmatched filename for UUID ‘%1%’");
-                            fmt % uuid;
-                            throw FormatException(fmt.str());
+                            if (currentUUID)
+                              {
+                                boost::format fmt("Unmatched filename for UUID ‘%1%’");
+                                fmt % uuid;
+                                throw FormatException(fmt.str());
+                              }
+                            else
+                              {
+                                boost::format fmt("Unmatched filename for UUID ‘%1%’; falling back to current file ‘%2%’ (which lacks a UUID)");
+                                fmt % uuid % currentId.string();
+                                BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
+
+                                filename = currentId;
+                              }
                           }
                       }
                   }
