@@ -69,7 +69,10 @@ public class FakeReaderTest {
     return new Object[][] {
       {"1", new Length(1.0, UNITS.MICROM)},
       {"1.0", new Length(1.0, UNITS.MICROM)},
+      {"1mm", new Length(1.0, UNITS.MM)},
+      {"1.0mm", new Length(1.0, UNITS.MM)},
       {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
