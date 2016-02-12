@@ -240,4 +240,20 @@ public class FakeReaderTest {
     MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
+  
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeY(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeY=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeY(0), length);
+  }
+  
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeZ(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeZ=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
 }
