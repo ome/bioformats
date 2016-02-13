@@ -2260,7 +2260,8 @@
         </xsd:element>
 
         <!-- Light elements -->
-        <xsd:complexType name="LightSource"> <!-- top level definition -->
+        <xsd:element name="LightSource" abstract="true" type="LightSource"/> <!-- top level definition -->
+        <xsd:complexType name="LightSource">
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>LightSources</plural><abstract/></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2270,41 +2271,39 @@
                                 (eg, Nd-YAG for Laser or Hg for Arc).
                         </xsd:documentation>
                 </xsd:annotation>
-                <xsd:complexType>
-                        <xsd:complexContent>
-                                <xsd:extension base="ManufacturerSpec">
-                                        <xsd:sequence>
-                                                <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
-                                                        <xsd:annotation>
-                                                                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-                                                        </xsd:annotation>
-                                                </xsd:element>
-                                        </xsd:sequence>
-                                        <xsd:attribute name="ID" use="required" type="LightSourceID">
+                <xsd:complexContent>
+                        <xsd:extension base="ManufacturerSpec">
+                                <xsd:sequence>
+                                        <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
                                                 <xsd:annotation>
-                                                        <xsd:documentation>
-                                                                A LightSource ID must be specified for each light source, and the individual
-                                                                light sources can be referred to by their LightSource IDs (eg from Channel).
-                                                        </xsd:documentation>
+                                                        <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
                                                 </xsd:annotation>
-                                        </xsd:attribute>
-                                        <xsd:attribute name="Power" use="optional" type="xsd:float">
-                                                <xsd:annotation>
-                                                        <xsd:documentation>
-                                                                The light-source power. Units are set by PowerUnit.
-                                                        </xsd:documentation>
-                                                </xsd:annotation>
-                                        </xsd:attribute>
-                                        <xsd:attribute name="PowerUnit" use="optional" default="mW" type="UnitsPower">
-                                                <xsd:annotation>
-                                                        <xsd:documentation>The units of the Power - default:milliwatts[mW].</xsd:documentation>
-                                                </xsd:annotation>
-                                        </xsd:attribute>
-                                </xsd:extension>
-                        </xsd:complexContent>
-                </xsd:complexType>
+                                        </xsd:element>
+                                </xsd:sequence>
+                                <xsd:attribute name="ID" use="required" type="LightSourceID">
+                                        <xsd:annotation>
+                                                <xsd:documentation>
+                                                        A LightSource ID must be specified for each light source, and the individual
+                                                        light sources can be referred to by their LightSource IDs (eg from Channel).
+                                                </xsd:documentation>
+                                        </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="Power" use="optional" type="xsd:float">
+                                        <xsd:annotation>
+                                                <xsd:documentation>
+                                                        The light-source power. Units are set by PowerUnit.
+                                                </xsd:documentation>
+                                        </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="PowerUnit" use="optional" default="mW" type="UnitsPower">
+                                        <xsd:annotation>
+                                                <xsd:documentation>The units of the Power - default:milliwatts[mW].</xsd:documentation>
+                                        </xsd:annotation>
+                                </xsd:attribute>
+                        </xsd:extension>
+                </xsd:complexContent>
         </xsd:complexType>
-        <xsd:element name="Laser"> <!-- top level definition -->
+        <xsd:element name="Laser" substitutionGroup="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Lasers</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2312,159 +2311,160 @@
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                        <xsd:sequence>
-                                <xsd:element ref="Pump" minOccurs="0" maxOccurs="1">
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        The Laser element may contain a Pump sub-element which refers to
-                                                        a LightSource used as a laser pump.
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                </xsd:element>
-                        </xsd:sequence>
-                        <xsd:attribute name="Type" use="optional">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                Type is the general category of laser.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="Excimer"/>
-                                                <xsd:enumeration value="Gas"/>
-                                                <xsd:enumeration value="MetalVapor"/>
-                                                <xsd:enumeration value="SolidState"/>
-                                                <xsd:enumeration value="Dye"/>
-                                                <xsd:enumeration value="Semiconductor"/>
-                                                <xsd:enumeration value="FreeElectron"/>
-                                                <xsd:enumeration value="Other"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="LaserMedium" use="optional">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The Medium attribute specifies the actual lasing medium
-                                                for a given laser type.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                        <xsd:restriction base="xsd:string">
-                                                <!-- MetalVaporLaserMedia -->
-                                                <xsd:enumeration value="Cu"/>
-                                                <xsd:enumeration value="Ag"/>
-                                                <!-- ExcimerLaserMedia -->
-                                                <xsd:enumeration value="ArFl"/>
-                                                <xsd:enumeration value="ArCl"/>
-                                                <xsd:enumeration value="KrFl"/>
-                                                <xsd:enumeration value="KrCl"/>
-                                                <xsd:enumeration value="XeFl"/>
-                                                <xsd:enumeration value="XeCl"/>
-                                                <xsd:enumeration value="XeBr"/>
-                                                <!-- GasLaserMedia -->
-                                                <xsd:enumeration value="N"/>
-                                                <xsd:enumeration value="Ar"/>
-                                                <xsd:enumeration value="Kr"/>
-                                                <xsd:enumeration value="Xe"/>
-                                                <xsd:enumeration value="HeNe"/>
-                                                <xsd:enumeration value="HeCd"/>
-                                                <xsd:enumeration value="CO"/>
-                                                <xsd:enumeration value="CO2"/>
-                                                <xsd:enumeration value="H2O"/>
-                                                <xsd:enumeration value="HFl"/>
-                                                <!-- SolidStateLaserMedia -->
-                                                <xsd:enumeration value="NdGlass"/>
-                                                <xsd:enumeration value="NdYAG"/>
-                                                <xsd:enumeration value="ErGlass"/>
-                                                <xsd:enumeration value="ErYAG"/>
-                                                <xsd:enumeration value="HoYLF"/>
-                                                <xsd:enumeration value="HoYAG"/>
-                                                <xsd:enumeration value="Ruby"/>
-                                                <xsd:enumeration value="TiSapphire"/>
-                                                <xsd:enumeration value="Alexandrite"/>
-                                                <!-- DyeLaserMedia -->
-                                                <xsd:enumeration value="Rhodamine6G"/>
-                                                <xsd:enumeration value="CoumarinC30"/>
-                                                <!-- SemiconductorLaserMedia -->
-                                                <xsd:enumeration value="GaAs"/>
-                                                <xsd:enumeration value="GaAlAs"/>
-                                                <!-- FreeElectronLaserMedia -->
-                                                <xsd:enumeration value="EMinus"/>
-                                                <!-- OtherLaserMedia -->
-                                                <xsd:enumeration value="Other"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The Wavelength of the laser. Units are set by WavelengthUnit.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="WavelengthUnit" use="optional" default="nm" type="UnitsLength">
-                                <xsd:annotation>
-                                        <xsd:documentation>The units of the Wavelength - default:nanometres[nm].</xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="FrequencyMultiplication" use="optional" type="PositiveInt">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                FrequencyMultiplication that may be specified. [units:none]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Tuneable" use="optional" type="xsd:boolean">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                Whether or not the laser is Tuneable [flag]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Pulse" use="optional">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The Pulse mode of the laser.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="CW"/>
-                                                <xsd:enumeration value="Single"/>
-                                                <xsd:enumeration value="QSwitched"/>
-                                                <xsd:enumeration value="Repetitive"/>
-                                                <xsd:enumeration value="ModeLocked"/>
-                                                <xsd:enumeration value="Other"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="PockelCell" use="optional" type="xsd:boolean">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                If true the laser has a PockelCell to rotate the polarization of the beam. [flag]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="RepetitionRate" use="optional" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The is the rate in Hz at which the laser pulses if
-                                                the Pulse type is 'Repetitive'. hertz[Hz]
-                                                Units are set by RepetitionRateUnit.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="RepetitionRateUnit" use="optional" default="Hz" type="UnitsFrequency">
-                                <xsd:annotation>
-                                        <xsd:documentation>The units of the RepetitionRate - default:hertz[Hz].</xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
+                        <xsd:complexContent>
+                                <xsd:extension base="LightSource">
+                                        <xsd:sequence>
+                                                <xsd:element ref="Pump" minOccurs="0" maxOccurs="1">
+                                                        <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                        The Laser element may contain a Pump sub-element which refers to
+                                                                        a LightSource used as a laser pump.
+                                                                </xsd:documentation>
+                                                        </xsd:annotation>
+                                                </xsd:element>
+                                        </xsd:sequence>
+                                        <xsd:attribute name="Type" use="optional">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                Type is the general category of laser.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                                <xsd:enumeration value="Excimer"/>
+                                                                <xsd:enumeration value="Gas"/>
+                                                                <xsd:enumeration value="MetalVapor"/>
+                                                                <xsd:enumeration value="SolidState"/>
+                                                                <xsd:enumeration value="Dye"/>
+                                                                <xsd:enumeration value="Semiconductor"/>
+                                                                <xsd:enumeration value="FreeElectron"/>
+                                                                <xsd:enumeration value="Other"/>
+                                                        </xsd:restriction>
+                                                </xsd:simpleType>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="LaserMedium" use="optional">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The Medium attribute specifies the actual lasing medium
+                                                                for a given laser type.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                                <!-- MetalVaporLaserMedia -->
+                                                                <xsd:enumeration value="Cu"/>
+                                                                <xsd:enumeration value="Ag"/>
+                                                                <!-- ExcimerLaserMedia -->
+                                                                <xsd:enumeration value="ArFl"/>
+                                                                <xsd:enumeration value="ArCl"/>
+                                                                <xsd:enumeration value="KrFl"/>
+                                                                <xsd:enumeration value="KrCl"/>
+                                                                <xsd:enumeration value="XeFl"/>
+                                                                <xsd:enumeration value="XeCl"/>
+                                                                <xsd:enumeration value="XeBr"/>
+                                                                <!-- GasLaserMedia -->
+                                                                <xsd:enumeration value="N"/>
+                                                                <xsd:enumeration value="Ar"/>
+                                                                <xsd:enumeration value="Kr"/>
+                                                                <xsd:enumeration value="Xe"/>
+                                                                <xsd:enumeration value="HeNe"/>
+                                                                <xsd:enumeration value="HeCd"/>
+                                                                <xsd:enumeration value="CO"/>
+                                                                <xsd:enumeration value="CO2"/>
+                                                                <xsd:enumeration value="H2O"/>
+                                                                <xsd:enumeration value="HFl"/>
+                                                                <!-- SolidStateLaserMedia -->
+                                                                <xsd:enumeration value="NdGlass"/>
+                                                                <xsd:enumeration value="NdYAG"/>
+                                                                <xsd:enumeration value="ErGlass"/>
+                                                                <xsd:enumeration value="ErYAG"/>
+                                                                <xsd:enumeration value="HoYLF"/>
+                                                                <xsd:enumeration value="HoYAG"/>
+                                                                <xsd:enumeration value="Ruby"/>
+                                                                <xsd:enumeration value="TiSapphire"/>
+                                                                <xsd:enumeration value="Alexandrite"/>
+                                                                <!-- DyeLaserMedia -->
+                                                                <xsd:enumeration value="Rhodamine6G"/>
+                                                                <xsd:enumeration value="CoumarinC30"/>
+                                                                <!-- SemiconductorLaserMedia -->
+                                                                <xsd:enumeration value="GaAs"/>
+                                                                <xsd:enumeration value="GaAlAs"/>
+                                                                <!-- FreeElectronLaserMedia -->
+                                                                <xsd:enumeration value="EMinus"/>
+                                                                <!-- OtherLaserMedia -->
+                                                                <xsd:enumeration value="Other"/>
+                                                        </xsd:restriction>
+                                                </xsd:simpleType>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The Wavelength of the laser. Units are set by WavelengthUnit.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="WavelengthUnit" use="optional" default="nm" type="UnitsLength">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>The units of the Wavelength - default:nanometres[nm].</xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="FrequencyMultiplication" use="optional" type="PositiveInt">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                FrequencyMultiplication that may be specified. [units:none]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Tuneable" use="optional" type="xsd:boolean">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                Whether or not the laser is Tuneable [flag]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Pulse" use="optional">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The Pulse mode of the laser.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                                <xsd:enumeration value="CW"/>
+                                                                <xsd:enumeration value="Single"/>
+                                                                <xsd:enumeration value="QSwitched"/>
+                                                                <xsd:enumeration value="Repetitive"/>
+                                                                <xsd:enumeration value="ModeLocked"/>
+                                                                <xsd:enumeration value="Other"/>
+                                                        </xsd:restriction>
+                                                </xsd:simpleType>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="PockelCell" use="optional" type="xsd:boolean">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                If true the laser has a PockelCell to rotate the polarization of the beam. [flag]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="RepetitionRate" use="optional" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The is the rate in Hz at which the laser pulses if
+                                                                the Pulse type is 'Repetitive'. hertz[Hz]
+                                                                Units are set by RepetitionRateUnit.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="RepetitionRateUnit" use="optional" default="Hz" type="UnitsFrequency">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>The units of the RepetitionRate - default:hertz[Hz].</xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
-                <xsd:complexContent>
-                  <xsd:extension base="LightSource"/>
-                </xsd:complexContent>
         </xsd:element>
-        <xsd:element name="Arc"> <!-- top level definition -->
+        <xsd:element name="Arc" substitutionGroup="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Arcs</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2473,27 +2473,28 @@
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                        <xsd:attribute name="Type" use="optional">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The type of Arc lamp.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="Hg"/>
-                                                <xsd:enumeration value="Xe"/>
-                                                <xsd:enumeration value="HgXe"/>
-                                                <xsd:enumeration value="Other"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
+                        <xsd:complexContent>
+                                <xsd:extension base="LightSource">
+                                        <xsd:attribute name="Type" use="optional">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The type of Arc lamp.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                                <xsd:enumeration value="Hg"/>
+                                                                <xsd:enumeration value="Xe"/>
+                                                                <xsd:enumeration value="HgXe"/>
+                                                                <xsd:enumeration value="Other"/>
+                                                        </xsd:restriction>
+                                                </xsd:simpleType>
+                                        </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
-          <xsd:complexContent>
-            <xsd:extension base="LightSource"/>
-          </xsd:complexContent>
         </xsd:element>
-        <xsd:element name="Filament"> <!-- top level definition -->
+        <xsd:element name="Filament" substitutionGroup="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Filaments</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2502,26 +2503,27 @@
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                        <xsd:attribute name="Type" use="optional">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The type of filament.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="Incandescent"/>
-                                                <xsd:enumeration value="Halogen"/>
-                                                <xsd:enumeration value="Other"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
+                        <xsd:complexContent>
+                                <xsd:extension base="LightSource">
+                                        <xsd:attribute name="Type" use="optional">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The type of filament.
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                                <xsd:enumeration value="Incandescent"/>
+                                                                <xsd:enumeration value="Halogen"/>
+                                                                <xsd:enumeration value="Other"/>
+                                                        </xsd:restriction>
+                                                </xsd:simpleType>
+                                        </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
-          <xsd:complexContent>
-            <xsd:extension base="LightSource"/>
-          </xsd:complexContent>
         </xsd:element>
-        <xsd:element name="LightEmittingDiode"> <!-- top level definition -->
+        <xsd:element name="LightEmittingDiode" substitutionGroup="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>LightEmittingDiodes</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2556,11 +2558,13 @@
                                 this topic.
                         </xsd:documentation>
                 </xsd:annotation>
-          <xsd:complexContent>
-            <xsd:extension base="LightSource"/>
-          </xsd:complexContent>
+                <xsd:complexType>
+                        <xsd:complexContent>
+                                <xsd:extension base="LightSource"/>
+                        </xsd:complexContent>
+                </xsd:complexType>
         </xsd:element>
-        <xsd:element name="GenericExcitationSource"> <!-- top level definition -->
+        <xsd:element name="GenericExcitationSource" substitutionGroup="LightSource"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>GenericExcitationSources</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2571,13 +2575,14 @@
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                        <xsd:sequence>
-                                <xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
-                        </xsd:sequence>
+                        <xsd:complexContent>
+            				        <xsd:extension base="LightSource">
+                                        <xsd:sequence>
+                                                <xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
+                                        </xsd:sequence>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
-          <xsd:complexContent>
-            <xsd:extension base="LightSource"/>
-          </xsd:complexContent>
         </xsd:element>
         <xsd:element name="Pump"> <!-- top level definition -->
                 <xsd:annotation>
@@ -3547,7 +3552,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                         <xsd:element name="Union" minOccurs="1" maxOccurs="1">
                                                 <xsd:complexType>
                                                         <xsd:sequence>
-                                                          <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
+                                                                <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
                                                         </xsd:sequence>
                                                 </xsd:complexType>
                                         </xsd:element>
@@ -3580,8 +3585,8 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:attribute>
                 </xsd:complexType>
         </xsd:element>
-
-        <xsd:complexType name="Shape"> <!-- top level definition -->
+        <xsd:element name="Shape" abstract="true" type="Shape"/> <!-- top level definition -->
+        <xsd:complexType name="Shape">
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3590,185 +3595,180 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                 records any transform applied to the ROI shape.
                         </xsd:documentation>
                 </xsd:annotation>
-                <xsd:complexType>
-                        <xsd:sequence>
-
-                                <xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        This is a matrix used to transform the shape.
-                                                        The element has 6 xsd:float attributes. If the element
-                                                        is present then all 6 values must be included.
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                </xsd:element>
-                                <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
-                                        <xsd:annotation>
-                                                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-                                        </xsd:annotation>
-                                </xsd:element>
-                        </xsd:sequence>
-                        <xsd:attribute name="FillColor" use="optional" type="Color">
+                <xsd:sequence>
+                        <xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                The color of the fill - encoded as RGBA
-                                                The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
-                                                NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
+                                                This is a matrix used to transform the shape.
+                                                The element has 6 xsd:float attributes. If the element
+                                                is present then all 6 values must be included.
                                         </xsd:documentation>
                                 </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="FillRule" use="optional">
-                                <xsd:simpleType>
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        The rule used to decide which parts of the shape to
-                                                        fill. [enumeration]
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="EvenOdd"/>
-                                                <xsd:enumeration value="NonZero"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="StrokeColor" use="optional" type="Color">
+                        </xsd:element>
+                        <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:annotation>
+                                        <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                                </xsd:annotation>
+                        </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="FillColor" use="optional" type="Color">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The color of the fill - encoded as RGBA
+                                        The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+                                        NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="FillRule" use="optional">
+                        <xsd:simpleType>
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                The color of the stroke  - encoded as RGBA
-                                                The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
-                                                NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
+                                                The rule used to decide which parts of the shape to
+                                                fill. [enumeration]
                                         </xsd:documentation>
                                 </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
+                                <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="EvenOdd"/>
+                                        <xsd:enumeration value="NonZero"/>
+                                </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="StrokeColor" use="optional" type="Color">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The color of the stroke  - encoded as RGBA
+                                        The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+                                        NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="StrokeWidth" use="optional" type="xsd:float">
+                        <xsd:annotation>
+                               <xsd:documentation>
+                                        The width of the stroke. Units are set by StrokeWidthUnit.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="StrokeWidthUnit" use="optional" default="pixel" type="UnitsLength">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The units used for the stroke width.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        e.g. "none", "10 20 30 10"
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="LineCap" use="optional">
+                        <xsd:simpleType>
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                The width of the stroke. Units are set by StrokeWidthUnit.
+                                                The shape of the end of the line. [enumeration]
                                         </xsd:documentation>
                                 </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="StrokeWidthUnit" use="optional" default="pixel" type="UnitsLength">
+                                <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="Butt"/>
+                                        <xsd:enumeration value="Line"/>
+                                        <xsd:enumeration value="Square"/>
+                                </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="Text" use="optional" type="xsd:string"/>
+                <xsd:attribute name="FontFamily" use="optional">
+                        <xsd:simpleType>
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                The units used for the stroke width.
+                                                The font family used to draw the text. [enumeration]
+                                                Note: these values are all lower case so they match
+                                                the standard HTML/CSS values. "fantasy" has been
+                                                included for completeness we do not recommended its
+                                                regular use.
                                         </xsd:documentation>
                                 </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="StrokeDashArray" use="optional" type="xsd:string">
+                                <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="serif"/>
+                                        <xsd:enumeration value="sans-serif"/>
+                                        <xsd:enumeration value="cursive"/>
+                                        <xsd:enumeration value="fantasy"/>
+                                        <xsd:enumeration value="monospace"/>
+                                </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="FontSize" use="optional" type="NonNegativeInt">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        Size of the font. Units are set by FontSizeUnit.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="FontSizeUnit" use="optional" default="pt" type="UnitsLength">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The units used for the font size.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="FontStyle" use="optional">
+                        <xsd:simpleType>
                                 <xsd:annotation>
                                         <xsd:documentation>
-                                                e.g. "none", "10 20 30 10"
+                                                The style and weight applied to the text.  [enumeration]
+                                                This is a simplified combination of the HTML/CSS
+                                                attributes font-style AND font-weight.
                                         </xsd:documentation>
                                 </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="LineCap" use="optional">
-                                <xsd:simpleType>
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        The shape of the end of the line. [enumeration]
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="Butt"/>
-                                                <xsd:enumeration value="Line"/>
-                                                <xsd:enumeration value="Square"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="Text" use="optional" type="xsd:string"/>
-                        <xsd:attribute name="FontFamily" use="optional">
-                                <xsd:simpleType>
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        The font family used to draw the text. [enumeration]
-                                                        Note: these values are all lower case so they match
-                                                        the standard HTML/CSS values. "fantasy" has been
-                                                        included for completeness we do not recommended its
-                                                        regular use.
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="serif"/>
-                                                <xsd:enumeration value="sans-serif"/>
-                                                <xsd:enumeration value="cursive"/>
-                                                <xsd:enumeration value="fantasy"/>
-                                                <xsd:enumeration value="monospace"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="FontSize" use="optional" type="NonNegativeInt">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                Size of the font. Units are set by FontSizeUnit.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="FontSizeUnit" use="optional" default="pt" type="UnitsLength">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The units used for the font size.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="FontStyle" use="optional">
-                                <xsd:simpleType>
-                                        <xsd:annotation>
-                                                <xsd:documentation>
-                                                        The style and weight applied to the text.  [enumeration]
-                                                        This is a simplified combination of the HTML/CSS
-                                                        attributes font-style AND font-weight.
-                                                </xsd:documentation>
-                                        </xsd:annotation>
-                                        <xsd:restriction base="xsd:string">
-                                                <xsd:enumeration value="Bold"/>
-                                                <xsd:enumeration value="BoldItalic"/>
-                                                <xsd:enumeration value="Italic"/>
-                                                <xsd:enumeration value="Normal"/>
-                                        </xsd:restriction>
-                                </xsd:simpleType>
-                        </xsd:attribute>
-                        <xsd:attribute name="Locked" use="optional" type="xsd:boolean">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                Controls whether the shape is locked and read only,
-                                                true is locked, false is editable.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-
-
-                        <xsd:attribute name="ID" use="required" type="ShapeID"/>
-                        <xsd:attribute name="TheZ" use="optional" type="NonNegativeInt">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The z-section the ROI applies to. If not specified then
-                                                the ROI applies to all the z-sections of the image. [units:none]
-                                                This is numbered from 0.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="TheT" use="optional" type="NonNegativeInt">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The timepoint the ROI applies to. If not specified then
-                                                the ROI applies to all the timepoints of the image. [units:none]
-                                                This is numbered from 0.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="TheC" use="optional" type="NonNegativeInt">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The channel the ROI applies to. If not specified then
-                                                the ROI applies to all the channels of the image. [units:none]
-                                                This is numbered from 0.
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                </xsd:complexType>
+                                <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="Bold"/>
+                                        <xsd:enumeration value="BoldItalic"/>
+                                        <xsd:enumeration value="Italic"/>
+                                        <xsd:enumeration value="Normal"/>
+                                </xsd:restriction>
+                        </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="Locked" use="optional" type="xsd:boolean">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        Controls whether the shape is locked and read only,
+                                        true is locked, false is editable.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="ID" use="required" type="ShapeID"/>
+                <xsd:attribute name="TheZ" use="optional" type="NonNegativeInt">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The z-section the ROI applies to. If not specified then
+                                        the ROI applies to all the z-sections of the image. [units:none]
+                                        This is numbered from 0.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="TheT" use="optional" type="NonNegativeInt">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The timepoint the ROI applies to. If not specified then
+                                        the ROI applies to all the timepoints of the image. [units:none]
+                                        This is numbered from 0.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="TheC" use="optional" type="NonNegativeInt">
+                        <xsd:annotation>
+                                <xsd:documentation>
+                                        The channel the ROI applies to. If not specified then
+                                        the ROI applies to all the channels of the image. [units:none]
+                                        This is numbered from 0.
+                                </xsd:documentation>
+                        </xsd:annotation>
+                </xsd:attribute>
         </xsd:complexType>
 
-        <xsd:element name="Rectangle"> <!-- top level definition -->
+        <xsd:element name="Rectangle" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Rectangles</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3777,9 +3777,8 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                                        <xsd:complexContent>
-                                                <xsd:extension base="Shape"/>
-                                        </xsd:complexContent>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape">
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3808,10 +3807,12 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                                         </xsd:documentation>
                                                 </xsd:annotation>
                                         </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Mask"> <!-- top level definition -->
+        <xsd:element name="Mask" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Masks</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3823,50 +3824,50 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:complexContent>
-                                <xsd:extension base="Shape"/>
+                                <xsd:extension base="Shape">
+                                        <xsd:sequence>
+                                                <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
+                                        </xsd:sequence>
+                                        <xsd:attribute name="X" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The X coordinate of the left side of the image. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Y" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The Y coordinate of the top side of the image. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Width" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The width of the mask. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Height" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation>
+                                                                The height of the mask. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                </xsd:extension>
                         </xsd:complexContent>
-                        <xsd:sequence>
-                                <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
-                        </xsd:sequence>
-                        <xsd:attribute name="X" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The X coordinate of the left side of the image. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Y" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The Y coordinate of the top side of the image. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Width" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The width of the mask. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Height" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation>
-                                                The height of the mask. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Point"> <!-- top level definition -->
+        <xsd:element name="Point" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Points</plural></xsdfu></xsd:appinfo>
                 </xsd:annotation>
                 <xsd:complexType>
-                                        <xsd:complexContent>
-                                                <xsd:extension base="Shape"/>
-                                        </xsd:complexContent>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape">
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3881,10 +3882,12 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                                         </xsd:documentation>
                                                 </xsd:annotation>
                                         </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Ellipse"> <!-- top level definition -->
+        <xsd:element name="Ellipse" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Ellipses</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3893,9 +3896,8 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                                        <xsd:complexContent>
-                                                <xsd:extension base="Shape"/>
-                                        </xsd:complexContent>
+                        <xsd:complexContent>
+                                <xsd:extension base="Shape">
                                         <xsd:attribute name="X" use="required" type="xsd:float">
                                                 <xsd:annotation>
                                                         <xsd:documentation>
@@ -3924,10 +3926,12 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                                         </xsd:documentation>
                                                 </xsd:annotation>
                                         </xsd:attribute>
+                                </xsd:extension>
+                        </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Line"> <!-- top level definition -->
+        <xsd:element name="Line" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Lines</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3936,38 +3940,39 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:complexContent>
-                                <xsd:extension base="Shape"/>
+                                <xsd:extension base="Shape">
+                                        <xsd:attribute name="X1" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The X coordinate of the start of the line. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Y1" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The Y coordinate of the start of the line. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="X2" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The X coordinate of the end of the line. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Y2" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The Y coordinate of the end of the line. [units pixels]
+                                                        </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
+                                        <xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
+                                </xsd:extension>
                         </xsd:complexContent>
-                        <xsd:attribute name="X1" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> The X coordinate of the start of the line. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Y1" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> The Y coordinate of the start of the line. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="X2" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> The X coordinate of the end of the line. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Y2" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> The Y coordinate of the end of the line. [units pixels]
-                                        </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
-                        <xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Polyline"> <!-- top level definition -->
+        <xsd:element name="Polyline" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Polylines</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3978,21 +3983,22 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:complexContent>
-                                <xsd:extension base="Shape"/>
+                                <xsd:extension base="Shape">
+                                        <xsd:attribute name="Points" use="required" type="xsd:string">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The points of the polyline are defined as a list of comma
+                                                                separated x,y coordinates seperated by spaces like "x1,y1 x2,y2 x3,y3" e.g.
+                                                                "0,0 1,2 3,5" </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
+                                        <xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
+                                </xsd:extension>
                         </xsd:complexContent>
-                        <xsd:attribute name="Points" use="required" type="xsd:string">
-                                <xsd:annotation>
-                                        <xsd:documentation> The points of the polyline are defined as a list of comma
-                                                separated x,y coordinates seperated by spaces like "x1,y1 x2,y2 x3,y3" e.g.
-                                                "0,0 1,2 3,5" </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="MarkerStart" use="optional" type="Marker"/>
-                        <xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Polygon"> <!-- top level definition -->
+        <xsd:element name="Polygon" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Polygons</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -4003,19 +4009,20 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:complexContent>
-                                <xsd:extension base="Shape"/>
+                                <xsd:extension base="Shape">
+                                        <xsd:attribute name="Points" use="required" type="xsd:string">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> The points of the Polygon are defined as a list of comma
+                                                                separated x,y coordinates seperated by spaces like "x1,y1 x2,y2 x3,y3" e.g.
+                                                                "0,0 1,2 3,5" </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                </xsd:extension>
                         </xsd:complexContent>
-                        <xsd:attribute name="Points" use="required" type="xsd:string">
-                                <xsd:annotation>
-                                        <xsd:documentation> The points of the Polygon are defined as a list of comma
-                                                separated x,y coordinates seperated by spaces like "x1,y1 x2,y2 x3,y3" e.g.
-                                                "0,0 1,2 3,5" </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Label"> <!-- top level definition -->
+        <xsd:element name="Label" substitutionGroup="Shape"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Labels</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -4025,20 +4032,21 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:annotation>
                 <xsd:complexType>
                         <xsd:complexContent>
-                                <xsd:extension base="Shape"/>
+                                <xsd:extension base="Shape">
+                                        <xsd:attribute name="X" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> This defines the X coordinate of the current text position
+                                                                of the first character in the string. [units pixels] </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="Y" use="required" type="xsd:float">
+                                                <xsd:annotation>
+                                                        <xsd:documentation> This defines the Y coordinate of the current text position
+                                                                of the first character in the string. [units pixels] </xsd:documentation>
+                                                </xsd:annotation>
+                                        </xsd:attribute>
+                                </xsd:extension>
                         </xsd:complexContent>
-                        <xsd:attribute name="X" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> This defines the X coordinate of the current text position
-                                                of the first character in the string. [units pixels] </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="Y" use="required" type="xsd:float">
-                                <xsd:annotation>
-                                        <xsd:documentation> This defines the Y coordinate of the current text position
-                                                of the first character in the string. [units pixels] </xsd:documentation>
-                                </xsd:annotation>
-                        </xsd:attribute>
                 </xsd:complexType>
         </xsd:element>
 
