@@ -43,7 +43,8 @@ Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` w
 
     touch "physicalSizesUnits&physicalSizeX=1nm&physicalSizeY=1nm&physicalSizeZ=1.5km.fake"
     echo "physicalSizeX=1 nm" >> physicalSizes.fake.ini
-    echo "physicalSizeY=10 Å" >> physicalSizes.fake.ini
+    echo "physicalSizeY=10 pm" >> physicalSizes.fake.ini
+    echo "physicalSizeZ=.002 mm" >> physicalSizes.fake.ini
 
 To generate a simple plate file:
 
