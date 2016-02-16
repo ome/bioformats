@@ -44,12 +44,34 @@ public final class Log4jTools {
   private Log4jTools() { }
 
   /**
+   * Checks whether SLF4J logging was enabled via log4j
+   *
+   * @return {@code true} if logging was successfully enabled
+   */
+  public static synchronized boolean isEnabled() {
+    try {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.exec("import org.apache.log4j.Level");
+      r.exec("import org.apache.log4j.Logger");
+      r.exec("root = Logger.getRootLogger()");
+      Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
+      if (!en.hasMoreElements()) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (ReflectException exc) {
+      return false;
+    }
+  }
+  
+  /**
    * Attempts to enable SLF4J logging via log4j
    * without an external configuration file.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return true iff logging was successfully enabled
+   * @return {@code true} if logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
     try {
