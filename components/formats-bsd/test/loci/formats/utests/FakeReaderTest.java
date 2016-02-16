@@ -75,6 +75,7 @@ public class FakeReaderTest {
       {"1mm", new Length(1.0, UNITS.MM)},
       {"1.0mm", new Length(1.0, UNITS.MM)},
       {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
