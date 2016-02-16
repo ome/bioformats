@@ -217,18 +217,18 @@ public class ZeissTIFFReader extends BaseZeissReader {
     ArrayList<String> files = new ArrayList<String>();
 
     try {
-      if (new CaseInsensitiveLocation(tiffInfo.xmlname).exists()) {
-        files.add(tiffInfo.xmlname);
+      CaseInsensitiveLocation xml = new CaseInsensitiveLocation(tiffInfo.xmlname);
+      if (xml.exists()) {
+        files.add(xml.getAbsolutePath());
       }
     }
     catch (IOException e) {
       LOGGER.debug("Error checking existence of " + tiffInfo.xmlname, e);
     }
     try {
-      if (!noPixels && tiffInfo.origname != null &&
-        new CaseInsensitiveLocation(tiffInfo.origname).exists())
-      {
-        files.add(tiffInfo.origname);
+      CaseInsensitiveLocation origname = new CaseInsensitiveLocation(tiffInfo.origname);
+      if (!noPixels && tiffInfo.origname != null && origname.exists()) {
+        files.add(origname.getAbsolutePath());
       }
     }
     catch (IOException e) {
@@ -237,8 +237,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
     if (!noPixels) {
       for (String tiff : imageFiles) {
         try {
-          if (new CaseInsensitiveLocation(tiff).exists()) {
-            files.add(tiff);
+          CaseInsensitiveLocation tiffLocation = new CaseInsensitiveLocation(tiff);
+          if (tiffLocation.exists()) {
+            files.add(tiffLocation.getAbsolutePath());
           }
         }
         catch (IOException e) {
