@@ -38,6 +38,14 @@ global metadata map:
     echo "[GlobalMetadata]" >> my-special-test-file.fake.ini
     echo "my.key=some.value" >> my-special-test-file.fake.ini
 
+
+Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` where ``UNIT`` is the symbol of the desired unit::
+
+    touch "physicalSizesUnits&physicalSizeX=1nm&physicalSizeY=1nm&physicalSizeZ=1.5km.fake"
+    echo "physicalSizeX=1 nm" >> physicalSizes.fake.ini
+    echo "physicalSizeY=10 pm" >> physicalSizes.fake.ini
+    echo "physicalSizeZ=.002 mm" >> physicalSizes.fake.ini
+
 To generate a simple plate file:
 
 ::
@@ -146,7 +154,7 @@ with their default values, is shown below.
       * the scaling factor for the pixel values on each plane
       * 1
     - * exposureTime
-      * time of exposure, supports units defaulting to seconds
+      * time of exposure
       * null
     - * acquisitionDate
       * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"

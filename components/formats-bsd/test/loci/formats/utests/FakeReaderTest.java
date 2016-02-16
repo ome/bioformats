@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,9 +45,16 @@ import loci.common.Location;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tools.FakeImage;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
+import loci.common.services.ServiceFactory;
+
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 
@@ -55,6 +62,20 @@ public class FakeReaderTest {
 
   private Path wd;
   private FakeReader reader;
+  private OMEXMLService service;
+
+  @DataProvider(name = "physical sizes")
+  public Object[][] physicalSizes() {
+    return new Object[][] {
+      {"1", new Length(1.0, UNITS.MICROM)},
+      {"1.0", new Length(1.0, UNITS.MICROM)},
+      {"1mm", new Length(1.0, UNITS.MM)},
+      {"1.0mm", new Length(1.0, UNITS.MM)},
+      {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
+      {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
 
   /** Create a directory under wd */
   private static Location mkSubd(Path parent, String name) throws Exception {
@@ -94,6 +115,8 @@ public class FakeReaderTest {
   public void setUp() throws Exception {
     wd = Files.createTempDirectory(this.getClass().getName());
     reader = new FakeReader();
+    ServiceFactory sf = new ServiceFactory();
+    service = sf.getInstance(OMEXMLService.class);
   }
 
   @AfterMethod
@@ -212,4 +235,54 @@ public class FakeReaderTest {
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeX(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeX=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeX(0), length);
+  }
+  
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeXIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeX = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeX(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeY(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeY=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeY(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeYIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeY = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeY(0), length);
+  }
+  
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeZ(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeZ=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
+
+  @Test(dataProvider = "physical sizes")
+  public void testPhysicalSizeZIni(String value, Length length) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "physicalSizeZ = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
 }
