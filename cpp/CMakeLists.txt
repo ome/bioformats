@@ -47,6 +47,4 @@ function(bf_add_test)
 endfunction()
 
 add_subdirectory(lib)
-add_subdirectory(libexec)
-add_subdirectory(share/icons)
 add_subdirectory(test)

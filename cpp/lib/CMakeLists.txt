@@ -36,6 +36,4 @@
 
 add_subdirectory(ome/internal)
 add_subdirectory(ome/xml)
-add_subdirectory(ome/bioformats)
-add_subdirectory(ome/qtwidgets)
 add_subdirectory(ome/test)
