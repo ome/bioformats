@@ -148,7 +148,6 @@ foreach(dir
 endforeach()
 
 add_subdirectory(docs/doxygen)
-add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
