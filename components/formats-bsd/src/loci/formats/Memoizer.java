@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
+import com.esotericsoftware.kryo.Registration;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
@@ -116,12 +117,34 @@ public class Memoizer extends ReaderWrapper {
     void close();
   }
 
+
   public static class KryoDeser implements Deser {
 
-    final public Kryo kryo = new Kryo();
+    final public Kryo kryo = new Kryo() {
+
+        int count = 0;
+
+        @Override
+        public Registration getRegistration(Class k) {
+            Registration rv = this.getClassResolver().getRegistration(k);
+            if (rv == null) {
+                rv = new Registration(k, getDefaultSerializer(k), count++);
+                System.out.println("REGISTRATION: " + k + " --> " + count);
+                this.register(rv);
+            }
+            return rv;
+        }
+
+    };
+
     {
       // See https://github.com/EsotericSoftware/kryo/issues/216
-      ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+      ((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy())
+          .setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+      // The goal here is to eventually turn this on, but for the moment,
+      // the getRegistration method will auto-register, so required=true
+      // would have no effect.
+      // kryo.setRegistrationRequired(true);
     }
 
     FileInputStream fis;
