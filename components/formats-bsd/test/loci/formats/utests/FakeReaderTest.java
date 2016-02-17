@@ -37,10 +37,13 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import loci.common.Constants;
 import loci.common.Location;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
@@ -72,6 +75,7 @@ public class FakeReaderTest {
       {"1mm", new Length(1.0, UNITS.MM)},
       {"1.0mm", new Length(1.0, UNITS.MM)},
       {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
@@ -85,7 +89,8 @@ public class FakeReaderTest {
   /** Create a text file under wd with the given basename and content */
   private File mkIni(String basename, String... lines) throws Exception {
     File fakeIni = wd.resolve(basename).toFile();
-    PrintWriter pw = new PrintWriter(fakeIni);
+    PrintWriter pw = new PrintWriter(new OutputStreamWriter(
+      new FileOutputStream(fakeIni), Constants.ENCODING));
     try {
       for (String l: lines) {
         pw.println(l);
