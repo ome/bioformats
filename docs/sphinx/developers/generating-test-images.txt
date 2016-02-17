@@ -12,7 +12,8 @@ Whatever is before the first ``&`` is the image name; the remaining key-value
 pairs, each preceded with ``&``, set the pixel type and image dimensions. Just
 replace the values with whatever you need for testing.
 
-Additionally, you can put such values in a separate :file:`.ini` file:
+Additionally, you can put such values in a separate UTF-8 encoded
+:file:`.ini` file:
 
 ::
 
