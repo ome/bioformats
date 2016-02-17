@@ -147,8 +147,6 @@ public class FileWriteSPW {
     width = sizeX;
     height = sizeY;
     
-    Exception exception = null;
-    
     omexml = initializeMetadata(nFov);
     
     initializationSuccess = initializeWriter(omexml);
@@ -268,7 +266,7 @@ public class FileWriteSPW {
         for (int column = 0; column < cols; column++) {
           
           // set up well
-          String wellID = MetadataTools.createLSID("Well:", well);
+          String wellID = MetadataTools.createLSID("Well", well);
           meta.setWellID(wellID, plateIndex, well);
           meta.setWellRow(new NonNegativeInteger(row), plateIndex, well);
           meta.setWellColumn(new NonNegativeInteger(column), plateIndex, well); 
@@ -283,12 +281,12 @@ public class FileWriteSPW {
             meta.setImageID(imageID, series);
             meta.setImageName(imageName, series);
             
-            String pixelsID = MetadataTools.createLSID("Pixels",row, well, fov);
+            String pixelsID = MetadataTools.createLSID("Pixels", well, fov);
             meta.setPixelsID(pixelsID, series);
             
             // specify that the pixel data is stored in big-endian format
             // change 'TRUE' to 'FALSE' to specify little-endian format
-            meta.setPixelsBinDataBigEndian(Boolean.TRUE,  series, 0);
+            meta.setPixelsBigEndian(Boolean.TRUE, series);
 
             // specify that the image is stored in ZCT order
             meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, series);
