@@ -267,7 +267,7 @@ to open/import a dataset in a particular format.
      - .mnc
      - Single file
    * - Medical Research Council
-     - .mrc, .st, .ali, .map, .rec
+     - .mrc, .st, .ali, .map, .rec, .mrcs
      - Single file
    * - Metamorph STK
      - .stk, .nd, .tif, .tiff
@@ -277,7 +277,7 @@ to open/import a dataset in a particular format.
      - One or more .tif/.tiff files
    * - Micro-Manager
      - .tif, .tiff, .txt, .xml
-     - A 'metadata.txt' file plus or or more .tif files
+     - A file ending in 'metadata.txt' plus one or more .tif files
    * - Minolta MRW
      - .mrw
      - Single file
@@ -377,6 +377,9 @@ to open/import a dataset in a particular format.
    * - Prairie TIFF
      - .tif, .tiff, .cfg, .env, .xml
      - One .xml file, one .cfg file, and one or more .tif/.tiff files
+   * - Princeton Instruments SPE
+     - .spe
+     - Single file
    * - Pyramid TIFF
      - .tif, .tiff
      - Single file
@@ -398,6 +401,9 @@ to open/import a dataset in a particular format.
    * - SPCImage Data
      - .sdt
      - Single file
+   * - SPCImage Data
+     - .spc, .set
+     - One .spc file and similarly named .set file
    * - SPIDER
      - .spi
      - Single file
