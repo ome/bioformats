@@ -150,12 +150,23 @@ public class SDTReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
+    long blockSize = info.allBlockLengths[getSeries()];
+
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int times = timeBins;
     if (info.mcstaPoints == getSizeT()) {
       times = getSizeT();
     }
     int planeSize = paddedWidth * sizeY * times * bpp;
+
+    // remove width padding if we can be reasonably certain
+    // that the unpadded width is correct
+    if (paddedWidth > sizeX && planeSize * getSizeC() > blockSize &&
+      (planeSize / paddedWidth) * sizeX * getSizeC() <= blockSize)
+    {
+      paddedWidth = sizeX;
+      planeSize = sizeX * sizeY * times * bpp;
+    }
 
     if (preLoad  && !intensity) {
       int channel = no / times;
