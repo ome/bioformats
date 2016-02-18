@@ -45,8 +45,20 @@
 	extension-element-prefixes="exsl" version="1.0">
 
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd</xsl:variable>
+	<xsl:variable name="newOMESL">http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd</xsl:variable>
+	<xsl:variable name="newXSINS">http://www.w3.org/2001/XMLSchema-instance</xsl:variable>
+
+	<xsl:variable name="dummyOME">
+		<xsl:element name="OME:OME" namespace="{$newOMENS}"/>
+	</xsl:variable>
+	<xsl:variable name="dummyBIN">
+		<xsl:element name="Bin:BinData" namespace="{$newBINNS}"/>
+	</xsl:variable>
+	<xsl:variable name="dummyXSI">
+		<xsl:element name="xsi:schemaLocation" namespace="{$newXSINS}"/>
+	</xsl:variable>
 
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
@@ -308,13 +320,13 @@
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
-		<OME xmlns="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
-			xmlns:Bin="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
-			http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd">
-			<xsl:apply-templates select="* [local-name(.) = 'Image']"/>
-		</OME>
+		<xsl:element name="OME" namespace="{$newOMENS}">
+			<xsl:copy-of select="exsl:node-set($dummyOME)/*/namespace::*[.=$newOMENS]"/>
+			<xsl:copy-of select="exsl:node-set($dummyBIN)/*/namespace::*[.=$newBINNS]"/>
+			<xsl:copy-of select="exsl:node-set($dummyXSI)/*/namespace::*[.=$newXSINS]"/>
+			<xsl:attribute name="xsi:schemaLocation"><xsl:value-of select="$newOMESL"/></xsl:attribute>
+			<xsl:apply-templates select="* [local-name(.) = 'Image']"/> <!-- Don't copy UUID attribute or non-Image nodes -->
+		</xsl:element>
 	</xsl:template>
 
 	<!-- Default processing -->
