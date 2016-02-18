@@ -332,6 +332,17 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
+
+    // if the channel name and Z position are unique
+    // for each plane, then prefer unique channels over unique Zs
+    // the division by uniqueC.size is not a typo - it's meant to
+    // account for the multiple actual Z sections
+    if (effectiveC * getSizeZ() > totalPlanes &&
+      effectiveC * (getSizeZ() / uniqueC.size()) == totalPlanes)
+    {
+      m.sizeZ /= uniqueC.size();
+    }
+
     m.sizeT = totalPlanes /
       (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
     if (getSizeT() == 0) m.sizeT = 1;
