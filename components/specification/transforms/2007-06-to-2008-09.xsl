@@ -54,7 +54,6 @@
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
-	<xsl:variable name="newOMESL">http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2008-09</xsl:variable>
 	<xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09</xsl:variable>
 	<xsl:variable name="newCANS">http://www.openmicroscopy.org/Schemas/CA/2008-09</xsl:variable>
@@ -63,42 +62,9 @@
 	<xsl:variable name="newAMLNS">http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09</xsl:variable>
 	<xsl:variable name="newMLINS">http://www.openmicroscopy.org/Schemas/MLI/2008-09</xsl:variable>
 	<xsl:variable name="newCLINS">http://www.openmicroscopy.org/Schemas/CLI/2008-09</xsl:variable>
-	<xsl:variable name="newXSINS">http://www.w3.org/2001/XMLSchema-instance</xsl:variable>
 
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
-
-	<!-- Dummy elements to register namespace prefixes -->
-	<xsl:variable name="dummyOME">
-		<xsl:element name="OME:OME" namespace="{$newOMENS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummySPW">
-		<xsl:element name="SPW:Screen" namespace="{$newSPWNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyBIN">
-		<xsl:element name="Bin:BinData" namespace="{$newBINNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyCA">
-		<xsl:element name="CA:CA" namespace="{$newCANS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummySA">
-		<xsl:element name="SA:StructuredAnnotations" namespace="{$newSANS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummySTD">
-		<xsl:element name="STD:STD" namespace="{$newSTDNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyAML">
-		<xsl:element name="AML:AML" namespace="{$newAMLNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyMLI">
-		<xsl:element name="MLI:MLI" namespace="{$newMLINS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyCLI">
-		<xsl:element name="CLI:CLI" namespace="{$newCLINS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyXSI">
-		<xsl:element name="xsi:schemaLocation" namespace="{$newXSINS}"/>
-	</xsl:variable>
 
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
@@ -708,20 +674,15 @@
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
-		<xsl:element name="OME" namespace="{$newOMENS}">
-			<xsl:copy-of select="exsl:node-set($dummyOME)/*/namespace::*[.=$newOMENS]"/>
-			<xsl:copy-of select="exsl:node-set($dummySPW)/*/namespace::*[.=$newSPWNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyBIN)/*/namespace::*[.=$newBINNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyCA)/*/namespace::*[.=$newCANS]"/>
-			<xsl:copy-of select="exsl:node-set($dummySA)/*/namespace::*[.=$newSANS]"/>
-			<xsl:copy-of select="exsl:node-set($dummySTD)/*/namespace::*[.=$newSTDNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyAML)/*/namespace::*[.=$newAMLNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyMLI)/*/namespace::*[.=$newMLINS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyCLI)/*/namespace::*[.=$newCLINS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyXSI)/*/namespace::*[.=$newXSINS]"/>
-			<xsl:attribute name="xsi:schemaLocation"><xsl:value-of select="$newOMESL"/></xsl:attribute>
+		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"
+			xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-09"
+			xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-09"
+			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
+			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd">
 			<xsl:apply-templates select="node()"/> <!-- no attributes to copy -->
-		</xsl:element>
+		</OME>
 	</xsl:template>
 
 	<xsl:template match="OME:*">

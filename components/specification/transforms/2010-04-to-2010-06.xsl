@@ -51,35 +51,14 @@
 	extension-element-prefixes="exsl" version="1.0">
 
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2010-06</xsl:variable>
-	<xsl:variable name="newOMESL">schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2010-06</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06</xsl:variable>
 	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2010-06</xsl:variable>
 	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2010-06</xsl:variable>
-	<xsl:variable name="newXSINS">http://www.w3.org/2001/XMLSchema-instance</xsl:variable>
 
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
-
-	<xsl:variable name="dummyOME">
-		<xsl:element name="OME:OME" namespace="{$newOMENS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummySPW">
-		<xsl:element name="SPW:Screen" namespace="{$newSPWNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyBIN">
-		<xsl:element name="Bin:BinData" namespace="{$newBINNS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyROI">
-		<xsl:element name="ROI:ROI" namespace="{$newROINS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummySA">
-		<xsl:element name="SA:StructuredAnnotations" namespace="{$newSANS}"/>
-	</xsl:variable>
-	<xsl:variable name="dummyXSI">
-		<xsl:element name="xsi:schemaLocation" namespace="{$newXSINS}"/>
-	</xsl:variable>
 
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
@@ -248,16 +227,16 @@
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
-		<xsl:element name="OME" namespace="{$newOMENS}">
-			<xsl:copy-of select="exsl:node-set($dummyOME)/*/namespace::*[.=$newOMENS]"/>
-			<xsl:copy-of select="exsl:node-set($dummySPW)/*/namespace::*[.=$newSPWNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyBIN)/*/namespace::*[.=$newBINNS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyROI)/*/namespace::*[.=$newROINS]"/>
-			<xsl:copy-of select="exsl:node-set($dummySA)/*/namespace::*[.=$newSANS]"/>
-			<xsl:copy-of select="exsl:node-set($dummyXSI)/*/namespace::*[.=$newXSINS]"/>
-			<xsl:attribute name="xsi:schemaLocation"><xsl:value-of select="$newOMESL"/></xsl:attribute>
-			<xsl:apply-templates select="@UUID|node()"/> <!-- copy UUID attribute and nodes -->
-		</xsl:element>
+		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-06"
+			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06"
+			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06"
+			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06"
+			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06
+			http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
+			<xsl:apply-templates/>
+		</OME>
 	</xsl:template>
 
 	<xsl:template match="OME:*">
