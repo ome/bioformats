@@ -210,8 +210,8 @@ Simple Logging Facade for Java API
     License:   BSD
 
 Xalan Serializer
-    JAR file:  serializer-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  serializer-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 
@@ -229,8 +229,8 @@ Apache Velocity
     License:   Apache
 
 Xalan
-    JAR file:  xalan-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  xalan-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 
