@@ -79,7 +79,7 @@ public final class DebugTools {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("isEnabled", String.class);
-        return m.invoke(null);
+        return (Boolean) m.invoke(null);
       }
       catch (Throwable t) {
         // no-op. Ignore error and try the next class.
