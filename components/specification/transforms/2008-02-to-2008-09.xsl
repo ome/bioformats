@@ -632,7 +632,7 @@
 			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="@UUID|node()"/> <!-- copy UUID attribute and nodes -->
 		</OME>
 	</xsl:template>
 

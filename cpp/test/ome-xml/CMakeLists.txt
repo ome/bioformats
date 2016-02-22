@@ -68,6 +68,10 @@ if(BUILD_TESTS)
   target_link_libraries(timestamp OME::XML)
   target_link_libraries(timestamp ome-test)
 
+  add_executable(transform transform.cpp)
+  target_link_libraries(transform OME::Common OME::XML)
+  target_link_libraries(transform ome-test)
+
   add_executable(transform-resolver transform-resolver.cpp)
   target_link_libraries(transform-resolver OME::Common OME::XML)
   target_link_libraries(transform-resolver ome-test)
@@ -81,6 +85,7 @@ if(BUILD_TESTS)
   bf_add_test(ome-xml/constrained-numeric constrained-numeric)
   bf_add_test(ome-xml/timestamp timestamp)
   bf_add_test(ome-xml/transform-resolver transform-resolver)
+  bf_add_test(ome-xml/transform transform)
   bf_add_test(ome-xml/model model)
 
   if(extended-tests)

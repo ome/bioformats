@@ -53,7 +53,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
             http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
         </OME:OME>
     </xsl:template>
 

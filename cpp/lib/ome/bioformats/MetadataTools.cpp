@@ -54,8 +54,10 @@
 #include <ome/common/xml/dom/Document.h>
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/NodeList.h>
+#include <ome/common/xsl/Platform.h>
 
 #include <ome/xml/Document.h>
+#include <ome/xml/OMETransform.h>
 
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/MetadataException.h>
@@ -222,7 +224,41 @@ namespace ome
     ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata>
     createOMEXMLMetadata(ome::common::xml::dom::Document& document)
     {
-      ome::common::xml::dom::Element docroot(document.getDocumentElement());
+      ome::common::xsl::Platform xslplat;
+      ome::common::xml::dom::Document upgraded_doc;
+      ome::common::xml::dom::Element docroot;
+
+      if (getModelVersion(document) != OME_MODEL_VERSION)
+        {
+          // Transform to latest
+          ome::xml::OMEEntityResolver entity_resolver;
+          ome::xml::OMETransformResolver transform_resolver;
+
+          std::string xml;
+          ome::common::xml::dom::writeDocument(document, xml);
+
+          std::string upgraded_xml;
+          ome::xml::transform(OME_MODEL_VERSION, xml, upgraded_xml,
+                              entity_resolver, transform_resolver);
+
+          try
+            {
+              upgraded_doc = ome::xml::createDocument(upgraded_xml, ome::common::xml::dom::ParseParameters(),
+                                                      "OME-XML text (current schema)");
+            }
+          catch (const std::runtime_error&) // retry without strict validation
+            {
+              ome::common::xml::dom::ParseParameters params;
+              params.doSchema = false;
+              params.validationSchemaFullChecking = false;
+              upgraded_doc = ome::xml::createDocument(upgraded_xml, params, "Broken OME-XML");
+            }
+          docroot = upgraded_doc.getDocumentElement();
+        }
+      else
+        {
+          docroot = document.getDocumentElement();
+        }
 
       ome::compat::shared_ptr< ::ome::xml::meta::OMEXMLMetadata> meta(ome::compat::make_shared< ::ome::xml::meta::OMEXMLMetadata>());
       ome::xml::model::detail::OMEModel model;
@@ -237,12 +273,13 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::common::xml::Platform xmlplat;
+      ome::common::xsl::Platform xslplat;
       ome::common::xml::dom::Document doc;
       try
         {
           doc = ome::xml::createDocument(file);
         }
-      catch (const std::runtime_error&)
+      catch (const std::runtime_error&) // retry without strict validation
         {
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
@@ -257,18 +294,19 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::common::xml::Platform xmlplat;
+      ome::common::xsl::Platform xslplat;
       ome::common::xml::dom::Document doc;
       try
         {
           doc = ome::xml::createDocument(text, ome::common::xml::dom::ParseParameters(),
-                                                 "OME-XML");
+                                         "OME-XML text");
         }
-      catch (const std::runtime_error&)
+      catch (const std::runtime_error&) // retry without strict validation
         {
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::xml::createDocument(text, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(text, params, "Broken OME-XML text");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -278,18 +316,19 @@ namespace ome
     {
       // Parse OME-XML into DOM Document.
       ome::common::xml::Platform xmlplat;
+      ome::common::xsl::Platform xslplat;
       ome::common::xml::dom::Document doc;
       try
         {
           doc = ome::xml::createDocument(stream, ome::common::xml::dom::ParseParameters(),
-                                                 "OME-XML");
+                                                 "OME-XML stream");
         }
-      catch (const std::runtime_error&)
+      catch (const std::runtime_error&) // retry without strict validation
         {
           ome::common::xml::dom::ParseParameters params;
           params.doSchema = false;
           params.validationSchemaFullChecking = false;
-          doc = ome::xml::createDocument(stream, params, "Broken OME-XML");
+          doc = ome::xml::createDocument(stream, params, "Broken OME-XML stream");
         }
       return createOMEXMLMetadata(doc);
     }
@@ -343,7 +382,7 @@ namespace ome
       std::string xml(omexml.dumpXML());
 
       if (validate && !validateOMEXML(xml))
-        throw std::runtime_error("Invalid OME-XML");
+        throw std::runtime_error("Invalid OME-XML document");
 
       return xml;
     }
@@ -351,7 +390,7 @@ namespace ome
     bool
     validateOMEXML(const std::string& document)
     {
-      return validateXML(document, "OME-XML");
+      return validateXML(document, "OME-XML document for validation");
     }
 
     bool
@@ -1044,6 +1083,11 @@ namespace ome
         {
           return found[1];
         }
+      else if(ns == "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd")
+        {
+          return "2003-FC";
+        }
+
       return "";
     }
 
@@ -1102,8 +1146,14 @@ namespace ome
     std::string
     transformToLatestModelVersion(const std::string& document)
     {
-      /// @todo Implement model transforms.
-      return document;
+      ome::xml::OMEEntityResolver entity_resolver;
+      ome::xml::OMETransformResolver transform_resolver;
+
+      std::string upgraded_xml;
+      ome::xml::transform(OME_MODEL_VERSION, document, upgraded_xml,
+                          entity_resolver, transform_resolver);
+
+      return upgraded_xml;
     }
 
     bool

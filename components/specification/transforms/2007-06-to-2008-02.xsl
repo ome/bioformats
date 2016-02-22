@@ -347,7 +347,7 @@
 			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="node()"/> <!-- no attributes to copy -->
 		</OME>
 	</xsl:template>
 

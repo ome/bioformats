@@ -129,7 +129,7 @@
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="@UUID|node()"/> <!-- copy UUID attribute and nodes -->
 			<xsl:comment>Append all ROI nodes</xsl:comment>
 			<xsl:for-each select="exsl:node-set(OME:Image/OME:ROI)">
 				<xsl:comment>ROI node from Image</xsl:comment>
