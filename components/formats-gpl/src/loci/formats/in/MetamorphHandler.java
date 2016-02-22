@@ -61,6 +61,7 @@ public class MetamorphHandler extends BaseHandler {
   private Length positionX, positionY;
   private Vector<Double> exposures;
   private String channelName;
+  private Vector<String> channelNames;
   private String stageLabel;
   private Double gain;
   private boolean dualCamera = false;
@@ -78,6 +79,7 @@ public class MetamorphHandler extends BaseHandler {
     wavelengths = new Vector<Integer>();
     zPositions = new Vector<Double>();
     exposures = new Vector<Double>();
+    channelNames = new Vector<String>();
   }
 
   // -- MetamorphHandler API methods --
@@ -85,6 +87,8 @@ public class MetamorphHandler extends BaseHandler {
   public Double getGain() { return gain; }
 
   public String getChannelName() { return channelName; }
+
+  public Vector<String> getChannelNames() { return channelNames; }
 
   public String getStageLabel() { return stageLabel; }
 
@@ -272,7 +276,10 @@ public class MetamorphHandler extends BaseHandler {
       catch (NumberFormatException e) { }
     }
     else if (key.equals("_IllumSetting_")) {
-      channelName = value;
+      if (channelName == null) {
+        channelName = value;
+      }
+      channelNames.add(value);
     }
     else if (key.equals("stage-label")) {
       stageLabel = value;

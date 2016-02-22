@@ -513,6 +513,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
           store.setPixelsPhysicalSizeZ(sizeZ, s);
         }
 
+        if (uniqueChannels.size() == 0) {
+          uniqueChannels = handler.getChannelNames();
+        }
+
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {
             store.setChannelName(uniqueChannels.get(c), s, c);
