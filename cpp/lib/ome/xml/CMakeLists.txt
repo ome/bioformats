@@ -71,12 +71,9 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveLong.cpp
   model/primitives/Timestamp.cpp)
 
-# Not installed, internal only.
-set(OME_XML_META_PRIVATE_STATIC_HEADERS
-    meta/Convert.h)
-
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
+    meta/Convert.h
     meta/Metadata.h
     meta/MetadataException.h
     meta/MetadataRoot.h
