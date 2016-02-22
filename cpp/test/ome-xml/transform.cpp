@@ -44,8 +44,7 @@
 
 #include <ome/common/xsl/Platform.h>
 
-#include <ome/internal/version.h>
-
+#include <ome/xml/config.h>
 #include <ome/xml/OMEEntityResolver.h>
 #include <ome/xml/OMETransform.h>
 #include <ome/xml/OMETransformResolver.h>

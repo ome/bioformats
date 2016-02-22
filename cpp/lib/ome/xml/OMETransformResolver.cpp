@@ -282,7 +282,7 @@ namespace ome
     OMETransformResolver::OMETransformResolver():
       impl(ome::compat::make_shared<OMETransformResolverImpl>())
     {
-      impl->fill_graph(ome::common::module_runtime_path("bf-transform"));
+      impl->fill_graph(ome::common::module_runtime_path("ome-xml-transform"));
     }
 
     OMETransformResolver::OMETransformResolver(const boost::filesystem::path& transformdir):

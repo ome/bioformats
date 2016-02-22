@@ -43,7 +43,7 @@ set(OME_TOPLEVEL_INCLUDES
 function(bf_add_test)
   add_test(${ARGV})
   set_tests_properties(${ARGV0}
-    PROPERTIES ENVIRONMENT "BIOFORMATS_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema;BIOFORMATS_TRANSFORMDIR=${PROJECT_SOURCE_DIR}/components/specification/transforms")
+    PROPERTIES ENVIRONMENT "OME_XML_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema;OME_XML_TRANSFORMDIR=${PROJECT_SOURCE_DIR}/components/specification/transforms;OME_XML_SAMPLEDIR=${PROJECT_SOURCE_DIR}/components/specification/samples")
 endfunction()
 
 add_subdirectory(lib)

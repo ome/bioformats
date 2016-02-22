@@ -49,8 +49,8 @@ list(APPEND CMAKE_MODULE_PATH
 
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
-project(bioformats)
-message(STATUS "Configuring Bio-Formats main build")
+project(ome-xml)
+message(STATUS "Configuring OME-XML C++")
 
 include(cpp/cmake/Version.cmake)
 
@@ -100,31 +100,35 @@ if(MSVC)
 endif()
 
 
-if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
-  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
-      CACHE PATH "Bio-Formats-specific datadir")
+if(NOT DEFINED OME_XML_INSTALL_DATADIR)
+  set(OME_XML_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/xml"
+      CACHE PATH "OME-XML-specific datadir")
 endif()
 
 # Use standard path if using a prefix.
 if(CMAKE_INSTALL_PREFIX)
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
+  if (NOT DEFINED OME_XML_INSTALL_LIBEXECDIR)
+    set(OME_XML_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
         CACHE PATH "Bio-Formats-specific libexecdir")
   endif()
 else()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
+  if (NOT DEFINED OME_XML_INSTALL_LIBEXECDIR)
+    set(OME_XML_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
         CACHE PATH "Bio-Formats-specific libexecdir")
   endif()
 endif()
 
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
-  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
-      CACHE PATH "Bio-Formats schema directory")
+if (NOT DEFINED OME_XML_INSTALL_SCHEMADIR)
+  set(OME_XML_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+      CACHE PATH "OME-XML schema directory")
 endif()
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
-  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
-      CACHE PATH "Bio-Formats transform directory")
+if (NOT DEFINED OME_XML_INSTALL_TRANSFORMDIR)
+  set(OME_XML_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+      CACHE PATH "OME-XML transform directory")
+endif()
+if (NOT DEFINED OME_XML_INSTALL_SAMPLEDIR)
+  set(OME_XML_INSTALL_SAMPLEDIR "${OME_XML_INSTALL_DATADIR}/samples"
+      CACHE PATH "OME XML sample directory")
 endif()
 
 foreach(dir
@@ -132,8 +136,9 @@ foreach(dir
     LIBEXECDIR
     SCHEMADIR
     TRANSFORMDIR
+    SAMPLEDIR
     )
-  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
+  mark_as_advanced(OME_XML_INSTALL_${dir})
 endforeach()
 
 add_subdirectory(docs/doxygen)

@@ -38,14 +38,13 @@
 
 #include <iostream>
 
-#include <ome/internal/version.h>
-
 #include <boost/format.hpp>
 
 #include <boost/format.hpp>
 
 #include <ome/common/xml/Platform.h>
 
+#include <ome/xml/config.h>
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/OriginalMetadataAnnotation.h>

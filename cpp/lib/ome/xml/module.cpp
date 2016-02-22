@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-INTERNAL C++ headers for internal use only
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
  * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,18 +36,18 @@
  * #L%
  */
 
-#ifndef OME_INTERNAL_URL_H
-#define OME_INTERNAL_URL_H
+#include <ome/xml/config.h>
 
-// Public URLs for embedding in messages, metadata, etc.
- 
-/// URL of Bio-Formats web page.
-#define URL_BIO_FORMATS "http://www.openmicroscopy.org/site/products/bio-formats"
+#define OME_COMMON_MODULE_INTROSPECTION 1
+#include <ome/common/module.h>
 
-/// URL of 'Bio-Formats C++ overview' web page.
-#define URL_BIO_FORMATS_LIBRARIES "http://www.openmicroscopy.org/site/support/bio-formats/developers/cpp/overview.html"
-
-/// URL of OME-TIFF web page.
-#define URL_OME_TIFF "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/"
-
-#endif // OME_INTERNAL_URL_H
+namespace
+{
+  using ome::common::RegisterModule;
+  
+  // Bio-Formats package-specific paths.
+  RegisterModule omexml_data("ome-xml-data", "OME_XML_DATADIR", OME_XML_INSTALL_FULL_DATADIR, OME_XML_INSTALL_DATADIR, module_path);
+  RegisterModule omexml_schema("ome-xml-schema", "OME_XML_SCHEMADIR", OME_XML_INSTALL_FULL_SCHEMADIR, OME_XML_INSTALL_SCHEMADIR, module_path);
+  RegisterModule omexml_transform("ome-xml-transform", "OME_XML_TRANSFORMDIR", OME_XML_INSTALL_FULL_TRANSFORMDIR, OME_XML_INSTALL_TRANSFORMDIR, module_path);
+  RegisterModule omexml_sample("ome-xml-sample", "OME_XML_SAMPLEDIR", OME_XML_INSTALL_FULL_SAMPLEDIR, OME_XML_INSTALL_SAMPLEDIR, module_path);
+}

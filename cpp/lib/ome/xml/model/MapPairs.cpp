@@ -36,8 +36,7 @@
  * #L%
  */
 
-#include <ome/internal/version.h>
-
+#include <ome/xml/config.h>
 #include <ome/xml/model/OME.h>
 #include <ome/xml/model/MapPairs.h>
 

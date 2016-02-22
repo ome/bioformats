@@ -40,15 +40,13 @@
 
 #include <boost/filesystem.hpp>
 
-#include <ome/internal/config.h>
-#include <ome/internal/version.h>
-
 #include <ome/test/config.h>
 #include <ome/test/test.h>
 
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/config.h>
 #include <ome/xml/Document.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
