@@ -53,7 +53,6 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 # for.
 COMPLEX_OVERRIDE = ('Transform')
 ABSTRACT_OVERRIDE = ('Shape','LightSource')
-SHAPE_OVERRIDE = ('Line','Rectangle','Mask','Ellipse','Point','Polyline','Polygon','Label')
 ANNOTATION_OVERRIDE = ('AnnotationRef',)
 
 # The list of properties not to process.
