@@ -60,14 +60,6 @@ class Language(object):
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
-            'UnitsLength':            'UnitsLength',
-            'UnitsTime':              'UnitsTime',
-            'UnitsPressure':          'UnitsPressure',
-            'UnitsAngle':             'UnitsAngle',
-            'UnitsTemperature':       'UnitsTemperature',
-            'UnitsElectricPotential': 'UnitsElectricPotential',
-            'UnitsPower':             'UnitsPower',
-            'UnitsFrequency':         'UnitsFrequency',
             namespace + 'dateTime':   'Timestamp'
             }
             
@@ -240,6 +232,15 @@ class Java(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
 
+        self.primitive_type_map['UnitsLength'] = 'UnitsLength'
+        self.primitive_type_map['UnitsTime'] = 'UnitsTime'
+        self.primitive_type_map['UnitsPressure'] = 'UnitsPressure'
+        self.primitive_type_map['UnitsAngle'] = 'UnitsAngle'
+        self.primitive_type_map['UnitsTemperature'] = 'UnitsTemperature'
+        self.primitive_type_map['UnitsElectricPotential'] = 'UnitsElectricPotential'
+        self.primitive_type_map['UnitsPower'] = 'UnitsPower'
+        self.primitive_type_map['UnitsFrequency'] = 'UnitsFrequency'
+ 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
         self.model_type_map['K'] = None
