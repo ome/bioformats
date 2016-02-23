@@ -28,7 +28,7 @@ DOXYFILE_ENCODING      = UTF-8
 # identify the project. Note that if you do not use Doxywizard you need
 # to put quotes around the project name if it contains spaces.
 
-PROJECT_NAME           = bioformats
+PROJECT_NAME           = ome-xml
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -54,7 +54,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = bioformats
+OUTPUT_DIRECTORY       = ome-xml
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -645,7 +645,7 @@ WARN_FORMAT            = "$file:$line: $text"
 # and error messages should be written. If left blank the output is written
 # to stderr.
 
-WARN_LOGFILE           = bioformats.log
+WARN_LOGFILE           = ome-xml.log
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -1632,12 +1632,12 @@ SKIP_FUNCTION_MACROS   = YES
 # NOT include the path). If a tag file is not located in the directory in which
 # doxygen is run, you must also specify the path to the tagfile here.
 
-TAGFILES               =
+TAGFILES               = "@OME_COMMON_TAGFILE@ = ../../../ome-common/api/html"
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = bioformats/bioformats.tag
+GENERATE_TAGFILE       = ome-xml/ome-xml.tag
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes
