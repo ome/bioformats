@@ -522,6 +522,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
             store.setChannelName(uniqueChannels.get(c), s, c);
           }
           else store.setChannelName(handler.getChannelName(), s, c);
+          if (c < wavelengths.size()) {
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(Double.valueOf(wavelengths.get(c))), s, c);
+          }
         }
       }
     }
