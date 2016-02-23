@@ -1004,7 +1004,7 @@
                 <xsd:complexType>
                         <xsd:sequence>
                                 <xsd:element ref="Microscope" minOccurs="0" maxOccurs="1"/>
-                                <xsd:element ref="LightSource" minOccurs="1" maxOccurs="unbounded"/>
+                                <xsd:element ref="LightSourceGroup" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
                                 <xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
@@ -2260,7 +2260,7 @@
         </xsd:element>
 
         <!-- Light elements -->
-        <xsd:element name="LightSource" abstract="true" type="LightSource"/> <!-- top level definition -->
+        <xsd:element name="LightSourceGroup" abstract="true" type="LightSource"/> <!-- top level definition -->
         <xsd:complexType name="LightSource">
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>LightSources</plural><abstract/></xsdfu></xsd:appinfo>
@@ -2303,7 +2303,7 @@
                         </xsd:extension>
                 </xsd:complexContent>
         </xsd:complexType>
-        <xsd:element name="Laser" substitutionGroup="LightSource"> <!-- top level definition -->
+        <xsd:element name="Laser" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Lasers</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2464,7 +2464,7 @@
                         </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:element name="Arc" substitutionGroup="LightSource"> <!-- top level definition -->
+        <xsd:element name="Arc" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Arcs</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2494,7 +2494,7 @@
                         </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:element name="Filament" substitutionGroup="LightSource"> <!-- top level definition -->
+        <xsd:element name="Filament" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Filaments</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2523,7 +2523,7 @@
                         </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:element name="LightEmittingDiode" substitutionGroup="LightSource"> <!-- top level definition -->
+        <xsd:element name="LightEmittingDiode" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>LightEmittingDiodes</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -2564,7 +2564,7 @@
                         </xsd:complexContent>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:element name="GenericExcitationSource" substitutionGroup="LightSource"> <!-- top level definition -->
+        <xsd:element name="GenericExcitationSource" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>GenericExcitationSources</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3552,7 +3552,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                                         <xsd:element name="Union" minOccurs="1" maxOccurs="1">
                                                 <xsd:complexType>
                                                         <xsd:sequence>
-                                                                <xsd:element ref="Shape" minOccurs="1" maxOccurs="unbounded"/>
+                                                                <xsd:element ref="ShapeGroup" minOccurs="1" maxOccurs="unbounded"/>
                                                         </xsd:sequence>
                                                 </xsd:complexType>
                                         </xsd:element>
@@ -3585,7 +3585,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                         </xsd:attribute>
                 </xsd:complexType>
         </xsd:element>
-        <xsd:element name="Shape" abstract="true" type="Shape"/> <!-- top level definition -->
+        <xsd:element name="ShapeGroup" abstract="true" type="Shape"/>  <!-- top level definition -->
         <xsd:complexType name="Shape">
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
@@ -3768,7 +3768,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:attribute>
         </xsd:complexType>
 
-        <xsd:element name="Rectangle" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Rectangle" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Rectangles</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3812,7 +3812,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Mask" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Mask" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Masks</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3861,7 +3861,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Point" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Point" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Points</plural></xsdfu></xsd:appinfo>
                 </xsd:annotation>
@@ -3887,7 +3887,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Ellipse" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Ellipse" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Ellipses</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3931,7 +3931,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Line" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Line" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Lines</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3972,7 +3972,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Polyline" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Polyline" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Polylines</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -3998,7 +3998,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Polygon" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Polygon" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Polygons</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
@@ -4022,7 +4022,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-        <xsd:element name="Label" substitutionGroup="Shape"> <!-- top level definition -->
+        <xsd:element name="Label" substitutionGroup="ShapeGroup"> <!-- top level definition -->
                 <xsd:annotation>
                         <xsd:appinfo><xsdfu><plural>Labels</plural></xsdfu></xsd:appinfo>
                         <xsd:documentation>
