@@ -35,7 +35,9 @@
 # #L%
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+               ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
@@ -73,7 +75,8 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
   model/primitives/Timestamp.cpp
-  module.cpp)
+  module.cpp
+  version.cpp)
 
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
@@ -88,6 +91,9 @@ set(OME_XML_STATIC_HEADERS
     OMEEntityResolver.h
     OMETransform.h
     OMETransformResolver.h)
+
+set(OME_XML_GENERATED_HEADERS
+    ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
@@ -123,6 +129,7 @@ set(OME_XML_PUBLIC_STATIC_HEADERS
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
 set(OME_XML_PUBLIC_GENERATED_HEADERS
+    ${OME_XML_GENERATED_HEADERS}
     ${OME_XML_GENERATED_META_HEADERS}
     ${OME_XML_GENERATED_MODEL_HEADERS}
     ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
@@ -167,7 +174,7 @@ install(FILES OMEXMLConfig.cmake
 
 set(ome_xml_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/xml")
 
-install(FILES ${OME_XML_STATIC_HEADERS}
+install(FILES ${OME_XML_STATIC_HEADERS} ${OME_XML_GENERATED_HEADERS}
         DESTINATION ${ome_xml_includedir})
 install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS}
         DESTINATION ${ome_xml_includedir}/meta)
