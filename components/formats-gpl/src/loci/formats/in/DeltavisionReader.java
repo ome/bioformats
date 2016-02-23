@@ -64,7 +64,12 @@ public class DeltavisionReader extends FormatReader {
   public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
   public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
 
+  /* Deprecated in favor of DATE_FORMATS */
   public static final String DATE_FORMAT = "E MMM d HH:mm:ss yyyy";
+  public static final String[] DATE_FORMATS = {
+    "E MMM d HH:mm:ss yyyy",
+    "E MMM  d HH:mm:ss yyyy",
+  };
 
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
@@ -1202,7 +1207,7 @@ public class DeltavisionReader extends FormatReader {
       else if (line.startsWith("Image")) prefix = line;
       else if (line.startsWith("Created")) {
         if (line.length() > 8) line = line.substring(8).trim();
-        String date = DateTools.formatDate(line, DATE_FORMAT);
+        String date = DateTools.formatDate(line, DATE_FORMATS);
         if (date != null) {
           for (int series=0; series<getSeriesCount(); series++) {
             store.setImageAcquisitionDate(new Timestamp(date), series);
