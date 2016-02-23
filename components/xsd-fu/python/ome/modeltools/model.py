@@ -47,6 +47,8 @@ class ReferenceDelegate(object):
         self.values = None
         self.maxOccurs = 9999
         self.minOccurs = 0
+        self.shapeElement = None
+        self.lightSourceElement = None
 
     def getValues(self):
         return self.values
@@ -73,6 +75,8 @@ class OMEModel(object):
         self.elementNameObjectMap = dict()
         self.objects = odict()
         self.parents = dict()
+        # A mapping of abstract substitution groups with the abstract element
+        self.substitutionElement_map = dict()
 
     def addObject(self, element, obj):
         elementName = element.getName()
@@ -202,6 +206,13 @@ class OMEModel(object):
         """
         length = len(elements)
         for i, element in enumerate(elements):
+            if self.opts.lang.hasSubstitutionGroup(element.getName()):
+                continue
+            if (element.getName() in self.substitutionElement_map.keys()):
+                if parent is not None:
+                    element = self.substitutionElement_map[element.getName()]
+                if parent is None:
+                    continue   
             logging.info("Processing element: %s %d/%d"
                          % (element, i + 1, length))
             self.processLeaf(element, parent)
@@ -241,6 +252,12 @@ class OMEModel(object):
                 o.properties[ref] = prop
         for o in self.objects.values():
             for prop in o.properties.values():
+                if self.opts.lang.hasAbstractType(prop.name):
+                    abstractName = self.opts.lang.abstractType(prop.name)
+                    prop.delegate.name = abstractName
+                    prop.delegate.type = abstractName
+                    prop.delegate.unmappedCleanName = abstractName
+                    prop.delegate.cleanName = abstractName
                 if not prop.isReference and (
                         prop.isAttribute or prop.maxOccurs == 1 or
                         o.name == 'OME' or o.isAbstract):
@@ -289,6 +306,7 @@ class OMEModel(object):
         """
         elements = contentHandler.getRoot().getChildren()
         model = klass(opts)
+        model.populateSubstitutionGroups(elements)
         model.topLevelSimpleTypes = contentHandler.topLevelSimpleTypes
         model.processTree(elements)
         model.postProcessReferences()
@@ -322,3 +340,14 @@ class OMEModel(object):
     header_dependencies = property(
         _get_header_deps,
         doc="""The model's dependencies for include/import in headers.""")
+        
+    def populateSubstitutionGroups(self, elements):
+        """
+        Creates a mapping between substitution group elements and their type elements
+        """
+        length = len(elements)
+        for i, element in enumerate(elements):
+            if self.opts.lang.hasSubstitutionGroup(element.getName()):
+                substitutionGroupName = self.opts.lang.substitutionGroup(element.getName())
+                self.substitutionElement_map[substitutionGroupName] = element
+                continue
