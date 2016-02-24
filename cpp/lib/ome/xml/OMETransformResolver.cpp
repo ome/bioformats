@@ -286,7 +286,6 @@ namespace ome
       // Hack to force module registration when static linking.
       register_module_paths();
 
-      std::cerr << "RESOLVER: Using path " << ome::common::module_runtime_path("ome-xml-transform") << std::endl;
       impl->fill_graph(ome::common::module_runtime_path("ome-xml-transform"));
     }
 
@@ -318,7 +317,6 @@ namespace ome
     OMETransformResolver::transform_order(const std::string& source,
                                           const std::string& target) const
     {
-      std::cerr << "TRANS ORDER: " << source << " to " << target << std::endl;
       const OMETransformResolverImpl::Graph& g = impl->g;
 
       std::vector<Transform> order;
