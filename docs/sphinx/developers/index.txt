@@ -45,9 +45,7 @@ Using Bio-Formats as a Java library
 Using Bio-Formats as a native C++ library
 =========================================
 
-.. todo::
-
-    See new location for C++ documentation.
+.. note:: See new location for C++ documentation.
 
 Contributing to Bio-Formats
 ===========================
