@@ -334,6 +334,36 @@ namespace ome
         // -- Entity counting (code generated definitions) --
 
 {% end debug %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for k, v in indexes[abstractClass].items() %}\
+        /**
+         * Get the type of a ${abstractClass}.
+         *
+{% for param in v %}\
+     * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @returns the ${abstractClass} type.
+         *
+         * @todo Can this be a const reference?
+         */
+        virtual const std::string&
+        get${abstractClass}Type(${indexes_string(v)}) const = 0;
+ 
+        /**
+         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
+         *
+{% for param in v[:-1] %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @return the number of ${abstractClass} elements.
+         */
+        virtual index_type
+        get${abstractClass}Count(${indexes_string(v)}) const = 0;
+
+{% end %}\
+{% end %}\
+{% end header%}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -372,36 +402,6 @@ namespace ome
          */
         virtual index_type
         get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])}) const = 0;
-
-{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
-{% for k, v in indexes[abstractClass].items() %}\
-        /**
-         * Get the type of a ${abstractClass}.
-         *
-{% for param in v %}\
-     * @param ${param['argname']} the ${param['type']} index.
-{% end for %}\
-         * @returns the ${abstractClass} type.
-         *
-         * @todo Can this be a const reference?
-         */
-        virtual const std::string&
-        get${abstractClass}Type(${indexes_string(v)}) const = 0;
- 
-        /**
-         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
-         *
-{% for param in v[:-1] %}\
-         * @param ${param['argname']} the ${param['type']} index.
-{% end for %}\
-         * @return the number of ${abstractClass} elements.
-         */
-        virtual index_type
-        get${abstractClass}Count(${indexes_string(v)}) const = 0;
-
-{% end %}\
-{% end %}\
-
 {% end header%}\
 {% end %}\
 {% end %}\
