@@ -153,7 +153,7 @@
                 <xsd:key name="ExperimenterGroupIDKey"><xsd:selector xpath="OME:ExperimenterGroup"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
-                <xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
+                <xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:Laser|OME:Instrument/OME:Arc|OME:Instrument/OME:Filament|OME:Instrument/OME:LightEmittingDiode|OME:Instrument/OME:GenericExcitationSource"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
@@ -165,7 +165,7 @@
                 <xsd:key name="WellIDKey"><xsd:selector xpath="OME:Plate/OME:Well"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="WellSampleIDKey"><xsd:selector xpath="OME:Plate/OME:Well/OME:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ROIIDKey"><xsd:selector xpath="OME:ROI"/><xsd:field xpath="@ID"/></xsd:key>
-                <xsd:key name="ShapeIDKey"><xsd:selector xpath="OME:ROI/OME:Union/OME:Shape"/><xsd:field xpath="@ID"/></xsd:key>
+                <xsd:key name="ShapeIDKey"><xsd:selector xpath="OME:ROI/OME:Union/OME:Rectangle|OME:ROI/OME:Union/OME:Mask|OME:ROI/OME:Union/OME:Ellipse||OME:ROI/OME:Union/OME:Point|OME:ROI/OME:Union/OME:Line|OME:ROI/OME:Union/OME:Polyline|OME:ROI/OME:Union/OME:Polygon|OME:ROI/OME:Union/OME:Label"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="AnnotationIDKey"><xsd:selector xpath="OME:StructuredAnnotations/*"/><xsd:field xpath="@ID"/></xsd:key>
 
                 <!-- Unique references -->
