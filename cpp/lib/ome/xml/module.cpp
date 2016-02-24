@@ -43,11 +43,41 @@
 
 namespace
 {
+
   using ome::common::RegisterModule;
-  
-  // Bio-Formats package-specific paths.
-  RegisterModule omexml_data("ome-xml-data", "OME_XML_DATADIR", OME_XML_INSTALL_FULL_DATADIR, OME_XML_INSTALL_DATADIR, module_path);
-  RegisterModule omexml_schema("ome-xml-schema", "OME_XML_SCHEMADIR", OME_XML_INSTALL_FULL_SCHEMADIR, OME_XML_INSTALL_SCHEMADIR, module_path);
-  RegisterModule omexml_transform("ome-xml-transform", "OME_XML_TRANSFORMDIR", OME_XML_INSTALL_FULL_TRANSFORMDIR, OME_XML_INSTALL_TRANSFORMDIR, module_path);
-  RegisterModule omexml_sample("ome-xml-sample", "OME_XML_SAMPLEDIR", OME_XML_INSTALL_FULL_SAMPLEDIR, OME_XML_INSTALL_SAMPLEDIR, module_path);
+
+  void register_paths()
+  {
+    // Bio-Formats package-specific paths.
+    static RegisterModule omexml_data("ome-xml-data", "OME_XML_DATADIR", OME_XML_INSTALL_FULL_DATADIR, OME_XML_INSTALL_DATADIR, module_path);
+    static RegisterModule omexml_schema("ome-xml-schema", "OME_XML_SCHEMADIR", OME_XML_INSTALL_FULL_SCHEMADIR, OME_XML_INSTALL_SCHEMADIR, module_path);
+    static RegisterModule omexml_transform("ome-xml-transform", "OME_XML_TRANSFORMDIR", OME_XML_INSTALL_FULL_TRANSFORMDIR, OME_XML_INSTALL_TRANSFORMDIR, module_path);
+    static RegisterModule omexml_sample("ome-xml-sample", "OME_XML_SAMPLEDIR", OME_XML_INSTALL_FULL_SAMPLEDIR, OME_XML_INSTALL_SAMPLEDIR, module_path);
+  }
+
+  struct AutoRegister
+  {
+    AutoRegister()
+    {
+      register_paths();
+    }
+  };
+
+  AutoRegister path_register;
+
+}
+
+namespace ome
+{
+  namespace xml
+  {
+
+    void
+    register_module_paths()
+    {
+      ome::common::register_module_paths();
+      register_paths();
+    }
+
+  }
 }

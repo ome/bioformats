@@ -88,6 +88,7 @@ set(OME_XML_META_STATIC_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     Document.h
+    module.h
     OMEEntityResolver.h
     OMETransform.h
     OMETransformResolver.h)

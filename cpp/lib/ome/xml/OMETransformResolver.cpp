@@ -43,6 +43,7 @@
 #include <boost/tuple/tuple.hpp> // For tie
 
 #include <ome/common/module.h>
+#include <ome/xml/module.h>
 
 #include <ome/xml/OMETransformResolver.h>
 
@@ -282,6 +283,9 @@ namespace ome
     OMETransformResolver::OMETransformResolver():
       impl(ome::compat::make_shared<OMETransformResolverImpl>())
     {
+      // Hack to force module registration when static linking.
+      register_module_paths();
+
       std::cerr << "RESOLVER: Using path " << ome::common::module_runtime_path("ome-xml-transform") << std::endl;
       impl->fill_graph(ome::common::module_runtime_path("ome-xml-transform"));
     }

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2015 - 2016 Open Microscopy Environment:
+ * Copyright © 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,40 @@
  * #L%
  */
 
-#include <ome/common/module.h>
-#include <ome/xml/module.h>
+#ifndef OME_XML_MODEL_MODULE_H
+#define OME_XML_MODEL_MODULE_H
 
-#include <ome/xml/OMEEntityResolver.h>
+#include <ome/xml/module.h>
 
 namespace ome
 {
   namespace xml
   {
 
-    OMEEntityResolver::OMEEntityResolver():
-      ome::common::xml::EntityResolver()
-    {
-      // Hack to force module registration when static linking.
-      register_module_paths();
-
-      registerCatalog(ome::common::module_runtime_path("ome-xml-schema") / "catalog.xml");
-    }
-
-    OMEEntityResolver::~OMEEntityResolver()
-    {
-    }
+    /**
+     * Register the OME-XML module paths with OME-Common.
+     *
+     * This function forces path registration.
+     *
+     * @note This is a hack to allow static linking to work on
+     * Windows; without this, the module object is omitted and the
+     * paths aren't automatically registered.  This will no longer be
+     * required once it is built as a DLL.  Its only purpose is to
+     * force object inclusion when static linking, and ensure that the
+     * registration happens independently of object static
+     * construction order to allow use prior to main() entry.  You
+     * should not use this.
+     */
+    void
+    register_module_paths();
 
   }
 }
+
+#endif // OME_XML_MODEL_MODULE_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
