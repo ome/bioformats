@@ -14,7 +14,6 @@ option(fatal-warnings "Compiler warnings are errors" OFF)
 # Unit tests.
 option(test "Enable unit tests (requires gtest)" ON)
 option(extended-tests "Enable extended tests (more comprehensive, longer run time)" ON)
-option(embedded-gtest "Use embedded gtest rather than an external build" OFF)
 
 # The installation is relocatable; this affects path lookups (if OFF,
 # paths are assumed to be their configured absolute install location;

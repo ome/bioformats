@@ -455,6 +455,7 @@ ${customContent[obj.name][prop.name]}
 
 #include <ome/common/xml/Platform.h>
 
+#include <ome/xml/config-internal.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\
