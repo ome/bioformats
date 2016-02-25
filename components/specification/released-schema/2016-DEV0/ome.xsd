@@ -165,7 +165,7 @@
                 <xsd:key name="WellIDKey"><xsd:selector xpath="OME:Plate/OME:Well"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="WellSampleIDKey"><xsd:selector xpath="OME:Plate/OME:Well/OME:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="ROIIDKey"><xsd:selector xpath="OME:ROI"/><xsd:field xpath="@ID"/></xsd:key>
-                <xsd:key name="ShapeIDKey"><xsd:selector xpath="OME:ROI/OME:Union/OME:Rectangle|OME:ROI/OME:Union/OME:Mask|OME:ROI/OME:Union/OME:Ellipse||OME:ROI/OME:Union/OME:Point|OME:ROI/OME:Union/OME:Line|OME:ROI/OME:Union/OME:Polyline|OME:ROI/OME:Union/OME:Polygon|OME:ROI/OME:Union/OME:Label"/><xsd:field xpath="@ID"/></xsd:key>
+                <xsd:key name="ShapeIDKey"><xsd:selector xpath="OME:ROI/OME:Union/OME:Rectangle|OME:ROI/OME:Union/OME:Mask|OME:ROI/OME:Union/OME:Ellipse|OME:ROI/OME:Union/OME:Point|OME:ROI/OME:Union/OME:Line|OME:ROI/OME:Union/OME:Polyline|OME:ROI/OME:Union/OME:Polygon|OME:ROI/OME:Union/OME:Label"/><xsd:field xpath="@ID"/></xsd:key>
                 <xsd:key name="AnnotationIDKey"><xsd:selector xpath="OME:StructuredAnnotations/*"/><xsd:field xpath="@ID"/></xsd:key>
 
                 <!-- Unique references -->
