@@ -40,12 +40,6 @@
 #define OME_XML_CONFIG_H
 
 // Public URLs for embedding in messages, metadata, etc.
- 
-/// URL of Bio-Formats web page.
-#define URL_BIO_FORMATS "http://www.openmicroscopy.org/site/products/bio-formats"
-
-/// URL of 'Bio-Formats C++ overview' web page.
-#define URL_BIO_FORMATS_LIBRARIES "http://www.openmicroscopy.org/site/support/bio-formats/developers/cpp/overview.html"
 
 /// URL of OME-TIFF web page.
 #define URL_OME_TIFF "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/"
