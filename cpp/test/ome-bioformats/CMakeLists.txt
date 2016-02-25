@@ -46,6 +46,12 @@ if(BUILD_TESTS)
     bf_add_test(ome-bioformats/headers ome-bioformats-headers)
   endif(extended-tests)
 
+  add_executable(dimension dimension.cpp)
+  target_link_libraries(dimension ome-bioformats)
+  target_link_libraries(dimension ome-test)
+
+  bf_add_test(ome-bioformats/dimension dimension)
+
   add_executable(formatreader formatreader.cpp)
   target_link_libraries(formatreader OME::BioFormats)
   target_link_libraries(formatreader ome-test)
