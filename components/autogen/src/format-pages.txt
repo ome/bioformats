@@ -907,7 +907,7 @@ reader = IMODReader
 [Improvision Openlab LIFF]
 extensions = .liff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 versions = 2.0, 5.0
 weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
@@ -922,13 +922,11 @@ utilityRating = Fair
 privateSpecification = true
 reader = OpenlabReader
 mif = true
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision Openlab Raw]
 extensions = .raw
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 * a few Openlab Raw datasets
@@ -938,13 +936,11 @@ opennessRating = Very good
 presenceRating = Poor
 utilityRating = Fair
 reader = OpenlabRawReader
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision TIFF]
 extensions = .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an Improvision TIFF specification document \n
 * a few Improvision TIFF datasets
@@ -955,8 +951,6 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = ImprovisionTiffReader
-notes = .. seealso:: \n
-  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
 
 [Imspector OBF]
 extensions = .obf, .msr
