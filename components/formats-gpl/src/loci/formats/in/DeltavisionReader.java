@@ -64,7 +64,10 @@ public class DeltavisionReader extends FormatReader {
   public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
   public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
 
-  /* Deprecated in favor of DATE_FORMATS */
+ /**
+  * @deprecated Use {@link #DATE_FORMATS} instead
+  */
+  @Deprecated
   public static final String DATE_FORMAT = "E MMM d HH:mm:ss yyyy";
   public static final String[] DATE_FORMATS = {
     "E MMM d HH:mm:ss yyyy",
