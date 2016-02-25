@@ -40,6 +40,7 @@
 
 #define OME_COMMON_MODULE_INTROSPECTION 1
 #include <ome/common/module.h>
+#include <ome/xml/module.h>
 
 namespace
 {
@@ -48,11 +49,50 @@ namespace
 
   void register_paths()
   {
-    // Bio-Formats package-specific paths.
-    static RegisterModule omexml_data("ome-xml-data", "OME_XML_DATADIR", OME_XML_INSTALL_FULL_DATADIR, OME_XML_INSTALL_DATADIR, module_path);
-    static RegisterModule omexml_schema("ome-xml-schema", "OME_XML_SCHEMADIR", OME_XML_INSTALL_FULL_SCHEMADIR, OME_XML_INSTALL_SCHEMADIR, module_path);
-    static RegisterModule omexml_transform("ome-xml-transform", "OME_XML_TRANSFORMDIR", OME_XML_INSTALL_FULL_TRANSFORMDIR, OME_XML_INSTALL_TRANSFORMDIR, module_path);
-    static RegisterModule omexml_sample("ome-xml-sample", "OME_XML_SAMPLEDIR", OME_XML_INSTALL_FULL_SAMPLEDIR, OME_XML_INSTALL_SAMPLEDIR, module_path);
+    // OME-XML package-specific paths.
+    static RegisterModule omexml_pkgdata
+      ("ome-xml-data",
+       "OME_XML_PKGDATADIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_PKGDATADIR,
+       OME_XML_INSTALL_PKGDATADIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_schema
+      ("ome-xml-schema",
+       "OME_XML_SCHEMADIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_SCHEMADIR,
+       OME_XML_INSTALL_SCHEMADIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_transform
+      ("ome-xml-transform",
+       "OME_XML_TRANSFORMDIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_TRANSFORMDIR,
+       OME_XML_INSTALL_TRANSFORMDIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_sample
+      ("ome-xml-sample",
+       "OME_XML_SAMPLEDIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_SAMPLEDIR,
+       OME_XML_INSTALL_SAMPLEDIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
   }
 
   struct AutoRegister
