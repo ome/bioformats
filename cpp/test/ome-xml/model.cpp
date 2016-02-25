@@ -46,7 +46,7 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
-#include <ome/xml/config.h>
+#include <ome/xml/config-internal.h>
 #include <ome/xml/Document.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>

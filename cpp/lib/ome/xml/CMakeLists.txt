@@ -34,8 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-internal.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/config-internal.h @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
@@ -136,7 +136,7 @@ set(OME_XML_PUBLIC_GENERATED_HEADERS
     ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
 
 set(OME_XML_PRIVATE_GENERATED_HEADERS
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+    ${CMAKE_CURRENT_BINARY_DIR}/config-internal.h)
 
 set(OME_XML_HEADERS
     ${OME_XML_PRIVATE_STATIC_HEADERS}

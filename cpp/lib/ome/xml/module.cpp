@@ -36,7 +36,7 @@
  * #L%
  */
 
-#include <ome/xml/config.h>
+#include <ome/xml/config-internal.h>
 
 #define OME_COMMON_MODULE_INTROSPECTION 1
 #include <ome/common/module.h>
