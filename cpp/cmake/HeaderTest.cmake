@@ -94,7 +94,7 @@ function(header_test_from_file component library path)
       string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
       string(REPLACE "${headerdir}/" "" include ${include})
       string(REGEX REPLACE "\\.h$" "-${repeat}.cpp" genheader ${genheader})
-      string(REGEX REPLACE "[/.]" "_" safeheader ${include})
+      string(REGEX REPLACE "[/.-]" "_" safeheader ${include})
       string(CONFIGURE "#include <@include@>
 
 #include <ome/test/test.h>

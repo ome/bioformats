@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2015 - 2016 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,27 +36,87 @@
  * #L%
  */
 
+#include <ome/xml/config-internal.h>
+
+#define OME_COMMON_MODULE_INTROSPECTION 1
 #include <ome/common/module.h>
 #include <ome/xml/module.h>
 
-#include <ome/xml/OMEEntityResolver.h>
+namespace
+{
+
+  using ome::common::RegisterModule;
+
+  void register_paths()
+  {
+    // OME-XML package-specific paths.
+    static RegisterModule omexml_pkgdata
+      ("ome-xml-data",
+       "OME_XML_PKGDATADIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_PKGDATADIR,
+       OME_XML_INSTALL_PKGDATADIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_schema
+      ("ome-xml-schema",
+       "OME_XML_SCHEMADIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_SCHEMADIR,
+       OME_XML_INSTALL_SCHEMADIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_transform
+      ("ome-xml-transform",
+       "OME_XML_TRANSFORMDIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_TRANSFORMDIR,
+       OME_XML_INSTALL_TRANSFORMDIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+
+    static RegisterModule omexml_sample
+      ("ome-xml-sample",
+       "OME_XML_SAMPLEDIR",
+       "OME_XML_HOME",
+       "BIOFORMATS_HOME",
+       OME_XML_INSTALL_FULL_SAMPLEDIR,
+       OME_XML_INSTALL_SAMPLEDIR,
+       OME_XML_INSTALL_PREFIX,
+       OME_XML_SHLIBDIR,
+       module_path);
+  }
+
+  struct AutoRegister
+  {
+    AutoRegister()
+    {
+      register_paths();
+    }
+  };
+
+  AutoRegister path_register;
+
+}
 
 namespace ome
 {
   namespace xml
   {
 
-    OMEEntityResolver::OMEEntityResolver():
-      ome::common::xml::EntityResolver()
+    void
+    register_module_paths()
     {
-      // Hack to force module registration when static linking.
-      register_module_paths();
-
-      registerCatalog(ome::common::module_runtime_path("ome-xml-schema") / "catalog.xml");
-    }
-
-    OMEEntityResolver::~OMEEntityResolver()
-    {
+      ome::common::register_module_paths();
+      register_paths();
     }
 
   }

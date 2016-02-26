@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2015 - 2016 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,65 @@
  * #L%
  */
 
-#include <ome/common/module.h>
-#include <ome/xml/module.h>
+#ifndef OME_XML_VERSION_H
+#define OME_XML_VERSION_H
 
-#include <ome/xml/OMEEntityResolver.h>
+#include <string>
+
+// Version metadata as integers
+
+#define OME_XML_VERSION_MAJOR @OME_VERSION_MAJOR@U
+#define OME_XML_VERSION_MINOR @OME_VERSION_MINOR@U
+#define OME_XML_VERSION_PATCH @OME_VERSION_PATCH@U
+
+// Version metadata as strings
+
+#define OME_XML_VERSION_MAJOR_S "@OME_VERSION_MAJOR@"
+#define OME_XML_VERSION_MINOR_S "@OME_VERSION_MINOR@"
+#define OME_XML_VERSION_PATCH_S "@OME_VERSION_PATCH@"
+#define OME_XML_VERSION_EXTRA_S "@OME_VERSION_EXTRA@"
+#ifndef OME_XML_VERSION_EXTRA_S
+# define OME_XML_VERSION_EXTRA_S ""
+#endif
+
+// Revision number in version control
+#define OME_XML_VCS_SHORTREVISION "@OME_VCS_SHORTREVISION@"
+#define OME_XML_VCS_REVISION "@OME_VCS_REVISION@"
+
+// Release date (seconds since the UNIX epoch)
+#define OME_XML_VCS_DATE @OME_VCS_DATE@
+
+// Release date as ISO-8601 string
+#define OME_XML_VCS_DATE_S "@OME_VCS_DATE_S@"
+
+// Current OME model version used by xsd-fu
+#define OME_XML_MODEL_VERSION "@MODEL_VERSION@"
 
 namespace ome
 {
   namespace xml
   {
 
-    OMEEntityResolver::OMEEntityResolver():
-      ome::common::xml::EntityResolver()
-    {
-      // Hack to force module registration when static linking.
-      register_module_paths();
-
-      registerCatalog(ome::common::module_runtime_path("ome-xml-schema") / "catalog.xml");
-    }
-
-    OMEEntityResolver::~OMEEntityResolver()
-    {
-    }
+    /**
+     * Get the current OME-XML model version.
+     *
+     * Note that unlike the OME_XML_MODEL_VERSION macro, which is the
+     * version of the model which was built against, this gets the
+     * version of the model of the library linked against (which might
+     * differ).
+     *
+     * @returns the current OME-XML model version.
+     */
+    const std::string&
+    model_version();
 
   }
 }
+
+#endif // OME_XML_VERSION_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

@@ -80,6 +80,10 @@ if(BUILD_TESTS)
   target_link_libraries(model OME::XML)
   target_link_libraries(model ome-test)
 
+  add_executable(version version.cpp)
+  target_link_libraries(version OME::XML)
+  target_link_libraries(version ome-test)
+
   bf_add_test(ome-xml/color color)
   bf_add_test(ome-xml/enum enum)
   bf_add_test(ome-xml/constrained-numeric constrained-numeric)

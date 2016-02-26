@@ -452,12 +452,10 @@ ${customContent[obj.name][prop.name]}
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/internal/version.h>
 
 #include <ome/common/xml/Platform.h>
 
-#include <ome/internal/url.h>
-
+#include <ome/xml/config-internal.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\

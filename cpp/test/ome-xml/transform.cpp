@@ -44,11 +44,10 @@
 
 #include <ome/common/xsl/Platform.h>
 
-#include <ome/internal/version.h>
-
 #include <ome/xml/OMEEntityResolver.h>
 #include <ome/xml/OMETransform.h>
 #include <ome/xml/OMETransformResolver.h>
+#include <ome/xml/version.h>
 
 #include <ome/test/test.h>
 #include <ome/test/io.h>
@@ -165,12 +164,12 @@ TEST_P(TransformTest, TransformFileToString)
   const TransformTestParameters& params = GetParam();
 
   std::string result;
-  ASSERT_NO_THROW(ome::xml::transform(OME_MODEL_VERSION, params.file, result,
+  ASSERT_NO_THROW(ome::xml::transform(OME_XML_MODEL_VERSION, params.file, result,
                                       entity_resolver, transform_resolver));
   ASSERT_TRUE(!result.empty());
 
   ome::common::xml::dom::Document resultdoc(ome::common::xml::dom::createDocument(result, entity_resolver));
-  ASSERT_EQ(std::string(OME_MODEL_VERSION),
+  ASSERT_EQ(std::string(OME_XML_MODEL_VERSION),
             ome::xml::getModelVersion(resultdoc));
 }
 
@@ -181,12 +180,12 @@ TEST_P(TransformTest, TransformStreamToString)
   boost::filesystem::ifstream input(params.file);
 
   std::string result;
-  ASSERT_NO_THROW(ome::xml::transform(OME_MODEL_VERSION, params.file, result,
+  ASSERT_NO_THROW(ome::xml::transform(OME_XML_MODEL_VERSION, params.file, result,
                                       entity_resolver, transform_resolver));
   ASSERT_TRUE(!result.empty());
 
   ome::common::xml::dom::Document resultdoc(ome::common::xml::dom::createDocument(result, entity_resolver));
-  ASSERT_EQ(std::string(OME_MODEL_VERSION),
+  ASSERT_EQ(std::string(OME_XML_MODEL_VERSION),
             ome::xml::getModelVersion(resultdoc));
 }
 
@@ -198,12 +197,12 @@ TEST_P(TransformTest, TransformStringToString)
   readFile(params.file, input);
   
   std::string result;
-  ASSERT_NO_THROW(ome::xml::transform(OME_MODEL_VERSION, input, result,
+  ASSERT_NO_THROW(ome::xml::transform(OME_XML_MODEL_VERSION, input, result,
                                       entity_resolver, transform_resolver));
   ASSERT_TRUE(!result.empty());
 
   ome::common::xml::dom::Document resultdoc(ome::common::xml::dom::createDocument(result, entity_resolver));
-  ASSERT_EQ(std::string(OME_MODEL_VERSION),
+  ASSERT_EQ(std::string(OME_XML_MODEL_VERSION),
             ome::xml::getModelVersion(resultdoc));
 }
 

@@ -38,8 +38,6 @@
 
 #include <iostream>
 
-#include <ome/internal/version.h>
-
 #include <boost/format.hpp>
 
 #include <boost/format.hpp>
@@ -49,6 +47,7 @@
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/OriginalMetadataAnnotation.h>
+#include <ome/xml/version.h>
 
 using boost::format;
 
@@ -61,8 +60,8 @@ namespace ome
 
       namespace
       {
-        const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_MODEL_VERSION);
-        const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
+        const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_XML_MODEL_VERSION);
+        const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_XML_MODEL_VERSION);
       }
 
       OriginalMetadataAnnotation::OriginalMetadataAnnotation ():

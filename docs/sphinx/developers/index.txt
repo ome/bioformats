@@ -45,19 +45,7 @@ Using Bio-Formats as a Java library
 Using Bio-Formats as a native C++ library
 =========================================
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    cpp/overview
-    cpp/conversion
-    cpp/tutorial
-    cpp/bf-env
-    cpp/schema
-    cpp/commands/bf-test
-    cpp/commands/bf-test-info
-    cpp/commands/bf-test-view
-    cpp/maintenance
+.. note:: See new location for C++ documentation.
 
 Contributing to Bio-Formats
 ===========================

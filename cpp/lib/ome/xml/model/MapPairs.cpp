@@ -36,10 +36,9 @@
  * #L%
  */
 
-#include <ome/internal/version.h>
-
 #include <ome/xml/model/OME.h>
 #include <ome/xml/model/MapPairs.h>
+#include <ome/xml/version.h>
 
 namespace ome
 {
@@ -50,8 +49,8 @@ namespace ome
 
       namespace
       {
-        const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_MODEL_VERSION);
-        const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
+        const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_XML_MODEL_VERSION);
+        const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_XML_MODEL_VERSION);
       }
 
       MapPairs::MapPairs ():
