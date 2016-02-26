@@ -39,7 +39,7 @@
 # Written by Roger Leigh <rleigh@codelibre.net>
 
 #=============================================================================
-# Copyright 2014-2015 University of Dundee
+# Copyright (C) 2014 - 2016 Open Microscopy Environment
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
