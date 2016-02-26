@@ -22,12 +22,6 @@
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
  */
-/*
- * $Id$
- *
- *   Copyright 2014 University of Dundee. All rights reserved.
- *   Use is subject to license terms supplied in LICENSE.txt
- */
 
 package ome.units.quantity;
 
