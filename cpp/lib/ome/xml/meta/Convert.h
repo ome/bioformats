@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -35,8 +35,8 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_CONVERT_H
-#define OME_BIOFORMATS_META_CONVERT_H
+#ifndef OME_XML_META_CONVERT_H
+#define OME_XML_META_CONVERT_H
 
 #include <ome/xml/meta/MetadataStore.h>
 #include <ome/xml/meta/MetadataRetrieve.h>
@@ -87,7 +87,7 @@ namespace ome
   }
 }
 
-#endif // OME_BIOFORMATS_META_CONVERT_H
+#endif // OME_XML_META_CONVERT_H
 
 /*
  * Local Variables:
