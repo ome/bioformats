@@ -100,10 +100,10 @@ namespace ome
 {% for value in klass.possibleValues %}\
               /// ${value}
 {% if value == klass.possibleValues[-1] %}\
-              ${enum_value_name(value, klass.isUnitsEnumeration).upper()}
+              ${enum_value_name(value, False).upper()}
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              ${enum_value_name(value, klass.isUnitsEnumeration).upper()},
+              ${enum_value_name(value, False).upper()},
 {% end %}\
 {% end %}\
             };
@@ -295,10 +295,10 @@ namespace ome
 	    {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()}),
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()}),
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% end %}\
 	    };
@@ -316,10 +316,10 @@ namespace ome
 	    {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              vmap(${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()}, "${value}")
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}")
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              vmap(${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()}, "${value}"),
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}"),
 {% end %}\
 {% end %}\
 	    };
@@ -337,10 +337,10 @@ namespace ome
 	    {
 {% for value in klass.possibleValues %}\
 {% if value == klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()})
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()})
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, klass.isUnitsEnumeration).upper()}),
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
 {% end %}\
 {% end %}\
 	    };

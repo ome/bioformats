@@ -49,14 +49,18 @@ set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
 set(XSD_FU python ${XSD_FU_SCRIPT})
 
 # Version of the OME-XML model to use
-set(MODEL_VERSION 2016-DEV0)
+set(MODEL_VERSION 2013-06)
 
 # Path to the model within the source tree
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/components/specification/released-schema/${MODEL_VERSION})
 
 # Files to use within the model directory
 set(MODEL_FILES
-    ${MODEL_PATH}/ome.xsd)
+    ${MODEL_PATH}/ome.xsd
+    ${MODEL_PATH}/BinaryFile.xsd
+    ${MODEL_PATH}/ROI.xsd
+    ${MODEL_PATH}/SA.xsd
+    ${MODEL_PATH}/SPW.xsd)
 
 # Output directory for source generation
 set(GEN_DIR ${PROJECT_BINARY_DIR}/cpp/lib)
