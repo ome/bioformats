@@ -121,7 +121,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         return o->get${prop.methodName}();
 {% end %}\
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference and prop.maxOccurs > 1 %}\
+{% when obj.isConcreteSubstitution and prop.isReference and prop.maxOccurs > 1 %}\
         // ${o.parentName} is abstract, is reference and occurs more than once
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
@@ -133,7 +133,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
                                 "Internal metadata store inconsistency: null object");
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference  %}\
+{% when obj.isConcreteSubstitution and prop.isReference  %}\
         // ${parent} is abstract 
         ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [get${obj.parentName}(${index_name_string(obj.parentName)})]"));
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
@@ -142,7 +142,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
                                 "Internal metadata store inconsistency: null object");
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE %}\
+{% when obj.isConcreteSubstitution %}\
         // ${o.parentName} is abstract and not a reference
         //${accessor(obj.name, obj, prop)}
         ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [get${obj.parentName}(${index_name_string(obj.parentName)})]"));
@@ -308,7 +308,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% end %}\
 {% end %}\
-{% when (obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE) and prop.isReference %}\
+{% when (obj.isConcreteSubstitution or obj.isAbstractSubstitution) and prop.isReference %}\
     // ${prop.name} is abstract and is a reference
   
     ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
@@ -319,7 +319,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 
     model->addReference(modelObject, ref);
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE %}\
+{% when obj.isConcreteSubstitution or obj.isAbstractSubstitution %}\
         // ${obj.parentName} is abstract proprietary
 
 {% for i, v in enumerate(accessor(obj.name, getParent(o), prop, accessor_string_complex)) %}\
@@ -474,7 +474,7 @@ ${customContent[obj.name][prop.name]}
   def accessor(name, parent, prop, func=accessor_string):
     results = dict()
     o = model.getObjectByName(name)
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
       parentObj = model.getObjectByName(o.parentName)
       if len(results.keys()) == 0:
@@ -501,14 +501,14 @@ ${customContent[obj.name][prop.name]}
     return results[parents[name].keys()[0]]
 
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 
   def getAbstractDepth(name, func=accessor_string):
     results = dict()
     o = model.getObjectByName(name)
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
       parentObj = model.getObjectByName(o.parentName)
       return len(results[parents[parentObj.name].keys()[0]])
@@ -817,7 +817,7 @@ namespace ome
       }
 {% end source %}\
 
-{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
@@ -1072,7 +1072,7 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.name in fu.ABSTRACT_OVERRIDE %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isAbstractSubstitution %}\
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
@@ -1136,7 +1136,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //
@@ -1270,7 +1270,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //

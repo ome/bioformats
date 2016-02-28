@@ -1,7 +1,7 @@
 {% python
   def getConcreteClasses(abstractClass):
     returnList = []
-    if abstractClass in fu.ABSTRACT_OVERRIDE:
+    if model.opts.lang.hasSubstitutionGroup(abstractClass):
       for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)):
           if o.parentName == abstractClass:
             returnList.append(o.name)  
@@ -337,7 +337,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if prop.isAbstract %}\
-{% if prop.name in fu.ABSTRACT_OVERRIDE %}\
+{% if prop.isAbstractSubstitution %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
@@ -352,7 +352,7 @@ ${customUpdatePropertyContent[prop.name]}
      }
 {% end %}\
 {% end %}\
-{% if prop.name not in fu.ABSTRACT_OVERRIDE %}\
+{% if not prop.isAbstractSubstitution %}\
     // Element property ${prop.name} which is complex (has
     // sub-elements) and occurs more than once. The element's model
     // object type is also abstract so we need to have a handler for

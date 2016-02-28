@@ -35,6 +35,8 @@ class OMEModelObject(OMEModelEntity):
             or self.name == 'Annotation'
         self.plural = None
         self.manyToMany = False
+        self.isAbstractSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.name)
+        self.isConcreteSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.base)
         try:
             try:
                 root = ElementTree.fromstring(element.appinfo)

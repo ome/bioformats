@@ -64,16 +64,9 @@ class Language(object):
             }
             
         # A global type mapping from XSD Schema substitution groups to language abstract classes
-        self.abstract_type_map = {
-            'LightSourceGroup': 'LightSource',
-            'ShapeGroup': 'Shape'
-            }
-            
+        self.abstract_type_map = dict()
         # A global type mapping from XSD Schema abstract classes to their equivalent substitution group
-        self.substitutionGroup_map = {
-            'LightSource': 'LightSourceGroup',
-            'Shape': 'ShapeGroup'
-            }
+        self.substitutionGroup_map = dict()    
 
         # A global type mapping from XSD Schema elements to language model
         # object classes.  This will cause source code generation to be
@@ -180,6 +173,9 @@ class Language(object):
             return self.substitutionGroup_map[type]
         except KeyError:
             return None
+            
+    def getSubstitutionTypes(self):
+        return self.substitutionGroup_map.keys()
 
     def hasType(self, type):
         if type in self.type_map:

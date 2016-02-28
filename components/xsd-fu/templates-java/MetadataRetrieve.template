@@ -64,7 +64,7 @@
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 %}\
@@ -299,7 +299,7 @@ public interface MetadataRetrieve extends BaseMetadata {
    */
   int getPixelsBinDataCount(int imageIndex);
   
-{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
 /**
      * Get the type of a ${abstractClass}.
@@ -351,7 +351,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 
   // -- Entity counting (code generated definitions) --
   
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// ${o.name} entity counting
 {% end debug %}\
@@ -411,7 +411,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// MARKER [EEE]
 	//

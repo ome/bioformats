@@ -976,6 +976,12 @@ class OMEModelProperty(OMEModelEntity):
     isAbstract = property(
         _get_isAbstract,
         doc="""Is the property abstract.""")
+        
+    def _get_isAbstractSubstitution(self):
+        return self.model.opts.lang.hasSubstitutionGroup(self.name)
+    isAbstractSubstitution = property(
+        _get_isAbstract,
+        doc="""Is the property an abstract type using substitution groups.""")
 
     def fromAttribute(klass, attribute, parent, model):
         """

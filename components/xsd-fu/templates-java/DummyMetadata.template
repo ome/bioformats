@@ -97,7 +97,7 @@
     return results[parent]
 
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 %}\
@@ -244,7 +244,7 @@ public class DummyMetadata implements IMetadata
   
 	// -- Entity counting (code generated definitions) --
 
-{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
   public String get${abstractClass}Type(${indexes_string(v)})
   {
@@ -321,7 +321,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\
@@ -443,7 +443,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//

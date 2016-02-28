@@ -89,7 +89,7 @@
     return results[parent]
 
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 %}\
@@ -263,7 +263,7 @@ public class FilterMetadata implements MetadataStore
 	}
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\

@@ -52,7 +52,6 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 # Properties within abstract proprietary types that should be code generated
 # for.
 COMPLEX_OVERRIDE = ('Transform')
-ABSTRACT_OVERRIDE = ('Shape','LightSource')
 ANNOTATION_OVERRIDE = ('AnnotationRef',)
 
 # The list of properties not to process.

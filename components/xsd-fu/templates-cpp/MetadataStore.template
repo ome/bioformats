@@ -59,7 +59,7 @@
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 		
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 %}\
@@ -286,7 +286,7 @@ namespace ome
 
 {% end header%}\
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
 	//
 	// ${o.name} property storage

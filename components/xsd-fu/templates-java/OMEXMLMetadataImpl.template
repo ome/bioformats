@@ -60,18 +60,18 @@
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
 		return o.get${prop.methodName}();
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference and prop.maxOccurs > 1 %}\
+{% when obj.isConcreteSubstitution and prop.isReference and prop.maxOccurs > 1 %}\
     // ${obj.parentName} is abstract, is reference and occurs more than once 
     ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
-{% when o.parentName in fu.ABSTRACT_OVERRIDE and prop.isReference  %}\
+{% when o.isConcreteSubstitution and prop.isReference  %}\
     // ${o.parentName} is abstract 
     ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.getLinked${prop.methodName}().getID();
 {% end %}
 // ${o.parent}
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE or o.name in fu.ABSTRACT_OVERRIDE %}\
+{% when obj.isConcreteSubstitution or o.isAbstractSubstitution %}\
     // ${obj.parentName} is abstract and not a reference
     ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.get${prop.methodName}();
@@ -152,7 +152,7 @@
 {% end %}\
 {% end %}\
 {% end %}\
-{% when (obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE) and prop.isReference %}\
+{% when (obj.isConcreteSubstitution  or obj.isAbstractSubstitution) and prop.isReference %}\
     // ${prop.name} is abstract and is a reference
     ${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
     ${prop.instanceVariableName}_reference.setID(${prop.argumentName});
@@ -160,7 +160,7 @@
         (${obj.name})root.${".".join(accessor(obj.name, getParent(obj), prop))}.get${obj.parentName}(${index_name_string(obj.parentName)}),
         ${prop.instanceVariableName}_reference);
 {% end %}\
-{% when obj.parentName in fu.ABSTRACT_OVERRIDE  or obj.name in fu.ABSTRACT_OVERRIDE %}\
+{% when obj.isConcreteSubstitution  or obj.isAbstractSubstitution %}\
     // ${obj.parentName} is abstract and not a reference
     OME o0 = root;
 {% for i, v in enumerate(accessor(obj.name, getParent(obj), prop, accessor_string_complex)) %}\
@@ -265,7 +265,7 @@ ${customContent[obj.name][prop.name]}
   def accessor(name, parent, prop, func=accessor_string):
     results = dict()
     o = model.getObjectByName(name)
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
       parentObj = model.getObjectByName(o.parentName)
       if len(results.keys()) == 0:
@@ -294,13 +294,13 @@ ${customContent[obj.name][prop.name]}
   def getAbstractDepth(name, func=accessor_string):
     results = dict()
     o = model.getObjectByName(name)
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
       parentObj = model.getObjectByName(o.parentName)
       return len(results[parents[parentObj.name].keys()[0]])
 
   def getParent(o):
-    if o.parentName in fu.ABSTRACT_OVERRIDE:
+    if o.isConcreteSubstitution:
       return o.parentName
     return o.name
 %}\
@@ -468,7 +468,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
     return root.getStructuredAnnotations().getXMLAnnotation(xmlAnnotationIndex).sizeOfLinkedAnnotationList();
   }
 
-{% for abstractClass in fu.ABSTRACT_OVERRIDE %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
   public String get${abstractClass}Type(${indexes_string(v)})
   {
@@ -520,7 +520,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.name in fu.ABSTRACT_OVERRIDE %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isAbstractSubstitution %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
@@ -580,7 +580,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//
@@ -741,7 +741,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.parentName in fu.ABSTRACT_OVERRIDE %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//
