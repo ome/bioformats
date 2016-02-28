@@ -489,6 +489,7 @@ public class MicromanagerReader extends FormatReader {
           IFD ifd = ifds.get(i);
           parser.fillInIFD(ifd);
           json = ifd.getIFDTextValue(MM_JSON_TAG);
+          LOGGER.trace("JSON for IFD #{} = {}", i, json);
           if (json == null) {
             // if one of the files is missing the per-plane JSON tag,
             // assume all files are missing it (for performance)
