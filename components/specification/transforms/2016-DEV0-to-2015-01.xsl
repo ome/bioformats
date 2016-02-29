@@ -42,6 +42,29 @@
     <xsl:output method="xml" indent="yes"/>
     <xsl:preserve-space elements="*"/>
 
+    <!-- Rewrite abstract elements for Shape and LightSource -->
+    <xsl:template match="OME:Line | OME:Rectangle | OME:Mask | OME:Ellipse | OME:Point | OME:Polyline | OME:Polygon | OME:Label">
+         <xsl:element name="ROI:Shape"  namespace="{$newROINS}">
+            <xsl:apply-templates select="@FillRule | @FillColor | @StrokeColor | @StrokeWidth | @StrokeWidthUnit | @StrokeDashArray | @LineCap |@Text |  @FontFamily | @FontSize | @FontSizeUnit | @FontStyle | @Locked | @ID | @TheZ | @TheT | @TheC"/>
+            <xsl:apply-templates select="node()[local-name() = 'Transform' or local-name() = 'AnnotationRef']"/>             
+            <xsl:element name="ROI:{name()}"  namespace="{$newROINS}">
+                <xsl:apply-templates select="@*"/>
+                <xsl:apply-templates select="node()[not(local-name() = 'Transform' or local-name() = 'AnnotationRef')]"/>     
+            </xsl:element>
+         </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="OME:Laser | OME:Arc | OME:Filament | OME:LightEmittingDiode | OME:GenericExcitationSource">
+         <xsl:element name="OME:LightSource"  namespace="{$newOMENS}">
+            <xsl:apply-templates select="@ID | @Power | @PowerUnit |@Type"/>
+            <xsl:apply-templates select="node()[local-name() = 'AnnotationRef']"/>             
+            <xsl:element name="OME:{name()}"  namespace="{$newOMENS}">
+                <xsl:apply-templates select="@*"/>
+                <xsl:apply-templates select="node()[not(local-name() = 'AnnotationRef')]"/>     
+            </xsl:element>
+         </xsl:element>
+    </xsl:template>
+    
     <!-- Rewrite all namespaces -->
 
     <xsl:template match="OME:OME">
@@ -80,7 +103,7 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="OME:ROI | OME:Union | OME:ROI/OME:Description | OME:Shape | OME:Transform | OME:Rectangle | OME:Mask | OME:Point | OME:Ellipse | OME:Line | OME:Polyline | OME:Polygon | OME:Label | OME:ROIRef"
+    <xsl:template match="OME:ROI | OME:Union | OME:ROI/OME:Description | OME:Shape | OME:Transform | OME:ROIRef"
                   xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01">
         <xsl:element name="ROI:{local-name()}" namespace="{$newROINS}">
             <xsl:apply-templates select="@*|node()"/>
