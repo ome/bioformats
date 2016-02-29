@@ -198,13 +198,11 @@ ${customContent}\
 			value = ${klass.langBaseType}.valueOf(value_textContent);
 		}
 {% end %}\
-
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
 			LOGGER.debug("Expecting node name of ${klass.name} got {}", tagName);
 		}
-
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
@@ -611,17 +609,14 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
 
-
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
-
 
 		if (${klass.name}_element == null)
 		{

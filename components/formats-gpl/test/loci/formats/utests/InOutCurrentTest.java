@@ -45,7 +45,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
+
 import static org.testng.AssertJUnit.*;
+
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
@@ -94,6 +96,7 @@ import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
+
 import ome.units.quantity.Power;
 import ome.units.UNITS;
 

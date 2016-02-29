@@ -210,7 +210,7 @@ namespace ome
 {% end %}\
       //
       // Abstract:                  ${klass.isAbstract}
-      // ParentAbstract: 			${klass.isParentAbstract}
+      // ParentAbstract:            ${klass.isParentAbstract}
       // Annotation:                ${klass.isAnnotation}
       // Annotated:                 ${klass.isAnnotated}
       // Described:                 ${klass.isDescribed}

@@ -417,7 +417,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
   {
     return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
   }
- 
+
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).sizeOfLinkedAnnotationList();
   }
@@ -476,8 +476,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {% end %}\
 
   // -- Entity counting (code generated definitions) --
-  
-  
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
@@ -578,6 +577,7 @@ ${counter(k, o, v)}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
+  //
 	// Indexes: ${repr(indexes[o.name])}
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
@@ -605,7 +605,9 @@ ${counter(k, o, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+ // ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
+
 {% end %}\
 {% end %}\
 {% end %}\
@@ -668,7 +670,6 @@ ${getter(k, o, prop, v)}\
 	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
 	{
 		// TODO: To implement
-		//root.getROI(ROIIndex).getUnion().getMask(shapeIndex).setBinData(binData);
 	}
 
 	/** Sets the UUID associated with this collection of metadata. */
@@ -765,7 +766,9 @@ ${getter(k, o, prop, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+ // ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
+
 {% end %}\
 {% end %}\
 {% end %}\

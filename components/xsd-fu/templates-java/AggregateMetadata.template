@@ -565,7 +565,7 @@ ${counter(k, o, v)}\
 		}
 		return null;
 	}
-	
+
 	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();)

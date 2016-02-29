@@ -418,7 +418,7 @@ namespace ome
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
- 
+
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -667,6 +667,7 @@ namespace ome
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -691,6 +692,10 @@ namespace ome
 {% end %}\
 {% end %}\
 
+{% if debug %}\
+        // -- Entity counting (code generated definitions) --
+
+{% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -760,7 +765,6 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         bool
@@ -784,7 +788,7 @@ ${counter(k, o, v)}\
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
- 
+
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -915,7 +919,7 @@ ${getter(k, o, prop, v)}\
                                 "no delegate MetadataStore implementation");
       }
 {% end source %}\
- 
+
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 

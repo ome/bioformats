@@ -294,7 +294,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -478,6 +477,7 @@ namespace ome
                                 "intentionally not implemented");
       }
 {% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -490,10 +490,14 @@ namespace ome
         throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
                                 "intentionally not implemented");
       }
-{% end source %}\     
+{% end source %}\
+
+{% if debug %}\
+        // -- Entity counting (code generated definitions) --     
 {% end %}\
 {% end %}\
 
+{% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -561,6 +565,7 @@ ${counter(k, o, v)}\
                                 "intentionally not implemented");
       }
 {% end source %}\
+
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -673,6 +678,7 @@ ${getter(k, o, prop, v)}\
       {
       }
 {% end source %}\
+
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 

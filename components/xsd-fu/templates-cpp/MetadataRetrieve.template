@@ -336,7 +336,7 @@ namespace ome
          * Get the type of a ${abstractClass}.
          *
 {% for param in v %}\
-     * @param ${param['argname']} the ${param['type']} index.
+         * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @returns the ${abstractClass} type.
          *
@@ -359,6 +359,10 @@ namespace ome
 {% end %}\
 {% end %}\
 {% end header%}\
+{% if debug %}\
+        // -- Entity counting (code generated definitions) --
+
+{% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
@@ -397,6 +401,7 @@ namespace ome
          */
         virtual index_type
         get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])}) const = 0;
+
 {% end header%}\
 {% end %}\
 {% end %}\
@@ -418,6 +423,7 @@ namespace ome
         virtual bool
         getPixelsBinDataBigEndian(index_type imageIndex,
                                   index_type binDataIndex) const = 0;
+
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -472,7 +478,6 @@ namespace ome
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
-
 {% end %}\
 {% end %}\
 {% end %}\

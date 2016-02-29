@@ -283,16 +283,16 @@ ${counter(k, o, v)}\
 
 	// -- Entity retrieval (manual definitions) --
 
+  public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+  {
+    return null;
+  }
+
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
 		return null;
 	}
-
-  public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
-  {
-    return null;
-  }
  
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
@@ -406,6 +406,10 @@ ${getter(k, o, prop, v)}\
 
 	// -- Entity storage (manual definitions) --
 
+  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+  {
+  }
+
 	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
 	{
 	}
@@ -414,10 +418,6 @@ ${getter(k, o, prop, v)}\
 	public void setUUID(String uuid)
 	{
 	}
-
-  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
-  {
-  }
  
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)

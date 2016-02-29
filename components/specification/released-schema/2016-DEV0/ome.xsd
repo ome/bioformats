@@ -4703,5 +4703,4 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
                 </xsd:complexType>
         </xsd:element>
 
-
-    </xsd:schema>
+</xsd:schema>

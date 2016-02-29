@@ -74,7 +74,7 @@ import ome.xml.model.XMLAnnotation;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
+
 
 /**
  * import the schema resolver so I can use it to locate
@@ -737,7 +737,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape0() {
         Assert.assertNotNull(union0);
         shape0 = union0.getShape(0);
-        Assert.assertEquals(Point.class.getName(), shape0.getClass().getName());    
+        Assert.assertEquals(Point.class.getName(), shape0.getClass().getName());
         Point point0 = (Point) shape0;
         Assert.assertEquals(ref.ROI0Shape0TheC, point0.getTheC());
         Assert.assertEquals(ref.ROI0Shape0PointX, point0.getX());
@@ -748,7 +748,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape1() {
         Assert.assertNotNull(union1);
         shape1 = union1.getShape(0);
-        Assert.assertEquals(Point.class.getName(), shape1.getClass().getName());    
+        Assert.assertEquals(Point.class.getName(), shape1.getClass().getName());
         Point point1 = (Point) shape1;
         Assert.assertEquals(ref.ROI1Shape1TheC, point1.getTheC());
         Assert.assertEquals(ref.ROI1Shape1PointX, point1.getX());
@@ -769,7 +769,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape2() {
         Assert.assertNotNull(union2);
         shape2 = union2.getShape(0);
-        Assert.assertEquals(Rectangle.class.getName(), shape2.getClass().getName());    
+        Assert.assertEquals(Rectangle.class.getName(), shape2.getClass().getName());
         Rectangle rectangle2 = (Rectangle) shape2;
         Assert.assertEquals(ref.ROI2Shape2FillRule, rectangle2.getFillRule());
         Assert.assertEquals(ref.ROI2Shape2Label, rectangle2.getText());
@@ -790,7 +790,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape3() {
         Assert.assertNotNull(union2);
         shape3 = union2.getShape(0);
-        Assert.assertEquals(Label.class.getName(), shape3.getClass().getName());    
+        Assert.assertEquals(Label.class.getName(), shape3.getClass().getName());
         Label label3 = (Label) shape3;
         Assert.assertEquals(ref.ROI2Shape3FillRule, label3.getFillRule());
         Assert.assertEquals(ref.ROI2Shape3FontFamily, label3.getFontFamily());
@@ -804,7 +804,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape4() {
         Assert.assertNotNull(union2);
         shape4 = union2.getShape(4);
-        Assert.assertEquals(Polygon.class.getName(), shape4.getClass().getName());    
+        Assert.assertEquals(Polygon.class.getName(), shape4.getClass().getName());
         Polygon polygon4 = (Polygon) shape4;
         Assert.assertEquals(ref.ROI2Shape4Stroke, polygon4.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape4StrokeWidth, polygon4.getStrokeWidth());
@@ -815,7 +815,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape5() {
         Assert.assertNotNull(union2);
         shape5 = union2.getShape(5);
-        Assert.assertEquals(Polyline.class.getName(), shape5.getClass().getName());   
+        Assert.assertEquals(Polyline.class.getName(), shape5.getClass().getName());
         Polyline polyline5 = (Polyline) shape5;
         Assert.assertEquals(ref.ROI2Shape5Stroke, polyline5.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape5StrokeWidth, polyline5.getStrokeWidth());
@@ -828,7 +828,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape6() {
         Assert.assertNotNull(union2);
         shape6 = union2.getShape(6);
-        Assert.assertEquals(Polyline.class.getName(), shape6.getClass().getName());   
+        Assert.assertEquals(Polyline.class.getName(), shape6.getClass().getName());
         Polyline polyline6 = (Polyline) shape6;
         Assert.assertEquals(ref.ROI2Shape6Stroke, polyline6.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape6StrokeWidth, polyline6.getStrokeWidth());
@@ -840,7 +840,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape7() {
         Assert.assertNotNull(union2);
         shape7 = union2.getShape(1);
-        Assert.assertEquals(Line.class.getName(), shape7.getClass().getName());   
+        Assert.assertEquals(Line.class.getName(), shape7.getClass().getName());
         Line line7 = (Line) shape7;
         Assert.assertEquals(ref.ROI2Shape7Stroke, line7.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape7StrokeWidth, line7.getStrokeWidth());
@@ -856,7 +856,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape8() {
         Assert.assertNotNull(union2);
         shape8 = union2.getShape(2);
-        Assert.assertEquals(Line.class.getName(), shape8.getClass().getName());   
+        Assert.assertEquals(Line.class.getName(), shape8.getClass().getName());
         Line line8 = (Line) shape8;
         Assert.assertEquals(ref.ROI2Shape8Stroke, line8.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape8StrokeWidth, line8.getStrokeWidth());
@@ -871,7 +871,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape9() {
         Assert.assertNotNull(union2);
         shape9 = union2.getShape(3);
-        Assert.assertEquals(Line.class.getName(), shape9.getClass().getName());   
+        Assert.assertEquals(Line.class.getName(), shape9.getClass().getName());
         Line line9 = (Line) shape9;
         Assert.assertEquals(ref.ROI2Shape9Stroke, line9.getStrokeColor());
         Assert.assertEquals(ref.ROI2Shape9StrokeWidth, line9.getStrokeWidth());
@@ -891,7 +891,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape11() {
         Assert.assertNotNull(union3);
         shape11 = union3.getShape(0);
-        Assert.assertEquals(Label.class.getName(), shape11.getClass().getName());   
+        Assert.assertEquals(Label.class.getName(), shape11.getClass().getName());
         Label label11 = (Label) shape11;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label11.getText());
         Assert.assertEquals(Double.valueOf(0), label11.getX());
@@ -902,7 +902,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape12() {
         Assert.assertNotNull(union4);
         shape12 = union4.getShape(0);
-        Assert.assertEquals(Label.class.getName(), shape12.getClass().getName());   
+        Assert.assertEquals(Label.class.getName(), shape12.getClass().getName());
         Label label12 = (Label) shape12;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label12.getText());
         Assert.assertEquals(Double.valueOf(0), label12.getX());
@@ -912,7 +912,7 @@ public class Schema2011_06_File_Upgrade_Test {
     public void testShape13() {
         Assert.assertNotNull(union4);
         shape13 = union4.getShape(1);
-        Assert.assertEquals(Label.class.getName(), shape13.getClass().getName());   
+        Assert.assertEquals(Label.class.getName(), shape13.getClass().getName());
         Label label13 = (Label) shape13;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label13.getText());
         Assert.assertEquals(Double.valueOf(0), label13.getX());

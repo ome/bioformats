@@ -228,7 +228,7 @@ public interface MetadataStore extends BaseMetadata
 
 	// -- Entity storage (code generated definitions) --
 
-  /**
+        /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
@@ -262,20 +262,17 @@ public interface MetadataStore extends BaseMetadata
 	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
-
-
-
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
 	// MARKER [EEE]
+	//
 	// ${o.name} property storage
-	// 
+	//
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
 {% end debug %}\
 
 {% choose %}\
-
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
@@ -286,16 +283,12 @@ public interface MetadataStore extends BaseMetadata
 {% end debug %}\
 {% end %}\
 {% end %}\
-
 {% otherwise %}\
 \
-
 {% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
-
-
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
 	// MARKER [CCC]
@@ -304,7 +297,6 @@ public interface MetadataStore extends BaseMetadata
 	// Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
-
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
@@ -314,11 +306,10 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
- 
-{% end %}\
-{% end %}\
-{% end %}\
 
+{% end %}\
+{% end %}\
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -350,6 +341,7 @@ public interface MetadataStore extends BaseMetadata
 	// MARKER [BBB]
 {% end debug %}\
 ${setter(k, o, prop, v)}
+
 {% end %}\
 {% end %}\
 {% end %}\

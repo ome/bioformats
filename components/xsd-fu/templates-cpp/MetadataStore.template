@@ -251,6 +251,7 @@ namespace ome
         setPixelsBinDataBigEndian(bool bigEndian,
                                   index_type imageIndex,
                                   index_type binDataIndex = 0) = 0;
+
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 

@@ -848,6 +848,7 @@ namespace ome
         return safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->sizeOfBinDataList();
       }
 {% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -1077,7 +1078,6 @@ ${counter(k, o, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
-
 {% if debug %}\
         // -- Entity retrieval (manual definitions) --
 
@@ -1107,6 +1107,7 @@ ${counter(k, o, v)}\
         return safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBinData(binDataIndex), bindata_method)->getBigEndian();
       }
 {% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
@@ -1176,6 +1177,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end header %}\
 ${getter(k, o, prop, v)}\
+
 {% end %}\
 {% end %}\
 {% end %}\
@@ -1209,7 +1211,6 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
-
 {% if debug %}\
         // -- Entity storage (manual definitions) --
 
@@ -1245,6 +1246,7 @@ ${getter(k, o, prop, v)}\
         o2->setBigEndian(newBool);
       }
 {% end source %}\
+
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
@@ -1307,6 +1309,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end header %}\
 ${setter(k, o, prop, v)}\
+
 {% end %}\
 {% end %}\
 {% end %}\

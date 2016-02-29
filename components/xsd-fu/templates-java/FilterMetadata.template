@@ -214,15 +214,15 @@ public class FilterMetadata implements MetadataStore
 
 	// -- Entity storage (manual definitions) --
 
-	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
-	{
-		store.setMaskBinData(binData, ROIIndex, shapeIndex);
-	}
-
   public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
   {
     store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
   }
+
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		store.setMaskBinData(binData, ROIIndex, shapeIndex);
+	}
  
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
