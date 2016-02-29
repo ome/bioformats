@@ -288,7 +288,7 @@ public enum TiffCompression implements CodedEnum {
       LOGGER.debug("reversing horizontal differencing");
       int[] bitsPerSample = ifd.getBitsPerSample();
       int len = bitsPerSample.length;
-      long width = ifd.getImageWidth();
+      long width = ifd.getTileWidth();
       boolean little = ifd.isLittleEndian();
       int planarConfig = ifd.getPlanarConfiguration();
 
@@ -362,7 +362,7 @@ public enum TiffCompression implements CodedEnum {
     if (predictor == 2) {
       LOGGER.debug("performing horizontal differencing");
       int[] bitsPerSample = ifd.getBitsPerSample();
-      long width = ifd.getImageWidth();
+      long width = ifd.getTileWidth();
       boolean little = ifd.isLittleEndian();
       int planarConfig = ifd.getPlanarConfiguration();
       int bytes = ifd.getBytesPerSample()[0];
