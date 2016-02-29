@@ -76,7 +76,7 @@ public:
     "<!--\n"
     "	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
     "	#\n"
-    "	# Copyright (C) 2012-2014 Open Microscopy Environment\n"
+    "	# Copyright (C) 2012 - 2016 Open Microscopy Environment\n"
     "	#       Massachusetts Institute of Technology,\n"
     "	#       National Institutes of Health,\n"
     "	#       University of Dundee,\n"
