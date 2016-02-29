@@ -2203,6 +2203,13 @@ public class FormatReaderTest {
             {
               continue;
             }
+            if (!result && r instanceof MicromanagerReader &&
+              readers[j] instanceof MicromanagerReader &&
+              (used[i].toLowerCase().endsWith(".ome.tif") ||
+              used[i].toLowerCase().endsWith(".ome.tiff")))
+            {
+              continue;
+            }
 
             if (result && r instanceof TrestleReader &&
               (readers[j] instanceof JPEGReader ||
