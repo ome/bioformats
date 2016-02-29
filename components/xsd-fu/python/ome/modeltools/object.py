@@ -37,6 +37,9 @@ class OMEModelObject(OMEModelEntity):
         self.manyToMany = False
         self.isAbstractSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.name)
         self.isConcreteSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.base)
+        self.topLevelName = element.getName()
+        if self.isConcreteSubstitution:
+            self.topLevelName = self.base
         try:
             try:
                 root = ElementTree.fromstring(element.appinfo)

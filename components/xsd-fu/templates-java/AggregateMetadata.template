@@ -172,11 +172,6 @@
     if len(results.keys()) == 0:
       raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
     return results[parent]
-
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
 %}\
 \
 \
@@ -659,7 +654,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -701,7 +696,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
 	// MARKER [HHH-AGG]
 {% end debug %}\
@@ -824,7 +819,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -863,7 +858,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

@@ -65,11 +65,6 @@
 
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
-                
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
 %}\
 \
 \
@@ -375,13 +370,13 @@ namespace ome
         /**
          * Get the text value of ${o.name}.
          *
-{% for param in indexes[getParent(o)].items()[0][1] %}\
+{% for param in indexes[o.topLevelName].items()[0][1] %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @returns the text value.
          */
         virtual ${o.langBaseType}
-        get${getParent(o)}Value(${indexes_string(indexes[getParent(o)].items()[0][1])}) const = 0;
+        get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -462,7 +457,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -499,7 +494,7 @@ namespace ome
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\

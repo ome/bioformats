@@ -62,11 +62,6 @@
 
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
-
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
 %}\
 \
 \
@@ -340,12 +335,12 @@ public interface MetadataRetrieve extends BaseMetadata {
         /**
          * Get the text value of ${o.name}.
          *
-{% for param in indexes[getParent(o)].items()[0][1] %}\
+{% for param in indexes[o.topLevelName].items()[0][1] %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @return the text value.
          */
-	${o.langBaseType} get${getParent(o)}Value(${indexes_string(indexes[getParent(o)].items()[0][1])});
+	${o.langBaseType} get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])});
 
 {% end %}\
 
@@ -355,7 +350,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% if debug %}\
 	// ${o.name} entity counting
 {% end debug %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
         /**
          * Get the number of ${o.name} elements{% if is_multi_path[o.name] %} in ${k}{% end %}.
@@ -434,7 +429,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -483,7 +478,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\

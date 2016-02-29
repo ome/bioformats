@@ -150,11 +150,6 @@
     if len(results.keys()) == 0:
       raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
     return results[parent]
-                
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
 %}\
 \
 \
@@ -533,11 +528,11 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if parents[getParent(o)] is not None and not o.isAbstract %}\
+{% if parents[o.topLevelName] is not None and not o.isAbstract %}\
 {% if debug %}\
-        // ${getParent(o)} entity counting
+        // ${o.topLevelName} entity counting
 {% end debug %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
@@ -609,7 +604,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -646,7 +641,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -718,7 +713,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -755,7 +750,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

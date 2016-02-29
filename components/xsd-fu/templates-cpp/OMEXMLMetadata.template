@@ -254,7 +254,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract and not a reference
-{% for i, v in enumerate(accessor(obj.name, getParent(o), prop, accessor_string_complex)[:-1]) %}\
+{% for i, v in enumerate(accessor(obj.name, o.topLevelName, prop, accessor_string_complex)[:-1]) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 {% if i == 0 %}\
@@ -322,7 +322,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
 {% when obj.isConcreteSubstitution or obj.isAbstractSubstitution %}\
         // ${obj.parentName} is abstract proprietary
 
-{% for i, v in enumerate(accessor(obj.name, getParent(o), prop, accessor_string_complex)) %}\
+{% for i, v in enumerate(accessor(obj.name, o.topLevelName, prop, accessor_string_complex)) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 {% if i == 0 %}\
@@ -499,11 +499,6 @@ ${customContent[obj.name][prop.name]}
     if parents[name].keys()[0] not in results.keys():
       raise Exception("Invalid KEY No accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
     return results[parents[name].keys()[0]]
-
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
 
   def getAbstractDepth(name, func=accessor_string):
     results = dict()
@@ -1163,7 +1158,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -1202,7 +1197,7 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -1294,7 +1289,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -1333,7 +1328,7 @@ ${setter(k, o, prop, v)}\
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

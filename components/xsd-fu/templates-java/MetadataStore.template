@@ -62,12 +62,6 @@
 
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
-
-  def getParent(o):
-    if o.isConcreteSubstitution:
-      return o.parentName
-    return o.name
-
 %}\
 \
 \
@@ -296,7 +290,7 @@ public interface MetadataStore extends BaseMetadata
 {% otherwise %}\
 \
 
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -351,7 +345,7 @@ public interface MetadataStore extends BaseMetadata
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[getParent(o)].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\
