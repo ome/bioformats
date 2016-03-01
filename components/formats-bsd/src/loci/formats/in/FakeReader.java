@@ -135,6 +135,18 @@ public class FakeReader extends FormatReader {
   /* physical sizes */
   private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
+  /* annotation counts per file */
+  private int annotationCount = 0;
+  private int annotationBoolCount = 0;
+  private int annotationCommentCount = 0;
+  private int annotationDoubleCount = 0;
+  private int annotationLongCount = 0;
+  private int annotationMapCount = 0;
+  private int annotationTagCount = 0;
+  private int annotationTermCount = 0;
+  private int annotationTimeCount = 0;
+  private int annotationXmlCount = 0;
+
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
 
@@ -439,20 +451,15 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
-/*
- *  Other annotation types that could be added
- *  int annFile = 0; // FileAnnotation
- *  int annList = 0; // ListAnnotation
- */
-    int annLong = 0;
-    int annDouble = 0;
-    int annComment = 0;
     int annBool = 0;
+    int annComment = 0;
+    int annDouble = 0;
+    int annLong = 0;
+    int annMap = 0;
     int annTime = 0;
     int annTag = 0;
     int annTerm = 0;
     int annXml = 0;
-    int annMap = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -644,21 +651,7 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
-    // per file counts
-    int annotationCount = 0;
-    int annotationDoubleCount = 0;
-    int annotationLongCount = 0;
-    int annotationBoolCount = 0;
-    int annotationCommentCount = 0;
-    int annotationTagCount = 0;
-    int annotationTermCount = 0;
-    int annotationTimeCount = 0;
-    int annotationXmlCount = 0;
-    int annotationMapCount = 0;
-    // per image count
-    int annotationRefCount = 0;
 
-    String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
@@ -676,112 +669,8 @@ public class FakeReader extends FormatReader {
           store.setChannelColor(channel, currentImageIndex, c);
         }
       }
-
-      // new image so reset annotationRefCount
-      annotationRefCount = 0;
-      for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
-        store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
-        store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationLongCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annDouble; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
-        store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
-        store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationDoubleCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annMap; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
-        store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-        List<MapPair> mapValue = new ArrayList<MapPair>();
-        for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.add(new MapPair("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
-        }
-        store.setMapAnnotationValue(mapValue, annotationMapCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationMapCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annComment; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setCommentAnnotationID(nextAnnotationID, annotationCommentCount);
-        store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationCommentCount);
-        store.setCommentAnnotationValue(ANN_COMMENT_VALUE + (annotationCount+1), annotationCommentCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationCommentCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annBool; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setBooleanAnnotationID(nextAnnotationID, annotationBoolCount);
-        store.setBooleanAnnotationNamespace(ANNOTATION_NAMESPACE, annotationBoolCount);
-        store.setBooleanAnnotationValue(ANN_BOOLEAN_VALUE, annotationBoolCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationBoolCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTime; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTimestampAnnotationID(nextAnnotationID, annotationTimeCount);
-        store.setTimestampAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTimeCount);
-        store.setTimestampAnnotationValue(ANN_TIME_VALUE, annotationTimeCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTimeCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTag; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTagAnnotationID(nextAnnotationID, annotationTagCount);
-        store.setTagAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTagCount);
-        store.setTagAnnotationValue(ANN_TAG_VALUE + (annotationCount+1), annotationTagCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTagCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTerm; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTermAnnotationID(nextAnnotationID, annotationTermCount);
-        store.setTermAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTermCount);
-        store.setTermAnnotationValue(ANN_TERM_VALUE + (annotationCount+1), annotationTermCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTermCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annXml; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setXMLAnnotationID(nextAnnotationID, annotationXmlCount);
-        store.setXMLAnnotationNamespace(ANNOTATION_NAMESPACE, annotationXmlCount);
-        store.setXMLAnnotationValue(ANN_XML_VALUE_START + (annotationCount+1) + ANN_XML_VALUE_END, annotationXmlCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationXmlCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
+      fillAnnotations(store, currentImageIndex, annBool, annComment,
+        annDouble, annLong, annMap, annTag, annTerm, annTime, annXml);
     }
 
     // for indexed color images, create lookup tables
@@ -848,6 +737,114 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  private void fillAnnotations(MetadataStore store, int imageIndex, int annBool, int annComment, int annDouble, int annLong, int annMap, int annTag, int annTerm, int annTime, int annXml) {
+
+    int annotationRefCount = 0;
+    String annotationID;
+
+    for (int i=0; i<annBool; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setBooleanAnnotationID(annotationID, annotationBoolCount);
+      store.setBooleanAnnotationNamespace(ANNOTATION_NAMESPACE, annotationBoolCount);
+      store.setBooleanAnnotationValue(ANN_BOOLEAN_VALUE, annotationBoolCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationBoolCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annComment; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setCommentAnnotationID(annotationID, annotationCommentCount);
+      store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationCommentCount);
+      store.setCommentAnnotationValue(ANN_COMMENT_VALUE + (annotationCount+1), annotationCommentCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationCommentCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annDouble; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setDoubleAnnotationID(annotationID, annotationDoubleCount);
+      store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
+      store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationDoubleCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annLong; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setLongAnnotationID(annotationID, annotationLongCount);
+      store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
+      store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationLongCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annMap; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setMapAnnotationID(annotationID, annotationMapCount);
+      store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
+      List<MapPair> mapValue = new ArrayList<MapPair>();
+      for (int keyNum=0; keyNum<10; keyNum++) {
+        mapValue.add(new MapPair("keyS" + imageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
+      }
+      store.setMapAnnotationValue(mapValue, annotationMapCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationMapCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTag; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setTagAnnotationID(annotationID, annotationTagCount);
+      store.setTagAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTagCount);
+      store.setTagAnnotationValue(ANN_TAG_VALUE + (annotationCount+1), annotationTagCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationTagCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTerm; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setTermAnnotationID(annotationID, annotationTermCount);
+      store.setTermAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTermCount);
+      store.setTermAnnotationValue(ANN_TERM_VALUE + (annotationCount+1), annotationTermCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationTermCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTime; i++) {
+       annotationID = ANNOTATION_PREFIX + annotationCount;
+       store.setTimestampAnnotationID(annotationID, annotationTimeCount);
+       store.setTimestampAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTimeCount);
+       store.setTimestampAnnotationValue(ANN_TIME_VALUE, annotationTimeCount);
+       store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+       annotationTimeCount++;
+       annotationCount++;
+       annotationRefCount++;
+     }
+
+    for (int i=0; i<annXml; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setXMLAnnotationID(annotationID, annotationXmlCount);
+      store.setXMLAnnotationNamespace(ANNOTATION_NAMESPACE, annotationXmlCount);
+      store.setXMLAnnotationValue(ANN_XML_VALUE_START + (annotationCount+1) + ANN_XML_VALUE_END, annotationXmlCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationXmlCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+  }
 
 // -- Helper methods --
 
