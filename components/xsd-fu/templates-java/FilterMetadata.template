@@ -223,7 +223,7 @@ public class FilterMetadata implements MetadataStore
 	{
 		store.setMaskBinData(binData, ROIIndex, shapeIndex);
 	}
- 
+
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{

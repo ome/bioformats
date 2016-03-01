@@ -528,12 +528,6 @@ ${counter(k, o, v)}\
 
 	// -- Entity retrieval (manual definitions) --
 
-	/** Gets the UUID associated with this collection of metadata. */
-	public String getUUID()
-	{
-		return root.getUUID();
-	}
-
   public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
   {
     Boolean bigEndian = root.getImage(imageIndex).getPixels().getBigEndian();
@@ -542,6 +536,12 @@ ${counter(k, o, v)}\
     }
     return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
   }
+  
+	/** Gets the UUID associated with this collection of metadata. */
+	public String getUUID()
+	{
+		return root.getUUID();
+	}
  
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)

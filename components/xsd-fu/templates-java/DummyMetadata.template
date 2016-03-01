@@ -418,7 +418,7 @@ ${getter(k, o, prop, v)}\
 	public void setUUID(String uuid)
 	{
 	}
- 
+
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
