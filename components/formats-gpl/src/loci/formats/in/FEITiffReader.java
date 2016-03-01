@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -343,15 +343,39 @@ public class FEITiffReader extends BaseTiffReader {
   // -- Helper class --
 
   class FEIHandler extends BaseHandler {
+    private StringBuilder sb;
     private String key, value;
-    private String qName;
     private Deque<String> parentNames = new ArrayDeque<String>();
 
     // -- DefaultHandler API methods --
 
     @Override
     public void characters(char[] data, int start, int len) {
-      String d = new String(data, start, len).trim();
+      sb.append(data, start, len);
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      parentNames.push(qName);
+      sb = new StringBuilder();
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+    {
+      processElement(qName);
+      if (parentNames.size() > 0) {
+        String name = parentNames.peek();
+        if (qName.equals(name)) {
+          parentNames.pop();
+        }
+      }
+    }
+
+    private void processElement(String qName) {
+      String d = sb.toString().trim();
       if (d.isEmpty()) {
         return;
       }
@@ -378,15 +402,15 @@ public class FEITiffReader extends BaseTiffReader {
       if (key != null && value != null) {
         addGlobalMeta(key, value);
 
-        if (key.equals("Stage X") || ("StagePosition".equals(parent) && key.equals("X"))) {
+        if (key.equals("Stage X") || key.equals("StagePosition X")) {
           final Double number = Double.valueOf(value);
           stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Y") || ("StagePosition".equals(parent) && key.equals("Y"))) {
+        else if (key.equals("Stage Y") || key.equals("StagePosition Y")) {
           final Double number = Double.valueOf(value);
           stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Z") || ("StagePosition".equals(parent) && key.equals("Z"))) {
+        else if (key.equals("Stage Z") || key.equals("StagePosition Z")) {
           final Double number = Double.valueOf(value);
           stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
@@ -405,25 +429,6 @@ public class FEITiffReader extends BaseTiffReader {
         }
         else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
           sizeY = new Double(value);
-        }
-      }
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      this.qName = qName;
-      parentNames.push(qName);
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName)
-    {
-      if (parentNames.size() > 0) {
-        String name = parentNames.peek();
-        if (qName.equals(name)) {
-          parentNames.pop();
         }
       }
     }

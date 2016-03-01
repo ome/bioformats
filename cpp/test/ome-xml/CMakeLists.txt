@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,17 +34,13 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${XercesC_INCLUDE_DIRS})
-
 if(BUILD_TESTS)
   add_executable(color color.cpp)
-  target_link_libraries(color ome-xml)
+  target_link_libraries(color OME::XML)
   target_link_libraries(color ome-test)
 
   add_executable(enum enum.cpp)
-  target_link_libraries(enum ome-xml)
+  target_link_libraries(enum OME::XML)
   target_link_libraries(enum ome-test)
 
   if(UNIX)
@@ -65,27 +61,39 @@ if(BUILD_TESTS)
                  positive-float.cpp
                  positive-integer.cpp
                  positive-long.cpp)
-  target_link_libraries(constrained-numeric ome-xml)
+  target_link_libraries(constrained-numeric OME::XML)
   target_link_libraries(constrained-numeric ome-test)
 
   add_executable(timestamp timestamp.cpp)
-  target_link_libraries(timestamp ome-xml)
+  target_link_libraries(timestamp OME::XML)
   target_link_libraries(timestamp ome-test)
 
+  add_executable(transform transform.cpp)
+  target_link_libraries(transform OME::Common OME::XML)
+  target_link_libraries(transform ome-test)
+
+  add_executable(transform-resolver transform-resolver.cpp)
+  target_link_libraries(transform-resolver OME::Common OME::XML)
+  target_link_libraries(transform-resolver ome-test)
+
   add_executable(model model.cpp)
-  target_link_libraries(model ome-xml)
+  target_link_libraries(model OME::XML)
   target_link_libraries(model ome-test)
+
+  add_executable(version version.cpp)
+  target_link_libraries(version OME::XML)
+  target_link_libraries(version ome-test)
 
   bf_add_test(ome-xml/color color)
   bf_add_test(ome-xml/enum enum)
   bf_add_test(ome-xml/constrained-numeric constrained-numeric)
   bf_add_test(ome-xml/timestamp timestamp)
+  bf_add_test(ome-xml/transform-resolver transform-resolver)
+  bf_add_test(ome-xml/transform transform)
   bf_add_test(ome-xml/model model)
 
-
   if(extended-tests)
-    header_test_from_file(ome-xml ome-xml ome/xml)
-    target_link_libraries(ome-xml-headers ome-xml)
+    header_test_from_file(ome-xml OME::XML ome/xml)
     bf_add_test(ome-xml/headers ome-xml-headers)
   endif(extended-tests)
 endif(BUILD_TESTS)

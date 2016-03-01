@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -57,6 +57,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -100,6 +102,9 @@ public class OMEXMLWriter extends FormatWriter {
       xml = service.getOMEXML(retrieve);
       OMEXMLMetadata noBin = service.createOMEXMLMetadata(xml);
       service.removeBinData(noBin);
+
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) noBin.getRoot();
+      root.setCreator(FormatTools.CREATOR);
       xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {

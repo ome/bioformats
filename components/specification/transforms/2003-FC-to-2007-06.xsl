@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009 Glencoe Software, Inc.
+# Copyright (C) 2009 - 2016 Glencoe Software, Inc.
 #
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Lesser General Public
@@ -1183,7 +1183,7 @@
 			xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06 http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="node()"/> <!-- no attributes to copy -->
 		</OME>
 	</xsl:template>
 

@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2014 - 2015 Open Microscopy Environment
+# Copyright (C) 2014 - 2016 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -84,7 +84,7 @@
 		<xsl:param name="theCurrentUnit"/>
 		<xsl:param name="theAttributeName"/>
 		<xsl:param name="theElementName"/>
-		<xsl:message>OME-XSLT: units-conversion.xsl - Message - ConvertValueToDefault, (<xsl:value-of select="$theValue"/>, <xsl:value-of select="$theCurrentUnit"/>, <xsl:value-of select="$theAttributeName"/>, <xsl:value-of select="$theElementName"/>).</xsl:message>
+		<!-- <xsl:message>OME-XSLT: units-conversion.xsl - Message - ConvertValueToDefault, (<xsl:value-of select="$theValue"/>, <xsl:value-of select="$theCurrentUnit"/>, <xsl:value-of select="$theAttributeName"/>, <xsl:value-of select="$theElementName"/>).</xsl:message> -->
 		<xsl:choose>
 			<xsl:when test="$theCurrentUnit = ''">
 				<!-- Already using default units so no conversion necessary -->

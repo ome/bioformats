@@ -23,6 +23,9 @@ Version history
        - fixed handling of non-default physical size and plane position units
 * Documentation updates, including:
    - updated MapAnnotation example to show linkage of annotations to images
+* C++:
+   - no changes, released to keep version numbers in sync with Bio-Formats Java
+
 
 5.1.6 (2015 November 16)
 ------------------------
@@ -253,7 +256,7 @@ Version history
 
 * Improvements to performance with network file systems
 * Improvements to developer documentation
-* Initial version of :doc:`native C++ implementation </developers/cpp/overview>`
+* Initial version of `native C++ implementation <http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/cpp/overview.html>`__
 * Improved support for opening and saving ROI data with ImageJ
 * Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christophe Sommer)
 * Added support for :doc:`Perkin Elmer Nuance </formats/perkinelmer-nuance>` data (thanks to Lee Kamentsky)

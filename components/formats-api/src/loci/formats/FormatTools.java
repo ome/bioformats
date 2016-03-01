@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -218,6 +218,9 @@ public final class FormatTools {
   /** Version number of this release. */
   public static final String VERSION =
     VERSION_PROPERTIES.getProperty("release.version");
+
+  /** Value to use when setting creator/software fields in exported files. */
+  public static final String CREATOR = "OME Bio-Formats " + VERSION;
 
   public static final String PROPERTY_FILE = "version.properties";
 

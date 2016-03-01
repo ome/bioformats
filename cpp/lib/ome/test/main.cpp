@@ -2,7 +2,7 @@
  * #%L
  * # Bio-Formats C++ libraries (test infrastructure)
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2013 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <ome/common/log.h>
+
 #include <ome/test/test.h>
 
 int
@@ -43,6 +45,10 @@ main (int   argc,
       char *argv[])
 {
   testing::InitGoogleTest(&argc, argv);
+
+  // This is the default, but needs setting manually on Windows.
+  ome::common::setLogLevel(ome::logging::trivial::warning);
+
   return RUN_ALL_TESTS();
 }
 

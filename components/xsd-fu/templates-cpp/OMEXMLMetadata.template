@@ -544,7 +544,7 @@ ${customContent[obj.name][prop.name]}
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -596,12 +596,10 @@ ${customContent[obj.name][prop.name]}
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/internal/version.h>
 
 #include <ome/common/xml/Platform.h>
 
-#include <ome/internal/url.h>
-
+#include <ome/xml/config-internal.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\

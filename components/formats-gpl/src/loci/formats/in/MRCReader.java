@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,7 +56,7 @@ public class MRCReader extends FormatReader {
   // there, according to: http://bio3d.colorado.edu/imod/doc/mrc_format.txt
 
   private static final String[] MRC_SUFFIXES =
-    {"mrc", "st", "ali", "map", "rec"};
+    {"mrc", "st", "ali", "map", "rec", "mrcs"};
 
   private static final int HEADER_SIZE = 1024;
   private static final int GRIDSIZE_OFFSET = 28;

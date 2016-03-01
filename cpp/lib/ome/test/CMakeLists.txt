@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,10 +34,6 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${GTEST_INCLUDE_DIR})
-
 if(BUILD_TESTS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
@@ -58,8 +54,14 @@ if(BUILD_TESTS)
               ${ome_test_static_headers}
               ${ome_test_generated_headers})
 
-  target_link_libraries(ome-test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  target_include_directories(ome-test PUBLIC
+                             $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/cpp/lib>
+                             $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/cpp/lib>)
+
+  target_link_libraries(ome-test OME::Common GTest::GTest ${CMAKE_THREAD_LIBS_INIT})
   set_target_properties(ome-test PROPERTIES LINKER_LANGUAGE CXX)
+
+  add_library(OME::Test ALIAS ome-test)
 
   # Dump header list for testing
   header_include_list_write(ome_test_static_headers ome_test_generated_headers ome/test ${PROJECT_BINARY_DIR}/cpp/test/ome-test)

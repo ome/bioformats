@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -190,9 +190,12 @@ if (NOT MSVC)
       -Wunused-variable
       -Wwrite-strings
       -Wno-variadic-macros
-      -Wno-unused-local-typedef
-      -Wno-language-extension-token
       -fstrict-aliasing)
+  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    list(APPEND test_flags
+         -Wno-unused-local-typedef
+         -Wno-language-extension-token)
+  endif()
   if (extra-warnings)
     list(APPEND test_flags
         -Wconversion

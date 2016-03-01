@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009-2011 Open Microscopy Environment
+# Copyright (C) 2009 - 2016 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -147,7 +147,7 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06
 			http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="@UUID|node()"/> <!-- copy UUID attribute and nodes -->
 		</OME>
 	</xsl:template>
 

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
- * dimensional axes (Z, T or C), potentially recommending an adjustment in
+ * dimensional axes (Z, T, C or S), potentially recommending an adjustment in
  * dimension order within the files, depending on the confidence of each guess.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -51,6 +51,7 @@ public class AxisGuesser {
 
   // -- Constants --
 
+  /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(AxisGuesser.class);
 
@@ -69,18 +70,18 @@ public class AxisGuesser {
   /** Axis type for series. */
   public static final int S_AXIS = 4;
 
-  /** Prefix endings indicating space dimension. */
+  /** Prefixes indicating space dimension. */
   protected static final String[] Z = {
     "fp", "sec", "z", "zs", "focal", "focalplane"
   };
 
-  /** Prefix endings indicating time dimension. */
+  /** Prefixes indicating time dimension. */
   protected static final String[] T = {"t", "tl", "tp", "time"};
 
-  /** Prefix endings indicating channel dimension. */
+  /** Prefixes indicating channel dimension. */
   protected static final String[] C = {"c", "ch", "w", "wavelength"};
 
-  /** Prefix endings indicating series dimension. */
+  /** Prefixes indicating series dimension. */
   protected static final String[] S = {"s", "series", "sp"};
 
   protected static final String ONE = "1";
@@ -110,6 +111,30 @@ public class AxisGuesser {
    * Guesses dimensional axis assignments corresponding to the given
    * file pattern, using the specified dimensional information from
    * within each file as a guide.
+   * <p>
+   * The algorithm first assigns pattern blocks based on known
+   * prefixes. For instance, a block preceded by "time" is assigned to
+   * the time points (T) axis. Blocks that don't have a known prefix
+   * are checked for special cases (Bio-Rad .pic, RGB).  Remaining
+   * blocks are assigned according to the given dimensional sizes:
+   * dimensions with size greater than 1 are assumed to be already
+   * contained within each file, while those with size equal to 1 can be
+   * scattered across multiple files and thus are assigned to pattern
+   * blocks.
+   * <p>
+   * If <code>isCertain</code> is <code>false</code>, the algorithm
+   * checks for cases where the reader might have mixed up the Z and T
+   * dimensions. For instance, if the pattern string is
+   * <code>z&lt;*&gt;_&lt;*&gt;</code> and <code>size&lcub;Z,T,C&rcub;
+   * = 2,1,1</code>, then the reader is assumed to be wrong about the
+   * relative positions of Z and T in the given <code>dimOrder</code>.
+   * The new suggested order (see {@link #getAdjustedOrder}) will have
+   * Z and T swapped and the second block will be assigned to C (the
+   * actual dimensional sizes are assumed to be <code>1,2,1</code>).
+   * <p>
+   * If after trying all of the above there are still unassigned
+   * blocks, they will be assigned to the last dimension in the
+   * (possibly adjusted) order.
    *
    * @param fp The file pattern of the files
    * @param dimOrder The dimension order (e.g., XYZTC) within each file
@@ -363,108 +388,4 @@ public class AxisGuesser {
     return UNKNOWN_AXIS;
   }
 
-  // -- Main method --
-
-  /** Method for testing pattern guessing logic. */
-  public static void main(String[] args) throws FormatException, IOException {
-    Location file = args.length < 1 ?
-      new Location(System.getProperty("user.dir")).listFiles()[0] :
-      new Location(args[0]);
-    LOGGER.info("File = {}", file.getAbsoluteFile());
-    String pat = FilePattern.findPattern(file);
-    if (pat == null) LOGGER.info("No pattern found.");
-    else {
-      LOGGER.info("Pattern = {}", pat);
-      FilePattern fp = new FilePattern(pat);
-      if (fp.isValid()) {
-        LOGGER.info("Pattern is valid.");
-        String id = fp.getFiles()[0];
-        if (!new Location(id).exists()) {
-          LOGGER.info("File '{}' does not exist.", id);
-        }
-        else {
-          // read dimensional information from first file
-          LOGGER.info("Reading first file ");
-          ImageReader reader = new ImageReader();
-          reader.setId(id);
-          String dimOrder = reader.getDimensionOrder();
-          int sizeZ = reader.getSizeZ();
-          int sizeT = reader.getSizeT();
-          int sizeC = reader.getSizeC();
-          boolean certain = reader.isOrderCertain();
-          reader.close();
-          LOGGER.info("[done]");
-          LOGGER.info("\tdimOrder = {} ({})",
-            dimOrder, certain ? "certain" : "uncertain");
-          LOGGER.info("\tsizeZ = {}", sizeZ);
-          LOGGER.info("\tsizeT = {}", sizeT);
-          LOGGER.info("\tsizeC = {}", sizeC);
-
-          // guess axes
-          AxisGuesser ag = new AxisGuesser(fp,
-            dimOrder, sizeZ, sizeT, sizeC, certain);
-
-          // output results
-          String[] blocks = fp.getBlocks();
-          String[] prefixes = fp.getPrefixes();
-          int[] axes = ag.getAxisTypes();
-          String newOrder = ag.getAdjustedOrder();
-          boolean isCertain = ag.isCertain();
-          LOGGER.info("Axis types:");
-          for (int i=0; i<blocks.length; i++) {
-            String axis;
-            switch (axes[i]) {
-              case Z_AXIS:
-                axis = "Z";
-                break;
-              case T_AXIS:
-                axis = "T";
-                break;
-              case C_AXIS:
-                axis = "C";
-                break;
-              default:
-                axis = "?";
-            }
-            LOGGER.info("\t{}\t{} (prefix = {})",
-              new Object[] {blocks[i], axis, prefixes[i]});
-          }
-          if (!dimOrder.equals(newOrder)) {
-            LOGGER.info("Adjusted dimension order = {} ({})",
-              newOrder, isCertain ? "certain" : "uncertain");
-          }
-        }
-      }
-      else LOGGER.info("Pattern is invalid: {}", fp.getErrorMessage());
-    }
-  }
-
 }
-
-// -- Notes --
-
-// INPUTS: file pattern, dimOrder, sizeZ, sizeT, sizeC, isCertain
-//
-// 1) Fill in all "known" dimensional axes based on known patterns and
-//    conventions
-//      * known internal axes (ZCT) have isCertain == true
-//      * known dimensional axes have a known pattern or convention
-//    After that, we are left with only unknown slots, which we must guess.
-//
-// 2) First, we decide whether we really "believe" the reader. There is a
-//    special case where we may decide that it got Z and T mixed up:
-//      * if a Z block was found, but not a T block:
-//          if !isOrderCertain, and sizeZ > 1, and sizeT == 1, swap 'em
-//      * else if a T block was found, but not a Z block:
-//          if !isOrderCertain and sizeT > 1, and sizeZ == 1, swap 'em
-//    At this point, we can (have to) trust the internal ordering, and use it
-//    to decide how to fill in the remaining dimensional blocks.
-//
-// 3) Set canBeZ to true iff no Z block is assigned and sizeZ == 1.
-//    Set canBeT to true iff no T block is assigned and sizeT == 1.
-//    Go through the blocks in order from left to right:
-//      * If canBeZ, assign Z and set canBeZ to false.
-//      * If canBeT, assign T and set canBeT to false.
-//      * Otherwise, assign C.
-//
-// OUTPUTS: list of axis assignments, new dimOrder

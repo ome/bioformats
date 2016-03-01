@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -43,11 +43,8 @@ set(OME_TOPLEVEL_INCLUDES
 function(bf_add_test)
   add_test(${ARGV})
   set_tests_properties(${ARGV0}
-    PROPERTIES ENVIRONMENT "BIOFORMATS_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema")
+    PROPERTIES ENVIRONMENT "OME_XML_SCHEMADIR=${PROJECT_SOURCE_DIR}/components/specification/released-schema;OME_XML_TRANSFORMDIR=${PROJECT_SOURCE_DIR}/components/specification/transforms;OME_XML_SAMPLEDIR=${PROJECT_SOURCE_DIR}/components/specification/samples")
 endfunction()
 
 add_subdirectory(lib)
-add_subdirectory(libexec)
-add_subdirectory(share/icons)
 add_subdirectory(test)
-add_subdirectory(examples)

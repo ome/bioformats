@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1650,6 +1650,14 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Micromanager datasets cannot be detected with an OME-TIFF file
+          if (reader.getFormat().equals("Micro-Manager") &&
+            (base[i].toLowerCase().endsWith(".ome.tiff") ||
+            base[i].toLowerCase().endsWith(".ome.tif")))
+          {
+            continue;
+          }
+
           // DICOM companion files may not be detected
           if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
             continue;
@@ -2183,6 +2191,14 @@ public class FormatReaderTest {
             // extra metadata files, so it is acceptable for the OME-TIFF
             // reader to pick up TIFFs from a Prairie dataset
             if (result && r instanceof PrairieReader &&
+              readers[j] instanceof OMETiffReader)
+            {
+              continue;
+            }
+
+            // Micromanager datasets can consist of OME-TIFF files
+            // with an extra metadata file
+            if (result && r instanceof MicromanagerReader &&
               readers[j] instanceof OMETiffReader)
             {
               continue;

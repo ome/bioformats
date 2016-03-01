@@ -3,7 +3,7 @@
   #%L
   BSD implementations of Bio-Formats readers and writers
   %%
-  Copyright (C) 2005 - 2015 Open Microscopy Environment:
+  Copyright (C) 2005 - 2016 Open Microscopy Environment:
     - Board of Regents of the University of Wisconsin-Madison
     - Glencoe Software, Inc.
     - University of Dundee
@@ -30,32 +30,6 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-
-<!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# Copyright (C) 2009-2013 Open Microscopy Environment
-#       Massachusetts Institute of Technology,
-#       National Institutes of Health,
-#       University of Dundee,
-#       University of Wisconsin at Madison
-#
-#    This library is free software; you can redistribute it and/or
-#    modify it under the terms of the GNU Lesser General Public
-#    License as published by the Free Software Foundation; either
-#    version 2.1 of the License, or (at your option) any later version.
-#
-#    This library is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    Lesser General Public License for more details.
-#
-#    You should have received a copy of the GNU Lesser General Public
-#    License along with this library; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
 
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +73,7 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
 			http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
 		</OME>
 	</xsl:template>
 

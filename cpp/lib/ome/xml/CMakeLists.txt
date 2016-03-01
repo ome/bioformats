@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,9 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES}
-                    ${Boost_INCLUDE_DIRS}
-                    ${XercesC_INCLUDE_DIRS})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-internal.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/config-internal.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
@@ -55,6 +56,7 @@ endforeach(hdr)
 set(OME_XML_STATIC_SOURCES
   Document.cpp
   OMEEntityResolver.cpp
+  OMETransformResolver.cpp
   meta/MetadataException.cpp
   meta/OMEXMLMetadataRoot.cpp
   meta/Convert.cpp
@@ -72,14 +74,13 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp)
-
-# Not installed, internal only.
-set(OME_XML_META_PRIVATE_STATIC_HEADERS
-    meta/Convert.h)
+  model/primitives/Timestamp.cpp
+  module.cpp
+  version.cpp)
 
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
+    meta/Convert.h
     meta/Metadata.h
     meta/MetadataException.h
     meta/MetadataRoot.h
@@ -87,7 +88,13 @@ set(OME_XML_META_STATIC_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     Document.h
-    OMEEntityResolver.h)
+    module.h
+    OMEEntityResolver.h
+    OMETransform.h
+    OMETransformResolver.h)
+
+set(OME_XML_GENERATED_HEADERS
+    ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/ModelException.h
@@ -123,14 +130,19 @@ set(OME_XML_PUBLIC_STATIC_HEADERS
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
 set(OME_XML_PUBLIC_GENERATED_HEADERS
+    ${OME_XML_GENERATED_HEADERS}
     ${OME_XML_GENERATED_META_HEADERS}
     ${OME_XML_GENERATED_MODEL_HEADERS}
     ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS})
 
+set(OME_XML_PRIVATE_GENERATED_HEADERS
+    ${CMAKE_CURRENT_BINARY_DIR}/config-internal.h)
+
 set(OME_XML_HEADERS
     ${OME_XML_PRIVATE_STATIC_HEADERS}
     ${OME_XML_PUBLIC_STATIC_HEADERS}
-    ${OME_XML_PUBLIC_GENERATED_HEADERS})
+    ${OME_XML_PUBLIC_GENERATED_HEADERS}
+    ${OME_XML_PRIVATE_GENERATED_HEADERS})
 
 set(OME_XML_SOURCES
     ${OME_XML_STATIC_SOURCES}
@@ -140,18 +152,30 @@ set(OME_XML_SOURCES
 add_library(ome-xml
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
-target_link_libraries(ome-xml ome-compat ome-common)
-target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
+
+target_include_directories(ome-xml PUBLIC
+                           $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/cpp/lib>
+                           $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/cpp/lib>)
+
+target_link_libraries(ome-xml OME::Compat OME::Common)
+target_link_libraries(ome-xml Boost::date_time)
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
+add_library(OME::XML ALIAS ome-xml)
+
 install(TARGETS ome-xml
-        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+        EXPORT OMEXMLInternal
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(EXPORT OMEXMLInternal
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEXML)
+install(FILES OMEXMLConfig.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEXML)
 
-set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
+set(ome_xml_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/xml")
 
-install(FILES ${OME_XML_STATIC_HEADERS}
+install(FILES ${OME_XML_STATIC_HEADERS} ${OME_XML_GENERATED_HEADERS}
         DESTINATION ${ome_xml_includedir})
 install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS}
         DESTINATION ${ome_xml_includedir}/meta)
@@ -163,14 +187,6 @@ install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_MODEL_ENUMS_HE
         DESTINATION ${ome_xml_includedir}/model/enums)
 install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVES_HEADERS}
         DESTINATION ${ome_xml_includedir}/model/primitives)
-
-set(LIBRARY_PREFIX OME_XML)
-set(LIBRARY_NAME ome-xml)
-set(LIBRARY_HEADER ome/xml/model/OME.h)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-xml)
 
 # Dump header list for testing
 header_include_list_write(OME_XML_PUBLIC_STATIC_HEADERS
@@ -195,5 +211,22 @@ file(GLOB OME_SCHEMAS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/r
 foreach(schema ${OME_SCHEMAS})
   get_filename_component(SCHEMA_RELEASE ${schema} PATH)
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
-          DESTINATION "${OME_BIOFORMATS_INSTALL_FULL_SCHEMADIR}/${SCHEMA_RELEASE}")
+          DESTINATION "${OME_XML_INSTALL_SCHEMADIR}/${SCHEMA_RELEASE}")
 endforeach(schema)
+
+# Find and install all transforms
+file(GLOB OME_TRANSFORMS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/transforms/"
+     "${PROJECT_SOURCE_DIR}/components/specification/transforms/*.xsl")
+foreach(transform ${OME_TRANSFORMS})
+  get_filename_component(TRANSFORM ${transform} PATH)
+  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/transforms/${transform}"
+          DESTINATION "${OME_XML_INSTALL_TRANSFORMDIR}/${TRANSFORM}")
+endforeach(transform)
+
+# Find and install all samples
+file(GLOB_RECURSE OME_SAMPLES RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/samples/" "${PROJECT_SOURCE_DIR}/components/specification/samples/*")
+foreach(sample ${OME_SAMPLES})
+  get_filename_component(SAMPLE_FILE ${sample} PATH)
+  install(FILES "${PROJECT_SOURCE_DIR}/components/specification/samples/${sample}"
+          DESTINATION "${OME_XML_INSTALL_SAMPLEDIR}/${SAMPLE_FILE}")
+endforeach(sample)

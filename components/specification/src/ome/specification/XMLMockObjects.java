@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -24,6 +24,7 @@
  */
 /*
  * unit.XMLMockFactory
+<<<<<<< HEAD
  *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
@@ -42,6 +43,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  *------------------------------------------------------------------------------
+=======
+>>>>>>> openmicroscopy/develop
  */
 package ome.specification;
 

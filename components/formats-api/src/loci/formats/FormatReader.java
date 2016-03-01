@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,10 +35,12 @@ package loci.formats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Arrays;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -1041,17 +1043,22 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles() */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
+    String[] seriesUsedFiles;
+    int seriesCount = getSeriesCount();
+    if (seriesCount == 1) {
+      seriesUsedFiles = getSeriesUsedFiles(noPixels);
+      if (null == seriesUsedFiles) {
+        seriesUsedFiles = new String[] {};
+      }
+      return seriesUsedFiles;
+    }
     int oldSeries = getSeries();
-    Vector<String> files = new Vector<String>();
-    for (int i=0; i<getSeriesCount(); i++) {
+    Set<String> files = new LinkedHashSet<String>();
+    for (int i = 0; i < seriesCount; i++) {
       setSeries(i);
-      String[] s = getSeriesUsedFiles(noPixels);
-      if (s != null) {
-        for (String file : s) {
-          if (getSeriesCount() == 1 || !files.contains(file)) {
-            files.add(file);
-          }
-        }
+      seriesUsedFiles = getSeriesUsedFiles(noPixels);
+      if (seriesUsedFiles != null) {
+        files.addAll(Arrays.asList(seriesUsedFiles));
       }
     }
     setSeries(oldSeries);

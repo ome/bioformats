@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009 - 2015 Open Microscopy Environment
+# Copyright (C) 2009 - 2016 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -76,7 +76,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
             http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
         </OME:OME>
     </xsl:template>
 
@@ -115,6 +115,11 @@
             <xsl:apply-templates select="@*|node()"/>
         </xsl:element>
     </xsl:template>
+
+    <!-- Remove Folder elements -->
+
+    <xsl:template match="OME:Folder"/>
+    <xsl:template match="OME:FolderRef"/>
 
     <!-- Default processing -->
 

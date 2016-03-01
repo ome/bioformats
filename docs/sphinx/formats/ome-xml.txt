@@ -26,8 +26,9 @@ Writer: OMEXMLWriter (:bsd-writer:`Source Code <OMEXMLWriter.java>`)
 
 We currently have:
 
-* `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ 
-* many OME-XML datasets 
+* `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_
+* many OME-XML datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__
 * the ability to produce more datasets
 
 We would like to have:
