@@ -296,34 +296,28 @@ public interface MetadataRetrieve extends BaseMetadata {
   
 {% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
-/**
-     * Get the type of a ${abstractClass}.
-     *
+  /**
+   * Get the type of a ${abstractClass}.
+   *
 {% for param in v %}\
-     * @param ${param['argname']} the ${param['type']} index.
+   * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
-     * @return the ${abstractClass} type.
-     */
-    String get${abstractClass}Type(${indexes_string(v)});
+   * @return the ${abstractClass} type.
+   */
+  String get${abstractClass}Type(${indexes_string(v)});
     
-    
-
-        /**
-         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
-         *
+  /**
+   * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
+   *
 {% for param in v[:-1] %}\
-         * @param ${param['argname']} the ${param['type']} index.
+   * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
-         * @return the number of ${abstractClass} elements.
-         */
+   * @return the number of ${abstractClass} elements.
+   */
   int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])});
     
-    
-    
 {% end %}\
 {% end %}\
-
-
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -448,8 +442,8 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k}   
-
+	// ${prop.name} accessor from parent ${k}
+${getter(k, o, prop, v)}
 
 {% end %}\
 {% end %}\

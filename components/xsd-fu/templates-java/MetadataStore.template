@@ -198,9 +198,9 @@ public interface MetadataStore extends BaseMetadata
          *
          * @param binData the BinData to set.
          * @param ROIIndex the ROI index.
-         * @param maskIndex the Mask index.
+         * @param shapeIndex the Shape index.
          */
-  void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex);
+  void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
 
         /**
          * Set the values of a MapAnnotation.

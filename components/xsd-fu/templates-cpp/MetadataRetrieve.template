@@ -478,6 +478,7 @@ namespace ome
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
+${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\

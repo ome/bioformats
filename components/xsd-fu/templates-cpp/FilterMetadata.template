@@ -361,6 +361,7 @@ namespace ome
 {% if debug %}\
 	// ${prop.name} accessor from parent ${k}
 {% end debug %}\
+${setter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\

@@ -669,7 +669,9 @@ ${counter(k, o, v)}\
 {% if debug %}\
 	// MARKER [AAA-AGG]
 {% end debug %}\
-
+  // ${prop.name} accessor from parent ${k}
+${getter(k, o, prop, v)}\
+ 
 {% end %}\
 {% end %}\
 {% end %}\
@@ -831,6 +833,8 @@ ${getter(k, o, prop, v)}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+  // ${prop.name} accessor from parent ${k}
+${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\

@@ -361,7 +361,9 @@ ${counter(k, o, v)}\
 {% if debug %}\
 	// MARKER [AAA]
 {% end debug %}\
-
+  // ${prop.name} accessor from parent ${k}
+${getter(k, o, prop, v)}\
+ 
 {% end %}\
 {% end %}\
 {% end %}\

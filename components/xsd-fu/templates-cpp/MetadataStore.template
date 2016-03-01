@@ -316,7 +316,10 @@ namespace ome
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
-
+{% if debug %}\
+  // ${prop.name} accessor from parent ${k}
+{% end debug %}\
+${setter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 {% end %}\
