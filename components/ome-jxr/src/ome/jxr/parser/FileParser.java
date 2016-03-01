@@ -39,7 +39,9 @@ import ome.jxr.constants.File;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ * @deprecated See <a href="http://lists.openmicroscopy.org.uk/pipermail/ome-users/2015-September/005616.html">mailing-list thread</a> and <a href="http://blog.openmicroscopy.org/file-formats/community/2016/01/06/format-support">blog post</a>
  */
+@Deprecated
 public final class FileParser extends Parser {
 
   private int encoderVersion;
