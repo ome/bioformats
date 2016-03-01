@@ -68,6 +68,7 @@ public class FakeReaderTest {
   private Path wd;
   private FakeReader reader;
   private OMEXMLService service;
+  private MetadataRetrieve m;
 
   @DataProvider(name = "physical sizes")
   public Object[][] physicalSizes() {
@@ -132,6 +133,7 @@ public class FakeReaderTest {
     reader = new FakeReader();
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(OMEXMLService.class);
+    reader.setMetadataStore(service.createOMEXMLMetadata());
   }
 
   @AfterMethod
@@ -252,77 +254,68 @@ public class FakeReaderTest {
 
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeX(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&physicalSizeX=" + value + ".fake");
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
   
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeXIni(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     mkIni("foo.fake.ini", "physicalSizeX = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
 
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeY(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&physicalSizeY=" + value + ".fake");
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
 
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeYIni(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     mkIni("foo.fake.ini", "physicalSizeY = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
   
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeZ(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&physicalSizeZ=" + value + ".fake");
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
 
   @Test(dataProvider = "physical sizes")
   public void testPhysicalSizeZIni(String value, Length length) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     mkIni("foo.fake.ini", "physicalSizeZ = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
 
   @Test(dataProvider = "acquisition dates")
   public void testAcquisitionDate(String value, Timestamp date) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     reader.setId("foo&acquisitionDate=" + value + ".fake");
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
   @Test(dataProvider = "acquisition dates")
   public void testAcquisitionDateIni(String value, Timestamp date) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
     mkIni("foo.fake.ini", "acquisitionDate = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
   @Test(dataProvider = "acquisition dates")
-  public void testAcquisitionDates(String value, Timestamp date) throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
+  public void testAcquisitionDateMultiSeries(String value, Timestamp date) throws Exception {
     reader.setId("foo&series=10&acquisitionDate=" + value + ".fake");
-    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    m = service.asRetrieve(reader.getMetadataStore());
     for (int i = 0; i < 10; i++) {
       assertEquals(m.getImageAcquisitionDate(i), date);
     }
