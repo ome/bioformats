@@ -507,6 +507,13 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
     return raf.readInt();
   }
 
+  /**
+   * Read four input bytes and return an unsigned value.
+   */
+  public long readUnsignedInt() throws IOException {
+    return readInt() & 0xffffffffL;
+  }
+
   /** Read the next line of text from the input stream. */
   @Override
   public String readLine() throws IOException {
