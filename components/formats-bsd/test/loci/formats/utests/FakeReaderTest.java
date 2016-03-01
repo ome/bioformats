@@ -55,6 +55,8 @@ import loci.common.services.ServiceFactory;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
+import ome.xml.model.primitives.Timestamp;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -78,6 +80,14 @@ public class FakeReaderTest {
       {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
+
+  @DataProvider(name = "acquisition dates")
+  public Object[][] acquisitionDates() {
+    return new Object[][] {
+      {"2016-03-01_16-14-00", new Timestamp("2016-03-01T16:14:00")},
+      {"2016-03-01", null},
     };
   }
 
@@ -289,5 +299,32 @@ public class FakeReaderTest {
     reader.setId(wd.resolve("foo.fake").toString());
     MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
+
+  @Test(dataProvider = "acquisition dates")
+  public void testAcquisitionDate(String value, Timestamp date) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&acquisitionDate=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getImageAcquisitionDate(0), date);
+  }
+
+  @Test(dataProvider = "acquisition dates")
+  public void testAcquisitionDateIni(String value, Timestamp date) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    mkIni("foo.fake.ini", "acquisitionDate = " + value);
+    reader.setId(wd.resolve("foo.fake").toString());
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getImageAcquisitionDate(0), date);
+  }
+
+  @Test(dataProvider = "acquisition dates")
+  public void testAcquisitionDates(String value, Timestamp date) throws Exception {
+    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&series=10&acquisitionDate=" + value + ".fake");
+    MetadataRetrieve m = service.asRetrieve(reader.getMetadataStore());
+    for (int i = 0; i < 10; i++) {
+      assertEquals(m.getImageAcquisitionDate(i), date);
+    }
   }
 }
