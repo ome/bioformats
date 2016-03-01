@@ -48,7 +48,7 @@
             <xsl:apply-templates select="@FillRule | @FillColor | @StrokeColor | @StrokeWidth | @StrokeWidthUnit | @StrokeDashArray | @LineCap |@Text |  @FontFamily | @FontSize | @FontSizeUnit | @FontStyle | @Locked | @ID | @TheZ | @TheT | @TheC"/>
             <xsl:apply-templates select="node()[local-name() = 'Transform' or local-name() = 'AnnotationRef']"/>             
             <xsl:element name="ROI:{name()}"  namespace="{$newROINS}">
-                <xsl:apply-templates select="@*"/>
+                <xsl:apply-templates select="@*[not(name() = 'FillRule' or name() = 'FillColor' or name() = 'StrokeColor' or name() = 'StrokeWidth' or name() = 'StrokeWidthUnit' or name() = 'StrokeDashArray' or name() = 'LineCap' or name() = 'Text' or  name() = 'FontFamily' or name() = 'FontSize' or name() = 'FontSizeUnit' or name() = 'FontStyle' or name() = 'Locked' or name() = 'ID' or name() = 'TheZ' or name() = 'TheT' or name() = 'TheC')]"/>
                 <xsl:apply-templates select="node()[not(local-name() = 'Transform' or local-name() = 'AnnotationRef')]"/>     
             </xsl:element>
          </xsl:element>
@@ -59,7 +59,7 @@
             <xsl:apply-templates select="@ID | @Power | @PowerUnit |@Type"/>
             <xsl:apply-templates select="node()[local-name() = 'AnnotationRef']"/>             
             <xsl:element name="OME:{name()}"  namespace="{$newOMENS}">
-                <xsl:apply-templates select="@*"/>
+                <xsl:apply-templates select="@*[not(name() = 'ID' or name() = 'Power' or name() = 'PowerUnit' or name() = 'Type')]"/>
                 <xsl:apply-templates select="node()[not(local-name() = 'AnnotationRef')]"/>     
             </xsl:element>
          </xsl:element>
