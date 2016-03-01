@@ -665,11 +665,7 @@ public class FakeReader extends FormatReader {
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
-      if (acquisitionDate != null) {
-        if(DateTools.getTime(acquisitionDate, DateTools.FILENAME_FORMAT) != -1) {
-          store.setImageAcquisitionDate(new Timestamp(DateTools.formatDate(acquisitionDate, DateTools.FILENAME_FORMAT)), currentImageIndex);
-        }
-      }
+      fillAcquisitionDate(store, acquisitionDate, currentImageIndex);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         Color channel = defaultColor == null ? null: new Color(defaultColor);
@@ -842,6 +838,16 @@ public class FakeReader extends FormatReader {
     }
     setSeries(oldSeries);
   }
+
+  private void fillAcquisitionDate(MetadataStore store, String date, int imageIndex) {
+    if (date == null) return;
+    if(DateTools.getTime(date, DateTools.FILENAME_FORMAT) != -1) {
+      Timestamp stamp = new Timestamp(
+        DateTools.formatDate(date, DateTools.FILENAME_FORMAT));
+      store.setImageAcquisitionDate(stamp, imageIndex);
+    }
+  }
+
 
 // -- Helper methods --
 
