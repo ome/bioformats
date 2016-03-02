@@ -6,6 +6,8 @@
 
 #include <sstream>
 
+#include <boost/preprocessor.hpp>
+
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
 using ome::xml::model::enums::EnumerationException;
@@ -462,6 +464,19 @@ TEST(Enum, PixelTypeStreamInputFail)
   ASSERT_FALSE(!!is);
   ASSERT_EQ(PixelType::UINT16, e); // Unchanged.
 }
+
+#define MAKE_PT(maR, maProperty, maType)        \
+  {                                             \
+    PixelType pt(PixelType::maType);            \
+    ASSERT_EQ(PixelType::maType, pt);           \
+  }                                             \
+
+TEST(Enum, PixelTypePreprocess)
+{
+  BOOST_PP_SEQ_FOR_EACH(MAKE_PT, 0, OME_XML_MODEL_ENUMS_PIXELTYPE_VALUES);
+}
+
+#undef MAKE_PT
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.
