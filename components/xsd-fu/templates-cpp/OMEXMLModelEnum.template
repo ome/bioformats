@@ -55,6 +55,9 @@
 
 #include <ome/xml/model/enums/EnumerationException.h>
 
+// All values in the ${klass.langType} enumeration.
+#define ${fu.CLASS_PREFIX}_VALUES {% for value in klass.possibleValues %}(${enum_value_name(value, False).upper()}){% end %}
+
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <algorithm>
