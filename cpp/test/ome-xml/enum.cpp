@@ -480,7 +480,7 @@ check_pt(PixelType::enum_value pt_expected,
 
 TEST(Enum, PixelTypePreprocess)
 {
-  BOOST_PP_SEQ_FOR_EACH(MAKE_PT, 0, OME_XML_MODEL_ENUMS_PIXELTYPE_VALUES);
+  BOOST_PP_SEQ_FOR_EACH(MAKE_PT, %%, OME_XML_MODEL_ENUMS_PIXELTYPE_VALUES);
 }
 
 #undef MAKE_PT
