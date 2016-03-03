@@ -112,6 +112,7 @@ public class FakeReader extends FormatReader {
   private static final String ANN_COMMENT_VALUE = "Comment:";
   private static final String ANN_XML_VALUE_START = "<dummyXml>";
   private static final String ANN_XML_VALUE_END = "</dummyXml>";
+  private static final String ROI_PREFIX = "ROI:";
 
   public static final int BOX_SIZE = 10;
 
@@ -146,6 +147,8 @@ public class FakeReader extends FormatReader {
   private int annotationTermCount = 0;
   private int annotationTimeCount = 0;
   private int annotationXmlCount = 0;
+
+  private int roiCount = 0;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -451,6 +454,7 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
+    // Annotations
     int annBool = 0;
     int annComment = 0;
     int annDouble = 0;
@@ -460,6 +464,9 @@ public class FakeReader extends FormatReader {
     int annTag = 0;
     int annTerm = 0;
     int annXml = 0;
+
+    // Regions
+    int points = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -558,6 +565,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("points")) points = intValue;
       else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
       else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
       else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
@@ -671,6 +679,7 @@ public class FakeReader extends FormatReader {
       }
       fillAnnotations(store, currentImageIndex, annBool, annComment,
         annDouble, annLong, annMap, annTag, annTerm, annTime, annXml);
+      fillRegions(store, currentImageIndex, points);
     }
 
     // for indexed color images, create lookup tables
@@ -843,6 +852,24 @@ public class FakeReader extends FormatReader {
       annotationXmlCount++;
       annotationCount++;
       annotationRefCount++;
+    }
+  }
+
+  private void fillRegions(MetadataStore store, int imageIndex, int points) {
+    int roiRefCount = 0;
+    String roiID;
+
+    for (int i=0; i<points; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        String pointID = "Point:" + roiCount + ":" + i;
+
+        store.setPointID(pointID, roiCount, 0);
+        store.setPointX(new Double(1.0), roiCount, 0);
+        store.setPointY(new Double(1.0), roiCount, 0 );
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
     }
   }
 
