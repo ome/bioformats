@@ -988,7 +988,7 @@ public class FakeReader extends FormatReader {
   }
 
   private Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([\\D\\S]*)\\s*").matcher(value);
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
       if (!m.matches()) {
         throw new RuntimeException(String.format(
                 "%s does not match a physical size!", value));
