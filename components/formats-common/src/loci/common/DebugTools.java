@@ -78,7 +78,7 @@ public final class DebugTools {
     for (String[] toolClass : toolClasses) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
-        Method m = k.getMethod("isEnabled", String.class);
+        Method m = k.getMethod("isEnabled");
         return (Boolean) m.invoke(null);
       }
       catch (Throwable t) {
