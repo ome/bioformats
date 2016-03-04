@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-BIOFORMATS C++ library for image IO.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
  * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
