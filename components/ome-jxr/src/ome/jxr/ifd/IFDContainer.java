@@ -38,7 +38,9 @@ import ome.jxr.constants.IFD;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ * @deprecated See <a href="http://blog.openmicroscopy.org/file-formats/community/2016/01/06/format-support">blog post</a>
  */
+@Deprecated
 public class IFDContainer {
 
   private long offset;

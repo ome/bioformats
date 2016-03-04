@@ -32,7 +32,10 @@ package ome.jxr.constants;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ *
+ * @deprecated See <a href="http://blog.openmicroscopy.org/file-formats/community/2016/01/06/format-support">blog post</a>
  */
+@Deprecated
 public final class File {
 
   public static final int MINIMAL_HEADER_SIZE = 4;

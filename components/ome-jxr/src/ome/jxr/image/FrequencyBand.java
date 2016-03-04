@@ -36,7 +36,9 @@ import java.util.List;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ * @deprecated See <a href="http://blog.openmicroscopy.org/file-formats/community/2016/01/06/format-support">blog post</a>
  */
+@Deprecated
 public enum FrequencyBand {
   ALL(4, 0),
   NOFLEXBITS(3, 1),

@@ -33,7 +33,9 @@ package ome.jxr.ifd;
  * <dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ * @deprecated See <a href="http://blog.openmicroscopy.org/file-formats/community/2016/01/06/format-support">blog post</a>
  */
+@Deprecated
 public class JXRRational {
 
   private int numerator;
