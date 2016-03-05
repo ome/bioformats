@@ -40,12 +40,10 @@ bfCheckJavaPath();
 if javaMethod('isEnabled', 'loci.common.DebugTools'), return; end
 
 % Input check
-import org.apache.log4j.Level;
-levels = Level.getAllPossiblePriorities();
-levels = arrayfun(@(x) char(x.toString()), levels, 'Unif', false);
+levels = {'ALL', 'DEBUG', 'ERROR', 'FATAL', 'INFO', 'OFF', 'TRACE', 'WARN'};
 ip = inputParser;
 ip.addOptional('level', 'WARN', @(x) ismember(x, levels));
 ip.parse(varargin{:});
 
 % Set logging level
-javaMethod('enableLogging', 'loci.common.DebugTools', ip.Results.level)
+javaMethod('enableLogging', 'loci.common.DebugTools', ip.Results.level);
