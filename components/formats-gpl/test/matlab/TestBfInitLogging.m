@@ -41,6 +41,7 @@ classdef TestBfInitLogging < TestBfMatlab
         
         function disableLogging(self)
             self.root.removeAllAppenders();
+            bfCheckJavaPath();
             assertFalse(loci.common.DebugTools.isEnabled());
         end
         
