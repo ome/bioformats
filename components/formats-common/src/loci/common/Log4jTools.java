@@ -55,11 +55,7 @@ public final class Log4jTools {
       r.exec("import org.apache.log4j.Logger");
       r.exec("root = Logger.getRootLogger()");
       Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
-      if (!en.hasMoreElements()) {
-        return false;
-      } else {
-        return true;
-      }
+      return en.hasMoreElements();
     } catch (ReflectException exc) {
       return false;
     }
