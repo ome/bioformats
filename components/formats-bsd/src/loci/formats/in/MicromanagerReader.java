@@ -489,6 +489,7 @@ public class MicromanagerReader extends FormatReader {
           IFD ifd = ifds.get(i);
           parser.fillInIFD(ifd);
           json = ifd.getIFDTextValue(MM_JSON_TAG);
+          LOGGER.trace("JSON for IFD #{} = {}", i, json);
           if (json == null) {
             // if one of the files is missing the per-plane JSON tag,
             // assume all files are missing it (for performance)
@@ -497,32 +498,55 @@ public class MicromanagerReader extends FormatReader {
           }
           String[] tokens = json.split("[\\{\\}:,\"]");
           String key = null, value = null, propType = null;
-          for (String token : tokens) {
+          int nEmptyTokens = 0;
+          for (int q=0; q<tokens.length; q++) {
+            String token = tokens[q];
             if (token.length() == 0) {
+              nEmptyTokens++;
               continue;
             }
+            if (nEmptyTokens == 5 && value == null) {
+              key = null;
+            }
             if (key == null && value == null && propType == null) {
-              key = token;
+              // don't use completeCoords as a key, defer to child attributes
+              if (!token.equals("completeCoords")) {
+                key = token;
+              }
+              nEmptyTokens = 0;
             }
-            else if (token.equals("PropVal")) {
-              value = token;
-            }
-            else if (value != null && value.equals("PropVal")) {
+            else if (token.equals("PropVal") || token.equals("[")) {
               value = token;
             }
             else if (token.equals("PropType")) {
               propType = token;
             }
-            else if ((propType != null && propType.equals("PropType")) ||
+            else if (value != null && value.equals("PropVal") && propType == null) {
+              value = token;
+            }
+            else if (value != null && propType == null && value.startsWith("[") && !token.startsWith("]")) {
+              value += token;
+              value += ", ";
+            }
+            else if (((propType != null && propType.equals("PropType")) || token.equals("]")) ||
               (key != null && value == null))
             {
-              if (value == null) {
+              if (value == null && (propType == null || !propType.equals("PropType"))) {
                 value = token;
+
+                while (q + 1 < tokens.length && tokens[q + 1].trim().length() > 0) {
+                  value += ":";
+                  value += tokens[q + 1];
+                  q++;
+                }
               }
-              parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
+              if (!value.equals("PropVal")) {
+                parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
+              }
               propType = null;
               key = null;
               value = null;
+              nEmptyTokens = 0;
             }
           }
         }
