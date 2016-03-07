@@ -60,11 +60,7 @@ public final class LogbackTools {
    */
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    if (!root.iteratorForAppenders().hasNext()) {
-      return false;
-    } else {
-      return true;
-    }
+    return root.iteratorForAppenders().hasNext();
   }
 
   /**
