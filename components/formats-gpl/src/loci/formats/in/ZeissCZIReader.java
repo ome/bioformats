@@ -631,7 +631,7 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("prestitched = {}", prestitched);
     LOGGER.trace("scanDim = {}", scanDim);
 
-    if (mosaics == seriesCount &&
+    if (((mosaics == seriesCount) || (positions == seriesCount)) &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
