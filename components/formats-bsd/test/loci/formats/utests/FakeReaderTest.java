@@ -520,14 +520,19 @@ public class FakeReaderTest {
       assertEquals(m.getImageAnnotationRefCount(0), 10);
     }
   }
-  
+
   @Test
   public void testPoints() throws Exception {
     reader.setId("foo&series=5&points=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getImageCount(), 5);
     assertEquals(m.getROICount(), 50);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < m.getImageCount(); i++) {
       assertEquals(m.getImageROIRefCount(0), 10);
+    }
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), "Point");
     }
   }
 
@@ -536,9 +541,14 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "series = 5\npoints = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertEquals(m.getImageCount(), 5);
     assertEquals(m.getROICount(), 50);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < m.getImageCount(); i++) {
       assertEquals(m.getImageROIRefCount(0), 10);
+    }
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), "Point");
     }
   }
 }
