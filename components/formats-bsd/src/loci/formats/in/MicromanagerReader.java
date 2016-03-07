@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -101,7 +101,7 @@ public class MicromanagerReader extends FormatReader {
     super("Micro-Manager", new String[] {"tif", "tiff", "txt", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
-    datasetDescription = "A 'metadata.txt' file plus or or more .tif files";
+    datasetDescription = "A file ending in 'metadata.txt' plus one or more .tif files";
   }
 
   // -- IFormatReader API methods --
