@@ -296,10 +296,14 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
-  
+
   @Test(expectedExceptions={ RuntimeException.class })
   public void testPhysicalSizeZBadParsing() throws Exception {
-    reader.setMetadataStore(service.createOMEXMLMetadata());
+    reader.setId("foo&physicalSizeZ=1 1.fake");
+  }
+
+  @Test(expectedExceptions={ RuntimeException.class })
+  public void testPhysicalSizeZIniBadParsing() throws Exception {
     mkIni("foo.fake.ini", "physicalSizeZ = 1 1");
     reader.setId(wd.resolve("foo.fake").toString());
   }
