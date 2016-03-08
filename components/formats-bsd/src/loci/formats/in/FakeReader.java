@@ -162,6 +162,7 @@ public class FakeReader extends FormatReader {
   private int masks = 0;
   private int points = 0;
   private int polygons = 0;
+  private int polylines = 0;
   private int rectangles = 0;
   private int roiCount = 0;
 
@@ -573,7 +574,14 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("ellipses")) ellipses = intValue;
+      else if (key.equals("labels")) labels = intValue;
+      else if (key.equals("lines")) lines = intValue;
+      else if (key.equals("masks")) masks = intValue;
       else if (key.equals("points")) points = intValue;
+      else if (key.equals("polygons")) polygons = intValue;
+      else if (key.equals("polylines")) polylines = intValue;
+      else if (key.equals("rectangles")) rectangles = intValue;
       else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
       else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
       else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
