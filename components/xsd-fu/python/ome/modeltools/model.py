@@ -47,8 +47,6 @@ class ReferenceDelegate(object):
         self.values = None
         self.maxOccurs = 9999
         self.minOccurs = 0
-        self.shapeElement = None
-        self.lightSourceElement = None
 
     def getValues(self):
         return self.values
@@ -260,7 +258,7 @@ class OMEModel(object):
                     prop.delegate.cleanName = abstractName
                 if not prop.isReference and (
                         prop.isAttribute or prop.maxOccurs == 1 or
-                        o.name == 'OME' or o.isAbstract):
+                        o.name == 'OME' or o.isAbstractProprietary):
                     continue
                 shortName = config.REF_REGEX.sub('', prop.type)
                 try:

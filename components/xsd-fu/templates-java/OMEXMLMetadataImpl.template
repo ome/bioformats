@@ -111,18 +111,18 @@
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
-		// ${prop.name} is abstract and is a reference
+		// ${prop.name} is abstract proprietary and is a reference
 		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
 		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
 				${prop.instanceVariableName}_reference);
-		// ${parent} is abstract 
+		// ${parent} is abstract proprietary
 {% end %}\
 {% when is_abstract(parent) %}\
-		// ${parent} is abstract and not a reference
+		// ${parent} is abstract proprietary and not a reference
 		OME o0 = root;
-{% for i, v in enumerate(accessor(obj.name, obj.topLevelName, prop, accessor_string_complex)[:-1]) %}\
+{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)[:-1]) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
@@ -239,7 +239,7 @@ ${customContent[obj.name][prop.name]}
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-       (o.isAbstract):
+       (o.isAbstract or o.isAbstractProprietary):
       return True
     return False
 
@@ -514,7 +514,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isAbstractSubstitution %}\
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isAbstractSubstitution %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
@@ -555,8 +555,8 @@ ${counter(k, o, v)}\
 	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
     GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
-    // The first getMap returns an ome.xml.model.Map which
-    // extends ome.xml.model.MapPairs, the second getMap returns
+    // The first getMap returns an ${lang.omexml_model_package}.Map which
+    // extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
     // the java.util.Map holding the MapPairs
     return o.getMap().getPairs();
 	}
@@ -577,7 +577,7 @@ ${counter(k, o, v)}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
-  //
+	//
 	// Indexes: ${repr(indexes[o.name])}
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
@@ -736,7 +736,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//

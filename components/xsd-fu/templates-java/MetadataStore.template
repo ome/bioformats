@@ -56,7 +56,7 @@
   def is_abstract(name):
 	  o = model.getObjectByName(name)
 	  if o is not None and \
-		   (o.isAbstract):
+		   (o.isAbstract or o.isAbstractProprietary):
 		  return True
 	  return False
 
@@ -262,7 +262,7 @@ public interface MetadataStore extends BaseMetadata
 	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}\
 {% if debug %}\
 	// MARKER [EEE]
 	//
@@ -306,7 +306,8 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-
+  // ${prop.name} accessor from parent ${k}   
+${setter(k, o, prop, v)}
 {% end %}\
 {% end %}\
 {% end %}\

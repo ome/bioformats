@@ -64,7 +64,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-       (o.isAbstract):
+       (o.isAbstract or o.isAbstractProprietary):
       return True
     return False
 
@@ -316,7 +316,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\
@@ -440,7 +440,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//
