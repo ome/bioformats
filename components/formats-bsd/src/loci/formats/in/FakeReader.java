@@ -130,6 +130,13 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /* dimensions per image */
+  public static int sizeX = DEFAULT_SIZE_X;
+  public static int sizeY = DEFAULT_SIZE_Y;
+  public static int sizeZ = DEFAULT_SIZE_Z;
+  public static int sizeC = DEFAULT_SIZE_C;
+  public static int sizeT = DEFAULT_SIZE_T;
+
   /** exposure time per plane info */
   private Time exposureTime = null;
 
@@ -148,6 +155,14 @@ public class FakeReader extends FormatReader {
   private int annotationTimeCount = 0;
   private int annotationXmlCount = 0;
 
+  /* ROIs per image*/
+  private int ellipses = 0;
+  private int labels = 0;
+  private int lines = 0;
+  private int masks = 0;
+  private int points = 0;
+  private int polygons = 0;
+  private int rectangles = 0;
   private int roiCount = 0;
 
   /** Scale factor for gradient, if any. */
@@ -423,11 +438,7 @@ public class FakeReader extends FormatReader {
     }
 
     String name = null;
-    int sizeX = DEFAULT_SIZE_X;
-    int sizeY = DEFAULT_SIZE_Y;
-    int sizeZ = DEFAULT_SIZE_Z;
-    int sizeC = DEFAULT_SIZE_C;
-    int sizeT = DEFAULT_SIZE_T;
+
     int thumbSizeX = 0; // default
     int thumbSizeY = 0; // default
     int pixelType = DEFAULT_PIXEL_TYPE;
@@ -464,9 +475,6 @@ public class FakeReader extends FormatReader {
     int annTag = 0;
     int annTerm = 0;
     int annXml = 0;
-
-    // Regions
-    int points = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -679,7 +687,7 @@ public class FakeReader extends FormatReader {
       }
       fillAnnotations(store, currentImageIndex, annBool, annComment,
         annDouble, annLong, annMap, annTag, annTerm, annTime, annXml);
-      fillRegions(store, currentImageIndex, points);
+      fillRegions(store, currentImageIndex);
     }
 
     // for indexed color images, create lookup tables
@@ -855,14 +863,14 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  private void fillRegions(MetadataStore store, int imageIndex, int points) {
+  private void fillRegions(MetadataStore store, int imageIndex) {
     int roiRefCount = 0;
     String roiID;
 
     for (int i=0; i<points; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String pointID = "Point:" + roiCount + ":" + i;
+        String pointID = "Point:" + roiCount + ":" + 0;
 
         store.setPointID(pointID, roiCount, 0);
         store.setPointX(new Double(1.0), roiCount, 0);
