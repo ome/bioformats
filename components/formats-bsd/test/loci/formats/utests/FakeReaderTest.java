@@ -84,6 +84,20 @@ public class FakeReaderTest {
     };
   }
 
+  @DataProvider(name = "shapes")
+  public Object[][] shapes() {
+    return new Object[][] {
+      {"ellipses", "Ellipse"},
+      {"labels", "Label"},
+      {"lines", "Line"},
+      {"masks", "Mask"},
+      {"points", "Point"},
+      {"polygons", "Polygon"},
+      {"polylines", "Polyline"},
+      {"rectangles", "Rectangle"},
+    };
+  }
+
   @DataProvider(name = "acquisition dates")
   public Object[][] acquisitionDates() {
     return new Object[][] {
@@ -521,9 +535,9 @@ public class FakeReaderTest {
     }
   }
 
-  @Test
-  public void testPoints() throws Exception {
-    reader.setId("foo&series=5&points=10.fake");
+  @Test(dataProvider = "shapes")
+  public void testShapes(String key, String type) throws Exception {
+    reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getImageCount(), 5);
     assertEquals(m.getROICount(), 50);
@@ -532,13 +546,13 @@ public class FakeReaderTest {
     }
     for (int i = 0; i < m.getROICount(); i++) {
       assertEquals(m.getShapeCount(i), 1);
-      assertEquals(m.getShapeType(i, 0), "Point");
+      assertEquals(m.getShapeType(i, 0), type);
     }
   }
 
-  @Test
-  public void testPointsINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\npoints = 10");
+  @Test(dataProvider = "shapes")
+  public void testShapesINI(String key, String type) throws Exception {
+    mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
     assertEquals(m.getImageCount(), 5);
@@ -548,7 +562,7 @@ public class FakeReaderTest {
     }
     for (int i = 0; i < m.getROICount(); i++) {
       assertEquals(m.getShapeCount(i), 1);
-      assertEquals(m.getShapeType(i, 0), "Point");
+      assertEquals(m.getShapeType(i, 0), type);
     }
   }
 }
