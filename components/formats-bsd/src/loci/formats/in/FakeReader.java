@@ -144,6 +144,15 @@ public class FakeReader extends FormatReader {
   private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
   /* annotation counts per file */
+  private int annBool = 0;
+  private int annComment = 0;
+  private int annDouble = 0;
+  private int annLong = 0;
+  private int annMap = 0;
+  private int annTime = 0;
+  private int annTag = 0;
+  private int annTerm = 0;
+  private int annXml = 0;
   private int annotationCount = 0;
   private int annotationBoolCount = 0;
   private int annotationCommentCount = 0;
@@ -466,17 +475,6 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
-    // Annotations
-    int annBool = 0;
-    int annComment = 0;
-    int annDouble = 0;
-    int annLong = 0;
-    int annMap = 0;
-    int annTime = 0;
-    int annTag = 0;
-    int annTerm = 0;
-    int annXml = 0;
-
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
 
@@ -693,8 +691,7 @@ public class FakeReader extends FormatReader {
           store.setChannelColor(channel, currentImageIndex, c);
         }
       }
-      fillAnnotations(store, currentImageIndex, annBool, annComment,
-        annDouble, annLong, annMap, annTag, annTerm, annTime, annXml);
+      fillAnnotations(store, currentImageIndex);
       fillRegions(store, currentImageIndex);
     }
 
@@ -762,7 +759,7 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  private void fillAnnotations(MetadataStore store, int imageIndex, int annBool, int annComment, int annDouble, int annLong, int annMap, int annTag, int annTerm, int annTime, int annXml) {
+  private void fillAnnotations(MetadataStore store, int imageIndex) {
 
     int annotationRefCount = 0;
     String annotationID;
