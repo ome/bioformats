@@ -131,11 +131,11 @@ public class FakeReader extends FormatReader {
   // -- Fields --
 
   /* dimensions per image */
-  public static int sizeX = DEFAULT_SIZE_X;
-  public static int sizeY = DEFAULT_SIZE_Y;
-  public static int sizeZ = DEFAULT_SIZE_Z;
-  public static int sizeC = DEFAULT_SIZE_C;
-  public static int sizeT = DEFAULT_SIZE_T;
+  private int sizeX = DEFAULT_SIZE_X;
+  private int sizeY = DEFAULT_SIZE_Y;
+  private int sizeZ = DEFAULT_SIZE_Z;
+  private int sizeC = DEFAULT_SIZE_C;
+  private int sizeT = DEFAULT_SIZE_T;
 
   /** exposure time per plane info */
   private Time exposureTime = null;
