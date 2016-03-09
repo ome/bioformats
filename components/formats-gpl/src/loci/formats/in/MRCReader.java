@@ -220,9 +220,9 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      int xlen = in.readFloat();
-      int ylen = in.readFloat();
-      int zlen = in.readFloat();
+      float xlen = in.readFloat();
+      float ylen = in.readFloat();
+      float zlen = in.readFloat();
 
       // physical sizes are stored in ångströms
       xSize = (xlen / mx);
