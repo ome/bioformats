@@ -120,6 +120,11 @@ bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
 % bfsave-metadata-end
 delete('metadata.ome.tiff');
 
+% logging-start
+% Set the logging level to DEBUG
+loci.common.DebugTools.enableLogging('DEBUG');
+% logging-end
+
 % memoizer-start
 % Construct an empty Bio-Formats reader
 r = bfGetReader();
@@ -159,6 +164,8 @@ nWorkers = 4;
 
 % Enter parallel loop
 parfor i = 1 : nWorkers
+    % Initialize logging at INFO level
+    bfInitLogging('INFO');
     % Initialize a new reader per worker as Bio-Formats is not thread safe
     r2 = javaObject('loci.formats.Memoizer', bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the
