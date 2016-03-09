@@ -38,6 +38,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * SpiderReader is the file format reader for SPIDER files.
