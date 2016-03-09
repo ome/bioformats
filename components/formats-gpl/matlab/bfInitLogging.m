@@ -2,7 +2,6 @@ function bfInitLogging(varargin)
 % BFINITLOGGING initializes the Bio-Formats logging system
 %
 %   bfInitLogging() intializes the logging system at WARN level by default.
-%   It allows
 %
 %   bfInitLogging(level) sets the logging level to use when initializing
 %   the logging system
