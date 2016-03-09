@@ -220,14 +220,22 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      // physical sizes are stored in ångströms
-      xSize = (in.readFloat() / mx);
-      ySize = (in.readFloat() / my);
-      zSize = (in.readFloat() / mz);
+      int xlen = in.readFloat();
+      int ylen = in.readFloat();
+      int zlen = in.readFloat();
 
-      addGlobalMeta("Pixel size (X)", xSize);
-      addGlobalMeta("Pixel size (Y)", ySize);
-      addGlobalMeta("Pixel size (Z)", zSize);
+      // physical sizes are stored in ångströms
+      xSize = (xlen / mx);
+      ySize = (ylen / my);
+      zSize = (zlen / mz);
+
+      addGlobalMeta("Grid size (X)", mx);
+      addGlobalMeta("Grid size (Y)", my);
+      addGlobalMeta("Grid size (Z)", mz);
+
+      addGlobalMeta("Cell size (X)", xlen);
+      addGlobalMeta("Cell size (Y)", ylen);
+      addGlobalMeta("Cell size (Z)", zlen);
 
       addGlobalMeta("Alpha angle", in.readFloat());
       addGlobalMeta("Beta angle", in.readFloat());
