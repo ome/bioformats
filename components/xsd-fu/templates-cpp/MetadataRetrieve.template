@@ -205,6 +205,15 @@ namespace ome
 
 {% end debug %}\
         /**
+         * Get the number of BinData elements in Pixels.   
+         *    
+         * @param imageIndex the Image index.   
+         * @returns the number of BinData elements.   
+         */   
+        virtual index_type    
+        getPixelsBinDataCount(index_type imageIndex) const = 0;   
+    
+        /**
          * Get the number of links to a BooleanAnnotation.
          *
          * This method returns the number of references to the
