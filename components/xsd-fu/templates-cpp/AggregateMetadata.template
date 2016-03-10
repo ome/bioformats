@@ -707,7 +707,7 @@ namespace ome
           {
             ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->getLightSourceType(instrumentIndex, ightSourceIndex);
+              return retrieve->getLightSourceType(instrumentIndex, lightSourceIndex);
           }
         throw MetadataException("AggregateMetadata", "getLightSourceType",
                                 "no delegate MetadataRetrieve implementation");
