@@ -483,12 +483,12 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (labelString.equals("Scale")) {
+        if (labelString.equals("Scale") && !parent.equals("Calibration")) {
           if (value.indexOf(",") == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
           }
         }
-        else if (labelString.equals("Units")) {
+        else if (labelString.equals("Units") && !parent.equals("Calibration")) {
           // make sure that we don't add more units than sizes
           if (pixelSizes.size() == units.size() + 1) {
             units.add(value);
