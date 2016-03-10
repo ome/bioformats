@@ -383,6 +383,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop.na
         // ${prop.name} is reference and occurs more than once
         ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
+        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
         ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
         model->addReference(modelObject, ref);
