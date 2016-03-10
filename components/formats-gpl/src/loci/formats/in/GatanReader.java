@@ -45,6 +45,7 @@ import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
+import ome.units.unit.Unit;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -252,10 +253,8 @@ public class GatanReader extends FormatReader {
         Double y = pixelSizes.get(index + 1);
         String xUnits = index < units.size() ? units.get(index) : "";
         String yUnits = index + 1 < units.size() ? units.get(index + 1) : "";
-        x = correctForUnits(x, xUnits);
-        y = correctForUnits(y, yUnits);
-        Length sizeX = FormatTools.getPhysicalSizeX(x);
-        Length sizeY = FormatTools.getPhysicalSizeY(y);
+        Length sizeX = FormatTools.getPhysicalSizeX(x, convertUnits(xUnits));
+        Length sizeY = FormatTools.getPhysicalSizeY(y, convertUnits(yUnits));
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);
         }
@@ -266,9 +265,7 @@ public class GatanReader extends FormatReader {
         if (index < pixelSizes.size() - 2) {
           Double z = pixelSizes.get(index + 2);
           String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
-          z = correctForUnits(z, zUnits);
-          Length sizeZ = FormatTools.getPhysicalSizeZ(z);
-
+          Length sizeZ = FormatTools.getPhysicalSizeZ(z, convertUnits(zUnits));
           if (sizeZ != null) {
             store.setPixelsPhysicalSizeZ(sizeZ, 0);
           }
@@ -616,17 +613,16 @@ public class GatanReader extends FormatReader {
     }
   }
 
-  private Double correctForUnits(Double value, String units) {
-    Double newValue = value;
+  private Unit<Length> convertUnits(String units) {
     Collator c = Collator.getInstance(Locale.ENGLISH);
     if (units != null) {
       if (c.compare("nm", units) == 0) {
-        newValue /= 1000;
+        return UNITS.NM;
       } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
         LOGGER.warn("Not adjusting for unknown units: {}", units);
       }
     }
-    return newValue;
+    return UNITS.MICROM;
   }
 
 }
