@@ -831,38 +831,38 @@ namespace ome
 {% end %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        const std::string&    
-        getLightSourceType(index_type instrumentIndex,    
-                           index_type lightSourceIndex) const;    
-{% end header %}\   
-{% if fu.SOURCE_TYPE == "source" %}\    
-      const std::string&    
-      OMEXMLMetadata::getLightSourceType(index_type instrumentIndex,    
-                                         index_type lightSourceIndex) const   
-      {   
-        const char * const instrument_method("getLightSourceType [getInstrument]");   
-        ome::compat::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightSource(lightSourceIndex);   
-        return o->getLightSourceType();   
-      }   
-{% end source %}\   
-    
-{% if fu.SOURCE_TYPE == "header" %}\    
-        // Documented in base class.    
-        const std::string&    
-        getShapeType(index_type roiIndex,   
-                     index_type shapeIndex) const;    
-{% end header %}\   
-{% if fu.SOURCE_TYPE == "source" %}\    
-      const std::string&    
-      OMEXMLMetadata::getShapeType(index_type roiIndex,   
-                                   index_type shapeIndex) const   
-      {   
-        const char * const roi_method("getShapeType [getROI]");   
-        const char * const union_method("getShapeType [getUnion]");   
-        const char * const shape_method("getShapeType [getShape]");   
-        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getShape(shapeIndex), shape_method)->getShapeType();    
-      }   
+        // Documented in base class.
+        const std::string&
+        getLightSourceType(index_type instrumentIndex,
+                           index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      OMEXMLMetadata::getLightSourceType(index_type instrumentIndex,
+                                         index_type lightSourceIndex) const
+      {
+        const char * const instrument_method("getLightSourceType [getInstrument]");
+        ome::compat::shared_ptr<const ::${lang.omexml_model_package}::LightSource> o = safe_fetch(root->getInstrument(instrumentIndex), instrument_method)->getLightSource(lightSourceIndex);
+        return o->getLightSourceType();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const std::string&
+        getShapeType(index_type roiIndex,
+                     index_type shapeIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      OMEXMLMetadata::getShapeType(index_type roiIndex,
+                                   index_type shapeIndex) const
+      {
+        const char * const roi_method("getShapeType [getROI]");
+        const char * const union_method("getShapeType [getUnion]");
+        const char * const shape_method("getShapeType [getShape]");
+        return safe_fetch(safe_fetch(safe_fetch(root->getROI(roiIndex), roi_method)->getUnion(), union_method)->getShape(shapeIndex), shape_method)->getShapeType();
+      }
 {% end source %}\
 {% end %}\
 {% if debug %}\
@@ -1103,7 +1103,7 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isAbstractSubstitution %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isAbstractSubstitution %}\
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
@@ -1167,7 +1167,7 @@ ${counter(k, o, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //
@@ -1302,7 +1302,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         //
