@@ -471,7 +471,7 @@ public class GatanReader extends FormatReader {
         skipPadding();
         skipPadding();
         int num = in.readInt();
-        LOGGER.debug("{}{}: group({}) {", new Object[] {indent, i, num});
+        LOGGER.debug("{}{}: group({}) {} {", new Object[] {indent, i, num, labelString});
         parseTags(num, labelString, indent + "  ");
         LOGGER.debug("{}}", indent);
       }
