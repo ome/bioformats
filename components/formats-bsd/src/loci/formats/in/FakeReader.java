@@ -96,6 +96,7 @@ import ome.units.UNITS;
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
+ *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -115,6 +116,7 @@ public class FakeReader extends FormatReader {
   private static final String ROI_PREFIX = "ROI:";
 
   public static final int BOX_SIZE = 10;
+  private static final int ROI_SPACING = 10;
 
   public static final int DEFAULT_SIZE_X = 512;
   public static final int DEFAULT_SIZE_Y = 512;
@@ -868,6 +870,14 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  private Double getX(int i) {
+      return new Double(ROI_SPACING * i % sizeX);
+  }
+
+  private Double getY(int i) {
+      return new Double(ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
+  }
+
   private void fillRegions(MetadataStore store, int imageIndex) {
     int roiRefCount = 0;
     String roiID;
@@ -878,10 +888,10 @@ public class FakeReader extends FormatReader {
         String ellipseID = "Ellipse:" + roiCount + ":" + 0;
 
         store.setEllipseID(ellipseID, roiCount, 0);
-        store.setEllipseX(new Double(i % sizeX), roiCount, 0);
-        store.setEllipseY(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
-        store.setEllipseRadiusX(new Double(1), roiCount, 0);
-        store.setEllipseRadiusY(new Double(1), roiCount, 0);
+        store.setEllipseX(getX(i) + 5.0, roiCount, 0);
+        store.setEllipseY(getY(i) + 5.0, roiCount, 0);
+        store.setEllipseRadiusX(nefw Double(5.0), roiCount, 0);
+        store.setEllipseRadiusY(new Double(5.0), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -893,8 +903,8 @@ public class FakeReader extends FormatReader {
         String labelID = "Label:" + roiCount + ":" + 0;
 
         store.setLabelID(labelID, roiCount, 0);
-        store.setLabelX(new Double(i % sizeX), roiCount, 0);
-        store.setLabelY(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
+        store.setLabelX(getX(i), roiCount, 0);
+        store.setLabelY(getY(i), roiCount, 0);
         store.setLabelText("Label " + i, roiCount, 0 );
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
@@ -907,10 +917,10 @@ public class FakeReader extends FormatReader {
         String lineID = "Line:" + roiCount + ":" + 0;
 
         store.setLineID(lineID, roiCount, 0);
-        store.setLineX1(new Double(i % sizeX), roiCount, 0);
-        store.setLineY1(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
-        store.setLineX2(new Double(i % sizeX), roiCount, 0);
-        store.setLineY2(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
+        store.setLineX1(getX(i), roiCount, 0);
+        store.setLineY1(getY(i), roiCount, 0);
+        store.setLineX2(getX(i) + 5.0, roiCount, 0);
+        store.setLineY2(getY(i) + 5.0, roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -933,8 +943,8 @@ public class FakeReader extends FormatReader {
         String pointID = "Point:" + roiCount + ":" + 0;
 
         store.setPointID(pointID, roiCount, 0);
-        store.setPointX(new Double(i % sizeX), roiCount, 0);
-        store.setPointY(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
+        store.setPointX(getX(i), roiCount, 0);
+        store.setPointY(getY(i), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -970,8 +980,8 @@ public class FakeReader extends FormatReader {
         String rectangleID = "Rectangle:" + roiCount + ":" + 0;
 
         store.setRectangleID(rectangleID, roiCount, 0);
-        store.setRectangleX(new Double(i % sizeX), roiCount, 0);
-        store.setRectangleY(new Double(((int) i / sizeX) % sizeY), roiCount, 0);
+        store.setRectangleX(getX(i), roiCount, 0);
+        store.setRectangleY(getY(i), roiCount, 0);
         store.setRectangleWidth(new Double(5.0), roiCount, 0);
         store.setRectangleHeight(new Double(5.0), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
