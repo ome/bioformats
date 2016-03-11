@@ -890,7 +890,7 @@ public class FakeReader extends FormatReader {
         store.setEllipseID(ellipseID, roiCount, 0);
         store.setEllipseX(getX(i) + 5.0, roiCount, 0);
         store.setEllipseY(getY(i) + 5.0, roiCount, 0);
-        store.setEllipseRadiusX(nefw Double(5.0), roiCount, 0);
+        store.setEllipseRadiusX(new Double(5.0), roiCount, 0);
         store.setEllipseRadiusY(new Double(5.0), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
