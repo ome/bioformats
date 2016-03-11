@@ -620,14 +620,14 @@ ${customUpdatePropertyContent[prop.name]}
 	{
 		// Creating XML block for ${klass.name}
 {% if klass.isAbstractProprietary %}\
-      // Class is abstract so we may need to create its "container" element         
-      if (!"${klass.name}".equals(${klass.name}_element.getTagName()))         
-      {
+    // Class is abstract so we may need to create its "container" element
+    if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
+    {
       Element abstractElement =
           document.createElementNS(NAMESPACE, "${klass.name}");
-        abstractElement.appendChild(${klass.name}_element);
-        ${klass.name}_element = abstractElement;
-      }
+      abstractElement.appendChild(${klass.name}_element);
+      ${klass.name}_element = abstractElement;
+    }
 {% end if AbstractProprietary %}\
 		if (${klass.name}_element == null)
 		{

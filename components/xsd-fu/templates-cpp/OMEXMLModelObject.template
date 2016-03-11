@@ -1234,15 +1234,15 @@ ${customUpdatePropertyContent[prop.name]}
         element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
         element.setAttribute("xsi:schemaLocation", getXMLNamespace() + " " + getXMLNamespace() + "/ome.xsd");
 {% end %}\
-{% if klass.isAbstractProprietary %}\   
-        // Class is abstract so we may need to create its "container" element   
-        if (std::string(element.getTagName()) != "${klass.name}")   
-          {   
-            common::xml::dom::Element abstractElement =   
-              document.createElementNS(getXMLNamespace(), "${klass.name}");   
-            abstractElement.appendChild(element);   
-            element = abstractElement;    
-          }   
+{% if klass.isAbstractProprietary %}\
+        // Class is abstract so we may need to create its "container" element
+        if (std::string(element.getTagName()) != "${klass.name}")
+          {
+            common::xml::dom::Element abstractElement =
+              document.createElementNS(getXMLNamespace(), "${klass.name}");
+            abstractElement.appendChild(element);
+            element = abstractElement;
+          }
 {% end %}\
         if (!element)
           {
