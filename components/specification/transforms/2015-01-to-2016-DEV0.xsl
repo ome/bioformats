@@ -33,6 +33,7 @@
     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    xmlns:str="http://exslt.org/strings"
     exclude-result-prefixes="OME Bin SPW SA ROI"
     xmlns:exsl="http://exslt.org/common"
     extension-element-prefixes="exsl" version="1.0">
@@ -48,6 +49,59 @@
 
     <!-- Actual schema changes -->
 
+    <!-- Rewrite abstract elements for Shape and LightSource -->
+
+    <xsl:template match="OME:LightSource">
+        <xsl:variable name="lightSourceRoot" select="." />
+        <xsl:variable name="lightSourceType"  >
+    	      <xsl:for-each select="str:tokenize('Laser,Arc,Filament,LightEmittingDiode,GenericExcitationSource', ',')">
+                <xsl:variable name="lightSource" select="." />
+                <xsl:if test="($lightSourceRoot/*[name()= $lightSource]) or ($lightSourceRoot/*[name()= concat('OME:',$lightSource)])">
+                    <xsl:value-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:element name="{$lightSourceType}"  namespace="{$newOMENS}">
+            <xsl:apply-templates select="@*|*[name()=$lightSourceType]/@*|*[name()=concat('OME:',$lightSourceType)]/@*"/>
+            <xsl:apply-templates select="node()"/>
+            <xsl:apply-templates select="*[name()=$lightSourceType]/node()"/>
+            <xsl:apply-templates select="*[name()=concat('OME:',$lightSourceType)]/node()"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <xsl:template match="OME:Laser"/>
+    <xsl:template match="OME:Arc"/>
+    <xsl:template match="OME:Filament"/>
+    <xsl:template match="OME:LightEmittingDiode"/>
+    <xsl:template match="OME:GenericExcitationSource"/>
+    
+    <xsl:template match="ROI:Shape">
+        <xsl:variable name="shapeRoot" select="." />
+        <xsl:variable name="shapeType"  >
+    	      <xsl:for-each select="str:tokenize('Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label', ',')">
+                <xsl:variable name="shape" select="." />
+                <xsl:if test="($shapeRoot/*[name()= $shape]) or ($shapeRoot/*[name()= concat('ROI:',$shape)])">
+                    <xsl:value-of select="."/>
+                </xsl:if>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:element name="{$shapeType}" namespace="{$newROINS}">
+            <xsl:apply-templates select="@*|*[name()=$shapeType]/@*|*[name()=concat('ROI:',$shapeType)]/@*"/>
+            <xsl:apply-templates select="node()"/>
+            <xsl:apply-templates select="*[name()=$shapeType]/node()"/>
+            <xsl:apply-templates select="*[name()=concat('ROI:',$shapeType)]/node()"/>
+        </xsl:element>
+    </xsl:template>  
+    
+    <xsl:template match="ROI:Line"/>
+    <xsl:template match="ROI:Rectangle"/>
+    <xsl:template match="ROI:Mask"/>
+    <xsl:template match="ROI:Ellipse"/>
+    <xsl:template match="ROI:Point"/>
+    <xsl:template match="ROI:Polyline"/>
+    <xsl:template match="ROI:Polygon"/>
+    <xsl:template match="ROI:Label"/>
+    
     <!-- strip Namespace from ROI -->
     <xsl:template match="ROI:ROI/@Namespace"/>
 

@@ -29,6 +29,7 @@ class TemplateInfo(object):
         self.ABSTRACT_PROPRIETARY_OVERRIDE = \
             config.ABSTRACT_PROPRIETARY_OVERRIDE
         self.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
+        self.COMPLEX_OVERRIDE = config.COMPLEX_OVERRIDE
         self.REF_REGEX = config.REF_REGEX
 
     def link_overridden(self, property_name, class_name):

@@ -36,6 +36,11 @@ class OMEModelObject(OMEModelEntity):
             or self.name == 'Annotation'
         self.plural = None
         self.manyToMany = False
+        self.isAbstractSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.name)
+        self.isConcreteSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.base)
+        self.topLevelName = element.getName()
+        if self.isConcreteSubstitution:
+            self.topLevelName = self.base
         try:
             try:
                 root = ElementTree.fromstring(element.appinfo)
@@ -44,7 +49,7 @@ class OMEModelObject(OMEModelEntity):
                 raise
             if root.find('abstract') is not None:
                 self.isAbstract = True
-            if root.find('abstractproprietary') is not None:
+            if root.find('abstractproprietary') is not None:    
                 self.isAbstractProprietary = True
             if root.find('unique') is not None:
                 self.isUnique = True

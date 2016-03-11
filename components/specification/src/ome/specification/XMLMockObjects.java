@@ -54,6 +54,7 @@ import ome.xml.model.Filament;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
+import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -1126,7 +1127,7 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-	PositiveFloat emWave = new PositiveFloat(300.3);
+    PositiveFloat emWave = new PositiveFloat(300.3);
     channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
     PositiveFloat exWave = new PositiveFloat(400.3);
     channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
