@@ -173,6 +173,12 @@ public class FakeReaderTest {
   }
 
   @Test
+  public void testReopenFile() throws Exception {
+    reader.setId("foo.fake");
+    reader.reopenFile();
+  }
+
+  @Test
   public void testCompanionFile() throws Exception {
     Files.createFile(wd.resolve("foo.fake.ini"));
     reader.setId(Files.createFile(wd.resolve("foo.fake")).toString());
