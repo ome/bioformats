@@ -769,6 +769,10 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  @Override
+  public void reopenFile() throws IOException {
+  }
+
   private void fillPhysicalSizes(MetadataStore store) {
     if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
     for (int s=0; s<getSeriesCount(); s++) {
