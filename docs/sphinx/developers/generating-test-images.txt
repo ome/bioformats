@@ -47,6 +47,9 @@ Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` w
     echo "physicalSizeY=10 pm" >> physicalSizes.fake.ini
     echo "physicalSizeZ=.002 mm" >> physicalSizes.fake.ini
 
+High-content screening
+----------------------
+
 To generate a simple plate file:
 
 ::
@@ -78,6 +81,9 @@ to zero will be ignored and the defaults used. So, for example, the file:
     one-key-set&screens=0&plates=0&plateRows=0&plateCols=0&plateAcqs=0&fields=1.fake
 
 will create a simple plate with no screen.
+
+Key-value pairs
+---------------
 
 There are several other keys that can be added, a complete list of these,
 with their default values, is shown below.
