@@ -828,7 +828,7 @@ namespace ome
       OMEXMLMetadata::get${abstractClass}Type(${indexes_string(v)}) const
       {
 {% for k, v in indexes[abstractClass].items() %}\
-        return ${safe_accessor([{'accessor':'root'}]+accessor(abstractClass, k, abstractClass, func=accessor_string_complex)[:-1] + [{'accessor':"get%sType()" % abstractClass}], "get%sType()" % abstractClass)};
+        return ${safe_accessor(['root']+accessor(abstractClass, k, abstractClass) + ["get%sType()" % abstractClass], "get%sType()" % abstractClass)};
 {% end %}\
       }
 {% end source %}\

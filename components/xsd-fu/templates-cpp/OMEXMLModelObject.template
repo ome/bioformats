@@ -1163,56 +1163,31 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 
-{% if klass.name == "LightSource" %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        /**
-         * Get the LightSource type.
-         *
-         * @returns the concrete type of the LightSource.
-         */
-        virtual const std::string&
-        getLightSourceType() const = 0;
-{% end header %}\
-{% end light source%}\
-{% if klass.name != "AnnotationRef" and klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if klass.isConcreteSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
-        getLightSourceType() const;
+        get${klass.parentName}Type() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      ${klass.name}::getLightSourceType() const
+      ${klass.name}::get${klass.parentName}Type() const
       {
-	static const std::string type("${klass.name}");
-	return type;
+	      static const std::string type("${klass.name}");
+	      return type;
       }
 {% end source %}\
-{% end has parent light source %}\
-{% if klass.name == "Shape" %}\
+{% end  %}\
+{% if klass.isAbstractSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
-         * Get the Shape type.
+         * Get the ${klass.name} type.
          *
-         * @returns the concrete type of the Shape.
+         * @returns the concrete type of the ${klass.name}.
          */
         virtual const std::string&
-        getShapeType() const = 0;
+        get${klass.name}Type() const = 0;
 {% end header %}\
-{% end shape%}\
-{% if klass.name != "AnnotationRef" and klass.parents is not None and "Shape" in klass.parents.keys() %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        const std::string&
-        getShapeType() const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      ${klass.name}::getShapeType() const
-      {
-	static const std::string type("${klass.name}");
-	return type;
-      }
-{% end source %}\
-{% end has parent shape %}\
+{% end %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
