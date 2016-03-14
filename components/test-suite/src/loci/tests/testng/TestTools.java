@@ -141,7 +141,11 @@ public class TestTools {
   /** Returns true if a byte buffer of the given size will fit in memory. */
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
-    long mem = r.freeMemory() / 2;
+
+    // better indicator than freeMemory() of how much memory is actually available
+    long mem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+
+    mem /= 2;
     int threadCount = 1;
     try {
       threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
