@@ -70,7 +70,6 @@
     ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
     return o.getLinked${prop.methodName}().getID();
 {% end %}
-// ${o.parent}
 {% when obj.isConcreteSubstitution or o.isAbstractSubstitution %}\
     // ${obj.parentName} is abstract and not a reference
     ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
