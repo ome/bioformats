@@ -56,7 +56,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-       (o.isAbstract or o.isAbstractProprietary):
+       (o.isAbstract):
       return True
     return False
 
@@ -252,7 +252,7 @@ public class FilterMetadata implements MetadataStore
 	}
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
 	// MARKER [EEE]
 {% end debug %}\

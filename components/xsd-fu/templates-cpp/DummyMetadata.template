@@ -119,7 +119,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-      (o.isAbstract or o.isAbstractProprietary):
+      (o.isAbstract):
         return True
     return False
 
@@ -466,9 +466,9 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const;
+      DummyMetadata::get${abstractClass}Type(${indexes_string(v)}) const
       {
-        throw MetadataException("AggregateMetadata", "get${abstractClass}Type",
+        throw MetadataException("DummyMetadata", "get${abstractClass}Type",
                                 "intentionally not implemented");
       }
 {% end source %}\
@@ -476,43 +476,17 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
-        get${abstractClass}Count(${indexes_string(v)}) const;
+        get${abstractClass}Count(${indexes_string(v[:-1])}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::get${abstractClass}Count(${indexes_string(v)}) const;
+      DummyMetadata::index_type
+      DummyMetadata::get${abstractClass}Count(${indexes_string(v[:-1])}) const
       {
-        throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
+        throw MetadataException("DummyMetadata", "get${abstractClass}Count",
                                 "intentionally not implemented");
       }
 {% end source %}\
 {% end %}\
-{% end %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getLightSourceType(index_type instrumentIndex, index_type lightSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      DummyMetadata::getLightSourceType(index_type /* instrumentIndex */, index_type /* lightSourceIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLightSourceType", "intentionally not implemented");
-      }
-{% end source %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getShapeType(index_type roiIndex, index_type shapeIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      DummyMetadata::getShapeType(index_type /* roiIndex */, index_type /* shapeIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getShapeType", "intentionally not implemented");
-      }
-{% end source %}\
 {% end %}\
 {% if debug %}\
         // -- Entity counting (code generated definitions) --  
@@ -623,7 +597,7 @@ ${counter(k, o, v)}\
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -753,7 +727,7 @@ ${getter(k, o, prop, v)}\
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage

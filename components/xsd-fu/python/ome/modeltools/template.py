@@ -26,8 +26,6 @@ class TemplateInfo(object):
             config.BACK_REFERENCE_LINK_OVERRIDE
         self.BACK_REFERENCE_NAME_OVERRIDE = \
             config.BACK_REFERENCE_NAME_OVERRIDE
-        self.ABSTRACT_PROPRIETARY_OVERRIDE = \
-            config.ABSTRACT_PROPRIETARY_OVERRIDE
         self.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
         self.COMPLEX_OVERRIDE = config.COMPLEX_OVERRIDE
         self.REF_REGEX = config.REF_REGEX

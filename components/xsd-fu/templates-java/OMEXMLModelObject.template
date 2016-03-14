@@ -84,10 +84,10 @@ import ${lang.omexml_model_enums_package}.handlers.*;
 import ${lang.omexml_model_package}.primitives.*;
 
 {% choose %}\
-{% when klass.isAbstractProprietary or klass.isAbstract %}\
+{% when klass.isAbstract %}\
 public abstract class ${klass.name} extends ${klass.parentName}
 {% end %}\
-{% when not klass.isAbstractProprietary and not klass.isAbstract %}\
+{% when not klass.isAbstract %}\
 public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% end %}\
@@ -202,13 +202,11 @@ ${customContent}\
 			value = ${klass.langBaseType}.valueOf(value_textContent);
 		}
 {% end %}\
-{% if not klass.isAbstractProprietary %}\
 		String tagName = element.getTagName();
 		if (!"${klass.name}".equals(tagName))
 		{
 			LOGGER.debug("Expecting node name of ${klass.name} got {}", tagName);
 		}
-{% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
@@ -326,7 +324,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-{% when prop.maxOccurs == 1 and ((not klass.isAbstractProprietary and not klass.isAbstract)or not prop.isAttribute) %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or not prop.isAttribute) %}\
 		List<Element> ${prop.name}_nodeList =
 				getChildrenByTagName(element, "${prop.name}");
 		if (${prop.name}_nodeList.size() > 1)
@@ -338,7 +336,7 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 		else if (${prop.name}_nodeList.size() != 0)
 		{
-{% if prop.isComplex() and not klass.isAbstractProprietary and not klass.isAbstract %}\
+{% if prop.isComplex() and not klass.isAbstract %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
 {% if prop.langTypeNS != 'List<MapPair>' %}\
@@ -366,8 +364,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 		}
 {% end %}\
-{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstractProprietary and not klass.isAbstract %}\
-{% if prop.isAbstractProprietary or prop.isAbstract %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
+{% if prop.isAbstract %}\
 {% if prop.isAbstractSubstitution %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
@@ -407,7 +405,7 @@ ${customUpdatePropertyContent[prop.name]}
     }
 {% end %}\
 {% end %}\
-{% if not prop.isAbstractProprietary and not prop.isAbstract %}\
+{% if not prop.isAbstract %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once
 		List<Element> ${prop.name}_nodeList =
@@ -561,7 +559,7 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 	}
 {% end %}\
-{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
 	public ${prop.instanceVariableType} get${prop.methodName}()
 	{
@@ -584,7 +582,7 @@ ${customUpdatePropertyContent[prop.name]}
 		return "${prop.defaultXsdValue}";
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property ${prop.name}
 	public ${prop.instanceVariableType} get${prop.methodName}()
 	{
@@ -596,7 +594,7 @@ ${customUpdatePropertyContent[prop.name]}
 		this.${prop.instanceVariableName} = ${prop.argumentName};
 	}
 {% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
+{% when prop.maxOccurs > 1 and not klass.isAbstract %}
 	// Property which occurs more than once
 	public int sizeOf${prop.methodName}List()
 	{
@@ -641,25 +639,15 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-{% if not klass.isAbstractProprietary %}\
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
-{% end if NOT AbstractProprietary %}\
+
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
-{% if klass.isAbstractProprietary %}\
-    // Class is abstract so we may need to create its "container" element
-    if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
-    {
-      Element abstractElement =
-          document.createElementNS(NAMESPACE, "${klass.name}");
-      abstractElement.appendChild(${klass.name}_element);
-      ${klass.name}_element = abstractElement;
-    }
-{% end if AbstractProprietary %}\
 		if (${klass.name}_element == null)
 		{
 			${klass.name}_element =
@@ -680,7 +668,7 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% for prop in klass.properties.values() %}\
 {% if not prop.isUnitsEnumeration %}\
-{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
+{% if not klass.isAbstract or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
 {% choose %}\

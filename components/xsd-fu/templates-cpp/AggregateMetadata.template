@@ -188,7 +188,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-      (o.isAbstract or o.isAbstractProprietary):
+      (o.isAbstract):
         return True
     return False
 
@@ -657,7 +657,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const;
+      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -675,11 +675,11 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
-        get${abstractClass}Count(${indexes_string(v)}) const;
+        get${abstractClass}Count(${indexes_string(v[:-1])}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       AggregateMetadata::index_type
-      AggregateMetadata::get${abstractClass}Count(${indexes_string(v)}) const;
+      AggregateMetadata::get${abstractClass}Count(${indexes_string(v[:-1])}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -687,7 +687,7 @@ namespace ome
           {
             ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->get${abstractClass}Count(${indexes_name_string(v)});
+              return retrieve->get${abstractClass}Count(${indexes_name_string(v[:-1])});
           }
         throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
                                 "no delegate MetadataRetrieve implementation");
@@ -695,50 +695,7 @@ namespace ome
 {% end source %}\
 {% end %}\
 {% end %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getLightSourceType(index_type instrumentIndex, index_type lightSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      AggregateMetadata::getLightSourceType(index_type instrumentIndex, index_type lightSourceIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getLightSourceType(instrumentIndex, lightSourceIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getLightSourceType",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getShapeType(index_type roiIndex, index_type shapeIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      AggregateMetadata::getShapeType(index_type roiIndex, index_type shapeIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getShapeType(roiIndex, shapeIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getShapeType",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-{% end %}\
+
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
 
@@ -890,7 +847,7 @@ ${counter(k, o, v)}\
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -1050,7 +1007,7 @@ ${getter(k, o, prop, v)}\
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage

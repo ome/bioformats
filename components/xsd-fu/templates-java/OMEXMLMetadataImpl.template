@@ -92,16 +92,16 @@
 		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
-		// ${prop.name} is abstract proprietary and is a reference
+		// ${prop.name} is abstract and is a reference
 		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
 		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
 				${prop.instanceVariableName}_reference);
-		// ${parent} is abstract proprietary
+		// ${parent} is abstract
 {% end %}\
 {% when is_abstract(parent) %}\
-		// ${parent} is abstract proprietary and not a reference
+		// ${parent} is abstract and not a reference
 		OME o0 = root;
 {% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)[:-1]) %}\
 {% choose %}\
@@ -187,7 +187,7 @@ ${customContent[obj.name][prop.name]}
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-       (o.isAbstract or o.isAbstractProprietary):
+       (o.isAbstract):
       return True
     return False
 
@@ -462,7 +462,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isAbstractSubstitution %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isAbstractSubstitution %}\
 	// ${o.name} entity counting
 {% for k, v in indexes[o.name].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
@@ -641,7 +641,7 @@ ${getter(k, o, prop, v)}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 	//
 	// ${o.name} property storage
 	//
