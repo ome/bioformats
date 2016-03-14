@@ -279,6 +279,7 @@ public class FakeReaderTest {
   public void testExtraMetadata() throws Exception {
     File fakeIni = mkIni("foo.fake.ini", "[GlobalMetadata]", "foo=bar");
     reader.setId(fakeIni.getAbsolutePath());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
@@ -286,6 +287,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeX(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeX=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
   
@@ -294,6 +296,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeX = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
 
@@ -301,6 +304,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeY(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeY=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
 
@@ -309,6 +313,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeY = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
   
@@ -316,6 +321,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeZ(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeZ=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
 
@@ -324,6 +330,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeZ = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
 
@@ -342,6 +349,7 @@ public class FakeReaderTest {
   public void testAcquisitionDate(String value, Timestamp date) throws Exception {
     reader.setId("foo&acquisitionDate=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
@@ -350,6 +358,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "acquisitionDate = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
@@ -357,6 +366,7 @@ public class FakeReaderTest {
   public void testAcquisitionDateMultiSeries(String value, Timestamp date) throws Exception {
     reader.setId("foo&series=10&acquisitionDate=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     for (int i = 0; i < 10; i++) {
       assertEquals(m.getImageAcquisitionDate(i), date);
     }
@@ -366,6 +376,7 @@ public class FakeReaderTest {
   public void testAnnotations(String key, String methodName) throws Exception {
     reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     Method method = Class.forName("loci.formats.meta.MetadataRetrieve").getMethod(methodName);
     assertEquals(method.invoke(m), 50);
     for (int i = 0; i < 5; i++) {
@@ -378,6 +389,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     Method method = Class.forName("loci.formats.meta.MetadataRetrieve").getMethod(methodName);
     assertEquals(method.invoke(m), 50);
     for (int i = 0; i < 5; i++) {
@@ -389,6 +401,7 @@ public class FakeReaderTest {
   public void testShapes(String key, String type) throws Exception {
     reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageCount(), 5);
     assertEquals(m.getROICount(), 50);
     for (int i = 0; i < m.getImageCount(); i++) {
@@ -405,6 +418,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));    
     assertEquals(m.getImageCount(), 5);
     assertEquals(m.getROICount(), 50);
     for (int i = 0; i < m.getImageCount(); i++) {
