@@ -114,6 +114,7 @@ public class FakeReader extends FormatReader {
   private static final String ANN_XML_VALUE_START = "<dummyXml>";
   private static final String ANN_XML_VALUE_END = "</dummyXml>";
   private static final String ROI_PREFIX = "ROI:";
+  private static final String SHAPE_PREFIX = "Shape:";
 
   public static final int BOX_SIZE = 10;
   private static final int ROI_SPACING = 10;
@@ -885,9 +886,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<ellipses; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String ellipseID = "Ellipse:" + roiCount + ":" + 0;
-
-        store.setEllipseID(ellipseID, roiCount, 0);
+        store.setEllipseID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setEllipseX(getX(i) + 5.0, roiCount, 0);
         store.setEllipseY(getY(i) + 5.0, roiCount, 0);
         store.setEllipseRadiusX(new Double(5.0), roiCount, 0);
@@ -900,9 +899,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<labels; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String labelID = "Label:" + roiCount + ":" + 0;
-
-        store.setLabelID(labelID, roiCount, 0);
+        store.setLabelID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setLabelX(getX(i), roiCount, 0);
         store.setLabelY(getY(i), roiCount, 0);
         store.setLabelText("Label " + i, roiCount, 0 );
@@ -914,9 +911,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<lines; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String lineID = "Line:" + roiCount + ":" + 0;
-
-        store.setLineID(lineID, roiCount, 0);
+        store.setLineID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setLineX1(getX(i), roiCount, 0);
         store.setLineY1(getY(i), roiCount, 0);
         store.setLineX2(getX(i) + 5.0, roiCount, 0);
@@ -929,9 +924,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<masks; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String maskID = "Mask:" + roiCount + ":" + 0;
-
-        store.setMaskID(maskID, roiCount, 0);
+        store.setMaskID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -940,9 +933,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<points; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String pointID = "Point:" + roiCount + ":" + 0;
-
-        store.setPointID(pointID, roiCount, 0);
+        store.setPointID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setPointX(getX(i), roiCount, 0);
         store.setPointY(getY(i), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
@@ -953,9 +944,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<polygons; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String polygonID = "Polygon:" + roiCount + ":" + 0;
-
-        store.setPolygonID(polygonID, roiCount, 0);
+        store.setPolygonID(SHAPE_PREFIX + roiCount, roiCount, 0);
         // store.setPolygonPoints(new Double(i % sizeX), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
@@ -965,9 +954,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<polylines; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String polylineID = "Polyline:" + roiCount + ":" + 0;
-
-        store.setPolylineID(polylineID, roiCount, 0);
+        store.setPolylineID(SHAPE_PREFIX + roiCount, roiCount, 0);
         // store.setPolylinePoints(new Double(i % sizeX), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
@@ -977,9 +964,7 @@ public class FakeReader extends FormatReader {
     for (int i=0; i<rectangles; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
-        String rectangleID = "Rectangle:" + roiCount + ":" + 0;
-
-        store.setRectangleID(rectangleID, roiCount, 0);
+        store.setRectangleID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setRectangleX(getX(i), roiCount, 0);
         store.setRectangleY(getY(i), roiCount, 0);
         store.setRectangleWidth(new Double(5.0), roiCount, 0);
