@@ -47,6 +47,9 @@ Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` w
     echo "physicalSizeY=10 pm" >> physicalSizes.fake.ini
     echo "physicalSizeZ=.002 mm" >> physicalSizes.fake.ini
 
+High-content screening
+----------------------
+
 To generate a simple plate file:
 
 ::
@@ -78,6 +81,23 @@ to zero will be ignored and the defaults used. So, for example, the file:
     one-key-set&screens=0&plates=0&plateRows=0&plateCols=0&plateAcqs=0&fields=1.fake
 
 will create a simple plate with no screen.
+
+Regions
+-------
+
+To generate a fake file containing regions of interest:
+
+    touch "regions&points=10.fake"
+    touch "regions&ellipses=20.fake"
+    touch "regions&rectangles=5&lines=25.fake"
+
+For each shape type, the value will specify the number of regions of interest
+to create where each region of interest contains a single shape of the input
+type. By convention, all generated regions of interests are not associated to
+any given Z, C or T plane.
+
+Key-value pairs
+---------------
 
 There are several other keys that can be added, a complete list of these,
 with their default values, is shown below.
@@ -195,6 +215,9 @@ with their default values, is shown below.
       * null
     - * color_x
       * the color for channel x, overrides the default color for that channel
+      *
+    - * ellipses, labels, lines, points, rectangles
+      * the number of ROIs containing one shape of the given type to generate
       *
 
 For full details of these keys, how unset and default values are handled and

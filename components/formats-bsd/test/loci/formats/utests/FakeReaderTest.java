@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -81,6 +82,35 @@ public class FakeReaderTest {
       {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
+
+  @DataProvider(name = "annotations")
+  public Object[][] annotations() {
+    return new Object[][] {
+      {"annBool", "getBooleanAnnotationCount"},
+      {"annComment", "getCommentAnnotationCount"},
+      {"annDouble", "getDoubleAnnotationCount"},
+      {"annLong", "getLongAnnotationCount"},
+      {"annMap", "getMapAnnotationCount"},
+      {"annTag", "getTagAnnotationCount"},
+      {"annTerm", "getTermAnnotationCount"},
+      {"annTime", "getTimestampAnnotationCount"},
+      {"annXml", "getXMLAnnotationCount"},
+    };
+  }
+
+  @DataProvider(name = "shapes")
+  public Object[][] shapes() {
+    return new Object[][] {
+      {"ellipses", "Ellipse"},
+      {"labels", "Label"},
+      {"lines", "Line"},
+      // {"masks", "Mask"},
+      {"points", "Point"},
+      // {"polygons", "Polygon"},
+      // {"polylines", "Polyline"},
+      {"rectangles", "Rectangle"},
     };
   }
 
@@ -249,6 +279,7 @@ public class FakeReaderTest {
   public void testExtraMetadata() throws Exception {
     File fakeIni = mkIni("foo.fake.ini", "[GlobalMetadata]", "foo=bar");
     reader.setId(fakeIni.getAbsolutePath());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
@@ -256,6 +287,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeX(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeX=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
   
@@ -264,6 +296,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeX = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
   }
 
@@ -271,6 +304,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeY(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeY=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
 
@@ -279,6 +313,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeY = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
   }
   
@@ -286,6 +321,7 @@ public class FakeReaderTest {
   public void testPhysicalSizeZ(String value, Length length) throws Exception {
     reader.setId("foo&physicalSizeZ=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
   }
 
@@ -294,13 +330,26 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "physicalSizeZ = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+  }
+
+  @Test(expectedExceptions={ RuntimeException.class })
+  public void testPhysicalSizeZBadParsing() throws Exception {
+    reader.setId("foo&physicalSizeZ=1 1.fake");
+  }
+
+  @Test(expectedExceptions={ RuntimeException.class })
+  public void testPhysicalSizeZIniBadParsing() throws Exception {
+    mkIni("foo.fake.ini", "physicalSizeZ = 1 1");
+    reader.setId(wd.resolve("foo.fake").toString());
   }
 
   @Test(dataProvider = "acquisition dates")
   public void testAcquisitionDate(String value, Timestamp date) throws Exception {
     reader.setId("foo&acquisitionDate=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
@@ -309,6 +358,7 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "acquisitionDate = " + value);
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
   }
 
@@ -316,197 +366,67 @@ public class FakeReaderTest {
   public void testAcquisitionDateMultiSeries(String value, Timestamp date) throws Exception {
     reader.setId("foo&series=10&acquisitionDate=" + value + ".fake");
     m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     for (int i = 0; i < 10; i++) {
       assertEquals(m.getImageAcquisitionDate(i), date);
     }
   }
 
-  @Test
-  public void testBooleanAnnotation() throws Exception {
-    reader.setId("foo&series=5&annBool=10.fake");
+  @Test(dataProvider = "annotations")
+  public void testAnnotations(String key, String methodName) throws Exception {
+    reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getBooleanAnnotationCount(), 50);
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    Method method = Class.forName("loci.formats.meta.MetadataRetrieve").getMethod(methodName);
+    assertEquals(method.invoke(m), 50);
     for (int i = 0; i < 5; i++) {
       assertEquals(m.getImageAnnotationRefCount(0), 10);
     }
   }
 
-  @Test
-  public void testBooleanAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannBool = 10");
+  @Test(dataProvider = "annotations")
+  public void testAnnotationsINI(String key, String methodName) throws Exception {
+    mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getBooleanAnnotationCount(), 50);
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    Method method = Class.forName("loci.formats.meta.MetadataRetrieve").getMethod(methodName);
+    assertEquals(method.invoke(m), 50);
     for (int i = 0; i < 5; i++) {
       assertEquals(m.getImageAnnotationRefCount(0), 10);
     }
   }
 
-  @Test
-  public void testCommentAnnotation() throws Exception {
-    reader.setId("foo&series=5&annComment=10.fake");
+  @Test(dataProvider = "shapes")
+  public void testShapes(String key, String type) throws Exception {
+    reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getCommentAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getImageCount(), 5);
+    assertEquals(m.getROICount(), 50);
+    for (int i = 0; i < m.getImageCount(); i++) {
+      assertEquals(m.getImageROIRefCount(0), 10);
+    }
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), type);
     }
   }
 
-  @Test
-  public void testCommentAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannComment = 10");
+  @Test(dataProvider = "shapes")
+  public void testShapesINI(String key, String type) throws Exception {
+    mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getCommentAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));    
+    assertEquals(m.getImageCount(), 5);
+    assertEquals(m.getROICount(), 50);
+    for (int i = 0; i < m.getImageCount(); i++) {
+      assertEquals(m.getImageROIRefCount(0), 10);
     }
-  }
-
-  @Test
-  public void testDoubleAnnotation() throws Exception {
-    reader.setId("foo&series=5&annDouble=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getDoubleAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testDoubleAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannDouble = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getDoubleAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testLongAnnotation() throws Exception {
-    reader.setId("foo&series=5&annLong=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getLongAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testLongAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannLong = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getLongAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testMapAnnotation() throws Exception {
-    reader.setId("foo&series=5&annMap=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getMapAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testMapAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannMap = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getMapAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTagAnnotation() throws Exception {
-    reader.setId("foo&series=5&annTag=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTagAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTagAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannTag = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTagAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTermAnnotation() throws Exception {
-    reader.setId("foo&series=5&annTerm=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTermAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTermAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannTerm = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTermAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTimeAnnotation() throws Exception {
-    reader.setId("foo&series=5&annTime=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTimestampAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testTimeAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannTime = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getTimestampAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testXMLAnnotation() throws Exception {
-    reader.setId("foo&series=5&annXml=10.fake");
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getXMLAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
-    }
-  }
-
-  @Test
-  public void testXMLAnnotationINI() throws Exception {
-    mkIni("foo.fake.ini", "series = 5\nannXml = 10");
-    reader.setId(wd.resolve("foo.fake").toString());
-    m = service.asRetrieve(reader.getMetadataStore());
-    assertEquals(m.getXMLAnnotationCount(), 50);
-    for (int i = 0; i < 5; i++) {
-      assertEquals(m.getImageAnnotationRefCount(0), 10);
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), type);
     }
   }
 }

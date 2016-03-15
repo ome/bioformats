@@ -96,6 +96,7 @@ import ome.units.UNITS;
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
  *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
+ *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -112,8 +113,11 @@ public class FakeReader extends FormatReader {
   private static final String ANN_COMMENT_VALUE = "Comment:";
   private static final String ANN_XML_VALUE_START = "<dummyXml>";
   private static final String ANN_XML_VALUE_END = "</dummyXml>";
+  private static final String ROI_PREFIX = "ROI:";
+  private static final String SHAPE_PREFIX = "Shape:";
 
   public static final int BOX_SIZE = 10;
+  private static final int ROI_SPACING = 10;
 
   public static final int DEFAULT_SIZE_X = 512;
   public static final int DEFAULT_SIZE_Y = 512;
@@ -129,6 +133,13 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /* dimensions per image */
+  private int sizeX = DEFAULT_SIZE_X;
+  private int sizeY = DEFAULT_SIZE_Y;
+  private int sizeZ = DEFAULT_SIZE_Z;
+  private int sizeC = DEFAULT_SIZE_C;
+  private int sizeT = DEFAULT_SIZE_T;
+
   /** exposure time per plane info */
   private Time exposureTime = null;
 
@@ -136,6 +147,15 @@ public class FakeReader extends FormatReader {
   private Length physicalSizeX, physicalSizeY, physicalSizeZ;
 
   /* annotation counts per file */
+  private int annBool = 0;
+  private int annComment = 0;
+  private int annDouble = 0;
+  private int annLong = 0;
+  private int annMap = 0;
+  private int annTime = 0;
+  private int annTag = 0;
+  private int annTerm = 0;
+  private int annXml = 0;
   private int annotationCount = 0;
   private int annotationBoolCount = 0;
   private int annotationCommentCount = 0;
@@ -146,6 +166,17 @@ public class FakeReader extends FormatReader {
   private int annotationTermCount = 0;
   private int annotationTimeCount = 0;
   private int annotationXmlCount = 0;
+
+  /* ROIs per image*/
+  private int ellipses = 0;
+  private int labels = 0;
+  private int lines = 0;
+  private int masks = 0;
+  private int points = 0;
+  private int polygons = 0;
+  private int polylines = 0;
+  private int rectangles = 0;
+  private int roiCount = 0;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -420,11 +451,7 @@ public class FakeReader extends FormatReader {
     }
 
     String name = null;
-    int sizeX = DEFAULT_SIZE_X;
-    int sizeY = DEFAULT_SIZE_Y;
-    int sizeZ = DEFAULT_SIZE_Z;
-    int sizeC = DEFAULT_SIZE_C;
-    int sizeT = DEFAULT_SIZE_T;
+
     int thumbSizeX = 0; // default
     int thumbSizeY = 0; // default
     int pixelType = DEFAULT_PIXEL_TYPE;
@@ -450,16 +477,6 @@ public class FakeReader extends FormatReader {
     int plateCols = 0;
     int fields = 0;
     int plateAcqs = 0;
-
-    int annBool = 0;
-    int annComment = 0;
-    int annDouble = 0;
-    int annLong = 0;
-    int annMap = 0;
-    int annTime = 0;
-    int annTag = 0;
-    int annTerm = 0;
-    int annXml = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -558,6 +575,14 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("ellipses")) ellipses = intValue;
+      else if (key.equals("labels")) labels = intValue;
+      else if (key.equals("lines")) lines = intValue;
+      else if (key.equals("masks")) masks = intValue;
+      else if (key.equals("points")) points = intValue;
+      else if (key.equals("polygons")) polygons = intValue;
+      else if (key.equals("polylines")) polylines = intValue;
+      else if (key.equals("rectangles")) rectangles = intValue;
       else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
       else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
       else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
@@ -669,8 +694,8 @@ public class FakeReader extends FormatReader {
           store.setChannelColor(channel, currentImageIndex, c);
         }
       }
-      fillAnnotations(store, currentImageIndex, annBool, annComment,
-        annDouble, annLong, annMap, annTag, annTerm, annTime, annXml);
+      fillAnnotations(store, currentImageIndex);
+      fillRegions(store, currentImageIndex);
     }
 
     // for indexed color images, create lookup tables
@@ -737,7 +762,7 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  private void fillAnnotations(MetadataStore store, int imageIndex, int annBool, int annComment, int annDouble, int annLong, int annMap, int annTag, int annTerm, int annTime, int annXml) {
+  private void fillAnnotations(MetadataStore store, int imageIndex) {
 
     int annotationRefCount = 0;
     String annotationID;
@@ -843,6 +868,110 @@ public class FakeReader extends FormatReader {
       annotationXmlCount++;
       annotationCount++;
       annotationRefCount++;
+    }
+  }
+
+  private Double getX(int i) {
+      return new Double(ROI_SPACING * i % sizeX);
+  }
+
+  private Double getY(int i) {
+      return new Double(ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
+  }
+
+  private void fillRegions(MetadataStore store, int imageIndex) {
+    int roiRefCount = 0;
+    String roiID;
+
+    for (int i=0; i<ellipses; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setEllipseID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setEllipseX(getX(i) + 5.0, roiCount, 0);
+        store.setEllipseY(getY(i) + 5.0, roiCount, 0);
+        store.setEllipseRadiusX(new Double(5.0), roiCount, 0);
+        store.setEllipseRadiusY(new Double(5.0), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<labels; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setLabelID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setLabelX(getX(i), roiCount, 0);
+        store.setLabelY(getY(i), roiCount, 0);
+        store.setLabelText("Label " + i, roiCount, 0 );
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<lines; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setLineID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setLineX1(getX(i), roiCount, 0);
+        store.setLineY1(getY(i), roiCount, 0);
+        store.setLineX2(getX(i) + 5.0, roiCount, 0);
+        store.setLineY2(getY(i) + 5.0, roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<masks; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setMaskID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<points; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPointID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setPointX(getX(i), roiCount, 0);
+        store.setPointY(getY(i), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<polygons; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPolygonID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        // store.setPolygonPoints(new Double(i % sizeX), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<polylines; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPolylineID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        // store.setPolylinePoints(new Double(i % sizeX), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<rectangles; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setRectangleID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setRectangleX(getX(i), roiCount, 0);
+        store.setRectangleY(getY(i), roiCount, 0);
+        store.setRectangleWidth(new Double(5.0), roiCount, 0);
+        store.setRectangleHeight(new Double(5.0), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
     }
   }
 
@@ -991,7 +1120,7 @@ public class FakeReader extends FormatReader {
   }
 
   private Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([\\D\\S]*)\\s*").matcher(value);
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
       if (!m.matches()) {
         throw new RuntimeException(String.format(
                 "%s does not match a physical size!", value));
