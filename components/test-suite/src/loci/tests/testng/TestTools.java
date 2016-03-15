@@ -494,4 +494,23 @@ public class TestTools {
     return ir;
   }
 
+  /**
+   * Determine whether or not a Throwable was caused by an OutOfMemoryError.
+   *
+   * @param t Throwable object to check
+   * @return true if <code>t</code> is or was caused by an OutOfMemoryError, false otherwise
+   */
+  public static boolean isOutOfMemory(Throwable t) {
+    if (t instanceof OutOfMemoryError) {
+      return true;
+    }
+    while (t.getCause() != null) {
+      if (t.getCause() instanceof OutOfMemoryError) {
+        return true;
+      }
+      t = t.getCause();
+    }
+    return false;
+  }
+
 }

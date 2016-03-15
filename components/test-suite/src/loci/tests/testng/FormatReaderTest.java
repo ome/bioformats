@@ -314,9 +314,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbImage(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
 
         int actualX = b.getWidth();
@@ -389,9 +392,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbBytes(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
         success = b.length == expected;
         if (!success) {
