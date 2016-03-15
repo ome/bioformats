@@ -413,7 +413,99 @@ public final class DataTools {
     return sb.toString();
   }
 
-  /** Normalize the decimal separator for the user's locale. */
+  /**
+   * Parses the input string into a short
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Short parseShort(String value) {
+    try {
+      return Short.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a byte
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Byte parseByte(String value) {
+    try {
+      return Byte.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into an integer
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Integer parseInteger(String value) {
+    try {
+      return Integer.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a long
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Long parseLong(String value) {
+    try {
+      return Long.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a float accounting for the locale decimal
+   * separator
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Float parseFloat(String value) {
+    try {
+      return Float.valueOf(sanitizeDecimalString(value));
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse float value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a double accounting for the locale decimal
+   * separator
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Double parseDouble(String value) {
+    try {
+      return Double.valueOf(sanitizeDecimalString(value));
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse double value", e);
+    }
+    return null;
+  }
+
+  /** Normalizes the decimal separator of a string for the user's locale. */
+  private static String sanitizeDecimalString(String value) {
+    value = value.replaceAll("[^0-9,\\.]", "");
+    char separator = new DecimalFormatSymbols().getDecimalSeparator();
+    char usedSeparator = separator == '.' ? ',' : '.';
+    return value.replace(usedSeparator, separator);
+  }
+
+  /**
+   * Normalizes the decimal separator for the user's locale.
+   * @deprecated Use {@link parseDouble(String)} instead
+   */
+  @Deprecated
   public static String sanitizeDouble(String value) {
     value = value.replaceAll("[^0-9,\\.]", "");
     char separator = new DecimalFormatSymbols().getDecimalSeparator();
