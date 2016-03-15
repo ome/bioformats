@@ -36,6 +36,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 /**
  * A utility class with convenience methods for
  * reading, writing and decoding words.
@@ -49,6 +52,7 @@ public final class DataTools {
   // -- Constants --
 
   // -- Static fields --
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
   // -- Constructor --
 
