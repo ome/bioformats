@@ -197,7 +197,9 @@ public class FakeReaderTest {
 
   @Test
   public void testDefaultValues() throws Exception {
-    reader.setId("foo.fake");
+    reader.setId("default.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(reader.getSizeX(), FakeReader.DEFAULT_SIZE_X);
     assertEquals(reader.getSizeY(), FakeReader.DEFAULT_SIZE_Y);
     assertEquals(reader.getSizeZ(), FakeReader.DEFAULT_SIZE_Z);
@@ -208,6 +210,11 @@ public class FakeReaderTest {
                  FakeReader.DEFAULT_RGB_CHANNEL_COUNT);
     assertEquals(reader.getDimensionOrder(),
                  FakeReader.DEFAULT_DIMENSION_ORDER);
+    assertEquals(m.getImageAcquisitionDate(0), null);
+    assertEquals(m.getPixelsPhysicalSizeX(0), null);
+    assertEquals(m.getPixelsPhysicalSizeY(0), null);
+    assertEquals(m.getPixelsPhysicalSizeZ(0), null);
+    assertEquals(m.getROICount(), 0);
   }
 
   @Test
