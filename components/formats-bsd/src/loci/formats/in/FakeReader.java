@@ -368,6 +368,43 @@ public class FakeReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     iniFile = null;
+    sizeX = DEFAULT_SIZE_X;
+    sizeY = DEFAULT_SIZE_Y;
+    sizeZ = DEFAULT_SIZE_Z;
+    sizeC = DEFAULT_SIZE_C;
+    sizeT = DEFAULT_SIZE_T;
+    exposureTime = null;
+    physicalSizeX = null;
+    physicalSizeY = null;
+    physicalSizeZ = null;
+    annBool = 0;
+    annComment = 0;
+    annDouble = 0;
+    annLong = 0;
+    annMap = 0;
+    annTime = 0;
+    annTag = 0;
+    annTerm = 0;
+    annXml = 0;
+    annotationCount = 0;
+    annotationBoolCount = 0;
+    annotationCommentCount = 0;
+    annotationDoubleCount = 0;
+    annotationLongCount = 0;
+    annotationMapCount = 0;
+    annotationTagCount = 0;
+    annotationTermCount = 0;
+    annotationTimeCount = 0;
+    annotationXmlCount = 0;
+    ellipses = 0;
+    labels = 0;
+    lines = 0;
+    masks = 0;
+    points = 0;
+    polygons = 0;
+    polylines = 0;
+    rectangles = 0;
+    roiCount = 0;
     super.close(fileOnly);
   }
 
