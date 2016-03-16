@@ -111,6 +111,34 @@
     <!-- strip Visible from Shape -->
     <xsl:template match="ROI:Shape/@Visible"/>
 
+    <!-- for MarkerStart from Line have all markers be Arrow -->
+    <xsl:template match="ROI:Line/@MarkerStart">
+      <xsl:attribute name="MarkerStart">
+        <xsl:text>Arrow</xsl:text>
+      </xsl:attribute>
+    </xsl:template>
+
+    <!-- for MarkerEnd from Line have all markers be Arrow -->
+    <xsl:template match="ROI:Line/@MarkerEnd">
+      <xsl:attribute name="MarkerEnd">
+        <xsl:text>Arrow</xsl:text>
+      </xsl:attribute>
+    </xsl:template>
+
+    <!-- for MarkerStart from Polyline have all markers be Arrow -->
+    <xsl:template match="ROI:Polyline/@MarkerStart">
+      <xsl:attribute name="MarkerStart">
+        <xsl:text>Arrow</xsl:text>
+      </xsl:attribute>
+    </xsl:template>
+
+    <!-- for MarkerEnd from Polyline have all markers be Arrow -->
+    <xsl:template match="ROI:Polyline/@MarkerEnd">
+      <xsl:attribute name="MarkerEnd">
+        <xsl:text>Arrow</xsl:text>
+      </xsl:attribute>
+    </xsl:template>
+
     <!-- Rewrite all namespaces -->
 
     <xsl:template match="OME:OME">
