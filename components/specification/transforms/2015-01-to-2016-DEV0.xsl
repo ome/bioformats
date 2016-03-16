@@ -105,6 +105,9 @@
     <!-- strip Namespace from ROI -->
     <xsl:template match="ROI:ROI/@Namespace"/>
 
+    <!-- strip LineCap from Shape -->
+    <xsl:template match="ROI:Shape/@LineCap"/>
+
     <!-- strip Visible from Shape -->
     <xsl:template match="ROI:Shape/@Visible"/>
 
