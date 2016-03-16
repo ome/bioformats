@@ -67,9 +67,10 @@ public class PQBinReader extends FormatReader {
   protected byte[] dataStore = null;
 
   /**
-   * Whether to pre-load all lifetime bins for faster loading.
+   * Block of time bins currently stored for faster loading.
    */
-  protected boolean preLoad = true;
+  int currentBlock;
+  
 
   // -- Constructor --
   /**
@@ -123,42 +124,64 @@ public class PQBinReader extends FormatReader {
 
     int binSize = sizeX * sizeY  * bpp;  // size in Bytes of a single 2D timebin.
     
-    // if data is of a manageable size then pre-load for performance
-    if (preLoad)  {
-      if (dataStore == null)
-      {
-        // The whole plane (all timebins) is  copied into storage
-        // to allow different sub-plane sizes to be used for different timebins
-        dataStore = new byte[planeSize];
-        byte[] rowBuf = new byte[bpp * timeBins * sizeX];
-        in.seek(HEADER_SIZE);
+    int blockLength = 512;  // no of timeBins pre-loaded as a block
+    int blockSize = sizeX * sizeY * blockLength * bpp;
+    
+    // pre-load data for performance
+  
+    if (dataStore == null) {
+      dataStore = new byte[blockSize];
+      currentBlock = -1;
+    }
+      
+    if (timeBin/blockLength != currentBlock)  {
+      
+      currentBlock = timeBin/blockLength;
+      // A subset of timebins (a Block) is  copied into storage
+      // to allow different sub-plane sizes to be used for different timebins
+      
+      byte[] rowBuf = new byte[bpp * timeBins * sizeX];
+      in.seek(HEADER_SIZE);
+      
+      int endOfBlock =  (currentBlock + 1) * blockLength;
+      int storeLength;
+      if (endOfBlock > timeBins) {
+        storeLength = timeBins - (currentBlock * blockLength);
+      }
+      else {
+        storeLength = blockLength;
+      }
+              
+      
+      for (int row = 0; row < sizeY; row++) {
+        in.read(rowBuf);
 
-        for (int row = 0; row < sizeY; row++) {
-          in.read(rowBuf);
+        int input = currentBlock * storeLength;
+        for (int col = 0; col < sizeX; col++) {
+          // set output to first pixel of this row in 2D plane
+          // corresponding to zeroth timeBin
+          int output = (row * sizeX + col) * bpp;
 
-          int input = 0;
-          for (int col = 0; col < sizeX; col++) {
-            // set output to first pixel of this row in 2D plane
-            // corresponding to zeroth timeBin
-            int output = (row * sizeX + col) * bpp;
-
-            for (int t = 0; t < timeBins; t++) {
-              for (int bb = 0; bb < bpp; bb++) {
-                dataStore[output + bb] = rowBuf[input + bb];
-              }
-              output += binSize;
-              input += bpp;
+          for (int t = 0; t < storeLength; t++) {
+            for (int bb = 0; bb < bpp; bb++) {
+              dataStore[output + bb] = rowBuf[input + bb];
             }
+            output += binSize;
+            input += bpp;
           }
         }
-      }
-        // chanStore loaded
 
-        // copy 2D plane  from chanStore  into buf
+      }
+      // dataStore loaded
+
+      // copy 2D plane  from dataStore  into buf
       int iLineSize = sizeX * bpp;
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
-      int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
+      
+      int binInStore = timeBin - (currentBlock * blockLength);
+      
+      int input = (binSize * binInstore) + (y * iLineSize) + (x * bpp);
       int output = 0;
 
       for (int row = 0; row < h; row++) {
@@ -166,29 +189,7 @@ public class PQBinReader extends FormatReader {
         input += iLineSize;
         output += oLineSize;
       }
-    }    // endif preLoad
-    else  {   // load each plane individually for large data
-          
-      byte[] rowBuf = new byte[bpp * timeBins * w];
-      
-      in.seek(HEADER_SIZE +  (y * sizeX * bpp * timeBins));
-
-      for (int row = 0; row < h; row++) {
-        in.skipBytes(x * bpp * timeBins);
-        in.read(rowBuf);
-
-        for (int col = 0; col < w; col++) {
-          int output = (row * w + col) * bpp;
-          int input = (col * timeBins + timeBin) * bpp;
-          for (int bb = 0; bb < bpp; bb++) {
-            buf[output + bb] = rowBuf[input + bb];
-          }
-        }
-
-        in.skipBytes(bpp * timeBins * (sizeX - x - w));
-      }
-    }  // end else
-   
+    }
     return buf;
   }
 
@@ -200,7 +201,8 @@ public class PQBinReader extends FormatReader {
       // init preLoading
       dataStore = null;
       timeBins = 0;
-      preLoad = true;
+      currentBlock = -1;
+     
     }
   }
 
@@ -249,14 +251,7 @@ public class PQBinReader extends FormatReader {
     m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
     m.moduloT.unit = "ps";
     
-    // disable pre-load mode for very large files
-    // threshold is set to smaller than the  size of the largest test file currently available
-    if ( m.sizeX * m.sizeY * m.sizeT  >  (900 * 200 * 200))  {
-      preLoad = false;
-    }
-    else  {
-      preLoad = true;
-    }
+    
     
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
