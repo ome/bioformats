@@ -3742,7 +3742,8 @@ PlaneInfo (as Plane)
             Note: these values are all lower case so they match
             the standard HTML/CSS values. "fantasy" has been
             included for completeness; we do not recommend its
-            regular use.
+            regular use. This attribute is under consideration
+            for removal from the OME-XML schema.
           </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
