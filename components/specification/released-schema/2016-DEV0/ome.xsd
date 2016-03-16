@@ -4154,8 +4154,6 @@ PlaneInfo (as Plane)
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:enumeration value="Arrow"/>
-      <xsd:enumeration value="Circle"/>
-      <xsd:enumeration value="Square"/>
     </xsd:restriction>
   </xsd:simpleType>
 
