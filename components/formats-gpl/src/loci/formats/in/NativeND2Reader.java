@@ -375,6 +375,7 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
+      boolean foundAttributes = false;
       boolean useLastText = false;
       int blockCount = 0;
 
@@ -492,13 +493,14 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
-          if (foundMetadata) {
+          if (foundMetadata && foundAttributes) {
             imageOffsets.clear();
             imageNames.clear();
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
             foundMetadata = false;
+            foundAttributes = false;
             extraZDataCount = 0;
             useLastText = true;
           }
@@ -531,7 +533,7 @@ public class NativeND2Reader extends FormatReader {
           blockType.startsWith("CustomDataVa"))
         {
           if (blockType.equals("ImageAttribu")) {
-            foundMetadata = true;
+            foundAttributes = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -677,6 +679,10 @@ public class NativeND2Reader extends FormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
+            if (blockType.startsWith("ImageMetadat")) {
+              foundMetadata = true;
+            }
+
             int length = len - 12;
             byte[] b = new byte[length];
             in.read(b);
