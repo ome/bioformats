@@ -757,7 +757,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(ref.ROI1Shape1FontFamily, point1.getFontFamily());
         Assert.assertEquals(ref.ROI1Shape1FontSize, point1.getFontSize());
         Assert.assertEquals(ref.ROI1Shape1FontStyle, point1.getFontStyle());
-        Assert.assertEquals(ref.ROI1Shape1LineCap, point1.getLineCap());
         Assert.assertEquals(ref.ROI1Shape1StrokeDashArray, point1.getStrokeDashArray());
         Assert.assertEquals(ref.ROI1Shape1StrokeWidth, point1.getStrokeWidth());
         Assert.assertEquals(ref.ROI1Shape1Fill, point1.getFillColor());

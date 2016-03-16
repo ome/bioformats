@@ -41,7 +41,6 @@ import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.FillRule;
 import ome.xml.model.enums.FontFamily;
 import ome.xml.model.enums.FontStyle;
-import ome.xml.model.enums.LineCap;
 import ome.xml.model.enums.Marker;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.Color;
@@ -166,7 +165,6 @@ public class Upgrade2011_06
         public static final FontFamily ROI1Shape1FontFamily = FontFamily.SANSSERIF;
         public static final Length ROI1Shape1FontSize = new Length(1, UNITS.PT);
         public static final FontStyle ROI1Shape1FontStyle = FontStyle.BOLD;
-        public static final LineCap ROI1Shape1LineCap = LineCap.BUTT;
         public static final Marker ROI1Shape1MarkerStart = Marker.ARROW;
         public static final Marker ROI1Shape1MarkerEnd = Marker.CIRCLE;
         public static final Color ROI1Shape1Stroke = Color.valueOf("1");
