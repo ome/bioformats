@@ -3733,20 +3733,6 @@ PlaneInfo (as Plane)
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
-    <xsd:attribute name="LineCap" use="optional">
-      <xsd:simpleType>
-        <xsd:annotation>
-          <xsd:documentation>
-            The shape of the end of the line. [enumeration]
-          </xsd:documentation>
-        </xsd:annotation>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="Butt"/>
-          <xsd:enumeration value="Line"/>
-          <xsd:enumeration value="Square"/>
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
     <xsd:attribute name="Text" use="optional" type="xsd:string"/>
     <xsd:attribute name="FontFamily" use="optional">
       <xsd:simpleType>
