@@ -348,8 +348,8 @@ public class MemoizerTest {
     // Try to reopen the file with the Memoizer
     memoizer.setId(newid);
     memoizer.close();
-    assertFalse(memoizer.isLoadedFromMemo());
-    assertTrue(memoizer.isSavedToMemo());
+    assertTrue(memoizer.isLoadedFromMemo());
+    assertFalse(memoizer.isSavedToMemo());
   }
 
   public static void main(String[] args) throws Exception {
