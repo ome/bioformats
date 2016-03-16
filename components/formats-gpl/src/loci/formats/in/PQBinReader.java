@@ -181,7 +181,7 @@ public class PQBinReader extends FormatReader {
       
       int binInStore = timeBin - (currentBlock * blockLength);
       
-      int input = (binSize * binInstore) + (y * iLineSize) + (x * bpp);
+      int input = (binSize * binInStore) + (y * iLineSize) + (x * bpp);
       int output = 0;
 
       for (int row = 0; row < h; row++) {
