@@ -872,8 +872,8 @@ public class DicomReader extends FormatReader {
         rescaleSlope = Double.parseDouble(info);
       }
       else if (key.equals("Pixel Spacing")) {
-        pixelSizeX = info.substring(0, info.indexOf("\\"));
-        pixelSizeY = info.substring(info.lastIndexOf("\\") + 1);
+        pixelSizeY = info.substring(0, info.indexOf("\\"));
+        pixelSizeX = info.substring(info.lastIndexOf("\\") + 1);
       }
       else if (key.equals("Spacing Between Slices")) {
         pixelSizeZ = new Double(info);
