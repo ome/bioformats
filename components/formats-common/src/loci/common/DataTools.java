@@ -54,6 +54,9 @@ public final class DataTools {
   // -- Static fields --
   private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
+  // Character used for the decimal sign in the current locale
+  private static final char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+
   // -- Constructor --
 
   private DataTools() { }
@@ -496,9 +499,8 @@ public final class DataTools {
   /** Normalizes the decimal separator of a string for the user's locale. */
   private static String sanitizeDecimalString(String value) {
     value = value.replaceAll("[^0-9,\\.]", "");
-    char separator = new DecimalFormatSymbols().getDecimalSeparator();
-    char usedSeparator = separator == '.' ? ',' : '.';
-    return value.replace(usedSeparator, separator);
+    char usedSeparator = decimalSeparator == '.' ? ',' : '.';
+    return value.replace(usedSeparator, decimalSeparator);
   }
 
   /**
