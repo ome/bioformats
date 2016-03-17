@@ -94,33 +94,12 @@ namespace
                     TransformTestParameters p;
                     p.file = *fi;
 
-                    // 2003-FC/Iron-Plate.ome.tiff.xml
-                    if (schemadir.filename() == path("2003-FC") &&
-                        p.file.filename() == path("Iron-Plate.ome.tiff.xml"))
-                      continue;
-                    // 2003-FC/single-channel.ome.tif.xml
-                    if (schemadir.filename() == path("2003-FC") &&
-                        p.file.filename() == path("single-channel.ome.tif.xml"))
-                      continue;
-                    // 2008-09/6x4y1z1t1c8b-swatch-instrument.ome
+                    // 2008-09/instrument.ome.xml
                     if (schemadir.filename() == path("2008-09") &&
-                        p.file.filename() == path("6x4y1z1t1c8b-swatch-instrument.ome"))
+                        p.file.filename() == path("instrument.ome.xml"))
                       continue;
-                    // 2010-06/one-of-everything.xml - parse error
-                    if (schemadir.filename() == path("2010-06") &&
-                        p.file.filename() == path("one-of-everything.xml"))
-                      continue;
-                    // 2010-06/one-of-everything-no-problems.xml - parse error
-                    if (schemadir.filename() == path("2010-06") &&
-                        p.file.filename() == path("one-of-everything-no-problems.xml"))
-                      continue;
-                    // 2013-06/2013-06-datetests.ome - Contains non-POSIX timestamps.
-                    if (schemadir.filename() == path("2013-06") &&
-                        p.file.filename() == path("timestampannotation.ome.xml"))
-                      continue;
-                    // 2015-01/2013-06-datetests.ome - Contains non-POSIX timestamps.
-                    if (schemadir.filename() == path("2015-01") &&
-                        p.file.filename() == path("timestampannotation.ome.xml"))
+                    // timestampannotation.ome.xml - Contains non-POSIX timestamps.
+                    if (p.file.filename() == path("timestampannotation.ome.xml"))
                       continue;
 
                     if (p.file.extension() == path(".ome") ||
