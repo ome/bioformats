@@ -631,6 +631,12 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("prestitched = {}", prestitched);
     LOGGER.trace("scanDim = {}", scanDim);
 
+    /* debug */
+    	for (int q=0; q<planes.size(); q++) {
+		LOGGER.trace("plane #{} = {}", q, planes.get(q));
+	}
+    /* end debug */
+
     if (((mosaics == seriesCount) || (positions == seriesCount)) &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
@@ -676,6 +682,11 @@ public class ZeissCZIReader extends FormatReader {
         mosaics = 1;
         angles = 1;
         seriesCount = 1;
+      }
+      else if (seriesCount > mosaics && mosaics > 1 && prestitched) {
+        seriesCount /= mosaics;
+        mosaics = 1;
+	prestitched = false;
       }
     }
 
@@ -2879,6 +2890,12 @@ public class ZeissCZIReader extends FormatReader {
       this.stageZ = model.stageZ;
       this.x = model.x;
       this.y = model.y;
+    }
+
+    @Override
+    public String toString() {
+      return "seriesIndex=" + seriesIndex + ", planeIndex=" + planeIndex +
+        ", x=" + x + ", y=" + y + ", row=" + row + ", col=" + col;
     }
 
     @Override
