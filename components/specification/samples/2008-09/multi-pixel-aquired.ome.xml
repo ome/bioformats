@@ -11,10 +11,10 @@
          PixelType="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
          <Bin:BinData Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
       </Pixels>
-	<Pixels BigEndian="false" DimensionOrder="XYCZT" ID="Pixels:1:0"
-		PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0"
-		PixelType="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
-		<Bin:BinData Length="32">AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
-	</Pixels>
+   	<Pixels BigEndian="false" DimensionOrder="XYCZT" ID="Pixels:1:0"
+   		PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0"
+   		PixelType="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+   		<Bin:BinData Length="32">AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
+   	</Pixels>
    </Image>
 </OME>

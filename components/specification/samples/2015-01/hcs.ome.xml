@@ -7,12 +7,12 @@
     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
                         http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
 
-    <SPW:Plate
-        ID="Plate:1"
-        Name="Control Plate"
-        ColumnNamingConvention="letter"
-        RowNamingConvention="number"
-        Columns="12"
+    <SPW:Plate 
+        ID="Plate:1" 
+        Name="Control Plate" 
+        ColumnNamingConvention="letter" 
+        RowNamingConvention="number" 
+        Columns="12" 
         Rows="8"
         >
         <SPW:Description></SPW:Description>
@@ -21,7 +21,7 @@
         <SPW:Well ID="Well:1" Column="0" Row="0">
             <!-- repeat SPW:WellSample for # of images taken in the well -->
             <SPW:WellSample ID="WellSample:1" Index="0">
-                <!--
+                <!-- 
                         if there is an image associated with this SPW:WellSample
                         it is linked using an SPW:ImageRef
                     -->
@@ -37,8 +37,8 @@
     <OME:Image ID="Image:0" Name="Series 1">
         <OME:AcquisitionDate>2008-02-06T13:43:19</OME:AcquisitionDate>
         <OME:Description>An example OME compliant file, based on Olympus.oib</OME:Description>
-        <OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0"
-            PhysicalSizeX="0.207" PhysicalSizeY="0.207"
+        <OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0" 
+            PhysicalSizeX="0.207" PhysicalSizeY="0.207" 
             SizeC="3" SizeT="16" SizeX="1024" SizeY="1024" SizeZ="1"
             TimeIncrement="120.1302" Type="uint16">
             <OME:Channel EmissionWavelength="523" ExcitationWavelength="488" ID="Channel:0:0"
@@ -47,9 +47,9 @@
             <OME:Channel EmissionWavelength="578" ExcitationWavelength="561" ID="Channel:0:1"
                 IlluminationType="Epifluorescence" Name="CH3" SamplesPerPixel="1"
                 PinholeSize="127.24" AcquisitionMode="LaserScanningConfocalMicroscopy"/>
-            <OME:Channel ExcitationWavelength="488" ID="Channel:0:2"
+            <OME:Channel ExcitationWavelength="488" ID="Channel:0:2" 
                 IlluminationType="Transmitted"
-                ContrastMethod="DIC" Name="TD1" SamplesPerPixel="1"
+                ContrastMethod="DIC" Name="TD1" SamplesPerPixel="1"  
                 AcquisitionMode="LaserScanningConfocalMicroscopy"/>
             <BIN:BinData BigEndian="false" Length="0"/>
         </OME:Pixels>
