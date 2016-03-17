@@ -38,21 +38,21 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	        xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	        xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	        xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	        xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	        xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
-	        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	        xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	        exclude-result-prefixes="OME Bin SPW SA ROI"
-	        xmlns:exsl="http://exslt.org/common"
-	        extension-element-prefixes="exsl" version="1.0">
+                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+                xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
+                xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
+                xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
+                xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                exclude-result-prefixes="OME Bin SPW SA ROI"
+                xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl" version="1.0">
 
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2013-06</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2013-06</xsl:variable>
   <xsl:variable name="newBINNS"
-		>http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06</xsl:variable>
+                >http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06</xsl:variable>
   <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2013-06</xsl:variable>
   <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2013-06</xsl:variable>
 
@@ -65,14 +65,14 @@
 
   <xsl:template match="OME:OME">
     <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	 xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	 xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	 xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	 xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
-	 xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
-			     http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+         xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+         xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+         xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+         xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+         xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
+                             http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
       <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
     </OME>
   </xsl:template>

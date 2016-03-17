@@ -32,21 +32,21 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	        xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	        xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	        xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	        xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
-	        xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
-	        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	        xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	        exclude-result-prefixes="OME Bin SPW SA ROI"
-	        xmlns:exsl="http://exslt.org/common"
-	        extension-element-prefixes="exsl" version="1.0">
+                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+                xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+                xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+                xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+                xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                exclude-result-prefixes="OME Bin SPW SA ROI"
+                xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl" version="1.0">
 
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2015-01</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2015-01</xsl:variable>
   <xsl:variable name="newBINNS"
-		>http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01</xsl:variable>
+                >http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01</xsl:variable>
   <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2015-01</xsl:variable>
   <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2015-01</xsl:variable>
 
@@ -60,7 +60,7 @@
     <xsl:element name="{name()}" namespace="{$newSPWNS}">
       <xsl:apply-templates select="@*"/>
       <xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-	<xsl:apply-templates select="."/>
+        <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:element>
   </xsl:template>
@@ -70,7 +70,7 @@
     <xsl:element name="{name()}" namespace="{$newOMENS}">
       <xsl:apply-templates select="@*"/>
       <xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
-	<xsl:apply-templates select="."/>
+        <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:element>
   </xsl:template>
@@ -82,14 +82,14 @@
       <xsl:apply-templates select="*"/>
       <xsl:variable name="theImageID"><xsl:value-of select="@ID"/></xsl:variable>
       <xsl:for-each select="//SPW:WellSample/OME:ImageRef [@ID=$theImageID]">
-	<xsl:for-each select="parent::* [local-name() = 'AnnotationRef']">
-	  <xsl:apply-templates select="."/>
-	</xsl:for-each>
+        <xsl:for-each select="parent::* [local-name() = 'AnnotationRef']">
+          <xsl:apply-templates select="."/>
+        </xsl:for-each>
       </xsl:for-each>
       <xsl:for-each select="* [local-name() = 'Pixels']">
-	<xsl:for-each select="* [local-name() = 'AnnotationRef']">
-	  <xsl:apply-templates select="."/>
-	</xsl:for-each>
+        <xsl:for-each select="* [local-name() = 'AnnotationRef']">
+          <xsl:apply-templates select="."/>
+        </xsl:for-each>
       </xsl:for-each>
     </xsl:element>
   </xsl:template>
@@ -98,14 +98,14 @@
 
   <xsl:template match="OME:OME">
     <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2015-01"
-	 xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
-	 xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
-	 xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
-	 xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
-	 xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
-			     http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
+         xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+         xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+         xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+         xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+         xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+                             http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
       <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
     </OME>
   </xsl:template>

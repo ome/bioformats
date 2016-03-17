@@ -32,21 +32,21 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	        xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	        xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	        xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	        xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	        xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
-	        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	        xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	        exclude-result-prefixes="OME Bin SPW SA ROI"
-	        xmlns:exsl="http://exslt.org/common"
-	        extension-element-prefixes="exsl" version="1.0">
+                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+                xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
+                xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
+                xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
+                xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                exclude-result-prefixes="OME Bin SPW SA ROI"
+                xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl" version="1.0">
 
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2011-06</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2011-06</xsl:variable>
   <xsl:variable name="newBINNS"
-		>http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06</xsl:variable>
+                >http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06</xsl:variable>
   <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2011-06</xsl:variable>
   <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2011-06</xsl:variable>
 
@@ -67,11 +67,11 @@
       <!-- Insert ProjectRef elements -->
       <xsl:variable name="datasetID" select="@ID"/>
       <xsl:for-each select="exsl:node-set(//OME:Project/OME:DatasetRef[@ID=$datasetID])">
-	<xsl:element name="OME:ProjectRef" namespace="{$newOMENS}">
-	  <xsl:attribute name="ID"><xsl:for-each select=" parent::node()">
-	    <xsl:value-of select="@ID"/>
-	  </xsl:for-each></xsl:attribute>
-	</xsl:element>
+        <xsl:element name="OME:ProjectRef" namespace="{$newOMENS}">
+          <xsl:attribute name="ID"><xsl:for-each select=" parent::node()">
+            <xsl:value-of select="@ID"/>
+          </xsl:for-each></xsl:attribute>
+        </xsl:element>
       </xsl:for-each>
       <xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
     </xsl:element>
@@ -92,11 +92,11 @@
       <!-- Insert DatasetRef elements -->
       <xsl:variable name="imageID" select="@ID"/>
       <xsl:for-each select="exsl:node-set(//OME:Dataset/OME:ImageRef[@ID=$imageID])">
-	<xsl:element name="OME:DatasetRef" namespace="{$newOMENS}">
-	  <xsl:attribute name="ID"><xsl:for-each select=" parent::node()">
-	    <xsl:value-of select="@ID"/>
-	  </xsl:for-each></xsl:attribute>
-	</xsl:element>
+        <xsl:element name="OME:DatasetRef" namespace="{$newOMENS}">
+          <xsl:attribute name="ID"><xsl:for-each select=" parent::node()">
+            <xsl:value-of select="@ID"/>
+          </xsl:for-each></xsl:attribute>
+        </xsl:element>
       </xsl:for-each>
       <xsl:apply-templates select="* [local-name(.) = 'InstrumentRef' or local-name(.) = 'ObjectiveSettings' or local-name(.) = 'ImagingEnvironment' or local-name(.) = 'StageLabel' or local-name(.) = 'Pixels' or local-name(.) = 'ROIRef' or local-name(.) = 'MicrobeamManipulationRef' or local-name(.) = 'AnnotationRef']"/>
     </xsl:element>
@@ -116,18 +116,18 @@
       <xsl:apply-templates select="node()"/>
       <xsl:variable name="experimenterID" select="@ID"/>
       <xsl:for-each select="exsl:node-set(//OME:ExperimenterGroup/OME:ExperimenterRef[@ID=$experimenterID])">
-	<xsl:element name="OME:GroupRef" namespace="{$newOMENS}">
-	  <xsl:attribute name="ID">Group:<xsl:for-each select=" parent::node()">
-	  <xsl:value-of select="@ID"/>
-	  </xsl:for-each></xsl:attribute>
-	</xsl:element>
+        <xsl:element name="OME:GroupRef" namespace="{$newOMENS}">
+          <xsl:attribute name="ID">Group:<xsl:for-each select=" parent::node()">
+          <xsl:value-of select="@ID"/>
+          </xsl:for-each></xsl:attribute>
+        </xsl:element>
       </xsl:for-each>
       <xsl:for-each select="exsl:node-set(//OME:ExperimenterGroup/OME:Leader[@ID=$experimenterID])">
-	<xsl:element name="OME:GroupRef" namespace="{$newOMENS}">
-	  <xsl:attribute name="ID">Group:<xsl:for-each select=" parent::node()">
-	  <xsl:value-of select="@ID"/>
-	  </xsl:for-each></xsl:attribute>
-	</xsl:element>
+        <xsl:element name="OME:GroupRef" namespace="{$newOMENS}">
+          <xsl:attribute name="ID">Group:<xsl:for-each select=" parent::node()">
+          <xsl:value-of select="@ID"/>
+          </xsl:for-each></xsl:attribute>
+        </xsl:element>
       </xsl:for-each>
 
     </xsl:element>
@@ -137,15 +137,15 @@
     <xsl:element name="OME:Group" namespace="{$newOMENS}">
       <xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
       <xsl:for-each select="@* [name() = 'ID']">
-	<xsl:attribute name="ID">Group:<xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="ID">Group:<xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
 
       <xsl:apply-templates select="* [local-name(.) = 'Description']"/>
       <xsl:for-each select="* [local-name(.) = 'Leader'][1]">
-	<xsl:apply-templates select="."/>
+        <xsl:apply-templates select="."/>
       </xsl:for-each>
       <xsl:for-each select="* [local-name(.) = 'Leader'][2]">
-	<xsl:apply-templates select="." mode="ToContact"/>
+        <xsl:apply-templates select="." mode="ToContact"/>
       </xsl:for-each>
     </xsl:element>
   </xsl:template>
@@ -160,7 +160,7 @@
     <xsl:element name="OME:GroupRef" namespace="{$newOMENS}">
       <xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
       <xsl:for-each select="@* [name() = 'ID']">
-	<xsl:attribute name="ID">Group:<xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="ID">Group:<xsl:value-of select="."/></xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
@@ -175,14 +175,14 @@
   <xsl:template match="SPW:Well">
     <xsl:element name="SPW:Well" namespace="{$newSPWNS}">
       <xsl:for-each select="@* [not(name() = 'Type')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name() = 'Type']">
-	<xsl:attribute name="Status">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="Status">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
@@ -191,9 +191,9 @@
   <xsl:template match="SPW:Plate">
     <xsl:element name="SPW:Plate" namespace="{$newSPWNS}">
       <xsl:for-each select="@* [not(name() = 'FieldIndex')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
@@ -202,48 +202,48 @@
   <xsl:template match="ROI:Shape">
     <xsl:element name="ROI:Shape" namespace="{$newROINS}">
       <xsl:for-each
-	  select="@* [not(name() = 'FillColor' or name() = 'StrokeColor' or name() = 'Text' or name() =  'Visible' or name() =  'Locked')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+          select="@* [not(name() = 'FillColor' or name() = 'StrokeColor' or name() = 'Text' or name() =  'Visible' or name() =  'Locked')]">
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name() = 'FillColor']">
-	<xsl:attribute name="Fill">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="Fill">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name() = 'StrokeColor']">
-	<xsl:attribute name="Stroke">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="Stroke">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name() = 'Text']">
-	<xsl:attribute name="Label">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="Label">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
 
       <xsl:for-each select="* [local-name(.) = 'Line' or local-name(.) = 'Polyline']">
-	<xsl:for-each select="@* [name(.) = 'MarkerStart']">
-	  <xsl:attribute name="MarkerStart">
-	    <xsl:value-of select="."/>
-	  </xsl:attribute>
-	</xsl:for-each>
-	<xsl:for-each select="@* [name(.) = 'MarkerEnd']">
-	  <xsl:attribute name="MarkerEnd">
-	    <xsl:value-of select="."/>
-	  </xsl:attribute>
-	</xsl:for-each>
+        <xsl:for-each select="@* [name(.) = 'MarkerStart']">
+          <xsl:attribute name="MarkerStart">
+            <xsl:value-of select="."/>
+          </xsl:attribute>
+        </xsl:for-each>
+        <xsl:for-each select="@* [name(.) = 'MarkerEnd']">
+          <xsl:attribute name="MarkerEnd">
+            <xsl:value-of select="."/>
+          </xsl:attribute>
+        </xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="* [local-name(.) = 'Transform']">
-	<xsl:attribute name="Transform"><xsl:value-of select="@A00"/>, <xsl:value-of
-	select="@A10"/>, <xsl:value-of select="@A01"/>, <xsl:value-of select="@A11"
-	/>, <xsl:value-of select="@A02"/>, <xsl:value-of select="@A12"/></xsl:attribute>
+        <xsl:attribute name="Transform"><xsl:value-of select="@A00"/>, <xsl:value-of
+        select="@A10"/>, <xsl:value-of select="@A01"/>, <xsl:value-of select="@A11"
+        />, <xsl:value-of select="@A02"/>, <xsl:value-of select="@A12"/></xsl:attribute>
       </xsl:for-each>
       <!-- end of attributes -->
       <xsl:for-each select="* [not(local-name(.) = 'Transform')]">
-	<xsl:apply-templates select="."/>
+        <xsl:apply-templates select="."/>
       </xsl:for-each>
     </xsl:element>
   </xsl:template>
@@ -252,7 +252,7 @@
     <xsl:element name="ROI:Text" namespace="{$newROINS}">
       <xsl:apply-templates select="@*|node()"/>
       <xsl:element name="ROI:Value" namespace="{$newROINS}"><xsl:for-each select=" parent::node()">
-	<xsl:value-of select="@Text"/>
+        <xsl:value-of select="@Text"/>
       </xsl:for-each></xsl:element>
     </xsl:element>
   </xsl:template>
@@ -300,13 +300,13 @@
 
   <xsl:template match="OME:OME">
     <OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06"
-	     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06"
-	     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06"
-	     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06"
-	     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
-	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06
-			         http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
+             xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06"
+             xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06"
+             xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06"
+             xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06
+                                 http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
       <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
     </OME:OME>
   </xsl:template>

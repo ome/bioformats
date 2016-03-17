@@ -32,21 +32,21 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	        xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	        xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	        xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	        xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
-	        xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
-	        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	        xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	        exclude-result-prefixes="OME Bin SPW SA ROI"
-	        xmlns:exsl="http://exslt.org/common"
-	        extension-element-prefixes="exsl" version="1.0">
+                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+                xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+                xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+                xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+                xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                exclude-result-prefixes="OME Bin SPW SA ROI"
+                xmlns:exsl="http://exslt.org/common"
+                extension-element-prefixes="exsl" version="1.0">
 
   <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2012-06</xsl:variable>
   <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2012-06</xsl:variable>
   <xsl:variable name="newBINNS"
-		>http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06</xsl:variable>
+                >http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06</xsl:variable>
   <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2012-06</xsl:variable>
   <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2012-06</xsl:variable>
 
@@ -60,9 +60,9 @@
     <mapping name="FilterType">
       <!-- process Filter Type enumeration 'Tuneable' -->
       <map
-	  from="Tuneable"
-	  to="Other"
-	  />
+          from="Tuneable"
+          to="Other"
+          />
     </mapping>
   </xsl:variable>
   
@@ -72,22 +72,22 @@
     <xsl:param name="value"/>
     <!-- read the values from the mapping node -->
     <xsl:variable name="mappingNode"
-		  select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
+                  select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
     <xsl:variable name="newValue" select="($mappingNode)/map[@from=$value]/@to"/>
     <xsl:variable name="isOptional" select="($mappingNode)/@optional"/>
     <xsl:choose>
       <xsl:when test="string-length($newValue) > 0">
-	<xsl:value-of select="$newValue"/>
+        <xsl:value-of select="$newValue"/>
       </xsl:when>
       <xsl:when test="$value = 'Unknown'">
-	<xsl:value-of select="'Other'"/>
+        <xsl:value-of select="'Other'"/>
       </xsl:when>
       <!-- If the input file is valid this case should never happen, but if it does fix it -->
       <xsl:when test="string-length($value) = 0">
-	<xsl:value-of select="'Other'"/>
+        <xsl:value-of select="'Other'"/>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:value-of select="$value"/>
+        <xsl:value-of select="$value"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
@@ -96,17 +96,17 @@
   <xsl:template match="OME:Filter">
     <xsl:element name="{name()}" namespace="{$newOMENS}">
       <xsl:for-each select="@* [not(name() = 'Type')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:for-each select="@* [name(.) = 'Type']">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:call-template name="transformEnumerationValue">
-	    <xsl:with-param name="mappingName" select="'FilterType'"/>
-	    <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
-	  </xsl:call-template>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:call-template name="transformEnumerationValue">
+            <xsl:with-param name="mappingName" select="'FilterType'"/>
+            <xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+          </xsl:call-template>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
@@ -116,55 +116,55 @@
   <xsl:template match="OME:DetectorSettings">
     <xsl:element name="OME:DetectorSettings" namespace="{$newOMENS}">
       <xsl:for-each select="@* [not(name() = 'Integration' or name() = 'Zoom')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
-  </xsl:template>	
+  </xsl:template>       
   
   <!-- strip SignificantBits, Interleaved and BigEndian -->
   <xsl:template match="OME:Pixels">
     <xsl:element name="OME:Pixels" namespace="{$newOMENS}">
       <xsl:for-each select="@* [not(name() = 'SignificantBits' or name() = 'Interleaved' or name() = 'BigEndian')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
-  </xsl:template>	
+  </xsl:template>       
 
   <!-- strip Annotator from all child nodes of StructuredAnnotations -->
   <xsl:template match="SA:*[@Annotator]">
     <xsl:element name="{name()}" namespace="{$newSANS}">
       <xsl:for-each select="@* [not(name() = 'Annotator')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
-  </xsl:template>	
+  </xsl:template>       
 
   <!-- strip NominalMagnification ONLY if it is not an integer -->
   <xsl:template match="OME:Objective">
     <xsl:element name="OME:Objective" namespace="{$newOMENS}">
       <xsl:for-each select="@* [not(name() = 'NominalMagnification')]">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="."/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:variable name="theValue" select="@NominalMagnification"/>
       <xsl:for-each select="@* [name() = 'NominalMagnification']">
-	<xsl:attribute name="{local-name(.)}">
-	  <xsl:value-of select="round($theValue)"/>
-	</xsl:attribute>
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="round($theValue)"/>
+        </xsl:attribute>
       </xsl:for-each>
       <xsl:apply-templates select="node()"/>
     </xsl:element>
-  </xsl:template>	
+  </xsl:template>       
   
 
   <!-- strip Rights and turn into comments -->
@@ -174,27 +174,27 @@
         Rights Holder: 
         <xsl:value-of select="."/>
       </xsl:comment>
-    </xsl:for-each>	
+    </xsl:for-each>     
     <xsl:for-each select="* [name() = 'RightsHeld']">
       <xsl:comment>
         Rights Held: 
         <xsl:value-of select="."/>
       </xsl:comment>
-    </xsl:for-each>	
-  </xsl:template>	
+    </xsl:for-each>     
+  </xsl:template>       
   
 
   <!-- Rewriting all namespaces -->
 
   <xsl:template match="OME:OME">
     <OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
-	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
-			         http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
+             xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
+             xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
+             xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
+             xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
+                                 http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
       <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
     </OME:OME>
   </xsl:template>
