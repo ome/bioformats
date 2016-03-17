@@ -503,7 +503,7 @@ public final class DataTools {
 
   /**
    * Normalizes the decimal separator for the user's locale.
-   * @deprecated Use {@link parseDouble(String)} instead
+   * @deprecated Use {@link #parseDouble(String)} instead
    */
   @Deprecated
   public static String sanitizeDouble(String value) {
