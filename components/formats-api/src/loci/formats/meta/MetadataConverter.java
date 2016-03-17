@@ -2508,12 +2508,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getEllipseLineCap(i, q);
-            dest.setEllipseLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getEllipseLocked(i, q);
             dest.setEllipseLocked(locked, i, q);
           }
@@ -2644,12 +2638,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getLabelLineCap(i, q);
-            dest.setLabelLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getLabelLocked(i, q);
             dest.setLabelLocked(locked, i, q);
           }
@@ -2764,12 +2752,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getLineFontStyle(i, q);
             dest.setLineFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getLineLineCap(i, q);
-            dest.setLineLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2916,12 +2898,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getMaskLineCap(i, q);
-            dest.setMaskLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getMaskLocked(i, q);
             dest.setMaskLocked(locked, i, q);
           }
@@ -3052,12 +3028,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPointLineCap(i, q);
-            dest.setPointLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPointLocked(i, q);
             dest.setPointLocked(locked, i, q);
           }
@@ -3176,12 +3146,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPolygonLineCap(i, q);
-            dest.setPolygonLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPolygonLocked(i, q);
             dest.setPolygonLocked(locked, i, q);
           }
@@ -3290,12 +3254,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getPolylineFontStyle(i, q);
             dest.setPolylineFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getPolylineLineCap(i, q);
-            dest.setPolylineLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3420,12 +3378,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getRectangleFontStyle(i, q);
             dest.setRectangleFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getRectangleLineCap(i, q);
-            dest.setRectangleLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 

@@ -77,7 +77,6 @@ import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
-import ome.xml.model.enums.LineCap;
 import ome.xml.model.enums.Marker;
 import ome.xml.model.enums.Medium;
 import ome.xml.model.enums.MicrobeamManipulationType;
@@ -103,7 +102,6 @@ import ome.xml.model.enums.handlers.IlluminationTypeEnumHandler;
 import ome.xml.model.enums.handlers.ImmersionEnumHandler;
 import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
 import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
-import ome.xml.model.enums.handlers.LineCapEnumHandler;
 import ome.xml.model.enums.handlers.MarkerEnumHandler;
 import ome.xml.model.enums.handlers.MediumEnumHandler;
 import ome.xml.model.enums.handlers.MicrobeamManipulationTypeEnumHandler;
@@ -1796,22 +1794,6 @@ public abstract class FormatReader extends FormatHandler
     }
     catch (EnumerationException e) {
       throw new FormatException("LaserType creation failed", e);
-    }
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.LineCap} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   */
-  protected LineCap getLineCap(String value) throws FormatException {
-    LineCapEnumHandler handler = new LineCapEnumHandler();
-    try {
-      return (LineCap) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("LineCap creation failed", e);
     }
   }
   /**
