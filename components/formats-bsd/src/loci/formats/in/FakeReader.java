@@ -405,6 +405,9 @@ public class FakeReader extends FormatReader {
     polylines = 0;
     rectangles = 0;
     roiCount = 0;
+    scaleFactor = 1;
+    lut8 = null;
+    lut16 = null;
     super.close(fileOnly);
   }
 
