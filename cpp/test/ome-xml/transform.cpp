@@ -116,11 +116,11 @@ namespace
                       continue;
                     // 2013-06/2013-06-datetests.ome - Contains non-POSIX timestamps.
                     if (schemadir.filename() == path("2013-06") &&
-                        p.file.filename() == path("2013-06-datetests.ome"))
+                        p.file.filename() == path("timestampannotation.ome.xml"))
                       continue;
                     // 2015-01/2013-06-datetests.ome - Contains non-POSIX timestamps.
-                    if (schemadir.filename() == path("2013-06") &&
-                        p.file.filename() == path("2013-06-datetests.ome"))
+                    if (schemadir.filename() == path("2015-01") &&
+                        p.file.filename() == path("timestampannotation.ome.xml"))
                       continue;
 
                     if (p.file.extension() == path(".ome") ||
