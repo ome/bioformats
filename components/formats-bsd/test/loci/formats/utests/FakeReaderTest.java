@@ -173,6 +173,12 @@ public class FakeReaderTest {
   }
 
   @Test
+  public void testReopenFile() throws Exception {
+    reader.setId("foo.fake");
+    reader.reopenFile();
+  }
+
+  @Test
   public void testCompanionFile() throws Exception {
     Files.createFile(wd.resolve("foo.fake.ini"));
     reader.setId(Files.createFile(wd.resolve("foo.fake")).toString());
@@ -197,7 +203,9 @@ public class FakeReaderTest {
 
   @Test
   public void testDefaultValues() throws Exception {
-    reader.setId("foo.fake");
+    reader.setId("default.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(reader.getSizeX(), FakeReader.DEFAULT_SIZE_X);
     assertEquals(reader.getSizeY(), FakeReader.DEFAULT_SIZE_Y);
     assertEquals(reader.getSizeZ(), FakeReader.DEFAULT_SIZE_Z);
@@ -208,6 +216,11 @@ public class FakeReaderTest {
                  FakeReader.DEFAULT_RGB_CHANNEL_COUNT);
     assertEquals(reader.getDimensionOrder(),
                  FakeReader.DEFAULT_DIMENSION_ORDER);
+    assertEquals(m.getImageAcquisitionDate(0), null);
+    assertEquals(m.getPixelsPhysicalSizeX(0), null);
+    assertEquals(m.getPixelsPhysicalSizeY(0), null);
+    assertEquals(m.getPixelsPhysicalSizeZ(0), null);
+    assertEquals(m.getROICount(), 0);
   }
 
   @Test
@@ -289,6 +302,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
+    reader.close();
+    testDefaultValues();
   }
   
   @Test(dataProvider = "physical sizes")
@@ -298,6 +313,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeX(0), length);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "physical sizes")
@@ -306,6 +323,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "physical sizes")
@@ -315,6 +334,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeY(0), length);
+    reader.close();
+    testDefaultValues();
   }
   
   @Test(dataProvider = "physical sizes")
@@ -323,6 +344,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "physical sizes")
@@ -332,6 +355,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getPixelsPhysicalSizeZ(0), length);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(expectedExceptions={ RuntimeException.class })
@@ -351,6 +376,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "acquisition dates")
@@ -360,6 +387,8 @@ public class FakeReaderTest {
     m = service.asRetrieve(reader.getMetadataStore());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageAcquisitionDate(0), date);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "acquisition dates")
@@ -370,6 +399,8 @@ public class FakeReaderTest {
     for (int i = 0; i < 10; i++) {
       assertEquals(m.getImageAcquisitionDate(i), date);
     }
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "annotations")
@@ -382,6 +413,8 @@ public class FakeReaderTest {
     for (int i = 0; i < 5; i++) {
       assertEquals(m.getImageAnnotationRefCount(0), 10);
     }
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "annotations")
@@ -395,6 +428,8 @@ public class FakeReaderTest {
     for (int i = 0; i < 5; i++) {
       assertEquals(m.getImageAnnotationRefCount(0), 10);
     }
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "shapes")
@@ -411,6 +446,8 @@ public class FakeReaderTest {
       assertEquals(m.getShapeCount(i), 1);
       assertEquals(m.getShapeType(i, 0), type);
     }
+    reader.close();
+    testDefaultValues();
   }
 
   @Test(dataProvider = "shapes")
@@ -428,5 +465,7 @@ public class FakeReaderTest {
       assertEquals(m.getShapeCount(i), 1);
       assertEquals(m.getShapeType(i, 0), type);
     }
+    reader.close();
+    testDefaultValues();
   }
 }
