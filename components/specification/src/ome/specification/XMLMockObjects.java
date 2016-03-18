@@ -889,8 +889,28 @@ public class XMLMockObjects
       int index, int rows, int columns, int fields,
       int numberOfPlateAcquisition)
   {
+    return createPlate(numberOfPlates, index, rows, columns,
+        fields, numberOfPlateAcquisition, true);
+  }
+
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfPlates The total number of plates.
+   * @param index The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfPlates,
+      int index, int rows, int columns, int fields,
+      int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
     return createPlate(1, 0, numberOfPlates, index, rows, columns,
-        fields, numberOfPlateAcquisition);
+        fields, numberOfPlateAcquisition, withMicrobeam);
   }
 
   /**
@@ -910,13 +930,40 @@ public class XMLMockObjects
       int numberOfPlates, int plateIndex, int rows, int columns,
       int fields, int numberOfPlateAcquisition)
   {
+      return createPlate(numberOfScreens, screenIndex, numberOfPlates,
+          plateIndex, rows, columns, fields, numberOfPlateAcquisition, true);
+  }
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfScreens The total number of screens.
+   * @param screenIndex The index of the screen.
+   * @param numberOfPlates The total number of plates.
+   * @param plateIndex The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfScreens, int screenIndex,
+      int numberOfPlates, int plateIndex, int rows, int columns,
+      int fields, int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
     if (numberOfScreens == 0) {
       numberOfScreens = 1;
       screenIndex = 0;
     }
     // ticket:3102
     int totalPlateIndex = numberOfScreens*screenIndex+plateIndex;
-    Experiment exp = createExperiment(plateIndex);
+    Experiment exp;
+    if (withMicrobeam) {
+      exp = createExperimentWithMicrobeam(plateIndex);
+    } else {
+      exp = createExperiment(plateIndex);
+    }
+
     ome.addExperiment(exp);
 
     if (numberOfPlateAcquisition < 0) {
@@ -1536,9 +1583,26 @@ public class XMLMockObjects
   public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
       int acqs)
   {
+      return createPopulatedPlate(plates, rows, cols, fields, acqs, true);
+  }
+
+  /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs, boolean withMicrobeam)
+  {
     Plate plate;
     for (int p = 0; p < plates; p++) {
-      plate = createPlate(plates, p, rows, cols, fields, acqs);
+      plate = createPlate(plates, p, rows, cols, fields, acqs, withMicrobeam);
       ome.addPlate(plate);
     }
     return ome;
@@ -1558,12 +1622,32 @@ public class XMLMockObjects
   public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
       int fields, int acqs)
   {
+      return createPopulatedScreen(screens, plates, rows, cols, fields, acqs, 
+          true);
+  }
+
+  /**
+   * Creates several screens each with several plates.
+   *
+   * @param screens The number of screens to create.
+   * @param plates  The number of plates to create.
+   * @param rows    The number of rows for plate.
+   * @param cols    The number of columns for plate.
+   * @param fields  The number of fields.
+   * @param acqs    The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
+      int fields, int acqs, boolean withMicrobeam)
+  {
     Screen screen;
     Plate plate;
     for (int s = 0; s < screens; s++) {
       screen = createScreen(s);
       for (int p = 0; p < plates; p++) {
-        plate = createPlate(screens, s, plates, p, rows, cols, fields, acqs);
+        plate = createPlate(screens, s, plates, p, rows, cols, fields, acqs,
+            withMicrobeam);
         screen.linkPlate(plate);
         ome.addPlate(plate);
       }
