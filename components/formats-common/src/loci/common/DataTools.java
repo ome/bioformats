@@ -474,6 +474,7 @@ public final class DataTools {
    * @return {@code null} if the string could not be parsed
    */
   public static Float parseFloat(String value) {
+    if (value == null) return null;
     try {
       return Float.valueOf(sanitizeDecimalString(value));
     } catch (NumberFormatException e) {
@@ -488,6 +489,7 @@ public final class DataTools {
    * @return {@code null} if the string could not be parsed
    */
   public static Double parseDouble(String value) {
+    if (value == null) return null;
     try {
       return Double.valueOf(sanitizeDecimalString(value));
     } catch (NumberFormatException e) {
