@@ -142,6 +142,9 @@ public class DicomReader extends FormatReader {
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
   private Double pixelSizeZ;
+  private List<Double> positionX = new ArrayList<Double>();
+  private List<Double> positionY = new ArrayList<Double>();
+  private List<Double> positionZ = new ArrayList<Double>();
 
   private Map<Integer, List<String>> fileList;
   private int imagesPerFile;
@@ -450,6 +453,9 @@ public class DicomReader extends FormatReader {
       originalSeries = 0;
       helper = null;
       companionFiles.clear();
+      positionX.clear();
+      positionY.clear();
+      positionZ.clear();
     }
   }
 
@@ -762,7 +768,7 @@ public class DicomReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     String stamp = null;
 
@@ -799,6 +805,33 @@ public class DicomReader extends FormatReader {
           Length z = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ), UNITS.MILLIMETER);
           if (z != null) {
             store.setPixelsPhysicalSizeZ(z, i);
+          }
+        }
+
+        for (int p=0; p<getImageCount(); p++) {
+          if (p < positionX.size()) {
+            if (positionX.get(p) != null) {
+              Length x = new Length(positionX.get(p), UNITS.MM);
+              if (x != null) {
+                store.setPlanePositionX(x, 0, p);
+              }
+            }
+          }
+          if (p < positionY.size()) {
+            if (positionY.get(p) != null) {
+              Length y = new Length(positionY.get(p), UNITS.MM);
+              if (y != null) {
+                store.setPlanePositionY(y, 0, p);
+              }
+            }
+          }
+          if (p < positionZ.size()) {
+            if (positionZ.get(p) != null) {
+              Length z = new Length(positionZ.get(p), UNITS.MM);
+              if (z != null) {
+                store.setPlanePositionZ(z, 0, p);
+              }
+            }
           }
         }
       }
@@ -877,6 +910,45 @@ public class DicomReader extends FormatReader {
       }
       else if (key.equals("Spacing Between Slices")) {
         pixelSizeZ = new Double(info);
+      }
+      else if (tag == 0x200032) {
+        String[] positions = info.replace('\\', '_').split("_");
+        if (positions.length > 0) {
+          try {
+            positionX.add(Double.valueOf(positions[0]));
+          }
+          catch (NumberFormatException e) {
+            positionX.add(null);
+          }
+        }
+        else {
+          positionX.add(null);
+          positionY.add(null);
+          positionZ.add(null);
+        }
+        if (positions.length > 1) {
+          try {
+            positionY.add(Double.valueOf(positions[1]));
+          }
+          catch (NumberFormatException e) {
+            positionY.add(null);
+          }
+        }
+        else {
+          positionY.add(null);
+          positionZ.add(null);
+        }
+        if (positions.length > 2) {
+          try {
+            positionZ.add(Double.valueOf(positions[2]));
+          }
+          catch (NumberFormatException e) {
+            positionZ.add(null);
+          }
+        }
+        else {
+          positionZ.add(null);
+        }
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
