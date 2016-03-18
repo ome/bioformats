@@ -6,18 +6,18 @@
                              http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
   <ome:Image ID="Image:1" Name="Name92">
     <ome:AcquisitionDate>2009-03-16T15:41:51.0Z</ome:AcquisitionDate>
-    <ome:Pixels 
-       ID="Pixels:1" 
-       DimensionOrder="XYZCT" 
-       Type="int8" 
-       SizeX="2" 
-       SizeY="2" 
+    <ome:Pixels
+       ID="Pixels:1"
+       DimensionOrder="XYZCT"
+       Type="int8"
+       SizeX="2"
+       SizeY="2"
        SizeZ="2"
-       SizeC="2" 
+       SizeC="2"
        SizeT="2">
-      <bf:BinData 
-         BigEndian="false" 
-         Compression="none" 
+      <bf:BinData
+         BigEndian="false"
+         Compression="none"
          Length="12"
          >ZGVmYXVsdA==</bf:BinData>
     </ome:Pixels>

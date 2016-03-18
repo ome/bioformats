@@ -20,13 +20,13 @@
     <!-- First Tag -->
     <SA:XMLAnnotation ID="Annotation:1" Namespace="openmicroscopy.org/sample/body/whitespace">
       <SA:Value>
-        <body>There should be a <b>space</b> <i>between</i> 
+        <body>There should be a <b>space</b> <i>between</i>
           the bold and italics words.</body>
         <body>There should not be a <b>space</b><i>between</i> the bold and italics
           words.</body>
-        <body xml:space="preserve">There should be a <b>space</b> <i>between</i> the bold 
+        <body xml:space="preserve">There should be a <b>space</b> <i>between</i> the bold
           and italics words.</body>
-        <body xml:space="preserve">There should not be a <b>space</b><i>between</i> the bold 
+        <body xml:space="preserve">There should not be a <b>space</b><i>between</i> the bold
           and italics words.</body>
       </SA:Value>
     </SA:XMLAnnotation>

@@ -25,9 +25,9 @@
           <i>between</i> the bold and italics words.</body>
         <body>There should not be a <b>space</b><i>between</i> the bold and italics
           words.</body>
-        <body xml:space="preserve">There should be a <b>space</b> <i>between</i> the bold 
+        <body xml:space="preserve">There should be a <b>space</b> <i>between</i> the bold
           and italics words.</body>
-        <body xml:space="preserve">There should not be a <b>space</b><i>between</i> the bold 
+        <body xml:space="preserve">There should not be a <b>space</b><i>between</i> the bold
           and italics words.</body>
       </SA:Value>
     </SA:XMLAnnotation>
