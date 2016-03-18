@@ -468,4 +468,41 @@ public class FakeReaderTest {
     reader.close();
     testDefaultValues();
   }
+
+  @Test(dataProvider = "shapes")
+  public void testHCSShapes(String key, String type) throws Exception {
+    reader.setId("foo&plateRows=10&plateCols=10&" + key + "=10.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getImageCount(), 100);
+    assertEquals(m.getROICount(), 1000);
+    for (int i = 0; i < m.getImageCount(); i++) {
+      assertEquals(m.getImageROIRefCount(0), 10);
+    }
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), type);
+    }
+    reader.close();
+    testDefaultValues();
+  }
+
+  @Test(dataProvider = "shapes")
+  public void testHCSShapesINI(String key, String type) throws Exception {
+    mkIni("foo.fake.ini", "plateRows=10\nplateCols=10\n" + key + "=10");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getImageCount(), 100);
+    assertEquals(m.getROICount(), 1000);
+    for (int i = 0; i < m.getImageCount(); i++) {
+      assertEquals(m.getImageROIRefCount(0), 10);
+    }
+    for (int i = 0; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), type);
+    }
+    reader.close();
+    testDefaultValues();
+  }
 }
