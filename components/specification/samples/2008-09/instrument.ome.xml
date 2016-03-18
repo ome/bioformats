@@ -4,7 +4,7 @@
     <Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3" SerialNumber="L3-1234"/>
     <LightSource ID="LightSource:0" Power="200" Manufacturer="OME Lights" Model="Ruby60" SerialNumber="A654321">
       <Laser Type="SolidState" LaserMedium="Ruby">
-    	<Pump ID="LightSource:1"/>
+        <Pump ID="LightSource:1"/>
       </Laser>
     </LightSource>
     <LightSource ID="LightSource:1" Power="300" Manufacturer="OME Lights" Model="Arc60" SerialNumber="A123456">
@@ -20,8 +20,8 @@
       <WorkingDistance>20</WorkingDistance>
     </Objective>
     <FilterSet ID="FilterSet:0"
-    	       ExFilterRef="Filter:0" DichroicRef="Dichroic:0" EmFilterRef="Filter:1"
-    	       Manufacturer="OME Filters" Model="Standard Mk3" LotNumber="Lot174-A"/>
+               ExFilterRef="Filter:0" DichroicRef="Dichroic:0" EmFilterRef="Filter:1"
+               Manufacturer="OME Filters" Model="Standard Mk3" LotNumber="Lot174-A"/>
     <Filter ID="Filter:0"  Manufacturer="OME Filters" Model="Model1" FilterWheel="Disc A">
       <TransmittanceRange CutIn="350" CutOut="450" CutInTolerance="10" CutOutTolerance="20" Transmittance="0.3"/>
     </Filter>
@@ -31,7 +31,7 @@
     <Dichroic ID="Dichroic:0" Model="Standard Mk3" Manufacturer="OME Insturuments"/>
   </Instrument>
   <Image AcquiredPixels="Pixels:0:0" DefaultPixels="Pixels:0:0"
-	 ID="Image:0" Name="6x6x1x8-swatch.tif">
+         ID="Image:0" Name="6x6x1x8-swatch.tif">
     <CreationDate>2010-02-23T12:51:30</CreationDate>
     <Description>This image is linked to the Control Set</Description>
     <InstrumentRef ID="Instrument:0"/>

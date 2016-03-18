@@ -15,7 +15,7 @@
     <Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3" SerialNumber="L3-1234"/>
     <LightSource ID="LightSource:0" Power="200" Manufacturer="OME Lights" Model="Ruby60" SerialNumber="A654321">
       <Laser Type="SolidState" LaserMedium="Ruby">
-	<Pump ID="LightSource:1"/>
+        <Pump ID="LightSource:1"/>
       </Laser>
     </LightSource>
     <LightSource ID="LightSource:1" Power="300" Manufacturer="OME Lights" Model="Arc60" SerialNumber="A123456">

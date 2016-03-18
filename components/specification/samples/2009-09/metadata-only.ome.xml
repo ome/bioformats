@@ -13,7 +13,7 @@
   <Image ID="Image:0" Name="18x24y1z5t1c8b-text">
     <AcquiredDate>2010-03-02T10:01:15</AcquiredDate>
     <Pixels DimensionOrder="XYZCT" ID="Pixels:0:0" Type="uint8" SizeX="18" SizeY="24" SizeZ="5"
-	    SizeC="1" SizeT="5">
+            SizeC="1" SizeT="5">
       <Channel Color="4294967295" ID="Channel:0"/>
       <MetadataOnly/>
     </Pixels>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
-																																																      http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
+                                                                                                                                                                                                                                                                                                                                                                                                      http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
 
   <Instrument ID="Instrument:0">
     <LightSource ID="LightSource:0:0">
@@ -57,19 +57,19 @@
     <ObjectiveSettings ID="Objective:0:0"/>
     <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" ID="Pixels:1" DimensionOrder="XYCTZ" Type="int16" SizeX="128" SizeY="128" SizeZ="1" SizeC="2" SizeT="1">
       <Channel ID="Channel:1">
-	<LightPath>
-	  <!-- ordered collection -->
-	  <ExcitationFilterRef ID="Filter:1"/>
-	  <ExcitationFilterRef ID="Filter:Dichroic:2"/>
-	  <DichroicRef ID="Dichroic:1"/>
-	  <EmissionFilterRef ID="Filter:5"/>
-	</LightPath>
+        <LightPath>
+          <!-- ordered collection -->
+          <ExcitationFilterRef ID="Filter:1"/>
+          <ExcitationFilterRef ID="Filter:Dichroic:2"/>
+          <DichroicRef ID="Dichroic:1"/>
+          <EmissionFilterRef ID="Filter:5"/>
+        </LightPath>
       </Channel>
       <Channel ID="Channel:2">
-	<FilterSetRef ID="FilterSet:2"/>
-	<LightPath>
-	  <EmissionFilterRef ID="Filter:6"/>
-	</LightPath>
+        <FilterSetRef ID="FilterSet:2"/>
+        <LightPath>
+          <EmissionFilterRef ID="Filter:6"/>
+        </LightPath>
       </Channel>
       <MetadataOnly/>
     </OME:Pixels>

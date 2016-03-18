@@ -4,46 +4,46 @@
     <SPW:Description>Plate 1 description.</SPW:Description>
     <SPW:Well ID="Well:1.1.1" Column="1" Row="1">
       <SPW:WellSample ID="WellSample:1.1.1.1" Index="1">
-	<ImageRef ID="Image:0"/>
+        <ImageRef ID="Image:0"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.1.2" Index="5">
-	<ImageRef ID="Image:1"/>
+        <ImageRef ID="Image:1"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.2.1" Column="2" Row="1">
       <SPW:WellSample ID="WellSample:1.2.1.1" Index="2">
-	<ImageRef ID="Image:2"/>
+        <ImageRef ID="Image:2"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.2.1.2" Index="6">
-	<ImageRef ID="Image:3"/>
+        <ImageRef ID="Image:3"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.1.2" Column="1" Row="2">
       <SPW:WellSample ID="WellSample:1.1.2.1" Index="3">
-	<ImageRef ID="Image:4"/>
+        <ImageRef ID="Image:4"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.2" Index="7">
-	<ImageRef ID="Image:5"/>
+        <ImageRef ID="Image:5"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.3" Index="11">
-	<ImageRef ID="Image:6"/>
+        <ImageRef ID="Image:6"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.4" Index="15">
-	<ImageRef ID="Image:7"/>
+        <ImageRef ID="Image:7"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.5" Index="19">
-	<ImageRef ID="Image:8"/>
+        <ImageRef ID="Image:8"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.2.2" Column="2" Row="2">
       <SPW:WellSample ID="WellSample:1.2.2.1" Index="4">
-	<ImageRef ID="Image:9"/>
+        <ImageRef ID="Image:9"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.2.2.2" Index="8">
-	<ImageRef ID="Image:10"/>
+        <ImageRef ID="Image:10"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
