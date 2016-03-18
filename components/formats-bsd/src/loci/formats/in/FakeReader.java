@@ -1083,9 +1083,9 @@ public class FakeReader extends FormatReader {
     final XMLMockObjects xml = new XMLMockObjects();
     OME ome = null;
     if (screens==0) {
-      ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs);
+      ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs, false);
     } else {
-      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs);
+      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs, false);
     }
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
