@@ -152,6 +152,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseByte() {
+    assertEquals(DataTools.parseByte(null), null);
+    assertEquals(DataTools.parseByte(""), null);
     assertEquals(DataTools.parseByte("0"), new Byte((byte)0));
     assertEquals(DataTools.parseByte("1"), new Byte((byte)1));
     assertEquals(DataTools.parseByte("1.0"), null);
@@ -162,6 +164,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseShort() {
+    assertEquals(DataTools.parseShort(null), null);
+    assertEquals(DataTools.parseShort(""), null);
     assertEquals(DataTools.parseShort("0"), new Short((short)0));
     assertEquals(DataTools.parseShort("1"), new Short((short)1));
     assertEquals(DataTools.parseShort("1.0"), null);
@@ -172,6 +176,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseInteger() {
+    assertEquals(DataTools.parseInteger(null), null);
+    assertEquals(DataTools.parseInteger(""), null);
     assertEquals(DataTools.parseInteger("0"), Integer.valueOf(0));
     assertEquals(DataTools.parseInteger("1"), Integer.valueOf(1));
     assertEquals(DataTools.parseInteger("1.0"), null);
@@ -182,6 +188,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseLong() {
+    assertEquals(DataTools.parseLong(null), null);
+    assertEquals(DataTools.parseLong(""), null);
     assertEquals(DataTools.parseLong("0"), Long.valueOf(0));
     assertEquals(DataTools.parseLong("1"), Long.valueOf(1));
     assertEquals(DataTools.parseLong("1.0"), null);
@@ -192,6 +200,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseFloat() {
+    assertEquals(DataTools.parseFloat(null), null);
+    assertEquals(DataTools.parseFloat(""), null);
     assertEquals(DataTools.parseFloat("0"), 0.0f);
     assertEquals(DataTools.parseFloat("1"), 1.0f);
     assertEquals(DataTools.parseFloat("1.0"), 1.0f);
@@ -202,6 +212,8 @@ public class DataToolsTest {
 
   @Test
   public void testParseDouble() {
+    assertEquals(DataTools.parseDouble(null), null);
+    assertEquals(DataTools.parseDouble(""), null);
     assertEquals(DataTools.parseDouble("0"), 0.0d);
     assertEquals(DataTools.parseDouble("1"), 1.0d);
     assertEquals(DataTools.parseDouble("1.0"), 1.0d);
