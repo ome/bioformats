@@ -48,11 +48,9 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -2235,9 +2233,12 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
+            if(last-first < 0){
+                last = first + key.substring(first).indexOf(' ');
+            }
             try {
               textEmissionWavelengths.add(
-                new Double(key.substring(first, last)) + 20);
+                new Double(key.substring(first, last).trim()) + 20);
             }
             catch (NumberFormatException nfe) {
               LOGGER.trace("Could not parse emission wavelength", nfe);
