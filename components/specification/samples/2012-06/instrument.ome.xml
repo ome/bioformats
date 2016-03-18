@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06      http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
+<?xml version="1.0" encoding="UTF-8"?><OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
+																																																					    http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
   <Instrument ID="Instrument:0">
     <Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3" SerialNumber="L3-1234"/>
     <LightSource ID="LightSource:0" Power="200" Manufacturer="OME Lights" Model="Ruby60" SerialNumber="A654321">
       <Laser Type="SolidState" LaserMedium="Ruby">
-        <Pump ID="LightSource:1"/>
+	<Pump ID="LightSource:1"/>
       </Laser>
     </LightSource>
     <LightSource ID="LightSource:1" Power="300" Manufacturer="OME Lights" Model="Arc60" SerialNumber="A123456">
@@ -37,14 +37,14 @@
     <InstrumentRef ID="Instrument:0"/>
     <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
       <OME:Channel Color="-2147483648" ID="Channel:0:1">
-        <LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="510"/>
-        <DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7" ReadOutRate="3200" Voltage="120"/>
-        <LightPath>
-          <ExcitationFilterRef ID="Filter:3"/>
-          <!-- Was SecondaryExcitationFilter-->
-          <EmissionFilterRef ID="Filter:2"/>
-          <!-- Was SecondaryEmissionFilter-->
-        </LightPath>
+	<LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="510"/>
+	<DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7" ReadOutRate="3200" Voltage="120"/>
+	<LightPath>
+	  <ExcitationFilterRef ID="Filter:3"/>
+	  <!-- Was SecondaryExcitationFilter-->
+	  <EmissionFilterRef ID="Filter:2"/>
+	  <!-- Was SecondaryEmissionFilter-->
+	</LightPath>
       </OME:Channel>
       <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
     </OME:Pixels>

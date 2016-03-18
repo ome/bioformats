@@ -5,46 +5,46 @@
     <SPW:ScreenRef ID="Screen:1"/>
     <SPW:Well ID="Well:1.1.1" Column="1" Row="1">
       <SPW:WellSample ID="WellSample:1.1.1.1" Index="1">
-        <SPW:ImageRef ID="Image:0"/>
+	<SPW:ImageRef ID="Image:0"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.1.2" Index="5">
-        <SPW:ImageRef ID="Image:1"/>
+	<SPW:ImageRef ID="Image:1"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.2.1" Column="2" Row="1">
       <SPW:WellSample ID="WellSample:1.2.1.1" Index="2">
-        <SPW:ImageRef ID="Image:2"/>
+	<SPW:ImageRef ID="Image:2"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.2.1.2" Index="6">
-        <SPW:ImageRef ID="Image:3"/>
+	<SPW:ImageRef ID="Image:3"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.1.2" Column="1" Row="2">
       <SPW:WellSample ID="WellSample:1.1.2.1" Index="3">
-        <SPW:ImageRef ID="Image:4"/>
+	<SPW:ImageRef ID="Image:4"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.2" Index="7">
-        <SPW:ImageRef ID="Image:5"/>
+	<SPW:ImageRef ID="Image:5"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.3" Index="11">
-        <SPW:ImageRef ID="Image:6"/>
+	<SPW:ImageRef ID="Image:6"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.4" Index="15">
-        <SPW:ImageRef ID="Image:7"/>
+	<SPW:ImageRef ID="Image:7"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.1.2.5" Index="19">
-        <SPW:ImageRef ID="Image:8"/>
+	<SPW:ImageRef ID="Image:8"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:1.2.2" Column="2" Row="2">
       <SPW:WellSample ID="WellSample:1.2.2.1" Index="4">
-        <SPW:ImageRef ID="Image:9"/>
+	<SPW:ImageRef ID="Image:9"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:1.2.2.2" Index="8">
-        <SPW:ImageRef ID="Image:10"/>
+	<SPW:ImageRef ID="Image:10"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
@@ -66,46 +66,46 @@
     <SPW:ScreenRef ID="Screen:1"/>
     <SPW:Well ID="Well:2.1.1" Column="1" Row="1">
       <SPW:WellSample ID="WellSample:2.1.1.1" Index="1">
-        <SPW:ImageRef ID="Image:11"/>
+	<SPW:ImageRef ID="Image:11"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.1.1.2" Index="5">
-        <SPW:ImageRef ID="Image:12"/>
+	<SPW:ImageRef ID="Image:12"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:2"/>
     </SPW:Well>
     <SPW:Well ID="Well:2.2.1" Column="2" Row="1">
       <SPW:WellSample ID="WellSample:2.2.1.1" Index="2">
-        <SPW:ImageRef ID="Image:13"/>
+	<SPW:ImageRef ID="Image:13"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.2.1.2" Index="6">
-        <SPW:ImageRef ID="Image:14"/>
+	<SPW:ImageRef ID="Image:14"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:2.1.2" Column="1" Row="2">
       <SPW:WellSample ID="WellSample:2.1.2.1" Index="3">
-        <SPW:ImageRef ID="Image:15"/>
+	<SPW:ImageRef ID="Image:15"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.1.2.2" Index="7">
-        <SPW:ImageRef ID="Image:16"/>
+	<SPW:ImageRef ID="Image:16"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.1.2.3" Index="11">
-        <SPW:ImageRef ID="Image:17"/>
+	<SPW:ImageRef ID="Image:17"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.1.2.4" Index="15">
-        <SPW:ImageRef ID="Image:18"/>
+	<SPW:ImageRef ID="Image:18"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.1.2.5" Index="19">
-        <SPW:ImageRef ID="Image:19"/>
+	<SPW:ImageRef ID="Image:19"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
     <SPW:Well ID="Well:2.2.2" Column="2" Row="2">
       <SPW:WellSample ID="WellSample:2.2.2.1" Index="4">
-        <SPW:ImageRef ID="Image:20"/>
+	<SPW:ImageRef ID="Image:20"/>
       </SPW:WellSample>
       <SPW:WellSample ID="WellSample:2.2.2.2" Index="8">
-        <SPW:ImageRef ID="Image:21"/>
+	<SPW:ImageRef ID="Image:21"/>
       </SPW:WellSample>
       <SPW:ReagentRef ID="Reagent:1"/>
     </SPW:Well>
@@ -286,3 +286,4 @@
     </Pixels>
   </Image>
 </OME>
+

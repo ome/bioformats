@@ -17,27 +17,28 @@
   <ROI:ROI ID="ROI:1">
     <ROI:Union>
       <ROI:Shape ID="Shape:1" TheC="0">
-        <ROI:Point X="1" Y="1"/>
+	<ROI:Point X="1" Y="1"/>
       </ROI:Shape>
     </ROI:Union>
   </ROI:ROI>
   <ROI:ROI ID="ROI:2">
     <ROI:Union>
       <ROI:Shape ID="Shape:2" Fill="1" FillRule="NonZero" FontFamily="Arial" FontSize="1" FontStyle="Bold" LineCap="Butt" MarkerStart="Arrow" MarkerEnd="Circle" Stroke="1" StrokeDashArray="1" StrokeWidth="1" Label="Hello" TheC="2">
-        <ROI:Point X="1" Y="1"/>
+	<ROI:Point X="1" Y="1"/>
       </ROI:Shape>
     </ROI:Union>
   </ROI:ROI>
   <ROI:ROI ID="ROI:3">
     <ROI:Union>
       <ROI:Shape ID="Shape:3" FillRule="EvenOdd" Label="Hi There!">
-        <ROI:Rectangle X="1" Y="2" Width="3" Height="4"/>
+	<ROI:Rectangle X="1" Y="2" Width="3" Height="4"/>
       </ROI:Shape>
       <ROI:Shape ID="Shape:4" FillRule="EvenOdd" FontStyle="Regular" FontFamily="TimesNewRoman">
-        <ROI:Text X="1" Y="1">
-          <ROI:Value>Hello World!</ROI:Value>
-        </ROI:Text>
+	<ROI:Text X="1" Y="1">
+	  <ROI:Value>Hello World!</ROI:Value>
+	</ROI:Text>
       </ROI:Shape>
     </ROI:Union>
   </ROI:ROI>
 </OME>
+
