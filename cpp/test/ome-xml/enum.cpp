@@ -486,6 +486,9 @@ TEST(Enum, PixelTypePreprocess)
 
 #undef MAKE_PT
 
+// Nested lists don't work on Windows due to its broken preprocessor.
+#ifndef _MSC_VER
+
 #define PP_SEQ_FOR_EACH_R_ID() BOOST_PP_SEQ_FOR_EACH_R
 #define PP_DEFER(x) x BOOST_PP_EMPTY()
 
@@ -542,6 +545,8 @@ TEST(Enum, PixelTypePreprocessNested)
 #undef LT_NESTED
 #undef LT_TOPLEVEL
 #undef NESTED_TEST
+
+#endif // !_MSC_VER
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.
