@@ -32,6 +32,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,6 +198,17 @@ public class DicomReader extends FormatReader {
     catch (NullPointerException e) { }
     catch (FormatException e) { }
     return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  @Override
+  public int getRequiredDirectories(String[] files) throws FormatException, IOException {
+    for (String file : files) {
+      if (file.endsWith("DICOMDIR")) {
+        return 1;
+      }
+    }
+    return super.getRequiredDirectories(files);
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -512,6 +524,7 @@ public class DicomReader extends FormatReader {
 
     boolean decodingTags = true;
     boolean signed = false;
+    String currentType = "";
 
     while (decodingTags) {
       if (in.getFilePointer() + 4 >= in.length()) {
@@ -640,6 +653,24 @@ public class DicomReader extends FormatReader {
         case 0:
           in.seek(in.getFilePointer() - 4);
           break;
+        case 0x41430:
+          currentType = getHeaderInfo(tag, s).trim();
+          break;
+        case 0x41500:
+          if (currentType.equals("IMAGE")) {
+            if (fileList == null) {
+              fileList = new HashMap<Integer, List<String>>();
+            }
+            if (fileList.get(0) == null) {
+              fileList.put(0, new ArrayList<String>());
+            }
+            fileList.get(0).add(getHeaderInfo(tag, s).trim());
+          }
+          else {
+            companionFiles.add(getHeaderInfo(tag, s).trim());
+          }
+          currentType = "";
+          break;
         default:
           long oldfp = in.getFilePointer();
           addInfo(tag, s);
@@ -650,6 +681,25 @@ public class DicomReader extends FormatReader {
       }
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
+
+    if (id.endsWith("DICOMDIR")) {
+      String parent = new Location(currentId).getAbsoluteFile().getParent();
+      for (int i=0; i<fileList.get(0).size(); i++) {
+        String file = fileList.get(0).get(i);
+        file = file.replace('\\', File.separatorChar);
+        file = file.replaceAll("/", File.separator);
+        fileList.get(0).set(i, parent + File.separator + file);
+      }
+      for (int i=0; i<companionFiles.size(); i++) {
+        String file = companionFiles.get(i);
+        file = file.replace('\\', File.separatorChar);
+        file = file.replaceAll("/", File.separator);
+        companionFiles.set(i, parent + File.separator + file);
+      }
+      companionFiles.add(new Location(currentId).getAbsolutePath());
+      initFile(fileList.get(0).get(0));
+      return;
+    }
 
     m.bitsPerPixel = bitsPerPixel;
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
@@ -1121,6 +1171,9 @@ public class DicomReader extends FormatReader {
     throws FormatException, IOException
   {
     long fp = stream.getFilePointer();
+    if (fp >= stream.length() - 2) {
+      return 0;
+    }
     int groupWord = stream.readShort() & 0xffff;
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       core.get(0).littleEndian = false;
