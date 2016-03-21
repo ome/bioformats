@@ -85,7 +85,7 @@ namespace
             p.file = *i;
 
             // Contains non-POSIX timestamps.
-            if (p.file.filename() == path("2013-06-datetests.ome"))
+            if (p.file.filename() == path("timestampannotation.ome.xml"))
               continue;
 
             if (p.file.extension() == path(".ome") ||
