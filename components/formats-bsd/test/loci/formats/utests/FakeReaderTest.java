@@ -433,16 +433,16 @@ public class FakeReaderTest {
   }
 
   private void checkROIs(MetadataRetrieve m, int nImages, int nRoisPerImage,
-      String shapeType) throws Exception {
+      String shapeType, int nOtherRois) throws Exception {
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(m.getImageCount(), nImages);
-    assertEquals(m.getROICount(), nImages * nRoisPerImage);
+    assertEquals(m.getROICount(), nImages * nRoisPerImage + nOtherRois);
     for (int i = 0; i < m.getImageCount(); i++) {
-    assertEquals(m.getImageROIRefCount(0), nRoisPerImage);
+      assertEquals(m.getImageROIRefCount(0), nRoisPerImage);
     }
-    for (int i = 0; i < m.getROICount(); i++) {
-    assertEquals(m.getShapeCount(i), 1);
-    assertEquals(m.getShapeType(i, 0), shapeType);
+    for (int i = nOtherRois; i < m.getROICount(); i++) {
+      assertEquals(m.getShapeCount(i), 1);
+      assertEquals(m.getShapeType(i, 0), shapeType);
     }
   }
 
@@ -450,17 +450,22 @@ public class FakeReaderTest {
   public void testShapes(String key, String type) throws Exception {
     reader.setId("foo&series=5&" + key + "=10.fake");
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 5, 10, type);
+    checkROIs(m, 5, 10, type, 0);
+
+    reader.close();
+    reader.setId("foo&plateRows=10&plateCols=10&" + key + "=5&withMicrobeam=true.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    checkROIs(m, 100, 5, type, 1);
 
     reader.close();
     reader.setId("foo&plateRows=10&plateCols=10&" + key + "=5.fake");
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 100, 5, type);
+    checkROIs(m, 100, 5, type, 0);
 
     reader.close();
     reader.setId("foo&screens=2&plateRows=10&plateCols=10&" + key + "=5.fake");
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 200, 5, type);
+    checkROIs(m, 200, 5, type, 0);
 
     reader.close();
     testDefaultValues();
@@ -471,19 +476,25 @@ public class FakeReaderTest {
     mkIni("foo.fake.ini", "series = 5\n" + key + " = 10");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 5, 10, type);
+    checkROIs(m, 5, 10, type, 0);
+
+    reader.close();
+    mkIni("foo.fake.ini", "plateRows = 10\nplateCols = 10\n" + key + " = 5\nwithMicrobeam=true");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    checkROIs(m, 100, 5, type, 1);
 
     reader.close();
     mkIni("foo.fake.ini", "plateRows = 10\nplateCols = 10\n" + key + " = 5");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 100, 5, type);
+    checkROIs(m, 100, 5, type, 0);
 
     reader.close();
     mkIni("foo.fake.ini", "screens = 2\nplateRows = 10\nplateCols = 10\n" + key + " = 5");
     reader.setId(wd.resolve("foo.fake").toString());
     m = service.asRetrieve(reader.getMetadataStore());
-    checkROIs(m, 200, 5, type);
+    checkROIs(m, 200, 5, type, 0);
 
     reader.close();
     testDefaultValues();
