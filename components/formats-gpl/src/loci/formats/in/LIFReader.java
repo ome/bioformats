@@ -323,8 +323,7 @@ public class LIFReader extends FormatReader {
       tile -= tileCount[i];
     }
 
-    // seek instead of skipBytes to prevent dangerous int cast
-    in.seek(in.getFilePointer() + tile * planeSize * getImageCount());
+    in.skipBytes((int) (tile * planeSize * getImageCount()));
     in.skipBytes(bytesToSkip * getSizeY() * no);
 
     if (bytesToSkip == 0) {
