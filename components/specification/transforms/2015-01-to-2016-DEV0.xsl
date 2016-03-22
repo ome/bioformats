@@ -50,11 +50,40 @@
     <!-- Actual schema changes -->
 
     <!-- Rewrite abstract elements for Shape and LightSource -->
+<xsl:template name="tokenize">
+  <xsl:param name="string"/>
+    <xsl:param name="separator" select="','"/>
+        <xsl:choose>
+            <xsl:when test="contains($string,$separator)">
+                <token>
+                    <xsl:value-of select="substring-before($string,$separator)"/>
+                </token>
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="string" select="substring-after($string,$separator)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <token><xsl:value-of select="$string"/></token>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:variable name="lightSources">
+        <xsl:call-template name="tokenize">
+            <xsl:with-param name="string" select="'Laser,Arc,Filament,LightEmittingDiode,GenericExcitationSource'"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="shapes">
+        <xsl:call-template name="tokenize">
+            <xsl:with-param name="string" select="'Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label'"/>
+        </xsl:call-template>
+    </xsl:variable>
 
     <xsl:template match="OME:LightSource">
         <xsl:variable name="lightSourceRoot" select="." />
         <xsl:variable name="lightSourceType"  >
-    	      <xsl:for-each select="str:tokenize('Laser,Arc,Filament,LightEmittingDiode,GenericExcitationSource', ',')">
+            <xsl:for-each select="exsl:node-set($lightSources)">
                 <xsl:variable name="lightSource" select="." />
                 <xsl:if test="($lightSourceRoot/*[name()= $lightSource]) or ($lightSourceRoot/*[name()= concat('OME:',$lightSource)])">
                     <xsl:value-of select="."/>
@@ -78,7 +107,7 @@
     <xsl:template match="ROI:Shape">
         <xsl:variable name="shapeRoot" select="." />
         <xsl:variable name="shapeType"  >
-    	      <xsl:for-each select="str:tokenize('Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label', ',')">
+            <xsl:for-each select="exsl:node-set($shapes)/*">
                 <xsl:variable name="shape" select="." />
                 <xsl:if test="($shapeRoot/*[name()= $shape]) or ($shapeRoot/*[name()= concat('ROI:',$shape)])">
                     <xsl:value-of select="."/>
