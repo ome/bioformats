@@ -314,6 +314,19 @@ public class ZeissCZIReader extends FormatReader {
     Arrays.fill(buf, (byte) 0);
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     try {
+      int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
+      for (SubBlock plane : planes) {
+        if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+          (plane.planeIndex == previousChannel && validScanDim))
+        {
+          if (plane.row < minTileY) {
+            minTileY = plane.row;
+          }
+          if (plane.col < minTileX) {
+            minTileX = plane.col;
+          }
+        }
+      }
       for (SubBlock plane : planes) {
         if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
@@ -330,6 +343,11 @@ public class ZeissCZIReader extends FormatReader {
             if (prestitched != null && prestitched && realX == getSizeX() && realY == getSizeY()) {
               tile.x = 0;
               tile.y = 0;
+            }
+            else if (prestitched != null && prestitched) {
+              // normalize the coordinates such that minimum row/col values are 0
+              tile.x -= minTileX;
+              tile.y -= minTileY;
             }
 
             if (tile.intersects(image)) {
@@ -631,12 +649,6 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("prestitched = {}", prestitched);
     LOGGER.trace("scanDim = {}", scanDim);
 
-    /* debug */
-    	for (int q=0; q<planes.size(); q++) {
-		LOGGER.trace("plane #{} = {}", q, planes.get(q));
-	}
-    /* end debug */
-
     if (((mosaics == seriesCount) || (positions == seriesCount)) &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
@@ -686,7 +698,6 @@ public class ZeissCZIReader extends FormatReader {
       else if (seriesCount > mosaics && mosaics > 1 && prestitched) {
         seriesCount /= mosaics;
         mosaics = 1;
-	prestitched = false;
       }
     }
 
