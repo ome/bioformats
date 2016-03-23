@@ -83,7 +83,7 @@
   <xsl:template match="OME:LightSource">
     <xsl:variable name="lightSourceRoot" select="." />
     <xsl:variable name="lightSourceType"  >
-      <xsl:for-each select="str:tokenize($lightSources)">
+      <xsl:for-each select="exsl:node-set($lightSources)/*">
         <xsl:variable name="lightSource" select="." />
         <xsl:if test="($lightSourceRoot/*[name()= $lightSource]) or ($lightSourceRoot/*[name()= concat('OME:',$lightSource)])">
           <xsl:value-of select="."/>
@@ -107,7 +107,7 @@
   <xsl:template match="ROI:Shape">
     <xsl:variable name="shapeRoot" select="." />
     <xsl:variable name="shapeType"  >
-      <xsl:for-each select="str:tokenize($shapes)">
+      <xsl:for-each select="exsl:node-set($shapes)/*">
         <xsl:variable name="shape" select="." />
         <xsl:if test="($shapeRoot/*[name()= $shape]) or ($shapeRoot/*[name()= concat('ROI:',$shape)])">
           <xsl:value-of select="."/>
