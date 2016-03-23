@@ -219,7 +219,7 @@ with their default values, is shown below.
     - * color_x
       * the color for channel x, overrides the default color for that channel
       *
-    - * ellipses, labels, lines, points, rectangles
+    - * ellipses, labels, lines, points, polygons, polylines, rectangles
       * the number of ROIs containing one shape of the given type to generate
       *
 
