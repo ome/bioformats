@@ -925,6 +925,21 @@ public class FakeReader extends FormatReader {
       return new Double(ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
   }
 
+  private String getPoints(int i) {
+      Double x0 = getX(i) + ROI_SPACING / 2;
+      Double y0 = getY(i) + ROI_SPACING / 2;
+      double [] dx = { -0.8, -.3, .4, .5, -.1};
+      double [] dy = { -0.4, .6, .5, -.3, -.7};
+      StringBuffer p = new StringBuffer();
+      for (int j=0; j<5; j++) {
+        p.append(x0 + ROI_SPACING /2 * dx[j]);
+        p.append(",");
+        p.append(y0 + ROI_SPACING /2 * dy[j]);
+        if (j < dx.length - 1) p.append(" ");
+      }
+      return p.toString();
+  }
+
   private void fillRegions(MetadataStore store, int imageIndex) {
     int roiRefCount = 0;
     String roiID;
@@ -991,7 +1006,7 @@ public class FakeReader extends FormatReader {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
         store.setPolygonID(SHAPE_PREFIX + roiCount, roiCount, 0);
-        // store.setPolygonPoints(new Double(i % sizeX), roiCount, 0);
+        store.setPolygonPoints(getPoints(i), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
@@ -1001,7 +1016,7 @@ public class FakeReader extends FormatReader {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
         store.setPolylineID(SHAPE_PREFIX + roiCount, roiCount, 0);
-        // store.setPolylinePoints(new Double(i % sizeX), roiCount, 0);
+        store.setPolylinePoints(getPoints(i), roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         roiCount++;
         roiRefCount++;
