@@ -505,6 +505,7 @@ public class FakeReader extends FormatReader {
     boolean falseColor = false;
     boolean metadataComplete = true;
     boolean thumbnail = false;
+    boolean withMicrobeam = false;
 
     int seriesCount = 1;
     int lutLength = 3;
@@ -606,6 +607,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("plateCols")) plateCols = intValue;
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
+      else if (key.equals("withMicrobeam")) withMicrobeam = boolValue;
       else if (key.equals("annLong")) annLong = intValue;
       else if (key.equals("annDouble")) annDouble = intValue;
       else if (key.equals("annMap")) annMap = intValue;
@@ -682,7 +684,7 @@ public class FakeReader extends FormatReader {
       if (plateAcqs<=0) plateAcqs = 1;
       // generate SPW metadata and override series count to match
       int imageCount =
-        populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs);
+        populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs, withMicrobeam);
       if (imageCount > 0) seriesCount = imageCount;
       else hasSPW = false; // failed to generate SPW metadata
     }
@@ -1077,16 +1079,16 @@ public class FakeReader extends FormatReader {
     return !listFakeSeries(path).get(0).equals(path);
   }
 
-  private int populateSPW(MetadataStore store, int screens, int plates, int rows, int cols,
-    int fields, int acqs)
+  private int populateSPW(MetadataStore store, int screens, int plates, int rows, int cols, int fields, int acqs, boolean withMicrobeam)
   {
     final XMLMockObjects xml = new XMLMockObjects();
     OME ome = null;
     if (screens==0) {
-      ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs);
+      ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs, withMicrobeam);
     } else {
-      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs);
+      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs, withMicrobeam);
     }
+    if (withMicrobeam) roiCount = roiCount + plates;;
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
