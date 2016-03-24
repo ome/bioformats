@@ -108,8 +108,8 @@ public class FakeReaderTest {
       {"lines", "Line"},
       // {"masks", "Mask"},
       {"points", "Point"},
-      // {"polygons", "Polygon"},
-      // {"polylines", "Polyline"},
+      {"polygons", "Polygon"},
+      {"polylines", "Polyline"},
       {"rectangles", "Rectangle"},
     };
   }
