@@ -324,7 +324,7 @@ public class FluoviewReader extends BaseTiffReader {
         }
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
-        if (i > 1) {
+        if (i > 1 && stamps != null) {
           zPositions = stamps[i - 2];
           if (zPositions != null) {
             for (Double z : zPositions) {
