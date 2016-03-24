@@ -51,6 +51,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -2233,7 +2234,7 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
-            if(last-first < 0){
+            if (last-first < 0){
                 last = first + key.substring(first).indexOf(' ');
             }
             try {
