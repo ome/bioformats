@@ -6,6 +6,7 @@ from optparse import OptionParser
 import os
 from subprocess import call
 import sys
+import time
 import zipfile
 import tarfile
 import StringIO
@@ -209,6 +210,7 @@ if __name__ == "__main__":
         options.bioformats_vcsdate))
     antversion = tarfile.TarInfo("%s/ant/gitversion.xml" % (prefix))
     antversion.size = antversionbuf.len
+    antversion.mtime = time.time()
     basetar.addfile(antversion, antversionbuf)
 
     cmakeversionbuf = StringIO.StringIO(GITVERSION_CMAKE % (
@@ -218,6 +220,7 @@ if __name__ == "__main__":
         options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
     cmakeversion = tarfile.TarInfo("%s/cpp/cmake/GitVersion.cmake" % (prefix))
     cmakeversion.size = cmakeversionbuf.len
+    cmakeversion.mtime = time.time()
     basetar.addfile(cmakeversion, cmakeversionbuf)
     basetar.close()
     try:
