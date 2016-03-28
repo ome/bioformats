@@ -2020,17 +2020,22 @@ public class LIFReader extends FormatReader {
     ms.indexed = !ms.rgb;
     ms.imageCount = ms.sizeZ * ms.sizeT;
     if (!ms.rgb) ms.imageCount *= ms.sizeC;
+    else {
+      ms.imageCount *= (ms.sizeC / 3);
+    }
 
     Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
-    if (getSizeC() > 1 && getSizeT() > 1) {
-      ms.dimensionOrder += "C";
-    }
-    for (Long nBytes : bytes) {
-      String axis = bytesPerAxis.get(nBytes);
-      if (ms.dimensionOrder.indexOf(axis) == -1) {
-        ms.dimensionOrder += axis;
+    if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
+      if (getSizeC() > 1 && getSizeT() > 1) {
+        ms.dimensionOrder += "C";
+      }
+      for (Long nBytes : bytes) {
+        String axis = bytesPerAxis.get(nBytes);
+        if (ms.dimensionOrder.indexOf(axis) == -1) {
+          ms.dimensionOrder += axis;
+        }
       }
     }
 
