@@ -163,6 +163,27 @@ public class OMETiffReader extends FormatReader {
     }
     metaFile = new Location(name).getAbsolutePath();
     boolean valid = super.isThisType(name, open);
+    if (metadataFile != null) {
+      // this is a binary-only file
+      // overwrite XML with what is in the companion OME-XML file
+      String dir = new File(metaFile).getParent();
+      Location path = new Location(dir, metadataFile);
+      LOGGER.debug("Checking metadata file {}", path);
+      if (!path.exists()) return false;
+      metadataFile = path.getAbsolutePath();
+
+      try {
+        String xml = readMetadataFile();
+        meta = service.createOMEXMLMetadata(xml);
+      } catch (ServiceException se) {
+        LOGGER.debug("OME-XML parsing failed", se);
+        return false;
+      } catch (IOException e) {
+        return false;
+      } catch (NullPointerException e) {
+        return false;
+      }
+    }
     if (valid && !isGroupFiles()) {
       try {
         return isSingleFile(metaFile);
@@ -215,11 +236,10 @@ public class OMETiffReader extends FormatReader {
       meta = service.createOMEXMLMetadata(comment);
 
       try {
-        String metadataFile = meta.getBinaryOnlyMetadataFile();
+        metadataFile = meta.getBinaryOnlyMetadataFile();
         // check the suffix to make sure that the MetadataFile is not
         // referencing the current OME-TIFF
-        if (metadataFile != null && !checkSuffix(metadataFile, "ome.tiff") &&
-          !checkSuffix(metadataFile, "ome.tif"))
+        if (metadataFile != null)
         {
           return true;
         }
