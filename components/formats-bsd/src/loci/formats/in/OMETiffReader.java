@@ -174,7 +174,7 @@ public class OMETiffReader extends FormatReader {
 
       try {
         String xml = readMetadataFile();
-        meta = service.createOMEXMLMetadata(xml);
+        service.createOMEXMLMetadata(xml);
       } catch (ServiceException se) {
         LOGGER.debug("OME-XML parsing failed", se);
         return false;
