@@ -38,6 +38,7 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -61,21 +62,27 @@ public class HamamatsuVMSReader extends FormatReader {
 
   // -- Constants --
 
+  private static final int MAX_JPEG_SIZE = 61440;
   private static final int MAX_SIZE = 2048;
 
   // -- Fields --
 
   private int initializedSeries = -1;
   private int initializedPlane = -1;
+  private String initializedFile = null;
 
   private ArrayList<String> files = new ArrayList<String>();
 
   private String[][][] tileFiles;
-  private String[] jpeg;
 
   private JPEGTurboService service;
   private HashMap<String, long[]> restartMarkers =
     new HashMap<String, long[]>();
+
+  private String macroFile;
+  private String mapFile;
+  private int nRows;
+  private int nCols;
 
   // -- Constructor --
 
@@ -113,7 +120,6 @@ public class HamamatsuVMSReader extends FormatReader {
 
     ArrayList<String> f = new ArrayList<String>();
     f.add(currentId);
-    f.add(jpeg[getSeries()]);
     f.addAll(files);
     return f.toArray(new String[f.size()]);
   }
@@ -127,7 +133,21 @@ public class HamamatsuVMSReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    String file = jpeg[getCoreIndex()];
+    int startCol = x / MAX_JPEG_SIZE;
+    int startRow = y / MAX_JPEG_SIZE;
+
+    String file = null;
+    switch (getCoreIndex()) {
+      case 0:
+        file = tileFiles[no][startRow][startCol];
+        break;
+      case 1:
+        file = macroFile;
+        break;
+      case 2:
+        file = mapFile;
+        break;
+    }
 
     if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
       JPEGReader reader = new JPEGReader();
@@ -142,24 +162,53 @@ public class HamamatsuVMSReader extends FormatReader {
     }
 
     try {
-      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
-        service.close();
-        if (restartMarkers.containsKey(file)) {
-          service.setRestartMarkers(restartMarkers.get(file));
-        }
-        else {
-          service.setRestartMarkers(null);
-        }
-        // closing the service will close this file
-        RandomAccessInputStream s = new RandomAccessInputStream(file);
-        service.initialize(s, getSizeX(), getSizeY());
-        restartMarkers.put(file, service.getRestartMarkers());
+      Region image = new Region(x, y, w, h);
+      for (int row=startRow; row<nRows; row++) {
+        for (int col=startCol; col<nCols; col++) {
+          Region tile = new Region(col * MAX_JPEG_SIZE, row * MAX_JPEG_SIZE,
+            col == nCols - 1 ? getSizeX() % MAX_JPEG_SIZE : MAX_JPEG_SIZE,
+            row == nRows - 1 ? getSizeY() % MAX_JPEG_SIZE : MAX_JPEG_SIZE);
+          if (!tile.intersects(image)) {
+            continue;
+          }
+          file = tileFiles[no][row][col];
+          if (initializedSeries != getCoreIndex() || initializedPlane != no ||
+            !file.equals(initializedFile))
+          {
+            service.close();
+            if (restartMarkers.containsKey(file)) {
+              service.setRestartMarkers(restartMarkers.get(file));
+            }
+            else {
+              service.setRestartMarkers(null);
+            }
+            // closing the service will close this file
+            RandomAccessInputStream s = new RandomAccessInputStream(file);
+            service.initialize(s, tile.width, tile.height);
+            restartMarkers.put(file, service.getRestartMarkers());
 
-        initializedSeries = getCoreIndex();
-        initializedPlane = no;
+            initializedSeries = getCoreIndex();
+            initializedPlane = no;
+            initializedFile = file;
+          }
+
+          Region intersection = tile.intersection(image);
+
+          int tileX = intersection.x % MAX_JPEG_SIZE;
+          int tileY = intersection.y % MAX_JPEG_SIZE;
+
+          int rowLen = intersection.width * getRGBChannelCount();
+          byte[] b = new byte[rowLen * intersection.height];
+
+          service.getTile(b, tileX, tileY, intersection.width, intersection.height);
+
+          for (int tileRow=0; tileRow<intersection.height; tileRow++) {
+            int src = tileRow * rowLen;
+            int dest = (((intersection.y + tileRow - y) * w) + (intersection.x - x)) * getRGBChannelCount();
+            System.arraycopy(b, src, buf, dest, rowLen);
+          }
+        }
       }
-
-      service.getTile(buf, x, y, w, h);
     }
     catch (ServiceException e) {
       throw new FormatException(e);
@@ -179,10 +228,12 @@ public class HamamatsuVMSReader extends FormatReader {
         service.close();
         service = null;
       }
-      jpeg = null;
       restartMarkers.clear();
       initializedSeries = -1;
       initializedPlane = -1;
+      nRows = 0;
+      nCols = 0;
+      initializedFile = null;
     }
   }
 
@@ -200,13 +251,13 @@ public class HamamatsuVMSReader extends FormatReader {
     IniTable slideInfo = layout.getTable("Virtual Microscope Specimen");
 
     int nLayers = Integer.parseInt(slideInfo.get("NoLayers"));
-    int nRows = Integer.parseInt(slideInfo.get("NoJpegRows"));
-    int nCols = Integer.parseInt(slideInfo.get("NoJpegColumns"));
+    nRows = Integer.parseInt(slideInfo.get("NoJpegRows"));
+    nCols = Integer.parseInt(slideInfo.get("NoJpegColumns"));
 
     String imageFile = slideInfo.get("ImageFile");
-    String mapFile = slideInfo.get("MapFile");
+    mapFile = slideInfo.get("MapFile");
     String optimisationFile = slideInfo.get("OptimisationFile");
-    String macroFile = slideInfo.get("MacroImage");
+    macroFile = slideInfo.get("MacroImage");
 
     Double physicalWidth = new Double(slideInfo.get("PhysicalWidth"));
     Double physicalHeight = new Double(slideInfo.get("PhysicalHeight"));
@@ -219,28 +270,32 @@ public class HamamatsuVMSReader extends FormatReader {
       addGlobalMeta(key, slideInfo.get(key));
     }
 
-    Location dir = new Location(id).getParentFile();
+    Location dir = new Location(id).getAbsoluteFile().getParentFile();
+
+    if (imageFile != null) {
+      imageFile = new Location(dir, imageFile).getAbsolutePath();
+      files.add(imageFile);
+    }
 
     tileFiles = new String[nLayers][nRows][nCols];
+    tileFiles[0][0][0] = imageFile;
 
     for (int layer=0; layer<nLayers; layer++) {
       for (int row=0; row<nRows; row++) {
         for (int col=0; col<nCols; col++) {
-          tileFiles[layer][row][col] =
-            slideInfo.get("ImageFile(" + col + "," + row + ")");
-          if (tileFiles[layer][row][col] != null) {
-            files.add(
-              new Location(dir, tileFiles[layer][row][col]).getAbsolutePath());
+          String f = slideInfo.get("ImageFile(" + col + "," + row + ")");
+          if (f != null) {
+            f = new Location(dir, f).getAbsolutePath();
+            tileFiles[layer][row][col] = f;
+            files.add(f);
           }
         }
       }
     }
 
-    if (imageFile != null) {
-      imageFile = new Location(dir, imageFile).getAbsolutePath();
-    }
     if (mapFile != null) {
       mapFile = new Location(dir, mapFile).getAbsolutePath();
+      files.add(mapFile);
     }
     if (optimisationFile != null) {
       optimisationFile = new Location(dir, optimisationFile).getAbsolutePath();
@@ -248,9 +303,8 @@ public class HamamatsuVMSReader extends FormatReader {
     }
     if (macroFile != null) {
       macroFile = new Location(dir, macroFile).getAbsolutePath();
+      files.add(macroFile);
     }
-
-    jpeg = new String[3];
 
     int seriesCount = 3;
 
@@ -259,7 +313,7 @@ public class HamamatsuVMSReader extends FormatReader {
       String file = null;
       switch (i) {
         case 0:
-          file = imageFile;
+          file = tileFiles[0][nRows-1][nCols-1];
           break;
         case 1:
           file = macroFile;
@@ -269,15 +323,20 @@ public class HamamatsuVMSReader extends FormatReader {
           break;
       }
 
-      jpeg[i] = file;
       JPEGTileDecoder decoder = new JPEGTileDecoder();
       RandomAccessInputStream s = new RandomAccessInputStream(file);
       int[] dims = decoder.preprocess(s);
       s.close();
 
       CoreMetadata m = new CoreMetadata();
-      m.sizeX = dims[0];
-      m.sizeY = dims[1];
+      if (i == 0) {
+        m.sizeX = (MAX_JPEG_SIZE * (nCols - 1)) + dims[0];
+        m.sizeY = (MAX_JPEG_SIZE * (nRows - 1)) + dims[1];
+      }
+      else {
+        m.sizeX = dims[0];
+        m.sizeY = dims[1];
+      }
       m.sizeZ = 1;
       m.sizeC = 3;
       m.sizeT = 1;
