@@ -3186,7 +3186,7 @@
     </xsd:annotation>
     <xsd:complexType>
       <xsd:simpleContent>
-        <xsd:extension base = "xsd:base64Binary">
+        <xsd:extension base = "xs:base64Binary">
           <xsd:attribute name = "Compression" default = "none" use="optional">
             <xsd:annotation>
               <xsd:documentation>Specifies the compression scheme used to encode the data. </xsd:documentation>
@@ -3882,7 +3882,7 @@ PlaneInfo (as Plane)
       <xsd:complexContent>
         <xsd:extension base="Shape">
           <xsd:sequence>
-            <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element ref="BinData" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
           <xsd:attribute name="X" use="required" type="xsd:float">
             <xsd:annotation>
