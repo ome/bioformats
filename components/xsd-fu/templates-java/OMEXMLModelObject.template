@@ -290,6 +290,16 @@ ${customUpdatePropertyContent[prop.name]}
 			}
 		}
 {% end %}\
+{% when 'byte[]' in prop.langType %}\
+{% if debug %}\
+      // MARKER [VVV]
+{% end debug %}\
+    if (element.hasAttribute("${prop.name}"))
+    {
+      // Attribute property ${prop.name}
+      set${prop.methodName}(element.getAttribute("${prop.name}").getBytes());
+    }
+{% end %}\
 {% when not prop.isEnumeration %}\
 {% if debug %}\
 			// MARKER [LLL]
