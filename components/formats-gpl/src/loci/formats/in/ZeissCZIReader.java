@@ -140,6 +140,10 @@ public class ZeissCZIReader extends FormatReader {
 
   private String zoom;
   private String gain;
+  
+  private String masterFile;
+  private String userSelectedFile;
+  private Boolean wrongMasterFile = false;
 
   private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<String> binnings = new ArrayList<String>();
@@ -463,7 +467,8 @@ public class ZeissCZIReader extends FormatReader {
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
-    if (base.endsWith(")") && isGroupFiles()) {
+    System.out.println(!wrongMasterFile);
+    if (base.endsWith(")") && isGroupFiles() && !wrongMasterFile) {
       LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
       int end = base.lastIndexOf(" (");
@@ -474,6 +479,8 @@ public class ZeissCZIReader extends FormatReader {
         base = base.substring(0, end) + ".czi";
         if (new Location(base).exists()) {
           LOGGER.info("Initializing master file {}", base);
+          masterFile = base;
+          userSelectedFile = id;
           initFile(base);
           return;
         }
@@ -619,6 +626,12 @@ public class ZeissCZIReader extends FormatReader {
     // finish populating the core metadata
 
     int seriesCount = positions * acquisitions * mosaics * angles;
+
+    if (seriesCount == 1 && masterFile != null && !wrongMasterFile){
+        wrongMasterFile = true;
+        System.out.println(userSelectedFile);
+        initFile(userSelectedFile);
+    }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
