@@ -467,7 +467,7 @@ public class ZeissCZIReader extends FormatReader {
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
-    System.out.println(!wrongMasterFile);
+
     if (base.endsWith(")") && isGroupFiles() && !wrongMasterFile) {
       LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
@@ -479,6 +479,7 @@ public class ZeissCZIReader extends FormatReader {
         base = base.substring(0, end) + ".czi";
         if (new Location(base).exists()) {
           LOGGER.info("Initializing master file {}", base);
+          close();
           masterFile = base;
           userSelectedFile = id;
           initFile(base);
@@ -624,13 +625,15 @@ public class ZeissCZIReader extends FormatReader {
     ms0.sizeT *= phases;
 
     // finish populating the core metadata
-
     int seriesCount = positions * acquisitions * mosaics * angles;
-
+    //Checkpoint for identifying wrong masterfiles.
+    //Current assumption: Datasets with master files will have seriesCount>1,
+    //This strategy is not the safest way, will need to be reviewed in future.
     if (seriesCount == 1 && masterFile != null && !wrongMasterFile){
+        close();
         wrongMasterFile = true;
-        System.out.println(userSelectedFile);
         initFile(userSelectedFile);
+        return;
     }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
