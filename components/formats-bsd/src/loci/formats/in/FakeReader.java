@@ -590,6 +590,8 @@ public class FakeReader extends FormatReader {
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
 
+    ArrayList<IniTable> seriesTables = new ArrayList<IniTable>();
+
     // add properties file values to list of tokens.
     if (iniFile != null) {
       IniParser parser = new IniParser();
@@ -617,6 +619,12 @@ public class FakeReader extends FormatReader {
       System.arraycopy(oldTokArr, 0, tokens, 0, oldTokArr.length);
       System.arraycopy(newTokArr, 0, tokens, oldTokArr.length, newTokArr.length);
       // Properties overrides file name values
+
+      int seriesIndex = 0;
+      while (list.getTable("series_" + seriesIndex) != null) {
+        seriesTables.add(list.getTable("series_" + seriesIndex));
+        seriesIndex++;
+      }
     }
 
     // parse tokens from filename
@@ -785,12 +793,14 @@ public class FakeReader extends FormatReader {
     }
 
     // populate OME metadata
-    boolean planeInfo = (exposureTime != null);
+    boolean planeInfo = (exposureTime != null) || seriesTables.size() > 0;
 
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
+
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
       fillAcquisitionDate(store, acquisitionDate, currentImageIndex);
@@ -1111,6 +1121,82 @@ public class FakeReader extends FormatReader {
         roiCount++;
         roiRefCount++;
     }
+  }
+
+  /**
+   * Translate key/value pairs from the INI table for the specified series.
+   */
+  private void parseSeriesTable(IniTable table, MetadataStore store, int newSeries) {
+    int s = getSeries();
+    setSeries(newSeries);
+
+    for (int i=0; i<getImageCount(); i++) {
+      String exposureTime = table.get("ExposureTime_" + i);
+      String exposureTimeUnit = table.get("ExposureTimeUnit_" + i);
+
+      if (exposureTime != null) {
+        try {
+          Double v = new Double(exposureTime);
+          Time exposure = FormatTools.getTime(v, exposureTimeUnit);
+          if (exposure != null) {
+            store.setPlaneExposureTime(exposure, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse ExposureTime for series #" + s + " plane #" + i, e);
+        }
+      }
+
+      String positionX = table.get("PositionX_" + i);
+      String positionXUnit = table.get("PositionXUnit_" + i);
+
+      if (positionX != null) {
+        try {
+          Double v = new Double(positionX);
+          Length x = FormatTools.getPhysicalSize(v, positionXUnit);
+          if (x != null) {
+            store.setPlanePositionX(x, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse PositionX for series #" + s + " plane #" + i, e);
+        }
+      }
+
+      String positionY = table.get("PositionY_" + i);
+      String positionYUnit = table.get("PositionYUnit_" + i);
+
+      if (positionY != null) {
+        try {
+          Double v = new Double(positionY);
+          Length y = FormatTools.getPhysicalSize(v, positionYUnit);
+          if (y != null) {
+            store.setPlanePositionY(y, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse PositionY for series #" + s + " plane #" + i, e);
+        }
+      }
+
+      String positionZ = table.get("PositionZ_" + i);
+      String positionZUnit = table.get("PositionZUnit_" + i);
+
+      if (positionZ != null) {
+        try {
+          Double v = new Double(positionZ);
+          Length z = FormatTools.getPhysicalSize(v, positionZUnit);
+          if (z != null) {
+            store.setPlanePositionZ(z, newSeries, i);
+          }
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Could not parse PositionZ for series #" + s + " plane #" + i, e);
+        }
+      }
+    }
+
+    setSeries(s);
   }
 
 // -- Helper methods --
