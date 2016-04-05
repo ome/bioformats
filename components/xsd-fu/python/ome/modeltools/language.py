@@ -242,7 +242,7 @@ class Java(Language):
         self.primitive_type_map[namespace + 'double'] = 'Double'
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
-        self.primitive_type_map['base64Binary'] = 'byte[]'
+        self.primitive_type_map[namespace + 'base64Binary'] = 'byte[]'
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
@@ -355,7 +355,7 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
-        self.primitive_type_map['base64Binary'] = 'std::string'
+        self.primitive_type_map[namespace + 'base64Binary'] = 'std::string'
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None

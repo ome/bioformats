@@ -26,6 +26,11 @@ def parse(opts):
 
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
+    for index, simpleType in enumerate(generateDS.generateDS.OtherSimpleTypes):
+        if simpleType.find("base64Binary") != -1:
+            lst = list(generateDS.generateDS.OtherSimpleTypes)
+            del lst[index]
+            generateDS.generateDS.OtherSimpleTypes = tuple(lst)
     generateDS.generateDS.XsdNameSpace = namespace
     logging.debug("Type map: %s" % opts.lang.type_map)
 

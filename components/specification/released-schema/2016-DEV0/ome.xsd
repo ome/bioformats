@@ -26,7 +26,6 @@
 -->
 <xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
             targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
-            xs="http://www.w3.org/2001/XMLSchema"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
             xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -3187,7 +3186,7 @@
     </xsd:annotation>
     <xsd:complexType>
       <xsd:simpleContent>
-        <xsd:extension base = "xs:base64Binary">
+        <xsd:extension base = "xsd:base64Binary">
           <xsd:attribute name = "Compression" default = "none" use="optional">
             <xsd:annotation>
               <xsd:documentation>Specifies the compression scheme used to encode the data. </xsd:documentation>
