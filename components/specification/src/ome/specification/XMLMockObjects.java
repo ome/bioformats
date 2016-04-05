@@ -956,12 +956,12 @@ public class XMLMockObjects
       screenIndex = 0;
     }
     // ticket:3102
-    int totalPlateIndex = numberOfScreens*screenIndex+plateIndex;
+    int totalPlateIndex = numberOfPlates*screenIndex+plateIndex;
     Experiment exp;
     if (withMicrobeam) {
-      exp = createExperimentWithMicrobeam(plateIndex);
+      exp = createExperimentWithMicrobeam(totalPlateIndex);
     } else {
-      exp = createExperiment(plateIndex);
+      exp = createExperiment(totalPlateIndex);
     }
 
     ome.addExperiment(exp);
