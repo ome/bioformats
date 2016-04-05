@@ -453,6 +453,11 @@ public class ZeissCZIReader extends FormatReader {
       phaseLabels = null;
       indexIntoPlanes.clear();
       parser = null;
+      
+      wrongMasterFile = false;
+      masterFile = null;
+      userSelectedFile = null;
+      
     }
   }
 
@@ -479,7 +484,6 @@ public class ZeissCZIReader extends FormatReader {
         base = base.substring(0, end) + ".czi";
         if (new Location(base).exists()) {
           LOGGER.info("Initializing master file {}", base);
-          close();
           masterFile = base;
           userSelectedFile = id;
           initFile(base);
@@ -630,7 +634,6 @@ public class ZeissCZIReader extends FormatReader {
     //Current assumption: Datasets with master files will have seriesCount>1,
     //This strategy is not the safest way, will need to be reviewed in future.
     if (seriesCount == 1 && masterFile != null && !wrongMasterFile){
-        close();
         wrongMasterFile = true;
         initFile(userSelectedFile);
         return;
