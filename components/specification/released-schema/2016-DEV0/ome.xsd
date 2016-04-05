@@ -26,8 +26,8 @@
 -->
 <xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
             targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+            xs="http://www.w3.org/2001/XMLSchema"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:xs="http://www.w3.org/2001/XMLSchema"
             xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
             xmlns:xml="http://www.w3.org/XML/1998/namespace"
             version="2"
