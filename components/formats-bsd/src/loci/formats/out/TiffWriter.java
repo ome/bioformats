@@ -238,9 +238,13 @@ public class TiffWriter extends FormatWriter {
       int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
   throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
-    boolean littleEndian = bigEndian == null ?
-      false : !bigEndian.booleanValue();
+    boolean littleEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      littleEndian = !retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     // Ensure that no more than one thread manipulated the initialized array
     // at one time.
@@ -481,9 +485,13 @@ public class TiffWriter extends FormatWriter {
     tiffSaver = new TiffSaver(out, currentId);
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
-    boolean littleEndian = bigEndian == null ?
-      false : !bigEndian.booleanValue();
+    boolean littleEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      littleEndian = !retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);

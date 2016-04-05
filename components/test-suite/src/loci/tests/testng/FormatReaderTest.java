@@ -521,8 +521,15 @@ public class FormatReaderTest {
         if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
-          if (reader.isLittleEndian() ==
-            retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
+          boolean littleEndian = false;
+          if (retrieve.getPixelsBigEndian(i) != null)
+          {
+            littleEndian = !retrieve.getPixelsBigEndian(i).booleanValue();
+          }
+          else if (retrieve.getPixelsBinDataCount(i) == 0) {
+            littleEndian = !retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue();
+          }
+          if (reader.isLittleEndian() == littleEndian)
           {
             msg = "BigEndian";
           }

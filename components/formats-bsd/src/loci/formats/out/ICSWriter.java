@@ -214,8 +214,13 @@ public class ICSWriter extends FormatWriter {
       }
 
       boolean signed = FormatTools.isSigned(pixelType);
-      boolean littleEndian =
-        !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      boolean littleEndian = false;
+      if (meta.getPixelsBigEndian(series) != null) {
+        littleEndian = !meta.getPixelsBigEndian(series).booleanValue();
+      }
+      else if (meta.getPixelsBinDataCount(series) == 0) {
+        littleEndian = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      }
 
       out.writeBytes("representation\tformat\t" +
         (pixelType == FormatTools.FLOAT ? "real\n" : "integer\n"));
