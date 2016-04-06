@@ -74,6 +74,7 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -987,6 +988,11 @@ public class FakeReader extends FormatReader {
         store.setROIID(roiID, roiCount);
         store.setMaskID(SHAPE_PREFIX + roiCount, roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        byte[] binData = new byte[ROI_SPACING*ROI_SPACING];
+        new Random().nextBytes(binData);
+        int shapeIndex = ellipses + labels + lines + i;
+        store.setMaskBinData(binData, roiCount, shapeIndex);
+        store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, shapeIndex);
         roiCount++;
         roiRefCount++;
     }
