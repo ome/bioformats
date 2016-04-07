@@ -529,7 +529,7 @@ public class FormatReaderTest {
           else if (retrieve.getPixelsBinDataCount(i) == 0) {
             littleEndian = !retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue();
           }
-          if (reader.isLittleEndian() == littleEndian)
+          if (reader.isLittleEndian() != littleEndian)
           {
             msg = "BigEndian";
           }
