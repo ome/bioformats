@@ -40,13 +40,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.DatatypeConverter;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -995,7 +996,8 @@ public class FakeReader extends FormatReader {
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         byte[] rawBytes = new byte[ROI_SPACING*ROI_SPACING];
         new Random().nextBytes(rawBytes);
-        byte[] binData = Base64.getEncoder().encode(rawBytes);
+        String base64encoded = DatatypeConverter.printBase64Binary(rawBytes);
+        byte[] binData = base64encoded.getBytes();
         store.setMaskBinData(binData, roiCount, 0);
         store.setMaskBinDataBigEndian(true, roiCount, 0);
         store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, 0);
