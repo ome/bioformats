@@ -200,7 +200,7 @@ class OMEModel(object):
         obj = OMEModelObject(e, parent, self)
         if self.opts.lang.isPrimitiveBase(obj.base):
             delegate = ReferenceDelegate(obj.name, obj.base, None)
-            delegate.name = obj.name
+            delegate.name = obj.base.title()
             delegate.minOccurs = 1
             delegate.maxOccurs = 1
             delegate.namespace = obj.namespace
