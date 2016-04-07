@@ -216,6 +216,18 @@ ${customUpdatePropertyContent[prop.name]}
 		// -- END custom content from ${prop.name} property template --
 {% end debug %}\
 {% end %}\
+{% when prop.hasBaseAttribute %}\
+		// Element's text data
+		String value_textContent = element.getTextContent();
+		if (value_textContent.trim().length() > 0) {
+{% if prop.type in model.opts.lang.primitive_base_types %}\
+			set${prop.methodName}(value_textContent.getBytes());
+{% end if prop.type %}\
+{% if not prop.type in model.opts.lang.primitive_base_types %}\
+			set${prop.methodName}(${prop.type}.valueOf(value_textContent));
+{% end if not prop.type %}\
+		}
+{% end when %}\
 {% when prop.isReference %}\
 		// Element reference ${prop.name}
 		List<Element> ${prop.name}_nodeList =
@@ -289,16 +301,6 @@ ${customUpdatePropertyContent[prop.name]}
 				set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
 			}
 		}
-{% end %}\
-{% when 'byte[]' in prop.langType %}\
-{% if debug %}\
-      // MARKER [VVV]
-{% end debug %}\
-    if (element.hasAttribute("${prop.name}"))
-    {
-      // Attribute property ${prop.name}
-      set${prop.methodName}(element.getAttribute("${prop.name}").getBytes());
-    }
 {% end %}\
 {% when not prop.isEnumeration %}\
 {% if debug %}\
