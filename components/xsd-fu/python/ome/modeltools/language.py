@@ -33,6 +33,8 @@ class Language(object):
 
         self.primitive_types = set()
 
+        self.primitive_base_types = set()
+
         self.base_class = None
 
         self.template_map = {
@@ -88,6 +90,10 @@ class Language(object):
             'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass(),
             'base64Binary': self.getDefaultModelBaseClass()
             }
+        
+        # A global set XSD Schema types use as base classes which are primitive  
+        self.primitive_base_types = set([
+            "base64Binary"])
 
         self.model_unit_map = {}
         self.model_unit_default = {}
@@ -187,7 +193,7 @@ class Language(object):
         return self.substitutionGroup_map.keys()
             
     def isPrimitiveBase(self, type):
-        if type == 'base64Binary':
+        if type in self.primitive_base_types:
             return True
         else:
             return False
