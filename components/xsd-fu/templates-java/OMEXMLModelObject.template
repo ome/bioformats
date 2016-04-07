@@ -672,6 +672,15 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			// -- END custom content from ${prop.name} property template --
 {% end debug %}\
 {% end when %}\
+{% when prop.hasBaseAttribute %}\
+			// Element's text data
+{% if not prop.type in model.opts.lang.primitive_base_types %}\
+			${klass.name}_element.setTextContent(${prop.instanceVariableName}.toString());
+{% end if not prop.type %}\
+{% if prop.type in model.opts.lang.primitive_base_types %}\
+			${klass.name}_element.setTextContent(new String(${prop.instanceVariableName}));
+{% end if prop.type %}\
+{% end when %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
 			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
