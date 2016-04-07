@@ -164,7 +164,7 @@ public class PQBinReader extends FormatReader {
           // corresponding to zeroth timeBin
           int output = ((row * sizeX) + col) * bpp;
           int input = ((col * timeBins) + (currentBlock * blockLength)) * bpp;
-         
+          // copy subset of decay into buffer.
           for (int t = 0; t < storeLength; t++) {
             for (int bb = 0; bb < bpp; bb++) {
               dataStore[output + bb] = rowBuf[input + bb];
