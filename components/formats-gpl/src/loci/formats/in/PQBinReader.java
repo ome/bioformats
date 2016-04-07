@@ -124,20 +124,29 @@ public class PQBinReader extends FormatReader {
 
     int binSize = sizeX * sizeY  * bpp;  // size in Bytes of a single 2D timebin.
     
-    int blockLength = 512;  // no of timeBins pre-loaded as a block
+    int blockLength = 1024;  // no of timeBins pre-loaded as a block
+    
+   
+    
     int blockSize = sizeX * sizeY * blockLength * bpp;
     
+   
+    
     // pre-load data for performance
-  
     if (dataStore == null) {
+      
+      LOGGER.info("About to set dataStore");
       dataStore = new byte[blockSize];
       currentBlock = -1;
     }
       
+    
+    
     if (timeBin/blockLength != currentBlock)  {
       
       currentBlock = timeBin/blockLength;
-      // A subset of timebins (a Block) is  copied into storage
+      
+      // A subset of whole timebins (a Block) is  copied into storage
       // to allow different sub-plane sizes to be used for different timebins
       
       byte[] rowBuf = new byte[bpp * timeBins * sizeX];
@@ -152,16 +161,29 @@ public class PQBinReader extends FormatReader {
         storeLength = blockLength;
       }
               
+      LOGGER.info("About to preload!");
+      LOGGER.info("currentBlock = " + Integer.toString(currentBlock));
+      LOGGER.info("storeLength = " + Integer.toString(storeLength));
+      LOGGER.info("sizeX = " + Integer.toString(sizeX));
+      LOGGER.info("sizeY = " + Integer.toString(sizeY));
+      LOGGER.info("timeBins = " + Integer.toString(timeBins));
       
       for (int row = 0; row < sizeY; row++) {
         in.read(rowBuf);
-
-        int input = currentBlock * storeLength;
         for (int col = 0; col < sizeX; col++) {
           // set output to first pixel of this row in 2D plane
           // corresponding to zeroth timeBin
-          int output = (row * sizeX + col) * bpp;
-
+          int output = ((row * sizeX) + col) * bpp;
+          int input = ((col * timeBins) + (currentBlock * blockLength)) * bpp;
+          
+          //debug
+          if (row < 3 & col < 3)  {
+            LOGGER.info("row = " + Integer.toString(row));
+            LOGGER.info("col = " + Integer.toString(col));
+            LOGGER.info("output = " + Integer.toString(output));
+            LOGGER.info("input = " + Integer.toString(input));
+          }
+          
           for (int t = 0; t < storeLength; t++) {
             for (int bb = 0; bb < bpp; bb++) {
               dataStore[output + bb] = rowBuf[input + bb];
@@ -170,26 +192,26 @@ public class PQBinReader extends FormatReader {
             input += bpp;
           }
         }
-
-      }
-      // dataStore loaded
-
-      // copy 2D plane  from dataStore  into buf
-      int iLineSize = sizeX * bpp;
-      int oLineSize = w * bpp;
-      // offset to correct timebin yth line and xth pixel
-      
-      int binInStore = timeBin - (currentBlock * blockLength);
-      
-      int input = (binSize * binInStore) + (y * iLineSize) + (x * bpp);
-      int output = 0;
-
-      for (int row = 0; row < h; row++) {
-        System.arraycopy(dataStore, input, buf, output, oLineSize);
-        input += iLineSize;
-        output += oLineSize;
       }
     }
+    // dataStore loaded
+
+    // copy 2D plane  from dataStore  into buf
+    int iLineSize = sizeX * bpp;
+    int oLineSize = w * bpp;
+    // offset to correct timebin yth line and xth pixel
+
+    int binInStore = timeBin - (currentBlock * blockLength);
+    
+    int input = (binSize * binInStore) + (y * iLineSize) + (x * bpp);
+    int output = 0;
+
+    for (int row = 0; row < h; row++) {
+      System.arraycopy(dataStore, input, buf, output, oLineSize);
+      input += iLineSize;
+      output += oLineSize;
+    }
+
     return buf;
   }
 
