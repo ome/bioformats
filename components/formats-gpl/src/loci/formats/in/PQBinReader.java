@@ -34,20 +34,19 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
-import ome.units.UNITS;
 
 /**
  * PQBinReader is the file format reader for PicoQuant .bin files.
  *
  * Please Note: This format holds FLIM data arranged so that each decay is stored contiguously. 
  * Therefore, as in other FLIM format readers e.g. SDTReader.java, on the first call to openBytes
- * the whole data cube ( x,y,t) (NB actually t not real-time T) is loaded from the file to  a buffer.
+ * the whole data cube ( x,y,t) (NB actually t not real-time T) is loaded from the file and buffered
  * On further calls to openBytes the appropriate 2D (x,y)plane (timebin) is returned from this buffer.
  * This is in the interest of significantly improved  performance when all the planes are requested one after another.
  * There will be a performance cost if a single plane is requested but this is highly unlikely for FLIM data.
+ * In order to limit the size of the buffer, beyond a certain size threshold only a subset of planes (a Block) are 
+ * retained in the buffer.
  */
 public class PQBinReader extends FormatReader {
 
@@ -69,7 +68,14 @@ public class PQBinReader extends FormatReader {
   /**
    * Block of time bins currently stored for faster loading.
    */
-  int currentBlock;
+  protected int currentBlock;
+  
+  /**
+   * No of timeBins pre-loaded as a block
+  */
+  protected int blockLength ;  
+  
+  
   
 
   // -- Constructor --
@@ -123,25 +129,15 @@ public class PQBinReader extends FormatReader {
     int timeBin = no;
 
     int binSize = sizeX * sizeY  * bpp;  // size in Bytes of a single 2D timebin.
-    
-    int blockLength = 1024;  // no of timeBins pre-loaded as a block
-    
    
-    
     int blockSize = sizeX * sizeY * blockLength * bpp;
-    
-   
     
     // pre-load data for performance
     if (dataStore == null) {
-      
-      LOGGER.info("About to set dataStore");
       dataStore = new byte[blockSize];
       currentBlock = -1;
     }
       
-    
-    
     if (timeBin/blockLength != currentBlock)  {
       
       currentBlock = timeBin/blockLength;
@@ -161,13 +157,6 @@ public class PQBinReader extends FormatReader {
         storeLength = blockLength;
       }
               
-      LOGGER.info("About to preload!");
-      LOGGER.info("currentBlock = " + Integer.toString(currentBlock));
-      LOGGER.info("storeLength = " + Integer.toString(storeLength));
-      LOGGER.info("sizeX = " + Integer.toString(sizeX));
-      LOGGER.info("sizeY = " + Integer.toString(sizeY));
-      LOGGER.info("timeBins = " + Integer.toString(timeBins));
-      
       for (int row = 0; row < sizeY; row++) {
         in.read(rowBuf);
         for (int col = 0; col < sizeX; col++) {
@@ -175,15 +164,7 @@ public class PQBinReader extends FormatReader {
           // corresponding to zeroth timeBin
           int output = ((row * sizeX) + col) * bpp;
           int input = ((col * timeBins) + (currentBlock * blockLength)) * bpp;
-          
-          //debug
-          if (row < 3 & col < 3)  {
-            LOGGER.info("row = " + Integer.toString(row));
-            LOGGER.info("col = " + Integer.toString(col));
-            LOGGER.info("output = " + Integer.toString(output));
-            LOGGER.info("input = " + Integer.toString(input));
-          }
-          
+         
           for (int t = 0; t < storeLength; t++) {
             for (int bb = 0; bb < bpp; bb++) {
               dataStore[output + bb] = rowBuf[input + bb];
@@ -244,8 +225,11 @@ public class PQBinReader extends FormatReader {
     LOGGER.info("Reading header PQBin");
    
     // Header
-    m.sizeX = in.readInt();
-    m.sizeY = in.readInt();
+    int sizeX = in.readInt();
+    int sizeY = in.readInt();
+    m.sizeY = sizeY;
+    m.sizeX = sizeX;
+    
     float pixResol = in.readFloat();    // Resolution of every Pixel in Image (in µm)
     m.sizeT = in.readInt();             // Number of DataPoints per Decay
     
@@ -273,7 +257,11 @@ public class PQBinReader extends FormatReader {
     m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
     m.moduloT.unit = "ps";
     
+    int sizeThreshold = 128 * 128 * 1024;  // Arbitararily chosen size limit for buffer
+    blockLength = 2048;   //default No of bins in buffer
     
+    while (blockLength * sizeX * sizeY > sizeThreshold)
+      blockLength = blockLength/2;
     
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
