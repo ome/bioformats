@@ -93,7 +93,7 @@ public class ImporterOptions extends OptionsList {
   public static final String LOCATION_OMERO = "OMERO";
 
   //possible values for roiMode
-  public static final String ROIS_MODE_MANAGER = "ROI Manager";
+  public static final String ROIS_MODE_MANAGER = "ROI manager";
   public static final String ROIS_MODE_OVERLAY = "Overlay";
   
   // possible values for stackFormat

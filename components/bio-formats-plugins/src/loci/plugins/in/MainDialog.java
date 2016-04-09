@@ -442,6 +442,7 @@ public class MainDialog extends ImporterDialog
     //boolean recordEnabled = recordBox.isEnabled();
     boolean showMetadataEnabled = showMetadataBox.isEnabled();
     boolean showOMEXMLEnabled = showOMEXMLBox.isEnabled();
+    boolean roisModeEnabled = roisModeChoice.isEnabled();
     boolean specifyRangesEnabled = specifyRangesBox.isEnabled();
     boolean splitZEnabled = splitZBox.isEnabled();
     boolean splitTEnabled = splitTBox.isEnabled();
@@ -461,6 +462,8 @@ public class MainDialog extends ImporterDialog
     //boolean isRecord = recordBox.getState();
     boolean isShowMetadata = showMetadataBox.getState();
     boolean isShowOMEXML = showOMEXMLBox.getState();
+    boolean isShowROIs = showROIsBox.getState();
+    String roisModeValue = roisModeChoice.getSelectedItem();
     boolean isSpecifyRanges = specifyRangesBox.getState();
     boolean isSplitZ = splitZBox.getState();
     boolean isSplitT = splitTBox.getState();
@@ -515,6 +518,10 @@ public class MainDialog extends ImporterDialog
     // showOMEXMLBox
     // NB: no other options affect showOMEXMLBox
 
+    // roisModeChoice
+    roisModeEnabled = isShowROIs;
+    if (!roisModeEnabled) roisModeValue = ImporterOptions.ROIS_MODE_MANAGER;
+    
     // == Dataset organization ==
 
     // groupFilesBox
@@ -602,6 +609,7 @@ public class MainDialog extends ImporterDialog
     //recordBox.setEnabled(recordEnabled);
     showMetadataBox.setEnabled(showMetadataEnabled);
     showOMEXMLBox.setEnabled(showOMEXMLEnabled);
+    roisModeChoice.setEnabled(roisModeEnabled);
     specifyRangesBox.setEnabled(specifyRangesEnabled);
     splitZBox.setEnabled(splitZEnabled);
     splitTBox.setEnabled(splitTEnabled);
@@ -621,6 +629,7 @@ public class MainDialog extends ImporterDialog
     //recordBox.setState(isRecord);
     showMetadataBox.setState(isShowMetadata);
     showOMEXMLBox.setState(isShowOMEXML);
+    roisModeChoice.select(roisModeValue);
     specifyRangesBox.setState(isSpecifyRanges);
     splitZBox.setState(isSplitZ);
     splitTBox.setState(isSplitT);
