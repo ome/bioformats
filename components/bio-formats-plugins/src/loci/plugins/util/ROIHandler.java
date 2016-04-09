@@ -96,6 +96,20 @@ public class ROIHandler {
    */
   public static void openROIs(IMetadata retrieve, ImagePlus[] images,
           boolean isOMERO) {
+    openROIs(retrieve, images, isOMERO, ImporterOptions.ROIS_MODE_MANAGER);  
+  }
+  
+  /**
+   * Opens the rois and converts them into ImageJ Rois.
+   *
+   * @param retrieve The OMEXML store.
+   * @param images The imageJ object.
+   * @param isOMERO <code>true</code> if data stored in OMERO,
+   *        <code>false</code> otherwise.
+   * @param roisMode Determines whether to import Rois to overlay or RoiManager
+   */
+  public static void openROIs(IMetadata retrieve, ImagePlus[] images,
+          boolean isOMERO, String roisMode) {
     if (!(retrieve instanceof OMEXMLMetadata)) return;
     int nextRoi = 0;
     RoiManager manager = RoiManager.getInstance();
@@ -109,7 +123,8 @@ public class ROIHandler {
     int imageCount = images.length;
     for (int imageNum=0; imageNum<imageCount; imageNum++) {
       int roiCount = root.sizeOfROIList();
-      if (roiCount > 0 && manager == null && roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
+      if (roiCount > 0 && manager == null
+    		  && roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
         manager = new RoiManager();
       }
 
@@ -418,7 +433,6 @@ public class ROIHandler {
         manager.runCommand("show all with labels");
       }
     }
-
   }
 
   /**
