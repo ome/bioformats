@@ -36,8 +36,7 @@ Version history
    - improved documentation for the export of BigTIFFs in ImageJ
 
 * C++:
-   - xerces version 3.1.2 is now removed from the mirror
-   - xerces version updated to Version 3.1.3
+   - no changes.
 
 
 5.1.8 (2016 February 15)
