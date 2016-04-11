@@ -299,7 +299,7 @@ public class OMEXMLReader extends FormatReader {
         if (omexmlMeta.getPixelsBigEndian(i) != null) {
           endian = omexmlMeta.getPixelsBigEndian(i).booleanValue();
         }
-        else if (omexmlMeta.getPixelsBinDataCount(i) == 0) {
+        else if (omexmlMeta.getPixelsBinDataCount(i) != 0) {
           endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0).booleanValue();
         }
       }
