@@ -22,7 +22,7 @@ Version history
        - fixed erroneous metadata parsing
        - added support for parsing and storing the physical sizes in native units
    - OME-TIFF
-       - improve handling of OME-TIFF multi-file file-sets with partial metadata blocks
+       - improved handling of OME-TIFF multi-file fileset’s with partial metadata blocks
    - Nikon ND2
        - fixed the parsing of emission wavelength
    - Olympus CellR (APL)
