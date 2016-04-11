@@ -221,6 +221,7 @@ public class FakeReaderTest {
     assertEquals(m.getPixelsPhysicalSizeY(0), null);
     assertEquals(m.getPixelsPhysicalSizeZ(0), null);
     assertEquals(m.getROICount(), 0);
+    assertEquals(m.getExperimentCount(), 0);
   }
 
   @Test
@@ -286,6 +287,45 @@ public class FakeReaderTest {
     while (i >= 0) {
         assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
     }
+  }
+
+  @Test
+  public void testMicrobeamINI() throws Exception {
+    mkIni("foo.fake.ini", "plates=1\nwithMicrobeam = true");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 1);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    reader.close();
+
+    mkIni("foo.fake.ini", "screens=2\nwithMicrobeam=true");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 2);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    assertEquals(m.getMicrobeamManipulationCount(1), 1);
+    reader.close();
+  }
+
+  @Test
+  public void testMicrobeam() throws Exception {
+    reader.setId("foo&plates=1&withMicrobeam=true.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 1);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    reader.close();
+
+    reader.setId("foo&screens=2&withMicrobeam=true.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 2);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    assertEquals(m.getMicrobeamManipulationCount(1), 1);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test
