@@ -1,6 +1,45 @@
 Version history
 ===============
 
+5.1.9 (2016 April 11)
+---------------------
+
+* Java bug fixes, including:
+   - SDT
+       - fixed width padding calculation for single-pixel image.
+   - Deltavision
+       - fixed the parsing of the new date format.
+       - added support for parsing and storing the working distance in native units.
+   - Micromanager
+       - cleaned up JSON metadata parsing.
+   - Olympus Fluoview
+       - fixed null pointer exceptions while parsing metadata.
+   - Leica LIF
+       - fixed large milt-tile files from having incorrect plane offsets after the 2GB mark.
+   - EM formats
+       - added native length support for EM readers.
+   - Gatan
+       - fixed erroneous metadata parsing.
+       - added support for parsing and storing the physical sizes in native units.
+   - OME-TIFF
+       - improve handling of OME-TIFF multi-file file-sets with partial metadata blocks.
+   - Nikon ND2
+       - fixed the parsing of emission wavelength.
+   - APL
+       - fixed multiple parsing issues with the mtb file.
+   - SlideBook
+       - removed slidebook dlls from Bio-Formats repository.
+   - Zeiss CZI
+       - fixed parsing of files with multiple mosaics and positions.
+
+* Documentation updates, including:
+   - improved documentation for the export of big-tiff’s in ImageJ.
+
+* C++:
+   - xerces version 3.1.2 is now removed from the mirror. 
+   - xerces version updated to Version 3.1.3.
+
+
 5.1.8 (2016 February 15)
 ------------------------
 
