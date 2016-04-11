@@ -263,6 +263,9 @@ public class PQBinReader extends FormatReader {
     while (blockLength * sizeX * sizeY > sizeThreshold)
       blockLength = blockLength/2;
     
+    if (blockLength > timeBins)
+      blockLength = timeBins;
+    
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     
