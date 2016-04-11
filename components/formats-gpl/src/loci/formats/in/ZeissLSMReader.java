@@ -59,6 +59,7 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -593,6 +594,7 @@ public class ZeissLSMReader extends FormatReader {
             acquiredDate.get(series)), series);
       }
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
+      store.setPixelsBinDataLength(new NonNegativeLong((long)0), series, 0);
     }
     setSeries(0);
   }
