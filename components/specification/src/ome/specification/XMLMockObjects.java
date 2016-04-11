@@ -233,14 +233,11 @@ public class XMLMockObjects
     Arc.class.getName(), Filament.class.getName(),
     LightEmittingDiode.class.getName(), Laser.class.getName()};
 
-  /**
-   * The shapes to handle.
-   * Do not use Masks, as BinData is not appropriately supported.
-   **/
+  /** The shapes to handle. */
   public static final String[] SHAPES = {Line.class.getName(),
     Point.class.getName(), Rectangle.class.getName(),
     Ellipse.class.getName(), Polyline.class.getName(),
-    /*Mask.class.getName()*/};
+    Mask.class.getName()};
 
   /** The supported types of annotations. */
   public static final String[] ANNOTATIONS = {
@@ -738,6 +735,7 @@ public class XMLMockObjects
       m.setY(0.0);
       m.setWidth(new Double(SIZE_X));
       m.setHeight(new Double(SIZE_Y));
+      m.setBinData(createBinData(SIZE_X,SIZE_Y,BYTES_PER_PIXEL));
       shape = m;
     }
     if (shape != null) {
@@ -1123,10 +1121,12 @@ public class XMLMockObjects
     pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROM));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
-    BinData data;
-    for (int i = 0; i < SIZE_Z*SIZE_C*SIZE_T; i++) {
-      data = createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL);
-      pixels.addBinData(data);
+    if (!metadata) {
+      BinData data;
+      for (int i = 0; i < SIZE_Z*SIZE_C*SIZE_T; i++) {
+        data = createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL);
+        pixels.addBinData(data);
+      }
     }
     for (int z = 0; z < SIZE_Z; z++) {
       for (int t = 0; t < SIZE_T; t++) {
