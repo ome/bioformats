@@ -38,6 +38,7 @@ import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -946,7 +947,7 @@ public class FakeReader extends FormatReader {
   private void fillRegions(MetadataStore store, int imageIndex) {
     int roiRefCount = 0;
     String roiID;
-
+    Random random = new Random();
     for (int i=0; i<ellipses; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
@@ -995,9 +996,9 @@ public class FakeReader extends FormatReader {
         store.setMaskHeight((double)ROI_SPACING, roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         byte[] rawBytes = new byte[ROI_SPACING*ROI_SPACING];
-        new Random().nextBytes(rawBytes);
+        random.nextBytes(rawBytes);
         String base64encoded = DatatypeConverter.printBase64Binary(rawBytes);
-        byte[] binData = base64encoded.getBytes();
+        byte[] binData = base64encoded.getBytes(StandardCharsets.UTF_8);
         store.setMaskBinData(binData, roiCount, 0);
         store.setMaskBinDataBigEndian(true, roiCount, 0);
         store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, 0);
