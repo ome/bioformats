@@ -1222,6 +1222,7 @@ Commercial applications that support LIF include: \n
 [LaVision Imspector]
 extensions = .msr
 developer = `LaVision BioTec <http://www.lavisionbiotec.com/>`_
+versions = 4.0, 4.1
 bsd = no
 weHave = * a few .msr files
 pixelsRating = Fair
