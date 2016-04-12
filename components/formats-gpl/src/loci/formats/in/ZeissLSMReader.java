@@ -593,8 +593,6 @@ public class ZeissLSMReader extends FormatReader {
         store.setImageAcquisitionDate(new Timestamp(
             acquiredDate.get(series)), series);
       }
-      store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
-      store.setPixelsBinDataLength(new NonNegativeLong((long)0), series, 0);
     }
     setSeries(0);
   }
