@@ -179,6 +179,7 @@ public class ZeissLSMReader extends FormatReader {
   private String binning;
   private List<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
+  private int rotations, phases, illuminations;
   private Map<String, Integer> seriesCounts;
   private String userName;
   private String[][] channelNames;
@@ -270,6 +271,9 @@ public class ZeissLSMReader extends FormatReader {
       zCoordinates = null;
       dimensionM = 0;
       dimensionP = 0;
+      rotations = 0;
+      phases = 0;
+      illuminations = 0;
       seriesCounts = null;
       originX = originY = originZ = 0d;
       userName = null;
@@ -971,13 +975,42 @@ public class ZeissLSMReader extends FormatReader {
       store.setChannelID(lsid, series, c);
     }
 
+    // NB: the Zeiss LSM 5.5 specification indicates that there should be
+    //     15 32-bit integers here; however, there are actually 16 32-bit
+    //     integers before the tile position offset.
+    //     We have confirmed with Zeiss that this is correct, and the 6.0
+    //     specification was updated to contain the correct information.
+
+    // rotations and phases may be reversed
+    // we only have examples where both values are equal
+    rotations = ras.readInt();
+    phases = ras.readInt();
+    illuminations = ras.readInt();
+
+    if (rotations > 1) {
+      ms.moduloZ.step = ms.sizeZ;
+      ms.moduloZ.end = ms.sizeZ * (rotations - 1);
+      ms.moduloZ.type = FormatTools.ROTATION;
+      ms.sizeZ *= rotations;
+    }
+
+    if (illuminations > 1) {
+      ms.moduloC.step = ms.sizeC;
+      ms.moduloC.end = ms.sizeC * (illuminations - 1);
+      ms.moduloC.type = FormatTools.ILLUMINATION;
+      ms.moduloC.parentType = FormatTools.CHANNEL;
+      ms.sizeC *= illuminations;
+    }
+
+    if (phases > 1) {
+      ms.moduloT.step = ms.sizeT;
+      ms.moduloT.end = ms.sizeT * (phases - 1);
+      ms.moduloT.type = FormatTools.PHASE;
+      ms.sizeT *= phases;
+    }
+
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      // NB: the Zeiss LSM 5.5 specification indicates that there should be
-      //     15 32-bit integers here; however, there are actually 16 32-bit
-      //     integers before the tile position offset.
-      //     We have confirmed with Zeiss that this is correct, and the 6.0
-      //     specification was updated to contain the correct information.
-      ras.skipBytes(64);
+      ras.skipBytes(52);
 
       int tilePositionOffset = ras.readInt();
 
@@ -1062,6 +1095,9 @@ public class ZeissLSMReader extends FormatReader {
           lut[getSeries()] = new byte[getSizeC() * 3][256];
           core.get(getSeries()).indexed = true;
           for (int i=0; i<getSizeC(); i++) {
+            if (i >= channelColor.length) {
+              continue;
+            }
             int color = in.readInt();
 
             int red = color & 0xff;
