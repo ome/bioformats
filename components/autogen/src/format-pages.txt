@@ -22,11 +22,8 @@ preserved. \n
 Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
 https://www.slidebook.com/reader.php.\n
 \n
-As of Bioformats 5.1.2 the native binary file SlideBook6Reader.dll\n
-of the proper architecture (x32 or x64) must be in the java binary path for\n
-this reader to work. This file is available from\n
-`3i Support <mailto: support@intelligent-imaging.com>`_ and is currently\n
-only available for Windows systems.\n
+SlideBook6Reader requires a native binary file to work, see\n
+www.openmicroscopy.org/info/slidebook for details.\n
 \n
 .. seealso:: \n
   `Slidebook software overview <https://www.slidebook.com>`_ \n
