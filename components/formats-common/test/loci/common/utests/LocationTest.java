@@ -85,7 +85,6 @@ public class LocationTest {
       new Location(validFile.getAbsolutePath()),
       new Location(invalidPath),
       new Location(tmpDirectory),
-      new Location("http://loci.wisc.edu/software/bio-formats"),
       new Location("http://www.openmicroscopy.org/site/foo/products/bio-formats"),
       new Location("https://www.openmicroscopy.org/site/products/images"),
       new Location("https://www.openmicroscopy.org/site/products/images/foo"),
@@ -93,19 +92,19 @@ public class LocationTest {
     };
 
     exists = new boolean[] {
-      true, false, true, true, false, true, false, true
+      true, false, true, false, true, false, true
     };
 
     isDirectory = new boolean[] {
-      false, false, true, false, false, false, false, false
+      false, false, true, false, false, false, false
     };
 
     isHidden = new boolean[] {
-      false, false, false, false, false, false, false, true
+      false, false, false, false, false, false, true
     };
 
     mode = new String[] {
-      "rw", "", "rw", "r", "", "r", "","rw"
+      "rw", "", "rw", "", "r", "","rw"
     };
 
   }
