@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -54,6 +54,9 @@
 #include <ome/common/log.h>
 
 #include <ome/xml/model/enums/EnumerationException.h>
+
+// All values in the ${klass.langType} enumeration.
+#define ${fu.CLASS_PREFIX}_VALUES {% for value in klass.possibleValues %}(${enum_value_name(value, False).upper()}){% end %}
 
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\

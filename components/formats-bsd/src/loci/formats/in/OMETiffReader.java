@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -163,6 +163,27 @@ public class OMETiffReader extends FormatReader {
     }
     metaFile = new Location(name).getAbsolutePath();
     boolean valid = super.isThisType(name, open);
+    if (metadataFile != null) {
+      // this is a binary-only file
+      // overwrite XML with what is in the companion OME-XML file
+      String dir = new File(metaFile).getParent();
+      Location path = new Location(dir, metadataFile);
+      LOGGER.debug("Checking metadata file {}", path);
+      if (!path.exists()) return false;
+      metadataFile = path.getAbsolutePath();
+
+      try {
+        String xml = readMetadataFile();
+        service.createOMEXMLMetadata(xml);
+      } catch (ServiceException se) {
+        LOGGER.debug("OME-XML parsing failed", se);
+        return false;
+      } catch (IOException e) {
+        return false;
+      } catch (NullPointerException e) {
+        return false;
+      }
+    }
     if (valid && !isGroupFiles()) {
       try {
         return isSingleFile(metaFile);
@@ -215,8 +236,11 @@ public class OMETiffReader extends FormatReader {
       meta = service.createOMEXMLMetadata(comment);
 
       try {
-        String metadataFile = meta.getBinaryOnlyMetadataFile();
-        if (metadataFile != null) {
+        metadataFile = meta.getBinaryOnlyMetadataFile();
+        // check the suffix to make sure that the MetadataFile is not
+        // referencing the current OME-TIFF
+        if (metadataFile != null)
+        {
           return true;
         }
       }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-09 http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09 http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09/BinaryFile.xsd http://www.openmicroscopy.org/Schemas/CA/2008-09 http://www.openmicroscopy.org/Schemas/CA/2008-09/CA.xsd http://www.openmicroscopy.org/Schemas/SPW/2008-09 http://www.openmicroscopy.org/Schemas/SPW/2008-09/SPW.xsd http://www.openmicroscopy.org/Schemas/STD/2008-09 http://www.openmicroscopy.org/Schemas/STD/2008-09/STD.xsd">
+  <Project ID="Project:1" Name="Project for Cell Line A">
+    <Description>This project contains the datasets using cell line A.</Description>
+  </Project>
+  <Dataset ID="Dataset:0" Name="Control Set">
+    <Description>This is the set of data collect for the Control</Description>
+    <ProjectRef ID="Project:1"/>
+  </Dataset>
+  <Experimenter ID="Experimenter:0">
+    <FirstName>John</FirstName>
+    <LastName>Smith</LastName>
+    <Email>j.smith@ome.example.com</Email>
+    <Institution>Open Microscopy Environment</Institution>
+    <OMEName>ome-jsmith</OMEName>
+    <GroupRef ID="Group:1"/>
+  </Experimenter>
+  <Group ID="Group:1" Name="OME Lab">
+    <Leader ID="Experimenter:0"/>
+    <Contact ID="Experimenter:0"/>
+  </Group>
+  <Image AcquiredPixels="Pixels:0:0" DefaultPixels="Pixels:0:0"
+         ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <CreationDate>2010-02-23T12:51:30</CreationDate>
+    <ExperimenterRef ID="Experimenter:0"/>
+    <Description>This image is linked to the Control Set</Description>
+    <DatasetRef ID="Dataset:0"/>
+    <LogicalChannel ID="LogicalChannel:0">
+      <ChannelComponent Index="0" Pixels="Pixels:0:0"/>
+    </LogicalChannel>
+    <Pixels BigEndian="false" DimensionOrder="XYCZT" ID="Pixels:0:0"
+            PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0"
+            PixelType="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Bin:BinData Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </Pixels>
+  </Image>
+</OME>

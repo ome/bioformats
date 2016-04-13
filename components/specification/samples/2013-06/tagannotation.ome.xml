@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06    http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+    <SA:AnnotationRef ID="Annotation:3"/>
+  </Image>
+  <SA:StructuredAnnotations>
+    <!-- First Tag -->
+    <SA:TagAnnotation ID="Annotation:1">
+      <SA:Description>This is the description of the sample tag A</SA:Description>
+      <SA:Value>SampleTagA</SA:Value>
+    </SA:TagAnnotation>
+    <!-- Second Tag -->
+    <SA:TagAnnotation ID="Annotation:2">
+      <SA:Description>This is the description of the sample tag B</SA:Description>
+      <SA:Value>SampleTagB</SA:Value>
+    </SA:TagAnnotation>
+    <!-- A Tagset -->
+    <SA:TagAnnotation ID="Annotation:3" Namespace="openmicroscopy.org/omero/insight/tagset">
+      <SA:Description>This is the description of the sample tagset</SA:Description>
+      <SA:AnnotationRef ID="Annotation:1"/>
+      <SA:AnnotationRef ID="Annotation:2"/>
+      <SA:Value>SampleTagset</SA:Value>
+    </SA:TagAnnotation>
+  </SA:StructuredAnnotations>
+</OME>

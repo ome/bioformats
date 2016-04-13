@@ -4,7 +4,7 @@ an OME XML (http://www.ome-xml.org) XSD document.
 """
 
 #
-#  Copyright (C) 2009 University of Dundee. All rights reserved.
+#  Copyright (C) 2009 - 2016 Open Microscopy Environment. All rights reserved.
 #
 #
 #  This program is free software; you can redistribute it and/or modify

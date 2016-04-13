@@ -5,7 +5,7 @@ Generate code to process OME-XML from an OME-XML schema.
 """
 
 #
-#  Copyright (C) 2007 - 2014 University of Dundee. All rights reserved.
+#  Copyright (C) 2007 - 2016 Open Microscopy Environment. All rights reserved.
 #
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -56,11 +56,18 @@ from getopt import gnu_getopt, GetoptError
 from glob import glob
 from xml import sax
 
-def guard(filename):
+def macroname(filename):
     filename = "_".join(filename.split(os.path.sep))
     filename = filename.upper()
     filename = re.sub("[^A-Z0-9]", "_", filename)
     return filename
+
+def guard(filename):
+    return macroname(filename)
+
+def class_prefix(filename):
+    filename, ext = os.path.splitext(filename)
+    return macroname(filename)
 
 def usage(error):
     """
@@ -198,6 +205,7 @@ def main(model, opts):
             continue
 
         fu.GUARD = guard(fullname)
+        fu.CLASS_PREFIX = class_prefix(fullname)
 
         fullname = os.path.join(opts.outdir, fullname)
 
@@ -288,6 +296,7 @@ def enumTypesMain(model, opts):
                 continue
 
             fu.GUARD = guard(fullname)
+            fu.CLASS_PREFIX = class_prefix(fullname)
             fu.SOURCE_TYPE = opts.filetype;
 
             fullname = os.path.join(opts.outdir, fullname)
@@ -329,6 +338,7 @@ def enumTypesIncludeAll(model, opts):
     fullname = os.path.join("ome", "xml", "model", fullname)
 
     fu.GUARD = guard(fullname)
+    fu.CLASS_PREFIX = class_prefix(fullname)
     fu.SOURCE_TYPE = language.TYPE_HEADER;
     fu.HEADERS = sorted(headers);
 
@@ -472,6 +482,7 @@ def processMetadataTemplate(template, outputFilename, model, opts):
     fu.METADATA_COUNT_IGNORE = config.METADATA_COUNT_IGNORE
     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
     fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
+    fu.COMPLEX_OVERRIDE = config.COMPLEX_OVERRIDE
     fu.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
     fu.OBJECT_HEADERS = sorted(object_headers);

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -277,6 +277,14 @@ public class CellSensReader extends FormatReader {
   private static final int DIMENSION_VALUE_ID = 2027;
 
   private static final int CHANNEL_NAME = 2419;
+
+  // Dimension types
+  private static final int Z = 1;
+  private static final int T = 2;
+  private static final int LAMBDA = 3;
+  private static final int C = 4;
+  private static final int UNKNOWN = 5;
+  private static final int PHASE = 9;
 
   // Stack properties
   private static final int DISPLAY_LIMITS = 2003;
@@ -1364,6 +1372,7 @@ public class CellSensReader extends FormatReader {
         int tag = vsi.readInt();
         long nextField = vsi.readInt() & 0xffffffffL;
         int dataSize = vsi.readInt();
+        String storedValue = null;
 
         LOGGER.debug("  tag #{}: fieldType={}, tag={}, nextField={}, dataSize={}",
           new Object[] {i, fieldType, tag, nextField, dataSize});
@@ -1695,6 +1704,7 @@ public class CellSensReader extends FormatReader {
               addGlobalMetaList(tagPrefix + tagName, value);
             }
           }
+          storedValue = value;
         }
 
         if (inDimensionProperties) {
@@ -1719,6 +1729,31 @@ public class CellSensReader extends FormatReader {
           }
           else if (tag == CHANNEL_PROPERTIES) {
             foundChannelTag = true;
+          }
+          else if (tag == DIMENSION_MEANING && storedValue != null) {
+            int dimension = -1;
+            try {
+              dimension = Integer.parseInt(storedValue);
+            }
+            catch (NumberFormatException e) { }
+            switch (dimension) {
+              case Z:
+                p.dimensionOrdering.put("Z", dimensionTag);
+                break;
+              case T:
+                p.dimensionOrdering.put("T", dimensionTag);
+                break;
+              case LAMBDA:
+                p.dimensionOrdering.put("L", dimensionTag);
+                break;
+              case C:
+                p.dimensionOrdering.put("C", dimensionTag);
+                break;
+              case PHASE:
+                p.dimensionOrdering.put("P", dimensionTag);
+              default:
+                throw new FormatException("Invalid dimension: " + dimension);
+            }
           }
         }
 

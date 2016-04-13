@@ -56,15 +56,15 @@
 {% end %}\
 \
 {% python
-        def is_abstract(name):
-                o = model.getObjectByName(name)
-                if o is not None and \
-                   (o.isAbstract or o.isAbstractProprietary):
-                        return True
-                return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+      (o.isAbstract or o.isAbstractProprietary):
+        return True
+    return False
 
-        def sorted_properties(o):
-                return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 %}\
 \
 \
@@ -72,7 +72,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -205,14 +205,14 @@ namespace ome
 
 {% end debug %}\
         /**
-         * Get the number of BinData elements in Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @returns the number of BinData elements.
-         */
-        virtual index_type
-        getPixelsBinDataCount(index_type imageIndex) const = 0;
-
+         * Get the number of BinData elements in Pixels.   
+         *    
+         * @param imageIndex the Image index.   
+         * @returns the number of BinData elements.   
+         */   
+        virtual index_type    
+        getPixelsBinDataCount(index_type imageIndex) const = 0;   
+    
         /**
          * Get the number of links to a BooleanAnnotation.
          *
@@ -333,6 +333,41 @@ namespace ome
         virtual index_type
         getXMLAnnotationAnnotationCount(index_type xmlAnnotationIndex) const = 0;
 
+{% end header%}\
+{% if debug %}\
+        // -- Entity counting (code generated definitions) --
+
+{% end debug %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
+{% for k, v in indexes[abstractClass].items() %}\
+        /**
+         * Get the type of a ${abstractClass}.
+         *
+{% for param in v %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @returns the ${abstractClass} type.
+         *
+         * @todo Can this be a const reference?
+         */
+        virtual const std::string&
+        get${abstractClass}Type(${indexes_string(v)}) const = 0;
+ 
+        /**
+         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
+         *
+{% for param in v[:-1] %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @return the number of ${abstractClass} elements.
+         */
+        virtual index_type
+        get${abstractClass}Count(${indexes_string(v)}) const = 0;
+
+{% end %}\
+{% end %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
         /**
          * Get the type of a LightSource.
          *
@@ -343,9 +378,8 @@ namespace ome
          * @todo Can this be a const reference?
          */
         virtual const std::string&
-        getLightSourceType(index_type instrumentIndex,
-                           index_type lightSourceIndex) const = 0;
-
+        getLightSourceType(index_type instrumentIndex, index_type lightSourceIndex) const = 0;
+        
         /**
          * Get the type of a Shape.
          *
@@ -356,9 +390,8 @@ namespace ome
          * @todo Can this be a const reference?
          */
         virtual const std::string&
-        getShapeType(index_type roiIndex,
-                     index_type shapeIndex) const = 0;
-
+        getShapeType(index_type roiIndex, index_type shapeIndex) const = 0;
+{% end %}\
 {% end header%}\
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
@@ -375,13 +408,13 @@ namespace ome
         /**
          * Get the text value of ${o.name}.
          *
-{% for param in indexes[o.name].items()[0][1] %}\
+{% for param in indexes[o.topLevelName].items()[0][1] %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @returns the text value.
          */
         virtual ${o.langBaseType}
-        get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const = 0;
+        get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -442,7 +475,7 @@ namespace ome
 {% end header%}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -464,7 +497,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -495,13 +528,13 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\

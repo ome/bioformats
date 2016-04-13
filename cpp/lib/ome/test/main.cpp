@@ -2,7 +2,7 @@
  * #%L
  * # Bio-Formats C++ libraries (test infrastructure)
  * %%
- * Copyright © 2013 - 2015 Open Microscopy Environment:
+ * Copyright © 2013 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -55,7 +55,7 @@ main (int   argc,
 bool
 verbose ()
 {
-  static bool v(getenv("BIOFORMATS_TEST_VERBOSE")
-                && std::string(getenv("BIOFORMATS_TEST_VERBOSE")) == "true");
+  static bool v(getenv("TEST_VERBOSE")
+                && std::string(getenv("TEST_VERBOSE")) == "true");
   return v;
 }

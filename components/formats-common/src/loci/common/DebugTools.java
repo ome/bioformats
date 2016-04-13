@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -65,12 +65,36 @@ public final class DebugTools {
   }
 
   /**
+   * Checks whether SLF4J logging has been enabled via logback or log4j
+   *
+   * @return {@code true} if logging was successfully enabled
+   */
+  public static synchronized boolean isEnabled() {
+    final String[][] toolClasses = new String[][] {
+      new String[] {"loci.common.", "LogbackTools"},
+      new String[] {"loci.common.", "Log4jTools"}
+    };
+
+    for (String[] toolClass : toolClasses) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("isEnabled");
+        return (Boolean) m.invoke(null);
+      }
+      catch (Throwable t) {
+        // no-op. Ignore error and try the next class.
+      }
+    }
+    return false;
+  }
+
+  /**
    * Attempts to enable SLF4J logging via logback or log4j
    * without an external configuration file.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return true iff logging was successfully enabled
+   * @return {@code} true if logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
     final String[][] toolClasses = new String[][] {

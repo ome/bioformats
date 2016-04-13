@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -375,6 +375,7 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
+      boolean foundAttributes = false;
       boolean useLastText = false;
       int blockCount = 0;
 
@@ -492,13 +493,14 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
-          if (foundMetadata) {
+          if (foundMetadata && foundAttributes) {
             imageOffsets.clear();
             imageNames.clear();
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
             foundMetadata = false;
+            foundAttributes = false;
             extraZDataCount = 0;
             useLastText = true;
           }
@@ -531,7 +533,7 @@ public class NativeND2Reader extends FormatReader {
           blockType.startsWith("CustomDataVa"))
         {
           if (blockType.equals("ImageAttribu")) {
-            foundMetadata = true;
+            foundAttributes = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -677,6 +679,10 @@ public class NativeND2Reader extends FormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
+            if (blockType.startsWith("ImageMetadat")) {
+              foundMetadata = true;
+            }
+
             int length = len - 12;
             byte[] b = new byte[length];
             in.read(b);
@@ -2235,9 +2241,12 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
+            if (last-first < 0){
+                last = first + key.substring(first).indexOf(' ');
+            }
             try {
               textEmissionWavelengths.add(
-                new Double(key.substring(first, last)) + 20);
+                new Double(key.substring(first, last).trim()) + 20);
             }
             catch (NumberFormatException nfe) {
               LOGGER.trace("Could not parse emission wavelength", nfe);

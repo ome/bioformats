@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+     xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
+     xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
+     xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+     xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
+     xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+            PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6"
+            SizeY="4" SizeZ="1">
+      <Channel Color="4294967295" ID="Channel:0"/>
+      <Bin:BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </Pixels>
+  </Image>
+</OME>

@@ -1,6 +1,6 @@
 /*
  *------------------------------------------------------------------------------
- *  Copyright (C) 2015 University of Dundee. All rights reserved.
+ *  Copyright (C) 2015 - 2016 Open Microscopy Environment. All rights reserved.
  *
  *
  *  This program is free software; you can redistribute it and/or modify

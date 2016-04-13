@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -314,6 +314,19 @@ public class ZeissCZIReader extends FormatReader {
     Arrays.fill(buf, (byte) 0);
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     try {
+      int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
+      for (SubBlock plane : planes) {
+        if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+          (plane.planeIndex == previousChannel && validScanDim))
+        {
+          if (plane.row < minTileY) {
+            minTileY = plane.row;
+          }
+          if (plane.col < minTileX) {
+            minTileX = plane.col;
+          }
+        }
+      }
       for (SubBlock plane : planes) {
         if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
@@ -330,6 +343,11 @@ public class ZeissCZIReader extends FormatReader {
             if (prestitched != null && prestitched && realX == getSizeX() && realY == getSizeY()) {
               tile.x = 0;
               tile.y = 0;
+            }
+            else if (prestitched != null && prestitched) {
+              // normalize the coordinates such that minimum row/col values are 0
+              tile.x -= minTileX;
+              tile.y -= minTileY;
             }
 
             if (tile.intersects(image)) {
@@ -631,7 +649,7 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("prestitched = {}", prestitched);
     LOGGER.trace("scanDim = {}", scanDim);
 
-    if (mosaics == seriesCount &&
+    if (((mosaics == seriesCount) || (positions == seriesCount)) &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
@@ -676,6 +694,10 @@ public class ZeissCZIReader extends FormatReader {
         mosaics = 1;
         angles = 1;
         seriesCount = 1;
+      }
+      else if (seriesCount > mosaics && mosaics > 1 && prestitched) {
+        seriesCount /= mosaics;
+        mosaics = 1;
       }
     }
 
@@ -2879,6 +2901,12 @@ public class ZeissCZIReader extends FormatReader {
       this.stageZ = model.stageZ;
       this.x = model.x;
       this.y = model.y;
+    }
+
+    @Override
+    public String toString() {
+      return "seriesIndex=" + seriesIndex + ", planeIndex=" + planeIndex +
+        ", x=" + x + ", y=" + y + ", row=" + row + ", col=" + col;
     }
 
     @Override

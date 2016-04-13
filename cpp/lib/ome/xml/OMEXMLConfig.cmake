@@ -1,5 +1,5 @@
 include(CMakeFindDependencyMacro)
-find_dependency(OME REQUIRED COMPONENTS Common)
+find_dependency(OMECommon REQUIRED)
 
 include(${CMAKE_CURRENT_LIST_DIR}/OMEXMLInternal.cmake)
 

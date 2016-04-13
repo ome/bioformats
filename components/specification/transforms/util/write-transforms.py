@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2015 University of Dundee & Open Microscopy Environment.
+# Copyright (C) 2015 - 2016 Open Microscopy Environment & University of Dundee.
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -141,7 +141,7 @@ print """<?xml version = "1.0" encoding = "UTF-8"?>
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2012-2014 Open Microscopy Environment
+	# Copyright (C) 2012 - 2016 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,

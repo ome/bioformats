@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,15 +40,13 @@
 
 #include <boost/filesystem.hpp>
 
-#include <ome/internal/config.h>
-#include <ome/internal/version.h>
-
 #include <ome/test/config.h>
 #include <ome/test/test.h>
 
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/config-internal.h>
 #include <ome/xml/Document.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
@@ -87,7 +85,7 @@ namespace
             p.file = *i;
 
             // Contains non-POSIX timestamps.
-            if (p.file.filename() == path("2013-06-datetests.ome"))
+            if (p.file.filename() == path("timestampannotation.ome.xml"))
               continue;
 
             if (p.file.extension() == path(".ome") ||
@@ -101,7 +99,7 @@ namespace
 
 }
 
-std::vector<ModelTestParameters> tile_params(find_model_tests());
+std::vector<ModelTestParameters> model_params(find_model_tests());
 
 class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
 {
@@ -209,4 +207,4 @@ TEST(ModelObject, StripNamespacePrefix)
 #  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
-INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(tile_params));
+INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(model_params));

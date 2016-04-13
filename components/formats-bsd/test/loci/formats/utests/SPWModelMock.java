@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -234,7 +234,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-06";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -242,7 +242,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd";
 
   public SPWModelMock(boolean makeLightSources) {
     ome = new OME();

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -49,8 +49,8 @@ list(APPEND CMAKE_MODULE_PATH
 
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
-project(bioformats)
-message(STATUS "Configuring Bio-Formats main build")
+project(ome-xml)
+message(STATUS "Configuring OME-XML C++")
 
 include(cpp/cmake/Version.cmake)
 
@@ -72,8 +72,7 @@ include(BoostChecks)
 include(RegexChecks)
 include(ThreadChecks)
 include(XercesChecks)
-include(ImageLibraries)
-include(QtGLChecks)
+include(XalanChecks)
 include(XsdFu)
 include(GTest)
 include(Doxygen)
@@ -101,53 +100,34 @@ if(MSVC)
 endif()
 
 
-if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
-  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
-      CACHE PATH "Bio-Formats-specific datadir")
+if(NOT DEFINED OME_XML_INSTALL_PKGDATADIR)
+  set(OME_XML_INSTALL_PKGDATADIR "${CMAKE_INSTALL_DATADIR}/ome/xml"
+      CACHE PATH "OME-XML-specific datadir")
 endif()
 
-# Use standard path if using a prefix.
-if(CMAKE_INSTALL_PREFIX)
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
-        CACHE PATH "Icon directory")
-  endif()
-else()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
-        CACHE PATH "Icon directory")
-  endif()
+if (NOT DEFINED OME_XML_INSTALL_SCHEMADIR)
+  set(OME_XML_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+      CACHE PATH "OME-XML schema directory")
 endif()
-
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
-  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
-      CACHE PATH "Bio-Formats schema directory")
+if (NOT DEFINED OME_XML_INSTALL_TRANSFORMDIR)
+  set(OME_XML_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+      CACHE PATH "OME-XML transform directory")
 endif()
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
-  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
-      CACHE PATH "Bio-Formats transform directory")
+if (NOT DEFINED OME_XML_INSTALL_SAMPLEDIR)
+  set(OME_XML_INSTALL_SAMPLEDIR "${OME_XML_INSTALL_PKGDATADIR}/samples"
+      CACHE PATH "OME XML sample directory")
 endif()
 
 foreach(dir
     DATADIR
-    LIBEXECDIR
-    ICONDIR
     SCHEMADIR
     TRANSFORMDIR
+    SAMPLEDIR
     )
-  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
+  mark_as_advanced(OME_XML_INSTALL_${dir})
 endforeach()
 
 add_subdirectory(docs/doxygen)
-add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
@@ -156,23 +136,15 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
                ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
 file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      DESTINATION ${PROJECT_BINARY_DIR}
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
 if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                  ${PROJECT_BINARY_DIR}/config.bat @ONLY)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
                  ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
-  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-                 ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
-  install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-          DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 return()
 

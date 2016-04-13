@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -505,6 +505,13 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   @Override
   public int readInt() throws IOException {
     return raf.readInt();
+  }
+
+  /**
+   * Read four input bytes and return an unsigned value.
+   */
+  public long readUnsignedInt() throws IOException {
+    return readInt() & 0xffffffffL;
   }
 
   /** Read the next line of text from the input stream. */

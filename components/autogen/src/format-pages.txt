@@ -68,7 +68,7 @@ extensions = .al3d
 owner = `Alicona Imaging <http://www.alicona.com/>`_
 bsd = no
 versions = 1.0
-weHave = * an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
+weHave = * an `AL3D specification document <http://www.alicona.co.uk/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
 * a few AL3D datasets
 weWant = * more AL3D datasets (Z series, T series, 16-bit)
 pixelsRating = Very good
@@ -196,8 +196,8 @@ extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
 bsd = no
 versions = 8.0, 8.2, 9.0
-weHave = * many SVS datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__ \n
+weHave = * many SVS datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__\n
 * an SVS specification document \n
 * the ability to generate additional SVS datasets
 pixelsRating = Very good
@@ -429,7 +429,8 @@ extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
 software = `Micro-Manager <http://micro-manager.org/>`_
-weHave = * many Micro-manager datasets
+weHave = * many Micro-manager datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Outstanding
@@ -437,6 +438,13 @@ presenceRating = Fair
 utilityRating = Good
 reader = MicromanagerReader
 mif = true
+notes = - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a\n
+  Micro-Manager fileset if pointed at it and will load the fileset including\n
+  the companion TIFF files.\n
+- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize\n
+  an OME-TIFF format instead. This means it may load the fileset if there are\n
+  multiple .ome.tif but it will not include :file:`*metadata.txt` in this\n
+  fileset and therefore the extended Micro-Manager metadata will be skipped.
 
 [CellH5]
 extensions = .ch5
@@ -457,7 +465,7 @@ mif = true
 extensions = .c01, .dib
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 bsd = no
-weHave = * a few Cellomics .c01 datasets \n
+weHave = * a few Cellomics .c01 datasets\n
 * `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
 weWant = * a Cellomics .c01 specification document \n
 * more Cellomics .c01 datasets
@@ -503,7 +511,7 @@ owner = `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.c
 bsd = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 weHave = * a DV specification document (v2.10 or newer, in HTML) \n
-* numerous DV datasets \n
+* numerous DV datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__
 pixelsRating = Outstanding
 metadataRating = Good
@@ -899,7 +907,7 @@ reader = IMODReader
 [Improvision Openlab LIFF]
 extensions = .liff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 versions = 2.0, 5.0
 weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
@@ -914,13 +922,11 @@ utilityRating = Fair
 privateSpecification = true
 reader = OpenlabReader
 mif = true
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision Openlab Raw]
 extensions = .raw
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 * a few Openlab Raw datasets
@@ -930,13 +936,11 @@ opennessRating = Very good
 presenceRating = Poor
 utilityRating = Fair
 reader = OpenlabRawReader
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision TIFF]
 extensions = .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an Improvision TIFF specification document \n
 * a few Improvision TIFF datasets
@@ -947,8 +951,6 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = ImprovisionTiffReader
-notes = .. seealso:: \n
-  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
 
 [Imspector OBF]
 extensions = .obf, .msr
@@ -970,7 +972,7 @@ pagename = incell-1000
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
-weHave = * a few InCell 1000 datasets \n
+weHave = * a few InCell 1000 datasets\n
 * `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_
 weWant = * an InCell 1000 specification document \n
 * more InCell 1000 datasets
@@ -1220,6 +1222,7 @@ Commercial applications that support LIF include: \n
 [LaVision Imspector]
 extensions = .msr
 developer = `LaVision BioTec <http://www.lavisionbiotec.com/>`_
+versions = 4.0, 4.1
 bsd = no
 weHave = * a few .msr files
 pixelsRating = Fair
@@ -1663,9 +1666,9 @@ extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/om
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
-weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` \n
-* many OME-TIFF datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__ \n
+weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>`\n
+* many OME-TIFF datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__\n
 * the ability to produce additional datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1691,9 +1694,9 @@ extensions = `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-mod
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
-weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
-* many OME-XML datasets \n
-* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__ \n
+weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_\n
+* many OME-XML datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__\n
 * the ability to produce more datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
@@ -1796,7 +1799,7 @@ mif = true
 extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * a few sample datasets \n
+weHave = * a few sample datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__
 weWant = * an official specification document \n
 * more sample datasets
@@ -1808,12 +1811,12 @@ utilityRating = Good
 reader = OperettaReader
 mif = true
 
-[PerkinElmer UltraView]
+[PerkinElmer UltraVIEW]
 indexExtensions = .tif, .2, .3, .4
 extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * several UltraView datasets
+weHave = * several UltraVIEW datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -1829,7 +1832,7 @@ Commercial applications that support this format include: \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
-  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
+  `PerkinElmer UltraVIEW system overview <http://www.perkinelmer.com/product/ultraview-vox-3d-live-cell-imaging-system-l7267000>`_
 
 [Portable Any Map]
 pagename = pgm
@@ -2065,11 +2068,11 @@ reader = SMCameraReader
 
 [SPIDER]
 extensions = .spi, .stk
-developer = `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+developer = `Wadsworth Center <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 bsd = no
-software = `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+software = `SPIDER <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 weHave = * a few example datasets \n
-* `official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+* `official file format documentation <http://spider.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -533,11 +533,11 @@ public class TiffParser {
     }
     else if (type == IFDType.LONG || type == IFDType.IFD) {
       // 32-bit (4-byte) unsigned integer
-      if (count == 1) return new Long(in.readInt());
+      if (count == 1) return new Long(in.readUnsignedInt());
       long[] longs = new long[count];
       for (int j=0; j<count; j++) {
         if (in.getFilePointer() + 4 <= in.length()) {
-          longs[j] = in.readInt();
+          longs[j] = in.readUnsignedInt();
         }
       }
       return longs;
@@ -571,10 +571,10 @@ public class TiffParser {
     else if (type == IFDType.RATIONAL || type == IFDType.SRATIONAL) {
       // Two LONGs or SLONGs: the first represents the numerator
       // of a fraction; the second, the denominator
-      if (count == 1) return new TiffRational(in.readInt(), in.readInt());
+      if (count == 1) return new TiffRational(in.readUnsignedInt(), in.readUnsignedInt());
       TiffRational[] rationals = new TiffRational[count];
       for (int j=0; j<count; j++) {
-        rationals[j] = new TiffRational(in.readInt(), in.readInt());
+        rationals[j] = new TiffRational(in.readUnsignedInt(), in.readUnsignedInt());
       }
       return rationals;
     }
@@ -1238,7 +1238,7 @@ public class TiffParser {
     if (bigTiff || fakeBigTiff) {
       return in.readLong();
     }
-    long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);
+    long offset = (previous & ~0xffffffffL) | (in.readUnsignedInt());
 
     // Only adjust the offset if we know that the file is too large for 32-bit
     // offsets to be accurate; otherwise, we're making the incorrect assumption

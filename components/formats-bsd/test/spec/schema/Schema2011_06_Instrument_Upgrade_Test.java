@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -166,7 +166,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource0() {
         Assert.assertNotNull(ome);
-        lightsource0 = instrument0.getLightSource(0);
+        lightsource0 = instrument0.getLightSource(1);
         Assert.assertNotNull(lightsource0);
         Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, lightsource0.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource0Model, lightsource0.getModel());
@@ -187,7 +187,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource1() {
         Assert.assertNotNull(ome);
-        lightsource1 = instrument0.getLightSource(1);
+        lightsource1 = instrument0.getLightSource(0);
         Assert.assertNotNull(lightsource1);
         Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, lightsource1.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource1Model, lightsource1.getModel());

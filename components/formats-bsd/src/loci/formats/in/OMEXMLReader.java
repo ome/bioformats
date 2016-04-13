@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -269,7 +269,6 @@ public class OMEXMLReader extends FormatReader {
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
-    addGlobalMeta("Is SPW file", hasSPW);
 
     // TODO
     //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();

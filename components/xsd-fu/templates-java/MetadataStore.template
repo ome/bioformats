@@ -53,15 +53,15 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
+  def is_abstract(name):
+	  o = model.getObjectByName(name)
+	  if o is not None and \
 		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
+		  return True
+	  return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 %}\
 \
 \
@@ -69,7 +69,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -194,22 +194,13 @@ public interface MetadataStore extends BaseMetadata
 	// -- Entity storage (manual definitions) --
 
         /**
-         * Set the BigEndian property of Pixels.
-         *
-         * @param bigEndian true if big endian, or false if little endian.
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         */
-	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
-
-        /**
          * Set the BinData property of Mask.
          *
          * @param binData the BinData to set.
          * @param ROIIndex the ROI index.
          * @param shapeIndex the Shape index.
          */
-	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
+  void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
 
         /**
          * Set the values of a MapAnnotation.
@@ -237,13 +228,22 @@ public interface MetadataStore extends BaseMetadata
 
 	// -- Entity storage (code generated definitions) --
 
-	/**
+        /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
          */
 	void setUUID(String uuid);
 
+  /**
+   * Set the BigEndian property of Pixels.
+         *
+         * @param bigEndian true if big endian, or false if little endian.
+         * @param imageIndex the Image index.
+         * @param binDataIndex BinData index (unused).
+         */
+   void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+ 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
@@ -262,7 +262,7 @@ public interface MetadataStore extends BaseMetadata
 	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}\
 {% if debug %}\
 	// MARKER [EEE]
 	//
@@ -285,7 +285,7 @@ public interface MetadataStore extends BaseMetadata
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -306,9 +306,8 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k}
+  // ${prop.name} accessor from parent ${k}   
 ${setter(k, o, prop, v)}
-
 {% end %}\
 {% end %}\
 {% end %}\
@@ -324,7 +323,7 @@ ${setter(k, o, prop, v)}
 	// Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE)%}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
@@ -338,7 +337,7 @@ ${setter(k, o, prop, v)}
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\

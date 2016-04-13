@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,12 +54,22 @@ public final class LogbackTools {
   private LogbackTools() { }
 
   /**
-   * Attempts to enable SLF4J logging via logback
-   * without an external configuration file.
+   * Checks whether SLF4J logging was enabled via logback
+   *
+   * @return {@code} true if logging was successfully enabled
+   */
+  public static synchronized boolean isEnabled() {
+    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    return root.iteratorForAppenders().hasNext();
+  }
+
+  /**
+   * Attempts to enable SLF4J logging via logback without an external
+   * configuration file.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return true iff logging was successfully enabled
+   * @return {@code} true if logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);

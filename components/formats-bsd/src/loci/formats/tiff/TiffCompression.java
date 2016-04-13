@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -288,7 +288,7 @@ public enum TiffCompression implements CodedEnum {
       LOGGER.debug("reversing horizontal differencing");
       int[] bitsPerSample = ifd.getBitsPerSample();
       int len = bitsPerSample.length;
-      long width = ifd.getImageWidth();
+      long width = ifd.getTileWidth();
       boolean little = ifd.isLittleEndian();
       int planarConfig = ifd.getPlanarConfiguration();
 
@@ -362,7 +362,7 @@ public enum TiffCompression implements CodedEnum {
     if (predictor == 2) {
       LOGGER.debug("performing horizontal differencing");
       int[] bitsPerSample = ifd.getBitsPerSample();
-      long width = ifd.getImageWidth();
+      long width = ifd.getTileWidth();
       boolean little = ifd.isLittleEndian();
       int planarConfig = ifd.getPlanarConfiguration();
       int bytes = ifd.getBytesPerSample()[0];

@@ -1,9 +1,7 @@
 bfCheckJavaPath();
 
 % Create local file for testing
-java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
-uuid = char(java.util.UUID.randomUUID());
-tmpdir = fullfile(java_tmpdir, uuid);
+tmpdir = tempname();
 mkdir(tmpdir);
 
 % Create fake file for testing purposes
@@ -54,8 +52,7 @@ imagesc(series1_plane1);
 % displaying-images-end
 
 % animated-movie-start
-v = linspace(0, 1, 256)';
-cmap = [v v v];
+cmap = gray(256);
 for p = 1 : size(series1, 1)
   M(p) = im2frame(uint8(series1{p, 1}), cmap);
 end
@@ -123,6 +120,11 @@ bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
 % bfsave-metadata-end
 delete('metadata.ome.tiff');
 
+% logging-start
+% Set the logging level to DEBUG
+loci.common.DebugTools.enableLogging('DEBUG');
+% logging-end
+
 % memoizer-start
 % Construct an empty Bio-Formats reader
 r = bfGetReader();
@@ -162,6 +164,8 @@ nWorkers = 4;
 
 % Enter parallel loop
 parfor i = 1 : nWorkers
+    % Initialize logging at INFO level
+    bfInitLogging('INFO');
     % Initialize a new reader per worker as Bio-Formats is not thread safe
     r2 = javaObject('loci.formats.Memoizer', bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the

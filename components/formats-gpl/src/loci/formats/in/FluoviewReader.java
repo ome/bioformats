@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -324,7 +324,7 @@ public class FluoviewReader extends BaseTiffReader {
         }
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
-        if (i > 1) {
+        if (i > 1 && stamps != null) {
           zPositions = stamps[i - 2];
           if (zPositions != null) {
             for (Double z : zPositions) {

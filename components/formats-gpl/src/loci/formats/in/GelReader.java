@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -153,10 +153,10 @@ public class GelReader extends BaseTiffReader {
       }
     }
 
-    super.initStandardMetadata();
-
     IFD firstIFD = ifds.get(0);
     tiffParser.fillInIFD(firstIFD);
+
+    super.initStandardMetadata();
 
     fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
     if (fmt == SQUARE_ROOT) core.get(0).pixelType = FormatTools.FLOAT;

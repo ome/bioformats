@@ -50,14 +50,14 @@
       <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
       <artifactId>serializer</artifactId>
-      <version>2.7.1</version>
+      <version>2.7.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-      <version>2.7.1</version>
+      <version>2.7.2</version>
       <scope>runtime</scope>
     </dependency>
 

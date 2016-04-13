@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -99,6 +99,7 @@ public final class MetadataConverter {
     convertScreens(src, dest);
     convertDatasets(src, dest);
     convertProjects(src, dest);
+    convertFolders(src, dest);
 
     convertRootAttributes(src, dest);
   }
@@ -689,6 +690,90 @@ public final class MetadataConverter {
         }
         catch (NullPointerException e) { }
       }
+    }
+  }
+
+  /**
+   * Convert all Folder attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   */
+  private static void convertFolders(MetadataRetrieve src, MetadataStore dest)
+  {
+    int folders = 0;
+    try {
+      folders = src.getFolderCount();
+    }
+    catch (NullPointerException e) { }
+
+    for (int i=0; i<folders; i++) {
+      try {
+        String id = src.getFolderID(i);
+        dest.setFolderID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getFolderDescription(i);
+        dest.setFolderDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getFolderName(i);
+        dest.setFolderName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int folderRefCount = src.getFolderRefCount(i);
+        for (int q=0; q<folderRefCount; q++) {
+          try {
+            String folderRef = src.getFolderFolderRef(i, q);
+            dest.setFolderFolderRef(folderRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int imageRefCount = src.getFolderImageRefCount(i);
+        for (int q=0; q<imageRefCount; q++) {
+          try {
+            String imageRef = src.getFolderImageRef(i, q);
+            dest.setFolderImageRef(imageRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int roiRefCount = src.getFolderROIRefCount(i);
+        for (int q=0; q<roiRefCount; q++) {
+          try {
+            String roiRef = src.getFolderROIRef(i, q);
+            dest.setFolderROIRef(roiRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int annotationRefCount = src.getFolderAnnotationRefCount(i);
+        for (int q=0; q<annotationRefCount; q++) {
+          try {
+            String annotationRef = src.getFolderAnnotationRef(i, q);
+            dest.setFolderAnnotationRef(annotationRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
     }
   }
 
@@ -2423,12 +2508,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getEllipseLineCap(i, q);
-            dest.setEllipseLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getEllipseLocked(i, q);
             dest.setEllipseLocked(locked, i, q);
           }
@@ -2559,12 +2638,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getLabelLineCap(i, q);
-            dest.setLabelLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getLabelLocked(i, q);
             dest.setLabelLocked(locked, i, q);
           }
@@ -2679,12 +2752,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getLineFontStyle(i, q);
             dest.setLineFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getLineLineCap(i, q);
-            dest.setLineLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2831,12 +2898,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getMaskLineCap(i, q);
-            dest.setMaskLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getMaskLocked(i, q);
             dest.setMaskLocked(locked, i, q);
           }
@@ -2967,12 +3028,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPointLineCap(i, q);
-            dest.setPointLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPointLocked(i, q);
             dest.setPointLocked(locked, i, q);
           }
@@ -3091,12 +3146,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPolygonLineCap(i, q);
-            dest.setPolygonLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPolygonLocked(i, q);
             dest.setPolygonLocked(locked, i, q);
           }
@@ -3205,12 +3254,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getPolylineFontStyle(i, q);
             dest.setPolylineFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getPolylineLineCap(i, q);
-            dest.setPolylineLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3335,12 +3378,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getRectangleFontStyle(i, q);
             dest.setRectangleFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getRectangleLineCap(i, q);
-            dest.setRectangleLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
