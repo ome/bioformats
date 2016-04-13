@@ -970,11 +970,6 @@ public class ZeissLSMReader extends FormatReader {
       if (splitPlanes) ms.imageCount *= getSizeC();
     }
 
-    for (int c=0; c<getEffectiveSizeC(); c++) {
-      String lsid = MetadataTools.createLSID("Channel", series, c);
-      store.setChannelID(lsid, series, c);
-    }
-
     // NB: the Zeiss LSM 5.5 specification indicates that there should be
     //     15 32-bit integers here; however, there are actually 16 32-bit
     //     integers before the tile position offset.
@@ -1007,6 +1002,11 @@ public class ZeissLSMReader extends FormatReader {
       ms.moduloT.end = ms.sizeT * (phases - 1);
       ms.moduloT.type = FormatTools.PHASE;
       ms.sizeT *= phases;
+    }
+
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      String lsid = MetadataTools.createLSID("Channel", series, c);
+      store.setChannelID(lsid, series, c);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
