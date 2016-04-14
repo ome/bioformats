@@ -36,6 +36,7 @@ import java.math.BigInteger;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertNull;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -45,8 +46,8 @@ import loci.formats.IllegalBlockException;
 
 public class FilePatternBlockTest {
 
-  @DataProvider(name = "valid")
-  public Object[][] validBlocks() {
+  @DataProvider(name = "range")
+  public Object[][] rangeBlocks() {
     return new Object[][] {
       {"<9>", new String[] {"9"}, true, true},
       {"<0-2>", new String[] {"0", "1", "2"}, true, true},
@@ -62,16 +63,26 @@ public class FilePatternBlockTest {
     };
   }
 
+  @DataProvider(name = "commasep")
+  public Object[][] commaSepBlocks() {
+    return new Object[][] {
+      {"<1,3,6>", new String[] {"1", "3", "6"}, true, true},
+      {"<01,03,11>", new String[] {"01", "03", "11"}, true, true},
+      {"<1,3,11>", new String[] {"1", "3", "11"}, false, true},
+      {"<R,G,B>", new String[] {"R", "G", "B"}, true, false},
+      {"<Cy3,DAPI>", new String[] {"Cy3", "DAPI"}, false, false}
+    };
+  }
+
   @DataProvider(name = "invalid")
   public Object[][] invalidBlocks() {
     return new Object[][] {
       {""}, {"<"}, {">"}, {"9"}, {"<9"}, {"9>"},  // missing block delimiter(s)
-      {"<!-A>"}, {"<A-~>"}, {"<A-C:!>"}  // invalid range delimiter(s)
+      {"<!-A>"}, {"<A-~>"}, {"<A-C:!>"}, {"<>"}  // invalid range delimiter(s)
     };
   }
 
-  @Test(dataProvider = "valid")
-  public void testValidBlocks(String pattern, String[] elements,
+  private void commonChecks(String pattern, String[] elements,
       boolean fixed, boolean numeric) {
     FilePatternBlock block = new FilePatternBlock(pattern);
     String[] blkElements = block.getElements();
@@ -82,6 +93,10 @@ public class FilePatternBlockTest {
     assertEquals(block.getBlock(), pattern);
     assertEquals(block.isFixed(), fixed);
     assertEquals(block.isNumeric(), numeric);
+  }
+
+  private void rangeChecks(String pattern, String[] elements, boolean numeric) {
+    FilePatternBlock block = new FilePatternBlock(pattern);
     int radix = numeric ? 10 : Character.MAX_RADIX;
     BigInteger first = new BigInteger(elements[0], radix);
     BigInteger last = new BigInteger(elements[elements.length-1], radix);
@@ -94,6 +109,27 @@ public class FilePatternBlockTest {
     assertTrue(block.getFirst().equals(first));
     assertTrue(block.getLast().equals(last));
     assertTrue(block.getStep().equals(step));
+  }
+
+  private void commaSepChecks(String pattern) {
+    FilePatternBlock block = new FilePatternBlock(pattern);
+    assertNull(block.getFirst());
+    assertNull(block.getLast());
+    assertNull(block.getStep());
+  }
+
+  @Test(dataProvider = "range")
+  public void testRange(String pattern, String[] elements,
+      boolean fixed, boolean numeric) {
+    commonChecks(pattern, elements, fixed, numeric);
+    rangeChecks(pattern, elements, numeric);
+  }
+
+  @Test(dataProvider = "commasep")
+  public void testCommaSep(String pattern, String[] elements,
+      boolean fixed, boolean numeric) {
+    commonChecks(pattern, elements, fixed, numeric);
+    commaSepChecks(pattern);
   }
 
   @Test(dataProvider = "invalid",

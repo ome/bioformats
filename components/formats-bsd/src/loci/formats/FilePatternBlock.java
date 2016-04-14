@@ -164,6 +164,29 @@ public class FilePatternBlock {
     );
   }
 
+  private void setNumeric() {
+    numeric = true;
+    for (String s: elements) {
+      try {
+        new BigInteger(s);
+      } catch (NumberFormatException e) {
+        numeric = false;
+        break;
+      }
+    }
+  }
+
+  private void setFixed() {
+    fixed = true;
+    int L = elements[0].length();
+    for (int i = 1; i < elements.length; i++) {
+      if (elements[i].length() != L) {
+        fixed = false;
+        break;
+      }
+    }
+  }
+
   private void explode() {
     if (!block.startsWith(BLOCK_START) || !block.endsWith(BLOCK_END)) {
       throwBadBlock("\"%s\": missing block delimiter(s)");
@@ -178,6 +201,8 @@ public class FilePatternBlock {
       int comma = trimmed.indexOf(",");
       if (comma > 0) {
         elements = trimmed.split(",");
+        setNumeric();
+        setFixed();
         return;
       }
       else {
