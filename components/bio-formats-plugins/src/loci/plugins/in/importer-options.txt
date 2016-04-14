@@ -189,8 +189,18 @@ default = false
 type = boolean
 label = Display_ROIs
 info = <b>Display ROIs</b> - \
-  Adds any ROIs in the file to ImageJ's ROI manager.
+  Adds any ROIs in the file to ImageJ.
 default = false
+
+[roiMode]
+label = ROIs_Import Mode:
+info = <b>ROI Import Mode</b> - \
+  ROIs can be imported to the ROI manager or an overlay.
+type = string
+default = ROI manager
+values = \
+  ROI manager, \
+  Overlay
 
 [specifyRanges]
 type = boolean
