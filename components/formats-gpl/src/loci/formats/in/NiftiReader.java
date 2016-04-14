@@ -147,7 +147,7 @@ public class NiftiReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int planeSize = FormatTools.getPlaneSize(this);
+    long planeSize = FormatTools.getPlaneSize(this);
     pixelFile.seek(pixelOffset + no * planeSize);
     readPlane(pixelFile, x, y, w, h, buf);
 
