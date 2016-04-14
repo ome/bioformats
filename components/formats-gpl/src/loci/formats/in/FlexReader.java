@@ -1372,7 +1372,7 @@ public class FlexReader extends FormatReader {
           FlexFile file = new FlexFile();
           file.row = row;
           file.column = col;
-          if (nFiles > runCount) {
+          if (nFiles > runCount && runCount > 0) {
             file.field = field % (nFiles / runCount);
           } else {
             file.field = 0;
