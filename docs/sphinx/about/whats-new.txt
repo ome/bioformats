@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.1.9 (2016 April 11)
+5.1.9 (2016 April 14)
 ---------------------
 
 * Java bug fixes, including:
@@ -29,6 +29,7 @@ Version history
        - fixed multiple parsing issues with the mtb file
    - SlideBook
        - removed slidebook dlls from Bio-Formats repository
+       - http://www.openmicroscopy.org/info/slidebook
    - Zeiss CZI
        - fixed parsing of files with multiple mosaics and positions
 
