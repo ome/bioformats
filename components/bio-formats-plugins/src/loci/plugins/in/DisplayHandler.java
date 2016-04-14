@@ -211,7 +211,7 @@ public class DisplayHandler implements StatusListener {
 
   public void displayROIs(ImagePlus[] imps) {
     if (!options.showROIs()) return;
-    ROIHandler.openROIs(process.getOMEMetadata(), imps, options.isOMERO());
+    ROIHandler.openROIs(process.getOMEMetadata(), imps, options.isOMERO(), options.getROIsMode());
     
   }
    
