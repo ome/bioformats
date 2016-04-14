@@ -49,6 +49,9 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.scijava.nativelib.NativeLibraryUtil;
+import org.scijava.nativelib.NativeLibraryUtil.Architecture;
+
+import ij.gui.GenericDialog;
 
 /**
  * SlideBook6Reader is a file format reader for 3i SlideBook SLD files that uses
@@ -71,36 +74,42 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook.html";
-	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
-			"Please see " + URL_3I_SLD + " for details.";
-	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
-			"Please see " + URL_3I_SLD + " for details.";
+			"http://www.intelligent-imaging.com/bioformats";
+	private static final String NO_3I_MSG = "3i SlideBook 6 native SLD reader library not found. Press 'Help' button for more details.";
+	private static final String GENERAL_3I_MSG = "3i SlideBook 6 native SLD reader library problem. Press 'Help' button for more details.";
 
 	// -- Static initializers --
 
 	private static boolean libraryFound = false;
 
 	static {
+		String errMsg = null;
+		Architecture theArch = NativeLibraryUtil.getArchitecture();
 		try {
-			// load JNI wrapper of SBReadFile.dll
-			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
-			if (arch != NativeLibraryUtil.Architecture.WINDOWS_64 && arch != NativeLibraryUtil.Architecture.WINDOWS_32) {
-				// TODO: add compiled linux and OS X architecture libraries to class
-				throw new UnsatisfiedLinkError();
-			}
+			// load JNI wrapper of SlideBook6Reader.dll
 			if (!libraryFound) {
 				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
+				if (!libraryFound) {
+					errMsg = new String(NO_3I_MSG + "["+ theArch.name() + "]");
+				}
 			}
 		}
 		catch (UnsatisfiedLinkError e) {
 			// log level debug, otherwise a warning will be printed every time a file is initialized without the .dll present
-			LOGGER.debug(NO_3I_MSG, e);
+			LOGGER.debug(NO_3I_MSG + "["+ theArch.name() + "] ", e);
+			errMsg = new String(NO_3I_MSG  + "["+ theArch.name() + "]");
 			libraryFound = false;
 		}
 		catch (SecurityException e) {
-			LOGGER.warn("Insufficient permission to load native library", e);
+			LOGGER.warn("Insufficient permission to load native library"  + "["+ theArch.name() + "] " , e);
+			errMsg = new String("Insufficient permission to load native library" + "["+ theArch.name() + "] " + e);
 			libraryFound = false;
+		}
+		if (errMsg != null) {
+			GenericDialog errDlg = new GenericDialog("SlideBook 6 SLD (native) Bio-formats Reader plugin");
+			errDlg.addMessage(errMsg);
+			errDlg.addHelp(URL_3I_SLD);
+			errDlg.showDialog();
 		}
 	}
 
