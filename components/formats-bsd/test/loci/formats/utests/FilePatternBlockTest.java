@@ -49,17 +49,18 @@ public class FilePatternBlockTest {
   @DataProvider(name = "range")
   public Object[][] rangeBlocks() {
     return new Object[][] {
-      {"<9>", new String[] {"9"}, true, true},
       {"<0-2>", new String[] {"0", "1", "2"}, true, true},
       {"<9-11>", new String[] {"9", "10", "11"}, false, true},
       {"<09-11>", new String[] {"09", "10", "11"}, true, true},
       {"<1-5:2>", new String[] {"1", "3", "5"}, true, true},
-      {"<Z>", new String[] {"Z"}, true, false},
       {"<A-C>", new String[] {"A", "B", "C"}, true, false},
       {"<A-E:2>", new String[] {"A", "C", "E"}, true, false},
-      {"<z>", new String[] {"z"}, true, false},
+      {"<X-Z>", new String[] {"X", "Y", "Z"}, true, false},
+      {"<V-Z:2>", new String[] {"V", "X", "Z"}, true, false},
       {"<a-c>", new String[] {"a", "b", "c"}, true, false},
-      {"<a-e:2>", new String[] {"a", "c", "e"}, true, false}
+      {"<a-e:2>", new String[] {"a", "c", "e"}, true, false},
+      {"<x-z>", new String[] {"x", "y", "z"}, true, false},
+      {"<v-z:2>", new String[] {"v", "x", "z"}, true, false}
     };
   }
 
@@ -70,7 +71,13 @@ public class FilePatternBlockTest {
       {"<01,03,11>", new String[] {"01", "03", "11"}, true, true},
       {"<1,3,11>", new String[] {"1", "3", "11"}, false, true},
       {"<R,G,B>", new String[] {"R", "G", "B"}, true, false},
-      {"<Cy3,DAPI>", new String[] {"Cy3", "DAPI"}, false, false}
+      {"<Cy3,DAPI>", new String[] {"Cy3", "DAPI"}, false, false},
+      {"<Cy3-B,DAPI>", new String[] {"Cy3-B", "DAPI"}, false, false},
+      {"<Cy3>", new String[] {"Cy3"}, true, false},
+      {"<9>", new String[] {"9"}, true, true},
+      {"<Z>", new String[] {"Z"}, true, false},
+      {"<z>", new String[] {"z"}, true, false},
+      {"<>", new String[] {""}, true, false}
     };
   }
 
@@ -78,7 +85,7 @@ public class FilePatternBlockTest {
   public Object[][] invalidBlocks() {
     return new Object[][] {
       {""}, {"<"}, {">"}, {"9"}, {"<9"}, {"9>"},  // missing block delimiter(s)
-      {"<!-A>"}, {"<A-~>"}, {"<A-C:!>"}, {"<>"}  // invalid range delimiter(s)
+      {"<!-A>"}, {"<A-~>"}, {"<A-C:!>"}  // invalid range delimiter(s)
     };
   }
 

@@ -194,35 +194,22 @@ public class FilePatternBlock {
     String trimmed = block.substring(
         BLOCK_START.length(), block.length() - BLOCK_END.length()
     );
-    int dash = trimmed.indexOf("-");
-    String b, e, s;
-    if (dash < 0) {
-      // check if this is an enumerated list
-      int comma = trimmed.indexOf(",");
-      if (comma > 0) {
-        elements = trimmed.split(",");
-        setNumeric();
-        setFixed();
-        return;
-      }
-      else {
-        // no range and not a list; assume entire block is a single value
-        b = e = trimmed;
-        s = "1";
-      }
+    elements = trimmed.split(",", -1);
+    if (elements.length > 1) {
+      setNumeric();
+      setFixed();
+      return;
     }
-    else {
-      int colon = trimmed.indexOf(":");
-      b = trimmed.substring(0, dash);
-      if (colon < 0) {
-        e = trimmed.substring(dash + 1);
-        s = "1";
-      }
-      else {
-        e = trimmed.substring(dash + 1, colon);
-        s = trimmed.substring(colon + 1);
-      }
+    elements = elements[0].split("-");
+    if (elements.length < 2) {
+      setNumeric();
+      fixed = true;
+      return;
     }
+    String b = elements[0];
+    elements = elements[1].split(":", -1);
+    String e = elements[0];
+    String s = (elements.length < 2) ? "1" : elements[1];
 
     numeric = true;
 
