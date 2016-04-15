@@ -468,8 +468,6 @@ def processMetadataTemplate(template, outputFilename, model, opts):
     """
     args = opts.args
     template = opts.lang.templatepath(template)
-    
-    print("Debug BinData testing - Processing template file: " + template)
 
     used_files = set()
     for file in opts.args:
@@ -754,8 +752,6 @@ class options:
 
         self.command = self.args[0]
         self.args = self.args[1:]
-        for arg in self.args:
-            print("Debug BinData testing - Using schema file: " + arg)
 
         if (self.command != "doc_gen" and self.command != "tab_gen") and len(self.args) < 1:
             usage("No schema files specified")
