@@ -240,6 +240,19 @@ namespace ome
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
+        /**    
+         * Set the BigEndian property of Pixels.    
+         *    
+         * @param bigEndian @c true if big endian, or @c false if little endian.    
+         * @param imageIndex the Image index.   
+         * @param binDataIndex BinData index (unused).    
+         */   
+        virtual void    
+        setPixelsBinDataBigEndian(bool bigEndian,   
+                                  index_type imageIndex,    
+                                  index_type binDataIndex = 0) = 0;
+{% end %}\
 
 {% if debug %}\
         // -- Entity storage (code generated definitions) --

@@ -366,3 +366,5 @@ class OMEModel(object):
                 substitutionGroupName = self.opts.lang.substitutionGroup(element.getName())
                 self.substitutionElement_map[substitutionGroupName] = element
                 continue
+        if len(self.opts.lang.getSubstitutionTypes()) >= 0:
+            config.METADATA_OBJECT_IGNORE.remove('BinData')
