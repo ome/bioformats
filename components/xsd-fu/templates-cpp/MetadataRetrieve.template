@@ -203,8 +203,8 @@ namespace ome
 {% if debug %}\
         // -- Entity counting (manual definitions) --
 
-{% end debug %}\   
-    
+{% end debug %}\
+
         /**
          * Get the number of links to a BooleanAnnotation.
          *
