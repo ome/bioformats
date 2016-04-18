@@ -18,6 +18,9 @@ Other projects using the JACE C++ bindings include:
 
 -  WiscScan_ which uses the JACE C++ bindings to write
    :model_doc:`OME-TIFF <ome-tiff>` files.
+-  :doc:`/users/xuvtools/index` which uses an adapted version of the JACE C++
+   bindings called
+   `BlitzBioFormats <http://www.xuvtools.org/doku.php?id=devel:libblitzbioformats>`_.
 -  `Video Spot Tracker`_ which uses the JACE C++ bindings to add Bio-Formats
    support since version 8.10.
 
