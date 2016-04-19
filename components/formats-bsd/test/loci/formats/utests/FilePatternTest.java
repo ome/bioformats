@@ -322,7 +322,7 @@ public class FilePatternTest {
     assertEquals(fp.getCount(), new int[] {2});
     assertEquals(fp.getElements(), new String[][] {{"0", "1"}});
     assertEqualsNoOrder(fp.getFiles(), new String[] {
-      "z0/foo.tif", "z1/foo.tif",
+      "z0" + suffix, "z1" + suffix,
     });
     assertEquals(fp.getFirst(), new BigInteger[] {BigInteger.ZERO});
     assertEquals(fp.getLast(), new BigInteger[] {BigInteger.ONE});
