@@ -67,7 +67,7 @@ public final class DebugTools {
   /**
    * Checks whether SLF4J logging has been enabled via logback or log4j
    *
-   * @return {@code true} if logging was successfully enabled
+   * @return {@code true} if logging has been successfully enabled
    */
   public static synchronized boolean isEnabled() {
     final String[][] toolClasses = new String[][] {
@@ -89,14 +89,15 @@ public final class DebugTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via logback or log4j
-   * without an external configuration file.
+   * Sets the SLF4J logging via logback or log4j
+   * This method will override any logging previously configured either via a
+   * configuration file or another {@link DebugTools} call.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code} true if logging was successfully enabled
    */
-  public static synchronized boolean enableLogging(String level) {
+  public static synchronized boolean setLogging(String level) {
     final String[][] toolClasses = new String[][] {
       new String[] {"loci.common.", "LogbackTools"},
       new String[] {"loci.common.", "Log4jTools"}
@@ -112,6 +113,38 @@ public final class DebugTools {
       catch (Throwable t) {
         // no-op. Ignore error and try the next class.
       }
+    }
+    return false;
+  }
+
+  /**
+   * Attempts to enable SLF4J logging via logback or log4j without an
+   * external configuration file.
+   * This will first check whether logging has been enabled either via a
+   * configuration file or a previous call. If not enabled, calls
+   * {@link #setLogging(String)} at INFO level.
+   *
+   * @return {@code true} if logging was successfully enabled by this method
+   */
+  public static synchronized boolean enableLogging() {
+    return enableLogging("INFO");
+  }
+  
+  /**
+   * Attempts to enable SLF4J logging via logback or log4j without an
+   * external configuration file.
+   * This will first check whether logging has been enabled either via a
+   * configuration file or a previous call. If not enabled, calls
+   * {@link #setLogging(String)} with the desired level.
+   *
+   * @param level A string indicating the desired level
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
+   * @return {@code true} if logging was successfully enabled by this method
+   */
+  public static synchronized boolean enableLogging(String level) {
+    if (!isEnabled()) {
+      boolean status = setLogging(level);
+      return status;
     }
     return false;
   }
