@@ -81,6 +81,7 @@ public class ScreenReader extends FormatReader {
   private String[][] files;
   private String[] ordering;
   private int[][] axisTypes;
+  private String[][] channelNames;
   private int[][][] fileIndexes;
 
   private Class<? extends IFormatReader> chosenReader = null;
@@ -238,6 +239,7 @@ public class ScreenReader extends FormatReader {
       files = null;
       ordering = null;
       axisTypes = null;
+      channelNames = null;
       fileIndexes = null;
     }
   }
@@ -302,6 +304,7 @@ public class ScreenReader extends FormatReader {
     files = new String[wells * fields][1];
     ordering = new String[wells * fields];
     axisTypes = new int[wells * fields][];
+    channelNames = new String[wells * fields][];
     fileIndexes = new int[wells * fields][][];
 
     for (int well=0; well<wells; well++) {
@@ -328,6 +331,10 @@ public class ScreenReader extends FormatReader {
           ordering[index] = "XY" + ordering[index];
         }
         axisTypes[index] = readAxisTypes(wellTable.get("AxisTypes"));
+        String channelNamesEntry = wellTable.get("ChannelNames");
+        if (null != channelNamesEntry) {
+          channelNames[index] = channelNamesEntry.split(",", -1);
+        }
       }
     }
 
@@ -466,6 +473,11 @@ public class ScreenReader extends FormatReader {
             store.setWellSampleImageRef(imageID, 0, well, nextWellSample);
             store.setWellSampleIndex(
               new NonNegativeInteger(seriesIndex), 0, well, nextWellSample);
+            if (null != channelNames[well]) {
+              for (int i = 0; i < channelNames[well].length; i++) {
+                store.setChannelName(channelNames[well][i], seriesIndex, i);
+              }
+            }
             nextWellSample++;
           }
         }
