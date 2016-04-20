@@ -329,7 +329,7 @@ public class LiFlimReader extends FormatReader {
             }
             rois.put(index, roi);
           }
-          else if (metaKey.endsWith("ExposureTime")) {
+          else if (metaKey.equals("ExposureTime")) {
             int space = value.indexOf(" ");
             double expTime = Double.parseDouble(value.substring(0, space));
             String units = value.substring(space + 1).toLowerCase();
