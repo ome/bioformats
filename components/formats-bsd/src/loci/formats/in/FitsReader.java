@@ -78,9 +78,19 @@ public class FitsReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
     in.seek(pixelOffset + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
+    
+    // reverse the order of the rows
+    // planes are stored with the origin in the lower-left corner
+    byte[] tmp = new byte[w * FormatTools.getBytesPerPixel(getPixelType())];
+    for (int row=0; row<h/2; row++) {
+      int src = row * tmp.length;
+      int dest = (h - row - 1) * tmp.length;
+      System.arraycopy(buf, src, tmp, 0, tmp.length);
+      System.arraycopy(buf, dest, buf, src, tmp.length);
+      System.arraycopy(tmp, 0, buf, dest, tmp.length);
+    }
     return buf;
   }
 
