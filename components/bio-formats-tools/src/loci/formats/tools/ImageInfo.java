@@ -215,15 +215,15 @@ public class ImageInfo {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setLogging("DEBUG");
         }
         else if (args[i].equals("-trace")) {
-          DebugTools.enableLogging("TRACE");
+          DebugTools.setLogging("TRACE");
         }
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
-          DebugTools.enableLogging("OFF");
+          DebugTools.setLogging("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -969,12 +969,12 @@ public class ImageInfo {
       }
 
       if (omexmlOnly) {
-        DebugTools.enableLogging("INFO");
+        DebugTools.setLogging("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
-        DebugTools.enableLogging("OFF");
+        DebugTools.setLogging("OFF");
       }
       if (validate) {
         service.validateOMEXML(xml);

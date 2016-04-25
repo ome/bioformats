@@ -35,9 +35,6 @@ function bfInitLogging(varargin)
 % Check Bio-Formats is set in the Java class path
 bfCheckJavaPath();
 
-% Return if the logging system is already initialized
-if javaMethod('isEnabled', 'loci.common.DebugTools'), return; end
-
 % Input check
 levels = {'ALL', 'DEBUG', 'ERROR', 'FATAL', 'INFO', 'OFF', 'TRACE', 'WARN'};
 ip = inputParser;
