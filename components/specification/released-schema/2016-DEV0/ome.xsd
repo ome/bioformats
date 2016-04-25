@@ -3595,7 +3595,7 @@ PlaneInfo (as Plane)
     </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
-        <xsd:extension base="TextAnnotation">
+        <xsd:extension base="BasicAnnotation">
           <xsd:sequence>
             <xsd:element name="Value"  type="MapPairs" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
