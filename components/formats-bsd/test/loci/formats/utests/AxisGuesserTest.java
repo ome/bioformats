@@ -59,6 +59,11 @@ public class AxisGuesserTest {
   private static final String[] C = new String[] {"c", "ch", "w", "wavelength"};
   private static final String[] S = new String[] {"s", "series", "sp"};
 
+  @DataProvider(name = "booleanStates")
+  public Object[][] createBooleans() {
+    return new Object[][] {{true}, {false}};
+  }
+
   @DataProvider(name = "prefixCases")
   public Object[][] createPrefixCases() {
     List<Object[]> cases = new ArrayList<Object[]>();
@@ -146,6 +151,13 @@ public class AxisGuesserTest {
     checkAxisCount(ag, types);
   }
 
+  private String mkPrefix(String baseTag, Boolean upperCase) {
+    if (upperCase) {
+      baseTag = baseTag.toUpperCase();
+    }
+    return String.format("_%s", baseTag);
+  }
+
   private void checkAxisCount(AxisGuesser ag, int[] axisTypes) {
     // Should be as simple as possible
     int countZ = 0, countT = 0, countC = 0, countS = 0;
@@ -206,19 +218,19 @@ public class AxisGuesserTest {
     check(pattern, order, sZ, sT, sC, true, order, types);
   }
 
-  @Test
-  public void testGetAxisType() {
+  @Test(dataProvider = "booleanStates")
+  public void testGetAxisType(Boolean upperCase) {
     for (String s: Z) {
-      assertEquals(AxisGuesser.getAxisType(String.format("_%s", s)), Z_AXIS);
+      assertEquals(AxisGuesser.getAxisType(mkPrefix(s, upperCase)), Z_AXIS);
     }
     for (String s: T) {
-      assertEquals(AxisGuesser.getAxisType(String.format("_%s", s)), T_AXIS);
+      assertEquals(AxisGuesser.getAxisType(mkPrefix(s, upperCase)), T_AXIS);
     }
     for (String s: C) {
-      assertEquals(AxisGuesser.getAxisType(String.format("_%s", s)), C_AXIS);
+      assertEquals(AxisGuesser.getAxisType(mkPrefix(s, upperCase)), C_AXIS);
     }
     for (String s: S) {
-      assertEquals(AxisGuesser.getAxisType(String.format("_%s", s)), S_AXIS);
+      assertEquals(AxisGuesser.getAxisType(mkPrefix(s, upperCase)), S_AXIS);
     }
   }
 
