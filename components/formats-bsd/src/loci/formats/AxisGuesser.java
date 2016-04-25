@@ -40,6 +40,8 @@ import loci.common.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
  * dimensional axes (Z, T, C or S), potentially recommending an adjustment in
@@ -71,18 +73,24 @@ public class AxisGuesser {
   public static final int S_AXIS = 4;
 
   /** Prefixes indicating space dimension. */
-  public static final String[] Z_PREFIXES = {
+  public static final ImmutableSet<String> Z_PREFIXES = ImmutableSet.of(
     "fp", "sec", "z", "zs", "focal", "focalplane"
-  };
+  );
 
   /** Prefixes indicating time dimension. */
-  public static final String[] T_PREFIXES = {"t", "tl", "tp", "time"};
+  public static final ImmutableSet<String> T_PREFIXES = ImmutableSet.of(
+      "t", "tl", "tp", "time"
+  );
 
   /** Prefixes indicating channel dimension. */
-  public static final String[] C_PREFIXES = {"c", "ch", "w", "wavelength"};
+  public static final ImmutableSet<String> C_PREFIXES = ImmutableSet.of(
+      "c", "ch", "w", "wavelength"
+  );
 
   /** Prefixes indicating series dimension. */
-  public static final String[] S_PREFIXES = {"s", "series", "sp"};
+  public static final ImmutableSet<String> S_PREFIXES = ImmutableSet.of(
+      "s", "series", "sp"
+  );
 
   protected static final String ONE = "1";
   protected static final String TWO = "2";
@@ -178,44 +186,26 @@ public class AxisGuesser {
       while (f >= 0 && ch[f] >= 'a' && ch[f] <= 'z') f--;
       p = p.substring(f + 1, l + 1);
 
-      // check against known Z prefixes
-      for (String knownP : Z_PREFIXES) {
-        if (p.equals(knownP)) {
-          axisTypes[i] = Z_AXIS;
-          foundZ = true;
-          break;
-        }
+      // check against known prefixes
+      if (Z_PREFIXES.contains(p)) {
+        axisTypes[i] = Z_AXIS;
+        foundZ = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known T prefixes
-      for (String knownP : T_PREFIXES) {
-        if (p.equals(knownP)) {
-          axisTypes[i] = T_AXIS;
-          foundT = true;
-          break;
-        }
+      if (T_PREFIXES.contains(p)) {
+        axisTypes[i] = T_AXIS;
+        foundT = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known C prefixes
-      for (String knownP : C_PREFIXES) {
-        if (p.equals(knownP)) {
-          axisTypes[i] = C_AXIS;
-          foundC = true;
-          break;
-        }
+      if (C_PREFIXES.contains(p)) {
+        axisTypes[i] = C_AXIS;
+        foundC = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known series prefixes
-      for (String knownP : S_PREFIXES) {
-        if (p.equals(knownP)) {
-          axisTypes[i] = S_AXIS;
-          break;
-        }
+      if (S_PREFIXES.contains(p)) {
+        axisTypes[i] = S_AXIS;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
       // check special case: <2-3>, <1-3> (Bio-Rad PIC)
       if (suffix.equalsIgnoreCase(".pic") && i == axisTypes.length - 1 &&
