@@ -3385,7 +3385,7 @@ PlaneInfo (as Plane)
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>
-      <xsd:extension base="Annotation"/>
+      <xsd:extension base="BasicAnnotation"/>
     </xsd:complexContent>
   </xsd:complexType>
   <xsd:complexType name="TextAnnotation"> <!-- top level definition -->
@@ -3595,7 +3595,7 @@ PlaneInfo (as Plane)
     </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
-        <xsd:extension base="BasicAnnotation">
+        <xsd:extension base="Annotation">
           <xsd:sequence>
             <xsd:element name="Value"  type="MapPairs" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
