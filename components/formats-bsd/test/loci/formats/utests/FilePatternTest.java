@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
+import java.math.BigInteger;
 
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
@@ -141,6 +142,18 @@ public class FilePatternTest {
       "z1cGt10.tif", "z1cGt20.tif", "z1cGt30.tif",
       "z1cBt10.tif", "z1cBt20.tif", "z1cBt30.tif",
     });
+    assertEquals(
+        fp.getFirst(),
+        new BigInteger[] {new BigInteger("0"), null, new BigInteger("10")}
+    );
+    assertEquals(
+        fp.getLast(),
+        new BigInteger[] {new BigInteger("1"), null, new BigInteger("30")}
+    );
+    assertEquals(
+        fp.getStep(),
+        new BigInteger[] {new BigInteger("1"), null, new BigInteger("10")}
+    );
   }
 
   @Test(dataProvider = "booleanStates")
