@@ -118,6 +118,7 @@
       <groups/>
       <classes>
         <class name="loci.formats.utests.FilePatternBlockTest"/>
+        <class name="loci.formats.utests.FilePatternTest"/>
       </classes>
     </test>
 </suite>
