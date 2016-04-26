@@ -58,6 +58,7 @@ public class FitsReader extends FormatReader {
   // -- Fields --
 
   private long pixelOffset;
+  private int  naxis;
 
   // -- Constructor --
 
@@ -129,7 +130,6 @@ public class FitsReader extends FormatReader {
         value = line.substring(ndx + 1, comment).trim();
       }
       else key = line.trim();
-
       // if the file has an extended header, "END" will appear twice
       // the first time marks the end of the extended header
       // the second time marks the end of the standard header
@@ -147,6 +147,7 @@ public class FitsReader extends FormatReader {
       else if (key.equals("NAXIS2")) m.sizeY = Integer.parseInt(value);
       else if (key.equals("NAXIS3")) m.sizeZ = Integer.parseInt(value);
 
+      if (key.equals("NAXIS")) naxis = Integer.parseInt(value);
       addGlobalMeta(key, value);
     }
     while (in.read() == 0x20);
@@ -154,12 +155,21 @@ public class FitsReader extends FormatReader {
 
     m.sizeC = 1;
     m.sizeT = 1;
-    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeZ() == 0) {
+        m.sizeZ = 1;
+    }
+    else m.sizeZ = getSizeZ();
+
+    // If naxis is 1, the other dimensions need to be set manually
+    if (naxis == 1){
+        m.sizeY = 1;
+        m.sizeZ = 1;
+    }
 
     // correct for truncated files
     int planeSize =
-      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
-    if (DataTools.safeMultiply64(planeSize, getSizeZ()) >
+      m.sizeX * m.sizeY * FormatTools.getBytesPerPixel(getPixelType());
+    if (DataTools.safeMultiply64(planeSize, m.sizeZ) >
       (in.length() - pixelOffset))
     {
       m.sizeZ = (int) ((in.length() - pixelOffset) / planeSize);
