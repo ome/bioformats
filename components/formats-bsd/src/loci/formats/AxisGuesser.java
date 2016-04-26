@@ -40,6 +40,8 @@ import loci.common.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
  * dimensional axes (Z, T, C or S), potentially recommending an adjustment in
@@ -71,18 +73,24 @@ public class AxisGuesser {
   public static final int S_AXIS = 4;
 
   /** Prefixes indicating space dimension. */
-  protected static final String[] Z = {
+  public static final ImmutableSet<String> Z_PREFIXES = ImmutableSet.of(
     "fp", "sec", "z", "zs", "focal", "focalplane"
-  };
+  );
 
   /** Prefixes indicating time dimension. */
-  protected static final String[] T = {"t", "tl", "tp", "time"};
+  public static final ImmutableSet<String> T_PREFIXES = ImmutableSet.of(
+      "t", "tl", "tp", "time"
+  );
 
   /** Prefixes indicating channel dimension. */
-  protected static final String[] C = {"c", "ch", "w", "wavelength"};
+  public static final ImmutableSet<String> C_PREFIXES = ImmutableSet.of(
+      "c", "ch", "w", "wavelength"
+  );
 
   /** Prefixes indicating series dimension. */
-  protected static final String[] S = {"s", "series", "sp"};
+  public static final ImmutableSet<String> S_PREFIXES = ImmutableSet.of(
+      "s", "series", "sp"
+  );
 
   protected static final String ONE = "1";
   protected static final String TWO = "2";
@@ -178,44 +186,26 @@ public class AxisGuesser {
       while (f >= 0 && ch[f] >= 'a' && ch[f] <= 'z') f--;
       p = p.substring(f + 1, l + 1);
 
-      // check against known Z prefixes
-      for (int j=0; j<Z.length; j++) {
-        if (p.equals(Z[j])) {
-          axisTypes[i] = Z_AXIS;
-          foundZ = true;
-          break;
-        }
+      // check against known prefixes
+      if (Z_PREFIXES.contains(p)) {
+        axisTypes[i] = Z_AXIS;
+        foundZ = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known T prefixes
-      for (int j=0; j<T.length; j++) {
-        if (p.equals(T[j])) {
-          axisTypes[i] = T_AXIS;
-          foundT = true;
-          break;
-        }
+      if (T_PREFIXES.contains(p)) {
+        axisTypes[i] = T_AXIS;
+        foundT = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known C prefixes
-      for (int j=0; j<C.length; j++) {
-        if (p.equals(C[j])) {
-          axisTypes[i] = C_AXIS;
-          foundC = true;
-          break;
-        }
+      if (C_PREFIXES.contains(p)) {
+        axisTypes[i] = C_AXIS;
+        foundC = true;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
-
-      // check against known series prefixes
-      for (int j=0; j<S.length; j++) {
-        if (p.equals(S[j])) {
-          axisTypes[i] = S_AXIS;
-          break;
-        }
+      if (S_PREFIXES.contains(p)) {
+        axisTypes[i] = S_AXIS;
+        continue;
       }
-      if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
       // check special case: <2-3>, <1-3> (Bio-Rad PIC)
       if (suffix.equalsIgnoreCase(".pic") && i == axisTypes.length - 1 &&
@@ -370,19 +360,25 @@ public class AxisGuesser {
 
   // -- Static API methods --
 
-  /** Returns a best guess of the given label's axis type. */
+  /** Convert the given label to an axis type. If the label ends with
+   * one of the known prefixes for the Z, C, T or S axis (as defined
+   * in <code>Z_PREFIXES, C_PREFIXES, T_PREFIXES, S_PREFIXES</code>),
+   * return the corresponding axis type; otherwise, return
+   * <code>UNKNOWN_AXIS</code>. Note that the match is
+   * case-insensitive.
+   */
   public static int getAxisType(String label) {
     String lowerLabel = label.toLowerCase();
-    for (String p : Z) {
+    for (String p : Z_PREFIXES) {
       if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return Z_AXIS;
     }
-    for (String p : C) {
+    for (String p : C_PREFIXES) {
       if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return C_AXIS;
     }
-    for (String p : T) {
+    for (String p : T_PREFIXES) {
       if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return T_AXIS;
     }
-    for (String p : S) {
+    for (String p : S_PREFIXES) {
       if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return S_AXIS;
     }
     return UNKNOWN_AXIS;
