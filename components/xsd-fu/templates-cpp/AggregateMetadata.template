@@ -408,7 +408,7 @@ namespace ome
 {% if fu.SOURCE_TYPE == "source" %}\
       AggregateMetadata::index_type
       AggregateMetadata::getPixelsBinDataCount(index_type imageIndex) const
-      {   
+      {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
              ++i)

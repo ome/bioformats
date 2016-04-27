@@ -298,17 +298,17 @@ namespace ome
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        index_type    
-        getPixelsBinDataCount(index_type imageIndex) const;   
+        // Documented in base class.
+        index_type
+        getPixelsBinDataCount(index_type imageIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type    
-      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const   
-      {   
-        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",   
-                                "intentionally not implemented");   
-      }   
+      BaseMetadata::index_type
+      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
+                                "intentionally not implemented");
+      }
 {% end source %}\
 {% end %}\
 
@@ -571,19 +571,19 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        bool    
-        getPixelsBinDataBigEndian(index_type imageIndex,    
-                                  index_type binDataIndex) const;   
+        // Documented in base class.
+        bool
+        getPixelsBinDataBigEndian(index_type imageIndex,
+                                  index_type binDataIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      bool    
-      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,   
-                                               index_type /* binDataIndex */) const   
-      {   
-        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",   
-                                "intentionally not implemented");   
-      }   
+      bool
+      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
+                                               index_type /* binDataIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
+                                "intentionally not implemented");
+      }
 {% end source %}\
 {% end %}\
 
@@ -687,19 +687,19 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        void    
-        setPixelsBinDataBigEndian(bool       bigEndian,   
-                                  index_type imageIndex,    
-                                  index_type binDataIndex);   
+        // Documented in base class.
+        void
+        setPixelsBinDataBigEndian(bool       bigEndian,
+                                  index_type imageIndex,
+                                  index_type binDataIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      void    
-      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,    
-                                               index_type /* imageIndex */,   
-                                               index_type /* binDataIndex */)   
-      {   
-      }   
+      void
+      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,
+                                               index_type /* imageIndex */,
+                                               index_type /* binDataIndex */)
+      {
+      }
 {% end source %}\
 {% end %}\
 

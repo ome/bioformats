@@ -205,14 +205,14 @@ namespace ome
 
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-        /**   
-         * Get the number of BinData elements in Pixels.      
-         *        
-         * @param imageIndex the Image index.       
-         * @returns the number of BinData elements.       
-         */       
-        virtual index_type        
-        getPixelsBinDataCount(index_type imageIndex) const = 0; 
+        /**
+         * Get the number of BinData elements in Pixels.
+         *
+         * @param imageIndex the Image index.
+         * @returns the number of BinData elements.
+         */
+        virtual index_type
+        getPixelsBinDataCount(index_type imageIndex) const = 0;
 {% end %}\
 
         /**
@@ -450,15 +450,15 @@ namespace ome
 
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-        /**    
-         * Get the BigEndian property of Pixels.    
-         *    
-         * @param imageIndex the Image index.   
-         * @param binDataIndex BinData index (unused).    
-         * @returns @c true if big endian, or @c false if little endian.    
-         */   
-        virtual bool    
-        getPixelsBinDataBigEndian(index_type imageIndex,    
+        /**
+         * Get the BigEndian property of Pixels.
+         *
+         * @param imageIndex the Image index.
+         * @param binDataIndex BinData index (unused).
+         * @returns @c true if big endian, or @c false if little endian.
+         */
+        virtual bool
+        getPixelsBinDataBigEndian(index_type imageIndex,
                                   index_type binDataIndex) const = 0;
 {% end %}\
 
