@@ -6,8 +6,9 @@ Varian FDF
 
 Extensions: .fdf
 
-Developer: `Varian, Inc. <http://www.varianinc.com>`_
+Developer: Varian, Inc.
 
+Owner: `Agilent Technologies <http://www.agilent.com/home>`_
 
 **Support**
 

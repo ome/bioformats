@@ -2203,7 +2203,8 @@ reader = UnisokuReader
 
 [Varian FDF]
 extensions = .fdf
-developer = `Varian, Inc. <http://www.varianinc.com>`_
+owner = `Agilent Technologies <http://www.agilent.com/home>`_
+developer = Varian, Inc.
 bsd = no
 weHave = * a few Varian FDF datasets
 weWant = * an official specification document \n
