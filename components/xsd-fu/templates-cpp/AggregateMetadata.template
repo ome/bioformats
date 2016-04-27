@@ -401,25 +401,25 @@ namespace ome
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        index_type    
-        getPixelsBinDataCount(index_type imageIndex) const;   
+        // Documented in base class.
+        index_type
+        getPixelsBinDataCount(index_type imageIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type   
-      AggregateMetadata::getPixelsBinDataCount(index_type imageIndex) const   
+      AggregateMetadata::index_type
+      AggregateMetadata::getPixelsBinDataCount(index_type imageIndex) const
       {   
-        for (delegate_list_type::const_iterator i = delegates.begin();    
-             i != delegates.end();    
-             ++i)   
-          {   
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);   
-            if (retrieve)   
-              return retrieve->getPixelsBinDataCount(imageIndex);   
-          }   
-        throw MetadataException("AggregateMetadata", "getPixelsBinDataCount",   
-                                "no delegate MetadataRetrieve implementation");   
-      }   
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getPixelsBinDataCount(imageIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataCount",
+                                "no delegate MetadataRetrieve implementation");
+      }
 {% end source %}\
 {% end %}\
 
@@ -814,27 +814,27 @@ ${counter(k, o, v)}\
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        bool    
-        getPixelsBinDataBigEndian(index_type imageIndex,    
-                                  index_type binDataIndex) const;   
+        // Documented in base class.
+        bool
+        getPixelsBinDataBigEndian(index_type imageIndex,
+                                  index_type binDataIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      bool    
-      AggregateMetadata::getPixelsBinDataBigEndian(index_type imageIndex,   
-                                                   index_type binDataIndex) const   
-      {   
-        for (delegate_list_type::const_iterator i = delegates.begin();    
-             i != delegates.end();    
-             ++i)   
-          {   
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);   
-            if (retrieve)   
-              return retrieve->getPixelsBinDataBigEndian(imageIndex, binDataIndex);   
-          }   
-        throw MetadataException("AggregateMetadata", "getPixelsBinDataBigEndian",   
-                                "no delegate MetadataRetrieve implementation");   
-      }   
+      bool
+      AggregateMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
+                                                   index_type binDataIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getPixelsBinDataBigEndian(imageIndex, binDataIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getPixelsBinDataBigEndian",
+                                "no delegate MetadataRetrieve implementation");
+      }
 {% end source %}\
 {% end %}\
 
@@ -946,29 +946,29 @@ ${getter(k, o, prop, v)}\
 {% end debug %}\
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.    
-        void    
-        setPixelsBinDataBigEndian(bool bigEndian,   
-                                  index_type imageIndex,    
-                                  index_type binDataIndex);   
+        // Documented in base class.
+        void
+        setPixelsBinDataBigEndian(bool bigEndian,
+                                  index_type imageIndex,
+                                  index_type binDataIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      void    
-      AggregateMetadata::setPixelsBinDataBigEndian(bool bigEndian,    
-                                                   index_type imageIndex,   
-                                                   index_type binDataIndex)   
-      {   
-        for (delegate_list_type::iterator i = delegates.begin();    
-             i != delegates.end();    
-             ++i)   
-          {   
-            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);    
-            if (store)    
-              store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);    
-          }   
-        throw MetadataException("AggregateMetadata", "setPixelsBinDataBigEndian",   
-                                "no delegate MetadataStore implementation");    
-      }   
+      void
+      AggregateMetadata::setPixelsBinDataBigEndian(bool bigEndian,
+                                                   index_type imageIndex,
+                                                   index_type binDataIndex)
+      {
+        for (delegate_list_type::iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
+            if (store)
+              store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+          }
+        throw MetadataException("AggregateMetadata", "setPixelsBinDataBigEndian",
+                                "no delegate MetadataStore implementation");
+      }
 {% end source %}\
 {% end %}\
 
