@@ -799,7 +799,9 @@ public class FakeReader extends FormatReader {
     fillExposureTime(store);
     fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
-      parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
+      if (currentImageIndex < seriesTables.size()) {
+        parseSeriesTable(seriesTables.get(currentImageIndex), store, currentImageIndex);
+      }
 
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
