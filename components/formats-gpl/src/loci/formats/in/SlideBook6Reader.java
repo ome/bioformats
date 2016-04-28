@@ -138,7 +138,7 @@ public class SlideBook6Reader  extends FormatReader {
 	/* @see loci.formats.IFormatReader#isThisType(String, boolean) */
 	public boolean isThisType(String file, boolean open) {
 		// Check the first few bytes to determine if the file can be read by this reader.
-		return libraryFound && super.isThisType(file, open);
+		return super.isThisType(file, open) && isLibraryFound();
 	}
 
 	/**
