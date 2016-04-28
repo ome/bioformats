@@ -1155,7 +1155,17 @@ public class FakeReader extends FormatReader {
       if (positionX != null) {
         try {
           Double v = new Double(positionX);
-          Length x = FormatTools.getPhysicalSize(v, positionXUnit);
+
+          Length x = new Length(v, UNITS.MICROM);
+          if (positionXUnit != null) {
+            try {
+              UnitsLength ul = UnitsLength.fromString(positionXUnit);
+              x = UnitsLength.create(v, ul);
+            }
+            catch (EnumerationException e) {
+              LOGGER.trace("Could not parse PositionXUnit for series #" + s + " plane #" + i);
+            }
+          }
           if (x != null) {
             store.setPlanePositionX(x, newSeries, i);
           }
@@ -1171,7 +1181,16 @@ public class FakeReader extends FormatReader {
       if (positionY != null) {
         try {
           Double v = new Double(positionY);
-          Length y = FormatTools.getPhysicalSize(v, positionYUnit);
+          Length y = new Length(v, UNITS.MICROM);
+          if (positionYUnit != null) {
+            try {
+              UnitsLength ul = UnitsLength.fromString(positionYUnit);
+              y = UnitsLength.create(v, ul);
+            }
+            catch (EnumerationException e) {
+              LOGGER.trace("Could not parse PositionYUnit for series #" + s + " plane #" + i);
+            }
+          }
           if (y != null) {
             store.setPlanePositionY(y, newSeries, i);
           }
@@ -1187,7 +1206,16 @@ public class FakeReader extends FormatReader {
       if (positionZ != null) {
         try {
           Double v = new Double(positionZ);
-          Length z = FormatTools.getPhysicalSize(v, positionZUnit);
+          Length z = new Length(v, UNITS.MICROM);
+          if (positionZUnit != null) {
+            try {
+              UnitsLength ul = UnitsLength.fromString(positionZUnit);
+              z = UnitsLength.create(v, ul);
+            }
+            catch (EnumerationException e) {
+              LOGGER.trace("Could not parse PositionZUnit for series #" + s + " plane #" + i);
+            }
+          }
           if (z != null) {
             store.setPlanePositionZ(z, newSeries, i);
           }
