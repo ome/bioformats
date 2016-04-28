@@ -79,6 +79,9 @@ public class FileStitcher extends ReaderWrapper {
   /** Component lengths for each axis type. */
   private int[][] lenZ, lenC, lenT;
 
+  /** Axis types for all series patterns. */
+  private int[] axisTypes;
+
   /** Core metadata. */
   private ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
 
@@ -164,6 +167,13 @@ public class FileStitcher extends ReaderWrapper {
 
   public boolean canChangePattern() {
     return !doNotChangePattern;
+  }
+
+  /**
+   * Call before setId to override axis types for all series patterns.
+   */
+  public void overrideAxisTypes(int[] axisTypes) {
+    this.axisTypes = axisTypes;
   }
 
   /** Gets the reader appropriate for use with the given image plane. */
@@ -929,7 +939,8 @@ public class FileStitcher extends ReaderWrapper {
     externals = new ExternalSeries[patterns.length];
 
     for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
+      externals[i] = new ExternalSeries(
+          new FilePattern(patterns[i]), axisTypes);
     }
     fp = new FilePattern(patterns[0]);
 
@@ -954,9 +965,16 @@ public class FileStitcher extends ReaderWrapper {
       return;
     }
 
-    AxisGuesser guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
-      reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
-      reader.isOrderCertain());
+    AxisGuesser guesser = null;
+    if (null != axisTypes) {
+      guesser = new AxisGuesser(axisTypes, reader.getDimensionOrder(),
+        reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
+        reader.isOrderCertain());
+    } else {
+      guesser = new AxisGuesser(fp, reader.getDimensionOrder(),
+        reader.getSizeZ(), reader.getSizeT(), reader.getEffectiveSizeC(),
+        reader.isOrderCertain());
+    }
 
     // use the dimension order recommended by the axis guesser
     ((DimensionSwapper) reader).swapDimensions(guesser.getAdjustedOrder());
@@ -1258,6 +1276,12 @@ public class FileStitcher extends ReaderWrapper {
     private int imagesPerFile;
 
     public ExternalSeries(FilePattern pattern)
+        throws FormatException, IOException
+    {
+      this(pattern, null);
+    }
+
+    public ExternalSeries(FilePattern pattern, int[] axisTypes)
       throws FormatException, IOException
     {
       this.pattern = pattern;
@@ -1275,9 +1299,15 @@ public class FileStitcher extends ReaderWrapper {
       }
       readers[0].setId(files[0]);
 
-      ag = new AxisGuesser(this.pattern, readers[0].getDimensionOrder(),
-        readers[0].getSizeZ(), readers[0].getSizeT(),
-        readers[0].getSizeC(), readers[0].isOrderCertain());
+      if (null != axisTypes) {
+        ag = new AxisGuesser(axisTypes, readers[0].getDimensionOrder(),
+          readers[0].getSizeZ(), readers[0].getSizeT(),
+          readers[0].getSizeC(), readers[0].isOrderCertain());
+      } else {
+        ag = new AxisGuesser(this.pattern, readers[0].getDimensionOrder(),
+          readers[0].getSizeZ(), readers[0].getSizeT(),
+          readers[0].getSizeC(), readers[0].isOrderCertain());
+      }
 
       blankThumbBytes = new byte[FormatTools.getPlaneSize(readers[0],
         readers[0].getThumbSizeX(), readers[0].getThumbSizeY())];
