@@ -220,7 +220,9 @@ public class FilePatternDialog extends ImporterDialog {
 
         FilePatternBlock block = new FilePatternBlock(fp.getBlock(i));
 
-        fileCount = fileCount.subtract(BigInteger.ONE).multiply(increment);
+        // Last image of each axis is defined as
+        // (number of images - 1) * axis increment + axis first image
+        fileCount = fileCount.subtract(BigInteger.ONE).multiply(increment).add(first);
 
         pattern += fp.getPrefix(i);
         pattern += "<";
