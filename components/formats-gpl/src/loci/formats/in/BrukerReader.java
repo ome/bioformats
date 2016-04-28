@@ -62,6 +62,18 @@ public class BrukerReader extends FormatReader {
   private int lastSeries = -1;
   private RandomAccessInputStream seriesStream;
 
+  private String[] sizes = null;
+  private String[] ordering = null;
+  private int ni = 0, nr = 0, ns = 0;
+  private int bits = 0;
+  private boolean signed = false;
+  private boolean isFloat = false;
+
+  private String[] imageNames = null;
+  private String[] institutions = null;
+  private String[] users = null;
+  private String[] timestamps = null;
+
   // -- Constructor --
 
   /** Constructs a new Bruker reader. */
@@ -120,8 +132,11 @@ public class BrukerReader extends FormatReader {
       lastSeries = getSeries();
     }
 
-    seriesStream.seek((long) no * FormatTools.getPlaneSize(this));
-    readPlane(seriesStream, x, y, w, h, buf);
+    long offset = (long) no * FormatTools.getPlaneSize(this);
+    if (offset < seriesStream.length()) {
+      seriesStream.seek(offset);
+      readPlane(seriesStream, x, y, w, h, buf);
+    }
     return buf;
   }
 
@@ -167,6 +182,20 @@ public class BrukerReader extends FormatReader {
         seriesStream.close();
       }
       seriesStream = null;
+
+      sizes = null;
+      ordering = null;
+      ni = 0;
+      nr = 0;
+      ns = 0;
+      bits = 0;
+      signed = false;
+      isFloat = false;
+
+      imageNames = null;
+      institutions = null;
+      users = null;
+      timestamps = null;
     }
   }
 
@@ -204,6 +233,7 @@ public class BrukerReader extends FormatReader {
 
     ArrayList<String> acqpFiles = new ArrayList<String>();
     ArrayList<String> recoFiles = new ArrayList<String>();
+    ArrayList<String> procFiles = new ArrayList<String>();
 
     for (String f : acquisitionDirs) {
       Location dir = new Location(parent, f);
@@ -231,6 +261,9 @@ public class BrukerReader extends FormatReader {
                   else if (m.equals("reco")) {
                     recoFiles.add(ggc.getAbsolutePath());
                   }
+                  else if (m.equals("d3proc")) {
+                    procFiles.add(ggc.getAbsolutePath());
+                  }
                 }
               }
             }
@@ -243,17 +276,31 @@ public class BrukerReader extends FormatReader {
         if (recoFiles.size() > pixelsFiles.size()) {
           recoFiles.remove(recoFiles.size() - 1);
         }
+        if (procFiles.size() > pixelsFiles.size()) {
+          procFiles.remove(procFiles.size() - 1);
+        }
       }
     }
 
 
-    String[] imageNames = new String[pixelsFiles.size()];
-    String[] timestamps = new String[pixelsFiles.size()];
-    String[] institutions = new String[pixelsFiles.size()];
-    String[] users = new String[pixelsFiles.size()];
+    imageNames = new String[pixelsFiles.size()];
+    timestamps = new String[pixelsFiles.size()];
+    institutions = new String[pixelsFiles.size()];
+    users = new String[pixelsFiles.size()];
 
     core.clear();
     for (int series=0; series<pixelsFiles.size(); series++) {
+      sizes = null;
+      ordering = null;
+      ni = nr = ns = 0;
+      bits = 0;
+      signed = false;
+      isFloat = false;
+
+      RandomAccessInputStream s = new RandomAccessInputStream(pixelsFiles.get(series), 1);
+      long pixelsFileSize = s.length();
+      s.close();
+
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
 
@@ -262,31 +309,108 @@ public class BrukerReader extends FormatReader {
       String acqData = DataTools.readFile(acqpFiles.get(series));
       String[] lines = acqData.split("\n");
 
-      String[] sizes = null;
-      String[] ordering = null;
-      int ni = 0, nr = 0, ns = 0;
-      int bits = 0;
-      boolean signed = false;
-      boolean isFloat = false;
+      parseLines(lines);
 
-      for (int i=0; i<lines.length; i++) {
-        String line = lines[i];
-        int index = line.indexOf('=');
-        if (index >= 0) {
-          String key = line.substring(0, index);
-          String value = line.substring(index + 1);
+      String recoData = DataTools.readFile(recoFiles.get(series));
+      lines = recoData.split("\n");
 
-          if (value.startsWith("(")) {
-            value = lines[i + 1].trim();
-            if (value.startsWith("<")) {
-              value = value.substring(1, value.length() - 1);
-            }
+      parseLines(lines);
+
+      String procData = DataTools.readFile(procFiles.get(series));
+      lines = procData.split("\n");
+
+      parseLines(lines);
+
+      ms.pixelType =
+        FormatTools.pixelTypeFromBytes(bits / 8, signed, isFloat);
+
+      // reset the dimensions if the d3proc data does not match the pixel file size
+      if (getSizeZ() * getSizeT() != nr * ni && (ni > 1 || nr > 1 || ns > 1)) {
+        ni = 1;
+        nr = 1;
+        ns = 1;
+      }
+      else {
+        ms.sizeX = 0;
+        ms.sizeY = 0;
+        ms.sizeZ = 0;
+        ms.sizeT = 0;
+      }
+
+      int td = Integer.parseInt(sizes[0]);
+      int ys = sizes.length > 1 ? Integer.parseInt(sizes[1]) : 0;
+      int zs = sizes.length > 2 ? Integer.parseInt(sizes[2]) : 0;
+
+      if (getSizeY() == 0 || getSizeZ() == 0) {
+        if (sizes.length == 2) {
+          if (ni == 1) {
+            ms.sizeY = ys;
+            ms.sizeZ = nr;
           }
-          if (key.length() < 4) {
-            continue;
+          else {
+            ms.sizeY = ys;
+            ms.sizeZ = ni;
           }
+        }
+        else if (sizes.length == 3) {
+          ms.sizeY = ni * ys;
+          ms.sizeZ = nr * zs;
+        }
+      }
+      if (getSizeX() == 0) {
+        ms.sizeX = td;
+      }
 
-          addSeriesMeta(key.substring(3), value);
+      if (getSizeT() == 0) {
+        ms.sizeZ /= ns;
+        ms.sizeT = ns * nr;
+      }
+      ms.sizeC = 1;
+      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms.dimensionOrder = "XYCTZ";
+      ms.rgb = false;
+      ms.interleaved = false;
+    }
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
+
+    for (int series=0; series<getSeriesCount(); series++) {
+      store.setImageName(imageNames[series] + " #" + (series + 1), series);
+      String date = DateTools.formatDate(timestamps[series], DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), series);
+      }
+
+      String expID = MetadataTools.createLSID("Experimenter", series);
+      store.setExperimenterID(expID, series);
+      store.setExperimenterLastName(users[series], series);
+      store.setExperimenterInstitution(institutions[series], series);
+
+      store.setImageExperimenterRef(expID, series);
+    }
+  }
+
+  private void parseLines(String[] lines) {
+    CoreMetadata ms = core.get(getCoreIndex());
+    for (int i=0; i<lines.length; i++) {
+      String line = lines[i];
+      int index = line.indexOf("=");
+      if (index >= 0) {
+        String key = line.substring(0, index);
+        String value = line.substring(index + 1);
+
+        if (value.startsWith("(")) {
+          value = lines[i + 1].trim();
+          if (value.startsWith("<")) {
+            value = value.substring(1, value.length() - 1);
+          }
+        }
+        if (key.length() < 4) {
+          continue;
+        }
+
+        addSeriesMeta(key.substring(3), value);
 
           if (key.equals("##$NI")) {
             ni = Integer.parseInt(value);
@@ -321,32 +445,7 @@ public class BrukerReader extends FormatReader {
           else if (key.equals("##$ACQ_ns_list_size")) {
             ns = Integer.parseInt(value);
           }
-        }
-      }
-
-      String recoData = DataTools.readFile(recoFiles.get(series));
-      lines = recoData.split("\n");
-
-      for (int i=0; i<lines.length; i++) {
-        String line = lines[i];
-        int index = line.indexOf('=');
-        if (index >= 0) {
-          String key = line.substring(0, index);
-          String value = line.substring(index + 1);
-
-          if (value.startsWith("(")) {
-            value = lines[i + 1].trim();
-            if (value.startsWith("<")) {
-              value = value.substring(1, value.length() - 1);
-            }
-          }
-          if (key.length() < 4) {
-            continue;
-          }
-
-          addSeriesMeta(key.substring(3), value);
-
-          if (key.equals("##$RECO_size")) {
+          else if (key.equals("##$RECO_size")) {
             sizes = value.split(" ");
           }
           else if (key.equals("##$RECO_wordtype")) {
@@ -354,57 +453,19 @@ public class BrukerReader extends FormatReader {
             signed = value.indexOf("_SGN_") >= 0;
             isFloat = !value.endsWith("_INT");
           }
-        }
+          else if (key.equals("##$IM_SIX")) {
+            ms.sizeX = Integer.parseInt(value);
+          }
+          else if (key.equals("##$IM_SIY")) {
+            ms.sizeY = Integer.parseInt(value);
+          }
+          else if (key.equals("##$IM_SIZ")) {
+            ms.sizeZ = Integer.parseInt(value);
+          }
+          else if (key.equals("##$IM_SIT")) {
+            ms.sizeT = Integer.parseInt(value);
+          }
       }
-
-      int td = Integer.parseInt(sizes[0]);
-      int ys = sizes.length > 1 ? Integer.parseInt(sizes[1]) : 0;
-      int zs = sizes.length > 2 ? Integer.parseInt(sizes[2]) : 0;
-
-      if (sizes.length == 2) {
-        if (ni == 1) {
-          ms.sizeY = ys;
-          ms.sizeZ = nr;
-        }
-        else {
-          ms.sizeY = ys;
-          ms.sizeZ = ni;
-        }
-      }
-      else if (sizes.length == 3) {
-        ms.sizeY = ni * ys;
-        ms.sizeZ = nr * zs;
-      }
-
-      ms.sizeX = td;
-
-      ms.sizeZ /= ns;
-      ms.sizeT = ns * nr;
-      ms.sizeC = 1;
-      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
-      ms.dimensionOrder = "XYCTZ";
-      ms.rgb = false;
-      ms.interleaved = false;
-      ms.pixelType =
-        FormatTools.pixelTypeFromBytes(bits / 8, signed, isFloat);
-    }
-
-    MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
-
-    for (int series=0; series<getSeriesCount(); series++) {
-      store.setImageName(imageNames[series] + " #" + (series + 1), series);
-      String date = DateTools.formatDate(timestamps[series], DATE_FORMAT);
-      if (date != null) {
-        store.setImageAcquisitionDate(new Timestamp(date), series);
-      }
-
-      String expID = MetadataTools.createLSID("Experimenter", series);
-      store.setExperimenterID(expID, series);
-      store.setExperimenterLastName(users[series], series);
-      store.setExperimenterInstitution(institutions[series], series);
-
-      store.setImageExperimenterRef(expID, series);
     }
   }
 
