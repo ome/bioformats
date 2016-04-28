@@ -361,7 +361,7 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
-        self.primitive_type_map['base64Binary'] = 'std::string'
+        self.primitive_type_map['base64Binary'] = 'std::vector<uint8_t>'
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
