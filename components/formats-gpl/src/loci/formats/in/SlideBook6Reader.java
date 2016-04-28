@@ -182,7 +182,7 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		if (libraryFound) {
+		if (initialized && isLibraryFound()) {
 			closeFile();
 		}
 	}
