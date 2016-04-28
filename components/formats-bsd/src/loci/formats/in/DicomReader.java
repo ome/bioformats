@@ -276,9 +276,12 @@ public class DicomReader extends FormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    if (fileList.get(keys[getSeries()]).size() > 1) {
-      int fileNumber = no / imagesPerFile;
-      no = no % imagesPerFile;
+    if (fileList.size() > 1) {
+      int fileNumber = 0;
+      if (fileList.get(keys[getSeries()]).size() > 1) {
+        fileNumber = no / imagesPerFile;
+        no = no % imagesPerFile;
+      }
       String file = fileList.get(keys[getSeries()]).get(fileNumber);
       helper.setId(file);
       return helper.openBytes(no, buf, x, y, w, h);
@@ -661,10 +664,19 @@ public class DicomReader extends FormatReader {
             if (fileList == null) {
               fileList = new HashMap<Integer, List<String>>();
             }
-            if (fileList.get(0) == null) {
-              fileList.put(0, new ArrayList<String>());
+            int seriesIndex = 0;
+            if (originalInstance != null) {
+              try {
+                seriesIndex = Integer.parseInt(originalInstance);
+              }
+              catch (NumberFormatException e) {
+                LOGGER.debug("Could not parse instance number: {}", originalInstance);
+              }
             }
-            fileList.get(0).add(getHeaderInfo(tag, s).trim());
+            if (fileList.get(seriesIndex) == null) {
+              fileList.put(seriesIndex, new ArrayList<String>());
+            }
+            fileList.get(seriesIndex).add(getHeaderInfo(tag, s).trim());
           }
           else {
             companionFiles.add(getHeaderInfo(tag, s).trim());
@@ -684,11 +696,14 @@ public class DicomReader extends FormatReader {
 
     if (id.endsWith("DICOMDIR")) {
       String parent = new Location(currentId).getAbsoluteFile().getParent();
-      for (int i=0; i<fileList.get(0).size(); i++) {
-        String file = fileList.get(0).get(i);
-        file = file.replace('\\', File.separatorChar);
-        file = file.replaceAll("/", File.separator);
-        fileList.get(0).set(i, parent + File.separator + file);
+      for (int q=0; q<fileList.size(); q++) {
+        Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
+        for (int i=0; i<fileList.get(fileKeys[q]).size(); i++) {
+          String file = fileList.get(fileKeys[q]).get(i);
+          file = file.replace('\\', File.separatorChar);
+          file = file.replaceAll("/", File.separator);
+          fileList.get(fileKeys[q]).set(i, parent + File.separator + file);
+        }
       }
       for (int i=0; i<companionFiles.size(); i++) {
         String file = companionFiles.get(i);
