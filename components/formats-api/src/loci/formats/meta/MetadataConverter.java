@@ -1021,8 +1021,14 @@ public final class MetadataConverter {
           try {
             Boolean bigEndian = src.getPixelsBinDataBigEndian(i, q);
             dest.setPixelsBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
             NonNegativeLong length = src.getPixelsBinDataLength(i, q);
             dest.setPixelsBinDataLength(length, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
             Compression compression = src.getPixelsBinDataCompression(i, q);
             dest.setPixelsBinDataCompression(compression, i, q);
           }
