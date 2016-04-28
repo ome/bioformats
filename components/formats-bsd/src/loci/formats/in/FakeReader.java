@@ -997,9 +997,7 @@ public class FakeReader extends FormatReader {
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
         byte[] rawBytes = new byte[ROI_SPACING*ROI_SPACING];
         random.nextBytes(rawBytes);
-        String base64encoded = DatatypeConverter.printBase64Binary(rawBytes);
-        byte[] binData = base64encoded.getBytes(StandardCharsets.UTF_8);
-        store.setMaskBinData(binData, roiCount, 0);
+        store.setMaskBinData(rawBytes, roiCount, 0);
         store.setMaskBinDataBigEndian(true, roiCount, 0);
         store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, 0);
         roiCount++;
