@@ -79,9 +79,11 @@ public class SlideBook6Reader  extends FormatReader {
 
 	// -- Static initializers --
 
+	private static boolean initialized = false;
 	private static boolean libraryFound = false;
 
-	static {
+	private static boolean isLibraryFound() {
+		if (initialized) return libraryFound;
 		try {
 			// load JNI wrapper of SBReadFile.dll
 			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
@@ -102,6 +104,8 @@ public class SlideBook6Reader  extends FormatReader {
 			LOGGER.warn("Insufficient permission to load native library", e);
 			libraryFound = false;
 		}
+		initialized = true;
+		return libraryFound;
 	}
 
 	// -- Constructor --
