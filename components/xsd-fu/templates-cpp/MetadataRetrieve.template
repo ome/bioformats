@@ -213,8 +213,8 @@ namespace ome
          */
         virtual index_type
         getPixelsBinDataCount(index_type imageIndex) const = 0;
-{% end %}\
 
+{% end %}\
         /**
          * Get the number of links to a BooleanAnnotation.
          *
