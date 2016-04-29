@@ -160,10 +160,10 @@
 {% end %}\
 {% end %}\
 {% if not v['isAbstractSub'] %}\
-    ${v['name']} o${i + 1} = o${i}.${v['accessor']};
+		${v['name']} o${i + 1} = o${i}.${v['accessor']};
 {% end %}\
 {% if v['isAbstractSub'] %}\
-    ${v['concreteName']} o${i + 1} = (${v['concreteName']}) o${i}.${v['accessor']};
+		${v['concreteName']} o${i + 1} = (${v['concreteName']}) o${i}.${v['accessor']};
 {% end %}\
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
