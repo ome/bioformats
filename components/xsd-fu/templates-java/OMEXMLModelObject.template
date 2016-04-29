@@ -64,7 +64,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-{% if prop.type in model.opts.lang.primitive_base_types && prop.type == "base64Binary" %}\
+{% if klass.hasPrimitiveBase %}\
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -224,11 +224,11 @@ ${customUpdatePropertyContent[prop.name]}
 		// Element's text data
 		String value_textContent = element.getTextContent();
 		if (value_textContent.trim().length() > 0) {
-{% if prop.type in model.opts.lang.primitive_base_types && prop.type == "base64Binary" %}\
+{% if prop.type in model.opts.lang.primitive_base_types and prop.type == 'base64Binary' %}\
 			byte[] rawBytes = DatatypeConverter.parseBase64Binary(value_textContent);
 			set${prop.methodName}(rawBytes);
 {% end if prop.type %}\
-{% if not prop.type == "base64Binary" %}\
+{% if not prop.type == 'base64Binary' %}\
 			set${prop.methodName}(${prop.type}.valueOf(value_textContent));
 {% end if not prop.type %}\
 		}
@@ -681,10 +681,10 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end when %}\
 {% when prop.hasBaseAttribute %}\
 			// Element's text data
-{% if not prop.type == "base64Binary" %}\
+{% if not prop.type == 'base64Binary' %}\
 			${klass.name}_element.setTextContent(${prop.instanceVariableName}.toString());
 {% end if not prop.type %}\
-{% if prop.type in model.opts.lang.primitive_base_types && prop.type == "base64Binary" %}\
+{% if prop.type in model.opts.lang.primitive_base_types and prop.type == 'base64Binary' %}\
 			String encodedString = DatatypeConverter.printBase64Binary(${prop.instanceVariableName});
 			${klass.name}_element.setTextContent(encodedString);
 {% end if prop.type %}\
