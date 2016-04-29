@@ -772,6 +772,7 @@ namespace ome
         return safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->sizeOfBinDataList();
       }
 {% end source %}\
+
 {% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
