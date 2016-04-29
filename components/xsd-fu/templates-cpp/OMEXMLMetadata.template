@@ -1032,6 +1032,7 @@ ${counter(k, o, v)}\
         return safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBinData(binDataIndex), bindata_method)->getBigEndian();
       }
 {% end source %}\
+
 {% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
@@ -1140,7 +1141,6 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-
 {% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
