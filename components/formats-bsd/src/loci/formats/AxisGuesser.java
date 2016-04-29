@@ -34,13 +34,17 @@ package loci.formats;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 import loci.common.Location;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
+import static java.util.Collections.unmodifiableSet;
+
 
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
@@ -73,24 +77,21 @@ public class AxisGuesser {
   public static final int S_AXIS = 4;
 
   /** Prefixes indicating space dimension. */
-  public static final ImmutableSet<String> Z_PREFIXES = ImmutableSet.of(
-    "fp", "sec", "z", "zs", "focal", "focalplane"
-  );
+  public static final Set<String> Z_PREFIXES = unmodifiableSet(
+      new HashSet<String>(Arrays.asList(
+          "fp", "sec", "z", "zs", "focal", "focalplane")));
 
   /** Prefixes indicating time dimension. */
-  public static final ImmutableSet<String> T_PREFIXES = ImmutableSet.of(
-      "t", "tl", "tp", "time"
-  );
+  public static final Set<String> T_PREFIXES = unmodifiableSet(
+      new HashSet<String>(Arrays.asList("t", "tl", "tp", "time")));
 
   /** Prefixes indicating channel dimension. */
-  public static final ImmutableSet<String> C_PREFIXES = ImmutableSet.of(
-      "c", "ch", "w", "wavelength"
-  );
+  public static final Set<String> C_PREFIXES = unmodifiableSet(
+      new HashSet<String>(Arrays.asList("c", "ch", "w", "wavelength")));
 
   /** Prefixes indicating series dimension. */
-  public static final ImmutableSet<String> S_PREFIXES = ImmutableSet.of(
-      "s", "series", "sp"
-  );
+  public static final Set<String> S_PREFIXES = unmodifiableSet(
+      new HashSet<String>(Arrays.asList("s", "series", "sp")));
 
   protected static final String ONE = "1";
   protected static final String TWO = "2";
