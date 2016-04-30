@@ -41,7 +41,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
-
+import ch.qos.logback.core.joran.util.ConfigurationWatchListUtil;
 
 
 /**
@@ -54,13 +54,14 @@ public final class LogbackTools {
   private LogbackTools() { }
 
   /**
-   * Checks whether SLF4J logging was enabled via logback
+   * Checks whether logback has been configured
    *
    * @return {@code} true if logging was successfully enabled
    */
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    return root.iteratorForAppenders().hasNext();
+    LoggerContext loggerContext = root.getLoggerContext();
+    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) == null);
   }
 
   /**
