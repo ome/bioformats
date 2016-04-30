@@ -83,7 +83,7 @@ public final class LogbackTools {
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code} true if logging was successfully enabled
    */
-  public static synchronized boolean enableLogging(String level) {
+  public static synchronized boolean enableLogging() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     LoggerContext context = root.getLoggerContext();
     if (!root.iteratorForAppenders().hasNext()) {
@@ -114,8 +114,6 @@ public final class LogbackTools {
         root.addAppender(defaultAppender);
       }
     }
-    root.setLevel(Level.toLevel(level));
-
     return true;
   }
 

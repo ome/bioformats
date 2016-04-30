@@ -44,7 +44,7 @@ public final class Log4jTools {
   private Log4jTools() { }
 
   /**
-   * Checks whether SLF4J logging was enabled via log4j
+   * Checks whether the log4j framework was successfully enabled
    *
    * @return {@code true} if logging was successfully enabled
    */
@@ -94,7 +94,6 @@ public final class Log4jTools {
       r.exec("import org.apache.log4j.Level");
       r.exec("import org.apache.log4j.Logger");
       r.exec("root = Logger.getRootLogger()");
-      r.exec("root.setLevel(Level." + level + ")");
       Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
       if (!en.hasMoreElements()) {
         // no appenders yet; attach a simple console appender

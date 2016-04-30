@@ -122,7 +122,19 @@ public final class DebugTools {
    * @return {@code true} if logging was successfully enabled by this method
    */
   public static synchronized boolean enableLogging() {
-    return enableLogging("INFO");
+    if (isEnabled()) return false;
+    for (String[] toolClass : TOOLCLASSES) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("enableLogging", String.class);
+        m.invoke(null);
+        return true;
+      }
+      catch (Throwable t) {
+        // no-op. Ignore error and try the next class.
+      }
+    }
+    return false;
   }
   
   /**
@@ -137,19 +149,9 @@ public final class DebugTools {
    * @return {@code true} if logging was successfully enabled by this method
    */
   public static synchronized boolean enableLogging(String level) {
-    if (isEnabled()) return false;
-    for (String[] toolClass : TOOLCLASSES) {
-      try {
-        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
-        Method m = k.getMethod("enableLogging", String.class);
-        m.invoke(null, level);
-        return true;
-      }
-      catch (Throwable t) {
-        // no-op. Ignore error and try the next class.
-      }
-    }
-    return false;
+    boolean status = enableLogging();
+    if (status) setRootLevel(level);
+    return status;
   }
 
   /**
