@@ -49,6 +49,11 @@ public final class DebugTools {
 
   // -- Constructor --
 
+  final static String[][] TOOLCLASSES = new String[][] {
+    new String[] {"loci.common.", "LogbackTools"},
+    new String[] {"loci.common.", "Log4jTools"}
+  };
+
   private DebugTools() { }
 
   // -- DebugTools methods --
@@ -70,12 +75,7 @@ public final class DebugTools {
    * @return {@code true} if logging has been successfully enabled
    */
   public static synchronized boolean isEnabled() {
-    final String[][] toolClasses = new String[][] {
-      new String[] {"loci.common.", "LogbackTools"},
-      new String[] {"loci.common.", "Log4jTools"}
-    };
-
-    for (String[] toolClass : toolClasses) {
+    for (String[] toolClass : TOOLCLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("isEnabled");
@@ -89,24 +89,19 @@ public final class DebugTools {
   }
 
   /**
-   * Sets the SLF4J logging via logback or log4j
-   * This method will override any logging previously configured either via a
-   * configuration file or another {@link DebugTools} call.
+   * Sets the level of the root logger
+   * This method will override the root logger level whether it was initialized
+   * via a configuration file or another logger call.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return {@code} true if logging was successfully enabled
+   * @return {@code} true if the  was successfully enabled
    */
-  public static synchronized boolean setLogging(String level) {
-    final String[][] toolClasses = new String[][] {
-      new String[] {"loci.common.", "LogbackTools"},
-      new String[] {"loci.common.", "Log4jTools"}
-    };
-
-    for (String[] toolClass : toolClasses) {
+  public static synchronized boolean setRootLevel(String level) {
+    for (String[] toolClass : TOOLCLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
-        Method m = k.getMethod("enableLogging", String.class);
+        Method m = k.getMethod("setRootLevel", String.class);
         m.invoke(null, level);
         return true;
       }
@@ -122,7 +117,7 @@ public final class DebugTools {
    * external configuration file.
    * This will first check whether logging has been enabled either via a
    * configuration file or a previous call. If not enabled, calls
-   * {@link #setLogging(String)} at INFO level.
+   * {@link #setRootLevel(String)} at INFO level.
    *
    * @return {@code true} if logging was successfully enabled by this method
    */
@@ -134,17 +129,25 @@ public final class DebugTools {
    * Attempts to enable SLF4J logging via logback or log4j without an
    * external configuration file.
    * This will first check whether logging has been enabled either via a
-   * configuration file or a previous call. If not enabled, calls
-   * {@link #setLogging(String)} with the desired level.
+   * configuration file or a previous call. If not enabled, dlee
+   * {@link #setRootLevel(String)} with the desired level.
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code true} if logging was successfully enabled by this method
    */
   public static synchronized boolean enableLogging(String level) {
-    if (!isEnabled()) {
-      boolean status = setLogging(level);
-      return status;
+    if (isEnabled()) return false;
+    for (String[] toolClass : TOOLCLASSES) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("enableLogging", String.class);
+        m.invoke(null, level);
+        return true;
+      }
+      catch (Throwable t) {
+        // no-op. Ignore error and try the next class.
+      }
     }
     return false;
   }
