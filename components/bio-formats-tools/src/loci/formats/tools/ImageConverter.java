@@ -129,7 +129,7 @@ public final class ImageConverter {
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-") && args.length > 1) {
         if (args[i].equals("-debug")) {
-          DebugTools.setLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
         else if (args[i].equals("-stitch")) stitch = true;
         else if (args[i].equals("-separate")) separate = true;
