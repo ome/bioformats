@@ -97,19 +97,19 @@ public final class DebugTools {
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code} true if the  was successfully enabled
    */
-  public static synchronized boolean setRootLevel(String level) {
+  public static synchronized void setRootLevel(String level) {
     for (String[] toolClass : TOOLCLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("setRootLevel", String.class);
         m.invoke(null, level);
-        return true;
+        return;
       }
       catch (Throwable t) {
         // no-op. Ignore error and try the next class.
       }
     }
-    return false;
+    return;
   }
 
   /**

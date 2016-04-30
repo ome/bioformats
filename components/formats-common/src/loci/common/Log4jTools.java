@@ -60,6 +60,25 @@ public final class Log4jTools {
       return false;
     }
   }
+
+  /**
+   * Sets the level of the root logger
+   *
+   * @param level A string indicating the desired level
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
+   */
+  public static synchronized void setRootLevel(String level) {
+    try {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.exec("import org.apache.log4j.Level");
+      r.exec("import org.apache.log4j.Logger");
+      r.exec("root = Logger.getRootLogger()");
+      r.exec("root.setLevel(Level." + level + ")");
+    } catch (ReflectException exc) {
+      return;
+    }
+    return;
+  }
   
   /**
    * Attempts to enable SLF4J logging via log4j

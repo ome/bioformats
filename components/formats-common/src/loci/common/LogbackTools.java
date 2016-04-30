@@ -64,6 +64,17 @@ public final class LogbackTools {
   }
 
   /**
+   * Sets the level of the root logger
+   *
+   * @param level A string indicating the desired level
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
+   */
+  public static synchronized void setRootLevel(String level) {
+    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    root.setLevel(Level.toLevel(level));
+  }
+
+  /**
    * Attempts to enable SLF4J logging via logback without an external
    * configuration file.
    *
