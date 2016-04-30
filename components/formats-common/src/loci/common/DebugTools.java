@@ -126,7 +126,7 @@ public final class DebugTools {
     for (String[] toolClass : TOOLCLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
-        Method m = k.getMethod("enableLogging", String.class);
+        Method m = k.getMethod("enableLogging");
         m.invoke(null);
         return true;
       }

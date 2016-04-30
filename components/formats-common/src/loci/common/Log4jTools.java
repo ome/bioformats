@@ -88,7 +88,7 @@ public final class Log4jTools {
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code true} if logging was successfully enabled
    */
-  public static synchronized boolean enableLogging(String level) {
+  public static synchronized boolean enableLogging() {
     try {
       ReflectedUniverse r = new ReflectedUniverse();
       r.exec("import org.apache.log4j.Level");
