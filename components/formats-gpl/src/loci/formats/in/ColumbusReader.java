@@ -52,6 +52,10 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
@@ -380,8 +384,8 @@ public class ColumbusReader extends FormatReader {
           store.setWellSampleIndex(new NonNegativeInteger(wellSample), 0, nextWell, field);
 
           if (p != null) {
-            store.setWellSamplePositionX(p.positionX, 0, nextWell, field);
-            store.setWellSamplePositionY(p.positionY, 0, nextWell, field);
+            store.setWellSamplePositionX(new Length(p.positionX, UNITS.REFERENCEFRAME), 0, nextWell, field);
+            store.setWellSamplePositionY(new Length(p.positionY, UNITS.REFERENCEFRAME), 0, nextWell, field);
           }
 
           String imageID = MetadataTools.createLSID("Image", wellSample);
@@ -394,8 +398,8 @@ public class ColumbusReader extends FormatReader {
           if (p != null) {
             p.series = wellSample;
 
-            store.setPixelsPhysicalSizeX(new PositiveFloat(p.sizeX), p.series);
-            store.setPixelsPhysicalSizeY(new PositiveFloat(p.sizeY), p.series);
+            store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(p.sizeX), p.series);
+            store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(p.sizeY), p.series);
 
             for (int c=0; c<getSizeC(); c++) {
               p = lookupPlane(row, col, field, 0, c);
@@ -404,11 +408,11 @@ public class ColumbusReader extends FormatReader {
                 store.setChannelName(p.channelName, p.series, p.channel);
                 if ((int) p.emWavelength > 0) {
                   store.setChannelEmissionWavelength(
-                    new PositiveInteger((int) p.emWavelength), p.series, p.channel);
+                    FormatTools.getEmissionWavelength(p.emWavelength), p.series, p.channel);
                 }
                 if ((int) p.exWavelength > 0) {
                   store.setChannelExcitationWavelength(
-                    new PositiveInteger((int) p.exWavelength), p.series, p.channel);
+                    FormatTools.getExcitationWavelength(p.exWavelength), p.series, p.channel);
                 }
                 store.setChannelColor(p.channelColor, p.series, p.channel);
               }
@@ -417,7 +421,7 @@ public class ColumbusReader extends FormatReader {
                 p = lookupPlane(row, col, field, t, c);
                 if (p != null) {
                   p.series = wellSample;
-                  store.setPlaneDeltaT(p.deltaT - timestampSeconds, p.series, getIndex(0, c, t));
+                  store.setPlaneDeltaT(new Time(p.deltaT - timestampSeconds, UNITS.S), p.series, getIndex(0, c, t));
                 }
               }
             }
