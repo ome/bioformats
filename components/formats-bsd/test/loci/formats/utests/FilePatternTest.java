@@ -299,4 +299,34 @@ public class FilePatternTest {
     assertNotNull(fp.getErrorMessage());
   }
 
+  @Test
+  public void testVarDir() {
+    String[] prefixes = {"z"};
+    String[] blocks = {"<0-1>"};
+    String suffix = SEPARATOR + "foo.tif";
+    String pattern = mkPattern(prefixes, blocks, suffix);
+    FilePattern fp = new FilePattern(pattern);
+    assertTrue(fp.isValid());
+    assertFalse(fp.isRegex());
+    assertEquals(fp.getPattern(), pattern);
+    assertEquals(fp.getPrefixes(), prefixes);
+    for (int i = 0; i < prefixes.length; i++) {
+      assertEquals(fp.getPrefix(i), prefixes[i]);
+    }
+    assertEquals(fp.getPrefix(), prefixes[0]);
+    assertEquals(fp.getBlocks(), blocks);
+    for (int i = 0; i < blocks.length; i++) {
+      assertEquals(fp.getBlock(i), blocks[i]);
+    }
+    assertEquals(fp.getSuffix(), suffix);
+    assertEquals(fp.getCount(), new int[] {2});
+    assertEquals(fp.getElements(), new String[][] {{"0", "1"}});
+    assertEqualsNoOrder(fp.getFiles(), new String[] {
+      "z0" + suffix, "z1" + suffix,
+    });
+    assertEquals(fp.getFirst(), new BigInteger[] {BigInteger.ZERO});
+    assertEquals(fp.getLast(), new BigInteger[] {BigInteger.ONE});
+    assertEquals(fp.getStep(), new BigInteger[] {BigInteger.ONE});
+  }
+
 }
