@@ -181,6 +181,7 @@ public class APNGWriter extends FormatWriter {
         String type = in.readString(4);
         if (type.equals("fcTL") || type.equals("fdAT")) {
           nextSequenceNumber = in.readInt() + 1;
+          length -= 4;
         }
         in.skipBytes(length + 4);
       }
