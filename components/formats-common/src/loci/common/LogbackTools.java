@@ -61,7 +61,7 @@ public final class LogbackTools {
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     LoggerContext loggerContext = root.getLoggerContext();
-    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) == null);
+    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) != null);
   }
 
   /**
@@ -79,8 +79,6 @@ public final class LogbackTools {
    * Attempts to enable SLF4J logging via logback without an external
    * configuration file.
    *
-   * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code} true if logging was successfully enabled
    */
   public static synchronized boolean enableLogging() {

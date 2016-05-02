@@ -116,8 +116,7 @@ public final class DebugTools {
    * Attempts to enable SLF4J logging via logback or log4j without an
    * external configuration file.
    * This will first check whether logging has been enabled either via a
-   * configuration file or a previous call. If not enabled, calls
-   * {@link #setRootLevel(String)} at INFO level.
+   * configuration file or a previous call.
    *
    * @return {@code true} if logging was successfully enabled by this method
    */

@@ -999,7 +999,6 @@ public class ImageInfo {
   public boolean testRead(String[] args)
     throws FormatException, ServiceException, IOException
   {
-    DebugTools.enableLogging("INFO");
 
     for (final String arg : args) {
       if (HELP_ARGUMENTS.contains(arg)) {
@@ -1110,6 +1109,7 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
