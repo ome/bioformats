@@ -35,12 +35,15 @@ package loci.common.utests;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 
+import loci.common.DebugTools;
+
 import org.slf4j.LoggerFactory;
 
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
-import loci.common.DebugTools;
-
+import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -48,21 +51,33 @@ import org.testng.annotations.Test;
  */
 public class DebugToolsTest {
 
-  // -- Tests --
+  Logger root;
 
-  @Test
-  public void testDefault() {
-    assertTrue(DebugTools.isEnabled());
-    boolean status = DebugTools.enableLogging();
-    assertFalse(status);
+  @DataProvider(name = "levels")
+  public Object[][] createLevels() {
+    return new Object[][] {
+        {"INFO"}, {"WARN"}, {"ERROR"}, {"DEBUG"}, {"TRACE"}, {"ALL"}};
   }
 
-  @Test
-  public void testResetContext() {
-    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+  @BeforeMethod
+  public void setUp() {
+    // Make sure logger context is reset
+    root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     root.getLoggerContext().reset();
     assertFalse(DebugTools.isEnabled());
+  }
+
+  // -- Tests --
+  @Test
+  public void testEnableLogging() {
     boolean status = DebugTools.enableLogging();
     assertTrue(status);
+  }
+
+  @Test(dataProvider = "levels")
+  public void testEnableLoggingLevels(String level) {
+    boolean status = DebugTools.enableLogging(level);
+    assertTrue(status);
+    assertEquals(root.getLevel(), level);
   }
 }
