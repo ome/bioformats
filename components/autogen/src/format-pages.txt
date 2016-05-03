@@ -2441,7 +2441,7 @@ notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.n
 \n
 Commercial applications that support this format include: \n
 \n
-* `SVI Huygens <http://www2.svi.nl/>`_ \n
+* `SVI Huygens <https://svi.nl/HomePage>`_ \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 * `Amira <http://www.amira.com/>`_ \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_
