@@ -73,21 +73,40 @@ public class DebugToolsTest {
   public void testEnableLogging() {
     status = DebugTools.enableLogging();
     assertTrue(status);
+    assertTrue(DebugTools.isEnabled());
     status = DebugTools.enableLogging();
     assertFalse(status);
+    assertTrue(DebugTools.isEnabled());
+  }
+
+  @Test
+  public void testEnableLoggingDefaultLevel() {
+    status = DebugTools.enableLogging("INFO");
+    assertTrue(status);
+    assertTrue(DebugTools.isEnabled());
+    assertEquals(root.getLevel(), Level.toLevel("INFO"));
+    status = DebugTools.enableLogging("DEBUG");
+    assertFalse(status);
+    assertTrue(DebugTools.isEnabled());
+    assertEquals(root.getLevel(), Level.toLevel("INFO"));
   }
 
   @Test(dataProvider = "levels")
   public void testEnableLoggingLevels(String level) {
     status = DebugTools.enableLogging(level);
     assertTrue(status);
+    assertTrue(DebugTools.isEnabled());
     assertEquals(root.getLevel(), Level.toLevel(level));
-    status = DebugTools.enableLogging(level);
+    status = DebugTools.enableLogging();
     assertFalse(status);
+    assertTrue(DebugTools.isEnabled());
   }
 
   @Test(dataProvider = "levels")
   public void testSetRootLevel(String level) {
+    status = DebugTools.enableLogging();
+    assertTrue(status);
+    assertTrue(DebugTools.isEnabled());
     DebugTools.setRootLevel(level);
     assertEquals(root.getLevel(), Level.toLevel(level));
   }

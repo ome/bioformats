@@ -61,7 +61,8 @@ public final class LogbackTools {
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     LoggerContext loggerContext = root.getLoggerContext();
-    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) != null);
+    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) != null
+            || root.iteratorForAppenders().hasNext());
   }
 
   /**
