@@ -53,6 +53,7 @@ import org.testng.annotations.Test;
 public class DebugToolsTest {
 
   Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+  boolean status;
 
   @DataProvider(name = "levels")
   public Object[][] createLevels() {
@@ -70,14 +71,20 @@ public class DebugToolsTest {
   // -- Tests --
   @Test
   public void testEnableLogging() {
-    boolean status = DebugTools.enableLogging();
+    status = DebugTools.enableLogging();
     assertTrue(status);
   }
 
   @Test(dataProvider = "levels")
   public void testEnableLoggingLevels(String level) {
-    boolean status = DebugTools.enableLogging(level);
+    status = DebugTools.enableLogging(level);
     assertTrue(status);
+    assertEquals(root.getLevel(), Level.toLevel(level));
+  }
+
+  @Test(dataProvider = "levels")
+  public void testSetRootLevel(String level) {
+    DebugTools.setRootLevel(level);
     assertEquals(root.getLevel(), Level.toLevel(level));
   }
 }
