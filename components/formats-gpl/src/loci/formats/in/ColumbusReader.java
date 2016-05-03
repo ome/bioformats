@@ -259,10 +259,19 @@ public class ColumbusReader extends FormatReader {
       int end = metadataFile.indexOf(File.separator);
       String timepointPath =
         end < 0 ? "" : parent + File.separator + metadataFile.substring(0, end);
-      String path = new Location(parent + File.separator + metadataFile).getAbsolutePath();
+      Location f = new Location(parent + File.separator + metadataFile);
+      if (!f.exists()) {
+        metadataFile = metadataFile.substring(end + 1);
+        f = new Location(parent, metadataFile);
+      }
+      String path = f.getAbsolutePath();
       metadataFiles.set(i, path);
       if (checkSuffix(path, "columbusidx.xml")) {
-        parseImageXML(path, timepointDirs.indexOf(timepointPath));
+        int timepoint = timepointDirs.indexOf(timepointPath);
+        if (timepointDirs.size() == 0) {
+          timepoint = 0;
+        }
+        parseImageXML(path, timepoint);
       }
     }
 
