@@ -433,7 +433,7 @@ public class NiftiReader extends FormatReader {
 
     String intentName = in.readString(16);
 
-    if (in.getFilePointer() + 4 < in.length()) {
+    if (in.getFilePointer() + 8 < in.length()) {
       in.skipBytes(4);
       byte extension = in.readByte();
       in.skipBytes(3);
