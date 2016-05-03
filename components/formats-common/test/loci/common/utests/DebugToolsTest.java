@@ -73,6 +73,8 @@ public class DebugToolsTest {
   public void testEnableLogging() {
     status = DebugTools.enableLogging();
     assertTrue(status);
+    status = DebugTools.enableLogging();
+    assertFalse(status);
   }
 
   @Test(dataProvider = "levels")
@@ -80,6 +82,8 @@ public class DebugToolsTest {
     status = DebugTools.enableLogging(level);
     assertTrue(status);
     assertEquals(root.getLevel(), Level.toLevel(level));
+    status = DebugTools.enableLogging(level);
+    assertFalse(status);
   }
 
   @Test(dataProvider = "levels")
