@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -61,11 +62,24 @@ public class DebugToolsTest {
         {"INFO"}, {"WARN"}, {"ERROR"}, {"DEBUG"}, {"TRACE"}, {"ALL"}};
   }
 
+  @BeforeClass
+  public void testConfigurationFile() {
+    // Logback should be initialized via a configuration file
+    assertTrue(DebugTools.isEnabled());
+    status = DebugTools.enableLogging();
+    assertFalse(status);
+    assertEquals(root.getLevel(), Level.toLevel("WARN"));
+    status = DebugTools.enableLogging("INFO");
+    assertFalse(status);
+    assertEquals(root.getLevel(), Level.toLevel("WARN"));
+  }
+
   @BeforeMethod
   public void setUp() {
-    // Make sure logger context is reset
+    // Reset the logger context before each test method
     root.getLoggerContext().reset();
     assertFalse(DebugTools.isEnabled());
+    assertEquals(root.getLevel(), Level.toLevel("DEBUG"));
   }
 
   // -- Tests --
