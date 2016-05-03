@@ -32,6 +32,7 @@
 
 package loci.common.utests;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 
@@ -51,7 +52,7 @@ import org.testng.annotations.Test;
  */
 public class DebugToolsTest {
 
-  Logger root;
+  Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
   @DataProvider(name = "levels")
   public Object[][] createLevels() {
@@ -62,7 +63,6 @@ public class DebugToolsTest {
   @BeforeMethod
   public void setUp() {
     // Make sure logger context is reset
-    root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     root.getLoggerContext().reset();
     assertFalse(DebugTools.isEnabled());
   }
@@ -78,6 +78,6 @@ public class DebugToolsTest {
   public void testEnableLoggingLevels(String level) {
     boolean status = DebugTools.enableLogging(level);
     assertTrue(status);
-    assertEquals(root.getLevel(), level);
+    assertEquals(root.getLevel(), Level.toLevel(level));
   }
 }
