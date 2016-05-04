@@ -42,8 +42,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
 
-# Set ${OME_XML_GENERATED_MODEL_HEADERS}, ${OME_XML_GENERATED_ENUMS_HEADERS}
-# and ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+# Set ${OME_XML_GENERATED_MODEL_HEADERS}, ${OME_XML_GENERATED_ENUMS_HEADERS},
+# ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS} ${OME_XML_GENERATED_QUANTITY_HEADERS}
 foreach(hdr ${model_headers})
   get_filename_component(hdr_name ${hdr} NAME)
   get_filename_component(hdr_dir ${hdr} PATH)
@@ -121,6 +121,7 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/PositiveFloat.h
     model/primitives/PositiveInteger.h
     model/primitives/PositiveLong.h
+    model/primitives/Quantity.h
     model/primitives/NumericConstraints.h
     model/primitives/Timestamp.h)
 
