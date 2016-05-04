@@ -80,7 +80,6 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         // ${parent} is abstract, is reference and occurs more than once
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
-        // DUMMYLINE
         ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
@@ -90,7 +89,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
@@ -99,7 +98,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract and not a reference
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor(['root']+accessor(obj.name, parent, prop)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))});
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
 {% if prop.minOccurs == 0 %}\
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
@@ -125,8 +124,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         // ${o.parentName} is abstract, is reference and occurs more than once
         // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
         // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
-        // DUMMYLINE
-         ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [get${obj.parentName}(${index_name_string(obj.parentName)})]"));
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
         if (ret)
           return ret->getID();
@@ -134,8 +132,8 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
                                 "Internal metadata store inconsistency: null object");
 {% end %}\
 {% when obj.isConcreteSubstitution and prop.isReference  %}\
-        // ${parent} is abstract 
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [get${obj.parentName}(${index_name_string(obj.parentName)})]"));
+        // ${parent} is abstract
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
         ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
         if (ret)
           return ret->getID();
@@ -144,8 +142,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% when obj.isConcreteSubstitution %}\
         // ${o.parentName} is abstract and not a reference
-        //${accessor(obj.name, obj, prop)}
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${getPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [get${obj.parentName}(${index_name_string(obj.parentName)})]"));
+        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
 {% if prop.minOccurs == 0 %}\
         ${prop.retType[' const']} ret = o->get${prop.methodName}();
         if (ret)
@@ -156,7 +153,12 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% if prop.maxOccurs == 1 and prop.defaultXsdValue is not None %}\
 {% if prop.langType == 'std::string' or prop.isEnumeration %}\
+{% if prop.langType == 'std::string' %}\
         return "${prop.defaultXsdValue}";
+{% end %}\
+{% if prop.langType != 'std::string' %}\
+        return ${prop.metadataStoreRetType}("${prop.defaultXsdValue}");
+{% end %}\
 {% end %}\
 {% if prop.langType != 'std::string' and not prop.isEnumeration %}\
         return ${prop.defaultXsdValue};
@@ -254,7 +256,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% when is_abstract(parent) %}\
         // ${parent} is abstract and not a reference
-{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)[:-1]) %}\
+{% for i, v in enumerate(accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1]) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 {% if i == 0 %}\
@@ -310,11 +312,10 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% when (obj.isConcreteSubstitution or obj.isAbstractSubstitution) and prop.isReference %}\
     // ${prop.name} is abstract and is a reference
-  
+
     ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
     ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-    ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor(['root']+accessor(obj.name, parent, prop), setPropMethod(is_multi_path[o.name], parent, obj.name, prop.name))}));
-    ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(safe_fetch(${safe_accessor(['root']+accessor(obj.name, obj, prop), setPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name))}->get${obj.parentName}(${index_name_string(obj.parentName)}), "${setPropMethod(is_multi_path[obj.name], parent, obj.name, prop.name)} [set${obj.parentName}(${index_name_string(obj.parentName)})]"));
+    ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], setPropMethod(is_multi_path[o.name], parent, obj.name, prop))}));
     ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
 
     model->addReference(modelObject, ref);
@@ -322,7 +323,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% when obj.isConcreteSubstitution or obj.isAbstractSubstitution %}\
         // ${obj.parentName} is abstract
 
-{% for i, v in enumerate(accessor(obj.name, o.topLevelName, prop, accessor_string_complex)) %}\
+{% for i, v in enumerate(accessor(obj.name, o.topLevelName, prop, func=accessor_string_complex)) %}\
 {% choose %}\
 {% when v['level'] == 2 %}\
 {% if i == 0 %}\
@@ -390,7 +391,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
 {% otherwise %}\
         // ${prop.name} is not a reference
-{% for i, v in enumerate(accessor(obj.name, parent, prop, accessor_string_complex)) %}\
+{% for i, v in enumerate(accessor(obj.name, parent, prop, func=accessor_string_complex)) %}\
 {% choose %}\
 {% when v['max_occurs'] > 1 %}\
 {% if i == 0 %}\
@@ -828,7 +829,7 @@ namespace ome
       OMEXMLMetadata::get${abstractClass}Type(${indexes_string(v)}) const
       {
 {% for k, v in indexes[abstractClass].items() %}\
-        return ${safe_accessor(['root']+accessor(abstractClass, k, abstractClass) + ["get%sType()" % abstractClass], "get%sType()" % abstractClass)};
+        return ${safe_accessor([{'accessor':'root'}]+accessor(abstractClass, k, abstractClass, func=accessor_string_complex)[:-1], "get%sType()" % abstractClass)}->get${abstractClass}Type();
 {% end %}\
       }
 {% end source %}\

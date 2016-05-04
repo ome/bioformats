@@ -1,12 +1,3 @@
-{% python
-  def getConcreteClasses(abstractClass):
-    returnList = []
-    if model.opts.lang.hasSubstitutionGroup(abstractClass):
-      for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)):
-          if o.parentName == abstractClass:
-            returnList.append(o.name)  
-    return returnList
-%}\
 /*
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
@@ -68,6 +59,8 @@
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/Node.h>
 #include <ome/common/xml/dom/NodeList.h>
+
+#include <ome/xml/model/primitives/Quantity.h>
 
 {% for include in klass.header_dependencies %}\
 #include <${include}>
@@ -333,8 +326,8 @@ namespace ome
         return type;
       }
 {% end source %}\
-{% end not Abstract %}\
 
+{% end not Abstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in superclass.
         bool
@@ -350,7 +343,6 @@ namespace ome
       }
 {% end source %}\
 
-{% if len(customContent) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:
         /// Assignment operator (deleted).
@@ -359,6 +351,7 @@ namespace ome
 
       public:
 {% end header %}\
+{% if len(customContent) > 0 %}\
         // -- Custom content from ${klass.name} specific template --
 
 ${customContent}\
@@ -373,7 +366,6 @@ ${customContent}\
                ${lang.omexml_model_package}::OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-
       void
       ${klass.name}::update(const common::xml::dom::Element&  element,
                             ${lang.omexml_model_package}::OMEModel& model)
@@ -395,7 +387,7 @@ ${customContent}\
 {% if klass.langBaseType == 'std::string' %}\
           this->impl->value = text;
 {% end %}\
-        }
+        } //a
 {% end %}\
         const std::string tagName(stripNamespacePrefix(element.getTagName()));
         if (!validElementName(tagName))
@@ -448,26 +440,49 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
              set${prop.methodName}(element.getAttribute("${prop.name}"));
-{% end %}\
+{% end if %}\
              // Adding this model object to the model handler
              ome::compat::shared_ptr< ${lang.omexml_model_package}::OMEModelObject> thisptr(ome::compat::dynamic_pointer_cast<  ${lang.omexml_model_package}::OMEModelObject>(shared_from_this()));
              model.addModelObject(getID(), thisptr);
            }
-{% end %}\
+{% end when prop.isAttribute and prop.name == "ID" %}\
 {% when prop.isAttribute %}\
         if (element.hasAttribute("${prop.name}"))
           {
 {% if prop.isEnumeration %}\
+{% choose %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+           // *** Ignoring *** units enumeration ${prop.name}
+{% end debug %}\
+{% end when %}\
+{% when prop.isEnumeration and not prop.isUnitsEnumeration%}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
             std::string text(element.getAttribute("${prop.name}"));
             ${prop.instanceVariableType} nattr(ome::compat::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
-{% end %}\
+{% end prop.minOccurs == 0 %}\
 {% if prop.minOccurs > 0 %}\
             set${prop.methodName}(${prop.langTypeNS}(element.getAttribute("${prop.name}")));
-{% end %}\
-{% end %}\
+{% end prop.minOccurs > 0 %}\
+{% end when %}\
+{% when prop.hasUnitsCompanion %}\
+            // Attribute property b${prop.name} with unit companion ${prop.unitsCompanion.name}
+            std::string unitSymbol("${prop.defaultXsdValue}");
+            if (element.hasAttribute("${prop.unitsCompanion.name}"))
+              {
+                unitSymbol = element.getAttribute("${prop.unitsCompanion.name}"));
+                if(unitSymbol.empty())
+                  unitSymbol = "${prop.defaultXsdValue}";
+              }
+
+            set_quantity(element.getAttribute("${prop.name}"), unitSymbol,
+                         *this, &${klass.name}::set${prop.methodName},
+                         "${klass.name}", "${prop.name}");
+{% end when %}\
+{% end choose %}\
+{% end prop.isEnumeration %}\
 {% if not prop.isEnumeration %}\
             // Attribute property ${prop.name}
             {
@@ -479,9 +494,9 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.instanceVariableType == 'std::string' %}\
               set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
-            }
+            } // b
 {% end %}\
-          }
+          } // c
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstract or not prop.isAttribute) %}\
         std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
@@ -547,7 +562,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-          }
+          } // d
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if prop.isAbstract %}\
@@ -556,13 +571,14 @@ ${customUpdatePropertyContent[prop.name]}
       // sub-elements) and occurs more than once. The element's model
       // object type is also abstract so we need to have a handler for
       // each "subclass".
-{% for subClass in getConcreteClasses(prop.name) %}\
+{% for subClass in prop.concreteClasses %}\
       std::vector<common::xml::dom::Element> ${subClass}_nodeList(getChildrenByTagName(element, "${subClass}"));
       for (std::vector<common::xml::dom::Element>::iterator elem = ${subClass}_nodeList.begin();
-           elem != ${prop.name}_nodeList.end();++elem)
-         ome::compat::shared_ptr<${prop.methodName}> object(${subClass}::create(*elem, model));
-         add${prop.methodName}(object);
-       }
+           elem != ${subClass}_nodeList.end();++elem)
+        {
+          ome::compat::shared_ptr<${prop.methodName}> object(${subClass}::create(*elem, model));
+          add${prop.methodName}(object);
+        }
 {% end %}\
 {% end %}\
 {% if not prop.isAbstractSubstitution %}\
@@ -591,7 +607,7 @@ ${customUpdatePropertyContent[prop.name]}
                    }
 {% end %}\
 {% end %}\
-          }
+          } // f
 {% end %}\
 {% end %}\
 {% if not prop.isAbstract %}\
@@ -629,7 +645,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-      }
+      } // g
+
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
@@ -735,7 +752,7 @@ ${customUpdatePropertyContent[prop.name]}
 \
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}
+{% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get size of linked ${prop.methodName} list.
@@ -913,7 +930,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% when prop.isReference %}
+{% when prop.isReference %}\
 {% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -976,7 +993,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}\
 {% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -1015,7 +1032,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstract %}
+{% when prop.maxOccurs > 1 and not klass.isAbstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get size of linked ${prop.methodName} list.
@@ -1155,7 +1172,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end %}\
-{% otherwise %}
+{% otherwise %}\
 {% if debug %}\
         // *** WARNING *** Unhandled or skipped property ${prop.name}
 {% end debug %}\
@@ -1172,8 +1189,8 @@ ${customUpdatePropertyContent[prop.name]}
       const std::string&
       ${klass.name}::get${klass.parentName}Type() const
       {
-	      static const std::string type("${klass.name}");
-	      return type;
+        static const std::string type("${klass.name}");
+        return type;
       }
 {% end source %}\
 {% end  %}\

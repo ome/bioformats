@@ -91,6 +91,7 @@ Options:
   --ome-xml-model-package=pkg                OME-XML model package
   --ome-xml-model-enums-package=pkg          OME-XML model enum package
   --ome-xml-model-enum-handlers-package=pkg  OME-XML model enum handler package
+  --ome-xml-model-quantity-package=pkg       OME-XML model quantity package
   -o, --output-directory=dir                 Generated output directory
   --print-depends                            Output command dependencies
   --print-generated                          Output generated file names
@@ -107,6 +108,7 @@ Available subcommands:
   omexml_model_enums
   omexml_model_enum_handlers
   omexml_model_enum_includeall
+  omexml_model_quantity
   tab_gen
 
 Default XSD namespace: "%s"
@@ -119,6 +121,7 @@ Default Java OME-XML metadata package: "%s"
 
 Default C++ OME-XML package: "%s"
 Default C++ OME-XML enum package: "%s"
+Default C++ OME-XML quantity package: "%s"
 Default C++ metadata package: "%s"
 Default C++ OME-XML metadata package: "%s"
 
@@ -131,7 +134,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
      cmd,
      java.modelNamespace,
      java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
-     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.metadata_package, cpp.omexml_metadata_package,
+     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.omexml_model_quantity_package, cpp.metadata_package, cpp.omexml_metadata_package,
      cmd, java.modelNamespace, java.omexml_model_package,
      cmd, cpp.modelNamespace, cpp.omexml_model_package))
     sys.exit(2)
@@ -402,6 +405,57 @@ def enumHandlersMain(model, opts):
 
             classContent = template.generate(fu=fu, klass=prop, model=model, opts=opts, lang=opts.lang, debug=opts.debug,
                              enum_value_name=enum_value_name, config=configobj).render(encoding='utf-8')
+
+            if not opts.dryrun:
+                f = codecs.open(fullname, "w", encoding='utf-8')
+                f.write(classContent.decode('utf-8'))
+                f.close()
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
+def quantityTypesMain(model, opts):
+    """
+    Default main() that parses command line options and generates
+    classes for quantity types in an output directory.
+    """
+
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('QUANTITY'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('QUANTITY')))
+    for obj in model.objects.values():
+        for prop in obj.properties.values():
+            if not prop.isUnitsEnumeration:
+                continue
+
+            try:
+                quantityUnit = re.sub("^Units", "", prop.langType)
+                quantityType = quantityUnit + "Quantity"
+                fullname = opts.lang.generatedFilename(quantityType, opts.filetype)
+                fullname = os.path.join("ome", "xml", "model", "primitives", fullname)
+            except ModelProcessingError:
+                continue
+
+            fu.GUARD = guard(fullname)
+            fu.SOURCE_TYPE = opts.filetype;
+
+            fullname = os.path.join(opts.outdir, fullname)
+
+            if opts.print_generated:
+                print(fullname)
+
+            outputDirectory = os.path.dirname(fullname)
+            if not opts.dryrun and not os.path.exists(outputDirectory):
+                os.makedirs(outputDirectory)
+
+            classContent = template.generate(fu=fu, klass=prop, opts=opts, lang=opts.lang, debug=opts.debug,
+                                             enum_value_name=enum_value_name, quantityUnit=quantityUnit,
+                                             quantityType=quantityType).render(encoding='utf-8')
 
             if not opts.dryrun:
                 f = codecs.open(fullname, "w", encoding='utf-8')
@@ -764,6 +818,7 @@ if __name__ == '__main__':
         enumTypesMain(model, opts)
         if isinstance(opts.lang, language.CXX) and opts.filetype == language.TYPE_HEADER:
             enumTypesIncludeAll(model, opts)
+            quantityTypesMain(model, opts)
         if isinstance(opts.lang, language.Java):
             enumHandlersMain(model, opts)
     elif opts.command == "omexml_metadata_all":
@@ -776,6 +831,8 @@ if __name__ == '__main__':
     elif opts.command == "metadata":
         metadataMain(model, opts)
     elif opts.command == "omexml_model_enums":
+        enumTypesMain(model, opts)
+    elif opts.command == "omexml_model_quantities":
         enumTypesMain(model, opts)
     elif opts.command == "omexml_model_enum_includeall":
         enumTypesIncludeAll(model, opts)

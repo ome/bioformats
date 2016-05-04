@@ -354,6 +354,14 @@ class OMEModelProperty(OMEModelEntity):
         _get_unitsType,
         doc="""The property's units type.""")
 
+    def _get_unitsDefault(self):
+        if self.hasUnitsCompanion:
+            return self.unitsCompanion.defaultXsdValue
+        return None
+    unitsDefault = property(
+        _get_unitsDefault,
+        doc="""The property's default unit.""")
+
     def _get_enumProperties(self):
         if self.isEnumeration:
             if self.enumProps is None:
@@ -418,6 +426,17 @@ class OMEModelProperty(OMEModelEntity):
         _get_isReference,
         doc="""Whether or not the property is a reference.""")
 
+    def _get_concreteClasses(self):
+        returnList = []
+        if self.model.opts.lang.hasSubstitutionGroup(self.name):
+            for o in sorted(self.model.objects.values(), lambda x, y: cmp(x.name, y.name)):
+                if o.parentName == self.name:
+                    returnList.append(o.name)
+        return returnList
+    concreteClasses = property(
+        _get_concreteClasses,
+        doc="""Concrete instance types for an abstract type.""")
+
     def _get_possibleValues(self):
         return self.delegate.getValues()
     possibleValues = property(
@@ -434,10 +453,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""If the property is an enumeration, its default value.""")
 
     def _get_defaultXsdValue(self):
-        if hasattr(self.delegate, 'default'):
-            return self.delegate.default
-        else:
-            return None
+        return self.delegate.getDefault()
     defaultXsdValue = property(
         _get_defaultXsdValue,
         doc="""The default value, if any, that is set on the attribute.""")
@@ -561,13 +577,17 @@ class OMEModelProperty(OMEModelEntity):
                     self.unitsCompanion.langTypeNS)
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
-                        itype = "ome::compat::shared_ptr<%s>" % qtype
+                        itype = {' const': "const ome::compat::shared_ptr<%s>&" % qtype,
+                                 '': "ome::compat::shared_ptr<%s>&" % qtype}
                     else:
-                        itype = "std::vector<%s>" % qtype
+                        itype = {' const': "const std::vector<%s>&" % qtype,
+                                 '': "std::vector<%s>&" % qtype}
                 elif self.minOccurs == 0 and self.maxOccurs == 1:
-                    qtype = itype
+                    itype = {' const': "const %s&" % qtype,
+                             '': "%s&" % qtype}
                 else:
-                    itype = "std::vector<%s>" % qtype
+                    itype = {' const': "const std::vector<%s>&" % qtype,
+                             '': "std::vector<%s>&" % qtype}
             elif self.isEnumeration:
                 if self.minOccurs == 0:
                     itype = {' const': "const ome::compat::shared_ptr<%s>"
@@ -807,7 +827,7 @@ class OMEModelProperty(OMEModelEntity):
                     else:
                         itype = "std::vector<%s>" % qtype
                 elif self.minOccurs == 0 and self.maxOccurs == 1:
-                    qtype = itype
+                    itype = qtype
                 else:
                     itype = "std::vector<%s>" % qtype
             elif self.isReference and self.maxOccurs > 1:
@@ -1021,6 +1041,9 @@ class OMEModelProperty(OMEModelEntity):
                 for prop in o.properties.values():
                     if not prop.hasBaseAttribute:
                         deps.update(prop.source_dependencies)
+            for c in self.concreteClasses:
+                path = re.sub("::", "/", c)
+                deps.add("ome/xml/model/%s.h" % path)
 
         return deps
     source_dependencies = property(

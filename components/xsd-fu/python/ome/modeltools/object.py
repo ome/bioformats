@@ -246,10 +246,11 @@ class OMEModelObject(OMEModelEntity):
                 self.langBaseType, "value", None, "Element's text data",
                 False])
         for prop in self.properties.values():
-            props.append([
-                prop.instanceVariableType, prop.instanceVariableName,
-                prop.instanceVariableDefault, prop.instanceVariableComment,
-                prop.isUnitsEnumeration])
+            if not prop.isUnitsEnumeration:
+                props.append([
+                    prop.instanceVariableType, prop.instanceVariableName,
+                    prop.instanceVariableDefault, prop.instanceVariableComment,
+                    prop.isUnitsEnumeration])
         return props
     instanceVariables = property(
         _get_instanceVariables,
