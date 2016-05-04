@@ -99,7 +99,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
             <suiteXmlFiles>
-              <suiteXmlFile>test/loci/plugins/in/testng-template.xml</suiteXmlFile>
+              <suiteXmlFile>test/loci/plugins/in/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
