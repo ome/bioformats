@@ -490,9 +490,9 @@ ${customContent[obj.name][prop.name]}
     o = model.getObjectByName(name)
     fu.resolve_hierarchy(results, model, {name: parents[name]}, accessor_string, min_occurs=1)
     if len(results.keys()) == 0:
-      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parents[name].keys()[0], prop, results))
+      raise Exception("Zero KEYS No basic accessor for: name:%s parent:%s prop:%s === %s" % (name, parents[name].keys()[0], prop, results))
     if parents[name].keys()[0] not in results.keys():
-      raise Exception("Invalid KEY No accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
+      raise Exception("Invalid KEY No basic accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
     return results[parents[name].keys()[0]]
 
   def getAbstractDepth(name, func=accessor_string):
