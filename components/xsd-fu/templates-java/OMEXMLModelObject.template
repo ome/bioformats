@@ -224,7 +224,7 @@ ${customUpdatePropertyContent[prop.name]}
 		// Element's text data
 		String value_textContent = element.getTextContent();
 		if (value_textContent.trim().length() > 0) {
-{% if prop.type in model.opts.lang.primitive_base_types and prop.type == 'base64Binary' %}\
+{% if prop.type == 'base64Binary' %}\
 			byte[] rawBytes = DatatypeConverter.parseBase64Binary(value_textContent);
 			set${prop.methodName}(rawBytes);
 {% end if prop.type %}\
@@ -698,7 +698,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if not prop.type == 'base64Binary' %}\
 			${klass.name}_element.setTextContent(${prop.instanceVariableName}.toString());
 {% end if not prop.type %}\
-{% if prop.type in model.opts.lang.primitive_base_types and prop.type == 'base64Binary' %}\
+{% if prop.type == 'base64Binary' %}\
 			String encodedString = DatatypeConverter.printBase64Binary(${prop.instanceVariableName});
 			${klass.name}_element.setTextContent(encodedString);
 {% end if prop.type %}\
