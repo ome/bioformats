@@ -134,7 +134,7 @@ class OMEModelProperty(OMEModelEntity):
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
-                  name != "std::string"):
+                  not name.startswith("std::")):
                 name = ("%s::primitives::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.instanceType or
@@ -215,7 +215,7 @@ class OMEModelProperty(OMEModelEntity):
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
-                  name != "std::string"):
+                  not name.startswith("std::")):
                 name = ("%s::primitives::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.langType or
@@ -255,7 +255,10 @@ class OMEModelProperty(OMEModelEntity):
                     not self.isEnumeration):
                 mstype = "const std::string&"
             if mstype is None:
-                mstype = self.langTypeNS
+                if self.langTypeNS.startswith("std::"):
+                    mstype = "const %s&" % (self.langTypeNS)
+                else:
+                    mstype = self.langTypeNS
         return mstype
     metadataStoreArgType = property(
         _get_metadataStoreArgType,
@@ -289,7 +292,10 @@ class OMEModelProperty(OMEModelEntity):
                     not self.isEnumeration):
                 mstype = "const std::string&"
             if mstype is None:
-                mstype = self.langTypeNS
+                if self.langTypeNS.startswith("std::"):
+                    mstype = "const %s&" % (self.langTypeNS)
+                else:
+                    mstype = self.langTypeNS
         return mstype
     metadataStoreRetType = property(
         _get_metadataStoreRetType,
@@ -958,7 +964,7 @@ class OMEModelProperty(OMEModelEntity):
             path = re.sub("::", "/", self.langType)
             if (not self.model.opts.lang.hasPrimitiveType(self.langType) and
                     not self.model.opts.lang.hasFundamentalType(
-                        self.langType) and self.langType != "std::string"):
+                        self.langType) and not self.langType.startswith("std::")):
                 if self.isEnumeration:
                     header = "ome/xml/model/enums/%s.h" % path
                 else:
@@ -978,7 +984,7 @@ class OMEModelProperty(OMEModelEntity):
                         pass
             elif (self.model.opts.lang.hasPrimitiveType(self.langType) and
                   not self.model.opts.lang.hasFundamentalType(
-                    self.langType) and self.langType != "std::string"):
+                    self.langType) and not self.langType.startswith("std::")):
                 header = "ome/xml/model/primitives/%s.h" % path
         return header
     header = property(
