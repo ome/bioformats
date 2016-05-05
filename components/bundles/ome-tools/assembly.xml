@@ -42,7 +42,6 @@
         <exclude>ch.qos.logback:logback-classic</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
-        <exclude>junit:junit</exclude>
         <exclude>com.beust:jcommander</exclude>
         <exclude>org.yaml:snakeyaml</exclude>
         <exclude>org.beanshell:bsh</exclude>
