@@ -79,9 +79,11 @@ public class SlideBook6Reader  extends FormatReader {
 
 	// -- Static initializers --
 
+	private static boolean initialized = false;
 	private static boolean libraryFound = false;
 
-	static {
+	private static boolean isLibraryFound() {
+		if (initialized) return libraryFound;
 		try {
 			// load JNI wrapper of SBReadFile.dll
 			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
@@ -102,6 +104,8 @@ public class SlideBook6Reader  extends FormatReader {
 			LOGGER.warn("Insufficient permission to load native library", e);
 			libraryFound = false;
 		}
+		initialized = true;
+		return libraryFound;
 	}
 
 	// -- Constructor --
@@ -134,7 +138,7 @@ public class SlideBook6Reader  extends FormatReader {
 	/* @see loci.formats.IFormatReader#isThisType(String, boolean) */
 	public boolean isThisType(String file, boolean open) {
 		// Check the first few bytes to determine if the file can be read by this reader.
-		return libraryFound && super.isThisType(file, open);
+		return super.isThisType(file, open) && isLibraryFound();
 	}
 
 	/**
@@ -178,7 +182,7 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		if (libraryFound) {
+		if (initialized && isLibraryFound()) {
 			closeFile();
 		}
 	}
