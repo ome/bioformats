@@ -120,55 +120,6 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         return o->get${prop.methodName}();
 {% end %}\
 {% end %}\
-{% when obj.isConcreteSubstitution and prop.isReference and prop.maxOccurs > 1 %}\
-        // ${o.parentName} is abstract, is reference and occurs more than once
-        // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-        // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
-        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
-        if (ret)
-          return ret->getID();
-        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
-                                "Internal metadata store inconsistency: null object");
-{% end %}\
-{% when obj.isConcreteSubstitution and prop.isReference  %}\
-        // ${parent} is abstract
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
-        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}().lock());
-        if (ret)
-          return ret->getID();
-        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
-                                "Internal metadata store inconsistency: null object");
-{% end %}\
-{% when obj.isConcreteSubstitution %}\
-        // ${o.parentName} is abstract and not a reference
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o = ome::compat::dynamic_pointer_cast< ${obj.langTypeNS}>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], getPropMethod(is_multi_path[o.name], parent, obj.name, prop))});
-{% if prop.minOccurs == 0 %}\
-        ${prop.retType[' const']} ret = o->get${prop.methodName}();
-        if (ret)
-          return *ret;
-{% if prop.maxOccurs != 1 or prop.defaultXsdValue is None %}\
-        throw MetadataException("OMEXMLMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
-                                "Internal metadata store inconsistency: null object");
-{% end %}\
-{% if prop.maxOccurs == 1 and prop.defaultXsdValue is not None %}\
-{% if prop.langType == 'std::string' or prop.isEnumeration %}\
-{% if prop.langType == 'std::string' %}\
-        return "${prop.defaultXsdValue}";
-{% end %}\
-{% if prop.langType != 'std::string' %}\
-        return ${prop.metadataStoreRetType}("${prop.defaultXsdValue}");
-{% end %}\
-{% end %}\
-{% if prop.langType != 'std::string' and not prop.isEnumeration %}\
-        return ${prop.defaultXsdValue};
-{% end %}\
-{% end %}\
-{% end %}\
-{% if prop.minOccurs == 1 %}\
-        return o->get${prop.methodName}();
-{% end %}\
-{% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
         ome::compat::shared_ptr< ${prop.langTypeNS}> annotation(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex), getPropMethod(is_multi_path[o.name], parent, obj.name, prop))}->getLinked${prop.methodName}(${index_name_string(prop.name)}).lock());
@@ -308,76 +259,6 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         o${i + 1}_mostderived->set${prop.methodName}(newval);
 {% end %}\
 {% end %}\
-{% end %}\
-{% end %}\
-{% when (obj.isConcreteSubstitution or obj.isAbstractSubstitution) and prop.isReference %}\
-    // ${prop.name} is abstract and is a reference
-
-    ome::compat::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(ome::compat::make_shared< ${prop.instanceTypeNS}>());
-    ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
-    ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> modelObject(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(${safe_accessor([{'accessor':'root'}]+accessor(obj.name, parent, prop, func=accessor_string_complex)[:-1], setPropMethod(is_multi_path[o.name], parent, obj.name, prop))}));
-    ome::compat::shared_ptr< ::${lang.omexml_model_package}::Reference> ref(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::Reference>(${prop.instanceVariableName}_reference));
-
-    model->addReference(modelObject, ref);
-{% end %}\
-{% when obj.isConcreteSubstitution or obj.isAbstractSubstitution %}\
-        // ${obj.parentName} is abstract
-
-{% for i, v in enumerate(accessor(obj.name, o.topLevelName, prop, func=accessor_string_complex)) %}\
-{% choose %}\
-{% when v['level'] == 2 %}\
-{% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
-{% end %}\
-        if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-          {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
-            o${i}->add${v['name']}(value);
-          }
-{% end %}\
-{% when v['max_occurs'] > 1 %}\
-{% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
-{% end %}\
-        if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-          {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
-            o${i}->add${v['name']}(value);
-          }
-{% end %}\
-{% when v['max_occurs'] == 1 %}\
-{% if i == 0 %}\
-        ome::compat::shared_ptr<OMEXMLMetadataRoot>& o0(root);
-{% end %}\
-        if (!o${i}->${v['accessor']}) // null
-          {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
-            o${i}->set${v['name']}(value);
-          }
-{% end %}\
-{% end %}\
-        ome::compat::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
-{% end %}\
-        if (o${getAbstractDepth(obj.name)}->sizeOf${obj.parentName}List() == ${index_name_string(obj.parentName)})
-          {
-            ome::compat::shared_ptr< ${obj.parentName}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
-            o${getAbstractDepth(obj.name)}->add${obj.parentName}(value);
-          }
-        ome::compat::shared_ptr< ${obj.name}> o${getAbstractDepth(obj.name) + 1} = o${getAbstractDepth(obj.name)}->get${obj.parentName}(${index_name_string(obj.parentName)});
-{% if "ID" == prop.name %}\
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${getAbstractDepth(obj.name) + 1}_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${getAbstractDepth(obj.name) + 1}));
-        model->addModelObject(${prop.argumentName}, o${getAbstractDepth(obj.name) + 1}_base);
-{% end %}\
-        ome::compat::shared_ptr< ${obj.langTypeNS}> o${getAbstractDepth(obj.name) + 1}_mostderived(ome::compat::static_pointer_cast< ${obj.langTypeNS}>(o${getAbstractDepth(obj.name) + 1}));
-        if (!o${getAbstractDepth(obj.name) + 1}_mostderived)
-          throw MetadataException("OMEXMLMetadata", "set{% if is_multi_path[o.name] %}${gatParent(o.name)}{% end %}${obj.name}${prop.name}",
-                                  "Internal metadata store inconsistency: null object");
-{% if not prop.isShared %}\
-        o${getAbstractDepth(obj.name) + 1}_mostderived->set${prop.methodName}(${prop.argumentName});
-{% end %}\
-{% if prop.isShared %}\
-        ${prop.instanceVariableType} newval(ome::compat::make_shared< ${prop.langTypeNS}>(${prop.argumentName}));
-        o${getAbstractDepth(obj.name) + 1}_mostderived->set${prop.methodName}(newval);
 {% end %}\
 {% end %}\
 {% when prop.isReference %}\
