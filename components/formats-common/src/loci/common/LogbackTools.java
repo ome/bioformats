@@ -54,9 +54,14 @@ public final class LogbackTools {
   private LogbackTools() { }
 
   /**
-   * Checks whether logback has been configured
+   * Checks whether logback has been enabled.
    *
-   * @return {@code} true if logging was successfully enabled
+   * This method will check if the root logger has been initialized via either
+   * a configuration file or a previous call to {@link #enableLogging()}. The
+   * logger context property will be used to discriminate the latter case from
+   * other initializations.
+   *
+   * @return {@code true} if logging was successfully enabled
    */
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -69,7 +74,7 @@ public final class LogbackTools {
    * Sets the level of the root logger
    *
    * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, WARN).
    */
   public static synchronized void setRootLevel(String level) {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -77,10 +82,12 @@ public final class LogbackTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via logback without an external
-   * configuration file.
+   * Initializes logback without an external configuration file.
    *
-   * @return {@code} true if logging was successfully enabled
+   * The logging initialization also sets a logger context property to record
+   * the initalization provenance.
+   *
+   * @return {@code true} if logging was successfully enabled
    */
   public static synchronized boolean enableLogging() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);

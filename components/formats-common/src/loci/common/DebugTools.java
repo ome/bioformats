@@ -47,13 +47,12 @@ import java.util.Arrays;
  */
 public final class DebugTools {
 
-  // -- Constructor --
-
   final static String[][] TOOLCLASSES = new String[][] {
     new String[] {"loci.common.", "LogbackTools"},
     new String[] {"loci.common.", "Log4jTools"}
   };
 
+  // -- Constructor --
   private DebugTools() { }
 
   // -- DebugTools methods --
@@ -70,7 +69,7 @@ public final class DebugTools {
   }
 
   /**
-   * Checks whether SLF4J logging has been enabled via logback or log4j
+   * Checks whether the SLF4J logging has been enabled via logback of log4j.
    *
    * @return {@code true} if logging has been successfully enabled
    */
@@ -89,13 +88,12 @@ public final class DebugTools {
   }
 
   /**
-   * Sets the level of the root logger
-   * This method will override the root logger level whether it was initialized
-   * via a configuration file or another logger call.
+   * Sets the root logger level.
+   *
+   * This method will override the root logger level independently of the way
+   * the logging framework has been enabled.
    *
    * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return {@code} true if the  was successfully enabled
    */
   public static synchronized void setRootLevel(String level) {
     for (String[] toolClass : TOOLCLASSES) {
@@ -113,10 +111,10 @@ public final class DebugTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via logback or log4j without an
-   * external configuration file.
-   * This will first check whether logging has been enabled either via a
-   * configuration file or a previous call.
+   * Attempts to enable SLF4J logging via logback or log4j.
+   *
+   * This will first check whether the logging has been enabled using the
+   * return value of {@link #isEnabled()}.
    *
    * @return {@code true} if logging was successfully enabled by this method
    */
@@ -137,14 +135,14 @@ public final class DebugTools {
   }
   
   /**
-   * Attempts to enable SLF4J logging via logback or log4j without an
-   * external configuration file.
-   * This will first check whether logging has been enabled either via a
-   * configuration file or a previous call. If not enabled, dlee
-   * {@link #setRootLevel(String)} with the desired level.
+   * Attempts to enable SLF4J logging and set the root logger level.
+   *
+   * This method will first try to initialize the logging using
+   * {@link #enableLogging()}. If this method returns {@code true}, the root
+   * logger level is also set via {@link #setRootLevel(String)} using the
+   * input level.
    *
    * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code true} if logging was successfully enabled by this method
    */
   public static synchronized boolean enableLogging(String level) {
@@ -155,6 +153,7 @@ public final class DebugTools {
 
   /**
    * Enable SLF4J logging using logback, in the context of ImageJ.
+   *
    * This allows logging events to be echoed to the ImageJ status bar,
    * regardless of how the logging configuration file was set up.
    *

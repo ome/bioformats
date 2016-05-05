@@ -84,8 +84,6 @@ public final class Log4jTools {
    * Attempts to enable SLF4J logging via log4j
    * without an external configuration file.
    *
-   * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
    * @return {@code true} if logging was successfully enabled
    */
   public static synchronized boolean enableLogging() {
