@@ -46,10 +46,6 @@ if(BUILD_TESTS)
   if(GTEST_SOURCE)
     # If not using a shared runtime, gtest hardcodes its own (which breaks linking)
     set(gtest_force_shared_crt ON CACHE BOOL "Force gtest to use shared runtime")
-    # VS2012 Faux variadic templates workaround.
-    if(NOT MSVC_VERSION VERSION_LESS 1700 AND MSVC_VERSION VERSION_LESS 1800)
-      add_definitions(-D_VARIADIC_MAX=10)
-    endif()
 
     # Remove warnings triggered by gtest since they aren't our responsibility.
     set(SAVED_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

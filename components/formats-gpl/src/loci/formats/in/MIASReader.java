@@ -617,8 +617,13 @@ public class MIASReader extends FormatReader {
 
       Location firstTiff = new Location(tiffFiles[0]);
 
-      FilePattern fp = new FilePattern(
-        firstTiff.getName(), firstTiff.getParentFile().getAbsolutePath());
+      List<String> names = new ArrayList<String>();
+      for (Location f: firstTiff.getParentFile().listFiles()) {
+        names.add(f.getName());
+      }
+
+      FilePattern fp = new FilePattern(FilePattern.findPattern(
+        firstTiff.getName(), null, names.toArray(new String[names.size()])));
       String[] blocks = fp.getPrefixes();
 
       order[j] = "XY";

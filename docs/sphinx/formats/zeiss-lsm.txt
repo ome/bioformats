@@ -61,7 +61,7 @@ Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.net/>`_
 
 Commercial applications that support this format include: 
 
-* `SVI Huygens <http://www2.svi.nl/>`_ 
+* `SVI Huygens <https://svi.nl/HomePage>`_ 
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 
 * `Amira <http://www.amira.com/>`_ 
 * `Image-Pro Plus <http://www.mediacy.com/>`_

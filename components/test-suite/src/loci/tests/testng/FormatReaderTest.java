@@ -192,7 +192,7 @@ public class FormatReaderTest {
         }
 
         if (c > 4 || plane < 0 || plane != checkPlane ||
-          !TestTools.canFitInMemory(plane))
+          !TestTools.canFitInMemory(plane * 3))
         {
           continue;
         }
@@ -229,6 +229,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -258,7 +262,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!TestTools.canFitInMemory(expected) || expected < 0) {
+        if (!TestTools.canFitInMemory(expected * 3) || expected < 0) {
           continue;
         }
 
@@ -275,6 +279,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -314,9 +322,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbImage(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
 
         int actualX = b.getWidth();
@@ -389,9 +400,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbBytes(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
         success = b.length == expected;
         if (!success) {
@@ -1457,6 +1471,13 @@ public class FormatReaderTest {
             catch (IOException e) {
               LOGGER.info("", e);
             }
+            catch (Throwable e) {
+              if (TestTools.isOutOfMemory(e)) {
+                result(testName, true, "Image too large");
+                return;
+              }
+              throw e;
+            }
           }
         }
         long t2 = System.currentTimeMillis();
@@ -1901,6 +1922,10 @@ public class FormatReaderTest {
       resolutionReader.close();
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -1948,6 +1973,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -2029,7 +2058,11 @@ public class FormatReaderTest {
           try {
             md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
           }
-          catch (Exception e) {
+          catch (Throwable e) {
+            if (TestTools.isOutOfMemory(e)) {
+              result(testName, true, "Image too large");
+              return;
+            }
             LOGGER.warn("", e);
           }
 
@@ -2078,7 +2111,13 @@ public class FormatReaderTest {
         try {
           md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
         }
-        catch (Exception e) { }
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
+        }
 
         if (md5 == null && expected1 == null && expected2 == null) {
           success = true;
@@ -2384,6 +2423,10 @@ public class FormatReaderTest {
       result(testName, true);
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.warn("", t);
       result(testName, false, t.getMessage());
     }
