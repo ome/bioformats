@@ -27,7 +27,6 @@
 
 package loci.plugins.in;
 
-
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
