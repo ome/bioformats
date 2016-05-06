@@ -207,7 +207,10 @@ class OMEModelProperty(OMEModelEntity):
     def _get_langTypeNS(self):
         name = self.langType
         if isinstance(self.model.opts.lang, language.CXX):
-            if self.isEnumeration:
+            if self.hasUnitsCompanion:
+                name = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.langTypeNS)
+            elif self.isEnumeration:
                 name = ("%s::enums::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
