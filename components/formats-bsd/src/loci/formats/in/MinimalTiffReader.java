@@ -92,6 +92,8 @@ public class MinimalTiffReader extends FormatReader {
 
   protected boolean noSubresolutions = false;
 
+  protected boolean seriesToIFD = false;
+
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;
 
@@ -279,7 +281,12 @@ public class MinimalTiffReader extends FormatReader {
 
     IFD firstIFD = ifds.get(0);
     lastPlane = no;
-    IFD ifd = ifds.get(no);
+    IFD ifd;
+    if (seriesToIFD) {
+      ifd = ifds.get(getSeries());
+    } else {
+      ifd = ifds.get(no);
+    }
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
         && resolutionLevels != null) {
