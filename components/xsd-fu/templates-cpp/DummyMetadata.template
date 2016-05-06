@@ -466,7 +466,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      DummyMetadata::get${abstractClass}Type(${indexes_string(v)}) const
+      DummyMetadata::get${abstractClass}Type(${indexes_string_dummy(v)}) const
       {
         throw MetadataException("DummyMetadata", "get${abstractClass}Type",
                                 "intentionally not implemented");
@@ -480,7 +480,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       DummyMetadata::index_type
-      DummyMetadata::get${abstractClass}Count(${indexes_string(v[:-1])}) const
+      DummyMetadata::get${abstractClass}Count(${indexes_string_dummy(v[:-1])}) const
       {
         throw MetadataException("DummyMetadata", "get${abstractClass}Count",
                                 "intentionally not implemented");
