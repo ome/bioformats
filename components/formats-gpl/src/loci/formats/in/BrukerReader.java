@@ -316,16 +316,19 @@ public class BrukerReader extends FormatReader {
 
       parseLines(lines);
 
-      String procData = DataTools.readFile(procFiles.get(series));
-      lines = procData.split("\n");
-
-      parseLines(lines);
+      boolean parsedProcFile = false;
+      if (series < procFiles.size()) {
+        String procData = DataTools.readFile(procFiles.get(series));
+        lines = procData.split("\n");
+        parseLines(lines);
+        parsedProcFile = true;
+      }
 
       ms.pixelType =
         FormatTools.pixelTypeFromBytes(bits / 8, signed, isFloat);
 
       // reset the dimensions if the d3proc data does not match the pixel file size
-      if (getSizeZ() * getSizeT() != nr * ni && (ni > 1 || nr > 1 || ns > 1)) {
+      if (parsedProcFile && getSizeZ() * getSizeT() != nr * ni && (ni > 1 || nr > 1 || ns > 1)) {
         ni = 1;
         nr = 1;
         ns = 1;
