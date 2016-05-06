@@ -232,5 +232,5 @@ Special thanks
 
 A special thanks goes out to `Dave Kuhlman
 <http://www.davekuhlman.org/>`_ for his fabulous work on
-`generateDS <http://www.davekuhlman.org/generateDS.html>`_ which
-:program:`xsd-fu` makes heavy use of internally.
+`generateDS <http://www.davekuhlman.org/pages/generateds-generate-data-structures-from-xml-schema.html>`_
+which :program:`xsd-fu` makes heavy use of internally.
