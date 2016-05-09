@@ -1,6 +1,20 @@
 Version history
 ===============
 
+5.1.10 (2016 May 9)
+-------------------
+
+Java bug fixes:
+
+* fixed warnings being thrown for ImageJ and other non-FIJI users on Windows
+  (these warnings were triggered by the removal of the 3i Slidebook DLLs from
+  the source code repository in Bio-Formats 5.1.9 and should now only be
+  triggered when opening Slidebook files without the update site enabled -
+  http://www.openmicroscopy.org/info/slidebook)
+* a fix in the ImageJ plugin for files grouped using the "Dimensions" option
+* a fix for writing TIFF files in tiles
+
+
 5.1.9 (2016 April 14)
 ---------------------
 
