@@ -137,8 +137,6 @@ public final class LogbackTools {
 
       if (debug) {
         root.setLevel(Level.DEBUG);
-      } else {
-        root.setLevel(Level.INFO);
       }
       appender.setContext(root.getLoggerContext());
       root.addAppender(appender);
