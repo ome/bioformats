@@ -285,7 +285,6 @@ public final class ImageConverter {
   {
     nextOutputIndex.clear();
     firstTile = true;
-    DebugTools.enableLogging("INFO");
     boolean success = parseArgs(args);
     if (!success) {
       return false;
@@ -860,6 +859,7 @@ public final class ImageConverter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
+    DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
