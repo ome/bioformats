@@ -283,7 +283,6 @@
             <root>test</root>
             <root>utils</root>
             <root>doc</root>
-            <root>cppwrap</root>
           </roots>
         </configuration>
       </plugin>

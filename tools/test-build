@@ -42,23 +42,6 @@ cpp()
     )
 }
 
-# Test cppwrap
-cppwrap()
-{
-    (
-        maven
-        cd components/formats-bsd
-        mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
-        cd target/cppwrap
-        mkdir build
-        cd build
-        cmake ..
-        make
-        ./showinf ../../../../specification/samples/2009-09/18x24y5z1t1c8b-text.ome.tiff
-        ./minimum_writer test.ome.tiff
-    )
-}
-
 # Check python sources with flake8
 flake()
 {
@@ -119,8 +102,6 @@ do
             maven_findbugs ;;
         cpp)
             cpp ;;
-        cppwrap)
-            cppwrap ;;
         flake8)
             flake ;;
         sphinx)
@@ -130,7 +111,7 @@ do
         ant)
             antbuild ;;
         all)
-            clean && maven_findbugs && cppwrap && sphinx && antbuild;;
+            clean && maven_findbugs && sphinx && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1
