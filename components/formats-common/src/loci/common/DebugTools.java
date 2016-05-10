@@ -47,7 +47,7 @@ import java.util.Arrays;
  */
 public final class DebugTools {
 
-  final static String[][] TOOLCLASSES = new String[][] {
+  final static String[][] TOOL_CLASSES = new String[][] {
     new String[] {"loci.common.", "LogbackTools"},
     new String[] {"loci.common.", "Log4jTools"}
   };
@@ -74,7 +74,7 @@ public final class DebugTools {
    * @return {@code true} if logging has been successfully enabled
    */
   public static synchronized boolean isEnabled() {
-    for (String[] toolClass : TOOLCLASSES) {
+    for (String[] toolClass : TOOL_CLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("isEnabled");
@@ -96,7 +96,7 @@ public final class DebugTools {
    * @param level A string indicating the desired level
    */
   public static synchronized void setRootLevel(String level) {
-    for (String[] toolClass : TOOLCLASSES) {
+    for (String[] toolClass : TOOL_CLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("setRootLevel", String.class);
@@ -120,7 +120,7 @@ public final class DebugTools {
    */
   public static synchronized boolean enableLogging() {
     if (isEnabled()) return false;
-    for (String[] toolClass : TOOLCLASSES) {
+    for (String[] toolClass : TOOL_CLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
         Method m = k.getMethod("enableLogging");
