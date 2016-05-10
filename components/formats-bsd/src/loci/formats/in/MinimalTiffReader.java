@@ -383,6 +383,7 @@ public class MinimalTiffReader extends FormatReader {
       tiffParser = null;
       resolutionLevels = null;
       j2kCodecOptions = null;
+      seriesToIFD = false;
     }
   }
 
