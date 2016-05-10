@@ -69,7 +69,7 @@ public final class DebugTools {
   }
 
   /**
-   * Checks whether the SLF4J logging has been enabled via logback of log4j.
+   * Checks whether SLF4J logging has been enabled via logback or log4j.
    *
    * @return {@code true} if logging has been successfully enabled
    */
