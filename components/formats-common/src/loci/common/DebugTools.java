@@ -80,7 +80,7 @@ public final class DebugTools {
         Method m = k.getMethod("isEnabled");
         return (Boolean) m.invoke(null);
       }
-      catch (Throwable t) {
+      catch (ReflectiveOperationException t) {
         // no-op. Ignore error and try the next class.
       }
     }
@@ -103,7 +103,7 @@ public final class DebugTools {
         m.invoke(null, level);
         return;
       }
-      catch (Throwable t) {
+      catch (ReflectiveOperationException t) {
         // no-op. Ignore error and try the next class.
       }
     }
@@ -127,7 +127,7 @@ public final class DebugTools {
         m.invoke(null);
         return true;
       }
-      catch (Throwable t) {
+      catch (ReflectiveOperationException t) {
         // no-op. Ignore error and try the next class.
       }
     }
