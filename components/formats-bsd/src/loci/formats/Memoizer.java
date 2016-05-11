@@ -327,6 +327,17 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
+  private static Object getMetadataOption(
+      MetadataOptions options, String name, Class type) {
+    Object opt = options.getMetadataOption(
+        String.format("%s.%s", Memoizer.class.getName(), name));
+    if (null != opt && !opt.getClass().isInstance(type)) {
+      LOGGER.warn("config: {} wrong type: {}", name, opt);
+      opt = null;
+    }
+    return opt;
+  }
+
   // -- Constants --
 
   /**
@@ -553,32 +564,19 @@ public class Memoizer extends ReaderWrapper {
     if (options == null) {
       return null;
     }
-    String k = Memoizer.class.getName();
-    Object elapsed = options.getMetadataOption(k + ".minimumElapsed");
-    if (!(elapsed instanceof Long)) {
-      if (null != elapsed) {
-        LOGGER.warn("config: minimumElapsed wrong type: {}", elapsed);
-      }
+    Object elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
+    if (null == elapsed) {
       return r;
     }
-    Object inplace = options.getMetadataOption(k + ".inPlace");
-    if (!(inplace instanceof Boolean)) {
-      if (null != inplace) {
-        LOGGER.warn("config: inplace wrong type: {}", inplace);
-      }
-      return r;
-    }
-    if (((Boolean) inplace).booleanValue()) {
+    Object inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    if (null != inplace && ((Boolean) inplace).booleanValue()) {
       return new Memoizer(r, (Long) elapsed);
     }
-    Object cachedir = options.getMetadataOption(k + ".cacheDirectory");
-    if (!(cachedir instanceof File)) {
-      if (null != cachedir) {
-        LOGGER.warn("config: cachedir wrong type: {}", cachedir);
-      }
-      return r;
+    Object cachedir = getMetadataOption(options, "cacheDirectory", File.class);
+    if (null != cachedir) {
+      return new Memoizer(r, (Long) elapsed, (File) cachedir);
     }
-    return new Memoizer(r, (Long) elapsed, (File) cachedir);
+    return r;
   }
 
   /**
