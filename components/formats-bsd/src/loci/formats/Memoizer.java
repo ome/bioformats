@@ -555,24 +555,30 @@ public class Memoizer extends ReaderWrapper {
     }
     String k = Memoizer.class.getName();
     Object elapsed = options.getMetadataOption(k + ".minimumElapsed");
-    Object inplace = options.getMetadataOption(k + ".inPlace");
-    Object cachedir = options.getMetadataOption(k + ".cacheDirectory");
     if (!(elapsed instanceof Long)) {
+      if (null != elapsed) {
         LOGGER.warn("config: minimumElapsed wrong type: {}", elapsed);
-        return r;
-    } else if (!(inplace instanceof Boolean)) {
-        LOGGER.warn("config: inplace wrong type: {}", inplace);
-        return r;
-    } else if (cachedir != null && !(cachedir instanceof File)) {
-        LOGGER.warn("config: cachedir wrong type: {}", cachedir);
-        return r;
+      }
+      return r;
     }
-
+    Object inplace = options.getMetadataOption(k + ".inPlace");
+    if (!(inplace instanceof Boolean)) {
+      if (null != inplace) {
+        LOGGER.warn("config: inplace wrong type: {}", inplace);
+      }
+      return r;
+    }
     if (((Boolean) inplace).booleanValue()) {
       return new Memoizer(r, (Long) elapsed);
-    } else{
-      return new Memoizer(r, (Long) elapsed, (File) cachedir);
     }
+    Object cachedir = options.getMetadataOption(k + ".cacheDirectory");
+    if (!(cachedir instanceof File)) {
+      if (null != cachedir) {
+        LOGGER.warn("config: cachedir wrong type: {}", cachedir);
+      }
+      return r;
+    }
+    return new Memoizer(r, (Long) elapsed, (File) cachedir);
   }
 
   /**
