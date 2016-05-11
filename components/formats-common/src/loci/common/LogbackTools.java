@@ -51,6 +51,8 @@ public final class LogbackTools {
 
   // -- Constructor --
 
+  public static String CALLER = "Bio-Formats";
+
   private LogbackTools() { }
 
   /**
@@ -67,7 +69,7 @@ public final class LogbackTools {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     LoggerContext loggerContext = root.getLoggerContext();
     return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) != null
-            || (loggerContext.getProperty("caller") == "Bio-Formats"));
+            || (loggerContext.getProperty("caller") == CALLER));
   }
 
   /**
@@ -94,7 +96,7 @@ public final class LogbackTools {
     LoggerContext context = root.getLoggerContext();
     if (!root.iteratorForAppenders().hasNext()) {
       context.reset();
-      context.putProperty("caller", "Bio-Formats");
+      context.putProperty("caller", CALLER);
       PatternLayoutEncoder layout = new PatternLayoutEncoder();
       layout.setContext(context);
       layout.setPattern("%m%n");
@@ -110,7 +112,7 @@ public final class LogbackTools {
       Appender defaultAppender = root.iteratorForAppenders().next();
       if (defaultAppender instanceof ConsoleAppender) {
         context.reset();
-        context.putProperty("caller", "Bio-Formats");
+        context.putProperty("caller", CALLER);
 
         PatternLayoutEncoder layout = new PatternLayoutEncoder();
         layout.setContext(context);
