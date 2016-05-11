@@ -562,7 +562,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
     if (options == null) {
-      return null;
+      return r;
     }
     Object elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
     if (null == elapsed) {
