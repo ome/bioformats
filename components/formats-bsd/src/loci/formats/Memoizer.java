@@ -327,13 +327,14 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
-  private static Object getMetadataOption(
-      MetadataOptions options, String name, Class type) {
-    Object opt = options.getMetadataOption(
-        String.format("%s.%s", Memoizer.class.getName(), name));
-    if (null != opt && !opt.getClass().isInstance(type)) {
-      LOGGER.warn("config: {} wrong type: {}", name, opt);
-      opt = null;
+  private static <T> T getMetadataOption(
+      MetadataOptions options, String name, Class<T> type) {
+    T opt = null;
+    String fullName = String.format("%s.%s", Memoizer.class.getName(), name);
+    try {
+      opt = type.cast(options.getMetadataOption(fullName));
+    } catch (ClassCastException e) {
+      LOGGER.warn("{}: wrong type (expected: {})", name, type.getName());
     }
     return opt;
   }
@@ -564,17 +565,17 @@ public class Memoizer extends ReaderWrapper {
     if (options == null) {
       return r;
     }
-    Object elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
+    Long elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
     if (null == elapsed) {
       return r;
     }
-    Object inplace = getMetadataOption(options, "inPlace", Boolean.class);
-    if (null != inplace && ((Boolean) inplace).booleanValue()) {
-      return new Memoizer(r, (Long) elapsed);
+    Boolean inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    if (null != inplace && inplace.booleanValue()) {
+      return new Memoizer(r, elapsed);
     }
-    Object cachedir = getMetadataOption(options, "cacheDirectory", File.class);
+    File cachedir = getMetadataOption(options, "cacheDirectory", File.class);
     if (null != cachedir) {
-      return new Memoizer(r, (Long) elapsed, (File) cachedir);
+      return new Memoizer(r, elapsed, cachedir);
     }
     return r;
   }
