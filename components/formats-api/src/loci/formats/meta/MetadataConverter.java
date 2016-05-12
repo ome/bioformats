@@ -678,6 +678,30 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        byte[] binData = src.getBinaryFileBinData(i);
+        dest.setBinaryFileBinData(binData, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        boolean bigEndian = src.getBinaryFileBinDataBigEndian(i);
+        dest.setBinaryFileBinDataBigEndian(bigEndian, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NonNegativeLong length = src.getBinaryFileBinDataLength(i);
+        dest.setBinaryFileBinDataLength(length, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Compression compression = src.getBinaryFileBinDataCompression(i);
+        dest.setBinaryFileBinDataCompression(compression, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getFileAnnotationAnnotationCount(i);
@@ -1031,6 +1055,11 @@ public final class MetadataConverter {
           try {
             Compression compression = src.getPixelsBinDataCompression(i, q);
             dest.setPixelsBinDataCompression(compression, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            byte[] data = src.getPixelsBinData(i, q);
+            dest.setPixelsBinData(data, i, q);
           }
           catch (NullPointerException e) { }
         }
