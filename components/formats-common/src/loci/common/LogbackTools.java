@@ -51,7 +51,7 @@ public final class LogbackTools {
 
   // -- Constructor --
 
-  public static String CALLER = "Bio-Formats";
+  public static final String CALLER = "Bio-Formats";
 
   private LogbackTools() { }
 
