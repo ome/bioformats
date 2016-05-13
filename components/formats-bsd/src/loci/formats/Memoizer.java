@@ -327,6 +327,18 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
+  private static <T> T getMetadataOption(
+      MetadataOptions options, String name, Class<T> type) {
+    T opt = null;
+    String fullName = String.format("%s.%s", Memoizer.class.getName(), name);
+    try {
+      opt = type.cast(options.getMetadataOption(fullName));
+    } catch (ClassCastException e) {
+      LOGGER.warn("{}: wrong type (expected: {})", name, type.getName());
+    }
+    return opt;
+  }
+
   // -- Constants --
 
   /**
@@ -551,28 +563,21 @@ public class Memoizer extends ReaderWrapper {
    */
   public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
     if (options == null) {
-      return null;
+      return r;
     }
-    String k = Memoizer.class.getName();
-    Object elapsed = options.getMetadataOption(k + ".minimumElapsed");
-    Object inplace = options.getMetadataOption(k + ".inPlace");
-    Object cachedir = options.getMetadataOption(k + ".cacheDirectory");
-    if (!(elapsed instanceof Long)) {
-        LOGGER.warn("config: minimumElapsed wrong type: {}", elapsed);
-        return r;
-    } else if (!(inplace instanceof Boolean)) {
-        LOGGER.warn("config: inplace wrong type: {}", inplace);
-        return r;
-    } else if (cachedir != null && !(cachedir instanceof File)) {
-        LOGGER.warn("config: cachedir wrong type: {}", cachedir);
-        return r;
+    Long elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
+    if (null == elapsed) {
+      return r;
     }
-
-    if (((Boolean) inplace).booleanValue()) {
-      return new Memoizer(r, (Long) elapsed);
-    } else{
-      return new Memoizer(r, (Long) elapsed, (File) cachedir);
+    Boolean inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    if (null != inplace && inplace.booleanValue()) {
+      return new Memoizer(r, elapsed);
     }
+    File cachedir = getMetadataOption(options, "cacheDirectory", File.class);
+    if (null != cachedir) {
+      return new Memoizer(r, elapsed, cachedir);
+    }
+    return r;
   }
 
   /**
