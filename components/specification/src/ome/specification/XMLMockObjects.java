@@ -65,7 +65,6 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Line;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.Map;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.Mask;
 import ome.xml.model.MicrobeamManipulation;

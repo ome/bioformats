@@ -41,13 +41,15 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 
+import com.google.common.collect.LinkedListMultimap;
+
+import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
-import ome.xml.model.Map;
-import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -79,13 +81,14 @@ public class ImagingEnvironmentMapTest {
     // Add an ImagingEnvironment with an Map
     ImagingEnvironment imagingEnvironment = new ImagingEnvironment();
 
-    Map dataMap = new Map();
-    dataMap.getPairs().add(new MapPair("a","1"));
-    dataMap.getPairs().add(new MapPair("b","2"));
-    dataMap.getPairs().add(new MapPair("c","3"));
-    dataMap.getPairs().add(new MapPair("d","4"));
-    dataMap.getPairs().add(new MapPair("e","5"));
-    imagingEnvironment.setMap(dataMap);
+    LinkedListMultimap<String,String> map = LinkedListMultimap.create();
+    map.put("a", "1");
+    map.put("d", "2");
+    map.put("c", "3");
+    map.put("b", "4");
+    map.put("e", "5");
+    map.put("c", "6");
+    imagingEnvironment.setMap(map);
 
     image.setImagingEnvironment(imagingEnvironment);
 
@@ -122,18 +125,19 @@ public class ImagingEnvironmentMapTest {
     assertNotNull(ome.getImage(0).getImagingEnvironment()); 
 
     ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
-    Map dataMap = imagingEnvironment.getMap();
+    LinkedListMultimap<String,String> dataMap = imagingEnvironment.getMap();
 
-    assertEquals(5, dataMap.getPairs().size());
+    assertEquals(6, dataMap.size());
     assertPair(dataMap, 0, "a", "1");
-    assertPair(dataMap, 1, "b", "2");
+    assertPair(dataMap, 1, "d", "2");
     assertPair(dataMap, 2, "c", "3");
-    assertPair(dataMap, 3, "d", "4");
+    assertPair(dataMap, 3, "b", "4");
     assertPair(dataMap, 4, "e", "5");
+    assertPair(dataMap, 5, "c", "6");
   }
 
-  void assertPair(Map dataMap, int idx, String name, String value) {
-    assertEquals(name, dataMap.getPairs().get(idx).getName());
-    assertEquals(value, dataMap.getPairs().get(idx).getValue());
+  void assertPair(LinkedListMultimap<String,String> dataMap, int idx, String name, String value) {
+    assertEquals(name, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getKey());
+    assertEquals(value, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getValue());
   }
 }

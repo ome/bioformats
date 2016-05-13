@@ -1051,7 +1051,7 @@
     </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
+        <xsd:element name="Map" type="Map" minOccurs="0" maxOccurs="1"/>
       </xsd:sequence>
       <xsd:attribute name="Temperature" use="optional" type="xsd:float">
         <xsd:annotation>
@@ -1555,23 +1555,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:element name="Map">
+  <xsd:complexType name="Map">
     <xsd:annotation>
       <xsd:appinfo><xsdfu xmlns=""><plural>Maps</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This is a Mapping of key/value pairs.
       </xsd:documentation>
-    </xsd:annotation>
-    <xsd:complexType>
-      <xsd:complexContent>
-        <xsd:extension base="MapPairs"/>
-      </xsd:complexContent>
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:complexType name="MapPairs">
-    <xsd:annotation>
-      <xsd:appinfo><xsdfu xmlns=""><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
     </xsd:annotation>
     <xsd:sequence minOccurs="1" maxOccurs="1">
       <xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
@@ -2783,7 +2772,7 @@
       <xsd:complexContent>
         <xsd:extension base="LightSource">
           <xsd:sequence>
-            <xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="Map" type="Map" minOccurs="0" maxOccurs="1"/>
           </xsd:sequence>
         </xsd:extension>
       </xsd:complexContent>
@@ -3749,7 +3738,7 @@ PlaneInfo (as Plane)
       <xsd:complexContent>
         <xsd:extension base="Annotation">
           <xsd:sequence>
-            <xsd:element name="Value"  type="MapPairs" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="Value" type="Map" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
         </xsd:extension>
       </xsd:complexContent>

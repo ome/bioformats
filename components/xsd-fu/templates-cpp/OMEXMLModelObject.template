@@ -500,9 +500,31 @@ ${customUpdatePropertyContent[prop.name]}
             common::xml::dom::Element elem(${prop.name}_nodeList.at(0));
             // While ome::compat::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
+{% if prop.langTypeNS != 'ome::xml::model::primitives::OrderedMultimap' %}\
             ${prop.instanceVariableType} p(${prop.langTypeNS}::create(elem, model));
 {% end %}\
-{% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
+{% if prop.langTypeNS == 'ome::xml::model::primitives::OrderedMultimap' %}\
+            ${prop.instanceVariableType} p(ome::compat::make_shared< ${prop.langTypeNS}>());
+            ome::xml::model::primitives::OrderedMultimap map;
+
+            std::vector<common::xml::dom::Element> children(getChildrenByTagName(elem, "M"));
+            for (std::vector<common::xml::dom::Element>::iterator child = children.begin();
+                 child != children.end();
+                 ++child)
+              {
+                if (child->hasAttribute("K"))
+                  map.get<0>().insert(map.end(),
+                                      ome::xml::model::primitives::OrderedMultimap::value_type(child->getAttribute("K"),
+                                                                                          child->getTextContent()));
+                else
+                  {
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "MapAnnotation entry M does not contain key attribute K";
+                  }
+              }
+{% end %}\
+{% end %}\
+{% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %}\
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
 {% end %}\
             set${prop.methodName}(p);
@@ -1361,11 +1383,45 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
           // Element property ${prop.name} which is complex (has
           // sub-elements)
+{% if prop.langTypeNS != 'ome::xml::model::primitives::OrderedMultimap' %}\
           if (this->impl->${prop.instanceVariableName})
             {
               common::xml::dom::Element child(this->impl->${prop.instanceVariableName}->asXMLElement(document));
               element.appendChild(child);
             }
+{% end %}\
+{% if prop.langTypeNS == 'ome::xml::model::primitives::OrderedMultimap' %}\
+              typedef ome::xml::model::primitives::OrderedMultimap::index<ome::xml::model::primitives::order_index>::type order_index_type;
+{% if prop.minOccurs == 0 %}\
+          if (this->impl->${prop.instanceVariableName})
+            {
+              common::xml::dom::Element child(document.createElementNS(getXMLNamespace(), "${prop.name}"));
+              for (order_index_type::const_iterator i = this->impl->${prop.instanceVariableName}->get<0>().begin();
+                   i != this->impl->${prop.instanceVariableName}->get<0>().end();
+                   ++i)
+                {
+                  common::xml::dom::Element pair = document.createElementNS(getXMLNamespace(), "M");
+                  pair.setAttribute("K", i->first);
+                  pair.setTextContent(i->second);
+                  child.appendChild(pair);
+                }
+              element.appendChild(child);
+           }
+{% end %}\
+{% if prop.minOccurs != 0 %}\
+            common::xml::dom::Element child(document.createElementNS(getXMLNamespace(), "${prop.name}"));
+            for (order_index_type::const_iterator i = this->impl->${prop.instanceVariableName}.get<0>().begin();
+                 i != this->impl->${prop.instanceVariableName}.get<0>().end();
+                 ++i)
+              {
+                common::xml::dom::Element pair = document.createElementNS(getXMLNamespace(), "M");
+                pair.setAttribute("K", i->first);
+                pair.setTextContent(i->second);
+                child.appendChild(pair);
+              }
+            element.appendChild(child);
+{% end %}\
+{% end %}\
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
           // Element property ${prop.name} which is not complex (has no

@@ -10,18 +10,16 @@
 		else if (Value_nodeList.size() != 0)
 		{
 			try {
-				java.util.List<MapPair> pairs = new java.util.ArrayList<MapPair>();
+                                LinkedListMultimap<String,String> pairs = LinkedListMultimap.create();
 				NodeList children = Value_nodeList.get(0).getChildNodes();
 
 				for (int i=0; i<children.getLength(); i++) {
 					Node child = children.item(i);
 					if (child.getNodeType() == Node.ELEMENT_NODE) {
-					    pairs.add(new MapPair(
-					      ((Element) child).getAttribute("K"), child.getTextContent()));
+					    pairs.put(((Element) child).getAttribute("K"), child.getTextContent());
 					}
 				}
-				MapPairs mapPairs = new MapPairs(pairs);
-				setValue(mapPairs);
+				setValue(pairs);
 			}
 			catch (Exception e)
 			{
