@@ -2235,9 +2235,12 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
+            if (last-first < 0){
+                last = first + key.substring(first).indexOf(' ');
+            }
             try {
               textEmissionWavelengths.add(
-                new Double(key.substring(first, last)) + 20);
+                new Double(key.substring(first, last).trim()) + 20);
             }
             catch (NumberFormatException nfe) {
               LOGGER.trace("Could not parse emission wavelength", nfe);

@@ -22,11 +22,8 @@ preserved. \n
 Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
 https://www.slidebook.com/reader.php.\n
 \n
-As of Bioformats 5.1.2 the native binary file SlideBook6Reader.dll\n
-of the proper architecture (x32 or x64) must be in the java binary path for\n
-this reader to work. This file is available from\n
-`3i Support <mailto: support@intelligent-imaging.com>`_ and is currently\n
-only available for Windows systems.\n
+SlideBook6Reader requires a native binary file to work, see\n
+http://www.openmicroscopy.org/info/slidebook for details.\n
 \n
 .. seealso:: \n
   `Slidebook software overview <https://www.slidebook.com>`_ \n
@@ -68,7 +65,7 @@ extensions = .al3d
 owner = `Alicona Imaging <http://www.alicona.com/>`_
 bsd = no
 versions = 1.0
-weHave = * an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
+weHave = * an `AL3D specification document <http://www.alicona.co.uk/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
 * a few AL3D datasets
 weWant = * more AL3D datasets (Z series, T series, 16-bit)
 pixelsRating = Very good
@@ -902,7 +899,7 @@ reader = IMODReader
 [Improvision Openlab LIFF]
 extensions = .liff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 versions = 2.0, 5.0
 weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
@@ -917,13 +914,11 @@ utilityRating = Fair
 privateSpecification = true
 reader = OpenlabReader
 mif = true
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision Openlab Raw]
 extensions = .raw
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 * a few Openlab Raw datasets
@@ -933,13 +928,11 @@ opennessRating = Very good
 presenceRating = Poor
 utilityRating = Fair
 reader = OpenlabRawReader
-notes = .. seealso:: \n
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_
 
 [Improvision TIFF]
 extensions = .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.improvision.com/>`_
+developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 bsd = no
 weHave = * an Improvision TIFF specification document \n
 * a few Improvision TIFF datasets
@@ -950,8 +943,6 @@ presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
 reader = ImprovisionTiffReader
-notes = .. seealso:: \n
-  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
 
 [Imspector OBF]
 extensions = .obf, .msr
@@ -1222,6 +1213,7 @@ Commercial applications that support LIF include: \n
 [LaVision Imspector]
 extensions = .msr
 developer = `LaVision BioTec <http://www.lavisionbiotec.com/>`_
+versions = 4.0, 4.1
 bsd = no
 weHave = * a few .msr files
 pixelsRating = Fair
@@ -1809,12 +1801,12 @@ utilityRating = Good
 reader = OperettaReader
 mif = true
 
-[PerkinElmer UltraView]
+[PerkinElmer UltraVIEW]
 indexExtensions = .tif, .2, .3, .4
 extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * several UltraView datasets
+weHave = * several UltraVIEW datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -1830,7 +1822,7 @@ Commercial applications that support this format include: \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
-  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
+  `PerkinElmer UltraVIEW system overview <http://www.perkinelmer.com/product/ultraview-vox-3d-live-cell-imaging-system-l7267000>`_
 
 [Portable Any Map]
 pagename = pgm
@@ -2255,7 +2247,7 @@ mif = true
 
 [Volocity Library Clipping]
 extensions = .acff
-developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 bsd = no
 weHave = * several Volocity library clipping datasets
 weWant = * any datasets that do not open correctly \n
@@ -2270,7 +2262,7 @@ notes = RGB .acff files are not yet supported.  See :ticket:`6413`.
 
 [Volocity]
 extensions = .mvd2
-developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 bsd = no
 samples = `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 weHave = * many example Volocity datasets
@@ -2439,7 +2431,7 @@ notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.n
 \n
 Commercial applications that support this format include: \n
 \n
-* `SVI Huygens <http://www2.svi.nl/>`_ \n
+* `SVI Huygens <https://svi.nl/HomePage>`_ \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 * `Amira <http://www.amira.com/>`_ \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_
