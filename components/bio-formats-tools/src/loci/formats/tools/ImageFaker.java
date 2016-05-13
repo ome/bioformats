@@ -80,7 +80,7 @@ public class ImageFaker {
         } else if (args[i].equals("-fields")) {
           fields = Integer.parseInt(args[++i]);
         } else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
       } else {
         if (targetDirectoryPath == null) {

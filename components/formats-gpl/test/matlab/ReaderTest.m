@@ -50,7 +50,7 @@ classdef ReaderTest < TestBfMatlab
             self.sizeZ = self.reader.DEFAULT_SIZE_Z;
             self.sizeC = self.reader.DEFAULT_SIZE_C;
             self.sizeT = self.reader.DEFAULT_SIZE_T;
-            loci.common.DebugTools.enableLogging('ERROR');
+            loci.common.DebugTools.setRootLevel('ERROR');
             import ome.units.UNITS.*;
         end
         

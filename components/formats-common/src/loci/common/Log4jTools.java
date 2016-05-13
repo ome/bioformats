@@ -44,7 +44,7 @@ public final class Log4jTools {
   private Log4jTools() { }
 
   /**
-   * Checks whether SLF4J logging was enabled via log4j
+   * Checks whether the log4j framework was successfully enabled
    *
    * @return {@code true} if logging was successfully enabled
    */
@@ -60,22 +60,38 @@ public final class Log4jTools {
       return false;
     }
   }
-  
+
   /**
-   * Attempts to enable SLF4J logging via log4j
-   * without an external configuration file.
+   * Sets the level of the root logger
    *
    * @param level A string indicating the desired level
    *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return {@code true} if logging was successfully enabled
    */
-  public static synchronized boolean enableLogging(String level) {
+  public static synchronized void setRootLevel(String level) {
     try {
       ReflectedUniverse r = new ReflectedUniverse();
       r.exec("import org.apache.log4j.Level");
       r.exec("import org.apache.log4j.Logger");
       r.exec("root = Logger.getRootLogger()");
       r.exec("root.setLevel(Level." + level + ")");
+    } catch (ReflectException exc) {
+      return;
+    }
+    return;
+  }
+  
+  /**
+   * Attempts to enable SLF4J logging via log4j
+   * without an external configuration file.
+   *
+   * @return {@code true} if logging was successfully enabled
+   */
+  public static synchronized boolean enableLogging() {
+    try {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.exec("import org.apache.log4j.Level");
+      r.exec("import org.apache.log4j.Logger");
+      r.exec("root = Logger.getRootLogger()");
       Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
       if (!en.hasMoreElements()) {
         // no appenders yet; attach a simple console appender

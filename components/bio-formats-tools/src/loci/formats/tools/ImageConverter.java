@@ -129,7 +129,7 @@ public final class ImageConverter {
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-") && args.length > 1) {
         if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
         else if (args[i].equals("-stitch")) stitch = true;
         else if (args[i].equals("-separate")) separate = true;
@@ -285,7 +285,6 @@ public final class ImageConverter {
   {
     nextOutputIndex.clear();
     firstTile = true;
-    DebugTools.enableLogging("INFO");
     boolean success = parseArgs(args);
     if (!success) {
       return false;
@@ -860,6 +859,7 @@ public final class ImageConverter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
+    DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =

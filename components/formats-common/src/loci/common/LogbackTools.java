@@ -41,7 +41,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
-
+import ch.qos.logback.core.joran.util.ConfigurationWatchListUtil;
 
 
 /**
@@ -51,31 +51,52 @@ public final class LogbackTools {
 
   // -- Constructor --
 
+  private static final String CALLER = "Bio-Formats";
+
   private LogbackTools() { }
 
   /**
-   * Checks whether SLF4J logging was enabled via logback
+   * Checks whether logback has been enabled.
    *
-   * @return {@code} true if logging was successfully enabled
+   * This method will check if the root logger has been initialized via either
+   * a configuration file or a previous call to {@link #enableLogging()}. The
+   * logger context property will be used to discriminate the latter case from
+   * other initializations.
+   *
+   * @return {@code true} if logging was successfully enabled
    */
   public static synchronized boolean isEnabled() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    return root.iteratorForAppenders().hasNext();
+    LoggerContext loggerContext = root.getLoggerContext();
+    return (ConfigurationWatchListUtil.getMainWatchURL(loggerContext) != null
+            || (loggerContext.getProperty("caller") == CALLER));
   }
 
   /**
-   * Attempts to enable SLF4J logging via logback without an external
-   * configuration file.
+   * Sets the level of the root logger
    *
    * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return {@code} true if logging was successfully enabled
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, WARN).
    */
-  public static synchronized boolean enableLogging(String level) {
+  public static synchronized void setRootLevel(String level) {
+    Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    root.setLevel(Level.toLevel(level));
+  }
+
+  /**
+   * Initializes logback without an external configuration file.
+   *
+   * The logging initialization also sets a logger context property to record
+   * the initalization provenance.
+   *
+   * @return {@code true} if logging was successfully enabled
+   */
+  public static synchronized boolean enableLogging() {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     LoggerContext context = root.getLoggerContext();
     if (!root.iteratorForAppenders().hasNext()) {
       context.reset();
+      context.putProperty("caller", CALLER);
       PatternLayoutEncoder layout = new PatternLayoutEncoder();
       layout.setContext(context);
       layout.setPattern("%m%n");
@@ -91,6 +112,8 @@ public final class LogbackTools {
       Appender defaultAppender = root.iteratorForAppenders().next();
       if (defaultAppender instanceof ConsoleAppender) {
         context.reset();
+        context.putProperty("caller", CALLER);
+
         PatternLayoutEncoder layout = new PatternLayoutEncoder();
         layout.setContext(context);
         layout.setPattern("%m%n");
@@ -102,8 +125,6 @@ public final class LogbackTools {
         root.addAppender(defaultAppender);
       }
     }
-    root.setLevel(Level.toLevel(level));
-
     return true;
   }
 
@@ -118,8 +139,6 @@ public final class LogbackTools {
 
       if (debug) {
         root.setLevel(Level.DEBUG);
-      } else {
-        root.setLevel(Level.INFO);
       }
       appender.setContext(root.getLoggerContext());
       root.addAppender(appender);
