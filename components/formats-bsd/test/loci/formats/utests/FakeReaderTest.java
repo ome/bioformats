@@ -106,7 +106,7 @@ public class FakeReaderTest {
       {"ellipses", "Ellipse"},
       {"labels", "Label"},
       {"lines", "Line"},
-      // {"masks", "Mask"},
+      {"masks", "Mask"},
       {"points", "Point"},
       {"polygons", "Polygon"},
       {"polylines", "Polyline"},

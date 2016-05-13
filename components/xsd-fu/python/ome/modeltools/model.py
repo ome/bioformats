@@ -59,6 +59,9 @@ class ReferenceDelegate(object):
 
     def getType(self):
         return self.dataType
+        
+    def getData_type(self):
+        return self.dataType
 
     def getName(self):
         return self.name
@@ -195,6 +198,14 @@ class OMEModel(object):
                 % (parent, e, e_type, e_name))
             return
         obj = OMEModelObject(e, parent, self)
+        if self.opts.lang.isPrimitiveBase(obj.base):
+            delegate = ReferenceDelegate(obj.name, obj.base, None)
+            delegate.name = obj.base.title()
+            delegate.minOccurs = 1
+            delegate.maxOccurs = 1
+            delegate.namespace = obj.namespace
+            obj.addBaseAttribute(delegate, obj.base)
+            obj.base = self.opts.lang.getDefaultModelBaseClass()
         self.addObject(e, obj)
         self.processAttributes(e)
 
@@ -355,3 +366,5 @@ class OMEModel(object):
                 substitutionGroupName = self.opts.lang.substitutionGroup(element.getName())
                 self.substitutionElement_map[substitutionGroupName] = element
                 continue
+        if len(self.opts.lang.getSubstitutionTypes()) > 0:
+            config.METADATA_OBJECT_IGNORE.remove('BinData')

@@ -31,7 +31,7 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -39,7 +39,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
 				if (result != null) return result;
 			}
 		}
@@ -47,7 +47,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -55,7 +55,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_name_string(indexes)});
 				if (result != null) return result;
 			}
 		}
@@ -87,7 +87,7 @@
 {% if debug %}\
 	// MARKER [A-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -95,7 +95,7 @@
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
 			}
 		}
 	}
@@ -104,7 +104,7 @@
 {% if debug %}\
 	// MARKER [B-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -112,7 +112,7 @@
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
+				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
 			}
 		}
 	}
@@ -121,7 +121,7 @@
 {% if debug %}\
 	// MARKER [C-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -129,7 +129,7 @@
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
+				store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
 			}
 		}
 	}
@@ -148,13 +148,15 @@
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-  def accessor_string(name, max_occurs, level):
+  def accessor_string(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    return accessor_string_complex(name, max_occurs, level)['accessor']
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-  def accessor_string_complex(name, max_occurs, level):
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -305,21 +307,6 @@ public class AggregateMetadata implements IMetadata
 
 
 	// -- Entity counting (manual definitions) --
-
-  public int getPixelsBinDataCount(int imageIndex)
-  {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();)
-    {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve)
-      {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        int result = retrieve.getPixelsBinDataCount(imageIndex);
-        if (result >= 0) return result;
-      }
-    }
-    return -1;
-  }
  
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -565,21 +552,6 @@ ${counter(k, o, v)}\
 		}
 		return null;
 	}
-
-	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
-  {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();)
-    {
-      Object o = iter.next();
-      if (o instanceof MetadataRetrieve)
-      {
-        MetadataRetrieve retrieve = (MetadataRetrieve) o;
-        Boolean result = retrieve.getPixelsBinDataBigEndian(imageIndex, binDataIndex);
-        if (result != null) return result;
-      }
-    }
-    return null;
-  }
 	
 	/** Gets the Map value associated with this annotation */
 	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
@@ -728,32 +700,6 @@ ${getter(k, o, prop, v)}\
 			}
 		}
 	}
-	
-	public void setMaskBinData(byte[] binData, int ROIIndex, int maskIndex)
-  {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();)
-    {
-      Object o = iter.next();
-      if (o instanceof MetadataStore)
-      {
-        MetadataStore store = (MetadataStore) o;
-        store.setMaskBinData(binData, ROIIndex, maskIndex);
-      }
-    }
-  }
-	
-  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
-  {
-    for (Iterator iter = delegates.iterator(); iter.hasNext();)
-    {
-      Object o = iter.next();
-      if (o instanceof MetadataStore)
-      {
-        MetadataStore store = (MetadataStore) o;
-        store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-      }
-    }
-  }
 
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)

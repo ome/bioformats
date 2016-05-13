@@ -42,11 +42,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
+      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -54,9 +54,9 @@
           {
             ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
           }
-        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
@@ -65,11 +65,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const
+      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -77,9 +77,9 @@
           {
             ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
+              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_name_string(indexes)});
           }
-        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
@@ -88,11 +88,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const
+      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -100,9 +100,9 @@
           {
             ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
+              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}();
           }
-        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("AggregateMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
@@ -116,11 +116,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -139,11 +139,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -151,9 +151,9 @@
           {
             ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
             if (store)
-              store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
+              store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
           }
-        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "no delegate MetadataStore implementation");
       }
 {% end source %}\
@@ -162,11 +162,11 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -174,9 +174,9 @@
           {
             ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
             if (store)
-              store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
+              store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
           }
-        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("AggregateMetadata", "set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "no delegate MetadataStore implementation");
       }
 {% end source %}\
@@ -195,13 +195,15 @@
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-  def accessor_string(name, max_occurs, level):
+  def accessor_string(name, max_occurs, level, concreteName=None):
     """Makes a C++ method accessor string from an index name."""
-    return accessor_string_complex(name, max_occurs, level)['accessor']
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-  def accessor_string_complex(name, max_occurs, level):
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
     """Makes a C++ method accessor string from an index name."""
-    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -397,6 +399,7 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -418,6 +421,7 @@ namespace ome
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
+{% end %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
@@ -808,6 +812,7 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         bool
@@ -831,6 +836,7 @@ ${counter(k, o, v)}\
                                 "no delegate MetadataRetrieve implementation");
       }
 {% end source %}\
+{% end %}\
 
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
@@ -938,6 +944,7 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -963,6 +970,7 @@ ${getter(k, o, prop, v)}\
                                 "no delegate MetadataStore implementation");
       }
 {% end source %}\
+{% end %}\
 
 {% if debug %}\
         // -- Entity storage (code generated definitions) --

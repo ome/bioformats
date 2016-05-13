@@ -17,17 +17,17 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
       {
 {% if prop.langType == "std::string" %}\
         /// @todo Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
       }
 {% end source %}\
 {% end %}\
@@ -35,17 +35,17 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
       {
 {% if prop.langType == "std::string" %}\
         /// @todo: Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
       }
 {% end source %}\
 {% end %}\
@@ -53,17 +53,17 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
       {
 {% if prop.langType == "String" %}\
         // TODO: Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
       }
 {% end source %}\
 {% end %}\
@@ -82,13 +82,15 @@
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-  def accessor_string(name, max_occurs, level):
+  def accessor_string(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    return accessor_string_complex(name, max_occurs, level)['accessor']
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-  def accessor_string_complex(name, max_occurs, level):
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -278,6 +280,7 @@ namespace ome
 	// -- Entity storage (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
       void
@@ -294,6 +297,7 @@ namespace ome
         store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
       }
 {% end source %}\
+{% end %}\
 
 {% if debug %}\
 	// -- Entity storage (code generated definitions) --

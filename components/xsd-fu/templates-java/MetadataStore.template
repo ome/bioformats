@@ -22,7 +22,7 @@
 {% end for %}\
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
@@ -36,7 +36,7 @@
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
@@ -47,7 +47,7 @@
          *
          * @param ${prop.argumentName} ${prop.name} to set.
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});\
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -194,15 +194,6 @@ public interface MetadataStore extends BaseMetadata
 	// -- Entity storage (manual definitions) --
 
         /**
-         * Set the BinData property of Mask.
-         *
-         * @param binData the BinData to set.
-         * @param ROIIndex the ROI index.
-         * @param shapeIndex the Shape index.
-         */
-  void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
-
-        /**
          * Set the values of a MapAnnotation.
          *
          * @param value the MapAnnotation values to set.
@@ -235,15 +226,6 @@ public interface MetadataStore extends BaseMetadata
          */
 	void setUUID(String uuid);
 
-  /**
-   * Set the BigEndian property of Pixels.
-         *
-         * @param bigEndian true if big endian, or false if little endian.
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         */
-   void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
- 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\

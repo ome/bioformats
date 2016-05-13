@@ -36,6 +36,7 @@ class OMEModelProperty(OMEModelEntity):
         self.isImmutable = False
         self.isInjected = False
         self._isReference = False
+        self.hasBaseAttribute = False
 
         try:
             try:
@@ -81,7 +82,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""The maximum number of occurrences for this property.""")
 
     def _get_minOccurs(self):
-        if self.isAttribute:
+        if self.isAttribute and (hasattr(self.delegate, 'use')):
             if self.delegate.getUse() == "optional":
                 return 0
             return 1
@@ -921,7 +922,8 @@ class OMEModelProperty(OMEModelEntity):
                 path = re.sub("::", "/", self.name)
                 deps.add("ome/xml/model/%s.h" % path)
                 for prop in o.properties.values():
-                    deps.update(prop.source_dependencies)
+                    if not prop.hasBaseAttribute:
+                        deps.update(prop.source_dependencies)
 
         return deps
     source_dependencies = property(
@@ -965,6 +967,8 @@ class OMEModelProperty(OMEModelEntity):
         # model in the XML Schema document itself for the "Description"
         # element.
         if self.name == "Description":
+            return False
+        if self.hasBaseAttribute:
             return False
         return self.delegate.isComplex()
 

@@ -131,7 +131,12 @@ public class APNGWriter extends FormatWriter {
       int nChannels = getSamplesPerPixel();
       boolean indexed =
         getColorModel() != null && (getColorModel() instanceof IndexColorModel);
-      littleEndian = !r.getPixelsBinDataBigEndian(series, 0);
+      if (r.getPixelsBigEndian(series) != null) {
+        littleEndian = !r.getPixelsBigEndian(series).booleanValue();
+      }
+      else if (r.getPixelsBinDataCount(series) == 0) {
+        littleEndian = !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      }
 
       // write 8-byte PNG signature
       out.write(PNG_SIG);

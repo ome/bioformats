@@ -13,7 +13,7 @@
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
          */
 	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${lang.index_string(lang.index_signature(prop.name, 0, 0))} = 0) = 0;
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${lang.index_string(lang.index_signature(prop.name, 0, 0))} = 0) = 0;
 
 {% end header%}\
 {% end %}\
@@ -28,7 +28,7 @@
 {% end for %}\
          */
 	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;
 
 {% end header%}\
 {% end %}\
@@ -40,7 +40,7 @@
          * @param ${prop.argumentName} ${prop.name} to set.
          */
 	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;
 
 {% end header%}\
 {% end %}\
@@ -240,6 +240,7 @@ namespace ome
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
         /**
          * Set the BigEndian property of Pixels.
          *
@@ -251,6 +252,7 @@ namespace ome
         setPixelsBinDataBigEndian(bool bigEndian,
                                   index_type imageIndex,
                                   index_type binDataIndex = 0) = 0;
+{% end %}\
 
 {% if debug %}\
         // -- Entity storage (code generated definitions) --

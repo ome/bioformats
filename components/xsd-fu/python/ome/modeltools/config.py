@@ -8,7 +8,7 @@ import re
 # Types which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_OBJECT_IGNORE = ('BinData', 'External', 'MapPairs', 'M')
+METADATA_OBJECT_IGNORE = ['External', 'MapPairs', 'M', 'BinData']
 
 # Type counts which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies

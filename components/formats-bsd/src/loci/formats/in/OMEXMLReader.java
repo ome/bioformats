@@ -295,7 +295,13 @@ public class OMEXMLReader extends FormatReader {
 
       Boolean endian = null;
       if (binData.size() > 0) {
-        endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+        endian = false;
+        if (omexmlMeta.getPixelsBigEndian(i) != null) {
+          endian = omexmlMeta.getPixelsBigEndian(i).booleanValue();
+        }
+        else if (omexmlMeta.getPixelsBinDataCount(i) != 0) {
+          endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0).booleanValue();
+        }
       }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();

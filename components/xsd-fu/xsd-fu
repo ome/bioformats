@@ -423,7 +423,7 @@ def max_occurs_under_parent(model, parent, name):
             return prop.maxOccurs
     return 0
 
-def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0, min_occurs=2):
+def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0, min_occurs=2, concreteName=None):
     """
     Resolves a representation of the hierarchical structure of element names.
     Updates the result list and returns a boolean True if the result list is
@@ -433,20 +433,31 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
     if names is None:
         return is_multi_path
     for name in names.keys():
+        o = model.getObjectByName(name)
         # Set our key and instantiate our index list if we're the first level
         if level == 1:
             key = name
+            if o.isAbstractSubstitution and concreteName is not None:
+                key = concreteName
             results[key] = list()
         # We only want to add the index if the object count at this level
         # is greater than 1.
         max_occurs = max_occurs_under_parent(model, name, child)
         if len(names.keys()) > 1:
             is_multi_path = True
-        is_child_multi_path = resolve_hierarchy(results, model, names[name], func, name, key, level + 1, min_occurs)
+        if o.isConcreteSubstitution:
+            parents = dict()
+            parents[o.parentName] = model.resolve_parents(o.parentName)
+            is_child_multi_path = resolve_hierarchy(results, model, {o.parentName: parents[o.parentName]}, func, name, key, level, min_occurs, name)
+        else:
+            is_child_multi_path = resolve_hierarchy(results, model, names[name], func, name, key, level + 1, min_occurs, concreteName)
         if is_child_multi_path:
             is_multi_path = True
         if child is not None and max_occurs >= min_occurs:
-            results[key].append(func(child, max_occurs, level))
+            if model.getObjectByName(child).isAbstractSubstitution:
+                results[key].append(func(child, max_occurs, level, concreteName))
+            else:
+                results[key].append(func(child, max_occurs, level))
     return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, model, opts):

@@ -22,7 +22,7 @@
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index.
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
@@ -36,7 +36,7 @@
 {% end for %}\
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
@@ -47,7 +47,7 @@
          *
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}();\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -276,23 +276,6 @@ public interface MetadataRetrieve extends BaseMetadata {
    * @return the number of XMLAnnotation links.
    */
   int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex);
-
-  /**
-   * Get the BigEndian property of Pixels.
-   *
-   * @param imageIndex the Image index.
-   * @param binDataIndex BinData index (unused).
-   * @return true if big endian, or false if little endian.
-   */
-  Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
-
-  /**
-   * Get the number of BinData elements in Pixels.
-   *
-   * @param imageIndex the Image index.
-   * @return the number of BinData elements.
-   */
-  int getPixelsBinDataCount(int imageIndex);
   
 {% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\

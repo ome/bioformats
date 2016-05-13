@@ -18,11 +18,11 @@
 		// Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
 		// ${obj.name} is a reference
-		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
+		return ${join_accessors(obj.name, parent, obj.name, -1, ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
 {% end %}\
 {% if not obj.isReference %}\
 		// ${obj.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOf%sList()" % obj.name.replace('Ref', '')])};
+		return ${join_accessors(obj.name, parent, obj.name, -1, ["sizeOf%sList()" % obj.name.replace('Ref', '')])};
 {% end %}\
 	}
 {% end %}\
@@ -30,13 +30,13 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}()
 {% end %}\
 {% end %}\
 	{
@@ -47,45 +47,27 @@
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
 		// ${parent} is abstract proprietary, is reference and occurs more than once
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+		return ${join_accessors(obj.name, parent, prop)}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${parent} is abstract proprietary
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.getLinked${prop.methodName}().getID();
+		return ${join_accessors(obj.name, parent, prop)}.getLinked${prop.methodName}().getID();
 {% end %}\
 {% when is_abstract(parent) %}\
 		// ${parent} is abstract proprietary and not a reference
-		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.get${prop.methodName}();
-{% end %}\
-{% when obj.isConcreteSubstitution and prop.isReference and prop.maxOccurs > 1 %}\
-    // ${obj.parentName} is abstract, is reference and occurs more than once 
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
-    return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
-{% end %}\
-{% when o.isConcreteSubstitution and prop.isReference  %}\
-    // ${o.parentName} is abstract 
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
-    return o.getLinked${prop.methodName}().getID();
-{% end %}
-{% when obj.isConcreteSubstitution or o.isAbstractSubstitution %}\
-    // ${obj.parentName} is abstract and not a reference
-    ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)});
-    return o.get${prop.methodName}();
+		return ${join_accessors(obj.name, parent, prop)}.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 		// ${prop.name} is reference and occurs more than once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+		return ${join_accessors(obj.name, parent, prop)}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs only once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}().getID();
+		return ${join_accessors(obj.name, parent, prop)}.getLinked${prop.methodName}().getID();
 {% end %}\
 {% otherwise %}\
 		// ${prop.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.methodName}();
+		return ${join_accessors(obj.name, parent, prop)}.get${prop.methodName}();
 {% end %}\
 {% end %}\
 	}
@@ -94,13 +76,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -151,50 +133,12 @@
 {% end %}\
 {% end %}\
 {% end %}\
-{% when (obj.isConcreteSubstitution  or obj.isAbstractSubstitution) and prop.isReference %}\
-    // ${prop.name} is abstract and is a reference
-    ${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
-    ${prop.instanceVariableName}_reference.setID(${prop.argumentName});
-    model.addReference(
-        (${obj.name})root.${".".join(accessor(obj.name, obj.topLevelName, prop))}.get${obj.parentName}(${index_name_string(obj.parentName)}),
-        ${prop.instanceVariableName}_reference);
-{% end %}\
-{% when obj.isConcreteSubstitution  or obj.isAbstractSubstitution %}\
-    // ${obj.parentName} is abstract and not a reference
-    OME o0 = root;
-{% for i, v in enumerate(accessor(obj.name, obj.topLevelName, prop, accessor_string_complex)) %}\
-{% choose %}\
-{% when v['max_occurs'] > 1 %}\
-    if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
-    {
-      o${i}.add${v['name']}(new ${v['name']}());
-    }
-{% end %}\
-{% when v['max_occurs'] == 1 %}\
-    if (o${i}.${v['accessor']} == null)
-    {
-      o${i}.set${v['name']}(new ${v['name']}());
-    }
-{% end %}\
-{% end %}\
-    ${v['name']} o${i + 1} = o${i}.${v['accessor']};
-{% end %}\
-    if (o${getAbstractDepth(obj.name)}.sizeOf${obj.parentName}List() == ${index_name_string(obj.parentName)})
-    {
-      o${getAbstractDepth(obj.name)}.add${obj.parentName}(new ${obj.name}());
-    }
-    ${obj.name} o${getAbstractDepth(obj.name) + 1} = (${obj.name})o${getAbstractDepth(obj.name)}.get${obj.parentName}(${index_name_string(obj.parentName)});
-    {% if "ID" == prop.name %}\
-    model.addModelObject(${prop.argumentName}, o${getAbstractDepth(obj.name) + 1});
-{% end %}\
-    ((${obj.name})o${getAbstractDepth(obj.name) + 1}).set${prop.methodName}(${prop.argumentName});
-{% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs more than once
 		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
 		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
-				root.${".".join(accessor(obj.name, parent, prop))},
+				${join_accessors(obj.name, parent, prop)},
 				${prop.instanceVariableName}_reference);
 {% end %}\
 {% otherwise %}\
@@ -205,17 +149,22 @@
 {% when v['max_occurs'] > 1 %}\
 		if (o${i}.sizeOf${v['name']}List() == ${index_name_string(v['name'])})
 		{
-			o${i}.add${v['name']}(new ${v['name']}());
+			o${i}.add${v['name']}(new ${v['concreteName']}());
 		}
 {% end %}\
 {% when v['max_occurs'] == 1 %}\
 		if (o${i}.${v['accessor']} == null)
 		{
-			o${i}.set${v['name']}(new ${v['name']}());
+			o${i}.set${v['name']}(new ${v['concreteName']}());
 		}
 {% end %}\
 {% end %}\
+{% if not v['isAbstractSub'] %}\
 		${v['name']} o${i + 1} = o${i}.${v['accessor']};
+{% end %}\
+{% if v['isAbstractSub'] %}\
+		${v['concreteName']} o${i + 1} = (${v['concreteName']}) o${i}.${v['accessor']};
+{% end %}\
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
 		model.addModelObject(${prop.argumentName}, o${i + 1});
@@ -245,13 +194,33 @@ ${customContent[obj.name][prop.name]}
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-  def accessor_string(name, max_occurs, level):
-    """Makes a Java method accessor string from an index name."""
-    return accessor_string_complex(name, max_occurs, level)['accessor']
+  def join_accessors(name, parent, prop=None, accessorIndex=None, additionalJoins=None):
+    results = dict()
+    to_return = "root"
+    o = model.getObjectByName(parent)
+    results = accessor(name, parent, prop, accessor_string_complex)
+    if accessorIndex is not None:
+      results = results[:accessorIndex]
+    for result in results:
+      if result['isAbstractSub']:
+        to_return = "".join(("((",result['concreteName'],")",to_return,".",result['accessor'],")"))
+      else:
+        to_return = ".".join((to_return, result['accessor']))
+    if additionalJoins is not None:
+      to_return = ".".join([to_return] + additionalJoins)
+    return to_return
 
-  def accessor_string_complex(name, max_occurs, level):
+  def accessor_string(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
+
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
+    """Makes a Java method accessor string from an index name."""
+    isAbstractSub = True
+    if concreteName is None:
+      concreteName = name
+      isAbstractSub = False
+    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs, 'isAbstractSub': isAbstractSub, 'concreteName': concreteName}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -263,22 +232,12 @@ ${customContent[obj.name][prop.name]}
 
   def accessor(name, parent, prop, func=accessor_string):
     results = dict()
-    o = model.getObjectByName(name)
-    if o.isConcreteSubstitution:
-      fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
-      parentObj = model.getObjectByName(o.parentName)
-      if len(results.keys()) == 0:
-        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (o.name, parents[parentObj.name].keys()[0], prop.name, results))
-      if parents[parentObj.name].keys()[0] not in results.keys():
-        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (o.name, parents[parentObj.name].keys()[0], prop.name, results))
-      return results[parents[parentObj.name].keys()[0]]
-    else:
-      fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-      if len(results.keys()) == 0:
-        raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-      if parent not in results.keys():
-        raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop.name, results))
-      return results[parent]
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop.name, results))
+    return results[parent]
       
   def basic_accessor(name):
     results = dict()
@@ -289,14 +248,7 @@ ${customContent[obj.name][prop.name]}
     if parents[name].keys()[0] not in results.keys():
       raise Exception("Invalid KEY No accessor for: name:%s parent:%s === %s" % (name, parents[name].keys()[0], results))
     return results[parents[name].keys()[0]]
-    
-  def getAbstractDepth(name, func=accessor_string):
-    results = dict()
-    o = model.getObjectByName(name)
-    if o.isConcreteSubstitution:
-      fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
-      parentObj = model.getObjectByName(o.parentName)
-      return len(results[parents[parentObj.name].keys()[0]])
+
 %}\
 \
 \
@@ -412,11 +364,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// -- Entity counting (manual definitions) --
 
-  public int getPixelsBinDataCount(int imageIndex)
-  {
-    return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
-  }
-
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).sizeOfLinkedAnnotationList();
   }
@@ -526,15 +473,6 @@ ${counter(k, o, v)}\
 {% end %}\
 
 	// -- Entity retrieval (manual definitions) --
-
-  public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
-  {
-    Boolean bigEndian = root.getImage(imageIndex).getPixels().getBigEndian();
-    if (bigEndian != null) {
-      return bigEndian;
-    }
-    return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
-  }
   
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
@@ -647,29 +585,6 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 
 	// -- Entity storage (manual definitions) --
-
-  public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
-  {
-    // Parents: {u'Image': {u'OME': None}}
-    // Type is not a reference
-    OME o0 = root;
-    if (o0.sizeOfImageList() == imageIndex)
-    {
-      o0.addImage(new Image());
-    }
-    Image o1 = o0.getImage(imageIndex);
-    if (o1.getPixels() == null)
-    {
-      o1.setPixels(new Pixels());
-    }
-    Pixels o2 = o1.getPixels();
-    o2.setBigEndian(bigEndian);
-  }
- 
-	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
-	{
-		// TODO: To implement
-	}
 
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)

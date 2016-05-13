@@ -33,6 +33,8 @@ class Language(object):
 
         self.primitive_types = set()
 
+        self.primitive_base_types = set()
+
         self.base_class = None
 
         self.template_map = {
@@ -85,8 +87,13 @@ class Language(object):
         # that is used to override places in the model where we do not
         # wish subclassing to take place.
         self.base_type_map = {
-            'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass()
+            'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass(),
+            'base64Binary': self.getDefaultModelBaseClass()
             }
+        
+        # A global set XSD Schema types use as base classes which are primitive  
+        self.primitive_base_types = set([
+            "base64Binary"])
 
         self.model_unit_map = {}
         self.model_unit_default = {}
@@ -184,6 +191,12 @@ class Language(object):
             
     def getSubstitutionTypes(self):
         return self.substitutionGroup_map.keys()
+            
+    def isPrimitiveBase(self, type):
+        if type in self.primitive_base_types:
+            return True
+        else:
+            return False
 
     def hasType(self, type):
         if type in self.type_map:
@@ -235,6 +248,7 @@ class Java(Language):
         self.primitive_type_map[namespace + 'double'] = 'Double'
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
+        self.primitive_type_map['base64Binary'] = 'byte[]'
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
@@ -347,6 +361,7 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
+        self.primitive_type_map['base64Binary'] = 'std::vector<uint8_t>'
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
