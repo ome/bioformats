@@ -12,15 +12,6 @@ For details, see LOCI's article
 `Interfacing from non-Java code
 <http://loci.wisc.edu/software/interfacing-non-java-code>`_.
 
-Recommended **in-process solution**: :doc:`jace/overview`
-
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    jace/overview
-    jace/build
-    jace/build-windows
-    jace/build-macosx
-    jace/build-linux
+Example **in-process solution**: `Bio-Formats JACE C++ bindings <https://github.com/ome/bio-formats-jace>`_
+(note that this is a legacy project and no longer actively maintained).
 
