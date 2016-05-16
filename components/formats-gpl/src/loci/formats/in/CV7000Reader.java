@@ -289,7 +289,7 @@ public class CV7000Reader extends FormatReader {
     reader = new MinimalTiffReader();
     reader.setId(firstFile);
     core.clear();
-    core.add(reader.getCoreMetadataList().get(0));
+    core.add(new CoreMetadata(reader.getCoreMetadataList().get(0)));
 
     core.get(0).dimensionOrder = "XYCZT";
     core.get(0).sizeZ = (maxSizeZ - minSizeZ) + 1;
@@ -570,7 +570,7 @@ public class CV7000Reader extends FormatReader {
       }
       else if (qName.equals("bts:MeasurementChannel")) {
         Channel c = new Channel();
-        c.index = Integer.parseInt(attributes.getValue("bts:Ch"));
+        c.index = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
         c.xSize = Double.parseDouble(attributes.getValue("bts:HorizontalPixelDimension"));
         c.ySize = Double.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
