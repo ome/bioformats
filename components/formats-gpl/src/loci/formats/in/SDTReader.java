@@ -116,6 +116,12 @@ public class SDTReader extends FormatReader {
     this.intensity = intensity;
   }
 
+  /**
+   * Toggles whether the reader should pre-load data for increased performance.
+   */
+  public void setPreLoad(boolean preLoad) {
+    // Deprecated!! 
+  }
   
   /**
    * Gets whether the reader is combining each lifetime
