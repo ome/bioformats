@@ -72,6 +72,9 @@ public class SDTReader extends FormatReader {
   /** Whether to combine lifetime bins into single intensity image planes. */
   protected boolean intensity = false;
   
+  /** Whether to pre-load all lifetime bins for faster loading. */
+  protected boolean preLoad = true;
+  
   /*
    * Currently stored channel
    */
@@ -120,7 +123,7 @@ public class SDTReader extends FormatReader {
    * Toggles whether the reader should pre-load data for increased performance.
    */
   public void setPreLoad(boolean preLoad) {
-    // Deprecated!! 
+    this.preLoad = preLoad; 
   }
   
   /**
@@ -185,7 +188,7 @@ public class SDTReader extends FormatReader {
       planeSize = sizeX * sizeY * times * bpp;
     }
 
-    if ( !intensity) {
+    if ( preLoad && !intensity) {
       int channel = no / times;
       int timeBin = no % times;
 
@@ -365,6 +368,7 @@ public class SDTReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       // init preLoading
+      preLoad = true;
       dataStore = null;
       storedChannel = -1;
       storedSeries = -1;
