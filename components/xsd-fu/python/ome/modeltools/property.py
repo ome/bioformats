@@ -358,9 +358,18 @@ class OMEModelProperty(OMEModelEntity):
 
                 try:
                     root = self.model.schemas['ome']
-                    enum = root.find("{http://www.w3.org/2001/XMLSchema}simpleType[@name='%s']" % self.langType)
+                    enum = None
+                    for e in root.findall("{http://www.w3.org/2001/XMLSchema}simpleType"):
+                        if e.get('name') is not None and e.get('name') == self.langType:
+                            enum = e
+                            break
                     if enum is None:
-                        enum = root.find(".//{http://www.w3.org/2001/XMLSchema}attribute[@name='%s']/{http://www.w3.org/2001/XMLSchema}simpleType" % self.langType)
+                        for e in root.findall(".//{http://www.w3.org/2001/XMLSchema}attribute"):
+                            if e.get('name') is not None and e.get('name') == self.langType:
+                                e2 = e.find('{http://www.w3.org/2001/XMLSchema}simpleType')
+                                if e2 is not None:
+                                    enum = e2
+                                    break
                     for value in enum.findall(".//{http://www.w3.org/2001/XMLSchema}enumeration"):
                         symbol = value.attrib['value']
                         props = value.find(".//xsdfu/enum")
@@ -383,10 +392,12 @@ class OMEModelProperty(OMEModelEntity):
 
                 try:
                     root = self.model.schemas['ome']
-                    for enum in root.findall("{http://www.w3.org/2001/XMLSchema}simpleType[@name='%s']//{http://www.w3.org/2001/XMLSchema}enumeration" % self.langType):
-                        symbol = enum.attrib['value']
-                        doc = enum.find(".//{http://www.w3.org/2001/XMLSchema}documentation")
-                        self.enumDocs[symbol] = doc.text
+                    for e in root.findall("{http://www.w3.org/2001/XMLSchema}simpleType"):
+                        if e.get('name') is not None and e.get('name') == self.langType:
+                            for e2 in e.findall('.//{http://www.w3.org/2001/XMLSchema}enumeration'):
+                                symbol = e2.attrib['value']
+                                doc = e2.find(".//{http://www.w3.org/2001/XMLSchema}documentation")
+                                self.enumDocs[symbol] = doc.text
                 except AttributeError:
                     pass
 
