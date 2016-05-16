@@ -49,6 +49,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 
 /**
@@ -58,6 +60,8 @@ import org.xml.sax.Attributes;
 public class CV7000Reader extends FormatReader {
 
   // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CV7000Reader.class);
 
   private static final String MEASUREMENT_FILE = "MeasurementData.mlf";
   private static final String MEASUREMENT_DETAIL = "MeasurementDetail.mrf";
@@ -490,19 +494,25 @@ public class CV7000Reader extends FormatReader {
     {
       currentValue.setLength(0);
 
-      if (qName.equals("bts:MeasurementRecord")) {
-        Plane p = new Plane();
-        p.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
-        p.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
-        p.timepoint = Integer.parseInt(attributes.getValue("bts:TimePoint")) - 1;
-        p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
-        p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
-        p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
-        p.xpos = Double.parseDouble(attributes.getValue("bts:X"));
-        p.ypos = Double.parseDouble(attributes.getValue("bts:Y"));
-        p.zpos = Double.parseDouble(attributes.getValue("bts:Z"));
-        p.timestamp = attributes.getValue("bts:Time");
-        planes.add(p);
+      try {
+        if (qName.equals("bts:MeasurementRecord")) {
+          Plane p = new Plane();
+          p.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
+          p.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
+          p.timepoint = Integer.parseInt(attributes.getValue("bts:TimePoint")) - 1;
+          p.field = Integer.parseInt(attributes.getValue("bts:FieldIndex")) - 1;
+          p.z = Integer.parseInt(attributes.getValue("bts:ZIndex")) - 1;
+          p.channel = Integer.parseInt(attributes.getValue("bts:Ch")) - 1;
+          p.xpos = Double.parseDouble(attributes.getValue("bts:X"));
+          p.ypos = Double.parseDouble(attributes.getValue("bts:Y"));
+          p.zpos = Double.parseDouble(attributes.getValue("bts:Z"));
+          p.timestamp = attributes.getValue("bts:Time");
+          planes.add(p);
+        }
+      }
+      catch (RuntimeException e) {
+        LOGGER.error("Error parsing attributes: {}", attributes);
+        throw e;
       }
     }
 
