@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import loci.common.DataTools;
@@ -78,6 +79,7 @@ public class CV7000Reader extends FormatReader {
   private String detailPath;
   private String measurementPath;
   private ArrayList<Plane> planeData;
+  private int[][] reversePlaneLookup;
   private ArrayList<Channel> channels;
   private int fields;
   private int realRows, realCols;
@@ -120,7 +122,7 @@ public class CV7000Reader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    ArrayList<String> files = new ArrayList<String>();
+    HashSet<String> files = new HashSet<String>();
     files.add(currentId);
     files.add(measurementPath);
     if (detailPath != null) {
@@ -130,8 +132,9 @@ public class CV7000Reader extends FormatReader {
       files.add(wppPath);
     }
     if (!noPixels && planeData != null) {
-      for (Plane p : planeData) {
-        if (p != null && p.file != null && !files.contains(p.file)) {
+      for (int index : reversePlaneLookup[getSeries()]) {
+        Plane p = planeData.get(index);
+        if (p != null && p.file != null) {
           files.add(p.file);
         }
       }
@@ -139,14 +142,13 @@ public class CV7000Reader extends FormatReader {
     if (!noPixels && channels != null) {
       for (Channel c : channels) {
         if (c != null && c.correctionFile != null) {
-          files.add(new Location(parent, c.correctionFile).getAbsolutePath());
+          files.add(c.correctionFile);
         }
       }
     }
     for (String file : allFiles) {
-      String path = new Location(parent, file).getAbsolutePath();
-      if (!files.contains(path) && (!noPixels || !checkSuffix(path, "tif"))) {
-        files.add(path);
+      if (!checkSuffix(file, "tif")) {
+        files.add(file);
       }
     }
     return files.toArray(new String[files.size()]);
@@ -171,6 +173,7 @@ public class CV7000Reader extends FormatReader {
       channels = null;
       startTime = null;
       endTime = null;
+      reversePlaneLookup = null;
     }
   }
 
@@ -202,6 +205,9 @@ public class CV7000Reader extends FormatReader {
 
     parent = new Location(id).getAbsoluteFile().getParentFile();
     allFiles = parent.list(true);
+    for (int i=0; i<allFiles.length; i++) {
+      allFiles[i] = new Location(parent, allFiles[i]).getAbsolutePath();
+    }
     Location measurementData = new Location(parent, MEASUREMENT_FILE);
 
     if (!measurementData.exists()) {
@@ -299,11 +305,14 @@ public class CV7000Reader extends FormatReader {
 
     int[] seriesLengths = new int[] {fields, realCols, realRows};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
-    for (Plane p : planeData) {
+    reversePlaneLookup = new int[getSeriesCount()][getImageCount()];
+    for (int i=0; i<planeData.size(); i++) {
+      Plane p = planeData.get(i);
       p.series = FormatTools.positionToRaster(seriesLengths,
         new int[] {p.field, p.column - minCols, p.row - minRows});
       p.no = FormatTools.positionToRaster(planeLengths,
         new int[] {p.channel - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
+      reversePlaneLookup[p.series][p.no] = i;
     }
 
     // populate the MetadataStore
@@ -379,6 +388,10 @@ public class CV7000Reader extends FormatReader {
             }
             Channel channel = null;
             for (Channel ch : channels) {
+              if (i == 0) {
+                ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
+              }
+
               if (ch.index == p.channel) {
                 channel = ch;
                 break;
@@ -422,12 +435,11 @@ public class CV7000Reader extends FormatReader {
   }
 
   private Plane lookupPlane(int series, int no) {
-    for (Plane p : planeData) {
-      if (p != null && p.series == series && p.no == no) {
-        return p;
-      }
+    int index = reversePlaneLookup[series][no];
+    if (index < 0 || index >= planeData.size()) {
+      return null;
     }
-    return null;
+    return planeData.get(index);
   }
 
   // -- Helper classes --
