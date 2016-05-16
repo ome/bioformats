@@ -517,7 +517,7 @@ public class CV7000Reader extends FormatReader {
           Map<String, String> attributeMap = new HashMap<String, String>();
           for (int i = 0; i < attributes.getLength(); i++) {
             attributeMap.put(
-                attributes.getLocalName(i), attributes.getValue(i));
+                attributes.getQName(i), attributes.getValue(i));
           }
           LOGGER.error("Error parsing attributes: {}", attributeMap, e);
         }
