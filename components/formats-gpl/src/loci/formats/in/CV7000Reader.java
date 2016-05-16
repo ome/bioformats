@@ -475,6 +475,7 @@ public class CV7000Reader extends FormatReader {
 
   class MeasurementDataHandler extends BaseHandler {
     private StringBuffer currentValue = new StringBuffer();
+    private String btsType;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
     private String parentDir;
 
@@ -502,8 +503,8 @@ public class CV7000Reader extends FormatReader {
       currentValue.setLength(0);
 
       try {
-        if (qName.equals("bts:MeasurementRecord")
-            && attributes.getValue("bts:Type").equals("IMG")) {
+        btsType = attributes.getValue("bts:Type");
+        if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG")) {
           // When the instrument is recording an acquisition error the "type"
           // will be "ERR" so we can skip those.
           Plane p = new Plane();
@@ -536,7 +537,7 @@ public class CV7000Reader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
-      if (qName.equals("bts:MeasurementRecord")) {
+      if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG")) {
         planes.get(planes.size() - 1).file = new Location(parentDir, value).getAbsolutePath();
       }
     }
