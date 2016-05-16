@@ -372,6 +372,11 @@ public class CV7000Reader extends FormatReader {
         if (channels != null) {
           for (int c=0; c<getSizeC(); c++) {
             Plane p = lookupPlane(i, c);
+            if (p == null) {
+              // There was likely an error during acquisition for this
+              // particular plane.  Skip it.
+              continue;
+            }
             Channel channel = null;
             for (Channel ch : channels) {
               if (ch.index == p.channel) {
