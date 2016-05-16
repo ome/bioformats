@@ -247,53 +247,7 @@ public class SDTReader extends FormatReader {
       storedSeries = getSeries();
       // dataStore loaded
 
-      /**********************************************
-      if (chanStore == null || storedChannel != channel ||
-        storedSeries != getSeries() )
-      {
-        // The whole plane (all timebins) is  copied into storage
-        // to allow different sub-plane sizes to be used for different timebins
-        chanStore = new byte[planeSize];
-        in.seek(info.allBlockOffsets[getSeries()]);
-
-        ZipInputStream codec = null;
-        String check = in.readString(2);
-        in.seek(in.getFilePointer() - 2);
-        if (check.equals("PK")) {
-          codec = new ZipInputStream(in);
-          codec.getNextEntry();
-          codec.skip(channel * planeSize);
-        }
-        else {
-          in.skipBytes(channel * planeSize);
-        }
-
-        for (int row = 0; row < sizeY; row++) {
-          readPixels(rowBuf, in, codec, 0);
-
-          int input = 0;
-          for (int col = 0; col < paddedWidth; col++) {
-            // set output to first pixel of this row in 2D plane
-            // corresponding to zeroth timeBin
-            int output = (row * paddedWidth + col) * bpp;
-
-            for (int t = 0; t < times; t++)  {
-              for (int bb = 0; bb < bpp; bb++) {
-                chanStore[output + bb] = rowBuf[input + bb];
-              }
-              output += binSize;
-              input += bpp;
-            }
-          }
-        }
-
-        storedChannel = channel;
-        storedSeries = getSeries();
-      }  // chanStore loaded
-       ************************************************************************/
-
       // copy 2D plane  from dataStore  into buf
-
       int iLineSize = paddedWidth * bpp;
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
