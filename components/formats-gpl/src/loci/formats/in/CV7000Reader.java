@@ -28,6 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -511,7 +513,14 @@ public class CV7000Reader extends FormatReader {
         }
       }
       catch (RuntimeException e) {
-        LOGGER.error("Error parsing attributes: {}", attributes);
+        if (LOGGER.isErrorEnabled()) {
+          Map<String, String> attributeMap = new HashMap<String, String>();
+          for (int i = 0; i < attributes.getLength(); i++) {
+            attributeMap.put(
+                attributes.getLocalName(i), attributes.getValue(i));
+          }
+          LOGGER.error("Error parsing attributes: {}", attributeMap, e);
+        }
         throw e;
       }
     }
