@@ -155,13 +155,6 @@
       </includes>
       <filtering>true</filtering>
     </resource>
-    <resource>
-      <directory>${project.basedir}</directory>
-      <includes>
-        <include>cppwrap/*.cpp</include>
-      </includes>
-      <filtering>true</filtering>
-    </resource>
     </resources>
 
     <plugins>
@@ -175,22 +168,6 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>loci.maven.plugins</groupId>
-        <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.1.1</version>
-        <configuration>
-          <headerFile>cppwrap/header.txt</headerFile>
-          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
-          <coreFile>cppwrap/core.txt</coreFile>
-          <sourceDir>target/classes/cppwrap</sourceDir>
-          <libraries>
-            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:formats-api:jar:${project.version}</library>
-            <library>${project.groupId}:formats-common:jar:${project.version}</library>
-          </libraries>
         </configuration>
       </plugin>
       <plugin>
