@@ -497,7 +497,10 @@ public class CV7000Reader extends FormatReader {
       currentValue.setLength(0);
 
       try {
-        if (qName.equals("bts:MeasurementRecord")) {
+        if (qName.equals("bts:MeasurementRecord")
+            && attributes.getValue("bts:Type").equals("IMG")) {
+          // When the instrument is recording an acquisition error the "type"
+          // will be "ERR" so we can skip those.
           Plane p = new Plane();
           p.row = Integer.parseInt(attributes.getValue("bts:Row")) - 1;
           p.column = Integer.parseInt(attributes.getValue("bts:Column")) - 1;
