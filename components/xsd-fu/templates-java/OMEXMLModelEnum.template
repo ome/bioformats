@@ -63,11 +63,12 @@ public enum ${klass.langType} implements Enumeration
 {
 {% for value in klass.possibleValues %}\
 {% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
+  /** ${klass.enumDocumentation[value]} */
 {% if value == klass.possibleValues[-1] %}\
-  ${klass.enumProperties[value].enum}("${value}") /** ${klass.enumDocumentation[value]} */;
+  ${klass.enumProperties[value].enum}("${value}");
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
-  ${klass.enumProperties[value].enum}("${value}") /** ${klass.enumDocumentation[value]} */,
+  ${klass.enumProperties[value].enum}("${value}"),
 {% end %}\
 {% end %}\
 {% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}\
