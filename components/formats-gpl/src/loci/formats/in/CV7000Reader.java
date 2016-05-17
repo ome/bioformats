@@ -389,8 +389,10 @@ public class CV7000Reader extends FormatReader {
             }
             Channel channel = null;
             for (Channel ch : channels) {
-              if (i == 0) {
-                ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
+              if (i == 0 && ch.correctionFile != null) {
+                if (new Location(ch.correctionFile).getParent() == null) {
+                  ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
+                }
               }
 
               if (ch.index == p.channel) {
@@ -550,7 +552,8 @@ public class CV7000Reader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
-      if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG")) {
+      if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG") &&
+        value.trim().length() > 0) {
         planes.get(planes.size() - 1).file = new Location(parentDir, value).getAbsolutePath();
       }
     }
@@ -567,6 +570,9 @@ public class CV7000Reader extends FormatReader {
     {
       if (qName.equals("bts:MeasurementSamplePlate")) {
         wppPath = attributes.getValue("bts:WellPlateProductFileName");
+        if (wppPath != null && wppPath.trim().length() == 0) {
+          wppPath = null;
+        }
       }
       else if (qName.equals("bts:MeasurementChannel")) {
         Channel c = new Channel();
@@ -575,6 +581,9 @@ public class CV7000Reader extends FormatReader {
         c.ySize = Double.parseDouble(attributes.getValue("bts:VerticalPixelDimension"));
         c.cameraNumber = Integer.parseInt(attributes.getValue("bts:CameraNumber"));
         c.correctionFile = attributes.getValue("bts:ShadingCorrectionSource");
+        if (c.correctionFile != null && c.correctionFile.trim().length() == 0) {
+          c.correctionFile = null;
+        }
         channels.add(c);
       }
       else if (qName.equals("bts:MeasurementDetail")) {
