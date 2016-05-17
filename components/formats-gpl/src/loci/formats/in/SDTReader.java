@@ -71,10 +71,10 @@ public class SDTReader extends FormatReader {
 
   /** Whether to combine lifetime bins into single intensity image planes. */
   protected boolean intensity = false;
-  
+
   /** Whether to pre-load all lifetime bins for faster loading. */
   protected boolean preLoad = true;
-  
+
   /*
    * Currently stored channel
    */
@@ -84,7 +84,7 @@ public class SDTReader extends FormatReader {
    * Currently stored series
    */
   protected int storedSeries = -1;
-  
+
   /*
    * Array to hold re-ordered data for all the timeBins
    */
@@ -94,12 +94,12 @@ public class SDTReader extends FormatReader {
    * Block of time bins currently stored for faster loading.
    */
   protected int currentBlock;
-  
+
   /**
    * No of timeBins pre-loaded as a block
   */
-  protected int blockLength ;  
-  
+  protected int blockLength ;
+
   // -- Constructor --
 
   /** Constructs a new SDT reader. */
@@ -123,9 +123,9 @@ public class SDTReader extends FormatReader {
    * Toggles whether the reader should pre-load data for increased performance.
    */
   public void setPreLoad(boolean preLoad) {
-    this.preLoad = preLoad; 
+    this.preLoad = preLoad;
   }
-  
+
   /**
    * Gets whether the reader is combining each lifetime
    * histogram into a summed intensity image plane.
@@ -188,16 +188,16 @@ public class SDTReader extends FormatReader {
       planeSize = sizeX * sizeY * times * bpp;
     }
 
-    if ( preLoad && !intensity) {
+    if (preLoad && !intensity) {
       int channel = no / times;
       int timeBin = no % times;
 
       byte[] rowBuf = new byte[bpp * times * paddedWidth];
 
       int binSize = paddedWidth * sizeY  * bpp;
-      
-      int preBlockSize = sizeX * sizeY * blockLength * bpp;
-      
+
+      int preBlockSize = paddedWidth * sizeY * blockLength * bpp;
+
       // pre-load data for performance
       if (dataStore == null) {
         dataStore = new byte[preBlockSize];
@@ -234,14 +234,14 @@ public class SDTReader extends FormatReader {
 
         for (int row = 0; row < sizeY; row++) {
           readPixels(rowBuf, in, codec, 0);
-          
+
           for (int col = 0; col < paddedWidth; col++) {
             // set output to first pixel of this row in 2D plane
             // corresponding to zeroth timeBin
             int output = (row * paddedWidth + col) * bpp;
             int input = ((col * timeBins) + (currentBlock * blockLength)) * bpp;
             // copy subset of decay into buffer.
-            
+
             for (int t = 0; t < storeLength; t++) {
               for (int bb = 0; bb < bpp; bb++) {
                 dataStore[output + bb] = rowBuf[input + bb];
@@ -261,7 +261,7 @@ public class SDTReader extends FormatReader {
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
       int binInStore = timeBin - (currentBlock * blockLength);
-      
+
       int input = (binSize * binInStore) + (y * iLineSize) + (x * bpp);
       int output = 0;
 
@@ -297,7 +297,7 @@ public class SDTReader extends FormatReader {
       return buf;
     }
     else {   // intensity mode so no pre-loading
-      
+
       int channel = intensity ? no : no / times;
       int timeBin = intensity ? 0 : no % times;
 
@@ -421,7 +421,7 @@ public class SDTReader extends FormatReader {
     m.indexed = false;
     m.falseColor = false;
     m.metadataComplete = true;
-      
+
 
     if (intensity) {
       m.moduloT.parentType = FormatTools.SPECTRA;
@@ -452,7 +452,7 @@ public class SDTReader extends FormatReader {
         }
       }
     }
-      
+
     int sizeThreshold = 512 * 512 * 512;  // Arbitrarily chosen size limit for buffer
     blockLength = 2048;   //default No of bins in buffer
 
