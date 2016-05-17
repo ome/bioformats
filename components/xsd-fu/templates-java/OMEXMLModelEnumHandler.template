@@ -91,15 +91,14 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
 {% for value in klass.possibleValues %}\
     p.put("^\\\s*${value}\\\s*", "${value}");
 {% end %}\
-    // BEGIN custom enumeration mappings
 {% for value in klass.possibleValues %}\
 {% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('compatregex', None) is not None %}\
-    p.put("${klass.enumProperties[value].compatregex}", "${value}"); // From schema
+    p.put("${klass.enumProperties[value].compatregex}", "${value}"); // Custom mapping from schema
 {% end %}\
 {% end %}\
 {% if klass.langType in config %}\
 {% for k, v in config[klass.langType].items() %}\
-    p.put("${k}", "${v}"); // From enum_handler.cfg
+    p.put("${k}", "${v}"); // Custom mapping from enum_handler.cfg
 {% end %}\
 {% end %}\
     return p;
