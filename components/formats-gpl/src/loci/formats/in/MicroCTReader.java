@@ -41,6 +41,10 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -292,14 +296,16 @@ public class MicroCTReader extends FormatReader {
     }
 
     if (physicalSize != null) {
-      store.setPixelsPhysicalSizeX(physicalSize, 0);
-      store.setPixelsPhysicalSizeY(physicalSize, 0);
-      store.setPixelsPhysicalSizeZ(physicalSize, 0);
+      Length size = FormatTools.createLength(physicalSize, UNITS.MICROM);
+      store.setPixelsPhysicalSizeX(size, 0);
+      store.setPixelsPhysicalSizeY(size, 0);
+      store.setPixelsPhysicalSizeZ(size, 0);
     }
 
     if (exposureTime != null) {
+      Time exposureSeconds = new Time(exposureTime, UNITS.S);
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(exposureTime, 0, i);
+        store.setPlaneExposureTime(exposureSeconds, 0, i);
       }
     }
 
