@@ -307,7 +307,7 @@ class OMEModel(object):
                 prop.isInjected = ref['isInjected']
                 o.properties[key] = prop
 
-    def process(klass, contentHandler, opts):
+    def process(klass, contentHandler, schemas, opts):
         """
         Main process entry point. All instantiations of this class should be
         made through this class method unless you really know what you are
@@ -315,6 +315,7 @@ class OMEModel(object):
         """
         elements = contentHandler.getRoot().getChildren()
         model = klass(opts)
+        model.schemas = schemas
         model.populateSubstitutionGroups(elements)
         model.topLevelSimpleTypes = contentHandler.topLevelSimpleTypes
         model.processTree(elements)

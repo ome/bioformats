@@ -607,7 +607,7 @@ public class Configuration {
         try {
           Time deltaT = retrieve.getPlaneDeltaT(series, p);
           if (deltaT != null) {
-            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {

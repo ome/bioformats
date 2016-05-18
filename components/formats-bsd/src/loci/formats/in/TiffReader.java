@@ -285,7 +285,7 @@ public class TiffReader extends BaseTiffReader {
       else if (token.startsWith("finterval=")) {
         Double valueDouble = parseDouble(value);
         if (valueDouble != null) {
-          timeIncrement = new Time(valueDouble, UNITS.S);
+          timeIncrement = new Time(valueDouble, UNITS.SECOND);
           put("Frame Interval", timeIncrement);
         }
       }

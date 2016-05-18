@@ -240,7 +240,7 @@ public class AliconaReader extends FormatReader {
       // used when the dataset was acquired, i.e. detector settings.
       if (voltage != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltage), UNITS.V), 0, 0);
+                new ElectricPotential(new Double(voltage), UNITS.VOLT), 0, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -259,7 +259,7 @@ public class AliconaReader extends FormatReader {
       }
 
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
       }
 
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
@@ -276,8 +276,8 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX);
         double pixelSizeY = Double.parseDouble(pntY);
 
-        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, UNITS.METRE);
-        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, UNITS.METRE);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, UNITS.METER);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, UNITS.METER);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

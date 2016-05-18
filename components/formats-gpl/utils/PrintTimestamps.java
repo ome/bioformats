@@ -78,7 +78,7 @@ public class PrintTimestamps {
       System.out.println("\tCreation time (in ms since epoch) = " +
         DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
     }
-    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.S).doubleValue());
+    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.SECOND).doubleValue());
   }
 
   /** Outputs timing details per timepoint. */
@@ -95,7 +95,7 @@ public class PrintTimestamps {
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       if (z == 0 && c == 0) {
-        System.out.println("\tTimepoint #" + t + " = " + deltaT.value(UNITS.S).doubleValue() + " s");
+        System.out.println("\tTimepoint #" + t + " = " + deltaT.value(UNITS.SECOND).doubleValue() + " s");
       }
     }
   }
@@ -121,7 +121,7 @@ public class PrintTimestamps {
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       System.out.println("\tZ " + z + ", C " + c + ", T " + t + " = " +
-        deltaT.value(UNITS.S).doubleValue() + " s");
+        deltaT.value(UNITS.SECOND).doubleValue() + " s");
     }
   }
 

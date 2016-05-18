@@ -319,7 +319,7 @@ public class FileWriteSPW {
                 meta.setPlaneTheT(new NonNegativeInteger(t), series, t);
                 meta.setPlaneTheC(new NonNegativeInteger(0), series, t);
                 meta.setPlaneTheZ(new NonNegativeInteger(0), series, t);
-                meta.setPlaneExposureTime(new Time(exposureTimes[t],ome.units.UNITS.S), series, t);
+                meta.setPlaneExposureTime(new Time(exposureTimes[t],ome.units.UNITS.SECOND), series, t);
               } 
             }
             

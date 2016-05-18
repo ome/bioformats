@@ -37,30 +37,36 @@ class OMEModelProperty(OMEModelEntity):
         self.isInjected = False
         self._isReference = False
         self.hasBaseAttribute = False
+        self.enumProps = None
+        self.enumDocs = None
 
         try:
+            root = None
             try:
                 root = ElementTree.fromstring(delegate.appinfo)
             except:
-                logging.error('Exception while parsing %r' % delegate.appinfo)
-                raise
-            self.plural = root.findtext('plural')
-            if root.find('manytomany') is not None:
-                self.manyToMany = True
-            if root.find('parentordered') is not None:
-                self.isParentOrdered = True
-            if root.find('childordered') is not None:
-                self.isChildOrdered = True
-            if root.find('ordered') is not None:
-                self.isOrdered = True
-            if root.find('unique') is not None:
-                self.isUnique = True
-            if root.find('immutable') is not None:
-                self.isImmutable = True
-            if root.find('injected') is not None:
-                self.isInjected = True
-            if root.find('global') is not None:
-                self._isGlobal = True
+                # Can occur if there's an error, or we're processing
+                # garbage, which occurs when generateds mangles the
+                # input for enums with appinfo per enum.
+                logging.debug('Exception while parsing %r' % delegate.appinfo)
+            if root is not None:
+                self.plural = root.findtext('plural')
+                if root.find('manytomany') is not None:
+                    self.manyToMany = True
+                if root.find('parentordered') is not None:
+                    self.isParentOrdered = True
+                if root.find('childordered') is not None:
+                    self.isChildOrdered = True
+                if root.find('ordered') is not None:
+                    self.isOrdered = True
+                if root.find('unique') is not None:
+                    self.isUnique = True
+                if root.find('immutable') is not None:
+                    self.isImmutable = True
+                if root.find('injected') is not None:
+                    self.isInjected = True
+                if root.find('global') is not None:
+                    self._isGlobal = True
         except AttributeError:
             pass
 
@@ -345,6 +351,61 @@ class OMEModelProperty(OMEModelEntity):
         _get_unitsType,
         doc="""The property's units type.""")
 
+    def _get_enumProperties(self):
+        if self.isEnumeration:
+            if self.enumProps is None:
+                self.enumProps = dict()
+
+                try:
+                    root = self.model.schemas['ome']
+                    enum = None
+                    for e in root.findall("{http://www.w3.org/2001/XMLSchema}simpleType"):
+                        if e.get('name') is not None and e.get('name') == self.langType:
+                            enum = e
+                            break
+                    if enum is None:
+                        for e in root.findall(".//{http://www.w3.org/2001/XMLSchema}attribute"):
+                            if e.get('name') is not None and e.get('name') == self.langType:
+                                e2 = e.find('{http://www.w3.org/2001/XMLSchema}simpleType')
+                                if e2 is not None:
+                                    enum = e2
+                                    break
+                    for value in enum.findall(".//{http://www.w3.org/2001/XMLSchema}enumeration"):
+                        symbol = value.attrib['value']
+                        props = value.find(".//xsdfu/enum")
+                        if isinstance(self.model.opts.lang, language.CXX) and getattr(props.attrib, 'cppenum', None) is not None:
+                            props.attrib.enum = props.attrib.cppenum
+                        if isinstance(self.model.opts.lang, language.Java) and getattr(props.attrib, 'javaenum', None) is not None:
+                            props.attrib.enum = props.attrib.javaenum
+                        self.enumProps[symbol] = props.attrib
+                except AttributeError:
+                    pass
+        return self.enumProps
+    enumProperties = property(
+        _get_enumProperties,
+        doc="""The property's enumeration properties.""")
+
+    def _get_enumDocumentation(self):
+        if self.isEnumeration:
+            if self.enumDocs is None:
+                self.enumDocs = dict()
+
+                try:
+                    root = self.model.schemas['ome']
+                    for e in root.findall("{http://www.w3.org/2001/XMLSchema}simpleType"):
+                        if e.get('name') is not None and e.get('name') == self.langType:
+                            for e2 in e.findall('.//{http://www.w3.org/2001/XMLSchema}enumeration'):
+                                symbol = e2.attrib['value']
+                                doc = e2.find(".//{http://www.w3.org/2001/XMLSchema}documentation")
+                                self.enumDocs[symbol] = doc.text
+                except AttributeError:
+                    pass
+
+        return self.enumDocs
+    enumDocumentation = property(
+        _get_enumDocumentation,
+        doc="""The property's enumeration documentation.""")
+
     def _get_isReference(self):
         o = self.model.getObjectByName(self.type)
         if o is not None:
@@ -438,6 +499,18 @@ class OMEModelProperty(OMEModelEntity):
             if (self.model.opts.lang.hasFundamentalType(self.langType) and
                     self.minOccurs > 0):
                 itype = self.langTypeNS
+            elif self.hasUnitsCompanion:
+                qtype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.langTypeNS)
+                if self.minOccurs == 0:
+                    if self.maxOccurs == 1:
+                        itype = "const ome::compat::shared_ptr<%s>&" % qtype
+                    else:
+                        itype = "const std::vector<%s>&" % qtype
+                elif self.minOccurs == 0 and self.maxOccurs == 1:
+                    itype = "const %s&" % qtype
+                else:
+                    itype = "const std::vector<%s>&" % qtype
             elif self.isEnumeration:
                 if self.minOccurs == 0:
                     itype = "ome::compat::shared_ptr<%s>&" % ns_sep
@@ -480,6 +553,18 @@ class OMEModelProperty(OMEModelEntity):
             if (self.model.opts.lang.hasFundamentalType(self.langType) and
                     self.minOccurs > 0):
                 itype = {' const': self.langTypeNS}
+            elif self.hasUnitsCompanion:
+                qtype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.langTypeNS)
+                if self.minOccurs == 0:
+                    if self.maxOccurs == 1:
+                        itype = "ome::compat::shared_ptr<%s>" % qtype
+                    else:
+                        itype = "std::vector<%s>" % qtype
+                elif self.minOccurs == 0 and self.maxOccurs == 1:
+                    qtype = itype
+                else:
+                    itype = "std::vector<%s>" % qtype
             elif self.isEnumeration:
                 if self.minOccurs == 0:
                     itype = {' const': "const ome::compat::shared_ptr<%s>"
@@ -711,8 +796,17 @@ class OMEModelProperty(OMEModelEntity):
             if ns_sep.startswith('::'):
                 ns_sep = ' ' + ns_sep
             if self.hasUnitsCompanion:
-                itype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.instanceVariableType)
+                qtype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.langTypeNS)
+                if self.minOccurs == 0:
+                    if self.maxOccurs == 1:
+                        itype = "ome::compat::shared_ptr<%s>" % qtype
+                    else:
+                        itype = "std::vector<%s>" % qtype
+                elif self.minOccurs == 0 and self.maxOccurs == 1:
+                    qtype = itype
+                else:
+                    itype = "std::vector<%s>" % qtype
             elif self.isReference and self.maxOccurs > 1:
                 itype = ("OMEModelObject::indexed_container"
                          "<%s, ome::compat::weak_ptr>::type") % ns_sep

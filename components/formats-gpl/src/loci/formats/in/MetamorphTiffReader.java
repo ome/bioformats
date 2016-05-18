@@ -463,14 +463,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
             if (t < timestamps.size()) {
               String stamp = timestamps.get(t);
               long ms = DateTools.getTime(stamp, DATE_FORMAT, ".");
-              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
+              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.SECOND), s, image);
             }
             int exposureIndex = image;
             if (dualCamera) {
               exposureIndex /= getEffectiveSizeC();
             }
             if (exposureIndex < exposures.size() && exposures.get(exposureIndex) != null) {
-              store.setPlaneExposureTime(new Time(exposures.get(exposureIndex), UNITS.S), s, image);
+              store.setPlaneExposureTime(new Time(exposures.get(exposureIndex), UNITS.SECOND), s, image);
             }
             if (s < stageX.size()) {
               store.setPlanePositionX(stageX.get(s), s, image);
@@ -483,7 +483,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(
-                new Temperature(handler.getTemperature(), UNITS.DEGREEC), s);
+                new Temperature(handler.getTemperature(), UNITS.CELSIUS), s);
 
         Length sizeX =
           FormatTools.getPhysicalSizeX(handler.getPixelSizeX());

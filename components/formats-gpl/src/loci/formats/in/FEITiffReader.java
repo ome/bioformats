@@ -321,9 +321,9 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelName("", 0);
 
       boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
-      Unit<Length> unit = UNITS.MICROM;
+      Unit<Length> unit = UNITS.MICROMETER;
       if (helios) {
-        unit = UNITS.METRE;
+        unit = UNITS.METER;
       }
       Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX, unit);
       Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY, unit);
@@ -335,7 +335,7 @@ public class FEITiffReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
       if (timeIncrement != null) {
-        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.SECOND), 0);
       }
     }
   }

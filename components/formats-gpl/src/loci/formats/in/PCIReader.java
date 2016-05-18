@@ -419,13 +419,13 @@ public class PCIReader extends FormatReader {
         }
         Double timestamp = timestamps.get(i);
         if (timestamp != null) {
-          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), 0, i);
         }
         if (i == 2) {
           Double first = timestamps.get(1);
           Double increment = timestamp - first;
           if (increment != null) {
-            store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+            store.setPixelsTimeIncrement(new Time(increment, UNITS.SECOND), 0);
           }
         }
       }

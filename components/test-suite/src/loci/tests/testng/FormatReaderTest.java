@@ -1140,7 +1140,7 @@ public class FormatReaderTest {
           return;
         }
         if (expectedDeltaT != null) {
-          Double seconds = deltaT.value(UNITS.S).doubleValue();
+          Double seconds = deltaT.value(UNITS.SECOND).doubleValue();
           if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
             result(testName, false, "series " + i + ", plane " + p +
               " (expected " + expectedDeltaT + ", actual " + seconds + ")");

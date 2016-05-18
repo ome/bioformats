@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import os
 import sys
 import keyword
 import logging
@@ -9,6 +10,7 @@ import logging
 import generateDS.generateDS
 from ome.modeltools.exceptions import ModelProcessingError
 from xml import sax
+from xml.etree import ElementTree
 from ome.modeltools.model import OMEModel
 
 XschemaHandler = generateDS.generateDS.XschemaHandler
@@ -24,6 +26,8 @@ def parse(opts):
     filenames = opts.args
     namespace = opts.namespace
 
+    schemas = dict()
+
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
     generateDS.generateDS.XsdNameSpace = namespace
@@ -35,12 +39,17 @@ def parse(opts):
     for filename in filenames:
         parser.parse(filename)
 
+        schemaname = os.path.split(filename)[1]
+        schemaname = os.path.splitext(schemaname)[0]
+        schema = ElementTree.parse(filename)
+        schemas[schemaname] = schema
+
     root = ch.getRoot()
     if root is None:
         raise ModelProcessingError(
             "No model objects found, have you set the correct namespace?")
     root.annotate()
-    return OMEModel.process(ch, opts)
+    return OMEModel.process(ch, schemas, opts)
 
 
 def reset():

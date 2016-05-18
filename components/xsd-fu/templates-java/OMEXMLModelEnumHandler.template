@@ -91,10 +91,14 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
 {% for value in klass.possibleValues %}\
     p.put("^\\\s*${value}\\\s*", "${value}");
 {% end %}\
+{% for value in klass.possibleValues %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('compatregex', None) is not None %}\
+    p.put("${klass.enumProperties[value].compatregex}", "${value}"); // Custom mapping from schema
+{% end %}\
+{% end %}\
 {% if klass.langType in config %}\
-    // BEGIN custom enumeration mappings
 {% for k, v in config[klass.langType].items() %}\
-    p.put("${k}", "${v}");
+    p.put("${k}", "${v}"); // Custom mapping from enum_handler.cfg
 {% end %}\
 {% end %}\
     return p;
@@ -145,10 +149,18 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     // begin: should be lookup in template
     theResult = ${klass.model.opts.lang.typeToDefault(klass.langType)};
 {% for value in klass.possibleValues %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
+    if (${klass.langType}.${klass.enumProperties[value].enum}.equals(inModelUnit))
+    {
+      theResult = UNITS.${klass.enumProperties[value].enum};
+    }
+{% end %}\
+{% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}\
     if (${klass.langType}.${enum_value_name(value, klass.isUnitsEnumeration).upper()}.equals(inModelUnit))
     {
       theResult = UNITS.${enum_value_name(value, klass.isUnitsEnumeration).upper()};
     }
+{% end %}\
 {% end %}\
     // end: should be lookup in template
     return theResult;

@@ -603,7 +603,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
-      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
+      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
       else if (key.equals("screens")) screens = intValue;
       else if (key.equals("plates")) plates = intValue;

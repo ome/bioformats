@@ -1899,7 +1899,7 @@ public class NativeND2Reader extends FormatReader {
           }
           if (stampIndex < tsT.size()) {
             double stamp = tsT.get(stampIndex).doubleValue();
-            store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+            store.setPlaneDeltaT(new Time(stamp, UNITS.SECOND), i, n);
           }
 
           int index = i * getSizeC() + coords[1];
@@ -1907,7 +1907,7 @@ public class NativeND2Reader extends FormatReader {
             index = coords[1];
           }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
-            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.SECOND), i, n);
           }
         }
       }
@@ -1986,7 +1986,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
@@ -2026,7 +2026,7 @@ public class NativeND2Reader extends FormatReader {
         }
         if (index < speed.size()) {
           store.setDetectorSettingsReadOutRate(
-                  new Frequency(speed.get(index), UNITS.HZ), i, c);
+                  new Frequency(speed.get(index), UNITS.HERTZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }
@@ -2036,7 +2036,7 @@ public class NativeND2Reader extends FormatReader {
       if (i * getSizeC() < temperature.size()) {
         Double temp = temperature.get(i * getSizeC());
         store.setImagingEnvironmentTemperature(
-                new Temperature(temp, UNITS.DEGREEC), i);
+                new Temperature(temp, UNITS.CELSIUS), i);
       }
     }
 
@@ -2044,7 +2044,7 @@ public class NativeND2Reader extends FormatReader {
     Double voltage = handler.getVoltage();
     if (voltage != null) {
       store.setDetectorSettingsVoltage(
-              new ElectricPotential(voltage, UNITS.V), 0, 0);
+              new ElectricPotential(voltage, UNITS.VOLT), 0, 0);
     }
 
     // populate Objective

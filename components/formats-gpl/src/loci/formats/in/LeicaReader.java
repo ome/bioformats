@@ -745,16 +745,16 @@ public class LeicaReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       if ((int) physicalSizes[i][4] > 0) {
-        store.setPixelsTimeIncrement(new Time(physicalSizes[i][4], UNITS.S), i);
+        store.setPixelsTimeIncrement(new Time(physicalSizes[i][4], UNITS.SECOND), i);
       }
 
       for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT, ":");
           double elapsedTime = (double) (time - firstPlane) / 1000;
-          store.setPlaneDeltaT(new Time(elapsedTime, UNITS.S), i, j);
+          store.setPlaneDeltaT(new Time(elapsedTime, UNITS.SECOND), i, j);
           if (exposureTime[i] > 0) {
-            store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.S), i, j);
+            store.setPlaneExposureTime(new Time(exposureTime[i], UNITS.SECOND), i, j);
           }
         }
       }
@@ -1560,7 +1560,7 @@ public class LeicaReader extends FormatReader {
       if (detector.active) {
         store.setDetectorOffset(detector.offset, series, nextDetector);
         store.setDetectorVoltage(
-                new ElectricPotential(detector.voltage, UNITS.V), series,
+                new ElectricPotential(detector.voltage, UNITS.VOLT), series,
                 nextDetector);
         store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
 
@@ -1625,7 +1625,7 @@ public class LeicaReader extends FormatReader {
           }
         }
         if (i < pinhole.length) {
-          store.setChannelPinholeSize(new Length(pinhole[i], UNITS.MICROM), i, channel);
+          store.setChannelPinholeSize(new Length(pinhole[i], UNITS.MICROMETER), i, channel);
         }
         if (channel < channelColor[i].length) {
           store.setChannelColor(channelColor[i][channel], i, channel);

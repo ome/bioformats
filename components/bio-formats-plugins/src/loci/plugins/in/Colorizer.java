@@ -375,7 +375,7 @@ public class Colorizer {
               Length wavelength =
                 retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
               if (wavelength != null) {
-                double wave = wavelength.value(UNITS.NM).doubleValue();
+                double wave = wavelength.value(UNITS.NANOMETER).doubleValue();
                 if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
                   color = Color.BLUE;
                 }

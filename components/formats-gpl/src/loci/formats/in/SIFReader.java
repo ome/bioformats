@@ -153,7 +153,7 @@ public class SIFReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneDeltaT(new Time(timestamp[i], UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(timestamp[i], UNITS.SECOND), 0, i);
       }
     }
   }

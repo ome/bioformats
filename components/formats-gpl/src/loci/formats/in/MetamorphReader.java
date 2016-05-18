@@ -765,7 +765,7 @@ public class MetamorphReader extends BaseTiffReader {
       store.setImageDescription("", i);
 
       store.setImagingEnvironmentTemperature(
-              new Temperature(handler.getTemperature(), UNITS.DEGREEC), i);
+              new Temperature(handler.getTemperature(), UNITS.CELSIUS), i);
 
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
@@ -851,7 +851,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(
-                  new Frequency(handler.getReadOutRate(), UNITS.HZ), i, c);
+                  new Frequency(handler.getReadOutRate(), UNITS.HERTZ), i, c);
         }
 
         if (gain == null) {
@@ -1025,10 +1025,10 @@ public class MetamorphReader extends BaseTiffReader {
           expTime = exposureTimes.get(index);
         }
         if (deltaT != null) {
-          store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, p);
+          store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), i, p);
         }
         if (expTime != null) {
-          store.setPlaneExposureTime(new Time(expTime, UNITS.S), i, p);
+          store.setPlaneExposureTime(new Time(expTime, UNITS.SECOND), i, p);
         }
 
         if (stageX != null && p < stageX.length) {

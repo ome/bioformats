@@ -135,8 +135,8 @@ public class Upgrade2011_06
         public static final String Image0Name = "6x6x1x8-swatch.tif";
         public static final String Image0AcquiredDate = "2010-02-23T12:51:30";
         public static final DimensionOrder Image0Pixels0_0DimensionOrder = DimensionOrder.XYCZT;
-        public static final Length Image0Pixels0_0PhysicalSizeX = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
-        public static final Length Image0Pixels0_0PhysicalSizeY = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
+        public static final Length Image0Pixels0_0PhysicalSizeX = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROMETER);
+        public static final Length Image0Pixels0_0PhysicalSizeY = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROMETER);
         public static final PixelType Image0Pixels0_0Type = PixelType.UINT8;
         public static final PositiveInteger Image0Pixels0_0SizeC = PositiveInteger.valueOf("3");
         public static final PositiveInteger Image0Pixels0_0SizeT = PositiveInteger.valueOf("1");
@@ -163,7 +163,7 @@ public class Upgrade2011_06
         public static final Color ROI1Shape1Fill = Color.valueOf("1");
         public static final FillRule ROI1Shape1FillRule = FillRule.NONZERO;
         public static final FontFamily ROI1Shape1FontFamily = FontFamily.SANSSERIF;
-        public static final Length ROI1Shape1FontSize = new Length(1, UNITS.PT);
+        public static final Length ROI1Shape1FontSize = new Length(1, UNITS.POINT);
         public static final FontStyle ROI1Shape1FontStyle = FontStyle.BOLD;
         public static final Marker ROI1Shape1MarkerStart = Marker.ARROW;
         public static final Marker ROI1Shape1MarkerEnd = Marker.ARROW;
