@@ -192,7 +192,11 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals("-nopix")) pixels = false;
+        if (args[i].equals(VERSION)){
+          printVersion = true;
+          return true;
+        }
+        else if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals(VERSION)) printVersion = true;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
