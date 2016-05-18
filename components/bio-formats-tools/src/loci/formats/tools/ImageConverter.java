@@ -294,9 +294,9 @@ public final class ImageConverter {
     }
 
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      System.out.println("Version: " + FormatTools.VERSION);
+      System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
+      System.out.println("Build date: " + FormatTools.DATE);
       return true;
     }
 
