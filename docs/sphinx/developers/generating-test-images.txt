@@ -87,6 +87,8 @@ Regions
 
 To generate a fake file containing regions of interest:
 
+::
+
     touch "regions&points=10.fake"
     touch "regions&ellipses=20.fake"
     touch "regions&rectangles=5&lines=25.fake"
