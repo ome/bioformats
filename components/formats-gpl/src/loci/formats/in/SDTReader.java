@@ -196,7 +196,7 @@ public class SDTReader extends FormatReader {
 
       int binSize = paddedWidth * sizeY  * bpp;
 
-      int preBlockSize = paddedWidth * sizeY * blockLength * bpp;
+      int preBlockSize = binSize * blockLength;
 
       // pre-load data for performance
       if (dataStore == null) {
@@ -226,8 +226,8 @@ public class SDTReader extends FormatReader {
 
         int endOfBlock = (currentBlock + 1) * blockLength;
         int storeLength;
-        if (endOfBlock > timeBins) {
-          storeLength = timeBins - (currentBlock * blockLength);
+        if (endOfBlock > times) {
+          storeLength = times - (currentBlock * blockLength);
         } else {
           storeLength = blockLength;
         }
@@ -239,7 +239,7 @@ public class SDTReader extends FormatReader {
             // set output to first pixel of this row in 2D plane
             // corresponding to zeroth timeBin
             int output = (row * paddedWidth + col) * bpp;
-            int input = ((col * timeBins) + (currentBlock * blockLength)) * bpp;
+            int input = ((col * times) + (currentBlock * blockLength)) * bpp;
             // copy subset of decay into buffer.
 
             for (int t = 0; t < storeLength; t++) {
