@@ -170,6 +170,7 @@ public class SDTReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
+    // This is the Becker Hickl block not the pre-loaded data block
     long blockSize = info.allBlockLengths[getSeries()];
 
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
@@ -199,13 +200,12 @@ public class SDTReader extends FormatReader {
       int preBlockSize = binSize * blockLength;
 
       // pre-load data for performance
-      if (dataStore == null) {
+      if (dataStore == null  || storedSeries != getSeries()) {
         dataStore = new byte[preBlockSize];
         currentBlock = -1;
       }
 
-      if (timeBin / blockLength != currentBlock || storedChannel != channel ||
-        storedSeries != getSeries() ) {
+      if (timeBin/blockLength != currentBlock || storedChannel != channel  ) {
 
         currentBlock = timeBin / blockLength;
 
