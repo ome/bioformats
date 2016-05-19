@@ -134,7 +134,7 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
-{% if "${model.getObjectByName(\"OME\").namespace}" == "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 #include <ome/xml/model/primitives/OrderedMultimap.h>
 {% end model not 2013-06 %}\
 #include <ome/xml/model/primitives/PercentFraction.h>
@@ -479,7 +479,7 @@ namespace ome
         virtual const std::string&
         getUUID() const = 0;
 
-{% if "${model.getObjectByName(\"OME\").namespace}" == "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
         /**
          * Get the map value of MapAnnotation.
          *

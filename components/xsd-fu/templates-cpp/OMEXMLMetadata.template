@@ -1057,7 +1057,7 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% if "${model.getObjectByName(\"OME\").namespace}" == "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         const ome::xml::model::primitives::OrderedMultimap&
@@ -1212,7 +1212,7 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% if "${model.getObjectByName(\"OME\").namespace}" == "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
