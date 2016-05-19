@@ -87,9 +87,17 @@ Regions
 
 To generate a fake file containing regions of interest:
 
+::
+
     touch "regions&points=10.fake"
     touch "regions&ellipses=20.fake"
     touch "regions&rectangles=5&lines=25.fake"
+
+Replace ``regions`` in the above examples with the desired image or plate which will contain the regions, e.g.
+
+::
+
+    touch "HCSanalysis&plates=1&plateRows=16&plateCols=24&rectangles=100.fake"
 
 For each shape type, the value will specify the number of regions of interest
 to create where each region of interest contains a single shape of the input
