@@ -288,15 +288,6 @@ do
     cp -v "$transform" "$path"
 done
 
-# Samples folder
-path="${root}/Schemas/Samples/"
-dir="samples"
-mkdir -p "$path"
-for sample in "$dir"/*
-do
-    cp -vRL "$sample" "$path"
-done
-
 # Root index
 
 # Create an HTML link for a schema.
@@ -438,7 +429,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
+    for schema in $(find published/Schemas -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
         createlink "$schema" "" "current" "true" "current" "$1"
     done
 
@@ -448,7 +439,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
+    for schema in $(find published/Schemas -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq); do
         createlink "$schema" "" "legacy" "true" "current" "$1"
     done
     cat <<EOF
@@ -531,10 +522,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         createlink "$schema" "$year" "current" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
         createlink "$schema" "$year" "current" "false" "legacy" "$2"
     done
 
@@ -544,10 +535,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
         createlink "$schema" "$year" "legacy" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
         createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
     done
 
@@ -561,14 +552,14 @@ EOF
 }
 
 for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
+    if [ $type != "Transforms" ]; then
         echo "HTML [2] -> $root/Schemas/${type}/index.html"
         createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
     fi
 done
 
 for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/XMLschemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
+    if [ $type != "Transforms" ]; then
         echo "HTML [3] -> $root/XMLschemas/${type}/index.html"
         createintermediateindex "$type" "legacy" > "$root/XMLschemas/${type}/index.html"
     fi
