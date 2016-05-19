@@ -137,7 +137,7 @@ public class ImagingEnvironmentMapTest {
   }
 
   void assertPair(LinkedListMultimap<String,String> dataMap, int idx, String name, String value) {
-    assertEquals(name, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getKey());
-    assertEquals(value, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getValue());
+    assertEquals(name, dataMap.entries().get(idx).getKey());
+    assertEquals(value, dataMap.entries().get(idx).getValue());
   }
 }

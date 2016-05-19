@@ -79,7 +79,7 @@ public class GenericExcitationMapTest {
     // Add a GenericExcitationSource with an Map
     GenericExcitationSource geSource = new GenericExcitationSource();
     geSource.setID("LightSource:0");
-    LinkedListMultimap dataMap = LinkedListMultimap.create();
+    LinkedListMultimap<String, String> dataMap = LinkedListMultimap.create();
     dataMap.put("a", "1");
     dataMap.put("d", "2");
     dataMap.put("c", "3");
@@ -148,9 +148,9 @@ public class GenericExcitationMapTest {
 
   }
 
-  void assertPair(LinkedListMultimap dataMap, int idx, String name, String value) {
-      assertEquals(name, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getKey());
-      assertEquals(value, ((Map.Entry<String,String>) dataMap.entries().get(idx)).getValue());
+  void assertPair(LinkedListMultimap<String, String> dataMap, int idx, String name, String value) {
+      assertEquals(name, dataMap.entries().get(idx).getKey());
+      assertEquals(value, dataMap.entries().get(idx).getValue());
   }
 
 }

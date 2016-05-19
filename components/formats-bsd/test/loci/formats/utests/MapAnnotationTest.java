@@ -135,16 +135,16 @@ public class MapAnnotationTest {
     assertEquals(6, dataMap.size());
     assertEquals("a", dataMap.entries().get(0).getKey());
     assertEquals("1", dataMap.entries().get(0).getValue());
-    assertEquals("d", dataMap.entries().get(0).getKey());
-    assertEquals("2", dataMap.entries().get(0).getValue());
-    assertEquals("c", dataMap.entries().get(0).getKey());
-    assertEquals("3", dataMap.entries().get(0).getValue());
-    assertEquals("b", dataMap.entries().get(0).getKey());
-    assertEquals("4", dataMap.entries().get(0).getValue());
-    assertEquals("e", dataMap.entries().get(0).getKey());
-    assertEquals("5", dataMap.entries().get(0).getValue());
-    assertEquals("c", dataMap.entries().get(0).getKey());
-    assertEquals("6", dataMap.entries().get(0).getValue());
+    assertEquals("d", dataMap.entries().get(1).getKey());
+    assertEquals("2", dataMap.entries().get(1).getValue());
+    assertEquals("c", dataMap.entries().get(2).getKey());
+    assertEquals("3", dataMap.entries().get(2).getValue());
+    assertEquals("b", dataMap.entries().get(3).getKey());
+    assertEquals("4", dataMap.entries().get(3).getValue());
+    assertEquals("e", dataMap.entries().get(4).getKey());
+    assertEquals("5", dataMap.entries().get(4).getValue());
+    assertEquals("c", dataMap.entries().get(5).getKey());
+    assertEquals("6", dataMap.entries().get(5).getValue());
   }
 
 }
