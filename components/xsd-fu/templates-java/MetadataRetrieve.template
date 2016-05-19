@@ -128,8 +128,6 @@ import ${lang.units_package}.quantity.Temperature;
 import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
 import ${lang.units_package}.unit.Unit;
 
-import java.util.Map;
-
 /**
  * A proxy whose responsibility it is to extract biological image data from a
  * particular storage medium.
