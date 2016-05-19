@@ -579,8 +579,3 @@ createmainindex "current" > "${root}/Schemas/index.html"
 echo "HTML [5] -> ${root}/XMLschemas/index.html"
 createmainindex "legacy" > "${root}/XMLschemas/index.html"
 
-echo "Add any web-extras"
-if [ -d "web-extra" ]; then
-    rsync --stats -r -t "web-extra/" "${root}"
-fi
-
