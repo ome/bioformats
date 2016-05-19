@@ -41,8 +41,6 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 
-import com.google.common.collect.LinkedListMultimap;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import ome.xml.model.Image;
 import ome.xml.model.MapAnnotation;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -81,13 +80,13 @@ public class MapAnnotationTest {
     image.setPixels(pixels);
 
     // Add a Map Annotation
-    LinkedListMultimap<String, String> map = LinkedListMultimap.create();
-    map.put("a", "1");
-    map.put("d", "2");
-    map.put("c", "3");
-    map.put("b", "4");
-    map.put("e", "5");
-    map.put("c", "6");
+    List<MapPair> map = new ArrayList<MapPair>();
+    map.add(new MapPair("a", "1"));
+    map.add(new MapPair("d", "2"));
+    map.add(new MapPair("c", "3"));
+    map.add(new MapPair("b", "4"));
+    map.add(new MapPair("e", "5"));
+    map.add(new MapPair("c", "6"));
 
     MapAnnotation mapAnnotation = new MapAnnotation();
     mapAnnotation.setID("Annotation:0");
@@ -130,21 +129,21 @@ public class MapAnnotationTest {
     assertNotNull(ome.getImage(0).getLinkedAnnotation(0)); 
 
     MapAnnotation mapAnnotation = (MapAnnotation) ome.getImage(0).getLinkedAnnotation(0); 
-    LinkedListMultimap<String,String> dataMap = mapAnnotation.getValue();
+    java.util.List<ome.xml.model.MapPair> dataMap = mapAnnotation.getValue();
 
     assertEquals(6, dataMap.size());
-    assertEquals("a", dataMap.entries().get(0).getKey());
-    assertEquals("1", dataMap.entries().get(0).getValue());
-    assertEquals("d", dataMap.entries().get(1).getKey());
-    assertEquals("2", dataMap.entries().get(1).getValue());
-    assertEquals("c", dataMap.entries().get(2).getKey());
-    assertEquals("3", dataMap.entries().get(2).getValue());
-    assertEquals("b", dataMap.entries().get(3).getKey());
-    assertEquals("4", dataMap.entries().get(3).getValue());
-    assertEquals("e", dataMap.entries().get(4).getKey());
-    assertEquals("5", dataMap.entries().get(4).getValue());
-    assertEquals("c", dataMap.entries().get(5).getKey());
-    assertEquals("6", dataMap.entries().get(5).getValue());
+    assertEquals("a", dataMap.get(0).getName());
+    assertEquals("1", dataMap.get(0).getValue());
+    assertEquals("d", dataMap.get(1).getName());
+    assertEquals("2", dataMap.get(1).getValue());
+    assertEquals("c", dataMap.get(2).getName());
+    assertEquals("3", dataMap.get(2).getValue());
+    assertEquals("b", dataMap.get(3).getName());
+    assertEquals("4", dataMap.get(3).getValue());
+    assertEquals("e", dataMap.get(4).getName());
+    assertEquals("5", dataMap.get(4).getValue());
+    assertEquals("c", dataMap.get(5).getName());
+    assertEquals("6", dataMap.get(5).getValue());
   }
 
 }

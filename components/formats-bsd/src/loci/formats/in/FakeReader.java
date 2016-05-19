@@ -36,8 +36,6 @@ import static ome.xml.model.Pixels.getPhysicalSizeXUnitXsdDefault;
 import static ome.xml.model.Pixels.getPhysicalSizeYUnitXsdDefault;
 import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
 
-import com.google.common.collect.LinkedListMultimap;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -73,6 +71,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
@@ -866,10 +865,10 @@ public class FakeReader extends FormatReader {
       annotationID = ANNOTATION_PREFIX + annotationCount;
       store.setMapAnnotationID(annotationID, annotationMapCount);
       store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-      LinkedListMultimap<String, String> mapValue = LinkedListMultimap.create();
+      java.util.List<ome.xml.model.MapPair> mapValue = new java.util.ArrayList<MapPair>();
       for (int keyNum=0; keyNum<10; keyNum++) {
-        mapValue.put("keyS" + imageIndex + "N" + keyNum,
-                     "val" + (keyNum+1)*(annotationCount+1));
+        mapValue.add(new MapPair("keyS" + imageIndex + "N" + keyNum,
+                                 "val" + (keyNum+1)*(annotationCount+1)));
       }
       store.setMapAnnotationValue(mapValue, annotationMapCount);
       store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);

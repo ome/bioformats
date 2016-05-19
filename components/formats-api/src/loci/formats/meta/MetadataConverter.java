@@ -32,8 +32,6 @@
 
 package loci.formats.meta;
 
-import com.google.common.collect.LinkedListMultimap;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -886,7 +884,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        LinkedListMultimap<String, String> map = src.getImagingEnvironmentMap(i);
+        java.util.List<ome.xml.model.MapPair> map = src.getImagingEnvironmentMap(i);
         dest.setImagingEnvironmentMap(map, i);
       }
       catch (NullPointerException e) { }
@@ -2077,7 +2075,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        LinkedListMultimap<String, String> value = src.getMapAnnotationValue(i);
+        java.util.List<ome.xml.model.MapPair> value = src.getMapAnnotationValue(i);
         dest.setMapAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
@@ -4126,7 +4124,7 @@ public final class MetadataConverter {
         }
 
         try {
-          LinkedListMultimap<String, String> map =
+          java.util.List<ome.xml.model.MapPair> map =
             src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
           dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
         }

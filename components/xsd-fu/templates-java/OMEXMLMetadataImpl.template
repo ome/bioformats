@@ -299,8 +299,6 @@ ${customContent[obj.name][prop.name]}
 
 package ${lang.omexml_metadata_package};
 
-import com.google.common.collect.LinkedListMultimap;
-
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
@@ -483,20 +481,20 @@ ${counter(k, o, v)}\
 	}
  
 	/** Gets the Map value associated with this annotation */
-	public LinkedListMultimap<String, String> getMapAnnotationValue(int mapAnnotationIndex)
+	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
 		return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).getValue();
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public LinkedListMultimap<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
     GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
     return o.getMap();
 	}
 
 	/** Gets the Map value associated with this imaging environment */
-	public LinkedListMultimap<String, String> getImagingEnvironmentMap(int imageIndex)
+	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
 	{
 		return root.getImage(imageIndex).getImagingEnvironment().getMap();
 	}
@@ -587,7 +585,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(LinkedListMultimap<String, String> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
 	{
 		OME o0 = root;
 		if (o0.getStructuredAnnotations() == null)
@@ -604,7 +602,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(LinkedListMultimap<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 		OME o0 = root;
 		if (o0.sizeOfInstrumentList() == instrumentIndex)
@@ -621,7 +619,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(LinkedListMultimap<String, String> map, int imageIndex)
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
 	{
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)

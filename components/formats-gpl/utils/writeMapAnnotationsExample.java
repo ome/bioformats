@@ -27,8 +27,6 @@
  * @since 5.1
  */
 
-import com.google.common.collect.LinkedListMultimap;
-
 import java.util.ArrayList;
 
 import loci.formats.FormatTools;
@@ -60,10 +58,10 @@ public class writeMapAnnotationsExample {
         // fill with random data
         for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
 
-        //Create MapPair Object and add to List
-        LinkedListMultimap<String, String> mapList = LinkedListMultimap.create();
-        mapList.put("Example Key","Example Value");
-        mapList.put("Bio-Formats Version", FormatTools.VERSION);
+        // Create MapPair Object and add to List
+        java.util.List<ome.xml.model.MapPair> mapList = new java.util.ArrayList<ome.xml.model.MapPair>();
+        mapList.add("Example Key","Example Value");
+        mapList.add("Bio-Formats Version", FormatTools.VERSION);
 
         // create metadata object with minimum required metadata fields
         System.out.println("Populating metadata...");

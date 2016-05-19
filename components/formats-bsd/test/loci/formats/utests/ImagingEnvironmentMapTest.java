@@ -41,15 +41,15 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 
-import com.google.common.collect.LinkedListMultimap;
-
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
+import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -81,13 +81,13 @@ public class ImagingEnvironmentMapTest {
     // Add an ImagingEnvironment with an Map
     ImagingEnvironment imagingEnvironment = new ImagingEnvironment();
 
-    LinkedListMultimap<String,String> map = LinkedListMultimap.create();
-    map.put("a", "1");
-    map.put("d", "2");
-    map.put("c", "3");
-    map.put("b", "4");
-    map.put("e", "5");
-    map.put("c", "6");
+    List<MapPair> map = new ArrayList<MapPair>();
+    map.add(new MapPair("a", "1"));
+    map.add(new MapPair("d", "2"));
+    map.add(new MapPair("c", "3"));
+    map.add(new MapPair("b", "4"));
+    map.add(new MapPair("e", "5"));
+    map.add(new MapPair("c", "6"));
     assertEquals(6, map.size());
     imagingEnvironment.setMap(map);
 
@@ -126,7 +126,7 @@ public class ImagingEnvironmentMapTest {
     assertNotNull(ome.getImage(0).getImagingEnvironment()); 
 
     ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
-    LinkedListMultimap<String,String> dataMap = imagingEnvironment.getMap();
+    java.util.List<ome.xml.model.MapPair> dataMap = imagingEnvironment.getMap();
 
     assertEquals(6, dataMap.size());
     assertPair(dataMap, 0, "a", "1");
@@ -137,8 +137,8 @@ public class ImagingEnvironmentMapTest {
     assertPair(dataMap, 5, "c", "6");
   }
 
-  void assertPair(LinkedListMultimap<String,String> dataMap, int idx, String name, String value) {
-    assertEquals(name, dataMap.entries().get(idx).getKey());
-    assertEquals(value, dataMap.entries().get(idx).getValue());
+  void assertPair(java.util.List<ome.xml.model.MapPair> dataMap, int idx, String name, String value) {
+    assertEquals(name, dataMap.get(idx).getName());
+    assertEquals(value, dataMap.get(idx).getValue());
   }
 }
