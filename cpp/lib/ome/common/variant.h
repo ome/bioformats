@@ -2,7 +2,7 @@
  * #%L
  * OME-COMMON C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -49,25 +49,11 @@
 
 # include <ome/common/config.h>
 
-#ifndef OME_VARIANT_LIMIT
-# ifndef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-/// Disable MPL header preprocessing (to allow the following macros to be modified).
-#  define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-# endif
-# ifndef BOOST_MPL_LIMIT_VECTOR_SIZE
-/// MPL vector size limit increase.
-#  define BOOST_MPL_LIMIT_VECTOR_SIZE 40
-# endif
-# ifndef BOOST_MPL_LIMIT_LIST_SIZE
-/// MPL list size limit increase.
-#  define BOOST_MPL_LIMIT_LIST_SIZE 40
-# endif
-#endif
-
 #include <boost/mpl/insert_range.hpp>
 #include <boost/mpl/joint_view.hpp>
 #include <boost/mpl/transform_view.hpp>
 #include <boost/mpl/vector.hpp>
+#include <boost/mpl/vector/vector0.hpp>
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 105800

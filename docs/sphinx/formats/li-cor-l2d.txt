@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Li-Cor L2D <li-cor-l2d-metadata>`
+Reader: L2DReader (:bfreader:`Source Code <L2DReader.java>`, :doc:`Supported Metadata Fields </metadata/L2DReader>`)
+
 
 
 
@@ -44,13 +45,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`L2DReader.java`
-
-Notes:
 
 
 L2D datasets cannot be imported into OME using server-side import. 

@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -88,15 +88,7 @@ public class MetaSupportAutogen {
 
     for (String handler : supportList.handlers()) {
       supportList.setHandler(handler);
-
-      for (IniTable table : data) {
-        if (table.get("reader").startsWith(handler + ".java")) {
-          String formatPage = FormatPageAutogen.getPageName(
-            table.get(IniTable.HEADER_KEY), table.get("pagename"));
-
-          supportList.setPageName(formatPage + "-metadata");
-        }
-      }
+      supportList.setPageName("metadata/" + handler);
     }
 
     // generate master table of metadata properties

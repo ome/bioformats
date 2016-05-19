@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -126,7 +126,7 @@ namespace
         {
           value = (src.*get)();
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
         }
       return value;
@@ -149,7 +149,7 @@ namespace
         {
           value = (src.*get)(param);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
         }
       return value;
@@ -175,7 +175,7 @@ namespace
         {
           value = (src.*get)(param1, param2);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
         }
       return value;
@@ -204,7 +204,7 @@ namespace
         {
           value = (src.*get)(param1, param2, param3);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
         }
       return value;
@@ -228,7 +228,7 @@ namespace
         {
           (dest.*set)((src.*get)());
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           ok = false;
         }
@@ -256,7 +256,7 @@ namespace
           (dest.*set)((src.*get)(param),
                       param);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           ok = false;
         }
@@ -289,7 +289,7 @@ namespace
           (dest.*set)((src.*get)(param1, param2),
                       param1, param2);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           ok = false;
         }
@@ -326,7 +326,7 @@ namespace
           (dest.*set)((src.*get)(param1, param2, param3),
                       param1, param2, param3);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           ok = false;
         }
@@ -367,7 +367,7 @@ namespace
           (dest.*set)((src.*get)(param1, param2, param3, param4),
                       param1, param2, param3, param4);
         }
-      catch (const std::runtime_error& /* e */)
+      catch (const std::runtime_error&)
         {
           ok = false;
         }

@@ -2,7 +2,7 @@
  * #%L
  * OME-XERCES C++ library for working with Xerces C++.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -58,6 +58,7 @@
 #include <ome/common/xml/dom/Element.h>
 #include <ome/common/xml/dom/NodeList.h>
 #include <ome/common/xml/dom/Wrapper.h>
+#include <ome/common/xml/EntityResolver.h>
 #include <ome/common/xml/String.h>
 
 namespace ome
@@ -156,7 +157,6 @@ namespace ome
             return *this;
           }
 
-          
           /**
            * Create Element with namespace.
            *
@@ -294,23 +294,27 @@ namespace ome
          * Construct a Document from the content of a file.
          *
          * @param file the file to read.
+         * @param resolver the EntityResolver to use.
          * @param params XML parser parameters.
          * @returns the new Document.
          */
         Document
         createDocument(const boost::filesystem::path& file,
+                       EntityResolver&                resolver,
                        const ParseParameters&         params = ParseParameters());
 
         /**
          * Construct a Document from the content of a string.
          *
          * @param text the string to use.
+         * @param resolver the EntityResolver to use.
          * @param params XML parser parameters.
          * @param id document filename (for error reporting only).
          * @returns the new Document.
          */
         Document
         createDocument(const std::string&     text,
+                       EntityResolver&        resolver,
                        const ParseParameters& params = ParseParameters(),
                        const std::string&     id = "membuf");
 
@@ -318,12 +322,14 @@ namespace ome
          * Construct a Document from the content of an input stream.
          *
          * @param stream the stream to read.
+         * @param resolver the EntityResolver to use.
          * @param params XML parser parameters.
          * @param id document filename (for error reporting only).
          * @returns the new Document.
          */
         Document
         createDocument(std::istream&          stream,
+                       EntityResolver&        resolver,
                        const ParseParameters& params = ParseParameters(),
                        const std::string&     id = "streambuf");
 

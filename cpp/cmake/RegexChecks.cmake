@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -64,6 +64,16 @@ int main() {
   if (${namespace}_match(fail, foo)) return 10;
   if (${namespace}_match(fail, bar)) return 11;
   if (${namespace}_match(fail, chk)) return 12;
+
+  // Checks for broken support in GCC 4.9 and 5.1
+  ${namespace} range1(\"^[a-z0-9][a-z0-9-]*\$\", ${namespace}::extended);
+  ${namespace} range2(\"^[a-z0-9][-a-z0-9]*\$\", ${namespace}::extended);
+  if (!${namespace}_match(test, range1)) return 13;
+  if (!${namespace}_match(test, range2)) return 14;
+  if (!${namespace}_match(\"a-\", range1)) return 15;
+  if (!${namespace}_match(\"a-\", range2)) return 16;
+  if (${namespace}_match(\"-a\", range1)) return 17;
+  if (${namespace}_match(\"-a\", range2)) return 18;
 
   return 0;
 }"

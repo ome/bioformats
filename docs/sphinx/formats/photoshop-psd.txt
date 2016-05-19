@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
-Supported Metadata Fields: :doc:`Adobe Photoshop PSD <photoshop-psd-metadata>`
+Reader: PSDReader (:bfreader:`Source Code <PSDReader.java>`, :doc:`Supported Metadata Fields </metadata/PSDReader>`)
+
 
 
 
@@ -44,12 +45,5 @@ Presence: |Good|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`PSDReader.java`
-
-Notes:
 
 

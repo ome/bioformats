@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -109,7 +109,7 @@ set(ome_common_sources
     xml/dom/NamedNodeMap.cpp
     xml/dom/NodeList.cpp)
 
-add_library(ome-common SHARED ${ome_common_sources} ${ome_common_headers})
+add_library(ome-common ${ome_common_sources} ${ome_common_headers})
 
 if(CMAKE_MAJOR_VERSION GREATER 2)
   target_link_libraries(ome-common ome-compat)
@@ -129,8 +129,10 @@ target_link_libraries(ome-common
 set_target_properties(ome-common PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(ome-common PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-install(TARGETS ome-common LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+install(TARGETS ome-common
+        RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 set(ome_common_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/common")
 

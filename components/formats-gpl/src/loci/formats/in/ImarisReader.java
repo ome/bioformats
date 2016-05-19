@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,8 +34,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -218,9 +216,9 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      Length sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
-      Length sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
-      Length sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+      Length sizeX = FormatTools.getPhysicalSizeX((double) dx);
+      Length sizeY = FormatTools.getPhysicalSizeY((double) dy);
+      Length sizeZ = FormatTools.getPhysicalSizeZ((double) dz);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -245,9 +243,9 @@ public class ImarisReader extends FormatReader {
 
       for (int i=0; i<getSizeC(); i++) {
         if (gains[i] > 0) {
-          store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+          store.setDetectorSettingsGain((double) gains[i], 0, i);
         }
-        store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
+        store.setDetectorSettingsOffset((double) offsets[i], i, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, i);

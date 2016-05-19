@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -92,7 +92,11 @@ TEST_P(ModulePathTest, ValidEnv)
 {
   const ModulePathTestParameters& params = GetParam();
 
+#ifdef _MSC_VER
+  _putenv_s(params.envvar.c_str(), PROJECT_BINARY_DIR);
+#else
   setenv(params.envvar.c_str(), PROJECT_BINARY_DIR, 1);
+#endif
 
   if (!params.logic_error)
     ASSERT_NO_THROW(ome::common::module_runtime_path(params.dtype));
@@ -104,7 +108,11 @@ TEST_P(ModulePathTest, InvalidEnv)
 {
   const ModulePathTestParameters& params = GetParam();
 
+#ifdef _MSC_VER
+  _putenv_s(params.envvar.c_str(), PROJECT_BINARY_DIR "/invalid-path");
+#else
   setenv(params.envvar.c_str(), PROJECT_BINARY_DIR "/invalid-path", 1);
+#endif
 
   try
     {

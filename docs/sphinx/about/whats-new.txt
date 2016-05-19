@@ -1,6 +1,288 @@
 Version history
 ===============
 
+5.1.10 (2016 May 9)
+-------------------
+
+Java bug fixes:
+
+* fixed warnings being thrown for ImageJ and other non-FIJI users on Windows
+  (these warnings were triggered by the removal of the 3i Slidebook DLLs from
+  the source code repository in Bio-Formats 5.1.9 and should now only be
+  triggered when opening Slidebook files without the update site enabled -
+  http://www.openmicroscopy.org/info/slidebook)
+* a fix in the ImageJ plugin for files grouped using the "Dimensions" option
+* a fix for writing TIFF files in tiles
+
+
+5.1.9 (2016 April 14)
+---------------------
+
+* Java bug fixes, including:
+   - SDT
+       - fixed width padding calculation for single-pixel image
+   - Deltavision
+       - fixed the parsing of the new date format
+       - added support for parsing and storing the working distance in native units
+   - Micromanager
+       - cleaned up JSON metadata parsing
+   - Olympus Fluoview
+       - fixed null pointer exceptions while parsing metadata
+   - Leica LIF
+       - fixed large multi-tiled files from having incorrect plane offsets after the 2GB mark
+   - EM formats (MRC and Spider)
+       - added native length support for EM readers
+   - Gatan
+       - fixed erroneous metadata parsing
+       - added support for parsing and storing the physical sizes in native units
+   - OME-TIFF
+       - improved handling of OME-TIFF multi-file fileset’s with partial metadata blocks
+   - Nikon ND2
+       - fixed the parsing of emission wavelength
+   - Olympus CellR (APL)
+       - fixed multiple parsing issues with the mtb file
+   - SlideBook
+       - removed slidebook dlls from Bio-Formats repository
+       - http://www.openmicroscopy.org/info/slidebook
+   - Zeiss CZI
+       - fixed parsing of files with multiple mosaics and positions
+
+* Documentation updates, including:
+   - improved documentation for the export of BigTIFFs in ImageJ
+
+* C++:
+   - no changes.
+
+
+5.1.8 (2016 February 15)
+------------------------
+
+* Java bug fixes, including:
+   - FEI TIFF
+       - fixed stage position parsing and whitespace handling (thanks to Antoine Vandecreme)
+   - Pyramid TIFF
+       - fixed tile reading when a cache (.bfmemo) file is present
+   - MicroManager
+       - updated to parse JSON data from tags 50839 and 51123
+       - fixed to detect :file:`*_metadata.txt` files in addition to :file:`metadata.txt`
+         files
+       - fixed to handle datasets with each stack in a single file
+   - OME-XML
+       - updated to make .ome.xml an official extension
+   - OME-TIFF
+       - fixed to ignore invalid BinaryOnly elements
+   - TIFF
+       - fixed caching of BigTIFF files
+   - Slidebook
+       - fixed handling of montages in Slidebook6Reader (thanks to Richard Myers)
+   - Performance improvement for writing files to disk (thanks to Stephane Dallongeville)
+   - Build system
+       - fixed Maven POMs to reduce calls to artifacts.openmicroscopy.org
+       - fixed bioformats_package.jar to include the loci.formats.tools
+         package
+* Documentation updates, including:
+   - updated format pages to include links to example data
+   - clarified description of Qu for MATLAB (thanks to Carnë Draug)
+   - added installation instructions for Octave (thanks to Carnë Draug)
+* C++:
+   - Bugfixes to the OME-TIFF writer to correct use of the metadata store with
+     multiple series
+   - Ensure file and writer state consistency upon close failure
+
+5.1.7 (2015 December 7)
+-----------------------
+
+* Java bug fixes, including:
+   - Prevent physical pixel sizes from being rounded to 0, for all formats
+   - Metamorph
+       - fixed calculation of Z step size
+       - fixed detection of post-processed dual camera acquisitions (thanks to Mark Kittisopikul)
+   - OME-XML
+       - fixed XML validation when an 'xmlns' value is not present (thanks to Bjoern Thiel)
+   - MINC
+       - fixed endianness of image data
+   - Andor/Fluoview TIFF
+       - fixed calculation of Z step size
+   - MATLAB
+       - improved performance by reducing static classpath checks (thanks to Mark Kittisopikul)
+   - Gatan
+       - fixed physical size parsing in non-English locales
+   - Automated testing
+       - fixed handling of non-default physical size and plane position units
+* Documentation updates, including:
+   - updated MapAnnotation example to show linkage of annotations to images
+* C++:
+   - no changes, released to keep version numbers in sync with Bio-Formats Java
+
+
+5.1.6 (2015 November 16)
+------------------------
+
+* Java bug fixes, including:
+   - Updated to use native units for following formats:
+       - IMOD
+       - Analyze
+       - Unisoku
+       - Olympus CellR (APL)
+   - Metamorph TIFF
+       - fixed handling of multi-line descriptions
+       - added support for dual camera acquisitions
+   - Zeiss LMS
+       - fixed exception in type detection
+   - Zeiss CZI
+       - fixed detection of line scan Airyscan data
+   - Slidebook
+       - fixed calculation of physical Z size
+   - ImageJ plugins
+       - fixed handling of non-default units
+       - fixed setting of preferences via macros
+   - Automated testing
+       - fixed handling of non-default units for physical sizes and timings
+* C++ changes, including:
+   - allow relocatable installation on Windows
+   - reduce time required for debug builds
+* Documentation updates, including:
+   - addition of "Multiple Images" column to the supported formats table
+   - addition of a MapAnnotation example
+
+5.1.5 (2015 October 12)
+-----------------------
+
+* Java bug fixes, including:
+   - ImageJ plugins
+       - fixed use of "Group files..." and "Open files individually" options
+       - fixed placement of ROIs
+       - fixed size of the "About Plugins > Bio-Formats Plugins" window
+   - xsd-fu (code generation)
+       - removed OMERO-specific logic
+   - Metamorph
+       - fixed physical Z size calculation
+   - Gatan DM3/DM4
+       - fixed physical pixel size parsing
+   - BMP
+       - added support for RLE compression
+   - DICOM
+       - updated to respect the WINDOW_CENTER tag
+       - fixed image dimensions when multiple sets of width and height values
+         are present
+   - Fluoview and Andor TIFF
+       - fixed physical Z size calculation
+   - Imspector OBF
+       - updated to parse OME-XML metadata (thanks to Bjoern Thiel)
+* C++ changes:
+   - TIFF strip/tile row and column calulations corrected to compute
+     the correct row and column count
+   - Several compiler warnings removed (false positive warnings in
+     third-party headers disabled, and additional warnings fixed)
+   - It is now possible to build with Boost 1.59 and compile with a
+     C++14 compiler
+* The source release is now provided in both tar.xz and zip formats
+* Documentation updates, including:
+   - substantial updates to the format pages
+       - improved linking of reader/writer classes to each format page
+       - improved supported metadata pages for each format
+       - updated format page formatting for clarity
+       - added developer documentation for adding and modifying format pages
+
+5.1.4 (2015 September 7)
+------------------------
+
+* Bug fixes, including:
+   - Command line tools
+       - fixed display of usage information
+   - Automated testing
+       - fixed problems with symlinked data on Windows
+       - added unit tests for checking physical pixel size creation
+   - Cellomics
+       - fixed reading of sparse plates
+   - SlideBook
+       - fixed a few lingering issues with native library packaging
+   - SimplePCI/HCImage TIFF
+       - fixed bit depth parsing for files from newer versions of HCImage
+   - SimplePCI/HCImage .cxd
+       - fixed image dimensions to allow for extra padding bytes
+   - Leica LIF
+       - improved reading of image descriptions
+   - ICS
+       - fixed to use correct units for timestamps and physical pixel sizes
+   - MicroManager
+       - fixed to use correct units for timestamps
+   - Gatan .dm3/.dm4
+       - fixed problems with reading double-precision metadata values
+   - Hamamatsu NDPI
+       - fixed reading of mask images
+   - Leica .lei
+       - fixed reading of bit depth and endianness for datasets that were modified after
+         acquisition
+   - FEI TIFF
+       - updated to read metadata from files produced by FEI Titan systems
+   - QuickTime
+       - fixed to handle planes with no stored pixels
+   - Leica .scn
+       - fixed reading of files that contain fewer images than expected
+   - Zeiss .czi
+       - fixed channel colors when an alpha value is not recorded
+       - fixed handling of pre-stitched image tiles
+   - SDT
+       - added support for Zip-compressed images
+   - Nikon .nd2
+       - fixed to read image dimensions from new non-XML metadata
+   - OME-XML
+       - fixed writing of integer metadata values
+* Native C++ updates:
+   - completed support for building on Windows
+* Documentation updates, including:
+   - updated instructions for running automated data tests
+   - clarified JVM versions currently supported
+
+5.1.3 (2015 July 21)
+--------------------
+
+* Native C++ updates:
+   - Added cmake superbuild to build core dependencies (zlib, bzip2, png, icu, xerces, boost)
+   - Progress on support for Windows
+* Bug fixes, including:
+   - Fixed segfault in the `showinf` tool used with the C++ bindings
+   - Allow reading from https URLs
+   - ImageJ
+       - improved performance of displaying ROIs
+   - Command line tools
+       - fixed bfconvert to correctly create datasets with multiple files
+   - Metamorph
+       - improved detection of time series
+       - fixed .nd datasets with variable Z and T counts in each channel
+       - fixed .nd datasets that contain invalid TIFF/STK files
+       - fixed dimensions when the number of planes does not match the recorded
+         Z, C, and T sizes
+   - SlideBook
+       - improved native library detection (thanks to Richard Myers)
+   - JPEG
+       - fixed decompression of lossless files with multiple channels (thanks to Aaron Avery)
+   - Imspector OBF
+       - updated to support version 2 files (thanks to Bjoern Thiel)
+   - Imspector MSR
+       - improved detection of Z stacks
+   - PerkinElmer Opera Flex
+       - improved handling of multiple acquisitions of the same plate
+   - Zeiss CZI
+       - fixed error when opening single-file datasets whose names contained
+         "("  and ")"
+   - TIFF
+       - improved speed of reading files with many tiles
+   - AVI
+       - updated to read frame index (idx1) tables
+   - Nikon ND2
+       - fixed channel counts for files with more than 3 channels
+   - PNG
+       - fixed decoding of interlaced images with a width or height that is not a multiple of 8
+   - PSD
+       - improved reading of compressed images
+* Documentation improvements, including:
+    - updated instructions for writing a new file format reader
+    - updated usage information for command line tools
+    - new Javadocs for the `MetadataStore` and `MetadataRetrieve` interfaces
+
+
 5.1.2 (2015 May 28)
 -------------------
 
@@ -385,7 +667,7 @@ Version history
 * Updated to 2011-06 OME-XML schema
 * Minor speed improvements in many formats
 * Switched version control system from SVN to Git
-* Moved all Trac tickets into the OME Trac: http://trac.openmicroscopy.org.uk
+* Moved all Trac tickets into the OME Trac: https://trac.openmicroscopy.org
 * Improvements to testing frameworks
 * Added Maven build system as an alternative to the existing Ant build system
 * Added pre-compiled C++ bindings to the download page

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -68,8 +68,16 @@
 
 using boost::trim;
 using boost::format;
-{% end %}\
 
+namespace
+{
+
+  typedef std::pair<std::string,${klass.langTypeNS}::enum_value> smap;
+  typedef std::pair<${klass.langTypeNS}::enum_value,std::string> vmap;
+
+}
+
+{% end %}\
 namespace ome
 {
   namespace xml
@@ -176,16 +184,7 @@ namespace ome
            */
           static const string_map_type&
           strings();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-        const ${klass.langType}::string_map_type&
-        ${klass.langType}::strings()
-        {
-          return string_map;
-        }
-{% end source%}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
           /**
            * Get a map of valid enum values and string names.
            *
@@ -193,92 +192,27 @@ namespace ome
            */
           static const value_map_type&
           values();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-        const ${klass.langType}::value_map_type&
-        ${klass.langType}::values()
-        {
-          return value_map;
-        }
-{% end source%}\
 
-{% if fu.SOURCE_TYPE == "header" %}\
         private:
+          /**
+           * Get a map of valid lowercased string names and enum values.
+           *
+           * @returns a map of lowercased string names to enum values.
+           */
+          static const string_map_type&
+          lowercase_strings();
+
           /// Enumeration value.
           enum_value         value;
           /// Enumeration name.
           const std::string *name;
-
-          /// Mapping of enumeration name to value.
-          static const string_map_type string_map;
-          /// Mapping of lowercase enumeration name to value.
-          static const string_map_type lowercase_string_map;
-          /// Mapping of enumeration value to name.
-          static const value_map_type value_map;
-{% end %}\
+        };
+{% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-        namespace
-        {
-
-          typedef std::pair<std::string,${klass.langType}::enum_value> smap;
-          typedef std::pair<${klass.langType}::enum_value,std::string> vmap;
-
-          smap init_string_values[] =
-            {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langType}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-              smap("${value}", ${klass.langType}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% end %}\
-            };
-
-          smap init_lcase_string_values[] =
-            {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value, False).upper()})
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-              smap("${value.lower()}", ${klass.langType}::${enum_value_name(value, False).upper()}),
-{% end %}\
-{% end %}\
-            };
-
-          vmap init_value_values[] =
-            {
-{% for value in klass.possibleValues %}\
-{% if value == klass.possibleValues[-1] %}\
-              vmap(${klass.langType}::${enum_value_name(value, False).upper()}, "${value}")
-{% end %}\
-{% if value != klass.possibleValues[-1] %}\
-              vmap(${klass.langType}::${enum_value_name(value, False).upper()}, "${value}"),
-{% end %}\
-{% end %}\
-            };
-
-        }
-
-        const ${klass.langType}::string_map_type
-        ${klass.langType}::string_map
-        (init_string_values,
-         init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
-
-        const ${klass.langType}::string_map_type
-        ${klass.langType}::lowercase_string_map
-        (init_lcase_string_values,
-         init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));
-
-        const ${klass.langType}::value_map_type
-        ${klass.langType}::value_map
-        (init_value_values,
-         init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
-
         ${klass.langType}::${klass.langType} (enum_value value):
           value(value)
         {
+          const value_map_type& value_map(values());
           value_map_type::const_iterator i = value_map.find(value);
           if (i == value_map.end())
             {
@@ -291,7 +225,10 @@ namespace ome
 
         ${klass.langType}::${klass.langType} (const std::string& name, bool strict)
         {
+          const string_map_type& string_map(strings());
+          const string_map_type& lowercase_string_map(lowercase_strings());
           string_map_type::const_iterator i = string_map.find(name);
+          string_map_type::const_iterator li = lowercase_string_map.end();
           if (strict == false && i == string_map.end())
             {
               // Trim leading and trailing whitespace and lowercase.
@@ -300,33 +237,41 @@ namespace ome
               std::string lname(name);
               trim(lname);
               std::transform(lname.begin(), lname.end(), lname.begin(), std::ptr_fun(::tolower));
-              i = lowercase_string_map.find(lname);
+              li = lowercase_string_map.find(lname);
 {% if 'Other' in klass.possibleValues %}\
-              if (i == lowercase_string_map.end())
+              if (li == lowercase_string_map.end())
                 {
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
                   fmt % "${klass.langType}" % name;
-                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                   i = string_map.find("Other");
                 }
               else
                 {
                   ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
                   format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
-                  fmt % "${klass.langType}" % name % ${klass.langType}(i->second);
-                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                  fmt % "${klass.langType}" % name % ${klass.langType}(li->second);
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt.str();
                 }
 {% end %}\
             }
-          if (i == string_map.end() || i == lowercase_string_map.end())
+          if (i != string_map.end())
+	    {
+	      this->value = i->second;
+	    }
+	  else if (li != lowercase_string_map.end())
+	    {
+	      this->value = li->second;
+	    }
+	  else
             {
               format fmt("‘%1%’ not a supported value of %2%");
               fmt % name % "${klass.langType}";
               throw EnumerationException(fmt.str());
             }
-          this->value = i->second;
 
+          const value_map_type& value_map(values());
           value_map_type::const_iterator i2 = value_map.find(value);
           if (i2 == value_map.end())
             {
@@ -342,9 +287,71 @@ namespace ome
           name(original.name)
         {
         }
-{% end source %}\
+
+        const ${klass.langType}::string_map_type&
+        ${klass.langType}::strings()
+        {
+	  const smap init_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
+          static const string_map_type string_map(init_string_values,
+                                                  init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
+
+          return string_map;
+        }
+
+        const ${klass.langType}::value_map_type&
+        ${klass.langType}::values()
+        {
+	  vmap init_value_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}")
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}"),
+{% end %}\
+{% end %}\
+	    };
+
+          static const value_map_type value_map(init_value_values,
+                                                init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
+
+          return value_map;
+        }
+
+        const ${klass.langType}::string_map_type&
+        ${klass.langType}::lowercase_strings()
+        {
+	  smap init_lcase_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()})
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
+          static const string_map_type lcase_string_map(init_lcase_string_values,
+                                                        init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));
+
+          return lcase_string_map;
+        }
+{% end source%}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        };
 
         /**
          * Compare two ${klass.langType} objects for equality.
@@ -521,7 +528,7 @@ namespace ome
                 {
                   enumeration = ${klass.langType}(value, false);
                 }
-              catch (const EnumerationException& e)
+              catch (const EnumerationException&)
                 {
                   is.setstate(std::ios::failbit);
                 }
@@ -529,7 +536,7 @@ namespace ome
 
           return is;
         }
-{% end %}\
+{% end header%}\
 
       }
     }

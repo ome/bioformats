@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`DeltaVision <deltavision-metadata>`
+Reader: DeltavisionReader (:bfreader:`Source Code <DeltavisionReader.java>`, :doc:`Supported Metadata Fields </metadata/DeltavisionReader>`)
+
 
 Freely Available Software:
 
@@ -29,6 +30,7 @@ We currently have:
 
 * a DV specification document (v2.10 or newer, in HTML) 
 * numerous DV datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/DV/>`__
 
 We would like to have:
 
@@ -46,13 +48,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`DeltavisionReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

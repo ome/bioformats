@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -114,11 +114,6 @@ int main()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
 endfunction(cxx_std_check)
 
-
-# Try to put the compiler into the most recent standard mode.  This
-# will generally have the most features, and will remove the need for
-# Boost fallbacks if native implementations are available.
-option(cxxstd-autodetect "Enable C++14 features if possible, otherwise fall back to C++11, C++03 or C++98" OFF)
 if (cxxstd-autodetect)
   if (NOT MSVC)
     cxx_std_check(-std=c++14 CXX_FLAG_CXX14)
@@ -171,14 +166,6 @@ if (NOT MSVC)
   endif (${test_cxx_flag})
 endif (NOT MSVC)
 
-# These are annoyingly verbose, produce false positives or don't work
-# nicely with all supported compiler versions, so are disabled unless
-# explicitly enabled.
-option(extra-warnings "Enable extra compiler warnings" OFF)
-
-# This will cause the compiler to fail when an error occurs.
-option(fatal-warnings "Compiler warnings are errors" OFF)
-
 # Check if the compiler supports each of the following additional
 # warning flags, and enable them if supported.  This greatly improves
 # the quality of the build by checking for a number of common
@@ -195,7 +182,6 @@ if (NOT MSVC)
       -Wmissing-declarations
       -Wno-long-long
       -Wnon-virtual-dtor
-      -Wold-style-cast
       -Woverlength-strings
       -Woverloaded-virtual
       -Wredundant-decls
@@ -203,6 +189,9 @@ if (NOT MSVC)
       -Wswitch-default
       -Wunused-variable
       -Wwrite-strings
+      -Wno-variadic-macros
+      -Wno-unused-local-typedef
+      -Wno-language-extension-token
       -fstrict-aliasing)
   if (extra-warnings)
     list(APPEND test_flags
@@ -210,6 +199,7 @@ if (NOT MSVC)
         -Wdocumentation
         -Wfloat-equal
         -Wmissing-prototypes
+        -Wold-style-cast
         -Wunreachable-code)
   endif (extra-warnings)
   if (fatal-warnings)
@@ -288,3 +278,13 @@ void print(const char *fmt, ...)
 
 int main() { print(\"%d %s\", 43, \"test\"); }
 " OME_HAVE_CSTDARG)
+
+# May be inlined, so check it compiles:
+check_cxx_source_compiles("
+#include <stdio.h>
+int main(void) {
+  char buf[10];
+  snprintf(buf, 10, \"Test %d\", 1);
+  return 0;
+}"
+  OME_HAVE_SNPRINTF)

@@ -53,6 +53,7 @@ Using Bio-Formats as a native C++ library
     cpp/conversion
     cpp/tutorial
     cpp/bf-env
+    cpp/schema
     cpp/commands/bf-test
     cpp/commands/bf-test-info
     cpp/commands/bf-test-view
@@ -64,14 +65,14 @@ Contributing to Bio-Formats
     :maxdepth: 1
 
     commit-testing
-    testing-notes
     generating-test-images
     reader-guide
+    format-documentation
     service
     xsd-fu
     useful-scripts
 
-See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org.uk/ome/report/44>`_ 
+See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org/ome/report/44>`_
 for information on work currently planned or in progress.
 
 For more general guidance about how to contribute to OME projects, see the 

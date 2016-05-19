@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,6 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -55,6 +58,8 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -104,6 +109,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** The TIFF's emWavelength */
   private long[] emWavelength;
 
+  private String[] stageLabels;
   private double[] wave;
 
   private String binning;
@@ -147,7 +153,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
     super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
-    domains = new String[] {FormatTools.LM_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
@@ -337,6 +343,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasChipOffsets = false;
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
+      stageLabels = null;
     }
   }
 
@@ -526,8 +533,8 @@ public class MetamorphReader extends BaseTiffReader {
       if (nstages > 0) numFiles *= nstages;
 
       // determine series count
-
-      int seriesCount = nstages == 0 ? 1 : nstages;
+      int stagesCount = nstages == 0 ? 1 : nstages;
+      int seriesCount = stagesCount;
       firstSeriesChannels = new boolean[cc];
       Arrays.fill(firstSeriesChannels, true);
       boolean differentZs = false;
@@ -545,7 +552,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (differentZs) {
         channelsInFirstSeries = 0;
         for (int i=0; i<cc; i++) {
-          if (hasZ.get(i).booleanValue()) channelsInFirstSeries++;
+          if ((!hasZ.get(0) && i == 0) ||
+            (hasZ.get(0) && hasZ.get(i).booleanValue()))
+          {
+            channelsInFirstSeries++;
+          }
           else firstSeriesChannels[i] = false;
         }
       }
@@ -553,8 +564,7 @@ public class MetamorphReader extends BaseTiffReader {
       stks = new String[seriesCount][];
       if (seriesCount == 1) stks[0] = new String[numFiles];
       else if (differentZs) {
-        int stages = nstages == 0 ? 1 : nstages;
-        for (int i=0; i<stages; i++) {
+        for (int i=0; i<stagesCount; i++) {
           stks[i * 2] = new String[channelsInFirstSeries * tc];
           stks[i * 2 + 1] = new String[(cc - channelsInFirstSeries) * tc];
         }
@@ -574,13 +584,13 @@ public class MetamorphReader extends BaseTiffReader {
       boolean anyZ = hasZ.contains(Boolean.TRUE);
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
-        int ns = nstages == 0 ? 1 : nstages;
-        for (int s=0; s<ns; s++) {
+        for (int s=0; s<stagesCount; s++) {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
-            int seriesNdx = s * (seriesCount / ns);
+            int seriesNdx = s * (seriesCount / stagesCount);
 
-            if ((seriesCount != 1 && !validZ) ||
+            if ((seriesCount != 1 &&
+              (!validZ || (hasZ.size() > 0  && !hasZ.get(0)))) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
               if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
@@ -678,8 +688,7 @@ public class MetamorphReader extends BaseTiffReader {
           ms.orderCertain = true;
         }
         if (stks.length > nstages) {
-          int ns = nstages == 0 ? 1 : nstages;
-          for (int j=0; j<ns; j++) {
+          for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
             CoreMetadata midx = newCore.get(idx);
             CoreMetadata pmidx = newCore.get(j * 2);
@@ -717,6 +726,46 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
+    // check stage labels for plate data
+
+    ArrayList<String> uniqueWells = new ArrayList<String>();
+    int rows = 0;
+    int cols = 0;
+    if (stageLabels != null) {
+      for (String label : stageLabels) {
+        if (label != null && label.startsWith("Scan ") &&
+          !uniqueWells.contains(label))
+        {
+          uniqueWells.add(label);
+          int row = getWellRow(label);
+          if (row >= rows) {
+            rows = row + 1;
+          }
+          int col = getWellColumn(label);
+          if (col >= cols) {
+            cols = col + 1;
+          }
+        }
+      }
+    }
+
+    // each plane corresponds to a unique well
+    boolean isHCS = stageLabels != null && uniqueWells.size() == stageLabels.length;
+    if (isHCS) {
+      CoreMetadata c = core.get(0);
+      core.clear();
+      c.sizeZ = 1;
+      c.sizeT = 1;
+      c.imageCount = 1;
+      for (int s=0; s<uniqueWells.size(); s++) {
+        CoreMetadata toAdd = new CoreMetadata(c);
+        if (s > 0) {
+          toAdd.seriesMetadata.clear();
+        }
+        core.add(toAdd);
+      }
+    }
+
     Vector<String> timestamps = null;
     MetamorphHandler handler = null;
 
@@ -724,12 +773,37 @@ public class MetamorphReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this, true);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
+    if (isHCS) {
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(rows), 0);
+      store.setPlateColumns(new PositiveInteger(cols), 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+    }
+
+    String instrumentID = null;
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
-      handler = new MetamorphHandler(getSeriesMetadata());
+      // do not reparse the same XML for every well
+      if (i == 0 || !isHCS) {
+        handler = new MetamorphHandler(getSeriesMetadata());
+      }
 
-      String instrumentID = MetadataTools.createLSID("Instrument", i);
-      store.setInstrumentID(instrumentID, i);
+      if (isHCS) {
+        String label = stageLabels[i];
+        String wellID = MetadataTools.createLSID("Well", 0, i);
+        store.setWellID(wellID, 0, i);
+        store.setWellColumn(new NonNegativeInteger(getWellColumn(label)), 0, i);
+        store.setWellRow(new NonNegativeInteger(getWellRow(label)), 0, i);
+        store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, i, 0), 0, i, 0);
+        store.setWellSampleImageRef(MetadataTools.createLSID("Image", i), 0, i, 0);
+        store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
+      }
+
+      if (i == 0 || !isHCS) {
+        instrumentID = MetadataTools.createLSID("Instrument", i);
+        store.setInstrumentID(instrumentID, i);
+      }
       store.setImageInstrumentRef(instrumentID, i);
 
       if (i == 0) {
@@ -738,11 +812,13 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       String comment = getFirstComment(i);
-      if (comment != null && comment.startsWith("<MetaData>")) {
-        try {
-          XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+      if (i == 0 || !isHCS) {
+        if (comment != null && comment.startsWith("<MetaData>")) {
+          try {
+            XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+          }
+          catch (IOException e) { }
         }
-        catch (IOException e) { }
       }
 
       if (creationTime != null) {
@@ -776,15 +852,49 @@ public class MetamorphReader extends BaseTiffReader {
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
+      else {
+        Vector<Double> zPositions = new Vector<Double>();
+        Vector<Double> uniqueZ = new Vector<Double>();
+    	  
+        for (IFD ifd : ifds) {
+          MetamorphHandler zPlaneHandler = new MetamorphHandler();
+
+          String zComment = ifd.getComment();
+          if (zComment != null &&
+              zComment.startsWith("<MetaData>"))
+          {
+            try {
+              XMLTools.parseXML(XMLTools.sanitizeXML(zComment),
+                  zPlaneHandler);
+            }
+            catch (IOException e) { }
+          }
+
+          zPositions = zPlaneHandler.getZPositions();
+          for (Double z : zPositions) {
+            if (!uniqueZ.contains(z)) uniqueZ.add(z);
+          }
+        } 
+        if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          stepSize = zRange.divide(zSize, mc).doubleValue();
+        }
+      }
+      
       Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
-      String objectiveID = MetadataTools.createLSID("Objective", i, 0);
-      store.setObjectiveID(objectiveID, i, 0);
+      int instrumentIndex = isHCS ? 0 : i;
+      String objectiveID = MetadataTools.createLSID("Objective", instrumentIndex, 0);
+      store.setObjectiveID(objectiveID, instrumentIndex, 0);
       if (handler.getLensNA() != 0) {
-          store.setObjectiveLensNA(handler.getLensNA(), i, 0);
+          store.setObjectiveLensNA(handler.getLensNA(), instrumentIndex, 0);
       }
       store.setObjectiveSettingsID(objectiveID, i);
 
@@ -832,11 +942,11 @@ public class MetamorphReader extends BaseTiffReader {
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
             String lightSourceID =
-              MetadataTools.createLSID("LightSource", i, c);
-            store.setLaserID(lightSourceID, i, c);
+              MetadataTools.createLSID("LightSource", instrumentIndex, c);
+            store.setLaserID(lightSourceID, instrumentIndex, c);
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-            store.setLaserType(getLaserType("Other"), i, c);
-            store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+            store.setLaserType(getLaserType("Other"), instrumentIndex, c);
+            store.setLaserLaserMedium(getLaserMedium("Other"), instrumentIndex, c);
 
             if (wavelength != null) {
               store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
@@ -914,10 +1024,19 @@ public class MetamorphReader extends BaseTiffReader {
               stream = new RandomAccessInputStream(file, 16);
               tp = new TiffParser(stream);
               tp.checkHeader();
-              lastFile = fileIndex;
-              lastIFDs = tp.getIFDs();
+              IFDList f = tp.getIFDs();
+              if (f.size() > 0) {
+                lastFile = fileIndex;
+                lastIFDs = f;
+              }
+              else {
+                file = null;
+                stks[i][fileIndex] = null;
+              }
             }
+          }
 
+          if (file != null) {
             lastIFD = lastIFDs.get(p % lastIFDs.size());
             Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {
@@ -1402,6 +1521,9 @@ public class MetamorphReader extends BaseTiffReader {
         name = name.substring(0, name.length() - 1);
       }
     }
+    if (name.length() == 0 && stageLabels != null) {
+      name = stageLabels[i];
+    }
     return name;
   }
 
@@ -1549,10 +1671,12 @@ public class MetamorphReader extends BaseTiffReader {
   void readStageLabels() throws IOException {
     int strlen;
     String iAsString;
+    stageLabels = new String[mmPlanes];
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
       strlen = in.readInt();
-      addSeriesMeta("stageLabel[" + iAsString + "]", in.readString(strlen));
+      stageLabels[i] = in.readString(strlen);
+      addSeriesMeta("stageLabel[" + iAsString + "]", stageLabels[i]);
     }
   }
 
@@ -1977,6 +2101,14 @@ public class MetamorphReader extends BaseTiffReader {
       case 66: return "OverlayPlaneColor";
     }
     return null;
+  }
+
+  private int getWellRow(String label) {
+    return (int) (label.charAt(5) - 'A');
+  }
+
+  private int getWellColumn(String label) {
+    return Integer.parseInt(label.substring(6, 8)) - 1;
   }
 
 }

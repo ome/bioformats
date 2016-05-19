@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <zeiss-axiovision-zvi-metadata>`
+Reader: ZeissZVIReader (:bfreader:`Source Code <ZeissZVIReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissZVIReader>`)
+
 
 Freely Available Software:
 
@@ -51,13 +52,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`ZeissZVIReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

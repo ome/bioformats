@@ -4,19 +4,15 @@ from __future__ import print_function
 
 from optparse import OptionParser
 import os
-from subprocess import call, Popen, PIPE
+from subprocess import call
 import sys
+import time
 import zipfile
+import tarfile
+import StringIO
+import platform
 
-# Due to "git archive" not supporting archiving of submodules in
-# addition to the base tree, this requires additional support in order
-# to create a complete and functional source archive.
-#
-# This script archives the base tree, and then uses "git submodule
-# foreach" to archive each submodule separately, setting the correct
-# path prefix for each archive, so that they may all be unpacked in
-# the same root to result in a complete and functional source tree.
-# It then repacks each of these zip files into a single zip which is
+# This script archives the base tree and repacks it into a single zip which is
 # the source release, taking care to preserve timestamps and exectute
 # permissions, etc.  This is done via ZipInfo objects, and the
 # repacking is done entirely in memory so that this should work on any
@@ -94,24 +90,9 @@ if __name__ == "__main__":
         '--output', "%s/%s-base.zip" % (options.target, prefix),
         'HEAD'])
     if base_archive_status != 0:
-        raise Exception('Failed to create git base archive')
+        raise Exception('Failed to create git zip base archive')
 
     zips = list(["%s/%s-base.zip" % (options.target, prefix)])
-
-    # Create submodule archives
-    submodule_archive = Popen([
-        'git', 'submodule', 'foreach', '--quiet', '--recursive',
-        ("npath=\"$(echo \"$path\" | tr / _)\"; "
-         "zip=\"%s/%s-submod-${npath}.zip\"; "
-         "git archive --format zip --prefix \"%s/${path}/\""
-         " --output \"${zip}\" HEAD || exit 1; "
-         "echo \"${zip}\"") % (options.target, prefix, prefix)],
-        stdout=PIPE)
-    submodule_zips = submodule_archive.communicate()[0]
-    if submodule_archive.returncode != 0:
-        raise Exception('Failed to create git submodule archives')
-
-    zips.extend(submodule_zips.splitlines())
 
     # Create destination zip file
     print("  - creating %s/%s.zip" % (options.target, prefix))
@@ -127,10 +108,10 @@ if __name__ == "__main__":
         for info in subzip.infolist():
             # Skip unwanted git and travis files
             if (os.path.basename(info.filename) == '.gitignore' or
-                    os.path.basename(info.filename) == '.gitmodule' or
                     os.path.basename(info.filename) == '.travis.yml'):
                 continue
-            # Skip files for which we don't have source in this repository, for GPL compliance
+            # Skip files for which we don't have source in this repository,
+            # for GPL compliance
             if (options.release.endswith("-dfsg") and
                 (os.path.splitext(info.filename)[1] == ".jar" or
                  os.path.splitext(info.filename)[1] == ".dll" or
@@ -138,7 +119,8 @@ if __name__ == "__main__":
                  os.path.splitext(info.filename)[1] == ".so")):
                 continue
             if (options.release.endswith("-dfsg") and
-                info.filename.startswith("%s/components/xsd-fu/python/genshi" % (prefix))):
+                info.filename.startswith(
+                    "%s/components/xsd-fu/python/genshi" % (prefix))):
                 continue
             print("File: %s" % (info.filename))
             # Repack a single zip object; preserve the metadata
@@ -168,3 +150,83 @@ if __name__ == "__main__":
             options.bioformats_vcsshortrevision,
             options.bioformats_vcsrevision,
             options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
+
+    # Repeat for tar archive
+    base_archive_status = call([
+        'git', 'archive', '--format', 'tar',
+        '--prefix', "%s/" % (prefix),
+        '--output', "%s/%s-base.tar" % (options.target, prefix),
+        'HEAD'])
+    if base_archive_status != 0:
+        raise Exception('Failed to create git tar base archive')
+
+    tars = list(["%s/%s-base.tar" % (options.target, prefix)])
+
+    # Create destination tar file
+    print("  - creating %s/%s.tar" % (options.target, prefix))
+    sys.stdout.flush()
+    basetar = tarfile.open("%s/%s.tar" % (options.target, prefix), 'w',
+                           format=tarfile.PAX_FORMAT)
+
+    # Repack each of the separate tars into the destination tar
+    for name in tars:
+        subtar = tarfile.open(name, 'r')
+        print("  - repacking %s" % (name))
+        sys.stdout.flush()
+        # Iterate over the TarInfo objects from the archive
+        for info in subtar.getmembers():
+            # Skip unwanted git and travis files
+            if (os.path.basename(info.name) == '.gitignore' or
+                    os.path.basename(info.name) == '.travis.yml'):
+                continue
+            # Skip files for which we don't have source in this repository,
+            # for GPL compliance
+            if (options.release.endswith("-dfsg") and
+                (os.path.splitext(info.name)[1] == ".jar" or
+                 os.path.splitext(info.name)[1] == ".dll" or
+                 os.path.splitext(info.name)[1] == ".dylib" or
+                 os.path.splitext(info.name)[1] == ".so")):
+                continue
+            if (options.release.endswith("-dfsg") and
+                info.name.startswith(
+                    "%s/components/xsd-fu/python/genshi" % (prefix))):
+                continue
+            print("File: %s" % (info.name))
+            # Repack a single tar object; preserve the metadata
+            # directly via the TarInfo object and rewrite the content
+            basetar.addfile(info, subtar.extractfile(info.name))
+
+        # Close tar or else the remove will fail on Windows
+        subtar.close()
+
+        # Remove repacked tar
+        os.remove(name)
+
+    # Embed release number
+    antversionbuf = StringIO.StringIO(GITVERSION_XML % (
+        options.bioformats_version, options.bioformats_shortversion,
+        options.bioformats_vcsshortrevision,
+        options.bioformats_vcsrevision,
+        options.bioformats_vcsdate))
+    antversion = tarfile.TarInfo("%s/ant/gitversion.xml" % (prefix))
+    antversion.size = antversionbuf.len
+    antversion.mtime = time.time()
+    basetar.addfile(antversion, antversionbuf)
+
+    cmakeversionbuf = StringIO.StringIO(GITVERSION_CMAKE % (
+        options.bioformats_version, options.bioformats_shortversion,
+        options.bioformats_vcsshortrevision,
+        options.bioformats_vcsrevision,
+        options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
+    cmakeversion = tarfile.TarInfo("%s/cpp/cmake/GitVersion.cmake" % (prefix))
+    cmakeversion.size = cmakeversionbuf.len
+    cmakeversion.mtime = time.time()
+    basetar.addfile(cmakeversion, cmakeversionbuf)
+    basetar.close()
+    try:
+        call(['xz', "%s/%s.tar" % (options.target, prefix)])
+    except:
+        # This is expected to fail on Windows when xz is unavailable,
+        # but is always an error on all other platforms.
+        if platform.system() != 'Windows':
+            sys.exit(1)

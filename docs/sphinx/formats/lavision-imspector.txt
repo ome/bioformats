@@ -16,9 +16,10 @@ BSD-licensed: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 4.0, 4.1
 
-Supported Metadata Fields: :doc:`LaVision Imspector <lavision-imspector-metadata>`
+Reader: ImspectorReader (:bfreader:`Source Code <ImspectorReader.java>`, :doc:`Supported Metadata Fields </metadata/ImspectorReader>`)
+
 
 
 
@@ -42,12 +43,5 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`ImspectorReader.java`
-
-Notes:
 
 

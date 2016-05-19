@@ -2,7 +2,7 @@
  * #%L
  * OME-COMMON C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -100,7 +100,7 @@ namespace ome
        * @param value the value to copy.
        */
       boolean(const boolean& value):
-        value(value)
+        value(value.value)
       {}
 
       /**
@@ -110,7 +110,7 @@ namespace ome
        */
       operator bool() const
       {
-        return static_cast<bool>(value);
+        return value != std::numeric_limits<uint8_t>::min();
       }
 
       /**

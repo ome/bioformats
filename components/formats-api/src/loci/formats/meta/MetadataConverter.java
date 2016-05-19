@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,12 +32,11 @@
 
 package loci.formats.meta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import loci.formats.in.MetadataLevel;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
@@ -46,7 +45,39 @@ import ome.units.quantity.Power;
 import ome.units.quantity.Pressure;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
-import ome.units.UNITS;
+import ome.xml.model.AffineTransform;
+import ome.xml.model.MapPair;
+import ome.xml.model.enums.AcquisitionMode;
+import ome.xml.model.enums.ArcType;
+import ome.xml.model.enums.Binning;
+import ome.xml.model.enums.ContrastMethod;
+import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.ExperimentType;
+import ome.xml.model.enums.FilamentType;
+import ome.xml.model.enums.FillRule;
+import ome.xml.model.enums.FilterType;
+import ome.xml.model.enums.FontFamily;
+import ome.xml.model.enums.FontStyle;
+import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.enums.Immersion;
+import ome.xml.model.enums.LaserMedium;
+import ome.xml.model.enums.LaserType;
+import ome.xml.model.enums.LineCap;
+import ome.xml.model.enums.Marker;
+import ome.xml.model.enums.Medium;
+import ome.xml.model.enums.MicrobeamManipulationType;
+import ome.xml.model.enums.MicroscopeType;
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.enums.Pulse;
+import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeLong;
+import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * A utility class containing a method for piping a source
@@ -77,6 +108,14 @@ public final class MetadataConverter {
    * (source) into a metadata store (destination).
    */
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
+    convertMetadata(src, dest, MetadataLevel.ALL);
+  }
+
+  /**
+   * Copies information from a metadata retrieval object
+   * (source) into a metadata store (destination).
+   */
+  public static void convertMetadata(MetadataRetrieve src, MetadataStore dest, MetadataLevel level) {
     convertBooleanAnnotations(src, dest);
     convertCommentAnnotations(src, dest);
     convertDoubleAnnotations(src, dest);
@@ -89,12 +128,15 @@ public final class MetadataConverter {
     convertTimestampAnnotations(src, dest);
     convertXMLAnnotations(src, dest);
 
-    convertROIs(src, dest);
-    convertInstruments(src, dest);
+    if (MetadataLevel.ALL == level) {
+      convertROIs(src, dest);
+    }
+
+    List<String> lightSourceIds = convertInstruments(src, dest);
     convertExperimenters(src, dest);
     convertExperimenterGroups(src, dest);
     convertExperiments(src, dest);
-    convertImages(src, dest);
+    convertImages(src, dest, level, lightSourceIds);
     convertPlates(src, dest);
     convertScreens(src, dest);
     convertDatasets(src, dest);
@@ -696,8 +738,10 @@ public final class MetadataConverter {
    * Convert all Image attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
+   * @param lightSourceIds the collection of light source identifiers.
    */
-  private static void convertImages(MetadataRetrieve src, MetadataStore dest) {
+  private static void convertImages(MetadataRetrieve src, MetadataStore dest, MetadataLevel level,
+    List<String> lightSourceIds) {
     int imageCount = 0;
     try {
       imageCount = src.getImageCount();
@@ -1104,7 +1148,7 @@ public final class MetadataConverter {
 
         try {
           String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
-          if (lightSourceID != null) {
+          if (lightSourceID != null && lightSourceIds.contains(lightSourceID)) {
             dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
 
             try {
@@ -1263,17 +1307,19 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
 
-      int roiRefCount = 0;
-      try {
-        roiRefCount = src.getImageROIRefCount(i);
-      }
-      catch (NullPointerException e) { }
-      for (int q=0; q<roiRefCount; q++) {
+      if (MetadataLevel.ALL == level) {
+        int roiRefCount = 0;
         try {
-          String roiRef = src.getImageROIRef(i, q);
-          dest.setImageROIRef(roiRef, i, q);
+          roiRefCount = src.getImageROIRefCount(i);
         }
         catch (NullPointerException e) { }
+        for (int q=0; q<roiRefCount; q++) {
+          try {
+            String roiRef = src.getImageROIRef(i, q);
+            dest.setImageROIRef(roiRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int tiffDataCount = 0;
@@ -1331,10 +1377,12 @@ public final class MetadataConverter {
    * Convert all Instrument attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
+   * @return Collection of light source identifiers.
    */
-  private static void convertInstruments(MetadataRetrieve src,
+  private static List<String> convertInstruments(MetadataRetrieve src,
     MetadataStore dest)
   {
+    List<String> lightSourceIds = new ArrayList<String>();
     int instrumentCount = 0;
     try {
       instrumentCount = src.getInstrumentCount();
@@ -1779,7 +1827,7 @@ public final class MetadataConverter {
         }
       }
 
-      convertLightSources(src, dest, i);
+      convertLightSources(src, dest, i, lightSourceIds);
 
       int instrumentRefCount = 0;
       try {
@@ -1794,6 +1842,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
     }
+    return lightSourceIds;
   }
 
   /**
@@ -3892,9 +3941,10 @@ public final class MetadataConverter {
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
    * @param instrumentIndex the index of the Instrument to convert
+   * @param lightSourceIds the collection of light source to populate
    */
   private static void convertLightSources(MetadataRetrieve src,
-    MetadataStore dest, int instrumentIndex)
+    MetadataStore dest, int instrumentIndex, List<String> lightSourceIds)
   {
     int lightSourceCount = 0;
     try {
@@ -3907,7 +3957,10 @@ public final class MetadataConverter {
       if (type.equals("Arc")) {
         try {
           String id = src.getArcID(instrumentIndex, lightSource);
-          if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setArcID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -3979,7 +4032,10 @@ public final class MetadataConverter {
       else if (type.equals("Filament")) {
         try {
           String id = src.getFilamentID(instrumentIndex, lightSource);
-          if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setFilamentID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4056,7 +4112,10 @@ public final class MetadataConverter {
         try {
           String id =
             src.getGenericExcitationSourceID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4125,7 +4184,10 @@ public final class MetadataConverter {
       else if (type.equals("Laser")) {
         try {
           String id = src.getLaserID(instrumentIndex, lightSource);
-          if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setLaserID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4271,7 +4333,8 @@ public final class MetadataConverter {
       else if (type.equals("LightEmittingDiode")) {
         try {
           String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-          if (id != null) {
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
           }
         }

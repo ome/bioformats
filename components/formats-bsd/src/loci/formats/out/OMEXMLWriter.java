@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -74,7 +74,7 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Constructor --
 
   public OMEXMLWriter() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     compressionTypes =
       new String[] {CompressionType.UNCOMPRESSED.getCompression(),
         CompressionType.ZLIB.getCompression()};

@@ -18,7 +18,9 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`AVI (Audio Video Interleave) <avi-metadata>`
+Reader: AVIReader (:bsd-reader:`Source Code <AVIReader.java>`, :doc:`Supported Metadata Fields </metadata/AVIReader>`)
+
+Writer: AVIWriter (:bsd-writer:`Source Code <AVIWriter.java>`)
 
 Freely Available Software:
 
@@ -51,13 +53,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Source Code: :bsd-reader:`AVIReader.java`
-
-Notes:
 
 
 * Bio-Formats can save image stacks as AVI (uncompressed). 

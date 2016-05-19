@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -801,7 +801,7 @@ namespace ome
                 getField(TILELENGTH).get(h);
                 impl->tiletype = TILE;
               }
-            catch (const Exception& e)
+            catch (const Exception&)
               {
                 getField(ROWSPERSTRIP).get(h);
                 impl->tiletype = STRIP;
@@ -975,7 +975,7 @@ namespace ome
               {
                 getField(SAMPLEFORMAT).get(sampleformat);
               }
-            catch(const Exception& e)
+            catch(const Exception&)
               {
                 // Default to unsigned integer.
                 sampleformat = UNSIGNED_INT;

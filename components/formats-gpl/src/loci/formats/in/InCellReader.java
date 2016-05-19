@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,8 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -79,8 +81,8 @@ public class InCellReader extends FormatReader {
 
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
-  private Vector<Double> emWaves, exWaves;
-  private Vector<String> channelNames;
+  private List<Double> emWaves, exWaves;
+  private List<String> channelNames;
   private int totalImages;
   private int imageWidth, imageHeight;
   private String creationDate;
@@ -88,22 +90,25 @@ public class InCellReader extends FormatReader {
   private int fieldCount;
 
   private int wellRows, wellCols;
-  private Hashtable<Integer, int[]> wellCoordinates;
-  private Vector<Length> posX, posY;
+  private Map<Integer, int[]> wellCoordinates;
+  private HashMap<Integer, Length> posX, posY;
 
   private boolean[][] exclude;
 
-  private Vector<Integer> channelsPerTimepoint;
+  private List<Integer> channelsPerTimepoint;
   private boolean oneTimepointPerSeries;
   private int totalChannels;
 
-  private Vector<String> metadataFiles;
+  private List<String> metadataFiles;
 
   private Binning bin;
   private Length x, y;
   private Double gain;
   private Double temperature;
   private Double refractive;
+
+  private ArrayList<String> exFilters = new ArrayList<String>();
+  private ArrayList<String> emFilters = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -214,7 +219,7 @@ public class InCellReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     files.addAll(metadataFiles);
     if (!noPixels && imageFiles != null) {
@@ -226,7 +231,7 @@ public class InCellReader extends FormatReader {
             if (new Location(plane.filename).exists()) {
               files.add(plane.filename);
             }
-            if (new Location(plane.thumbnailFile).exists()) {
+            if (plane.thumbnailFile != null && new Location(plane.thumbnailFile).exists()) {
               files.add(plane.thumbnailFile);
             }
           }
@@ -269,6 +274,8 @@ public class InCellReader extends FormatReader {
       gain = null;
       temperature = null;
       refractive = null;
+      emFilters.clear();
+      exFilters.clear();
     }
   }
 
@@ -344,17 +351,17 @@ public class InCellReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    channelNames = new Vector<String>();
-    emWaves = new Vector<Double>();
-    exWaves = new Vector<Double>();
-    channelsPerTimepoint = new Vector<Integer>();
-    metadataFiles = new Vector<String>();
+    channelNames = new ArrayList<String>();
+    emWaves = new ArrayList<Double>();
+    exWaves = new ArrayList<Double>();
+    channelsPerTimepoint = new ArrayList<Integer>();
+    metadataFiles = new ArrayList<String>();
 
     // parse metadata from the .xdce or .xml file
 
-    wellCoordinates = new Hashtable<Integer, int[]>();
-    posX = new Vector<Length>();
-    posY = new Vector<Length>();
+    wellCoordinates = new HashMap<Integer, int[]>();
+    posX = new HashMap<Integer, Length>();
+    posY = new HashMap<Integer, Length>();
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -370,6 +377,40 @@ public class InCellReader extends FormatReader {
     if (getSizeZ() == 0) ms0.sizeZ = 1;
     if (getSizeC() == 0) ms0.sizeC = 1;
     if (getSizeT() == 0) ms0.sizeT = 1;
+
+    if (totalImages == 0) {
+      ms0.imageCount = getSizeC() * getSizeZ() * getSizeT();
+      totalImages = getImageCount() * wellRows * wellCols * fieldCount;
+      Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+
+      for (int row=0; row<wellRows; row++) {
+        for (int col=0; col<wellCols; col++) {
+          plateMap[row][col] = true;
+          for (int field=0; field<fieldCount; field++) {
+            for (int t=0; t<getSizeT(); t++) {
+              for (int image=0; image<getSizeC() * getSizeZ(); image++) {
+                // this could be expanded to allow for timepoint indexes
+                // in the file name, as well as allowing the filter names to
+                // be omitted
+                int channel = getZCTCoords(image)[1];
+                Image plane = new Image();
+                String filename = (char) ('A' + row) + " - " + (col + 1) + "(fld " + (field + 1) +
+                  " wv " + exFilters.get(channel) + " - " + emFilters.get(channel) + ").tif";
+                Location path = new Location(parent, filename);
+                if (path.exists()) {
+                  plane.filename = path.getAbsolutePath();
+                }
+                else {
+                  LOGGER.debug("Missing file {}", filename);
+                }
+
+                imageFiles[row * wellCols + col][field][t][image] = plane;
+              }
+            }
+          }
+        }
+      }
+    }
 
     int seriesCount = 0;
 
@@ -571,11 +612,11 @@ public class InCellReader extends FormatReader {
       store.setWellSampleID(wellSampleID, 0, well, sampleIndex);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-      if (field < posX.size()) {
-        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
+      if (posX.containsKey(field - 1)) {
+        store.setWellSamplePositionX(posX.get(field - 1), 0, well, sampleIndex);
       }
-      if (field < posY.size()) {
-        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
+      if (posY.containsKey(field - 1)) {
+        store.setWellSamplePositionY(posY.get(field - 1), 0, well, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
@@ -720,17 +761,17 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("TimePoint")) {
-        channelsPerTimepoint.add(new Integer(nChannels));
+        channelsPerTimepoint.add(nChannels);
         nChannels = 0;
       }
       else if (qName.equals("Times")) {
         if (channelsPerTimepoint.size() == 0) {
-          channelsPerTimepoint.add(new Integer(getSizeC()));
+          channelsPerTimepoint.add(getSizeC());
         }
         for (int i=0; i<channelsPerTimepoint.size(); i++) {
           int c = channelsPerTimepoint.get(i).intValue();
           if (c == 0) {
-            channelsPerTimepoint.setElementAt(new Integer(getSizeC()), i);
+            channelsPerTimepoint.set(i, getSizeC());
           }
         }
       }
@@ -831,6 +872,12 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("TimeSchedule")) {
         doT = Boolean.parseBoolean(attributes.getValue("enabled"));
       }
+      else if (qName.equals("ExcitationFilter")) {
+        exFilters.add(attributes.getValue("name"));
+      }
+      else if (qName.equals("EmissionFilter")) {
+        emFilters.add(attributes.getValue("name"));
+      }
     }
   }
 
@@ -863,7 +910,7 @@ public class InCellReader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("Image")) {
-        wellCoordinates.put(new Integer(currentField),
+        wellCoordinates.put(currentField,
           new int[] {currentRow, currentCol});
         openImage = false;
 
@@ -904,7 +951,7 @@ public class InCellReader extends FormatReader {
         openImage = true;
         double time =
           Double.parseDouble(attributes.getValue("acquisition_time_ms"));
-        timestamp = new Double(time / 1000);
+        timestamp = time / 1000;
       }
       else if (qName.equals("Identifier")) {
         currentField = Integer.parseInt(attributes.getValue("field_index"));
@@ -1011,14 +1058,15 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Exposure") && openImage) {
         double exp = Double.parseDouble(attributes.getValue("time"));
-        exposure = new Double(exp / 1000);
+        exposure = exp / 1000;
       }
       else if (qName.equals("offset_point")) {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
+        int index = Integer.parseInt(attributes.getValue("index"));
 
-        posX.add(new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
-        posY.add(new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
+        posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
+        posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);

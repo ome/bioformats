@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -129,7 +129,11 @@ namespace ome
         {
           Sentry sentry;
 
-          tiff = TIFFOpen(filename.native().c_str(), mode.c_str());
+#ifdef _MSC_VER
+          tiff = TIFFOpenW(filename.wstring().c_str(), mode.c_str());
+#else
+          tiff = TIFFOpen(filename.string().c_str(), mode.c_str());
+#endif
           if (!tiff)
             sentry.error();
         }
@@ -145,7 +149,7 @@ namespace ome
             {
               close();
             }
-          catch (Exception& e)
+          catch (const Exception&)
             {
               /// @todo Log the error elsewhere.
             }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -200,7 +200,7 @@ public class FormatReaderTestFactory {
 
     // remove duplicates
     int index = 0;
-    FileStitcher reader = new FileStitcher();
+    FileStitcher reader = new FileStitcher(TestTools.getTestImageReader());
     while (index < files.size()) {
       String file = (String) files.get(index);
       try {

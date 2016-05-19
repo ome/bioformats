@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -62,6 +62,7 @@ if (OME_QTOPENGL)
       GLContainer.h
       GLWindow.h
       GLView2D.h
+      glm.h
       NavigationDock2D.h
       TexelProperties.h)
 
@@ -97,7 +98,7 @@ if (OME_QTOPENGL)
       glsl/v110/GLImageShader2D.h
       glsl/v110/GLLineShader2D.h)
 
-  add_library(ome-qtwidgets SHARED
+  add_library(ome-qtwidgets
               ${QTWIDGETS_SOURCES}
               ${QTWIDGETS_HEADERS}
               ${QTWIDGETS_GL_SOURCES}
@@ -116,8 +117,10 @@ if (OME_QTOPENGL)
 
   set_target_properties(ome-qtwidgets PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-  install(TARGETS ome-qtwidgets LIBRARY
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+  install(TARGETS ome-qtwidgets
+          RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
   set(ome_qtwidgets_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/qtwidgets")
 
@@ -136,11 +139,11 @@ if (OME_QTOPENGL)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                  ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-qtwidgets-config.cmake
-          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+          DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake/ome-qtwidgets)
 
   # Dump header list for testing
   header_include_list_write(QTWIDGETS_HEADERS "" ome/qtwidgets ${PROJECT_BINARY_DIR}/cpp/test/ome-qtwidgets)
 
 else()
-  message(WARNING "Not building Qt widgets and view program; Qt5.2, OpenGL or glm not found")
+  message(WARNING "Not building Qt widgets and view program; Qt5.2, OpenGL or glm not found, or explicitly disabled")
 endif()

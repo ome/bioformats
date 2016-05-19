@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,6 +27,7 @@
 
 package loci.plugins.in;
 
+import ij.IJ;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.plugins.BF;
@@ -78,7 +79,13 @@ public class ImporterPrompter implements StatusListener {
         if (!promptMain()) process.cancel();
         break;
       case STACK:
-        if (!promptFilePattern()) process.cancel();
+        ImporterOptions options = process.getOptions();
+        if (options != null && options.doMustGroup() && options.isGroupFiles()) {
+          IJ.showMessage("Bio-Formats",
+    				 "File Stitching Options are not available for files of this format.\n"
+    				 + "Files will be grouped according to image format specifications.\n");
+        }
+        else if (!promptFilePattern()) process.cancel();
         break;
       case SERIES:
         if (!promptSeries()) process.cancel();

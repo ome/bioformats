@@ -2,7 +2,7 @@
  * #%L
  * OME-COMMON C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -52,9 +52,14 @@
 
 #include <ome/common/config.h>
 
-// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
-#if defined(noexcept) and !defined(BOOST_NOEXCEPT)
-# define BOOST_NOEXCEPT
+#ifndef BOOST_NOEXCEPT
+# ifdef OME_HAVE_NOEXCEPT
+/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
+#  define BOOST_NOEXCEPT noexcept
+# else
+/// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
+#  define BOOST_NOEXCEPT
+# endif
 #endif
 
 #include <ome/common/endian/types.hpp>

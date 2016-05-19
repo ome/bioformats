@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,6 +55,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int MAX_SIZE = 2048;
+  private static final int SOURCE_LENS = 65421;
   private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
@@ -350,9 +351,22 @@ public class NDPIReader extends BaseTiffReader {
         ifd.getImageLength() == ifds.get(0).getImageLength())
       {
         sizeZ++;
-      }
-      else if (sizeZ == 1 && i < ifds.size() - 1) {
-        pyramidHeight++;
+      } else if (sizeZ == 1)
+      {
+        boolean isPyramid;
+        Object source_lens_value = ifd.getIFDValue(SOURCE_LENS);
+        if (source_lens_value != null)
+        {
+          float source_lens = (Float) source_lens_value;
+          // A value of -1 correspond to the macro image and a value of -2
+          // correspond to the map image
+          isPyramid = (source_lens != -1 && source_lens != -2);
+        } else {
+          // Assume the last IFD is the macro image
+          isPyramid = i < ifds.size() - 1;
+        }
+
+        if (isPyramid) pyramidHeight++;
       }
     }
 

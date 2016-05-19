@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,8 +49,8 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
 
 /**
- * MNGReader is the file format reader for Multiple Network Graphics (MNG)
- * files.  Does not support JNG (JPEG Network Graphics).
+ * MNGReader is the file format reader for Multiple-image Network Graphics
+ * (MNG) files.  Does not support JNG (JPEG Network Graphics).
  */
 public class MNGReader extends BIFormatReader {
 
@@ -68,7 +68,7 @@ public class MNGReader extends BIFormatReader {
 
   /** Constructs a new MNG reader. */
   public MNGReader() {
-    super("Multiple Network Graphics", "mng");
+    super("Multiple-image Network Graphics", "mng");
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 

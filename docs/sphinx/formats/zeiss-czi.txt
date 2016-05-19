@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
+Reader: ZeissCZIReader (:bfreader:`Source Code <ZeissCZIReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissCZIReader>`)
+
 
 Freely Available Software:
 
@@ -46,14 +47,9 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`ZeissCZIReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+Bio-Formats does not support CZI files generated using JPEG-XR compression.

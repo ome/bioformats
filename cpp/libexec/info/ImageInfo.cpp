@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,6 +40,8 @@
 
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
+
+#include <ome/xml/Document.h>
 
 #include <ome/xml/meta/MetadataStore.h>
 #include <ome/xml/meta/MetadataRetrieve.h>
@@ -331,7 +333,7 @@ namespace info
           {
             try
               {
-                ome::common::xml::dom::Document doc(ome::common::xml::dom::createDocument(omexml));
+                ome::common::xml::dom::Document doc(ome::xml::createDocument(omexml));
                 stream << "OME-XML validation successful\n";
               }
             catch (const std::exception& e)

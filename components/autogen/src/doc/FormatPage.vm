@@ -23,12 +23,27 @@ Owner: $owner
 
 BSD-licensed: |$bsd|
 
-Export: |$export|
+#if ($writer)
+Export: |yes|
+#else
+Export: |no|
+#end
 
 Officially Supported Versions: $versions
 
-#if ($metadataPage)
-Supported Metadata Fields: :doc:`$format <$metadataPage>`
+#if ($reader.size() > 1)
+Readers:
+
+#foreach ($item in $reader)
+- ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
+#end
+#else
+#set ($item = $reader.get(0))
+Reader: ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
+#end
+
+#if ($writer)
+Writer: ${writer} (:$writerextlink:`Source Code <${writer}.java>`)
 #end
 
 #if ($software)
@@ -72,19 +87,9 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-
+#if (($privateSpecification) or ($notes))
 **Additional Information**
-
-
-Source Code: #foreach ($item in $reader)
-#if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end
 #end
-
-#if ($writer)
-Source Code: :$writerextlink:`$writer`
-#end
-
-Notes:
 
 #if ($privateSpecification)
 **Please note that while we have specification documents for this

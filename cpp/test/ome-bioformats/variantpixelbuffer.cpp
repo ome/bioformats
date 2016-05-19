@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -476,7 +476,7 @@ struct SetIndexDeathTestVisitor : public boost::static_visitor<>
     badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
     ASSERT_DEATH_IF_SUPPORTED(v->at(badidx) = value_type(4), "Assertion.*failed");
-    ASSERT_DEATH_IF_SUPPORTED(value_type obs = cv->at(badidx), "Assertion.*failed");
+    ASSERT_DEATH_IF_SUPPORTED(cv->at(badidx), "Assertion.*failed");
   }
 };
 
@@ -985,7 +985,7 @@ TEST_P(VariantPixelBufferTest, SetIndex)
 
 TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 {
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(BOOST_DISABLE_ASSERTS)
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -995,7 +995,7 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 
   SetIndexDeathTestVisitor v(buf);
   boost::apply_visitor(v, buf.vbuffer());
-#endif // ! NDEBUG
+#endif // ! NDEBUG && ! BOOST_DISABLE_ASSERTS
 }
 
 TEST_P(VariantPixelBufferTest, StreamInput)

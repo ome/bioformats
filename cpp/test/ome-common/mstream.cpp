@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -45,7 +45,7 @@ using ome::common::imstream;
 TEST(Imstream, CreateFromIterator)
 {
   std::string src("43 992.82 objective");
-  imstream is(&*src.begin(), &*src.end());
+  imstream is(&src[0], src.size());
 
   int i;
   double d;

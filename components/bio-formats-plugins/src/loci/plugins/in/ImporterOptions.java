@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -77,7 +77,8 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_VIRTUAL         = "virtual";
   public static final String KEY_WINDOWLESS      = "windowless";
   public static final String KEY_STITCH_TILES    = "stitchTiles";
-
+  public static final String KEY_MUST_GROUP    	 = "mustGroup";
+  
   // possible values for colorMode
   public static final String COLOR_MODE_DEFAULT = "Default";
   public static final String COLOR_MODE_COMPOSITE = "Composite";
@@ -396,6 +397,11 @@ public class ImporterOptions extends OptionsList {
   public boolean doStitchTiles() { return isSet(KEY_STITCH_TILES); }
   public void setStitchTiles(boolean b) { setValue(KEY_STITCH_TILES, b); }
 
+  // mustGroup
+  public String getMustGroupInfo() { return getInfo(KEY_MUST_GROUP); }
+  public boolean doMustGroup() { return isSet(KEY_MUST_GROUP); }
+  public void setMustGroup(boolean b) { setValue(KEY_MUST_GROUP, b); }
+  
   // -- ImporterOptions methods - secondary options accessors and mutators --
 
   // series options

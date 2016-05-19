@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -80,24 +80,37 @@ set(XSD_FU_ARGS ${XSDFU_DEBUG} --language=C++ --output-directory=${GEN_DIR} ${MO
 # command: the xsd-fu command to invoke
 # outvar: variable to store generated file list in
 function(xsd_fu_single filetype command outvar)
-  message(STATUS "Determining xsd-fu dependencies and outputs for target ${command} (${filetype}s)")
+  message(STATUS "Determining xsd-fu outputs for target ${command} (${filetype}s)")
   execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-generated ${XSD_FU_ARGS}
-    OUTPUT_VARIABLE genfiles)
+                  OUTPUT_VARIABLE genfiles
+                  RESULT_VARIABLE genfiles_result)
+  if (genfiles_result)
+    message(FATAL_ERROR "xsd-fu: Failed to get output file list for target ${command} (${filetype}s): ${genfiles_result}")
+  endif()
+
   string(REPLACE "\n" ";" genfiles "${genfiles}")
   if(WIN32)
     string(REPLACE "\\" "/" genfiles "${genfiles}")
   endif(WIN32)
+  list(REMOVE_DUPLICATES genfiles)
+
+  message(STATUS "Determining xsd-fu dependencies for target ${command} (${filetype}s)")
   execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-depends ${XSD_FU_ARGS}
-    OUTPUT_VARIABLE gendeps)
+                  OUTPUT_VARIABLE gendeps
+                  RESULT_VARIABLE gendeps_result)
+  if (gendeps_result)
+    message(FATAL_ERROR "xsd-fu: Failed to get dependency file list for target ${command} (${filetype}s): ${gendeps_result}")
+  endif()
+
   string(REPLACE "\n" ";" gendeps "${gendeps}")
   if(WIN32)
     string(REPLACE "\\" "/" gendeps "${gendeps}")
   endif(WIN32)
+  list(REMOVE_DUPLICATES gendeps)
 
   add_custom_command(OUTPUT ${genfiles}
                      COMMAND ${XSD_FU} ${command} --quiet --file-type=${filetype} ${XSD_FU_ARGS}
                      DEPENDS ${gendeps} ${XSD_FU_SCRIPT})
-  #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${genfiles})
 
   set(${outvar} ${genfiles} PARENT_SCOPE)
 endfunction(xsd_fu_single)

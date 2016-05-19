@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Prairie Technologies TIFF <prairie-tech-tiff-metadata>`
+Reader: PrairieReader (:bfreader:`Source Code <PrairieReader.java>`, :doc:`Supported Metadata Fields </metadata/PrairieReader>`)
+
 
 
 
@@ -42,12 +43,5 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`PrairieReader.java`
-
-Notes:
 
 

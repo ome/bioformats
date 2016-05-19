@@ -7,6 +7,11 @@ library from C++ in a cross-platform manner. As of this writing the bindings
 are functional with GCC on Linux and Mac OS X systems, as well as with Visual
 C++ 2005 and Visual C++ 2008 on Windows.
 
+.. note::
+
+    The JACE C++ bindings require Java 6 or Java 7 to build and run.
+    They do *not* currently work with Java 8.
+
 Compile-time dependencies
 -------------------------
 
@@ -32,11 +37,12 @@ required:
     threads in a platform independent way.
 
 - `Java Development Kit <http://www.oracle.com/technetwork/java/javase/downloads/>`_
-    At runtime, only the Java Runtime Environment (JRE) is necessary to 
-    execute the Bio-Formats code. However, the full J2SE development kit is 
-    required at compile time on some platforms (Windows in particular), since 
-    it comes bundled with the |JVM| shared library (jvm.lib) necessary to link 
-    with Java.
+    Version 6 or 7 is required; version 8 is not currently supported.
+    At runtime, only the Java Runtime Environment (JRE) is necessary
+    to execute the Bio-Formats code. However, the full J2SE
+    development kit is required at compile time on some platforms
+    (Windows in particular), since it comes bundled with the |JVM|
+    shared library (jvm.lib) necessary to link with Java.
 
 For information on installing these dependencies, refer to the page for your
 specific platform: 

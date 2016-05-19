@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,8 +38,9 @@ import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 
 /**
- *
- * @author callan
+ * An attempt should be made by all implementations to propagate calls to
+ * {@link #setMetadataOptions(MetadataOptions)} to dependent internal
+ * instances.
  */
 public interface IMetadataConfigurable{
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -383,6 +383,17 @@ public class PCIReader extends FormatReader {
       String parent = file.substring(0, separator);
       imageFiles.put(getImageIndex(parent), file);
     }
+
+    int bpp = FormatTools.getBytesPerPixel(m.pixelType);
+    int expectedPlaneSize = m.sizeX * m.sizeY * bpp * m.sizeC;
+    String file = imageFiles.get(0);
+    RandomAccessInputStream s = poi.getDocumentStream(file);
+    TiffParser tp = new TiffParser(s);
+    // don't correct the image width if it's stored as a TIFF
+    if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
+      m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
+    }
+    s.close();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);

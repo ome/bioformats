@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -42,9 +42,10 @@
 #include <stdexcept>
 #include <iostream>
 
-#include <boost/lexical_cast.hpp>
-
 #include <ome/test/test.h>
+
+// Include last due to side effect of MPL vector limit setting which can change the default
+#include <boost/lexical_cast.hpp>
 
 using ome::bioformats::MetadataMap;
 using boost::lexical_cast;

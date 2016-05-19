@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -86,6 +86,11 @@ namespace ome
       }
 
       boost::recursive_mutex Sentry::tiff_mutex;
+
+      // Visual Studio 12 and earlier don't have va_copy.
+#if _MSC_VER &&_MSC_VER < 1800
+#  define va_copy(dest, src) (dest = src)
+#endif
 
       // This code deliberately formats a nonliteral format string, so
       // disable -Wformat-nonliteral for the duration.

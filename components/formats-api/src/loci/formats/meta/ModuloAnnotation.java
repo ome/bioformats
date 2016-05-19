@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -80,7 +80,7 @@ public class ModuloAnnotation extends XMLAnnotation {
       type = type.toLowerCase();
     }
     // Handle CZI files for the moment.
-    // TODO: see http://trac.openmicroscopy.org.uk/ome/ticket/11720
+    // TODO: see https://trac.openmicroscopy.org/ome/ticket/11720
     if (type.equals("rotation")) {
       type = "angle";
     }

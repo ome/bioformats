@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -492,7 +492,7 @@ public class ImportProcess implements StatusReporter {
 
     BF.status(options.isQuiet(), "Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
-    baseReader.setGroupFiles(!options.isUngroupFiles());
+    baseReader.setGroupFiles(!options.isUngroupFiles() || options.isGroupFiles());
     if(options != null && !options.showROIs()){
         MetadataOptions mo = baseReader.getMetadataOptions();
         if(mo == null){
@@ -504,6 +504,8 @@ public class ImportProcess implements StatusReporter {
     }
     baseReader.setId(options.getId());
     
+    boolean mustGroup = baseReader.fileGroupOption(options.getId()) == FormatTools.MUST_GROUP;
+    options.setMustGroup(mustGroup);
   }
 
   /** Performed following ImportStep.STACK notification. */
@@ -515,7 +517,7 @@ public class ImportProcess implements StatusReporter {
 
       // overwrite base filename with file pattern
       String id = options.getId();
-      options.setId(id);
+      fileStitcher.setId(id);
       fileStitcher.setUsingPatternIds(true);
       fileStitcher.setCanChangePattern(false);
     }

@@ -1,8 +1,0 @@
-            <!--
-            // Property Format
-            -->
-            <optional name="format" type="ome.model.enums.Format"/>
-            <!--
-            // Property Pixels
-            -->
-            <oneone name="pixels" type="ome.model.core.Pixels" inverse="image"/>

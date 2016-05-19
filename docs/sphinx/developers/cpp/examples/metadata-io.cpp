@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2015 Open Microscopy Environment:
+ * Copyright © 2015 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -43,6 +43,7 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/xml/Document.h>
 #include <ome/xml/meta/Convert.h>
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -81,7 +82,7 @@ namespace
     // XML platform (required by Xerces)
     xml::Platform xmlplat;
     // XML DOM tree containing parsed file content
-    xml::dom::Document inputdoc(xml::dom::createDocument(filename));
+    xml::dom::Document inputdoc(ome::xml::createDocument(filename));
     // Create metadata from DOM document
     shared_ptr<meta::OMEXMLMetadata> dommeta(createOMEXMLMetadata(inputdoc));
     /* read-dom-example-end */

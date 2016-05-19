@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -664,7 +664,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
 			if (${prop.instanceVariableName}.value() != null)
 			{
+{% if prop.type.endswith('Int') %}
+				${klass.name}_element.setAttribute("${prop.name}", Long.toString(${prop.instanceVariableName}.value().longValue()));
+{% end if prop.type %}
+{% if not prop.type.endswith('Int') %}
 				${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
+{% end if not prop.type %}
 			}
 			if (${prop.instanceVariableName}.unit() != null)
 			{

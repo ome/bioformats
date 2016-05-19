@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,6 +54,18 @@ public class Modulo {
 
   public Modulo(String dimension) {
     parentDimension = dimension;
+  }
+
+  public Modulo(Modulo m) {
+    this.parentDimension = m.parentDimension;
+    this.start = m.start;
+    this.step = m.step;
+    this.end = m.end;
+    this.parentType = m.parentType;
+    this.type = m.type;
+    this.typeDescription = m.typeDescription;
+    this.unit = m.unit;
+    this.labels = m.labels;
   }
 
   // -- Methods --

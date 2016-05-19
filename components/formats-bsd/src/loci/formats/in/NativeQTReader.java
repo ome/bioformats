@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -215,7 +215,9 @@ public class NativeQTReader extends FormatReader {
       System.arraycopy(temp, 0, t, 0, t.length);
     }
 
-    prevPixels = t;
+    if (t.length > 0) {
+      prevPixels = t;
+    }
     prevPlane = no;
 
     // determine whether we need to strip out any padding bytes
@@ -239,6 +241,9 @@ public class NativeQTReader extends FormatReader {
         System.arraycopy(prevPixels, row * (bytes * getSizeX() + pad), t,
           row * getSizeX() * bytes, getSizeX() * bytes);
       }
+    }
+    if (t.length == 0) {
+      t = prevPixels;
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());

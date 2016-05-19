@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`GIF (Graphics Interchange Format) <gif-metadata>`
+Reader: GIFReader (:bsd-reader:`Source Code <GIFReader.java>`, :doc:`Supported Metadata Fields </metadata/GIFReader>`)
+
 
 Freely Available Software:
 
@@ -49,12 +50,5 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
-**Additional Information**
-
-
-Source Code: :bsd-reader:`GIFReader.java`
-
-Notes:
 
 

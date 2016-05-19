@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -200,9 +200,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = c.seriesMetadata;
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
-    moduloZ = c.moduloZ;
-    moduloC = c.moduloC;
-    moduloT = c.moduloT;
+    moduloZ = new Modulo(c.moduloZ);
+    moduloC = new Modulo(c.moduloC);
+    moduloT = new Modulo(c.moduloT);
   }
 
   // -- Object methods --

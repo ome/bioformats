@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields: :doc:`Olympus FluoView FV1000 <olympus-fluoview-fv1000-metadata>`
+Reader: FV1000Reader (:bfreader:`Source Code <FV1000Reader.java>`, :doc:`Supported Metadata Fields </metadata/FV1000Reader>`)
+
 
 Freely Available Software:
 
@@ -50,13 +51,7 @@ Presence: |Good|
 
 Utility: |Very good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`FV1000Reader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

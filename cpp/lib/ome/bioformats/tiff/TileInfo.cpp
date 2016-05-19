@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -128,11 +128,11 @@ namespace ome
             }
 
           // Compute row and column counts.
-          nrows = imagewidth / tileheight;
-          if (imagewidth % tileheight)
+          nrows = imageheight / tileheight;
+          if (imageheight % tileheight)
             ++nrows;
-          ncols = imageheight / tilewidth;
-          if (imageheight % tilewidth)
+          ncols = imagewidth / tilewidth;
+          if (imagewidth % tilewidth)
             ++ncols;
           ntiles = nrows * ncols;
         }

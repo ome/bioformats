@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -906,17 +906,91 @@ public class XMLMockObjects
       int index, int rows, int columns, int fields,
       int numberOfPlateAcquisition)
   {
+    return createPlate(numberOfPlates, index, rows, columns,
+        fields, numberOfPlateAcquisition, true);
+  }
+
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfPlates The total number of plates.
+   * @param index The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfPlates,
+      int index, int rows, int columns, int fields,
+      int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
+    return createPlate(1, 0, numberOfPlates, index, rows, columns,
+        fields, numberOfPlateAcquisition, withMicrobeam);
+  }
+
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfScreens The total number of screens.
+   * @param screenIndex The index of the screen.
+   * @param numberOfPlates The total number of plates.
+   * @param plateIndex The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfScreens, int screenIndex,
+      int numberOfPlates, int plateIndex, int rows, int columns,
+      int fields, int numberOfPlateAcquisition)
+  {
+      return createPlate(numberOfScreens, screenIndex, numberOfPlates,
+          plateIndex, rows, columns, fields, numberOfPlateAcquisition, true);
+  }
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfScreens The total number of screens.
+   * @param screenIndex The index of the screen.
+   * @param numberOfPlates The total number of plates.
+   * @param plateIndex The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfScreens, int screenIndex,
+      int numberOfPlates, int plateIndex, int rows, int columns,
+      int fields, int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
+    if (numberOfScreens == 0) {
+      numberOfScreens = 1;
+      screenIndex = 0;
+    }
     // ticket:3102
-    Experiment exp = createExperimentWithMicrobeam(index);
+    int totalPlateIndex = numberOfScreens*screenIndex+plateIndex;
+    Experiment exp;
+    if (withMicrobeam) {
+      exp = createExperimentWithMicrobeam(plateIndex);
+    } else {
+      exp = createExperiment(plateIndex);
+    }
+
     ome.addExperiment(exp);
 
     if (numberOfPlateAcquisition < 0) {
       numberOfPlateAcquisition = 0;
     }
     Plate plate = new Plate();
-    plate.setID("Plate:"+index);
-    plate.setName("Plate Name "+index);
-    plate.setDescription("Plate Description "+index);
+    plate.setID("Plate:"+totalPlateIndex);
+    plate.setName("Plate Name "+totalPlateIndex);
+    plate.setDescription(String.format("Plate %d of %d",
+        plateIndex, numberOfPlates));
     plate.setExternalIdentifier("External Identifier");
     plate.setRows(new PositiveInteger(rows));
     plate.setColumns(new PositiveInteger(columns));
@@ -931,10 +1005,11 @@ public class XMLMockObjects
     if (numberOfPlateAcquisition > 0) {
       for (int i = 0; i < numberOfPlateAcquisition; i++) {
         pa = new PlateAcquisition();
-        v = i+index*numberOfPlates;
+        v = i+totalPlateIndex*numberOfPlateAcquisition;
         pa.setID("PlateAcquisition:"+v);
         pa.setName("PlateAcquisition Name "+v);
-        pa.setDescription("PlateAcquisition Description "+v);
+        pa.setDescription(String.format("PlateAcquisition %d of %d",
+            i, numberOfPlateAcquisition));
         pa.setEndTime(new Timestamp(TIME));
         pa.setStartTime(new Timestamp(TIME));
         plate.addPlateAcquisition(pa);
@@ -945,13 +1020,14 @@ public class XMLMockObjects
     Well well;
     WellSample sample;
     Image image;
-    int i = index*rows*columns*fields*numberOfPlateAcquisition;
+    int i = totalPlateIndex*rows*columns*fields*numberOfPlateAcquisition;
     Iterator<PlateAcquisition> k;
     int kk = 0;
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
         well = new Well();
-        well.setID(String.format("Well:%d_%d_%d", row, column, index));
+        well.setID(String.format("Well:%d_%d_%d_%d",
+            screenIndex, plateIndex, row, column));
         well.setRow(new NonNegativeInteger(row));
         well.setColumn(new NonNegativeInteger(column));
         well.setType("Transfection: done");
@@ -964,8 +1040,8 @@ public class XMLMockObjects
             sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
             sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
-            sample.setID(String.format("WellSample:%d_%d_%d_%d",
-                index, row, column, field));
+            sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
+                screenIndex, plateIndex, row, column, field));
             sample.setIndex(new NonNegativeInteger(i));
             //create an image. and register it
             image = createImageWithExperiment(i, true, exp);
@@ -981,13 +1057,13 @@ public class XMLMockObjects
           while (k.hasNext()) {
             pa = k.next();
             for (int field = 0; field < fields; field++) {
-              v = kk+index*numberOfPlates;
+              v = kk+totalPlateIndex*numberOfPlates*numberOfScreens;
               sample = new WellSample();
               sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
               sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
-              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
-                  index, row, column, field, v));
+              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d_%d",
+                  screenIndex, plateIndex, row, column, field, v));
               sample.setIndex(new NonNegativeInteger(i));
               //create an image. and register it
               //image = createImage(i, true);
@@ -1512,6 +1588,92 @@ public class XMLMockObjects
   }
 
   /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs)
+  {
+      return createPopulatedPlate(plates, rows, cols, fields, acqs, true);
+  }
+
+  /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs, boolean withMicrobeam)
+  {
+    Plate plate;
+    for (int p = 0; p < plates; p++) {
+      plate = createPlate(plates, p, rows, cols, fields, acqs, withMicrobeam);
+      ome.addPlate(plate);
+    }
+    return ome;
+  }
+
+  /**
+   * Creates several screens each with several plates.
+   *
+   * @param screens The number of screens to create.
+   * @param plates  The number of plates to create.
+   * @param rows    The number of rows for plate.
+   * @param cols    The number of columns for plate.
+   * @param fields  The number of fields.
+   * @param acqs    The number of plate acquisitions.
+   * @return See above.
+   */
+  public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
+      int fields, int acqs)
+  {
+      return createPopulatedScreen(screens, plates, rows, cols, fields, acqs, 
+          true);
+  }
+
+  /**
+   * Creates several screens each with several plates.
+   *
+   * @param screens The number of screens to create.
+   * @param plates  The number of plates to create.
+   * @param rows    The number of rows for plate.
+   * @param cols    The number of columns for plate.
+   * @param fields  The number of fields.
+   * @param acqs    The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
+      int fields, int acqs, boolean withMicrobeam)
+  {
+    Screen screen;
+    Plate plate;
+    for (int s = 0; s < screens; s++) {
+      screen = createScreen(s);
+      for (int p = 0; p < plates; p++) {
+        plate = createPlate(screens, s, plates, p, rows, cols, fields, acqs,
+            withMicrobeam);
+        screen.linkPlate(plate);
+        ome.addPlate(plate);
+      }
+      ome.addScreen(screen);
+    }
+    return ome;
+  }
+
+  /**
    * Creates a screen with several plates.
    *
    * @param plates The number of plates to create.
@@ -1524,15 +1686,7 @@ public class XMLMockObjects
   public OME createPopulatedScreen(int plates, int rows, int cols, int fields,
       int acqs)
   {
-    Screen screen = createScreen(0);
-    Plate plate;
-    for (int p = 0; p < plates; p++) {
-      plate = createPlate(plates, p, rows, cols, fields, acqs);
-      screen.linkPlate(plate);
-      ome.addPlate(plate);
-    }
-    ome.addScreen(screen);
-    return ome;
+    return createPopulatedScreen(1, plates, rows, cols, fields, acqs);
   }
 
   /**

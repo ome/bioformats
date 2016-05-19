@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2015 Open Microscopy Environment:
+ * Copyright © 2015 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -91,6 +91,7 @@ namespace
     core->bitsPerPixel = 12U;
     core->dimensionOrder = DimensionOrder::XYZTC;
     seriesList.push_back(core);
+    seriesList.push_back(core); // add two identical series
 
     fillMetadata(*meta, seriesList);
 
@@ -104,7 +105,7 @@ namespace
                  std::ostream& stream)
   {
     // Total number of images (series)
-    dimension_size_type ic = 1;
+    dimension_size_type ic = writer.getMetadataRetrieve()->getImageCount();
     stream << "Image count: " << ic << '\n';
 
     // Loop over images
@@ -114,7 +115,10 @@ namespace
         writer.setSeries(i);
 
         // Total number of planes.
-        dimension_size_type pc = 1;
+        dimension_size_type pc = 1U;
+        pc *= writer.getMetadataRetrieve()->getPixelsSizeZ(i);
+        pc *= writer.getMetadataRetrieve()->getPixelsSizeT(i);
+        pc *= writer.getMetadataRetrieve()->getChannelCount(i);
         stream << "\tPlane count: " << pc << '\n';
 
         // Loop over planes (for this image index)
@@ -199,7 +203,7 @@ main(int argc, char *argv[])
         }
       else
         {
-          std::cerr << "Usage: " << argv[0] << " ome-xml.xml\n";
+          std::cerr << "Usage: " << argv[0] << " ome-xml.ome.tiff\n";
           std::exit(1);
         }
     }

@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -152,7 +152,7 @@ namespace ome
         if (!tiff)
           {
             boost::format fmt("Failed to open ‘%1%’");
-            fmt % id.native();
+            fmt % id.string();
             throw FormatException(fmt.str());
           }
 

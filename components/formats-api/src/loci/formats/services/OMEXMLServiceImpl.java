@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,6 +52,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.Modulo;
+import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
@@ -60,17 +61,18 @@ import loci.formats.meta.ModuloAnnotation;
 import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
+
+import ome.units.quantity.Length;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Annotation;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
-import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
-import ome.xml.model.Annotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
 
@@ -807,7 +809,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         throw new IllegalArgumentException(
             "Expecting OMEXMLMetadata instance.");
       }
-
       dest.setRoot(ome);
     }
     else {
@@ -815,6 +816,25 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       // metadata object and copy it into the destination
       IMetadata src = createOMEXMLMetadata(xml);
       convertMetadata(src, dest);
+
+      // make sure that physical sizes are corrected
+      for (int image=0; image<src.getImageCount(); image++) {
+        Length physicalSizeX = src.getPixelsPhysicalSizeX(image);
+        if (physicalSizeX != null && physicalSizeX.value() != null) {
+          physicalSizeX = FormatTools.getPhysicalSize(physicalSizeX.value().doubleValue(), physicalSizeX.unit().getSymbol());
+          dest.setPixelsPhysicalSizeX(physicalSizeX, image);
+        }
+        Length physicalSizeY = src.getPixelsPhysicalSizeY(image);
+        if (physicalSizeY != null && physicalSizeY.value() != null) {
+          physicalSizeY = FormatTools.getPhysicalSize(physicalSizeY.value().doubleValue(), physicalSizeY.unit().getSymbol());
+          dest.setPixelsPhysicalSizeY(physicalSizeY, image);
+        }
+        Length physicalSizeZ = src.getPixelsPhysicalSizeZ(image);
+        if (physicalSizeZ != null && physicalSizeZ.value() != null) {
+          physicalSizeZ = FormatTools.getPhysicalSize(physicalSizeZ.value().doubleValue(), physicalSizeZ.unit().getSymbol());
+          dest.setPixelsPhysicalSizeZ(physicalSizeZ, image);
+        }
+      }
     }
   }
 
@@ -824,6 +844,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     MetadataConverter.convertMetadata(src, dest);
+  }
+
+  public void convertMetadata(MetadataRetrieve src, MetadataStore dest,
+    MetadataLevel level) {
+    MetadataConverter.convertMetadata(src, dest, level);
   }
 
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */

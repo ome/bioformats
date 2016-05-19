@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.1.3-SNAPSHOT</version>
+    <version>5.1.11-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8</version>
+      <version>${testng.version}</version>
     </dependency>
     <dependency>
       <groupId>nl.javadude.assumeng</groupId>

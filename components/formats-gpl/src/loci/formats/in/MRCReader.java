@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,6 +38,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * MRCReader is the file format reader for MRC files.
@@ -219,14 +220,22 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      // physical sizes are stored in ångströms, we want them in µm
-      xSize = (in.readFloat() / mx) / 10000.0;
-      ySize = (in.readFloat() / my) / 10000.0;
-      zSize = (in.readFloat() / mz) / 10000.0;
+      float xlen = in.readFloat();
+      float ylen = in.readFloat();
+      float zlen = in.readFloat();
 
-      addGlobalMeta("Pixel size (X)", xSize);
-      addGlobalMeta("Pixel size (Y)", ySize);
-      addGlobalMeta("Pixel size (Z)", zSize);
+      // physical sizes are stored in ångströms
+      xSize = (xlen / mx);
+      ySize = (ylen / my);
+      zSize = (zlen / mz);
+
+      addGlobalMeta("Grid size (X)", mx);
+      addGlobalMeta("Grid size (Y)", my);
+      addGlobalMeta("Grid size (Z)", mz);
+
+      addGlobalMeta("Cell size (X)", xlen);
+      addGlobalMeta("Cell size (Y)", ylen);
+      addGlobalMeta("Cell size (Z)", zlen);
 
       addGlobalMeta("Alpha angle", in.readFloat());
       addGlobalMeta("Beta angle", in.readFloat());
@@ -255,7 +264,7 @@ public class MRCReader extends FormatReader {
     double pixelTypeMax = pixelTypeMin + range;
 
     // Fix for EMAN2 generated MRC files containining unsigned 16-bit data
-    // See https://trac.openmicroscopy.org.uk/ome/ticket/4619
+    // See https://trac.openmicroscopy.org/ome/ticket/4619
     if (pixelTypeMax < maxValue || pixelTypeMin > minValue && signed) {
       switch (getPixelType()) {
         case FormatTools.INT16:
@@ -313,9 +322,9 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
-      Length sizeY = FormatTools.getPhysicalSizeY(ySize);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize, UNITS.ANGSTROM);
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize, UNITS.ANGSTROM);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSize, UNITS.ANGSTROM);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);

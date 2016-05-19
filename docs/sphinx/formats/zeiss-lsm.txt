@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Zeiss LSM (Laser Scanning Microscope) 510/710 <zeiss-lsm-metadata>`
+Reader: ZeissLSMReader (:bfreader:`Source Code <ZeissLSMReader.java>`, :doc:`Supported Metadata Fields </metadata/ZeissLSMReader>`)
+
 
 Freely Available Software:
 
@@ -51,13 +52,7 @@ Presence: |Very good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-Source Code: :bfreader:`ZeissLSMReader.java`
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
@@ -66,7 +61,7 @@ Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.net/>`_
 
 Commercial applications that support this format include: 
 
-* `SVI Huygens <http://www2.svi.nl/>`_ 
+* `SVI Huygens <https://svi.nl/HomePage>`_ 
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 
 * `Amira <http://www.amira.com/>`_ 
 * `Image-Pro Plus <http://www.mediacy.com/>`_

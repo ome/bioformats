@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -806,7 +806,7 @@ public class ICSReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
 
-    Double[] pixelSizes = null;
+    Double[] scales = null;
     Double[] timestamps = null;
     String[] units = null;
     String[] axes = null;
@@ -931,7 +931,7 @@ public class ICSReader extends FormatReader {
 
           if (key.equalsIgnoreCase("parameter scale")) {
             // parse physical pixel sizes and time increment
-            pixelSizes = splitDoubles(value);
+            scales = splitDoubles(value);
           }
           else if (key.equalsIgnoreCase("parameter t")) {
             // parse explicit timestamps
@@ -1501,8 +1501,8 @@ public class ICSReader extends FormatReader {
 
       // populate Dimensions data
 
-      if (pixelSizes != null) {
-        if (units != null && units.length == pixelSizes.length - 1) {
+      if (scales != null) {
+        if (units != null && units.length == scales.length - 1) {
           // correct for missing units
           // sometimes, the units for the C axis are missing entirely
           ArrayList<String> realUnits = new ArrayList<String>();
@@ -1518,10 +1518,10 @@ public class ICSReader extends FormatReader {
           units = realUnits.toArray(new String[realUnits.size()]);
         }
 
-        for (int i=0; i<pixelSizes.length; i++) {
-          Double pixelSize = pixelSizes[i];
+        for (int i=0; i<scales.length; i++) {
+          Double scale = scales[i];
 
-          if (pixelSize == null) {
+          if (scale == null) {
             continue;
           }
 
@@ -1529,7 +1529,7 @@ public class ICSReader extends FormatReader {
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              Length x = FormatTools.getPhysicalSizeX(pixelSize);
+              Length x = FormatTools.getPhysicalSizeX(scale);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
@@ -1537,7 +1537,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("y")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              Length y = FormatTools.getPhysicalSizeY(pixelSize);
+              Length y = FormatTools.getPhysicalSizeY(scale);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
@@ -1545,18 +1545,18 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("z")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              Length z = FormatTools.getPhysicalSizeZ(pixelSize);
+              Length z = FormatTools.getPhysicalSizeZ(scale);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
             }
           }
-          else if (axis.equals("t") && pixelSize != null) {
+          else if (axis.equals("t") && scale != null) {
             if (checkUnit(unit, "ms")) {
-              store.setPixelsTimeIncrement(new Time(1000 * pixelSize, UNITS.S), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.MS), 0);
             }
             else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
-              store.setPixelsTimeIncrement(new Time(pixelSize, UNITS.S), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.S), 0);
             }
           }
         }

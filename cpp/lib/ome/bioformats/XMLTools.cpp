@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -42,6 +42,8 @@
 #include <ome/common/xml/ErrorReporter.h>
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/String.h>
+
+#include <ome/xml/Document.h>
 
 namespace xml = ome::common::xml;
 
@@ -135,9 +137,9 @@ namespace ome
       try
         {
           ome::common::xml::Platform xmlplat;
-          ome::common::xml::dom::createDocument(s);
+          ome::xml::createDocument(s);
         }
-      catch (const std::runtime_error& e)
+      catch (const std::runtime_error&)
         {
           valid = false;
         }

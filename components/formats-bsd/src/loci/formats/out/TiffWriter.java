@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -317,14 +317,14 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
     Length px = retrieve.getPixelsPhysicalSizeX(series);
-    Double physicalSizeX = px == null ? null : px.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeX = px == null || px.value(UNITS.MICROM) == null ? null : px.value(UNITS.MICROM).doubleValue();
     if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
     }
     else physicalSizeX = 1d / physicalSizeX;
 
     Length py = retrieve.getPixelsPhysicalSizeY(series);
-    Double physicalSizeY = py == null ? null : py.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeY = py == null || py.value(UNITS.MICROM) == null ? null : py.value(UNITS.MICROM).doubleValue();
     if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
     }
@@ -353,7 +353,7 @@ public class TiffWriter extends FormatWriter {
     else {
       out.seek((Long) ifd.get(IFD.REUSE));
     }
-    
+
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION,
       interleaved || getSamplesPerPixel() == 1 ? 1 : 2);
 
@@ -361,6 +361,13 @@ public class TiffWriter extends FormatWriter {
     if (FormatTools.isSigned(type)) sampleFormat = 2;
     if (FormatTools.isFloatingPoint(type)) sampleFormat = 3;
     ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
+
+    int channels = retrieve.getPixelsSizeC(series).getValue().intValue();
+    int z = retrieve.getPixelsSizeZ(series).getValue().intValue();
+    int t = retrieve.getPixelsSizeT(series).getValue().intValue();
+    ifd.putIFDValue(IFD.IMAGE_DESCRIPTION,
+      "ImageJ=\nhyperstack=true\nimages=" + (channels * z * t) + "\nchannels=" +
+      channels + "\nslices=" + z + "\nframes=" + t);
 
     int index = no;
     for (int i=0; i<getSeries(); i++) {

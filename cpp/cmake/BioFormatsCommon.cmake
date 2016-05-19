@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,3 +34,4 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+include("${CMAKE_CURRENT_LIST_DIR}/Options.cmake")

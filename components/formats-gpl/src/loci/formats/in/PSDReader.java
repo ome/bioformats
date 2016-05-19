@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -293,7 +293,7 @@ public class PSDReader extends FormatReader {
       }
       int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
-      if (len > in.length() - in.getFilePointer()) {
+      if (len > in.length() - in.getFilePointer() || (len & 0xff0000) >> 16 == 1) {
         in.seek(start);
         len = 0;
       }

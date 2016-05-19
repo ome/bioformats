@@ -19,7 +19,7 @@
 {% for param in indexes %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
-         * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
+         * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index.
          * @return the ${prop.name} property.
          */
 	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
@@ -69,7 +69,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee

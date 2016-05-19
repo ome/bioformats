@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,6 +44,8 @@
 #include <stdexcept>
 #include <string>
 
+// Disable expensive bounds checking
+#define BOOST_DISABLE_ASSERTS 1
 #include <boost/multi_array.hpp>
 
 #include <ome/bioformats/PixelProperties.h>
@@ -435,7 +437,7 @@ namespace ome
           {
             array();
           }
-        catch (const std::runtime_error& e)
+        catch (const std::runtime_error&)
           {
             is_valid = false;
           }

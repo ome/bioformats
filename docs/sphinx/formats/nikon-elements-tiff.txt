@@ -18,7 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Nikon Elements TIFF <nikon-elements-tiff-metadata>`
+Reader: NikonElementsTiffReader (:bfreader:`Source Code <NikonElementsTiffReader.java>`, :doc:`Supported Metadata Fields </metadata/NikonElementsTiffReader>`)
+
 
 
 
@@ -43,12 +44,5 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Source Code: :bfreader:`NikonElementsTiffReader.java`
-
-Notes:
 
 

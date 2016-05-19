@@ -17,7 +17,7 @@
 {% for param in indexes %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
-         * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
+         * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index.
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
@@ -72,7 +72,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee

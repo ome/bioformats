@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,6 +40,7 @@ import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
+import loci.common.Location;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,6 @@ public class ConfigurationTree {
    *  file system with a custom configuration directory.
    *
    *  @param rootDir a string specifying the root directory
-   *
    *  @param configDir a string specifying the base configuration directory
    *
    */
@@ -98,9 +98,19 @@ public class ConfigurationTree {
     if (rootDir == null) {
       throw new IllegalArgumentException("rootDir cannot be null.");
     }
-    this.rootDir = new File(rootDir).getAbsolutePath();
+
     if (configDir != null) {
-        this.configDir = new File(configDir).getAbsolutePath();
+      Location rootLocation = new Location(rootDir);
+      Location configLocation = new Location(configDir);
+      while (rootLocation.getName().equals(configLocation.getName())) {
+        rootLocation = rootLocation.getParentFile();
+        configLocation = configLocation.getParentFile();
+      }
+
+      this.rootDir = rootLocation.getAbsolutePath();
+      this.configDir = configLocation.getAbsolutePath();
+    } else {
+      this.rootDir = new File(rootDir).getAbsolutePath();
     }
     root = new DefaultMutableTreeNode();
   }
@@ -121,6 +131,35 @@ public class ConfigurationTree {
     return this.configDir;
   }
 
+  /**
+   *  Relocate a path from an base directory into a target directory
+   */
+  public String relocate(String path, String oldRoot, String newRoot) {
+
+    String subPath = path.substring((int) Math.min(
+      oldRoot.length() + 1, path.length()));
+    if (subPath.length() == 0) {
+      return newRoot;
+    }
+    else {
+      return new Location(newRoot, subPath).getAbsolutePath();
+    }
+  }
+
+  /**
+   *  Relocate a path under the root directory to the configuration directory
+   */
+  public String relocateToConfig(String path) {
+    return relocate(path, this.rootDir, this.configDir);
+  }
+
+  /**
+   *  Relocate a path under the configuration directory to the root directory
+   */
+  public String relocateToRoot(String path) {
+    return relocate(path, this.configDir, this.rootDir);
+  }
+
   /** Retrieves the Configuration object corresponding to the given file. */
   public Configuration get(String id) throws IOException {
     DefaultMutableTreeNode pos = findNode(id, false, null);
@@ -136,7 +175,7 @@ public class ConfigurationTree {
     }
     String parent = file.getParent();
     if (configDir != null) {
-        parent = parent.replaceAll(configDir, rootDir);
+      parent = relocateToRoot(parent);
     }
 
     configFile = file.getAbsolutePath();
@@ -144,7 +183,6 @@ public class ConfigurationTree {
 
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
-    parser.setBackslashContinuesLine(false);
     FileInputStream stream = new FileInputStream(configFile);
     IniList iniList = parser.parseINI(new BufferedReader(
       new InputStreamReader(stream, Constants.ENCODING)));

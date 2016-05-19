@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -69,6 +69,7 @@
 
 #include <ome/common/xml/String.h>
 
+#include <ome/xml/Document.h>
 #include <ome/xml/model/ModelException.h>
 #include <ome/xml/model/detail/Parse.h>
 
@@ -96,8 +97,6 @@ namespace ome
       class ${f};
 {% end for %}\
 
-{% end header %}\
-{% if fu.SOURCE_TYPE == "header" %}\
       /**
        * ${klass.name} model object.
        */
@@ -110,12 +109,82 @@ namespace ome
       {
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      namespace
+
+      /// Private implementation details of ${klass.name} model object.
+      class ${klass.name}::Impl
       {
+      public:
+{% if len(klass.instanceVariables) > 0 %}\
+{% for prop in klass.instanceVariables %}\
+{% if prop[3] is not None %}\
+        /// ${prop[3]}
+{% end has comment %}\
+{% if prop[0] is not None %}\
+        ${prop[0]} ${prop[1]};
+{% end has instance type %}\
+{% end for %}\
+{% end has instanceVariables %}\
 
-        const std::string NAMESPACE("${klass.namespace}");
+        /// Default constructor.
+{% if len(klass.instanceVariables) > 0 %}\
+        Impl():
+{% for prop in klass.instanceVariables %}\
+{% if prop[0] is not None %}\
+{% if prop == klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+          ${prop[1]}(${prop[2]})
+{% end has default %}\
+{% if prop[2] is None %}\
+          ${prop[1]}()
+{% end no default %}\
+{% end last member %}\
+{% if prop != klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+          ${prop[1]}(${prop[2]}),
+{% end has default %}\
+{% if prop[2] is None %}\
+          ${prop[1]}(),
+{% end no default %}\
+{% end not last member %}\
+{% end has instance type %}\
+{% end for %}\
+{% end has instanceVariables %}\
+{% if len(klass.instanceVariables) == 0 %}\
+        Impl()
+{% end no instanceVariables %}\
+         {
+         }
 
-      }
+        /// Copy constructor
+{% if len(klass.instanceVariables) > 0 %}\
+        Impl(const Impl& copy):
+{% for prop in klass.instanceVariables %}\
+{% if prop[0] is not None %}\
+{% if prop == klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+          ${prop[1]}(copy.${prop[1]})
+{% end has default %}\
+{% if prop[2] is None %}\
+          ${prop[1]}(copy.${prop[1]})
+{% end no default %}\
+{% end last member %}\
+{% if prop != klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+          ${prop[1]}(copy.${prop[1]}),
+{% end has default %}\
+{% if prop[2] is None %}\
+          ${prop[1]}(copy.${prop[1]}),
+{% end no default %}\
+{% end not last member %}\
+{% end has instance type %}\
+{% end for %}\
+{% end has instanceVariables %}\
+{% if len(klass.instanceVariables) == 0 %}\
+        Impl(const Impl& /* copy */)
+{% end no instanceVariables %}\
+        {
+        }
+      };
 
       // ModelObject: ${klass.name}
       // Namespace:   ${klass.namespace}
@@ -157,56 +226,22 @@ namespace ome
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
       private:
-{% if len(klass.instanceVariables) > 0 %}\
-{% for prop in klass.instanceVariables %}\
-{% if prop[3] is not None %}\
-        /// ${prop[3]}
-{% end has comment %}\
-{% if prop[0] is not None %}\
-        ${prop[0]} ${prop[1]};
-{% end has instance type %}\
-{% end for %}\
-{% end has instanceVariables %}\
+        class Impl;
+        /// Private implementation details.
+        ome::compat::shared_ptr<Impl> impl;
+
+      public:
+        /// Default constructor.
+        ${klass.name}();
 
 {% end header %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-      public:
-{% end header %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        /// Default constructor.
-        ${klass.name} ();
-{% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::${klass.name} ():
+      ${klass.name}::${klass.name}():
         ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
-{% if len(klass.instanceVariables) == 0 %}\
-        ${klass.parentName}()
-{% end has no instance variables %}\
-{% if len(klass.instanceVariables) > 0 %}\
         ${klass.parentName}(),
-{% end has instance variables %}\
 {% end has parent %}\
-{% for prop in klass.instanceVariables %}\
-{% if prop[0] is not None %}\
-{% if prop == klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]})
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}()
-{% end no default %}\
-{% end last member %}\
-{% if prop != klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(${prop[2]}),
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}(),
-{% end no default %}\
-{% end not last member %}\
-{% end has instance type %}\
-{% end for %}\
+        impl(ome::compat::make_shared<Impl>())
       {
 #ifdef OME_HAVE_BOOST_LOG
         logger.add_attribute("ClassName", logging::attributes::constant<std::string>("${klass.name}"));
@@ -214,8 +249,8 @@ namespace ome
         logger.className("${klass.name}");
 #endif // OME_HAVE_BOOST_LOG
       }
-{% end source %}\
 
+{% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Copy constructor.
@@ -223,38 +258,14 @@ namespace ome
          * @param copy the ${klass.name} to copy.
          */
         ${klass.name} (const ${klass.name}& copy);
-{% end header%}\
+{% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} (const ${klass.name}& copy):
         ${lang.omexml_model_package}::OMEModelObject(),
 {% if klass.parentName is not None %}\
-{% if len(klass.instanceVariables) == 0 %}\
-        ${klass.parentName}(copy)
-{% end has no instance variables %}\
-{% if len(klass.instanceVariables) > 0 %}\
         ${klass.parentName}(copy),
-{% end has instance variables %}\
 {% end has parent %}\
-{% for prop in klass.instanceVariables %}\
-{% if prop[0] is not None %}\
-{% if prop == klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(copy.${prop[1]})
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}(copy.${prop[1]})
-{% end no default %}\
-{% end last member %}\
-{% if prop != klass.instanceVariables[-1] %}\
-{% if prop[2] is not None %}\
-        ${prop[1]}(copy.${prop[1]}),
-{% end has default %}\
-{% if prop[2] is None %}\
-        ${prop[1]}(copy.${prop[1]}),
-{% end no default %}\
-{% end not last member %}\
-{% end has instance type %}\
-{% end for %}\
+        impl(ome::compat::make_shared<Impl>(*copy.impl))
       {
       }
 {% end source %}\
@@ -263,7 +274,6 @@ namespace ome
         /// Destructor.
         virtual
         ~${klass.name} ();
-
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::~${klass.name} ()
@@ -273,7 +283,6 @@ namespace ome
 
 {% if not klass.isAbstract and not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-
         /**
          * Create a ${klass.name} model object from DOM element.
          *
@@ -376,7 +385,7 @@ ${customContent}\
             }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
-          this->value = text;
+          this->impl->value = text;
 {% end %}\
         }
 {% end %}\
@@ -613,22 +622,22 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
 {% if not prop.isReference and not prop.isBackReference %}\
-                if (contains(${prop.instanceVariableName}, o_casted))
+                if (contains(this->impl->${prop.instanceVariableName}, o_casted))
                   {
-                    ${prop.instanceVariableName}.push_back(o_casted);
+                    this->impl->${prop.instanceVariableName}.push_back(o_casted);
                   }
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
                 typedef OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::nth_index<1>::type container_set_type;
-                container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(o_casted));
-                if (it != this->${prop.instanceVariableName}.get<1>().end())
+                container_set_type::iterator it(this->impl->${prop.instanceVariableName}.get<1>().find(o_casted));
+                if (it != this->impl->${prop.instanceVariableName}.get<1>().end())
                   {
-                    ${prop.instanceVariableName}.push_back(o_casted);
+                    this->impl->${prop.instanceVariableName}.push_back(o_casted);
                   }
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs == 1 %}\
-                ${prop.instanceVariableName} = o_casted;
+                this->impl->${prop.instanceVariableName} = o_casted;
 {% end %}\
                 return true;
               }
@@ -656,7 +665,7 @@ ${customUpdatePropertyContent[prop.name]}
       const ${klass.langBaseType}&
       ${klass.name}::getValue () const
       {
-        return this->value;
+        return this->impl->value;
       }
 {% end source %}\
 
@@ -673,7 +682,7 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::setValue (const ${klass.langBaseType}& value)
       {
-        this->value = value;
+        this->impl->value = value;
       }
 {% end source %}\
 {% end not object %}\
@@ -695,7 +704,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.instanceVariableType}::size_type
       ${klass.name}::sizeOfLinked${prop.methodName}List () const
       {
-        return ${prop.instanceVariableName}.size();
+        return this->impl->${prop.instanceVariableName}.size();
       }
 {% end source %}\
 
@@ -712,7 +721,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.instanceVariableType}
       ${klass.name}::getLinked${prop.methodName}List () const
       {
-        return ${prop.instanceVariableName};
+        return this->impl->${prop.instanceVariableName};
       }
 {% end source %}\
 
@@ -731,7 +740,7 @@ ${customUpdatePropertyContent[prop.name]}
       const ome::compat::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const
       {
-        return ${prop.instanceVariableName}.at(index);
+        return this->impl->${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
@@ -756,12 +765,12 @@ ${customUpdatePropertyContent[prop.name]}
                                                  const ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isReference and not prop.isBackReference %}\
-        return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+        return this->impl->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
-        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
+        ${prop.instanceVariableType}::iterator it(this->impl->${prop.instanceVariableName}.iterator_to(this->impl->${prop.instanceVariableName}.at(index)));
         const ome::compat::weak_ptr<${prop.langTypeNS}> wp(${prop.argumentName});
-        ${prop.instanceVariableName}.replace(it, wp);
+        this->impl->${prop.instanceVariableName}.replace(it, wp);
         return *it;
 {% end %}\
       }
@@ -794,18 +803,18 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if not prop.isReference and not prop.isBackReference %}\
-        if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
+        if (!contains(this->impl->${prop.instanceVariableName}, ${prop.argumentName}))
           {
-            this->${prop.instanceVariableName}.push_back(${prop.argumentName});
+            this->impl->${prop.instanceVariableName}.push_back(${prop.argumentName});
             return true;
           }
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
         typedef OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::nth_index<1>::type container_set_type;
-        container_set_type::iterator it(${prop.instanceVariableName}.get<1>().find(${prop.argumentName}));
-        if (it == this->${prop.instanceVariableName}.get<1>().end())
+        container_set_type::iterator it(this->impl->${prop.instanceVariableName}.get<1>().find(${prop.argumentName}));
+        if (it == this->impl->${prop.instanceVariableName}.get<1>().end())
           {
-            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::iterator, bool> res(this->${prop.instanceVariableName}.push_back(ome::compat::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
+            std::pair<OMEModelObject::indexed_container<${prop.langTypeNS}, ome::compat::weak_ptr>::type::iterator, bool> res(this->impl->${prop.instanceVariableName}.push_back(ome::compat::weak_ptr<${prop.langTypeNS}>(${prop.argumentName})));
             return res.second;
           }
 {% end %}\
@@ -846,13 +855,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
         bool found = false;
         ${prop.instanceVariableType}::iterator i =
-          std::find_if(this->${prop.instanceVariableName}.begin(),
-                       this->${prop.instanceVariableName}.end(),
+          std::find_if(this->impl->${prop.instanceVariableName}.begin(),
+                       this->impl->${prop.instanceVariableName}.end(),
                        compare_element<${prop.langTypeNS}>(${prop.argumentName}));
-        if (i != this->${prop.instanceVariableName}.end())
+        if (i != this->impl->${prop.instanceVariableName}.end())
           {
             found = true;
-            this->${prop.instanceVariableName}.erase(i);
+            this->impl->${prop.instanceVariableName}.erase(i);
           }
         return found;
       }
@@ -875,7 +884,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.retType[qualifier]}
       ${klass.name}::getLinked${prop.methodName} ()${qualifier}
       {
-        return ${prop.instanceVariableName};
+        return this->impl->${prop.instanceVariableName};
       }
 {% end source %}\
 
@@ -893,7 +902,7 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::link${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        this->${prop.instanceVariableName} = ${prop.argumentName};
+        this->impl->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -914,9 +923,9 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::unlink${prop.methodName} (ome::compat::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        if (ome::compat::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
+        if (ome::compat::shared_ptr<${prop.langTypeNS}>(this->impl->${prop.instanceVariableName}) == ${prop.argumentName})
           {
-            this->${prop.instanceVariableName} = ome::compat::shared_ptr<${prop.langTypeNS}>();
+            this->impl->${prop.instanceVariableName} = ome::compat::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
@@ -937,7 +946,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.retType[qualifier]}
       ${klass.name}::get${prop.methodName} ()${qualifier}
       {
-        return ${prop.instanceVariableName};
+        return this->impl->${prop.instanceVariableName};
       }
 {% end source %}\
 
@@ -956,7 +965,7 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::set${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
-        this->${prop.instanceVariableName} = ${prop.argumentName};
+        this->impl->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
 {% end %}\
@@ -975,7 +984,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.instanceVariableType}::size_type
       ${klass.name}::sizeOf${prop.methodName}List () const
       {
-        return ${prop.instanceVariableName}.size();
+        return this->impl->${prop.instanceVariableName}.size();
       }
 {% end source %}\
 
@@ -994,7 +1003,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.retType[qualifier]}&
       ${klass.name}::get${prop.methodName}List ()${qualifier}
       {
-        return ${prop.instanceVariableName};
+        return this->impl->${prop.instanceVariableName};
       }
 {% end source %}\
 
@@ -1015,7 +1024,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.elementRetType[qualifier]}
       ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier}
       {
-        return ${prop.instanceVariableName}.at(index);
+        return this->impl->${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
@@ -1042,11 +1051,11 @@ ${customUpdatePropertyContent[prop.name]}
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
 {% if not prop.isReference and not prop.isBackReference %}\
-        ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
+        this->impl->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
 {% end %}\
 {% if prop.isReference or prop.isBackReference %}\
-        ${prop.instanceVariableType}::iterator it(${prop.instanceVariableName}.iterator_to(${prop.instanceVariableName}.at(index)));
-        ${prop.instanceVariableName}.replace(it, ${prop.argumentName});
+        ${prop.instanceVariableType}::iterator it(this->impl->${prop.instanceVariableName}.iterator_to(this->impl->${prop.instanceVariableName}.at(index)));
+        this->impl->${prop.instanceVariableName}.replace(it, ${prop.argumentName});
 {% end %}\
       }
 {% end source %}\
@@ -1071,7 +1080,7 @@ ${customUpdatePropertyContent[prop.name]}
         ome::compat::weak_ptr<${klass.type}> self(ome::compat::dynamic_pointer_cast<${klass.type}>(shared_from_this()));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
-        ${prop.instanceVariableName}.push_back(${prop.argumentName});
+        this->impl->${prop.instanceVariableName}.push_back(${prop.argumentName});
       }
 {% end source %}\
 
@@ -1092,11 +1101,11 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::remove${prop.methodName} (${prop.elementArgType} ${prop.argumentName})
       {
-        ${prop.instanceVariableType}::iterator i = std::find_if(${prop.instanceVariableName}.begin(),
-                                                                ${prop.instanceVariableName}.end(),
+        ${prop.instanceVariableType}::iterator i = std::find_if(this->impl->${prop.instanceVariableName}.begin(),
+                                                                this->impl->${prop.instanceVariableName}.end(),
                                                                 compare_element<${prop.langTypeNS}>(${prop.argumentName}));
-        if (i != ${prop.instanceVariableName}.end())
-          ${prop.instanceVariableName}.erase(i);
+        if (i != this->impl->${prop.instanceVariableName}.end())
+          this->impl->${prop.instanceVariableName}.erase(i);
       }
 {% end source %}\
 {% end %}\
@@ -1170,7 +1179,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${klass.name}::asXMLElement (common::xml::dom::Document& document) const
       {
 {% if klass.name != "OME" %}\
-        common::xml::dom::Element element(document.createElementNS(NAMESPACE, "${klass.name}"));
+        common::xml::dom::Element element(document.createElementNS(getXMLNamespace(), "${klass.name}"));
 {% end if %}\
 {% if klass.name == "OME" %}\
         common::xml::dom::Element element(document.getDocumentElement());
@@ -1198,42 +1207,42 @@ ${customUpdatePropertyContent[prop.name]}
 {% if klass.name == "OME" %}\
         static const std::string XSI_NAMESPACE("http://www.w3.org/2001/XMLSchema-instance");
         element.setAttribute("xmlns:xsi", XSI_NAMESPACE);
-        element.setAttribute("xsi:schemaLocation", NAMESPACE + " " + NAMESPACE + "/ome.xsd");
+        element.setAttribute("xsi:schemaLocation", getXMLNamespace() + " " + getXMLNamespace() + "/ome.xsd");
 {% end %}\
 {% if klass.isAbstractProprietary %}\
         // Class is abstract so we may need to create its "container" element
         if (std::string(element.getTagName()) != "${klass.name}")
           {
             common::xml::dom::Element abstractElement =
-              document.createElementNS(NAMESPACE, "${klass.name}");
+              document.createElementNS(getXMLNamespace(), "${klass.name}");
             abstractElement.appendChild(element);
             element = abstractElement;
           }
 {% end %}\
         if (!element)
           {
-            common::xml::dom::Element newElement = document.createElementNS(NAMESPACE, "${klass.name}");
+            common::xml::dom::Element newElement = document.createElementNS(getXMLNamespace(), "${klass.name}");
             element = newElement;
           }
 
 {% if klass.langBaseType is not None %}\
         // Element's text data
-//            if (!this->value.empty()) {
+//            if (!this->impl->value.empty()) {
 {% if klass.langBaseType != 'std::string' %}\
         {
           std::ostringstream os;
           os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
-          os << this->value;
+          os << this->impl->value;
 {% end %}\
 {% if prop.langTypeNS == 'bool' %}\
-          os << std::boolalpha << this->value;
+          os << std::boolalpha << this->impl->value;
 {% end %}\
           element.setTextContent(os.str());
         }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
-        element.setTextContent(this->value);
+        element.setTextContent(this->impl->value);
 {% end %}\
 {% end %}\
 {% if klass.isAnnotation %}\
@@ -1256,8 +1265,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.isReference and prop.maxOccurs > 1 %}\
           {
             // Reference property ${prop.name} which occurs more than once
-            for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
-                 i != ${prop.instanceVariableName}.end();
+            for (${prop.instanceVariableType}::const_iterator i = this->impl->${prop.instanceVariableName}.begin();
+                 i != this->impl->${prop.instanceVariableName}.end();
                  ++i)
               {
                 // Note that this doesn't strictly need to be a
@@ -1282,7 +1291,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
             ome::compat::shared_ptr<${prop.name}> o(ome::compat::make_shared< ${prop.name}>());
-            ome::compat::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName}.lock());
+            ome::compat::shared_ptr<${prop.langTypeNS}> sv(this->impl->${prop.instanceVariableName}.lock());
             if (sv)
               {
                 o->setID(sv->getID());
@@ -1303,21 +1312,21 @@ ${customAsXMLElementPropertyContent[prop.name]}
             os.imbue(std::locale::classic());
 {% if prop.minOccurs == 1 %}\
 {% if prop.langTypeNS != 'bool' %}\
-          os << ${prop.instanceVariableName};
+          os << this->impl->${prop.instanceVariableName};
 {% end %}\
 {% if prop.langTypeNS == 'bool' %}\
-          os << std::boolalpha << ${prop.instanceVariableName};
+          os << std::boolalpha << this->impl->${prop.instanceVariableName};
 {% end %}\
             element.setAttribute("${prop.name}", os.str());
 {% end %}\
 {% if prop.minOccurs == 0 %}\
-            if (${prop.instanceVariableName})
+            if (this->impl->${prop.instanceVariableName})
               {
 {% if prop.langTypeNS != 'bool' %}\
-                os << *${prop.instanceVariableName};
+                os << *this->impl->${prop.instanceVariableName};
 {% end %}\
 {% if prop.langTypeNS == 'bool' %}\
-                os << std::boolalpha << *${prop.instanceVariableName};
+                os << std::boolalpha << *this->impl->${prop.instanceVariableName};
 {% end %}\
                 element.setAttribute("${prop.name}", os.str());
               }
@@ -1327,9 +1336,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
           // Element property ${prop.name} which is complex (has
           // sub-elements)
-          if (${prop.instanceVariableName})
+          if (this->impl->${prop.instanceVariableName})
             {
-              common::xml::dom::Element child(${prop.instanceVariableName}->asXMLElement(document));
+              common::xml::dom::Element child(this->impl->${prop.instanceVariableName}->asXMLElement(document));
               element.appendChild(child);
             }
 {% end %}\
@@ -1338,29 +1347,29 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // sub-elements)
           {
 {% if prop.minOccurs == 1 %}\
-            common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+            common::xml::dom::Element child(document.createElementNS(getXMLNamespace(), "${prop.name}"));
             std::ostringstream os;
             os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
-            os << ${prop.instanceVariableName};
+            os << this->impl->${prop.instanceVariableName};
 {% end %}\
 {% if prop.langTypeNS == 'bool' %}\
-            os << std::boolalpha << ${prop.instanceVariableName};
+            os << std::boolalpha << this->impl->${prop.instanceVariableName};
 {% end %}\
             child.setTextContent(os.str());
             element.appendChild(child);
 {% end %}\
 {% if prop.minOccurs == 0 %}\
-            if (${prop.instanceVariableName})
+            if (this->impl->${prop.instanceVariableName})
               {
-                common::xml::dom::Element child(document.createElementNS(NAMESPACE, "${prop.name}"));
+                common::xml::dom::Element child(document.createElementNS(getXMLNamespace(), "${prop.name}"));
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
-                os << *${prop.instanceVariableName};
+                os << *this->impl->${prop.instanceVariableName};
 {% end %}\
 {% if prop.langTypeNS == 'bool' %}\
-                os << std::boolalpha << *${prop.instanceVariableName};
+                os << std::boolalpha << *this->impl->${prop.instanceVariableName};
 {% end %}\
                 child.setTextContent(os.str());
                 element.appendChild(child);
@@ -1372,8 +1381,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
           {
             // Element property ${prop.name} which is complex (has
             // sub-elements) and occurs more than once
-            for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
-                 i != ${prop.instanceVariableName}.end();
+            for (${prop.instanceVariableType}::const_iterator i = this->impl->${prop.instanceVariableName}.begin();
+                 i != this->impl->${prop.instanceVariableName}.end();
                  ++i)
               {
                 if (*i)
@@ -1388,12 +1397,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
           {
             // Element property ${prop.name} which is not complex (has no
             // sub-elements) which occurs more than once
-            for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
-                 i != ${prop.instanceVariableName}.end();
+            for (${prop.instanceVariableType}::const_iterator i = this->impl->${prop.instanceVariableName}.begin();
+                 i != this->impl->${prop.instanceVariableName}.end();
                  ++i)
               {
-                common::xml::dom::Element ${prop.instanceVariableName}_element =
-                                                                   document.createElementNS(NAMESPACE, "${prop.name}");
+                common::xml::dom::Element this->impl->${prop.instanceVariableName}_element =
+                                                                   document.createElementNS(getXMLNamespace(), "${prop.name}");
                 std::ostringstream os;
                 os.imbue(std::locale::classic());
 {% if prop.langTypeNS != 'bool' %}\
@@ -1402,8 +1411,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if prop.langTypeNS == 'bool' %}\
                 os << std::boolalpha << *i;
 {% end %}\
-                ${prop.instanceVariableName}_element.setTextContent(os.str());
-                common::xml::dom::Element child(${prop.instanceVariableName}_element);
+                this->impl->${prop.instanceVariableName}_element.setTextContent(os.str());
+                common::xml::dom::Element child(this->impl->${prop.instanceVariableName}_element);
                 element.appendChild(child);
               }
           }
@@ -1438,7 +1447,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
       const std::string&
       ${klass.name}::getXMLNamespace() const
       {
-        return NAMESPACE;
+        static const std::string ns("${klass.namespace}");
+        return ns;
       }
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\

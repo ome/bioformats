@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -147,7 +147,7 @@ namespace ome
                   is.exceptions(std::ios::failbit);
                   is >> value;
                 }
-              catch (const std::ios_base::failure& e)
+              catch (const std::ios_base::failure&)
                 {
                   parse_value_error(key, i->second);
                 }

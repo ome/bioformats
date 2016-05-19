@@ -3,8 +3,7 @@ C++ overview
 
 A completely native Bio-Formats C++ interface is now available.
 Unlike the JACE bindings, this does not wrap the Java implementation.
-With this release, TIFF reading and writing, and OME-TIFF reading are
-available.  OME-TIFF writing will be available soon.  All other
+Readers and writers are provided for TIFF and OME-TIFF.  All other
 readers and writers from the Java implementation are currently
 unavailable; the intention is that support for these will be added
 over time.
@@ -48,52 +47,69 @@ In order to build the C++ library and its documentation, a number of
 packages are required to be installed.  Note that the minimum version
 is the minimum version we regularly test with; older versions may work
 but are not supported.  Some packages are required only for building
-Bio-Formats (*BF build*).  A subset of these are required for building
-client applications making use of Bio-Formats (*Client build*) For
-end-user deployment (*Deploy*), the library packages rather than the
-development packages should be preferred; in some cases such as for
-Boost and Qt5, these are split up into a separate package for each
-library.
+Bio-Formats (*BF [super]build*).  A subset of these are required for
+building client applications making use of Bio-Formats (*Client
+build*).  For end-user deployment (*Deploy*), the library packages
+rather than the development packages should be preferred; in some
+cases such as for Boost and Qt5, these are split up into a separate
+package for each library.
 
-.. tabularcolumns:: |l|l|l|c|c|c|
+Bio-Formats may be built in two ways.  The first is “standalone” (*BF
+build*) and requires the prerequisites to be installed in advance, for
+example using your operating system's package manager.  The second is
+using a “super-build” (*BF superbuild*) which builds the prerequisites
+in addition to Bio-Formats, and is useful on systems where the
+prerequisites are unavailable, for example on Windows which lacks a
+package manager or on older systems such as CentOS 6 where the
+versions available through a package manager are too old.  Note that
+the super-build cannot provide *all* prerequisites; some will still
+need installing before building, shown in the table below.  Also note
+that the super-build may link against some system libraries when
+building packages such as libtiff, where the build system for the
+package will optionally use certain system libraries if available;
+this may result in a build which will not work on other systems unless
+these libraries are also installed.  In the future, these dependencies
+will also be provided by the super-build.
 
-+-----------------+--------------+--------------+----------------------------------+
-|                 |           Version           |           When required          |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Package         | Recommended  | Minimum      | BF build | Client build | Deploy |
-+=================+==============+==============+==========+==============+========+
-| Boost           | 1.54         | 1.48         |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| HDF5            | 1.8.x        | 1.8.x        |    ◦     | ◦            | ◦      |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| PNG             | 1.2          | 1.2          |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| TIFF            | 4.0.3        | 3.9.5        |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Xerces-C        | 3.0          | 3.0          |    \•    | \•           | \•     |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| GLM*            | 0.9.6        | 0.9.5        |    ◦     | ◦            |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Qt5*            | 5.2          | 5.0          |    ◦     | ◦            | ◦      |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| CMake           | 3.0          | 2.8.12       |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python          | 2.7          | 2.6          |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python Genshi   | 0.7          | 0.6          |    \•    |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Git             | 2.1.x        | 1.7.x        |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| GTest           | 1.7          | 1.5          |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Doxygen†        | 1.8          | 1.6          |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Graphviz†       | 2.x          | 1.8.10       |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| Python Sphinx‡§ | 1.2.x        | 1.1.x        |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
-| TeX (XeLaTeX)§  | TeXLive 2014 | TeXLive 2012 |    ◦     |              |        |
-+-----------------+--------------+--------------+----------+--------------+--------+
+.. tabularcolumns:: |l|l|l|c|c|c|c|
+
++---------------+--------------+--------------+--------------------------------------------------+
+|               |           Version           |                   When required                  |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Package       | Recommended  | Minimum      | BF build | BF superbuild | Client build | Deploy |
++===============+==============+==============+==========+===============+==============+========+
+| Boost         | 1.54         | 1.48         |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| HDF5          | 1.8.x        | 1.8.x        |    ◦     |               | ◦            | ◦      |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| PNG           | 1.2          | 1.2          |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| TIFF          | 4.0.3        | 3.9.5        |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Xerces-C      | 3.0          | 3.0          |    \•    |               | \•           | \•     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| GLM           | 0.9.6        | 0.9.5        |    \*    | \*            | \*           |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Qt5           | 5.2          | 5.0          |    \*    | \*            | \*           | \*     |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| CMake         | 3.0          | 2.8.12       |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python        | 2.7          | 2.6          |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python Genshi | 0.7          | 0.6          |    \•    | \•            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Git           | 2.1.x        | 1.7.x        |    ◦     | ◦             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| GTest         | 1.7          | 1.5          |    ◦     | ◦             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Doxygen       | 1.8          | 1.6          |    †     | †             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Graphviz      | 2.x          | 1.8.10       |    †     | †             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| Python Sphinx | 1.2.x        | 1.1.x        |    ‡§    | ‡§            |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
+| TeX (XeLaTeX) | TeXLive 2014 | TeXLive 2012 |    §     | §             |              |        |
++---------------+--------------+--------------+----------+---------------+--------------+--------+
 
 \•
   Required for Bio-Formats build; headers may be needed for client
@@ -112,10 +128,6 @@ library.
 §
   Optional, needed to build the manual (HTML and PDF)
 
-Due to lacking a package manager, if building on Windows most of the
-above packages will require downloading and installing by hand.  Links
-for these are provided below.
-
 Quick start
 ^^^^^^^^^^^
 
@@ -129,12 +141,21 @@ BSD Ports
   ``pkg install devel/boost-all devel/cmake science/hdf5 graphics/png lang/python textproc/py-genshi graphics/tiff textproc/xerces-c3 devel/git devel/googletest math/glm devel/qt5 graphics/graphviz devel/apache-ant java/openjdk7 textproc/py-sphinx print/texlive-full``
 Debian/Ubuntu
   ``apt-get install build-essential libboost-all-dev cmake libhdf5-dev libpng12-dev python python-genshi libtiff5-dev libxerces-c-dev git libgtest-dev libglm-dev qt5-default libqt5-opengl5-dev libqt5-svg5-dev graphviz ant ant-contrib ant-optional openjdk-7-jdk openjdk-7-jre python-sphinx texlive-full``
+
+Partial quick starts
+^^^^^^^^^^^^^^^^^^^^
+
+Homebrew and RedHat/CentOS do not provide packages for everything that is
+needed. The commands listed will install *most* of the dependencies, but
+further dependencies will need to be installed as described in various
+sections below.
+
 Homebrew
   ``brew install boost cmake hdf5 libpng python libtiff xerces-c git glm qt5 graphviz ant``
 RedHat/CentOS
   ``yum install libhdf5-devel libpng-devel python python-genshi libtiff-devel xerces-c-devel git gtest-devel graphviz java-1.7.0-openjdk``
+  See the :ref:`boost_req` section for installing a newer version of Boost.
 
-Note that Homebrew and RedHat/CentOS do not provide packages for everything you need; see below for details.
 
 Basic toolchain
 ^^^^^^^^^^^^^^^
@@ -166,6 +187,8 @@ If possible, install the following packages:
   Run ``yum groupinstall "Development Tools"``
 §
   Install Visual Studio or `Visual Studio Express <http://www.visualstudio.com/downloads/download-visual-studio-vs#d-express-windows-desktop>`__
+
+.. _boost_req:
 
 Boost
 ^^^^^
@@ -375,8 +398,8 @@ not functional on a specific system.
 
 If using an external GTest, make sure that :envvar:`GTEST_ROOT` is set
 in the environment, or that ``-DGTEST_ROOT=/path/to/gtest`` is passed
-to :program:`cmake` and that this points to the location where you
-installed the :program:`gtest` library.  If the library is located on
+to :program:`cmake` and that this points to the location where the
+:program:`gtest` library was installed.  If the library is located on
 the default library search path, this is not necessary.
 
 - `Website <https://code.google.com/p/googletest/>`__
@@ -565,6 +588,18 @@ TeX Gyre fonts available:
 - Windows: May need adding to the system fonts if not found
   automatically
 
+Sources
+-------
+
+Download the Bio-Formats source code or the CMake superbuild source
+code, depending upon which type of build is required, as described
+above.  The :downloads_cpp:`downloads page <>` provides links to the
+source releases for both, as well as links to their git repositories.
+If you wish to build a specific release of Bio-Formats, the source
+release is appropriate, but if you wish to build the latest
+development work, or make changes to the sources, the git repository
+will be more useful.
+
 Build environment
 -----------------
 
@@ -679,7 +714,7 @@ instead, if desired.
 
 Start by creating a temporary build directory.  This directory may be
 in any location inside or outside the Bio-Formats source tree.
-However, you may not use the source directory as the build directory.
+However, the source directory cannot be used as the build directory.
 (This fills the source tree full of autogenerated files.)
 
 Run :program:`cmake` from the temporary build directory::
@@ -692,14 +727,6 @@ Run ``cmake -LH`` to see the configurable project options; use
 ``-LAH`` to see advanced options.  The following basic options are
 supported:
 
-bioformats-superbuild=(ON|OFF)
-  Build Bio-Formats as part of a “super-build” project.  This will
-  download and build all needed library dependencies (Boost, libtiff
-  etc.) prior to building Bio-Formats.  This option is disabled by
-  default since most platforms provide all the libraries by default.
-  However, it is enabled by default when using Microsoft Visual C++,
-  since this platform does not provide libraries unless you have built
-  your own.
 cxxstd-autodetect=(ON|OFF)
   Enable or disable (default) C++ compiler standard autodetection.  If
   enabled, the compiler will be put into C++11 mode if available,
@@ -729,6 +756,15 @@ extra-warnings=(ON|OFF)
 fatal-warnings=(ON|OFF)
   Make compiler warnings into fatal errors.  This is disabled by
   default.
+relocatable-install=(ON|OFF)
+  Make the installed libraries, programs and datafiles relocatable;
+  this means that they may be moved from their installation prefix to
+  another location without breaking them.  If OFF, the installation
+  prefix is assumed to contain the libraries and datafiles.  If ON, no
+  assumptions are made, and a slower fallback is used to introspect
+  the location.  In all cases the location may be set in the
+  environment to override the compiled-in defaults.  This is OFF by
+  default for a regular build, and ON by default for a superbuild.
 sphinx=(ON|OFF)
   Build manual pages and HTML documentation with Sphinx.  Enabled by
   default if Sphinx is autodetected.
@@ -746,6 +782,18 @@ The installation prefix may be set at this point using
 may also be specified.  Please see the :program:`cmake` documentation
 for further details of all configurable options, and run ``cmake
 --help`` to list the available generators for your platform.
+
+If using the superbuild:
+
+source-cache=directory
+  Specify a directory in which to store downloaded source files; this
+  is useful if you need to repeat the build since the source files
+  will not need downloading again.
+bioformats-superbuild_USE_SYSTEM_${package}=(ON|OFF)
+  Disable the building of particular components, in order to use the
+  system version of these components.  By default, building of all
+  components is enabled. `${package}` is the component name.  Look in
+  the :file:`packages` directory for a full list of components.
 
 C++11
 ^^^^^

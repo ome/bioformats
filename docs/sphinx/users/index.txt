@@ -88,7 +88,6 @@ Libraries and scripting applications
     imglib/index
     itk/index
     qu-matlab/index
-    subimager/index
 
 
 Numerical data processing applications
@@ -98,6 +97,7 @@ Numerical data processing applications
     :maxdepth: 1
     :titlesonly:
 
+    octave/index
     idl/index
     knime/index
     matlab/index

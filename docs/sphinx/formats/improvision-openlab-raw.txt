@@ -6,7 +6,7 @@ Improvision Openlab Raw
 
 Extensions: .raw
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
@@ -19,7 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Improvision Openlab Raw <improvision-openlab-raw-metadata>`
+Reader: OpenlabRawReader (:bfreader:`Source Code <OpenlabRawReader.java>`, :doc:`Supported Metadata Fields </metadata/OpenlabRawReader>`)
+
 
 
 
@@ -45,13 +46,4 @@ Presence: |Poor|
 Utility: |Fair|
 
 
-**Additional Information**
 
-
-Source Code: :bfreader:`OpenlabRawReader.java`
-
-Notes:
-
-
-.. seealso:: 
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_

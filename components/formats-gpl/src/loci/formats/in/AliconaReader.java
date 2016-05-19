@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -273,11 +273,11 @@ public class AliconaReader extends FormatReader {
       // populate Dimensions data
 
       if (pntX != null && pntY != null) {
-        double pixelSizeX = Double.parseDouble(pntX) * 1000000;
-        double pixelSizeY = Double.parseDouble(pntY) * 1000000;
+        double pixelSizeX = Double.parseDouble(pntX);
+        double pixelSizeY = Double.parseDouble(pntY);
 
-        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, UNITS.METRE);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, UNITS.METRE);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -114,7 +114,7 @@ namespace ome
                       ret.push_back(child);
                     }
                 }
-              catch (std::logic_error& /* e */)
+              catch (std::logic_error&)
                 {
                   // Not an Element.
                 }

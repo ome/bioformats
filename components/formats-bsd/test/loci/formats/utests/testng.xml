@@ -2,7 +2,7 @@
   #%L
   BSD implementations of Bio-Formats readers and writers
   %%
-  Copyright (C) 2005 - 2015 Open Microscopy Environment:
+  Copyright (C) 2005 - 2016 Open Microscopy Environment:
     - Board of Regents of the University of Wisconsin-Madison
     - Glencoe Software, Inc.
     - University of Dundee
@@ -108,16 +108,35 @@
           <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
         </classes>
     </test>
-    <test name="FormatToolsTest">
-      <groups/>
-      <classes>
-        <class name="loci.formats.utests.FormatToolsTest"/>
-      </classes>
-    </test>
     <test name="MemoizerTest">
       <groups/>
       <classes>
         <class name="loci.formats.utests.MemoizerTest"/>
+      </classes>
+    </test>
+    <test name="AxisGuesserTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.AxisGuesserTest"/>
+      </classes>
+    </test>
+    <test name="FilePatternTests">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.FilePatternBlockTest"/>
+        <class name="loci.formats.utests.FilePatternTest"/>
+      </classes>
+    </test>
+    <test name="FileStitcherTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.FileStitcherTest"/>
+      </classes>
+    </test>
+    <test name="FakeReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.FakeReaderTest"/>
       </classes>
     </test>
 </suite>

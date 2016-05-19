@@ -5,7 +5,6 @@
       <pattern>%d [%t] %-5p %c - %m%n</pattern>
     </encoder>
   </appender>
-  <logger name="loci.formats.ClassList" level="FATAL"/>
   <root level="WARN">
     <appender-ref ref="stdout"/>
   </root>
