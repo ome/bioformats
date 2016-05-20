@@ -1026,10 +1026,10 @@ public class FV1000Reader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.S), i);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.SECOND), i);
 
       for (int p=0; p<core.get(i).imageCount; p++) {
-        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.S), i, p);
+        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.SECOND), i, p);
       }
 
       // populate LogicalChannel data
@@ -1053,7 +1053,7 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
-      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.V);
+      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.VOLT);
       if (theVoltage != null) {
         store.setDetectorVoltage(
               theVoltage, 0, channelIndex);
@@ -1152,7 +1152,7 @@ public class FV1000Reader extends FormatReader {
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
     }
     store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -1178,7 +1178,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<planes.size(); i++) {
       PlaneData plane = planes.get(i);
       if (plane.deltaT != null) {
-        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.SECOND), 0, i);
       }
       store.setPlanePositionX(plane.positionX, 0, i);
       store.setPlanePositionY(plane.positionY, 0, i);

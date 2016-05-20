@@ -106,7 +106,13 @@ public class V3DrawWriter extends FormatWriter {
         }
         String endianString = "L";
         MetadataRetrieve meta = getMetadataRetrieve();
-        boolean bigendian =  meta.getPixelsBinDataBigEndian(series, 0);
+        boolean bigendian = false;
+        if (meta.getPixelsBigEndian(series) != null) {
+          bigendian = meta.getPixelsBigEndian(series).booleanValue();
+        }
+        else if (meta.getPixelsBinDataCount(series) == 0) {
+          bigendian = meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+        }
         if (!bigendian) {
             endianString = "L";
         }else{

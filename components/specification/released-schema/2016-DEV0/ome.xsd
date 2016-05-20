@@ -214,7 +214,7 @@
   <!-- Key pixel storage elements -->
   <xsd:element name="Image"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Images</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Images</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This element describes the actual image and its meta-data.
         The elements that are references (ending in Ref or Settings) refer to
@@ -292,17 +292,17 @@
         <xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
         <xsd:element ref="ROIRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -312,7 +312,7 @@
   </xsd:element>
   <xsd:element name="Pixels"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Pixels</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Pixels</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Pixels is going to be removed in the future, but it is still required.
 
@@ -344,7 +344,7 @@
       <xsd:sequence>
         <xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><ordered/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:choice minOccurs="1" maxOccurs="1">
@@ -483,7 +483,7 @@
   </xsd:element>
   <xsd:element name="Plane"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Planes</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Planes</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Plane object holds microscope stage and image timing data
         for a given channel/z-section/timepoint.
@@ -503,7 +503,7 @@
         </xsd:choice>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -597,7 +597,7 @@
   </xsd:element>
   <xsd:element name="Channel"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Channels</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Channels</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         There must be one per channel in the Image, even for a single-plane image.
         And information about how each of them was acquired is stored in the various optional *Ref elements.  Each Logical Channel is composed of one or more
@@ -617,7 +617,7 @@
         <xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="LightPath" minOccurs="0" maxOccurs="1"/>
@@ -786,7 +786,7 @@
   <!-- Other elements associated with pixel storage -->
   <xsd:element name="MetadataOnly"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>MetadataOnlyMarkers</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>MetadataOnlyMarkers</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This place holder means there is on pixel data in this file.
       </xsd:documentation>
@@ -794,7 +794,7 @@
   </xsd:element>
   <xsd:element name="TiffData"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TiffDataBlocks</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TiffDataBlocks</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This described the location of the pixel data in a tiff file.
       </xsd:documentation>
@@ -873,7 +873,7 @@
   </xsd:element>
   <xsd:element name="StageLabel"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>StageLabels</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>StageLabels</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The StageLabel is used to specify a name and position for a stage position in the microscope's reference frame.
       </xsd:documentation>
@@ -922,7 +922,7 @@
   <!-- Misc -->
   <xsd:element name="MicrobeamManipulation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>MicrobeamManipulations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>MicrobeamManipulations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Defines a microbeam operation type and the region of the image it was applied to.
         The LightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
@@ -945,7 +945,7 @@
         </xsd:element>
         <xsd:element ref="ROIRef" minOccurs="1" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
@@ -981,7 +981,7 @@
   <!-- Physical microscope elements -->
   <xsd:element name="Instrument"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Instruments</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Instruments</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This element describes the instrument used to capture the Image.
         It is primarily a container for manufacturer's model and catalog
@@ -1009,7 +1009,7 @@
         <xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -1018,7 +1018,7 @@
   </xsd:element>
   <xsd:element name="Microscope"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Microscopes</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Microscopes</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>The microscope's manufacturer specification.</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -1043,7 +1043,7 @@
   <!-- Image sample elements -->
   <xsd:element name="ImagingEnvironment"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>ImagingEnvironments</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>ImagingEnvironments</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This describes the environment that the biological sample was in
         during the experiment.
@@ -1103,7 +1103,7 @@
   <!-- Structure elements -->
   <xsd:element name="Project"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Projects</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Projects</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Project ID is required.
         Datasets can be grouped into projects using a many-to-many relationship.
@@ -1129,12 +1129,12 @@
         <xsd:element ref="ExperimenterGroupRef" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -1144,7 +1144,7 @@
   </xsd:element>
   <xsd:element name="ExperimenterGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>ExperimenterGroups</plural><global/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>ExperimenterGroups</plural><global/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The ExperimenterGroupID is required.
         Information should ideally be specified for at least one Leader as a contact for the group.
@@ -1167,19 +1167,19 @@
         </xsd:element>
         <xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/><childordered/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/><childordered/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="Leader" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Name" use="optional" type="xsd:string">
         <xsd:annotation>
-          <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
+          <xsd:appinfo><xsdfu xmlns=""><unique/></xsdfu></xsd:appinfo>
         </xsd:annotation>
       </xsd:attribute>
       <xsd:attribute name="ID" use="required" type="ExperimenterGroupID"/>
@@ -1187,7 +1187,7 @@
   </xsd:element>
   <xsd:element name="Leader"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Leaders</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Leaders</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Contact information for a ExperimenterGroup leader specified using a reference
         to an Experimenter element defined elsewhere in the document.
@@ -1203,7 +1203,7 @@
   </xsd:element>
   <xsd:element name="Dataset"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Datasets</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Datasets</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An element specifying a collection of images that are always processed together.
         Images can belong to more than one Dataset, and a Dataset may contain more than one Image.
@@ -1232,12 +1232,12 @@
         <xsd:element ref="ExperimenterGroupRef" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="ImageRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -1253,7 +1253,7 @@
   </xsd:element>
   <xsd:element name="Experiment"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Experiments</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Experiments</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This element describes the type of experiment.  The required Type attribute must contain one or more entries from the following list:
         FP FRET Time-lapse 4-D+ Screen Immunocytochemistry FISH Electrophysiology  Ion-Imaging Colocalization PGI/Documentation
@@ -1322,7 +1322,7 @@
   </xsd:element>
   <xsd:element name="Experimenter"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Experimenters</plural><global/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Experimenters</plural><global/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This element describes a person who performed an imaging experiment.
         This person may also be a user of the OME system, in which case the UserName element contains their login name.
@@ -1333,7 +1333,7 @@
       <xsd:sequence>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -1371,7 +1371,7 @@
       </xsd:attribute>
       <xsd:attribute name="UserName" use="optional" type="xsd:string">
         <xsd:annotation>
-          <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
+          <xsd:appinfo><xsdfu xmlns=""><unique/></xsdfu></xsd:appinfo>
           <xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense). [plain text string]</xsd:documentation>
         </xsd:annotation>
       </xsd:attribute>
@@ -1379,7 +1379,7 @@
   </xsd:element>
   <xsd:element name="Folder"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Folders</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Folders</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An element specifying a possibly heterogeneous collection of data.
         Folders may contain Folders so that data may be organized within a tree of Folders.
@@ -1403,17 +1403,17 @@
         <xsd:element ref="FolderRef" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="ImageRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="ROIRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -1431,7 +1431,7 @@
   <!-- Common types -->
   <xsd:complexType name="ManufacturerSpec">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This is the base from which many microscope components are extended. E.g Objective, Filter etc.
         Provides attributes for recording common properties of these components such as Manufacturer name, Model etc,
@@ -1557,7 +1557,7 @@
 
   <xsd:element name="Map">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Maps</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Maps</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This is a Mapping of key/value pairs.
       </xsd:documentation>
@@ -1571,12 +1571,12 @@
 
   <xsd:complexType name="MapPairs">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
     </xsd:annotation>
     <xsd:sequence minOccurs="1" maxOccurs="1">
       <xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
-          <xsd:appinfo><xsdfu><plural>Ms</plural></xsdfu></xsd:appinfo>
+          <xsd:appinfo><xsdfu xmlns=""><plural>Ms</plural></xsdfu></xsd:appinfo>
           <xsd:documentation> This is a key/value pair used to build up a Mapping. The
           Element and Attribute name are kept to single letters to minimize the
           length at the expense of readability as they are likely to occur many
@@ -1593,6 +1593,110 @@
     </xsd:sequence>
   </xsd:complexType>
 
+  <xsd:simpleType name="Binning">
+    <xsd:annotation>
+      <xsd:documentation>
+        Represents the number of pixels that are combined to form larger pixels. {used:CCD,EMCCD}
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="1x1">
+        <xsd:annotation>
+          <xsd:documentation>No binning.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum name="1×1" enum="ONEBYONE" compatregex="^\\s*1.*x.*1\\s*"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="2x2">
+        <xsd:annotation>
+          <xsd:documentation>2×2 binning.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum name="2×2" enum="TWOBYTWO" compatregex="^\\s*2.*x.*2\\s*"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="4x4">
+        <xsd:annotation>
+          <xsd:documentation>4×4 binning.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum name="4×4" enum="FOURBYFOUR" compatregex="^\\s*4.*x.*4\\s*"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="8x8">
+        <xsd:annotation>
+          <xsd:documentation>8×8 binning.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum name="8×8" enum="EIGHTBYEIGHT" compatregex="^\\s*8.*x.*8\\s*"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="Other">
+        <xsd:annotation>
+          <xsd:documentation>Other binning value.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="OTHER"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="FontFamily">
+    <xsd:annotation>
+      <xsd:documentation>
+        The font family used to draw the text. [enumeration]
+        Note: these values are all lower case so they match
+        the standard HTML/CSS values. "fantasy" has been
+        included for completeness we do not recommended its
+        regular use.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="serif">
+        <xsd:annotation>
+          <xsd:documentation>serif.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="SERIF"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="sans-serif">
+        <xsd:annotation>
+          <xsd:documentation>sans-serif.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="SANSSERIF"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="cursive">
+        <xsd:annotation>
+          <xsd:documentation>cursive.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="CURSIVE"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="fantasy">
+        <xsd:annotation>
+          <xsd:documentation>fantasy.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="FANTASY"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value="monospace">
+        <xsd:annotation>
+          <xsd:documentation>monospace.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns="">
+            <enum enum="MONOSPACE"/>
+          </xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:simpleType name="PixelType">
     <xsd:annotation>
       <xsd:documentation>
@@ -1600,17 +1704,72 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value = "int8"/>
-      <xsd:enumeration value = "int16"/>
-      <xsd:enumeration value = "int32"/>
-      <xsd:enumeration value = "uint8"/>
-      <xsd:enumeration value = "uint16"/>
-      <xsd:enumeration value = "uint32"/>
-      <xsd:enumeration value = "float"/>
-      <xsd:enumeration value = "bit"/>
-      <xsd:enumeration value = "double"/>
-      <xsd:enumeration value = "complex"/>
-      <xsd:enumeration value = "double-complex"/>
+      <xsd:enumeration value = "int8">
+        <xsd:annotation>
+          <xsd:documentation>8 bit signed integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="INT8"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "int16">
+        <xsd:annotation>
+          <xsd:documentation>16 bit signed integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="INT16"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "int32">
+        <xsd:annotation>
+          <xsd:documentation>32 bit signed integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="INT32"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "uint8">
+        <xsd:annotation>
+          <xsd:documentation>8 bit unsigned integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="UINT8"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "uint16">
+        <xsd:annotation>
+          <xsd:documentation>16 bit unsigned integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="UINT16"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "uint32">
+        <xsd:annotation>
+          <xsd:documentation>32 bit unsigned integer.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="UINT32"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "float">
+        <xsd:annotation>
+          <xsd:documentation>single-precision floating point.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="FLOAT"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "double">
+        <xsd:annotation>
+          <xsd:documentation>double-precision floating point.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="DOUBLE"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "complex">
+        <xsd:annotation>
+          <xsd:documentation>complex single-precision floating point.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="COMPLEXFLOAT"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "double-complex">
+        <xsd:annotation>
+          <xsd:documentation>complex double-precision floating point.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="COMPLEXDOUBLE"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
+      <xsd:enumeration value = "bit">
+        <xsd:annotation>
+          <xsd:documentation>bit mask.</xsd:documentation>
+          <xsd:appinfo><xsdfu xmlns=""><enum enum="BIT"/></xsdfu></xsd:appinfo>
+        </xsd:annotation>
+      </xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:simpleType name="Color">
@@ -1632,45 +1791,45 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "Ym"><xsd:annotation><xsd:documentation>The length unit is yotta meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Zm"><xsd:annotation><xsd:documentation>The length unit is zetta meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Em"><xsd:annotation><xsd:documentation>The length unit is   exa meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Pm"><xsd:annotation><xsd:documentation>The length unit is  peta meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Tm"><xsd:annotation><xsd:documentation>The length unit is  tera meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Gm"><xsd:annotation><xsd:documentation>The length unit is  giga meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Mm"><xsd:annotation><xsd:documentation>The length unit is  mega meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "km"><xsd:annotation><xsd:documentation>The length unit is  kilo meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hm"><xsd:annotation><xsd:documentation>The length unit is hecto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "dam"><xsd:annotation><xsd:documentation>The length unit is  deca meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "m"><xsd:annotation><xsd:documentation>The length unit is       meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dm"><xsd:annotation><xsd:documentation>The length unit is  deci meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cm"><xsd:annotation><xsd:documentation>The length unit is centi meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mm"><xsd:annotation><xsd:documentation>The length unit is milli meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µm"><xsd:annotation><xsd:documentation>The length unit is micro meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "nm"><xsd:annotation><xsd:documentation>The length unit is  nano meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "pm"><xsd:annotation><xsd:documentation>The length unit is  pico meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fm"><xsd:annotation><xsd:documentation>The length unit is femto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "am"><xsd:annotation><xsd:documentation>The length unit is  atto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zm"><xsd:annotation><xsd:documentation>The length unit is zepto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ym"><xsd:annotation><xsd:documentation>The length unit is yocto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Ym"><xsd:annotation><xsd:documentation>yottameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottameter" plural="yottameter" altname="yottametre" altplural="yottametres" unitsystem="SI.METER" enum="YOTTAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Zm"><xsd:annotation><xsd:documentation>zettameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettameter" plural="zettameter" altname="zettametre" altplural="zettametres" unitsystem="SI.METER" enum="ZETTAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Em"><xsd:annotation><xsd:documentation> exameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exameter" plural="exameter" altname="exametre" altplural="exametres" unitsystem="SI.METER" enum="EXAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Pm"><xsd:annotation><xsd:documentation>petameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petameter" plural="petameter" altname="petametre" altplural="petametres" unitsystem="SI.METER" enum="PETAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Tm"><xsd:annotation><xsd:documentation>terameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="terameter" plural="terameter" altname="terametre" altplural="terametres" unitsystem="SI.METER" enum="TERAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Gm"><xsd:annotation><xsd:documentation>gigameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigameter" plural="gigameter" altname="gigametre" altplural="gigametres" unitsystem="SI.METER" enum="GIGAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Mm"><xsd:annotation><xsd:documentation>megameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megameter" plural="megameter" altname="megametre" altplural="megametres" unitsystem="SI.METER" enum="MEGAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "km"><xsd:annotation><xsd:documentation>kilometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilometer" plural="kilometer" altname="kilometre" altplural="kilometres" unitsystem="SI.METER" enum="KILOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hm"><xsd:annotation><xsd:documentation>hectometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectometer" plural="hectometer" altname="hectometre" altplural="hectometres" unitsystem="SI.METER" enum="HECTOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "dam"><xsd:annotation><xsd:documentation>decameter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decameter" plural="decameter" altname="decametre" altplural="decametres" unitsystem="SI.METER" enum="DECAMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "m"><xsd:annotation><xsd:documentation>meter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="meter" plural="meter" altname="metre" altplural="metres" unitsystem="SI.METER" enum="METER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dm"><xsd:annotation><xsd:documentation>decimeter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decimeter" plural="decimeter" altname="decimetre" altplural="decimetres" unitsystem="SI.METER" enum="DECIMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cm"><xsd:annotation><xsd:documentation>centimeter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centimeter" plural="centimeter" altname="centimetre" altplural="centimetres" unitsystem="SI.METER" enum="CENTIMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mm"><xsd:annotation><xsd:documentation>millimeter SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millimeter" plural="millimeter" altname="millimetre" altplural="millimetres" unitsystem="SI.METER" enum="MILLIMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µm"><xsd:annotation><xsd:documentation>micrometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="micrometer" plural="micrometer" altname="micrometre" altplural="micrometres" unitsystem="SI.METER" enum="MICROMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "nm"><xsd:annotation><xsd:documentation>nanometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanometer" plural="nanometer" altname="nanometre" altplural="nanometres" unitsystem="SI.METER" enum="NANOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "pm"><xsd:annotation><xsd:documentation>picometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picometer" plural="picometer" altname="picometre" altplural="picometres" unitsystem="SI.METER" enum="PICOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fm"><xsd:annotation><xsd:documentation>femtometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtometer" plural="femtometer" altname="femtometre" altplural="femtometres" unitsystem="SI.METER" enum="FEMTOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "am"><xsd:annotation><xsd:documentation>attometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attometer" plural="attometer" altname="attometre" altplural="attometres" unitsystem="SI.METER" enum="ATTOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zm"><xsd:annotation><xsd:documentation>zeptometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptometer" plural="zeptometer" altname="zeptometre" altplural="zeptometres" unitsystem="SI.METER" enum="ZEPTOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ym"><xsd:annotation><xsd:documentation>yoctometer SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctometer" plural="yoctometer" altname="yoctometre" altplural="yoctometres" unitsystem="SI.METER" enum="YOCTOMETER"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "Å"><xsd:annotation><xsd:documentation>The length unit is    ångströms.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "Å"><xsd:annotation><xsd:documentation>ångström SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="ångström" plural="ångströms" unitsystem="SI.METER" enum="ANGSTROM"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "thou"><xsd:annotation><xsd:documentation>The length unit is thou (or mil, 1/1000 of an inch).</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "li"><xsd:annotation><xsd:documentation>The length unit is line (1/12 of an inch).</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "in"><xsd:annotation><xsd:documentation>The length unit is inch.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "ft"><xsd:annotation><xsd:documentation>The length unit is foot.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "yd"><xsd:annotation><xsd:documentation>The length unit is yard.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "mi"><xsd:annotation><xsd:documentation>The length unit is terrestrial mile.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "thou"><xsd:annotation><xsd:documentation>thou Imperial unit (or mil, 1/1000 inch).</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="thou" plural="thous" unitsystem="Imperial" enum="THOU"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "li"><xsd:annotation><xsd:documentation>line Imperial unit (1/12 inch).</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="line" plural="lines" unitsystem="Imperial" enum="LINE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "in"><xsd:annotation><xsd:documentation>inch Imperial unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="inch" plural="inches" unitsystem="Imperial" enum="INCH"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "ft"><xsd:annotation><xsd:documentation>foot Imperial unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="foot" plural="feet" unitsystem="Imperial" enum="FOOT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "yd"><xsd:annotation><xsd:documentation>yard Imperial unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yard" plural="yards" unitsystem="Imperial" enum="YARD"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "mi"><xsd:annotation><xsd:documentation>terrestrial mile Imperial unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="mile" plural="miles" unitsystem="Imperial" enum="MILE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "ua"><xsd:annotation><xsd:documentation>The length unit is astronomical unit. The official term is ua as the SI standard assigned AU to absorbance unit.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "ly"><xsd:annotation><xsd:documentation>The length unit is light year.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "pc"><xsd:annotation><xsd:documentation>The length unit is parsec.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "ua"><xsd:annotation><xsd:documentation>astronomical unit SI-derived unit. The official term is ua as the SI standard assigned AU to absorbance unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="astronomical unit" plural="astronomical units" unitsystem="SI.METER" enum="ASTRONOMICALUNIT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "ly"><xsd:annotation><xsd:documentation>light year.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="light year" plural="light years" unitsystem="SI.METER" enum="LIGHTYEAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "pc"><xsd:annotation><xsd:documentation>parsec.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="parsec" plural="parsecs" unitsystem="SI.METER" enum="PARSEC"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "pt"><xsd:annotation><xsd:documentation>The length unit is typography point. This unit should be limited to font sizes.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "pixel"><xsd:annotation><xsd:documentation>The length unit is pixel. This unit should be limited to the ROI objects. It can then be resolved to real units from the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "pt"><xsd:annotation><xsd:documentation>typography point Imperial-derived unit (1/72 inch). Use of this unit should be limited to font sizes.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="point" plural="points" unitsystem="Imperial" enum="POINT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "pixel"><xsd:annotation><xsd:documentation>pixel abstract unit.  This is not convertible to any other length unit without a calibrated scaling factor. Its use should should be limited to ROI objects, and converted to an appropriate length units using the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="pixel" plural="pixels" unitsystem="Pixel" enum="PIXEL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "reference frame"><xsd:annotation><xsd:documentation>The length unit is reference frame.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "reference frame"><xsd:annotation><xsd:documentation>reference frame abstract unit.  This is not convertible to any other length unit without a scaling factor.  Its use should be limited to uncalibrated stage positions, and converted to an appropriate length unit using a calibrated scaling factor.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="reference frame" unitsystem="ReferenceFrame" enum="REFERENCEFRAME"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1681,31 +1840,31 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "Ys"><xsd:annotation><xsd:documentation>The time unit is yotta seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Zs"><xsd:annotation><xsd:documentation>The time unit is zetta seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Es"><xsd:annotation><xsd:documentation>The time unit is   exa seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Ps"><xsd:annotation><xsd:documentation>The time unit is  peta seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Ts"><xsd:annotation><xsd:documentation>The time unit is  tera seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Gs"><xsd:annotation><xsd:documentation>The time unit is  giga seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Ms"><xsd:annotation><xsd:documentation>The time unit is  mega seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ks"><xsd:annotation><xsd:documentation>The time unit is  kilo seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hs"><xsd:annotation><xsd:documentation>The time unit is hecto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "das"><xsd:annotation><xsd:documentation>The time unit is  deca seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "s"><xsd:annotation><xsd:documentation>The time unit is       seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ds"><xsd:annotation><xsd:documentation>The time unit is  deci seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cs"><xsd:annotation><xsd:documentation>The time unit is centi seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ms"><xsd:annotation><xsd:documentation>The time unit is milli seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µs"><xsd:annotation><xsd:documentation>The time unit is micro seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ns"><xsd:annotation><xsd:documentation>The time unit is  nano seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ps"><xsd:annotation><xsd:documentation>The time unit is  pico seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fs"><xsd:annotation><xsd:documentation>The time unit is femto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "as"><xsd:annotation><xsd:documentation>The time unit is  atto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zs"><xsd:annotation><xsd:documentation>The time unit is zepto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ys"><xsd:annotation><xsd:documentation>The time unit is yocto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Ys"><xsd:annotation><xsd:documentation>yottasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottasecond" plural="yottaseconds" unitsystem="SI.SECOND" enum="YOTTASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Zs"><xsd:annotation><xsd:documentation>zettasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettasecond" plural="zettaseconds" unitsystem="SI.SECOND" enum="ZETTASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Es"><xsd:annotation><xsd:documentation>exasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exasecond" plural="exaseconds" unitsystem="SI.SECOND" enum="EXASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Ps"><xsd:annotation><xsd:documentation>petasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petasecond" plural="petaseconds" unitsystem="SI.SECOND" enum="PETASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Ts"><xsd:annotation><xsd:documentation>terasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="terasecond" plural="teraseconds" unitsystem="SI.SECOND" enum="TERASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Gs"><xsd:annotation><xsd:documentation>gigasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigasecond" plural="gigaseconds" unitsystem="SI.SECOND" enum="GIGASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Ms"><xsd:annotation><xsd:documentation>megasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megasecond" plural="megaseconds" unitsystem="SI.SECOND" enum="MEGASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ks"><xsd:annotation><xsd:documentation>kilosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilosecond" plural="kiloseconds" unitsystem="SI.SECOND" enum="KILOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hs"><xsd:annotation><xsd:documentation>hectosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectosecond" plural="hectoseconds" unitsystem="SI.SECOND" enum="HECTOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "das"><xsd:annotation><xsd:documentation>decasecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decasecond" plural="decaseconds" unitsystem="SI.SECOND" enum="DECASECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "s"><xsd:annotation><xsd:documentation>second SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="second" plural="seconds" unitsystem="SI.SECOND" enum="SECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ds"><xsd:annotation><xsd:documentation>decisecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decisecond" plural="deciseconds" unitsystem="SI.SECOND" enum="DECISECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cs"><xsd:annotation><xsd:documentation>centisecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centisecond" plural="centiseconds" unitsystem="SI.SECOND" enum="CENTISECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ms"><xsd:annotation><xsd:documentation>millisecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millisecond" plural="milliseconds" unitsystem="SI.SECOND" enum="MILLISECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µs"><xsd:annotation><xsd:documentation>microsecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="microsecond" plural="microseconds" unitsystem="SI.SECOND" enum="MICROSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ns"><xsd:annotation><xsd:documentation>nanosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanosecond" plural="nanoseconds" unitsystem="SI.SECOND" enum="NANOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ps"><xsd:annotation><xsd:documentation>picosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picosecond" plural="picoseconds" unitsystem="SI.SECOND" enum="PICOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fs"><xsd:annotation><xsd:documentation>femtosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtosecond" plural="femtoseconds" unitsystem="SI.SECOND" enum="FEMTOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "as"><xsd:annotation><xsd:documentation>attosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attosecond" plural="attoseconds" unitsystem="SI.SECOND" enum="ATTOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zs"><xsd:annotation><xsd:documentation>zeptosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptosecond" plural="zeptoseconds" unitsystem="SI.SECOND" enum="ZEPTOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ys"><xsd:annotation><xsd:documentation>yoctosecond SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctosecond" plural="yoctoseconds" unitsystem="SI.SECOND" enum="YOCTOSECOND"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "min"><xsd:annotation><xsd:documentation>The time unit is       minutes.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "h"><xsd:annotation><xsd:documentation>The time unit is         hours.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "d"><xsd:annotation><xsd:documentation>The time unit is          days.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "min"><xsd:annotation><xsd:documentation>minute SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="minute" plural="minutes" unitsystem="SI.SECOND" enum="MINUTE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "h"><xsd:annotation><xsd:documentation>hour SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hour" plural="hours" unitsystem="SI.SECOND" enum="HOUR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "d"><xsd:annotation><xsd:documentation>day SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="day" plural="days" unitsystem="SI.SECOND" enum="DAY"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1716,42 +1875,42 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "YPa"><xsd:annotation><xsd:documentation>The pressure unit is yotta pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ZPa"><xsd:annotation><xsd:documentation>The pressure unit is zetta pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "EPa"><xsd:annotation><xsd:documentation>The pressure unit is   exa pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "PPa"><xsd:annotation><xsd:documentation>The pressure unit is  peta pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "TPa"><xsd:annotation><xsd:documentation>The pressure unit is  tera pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "GPa"><xsd:annotation><xsd:documentation>The pressure unit is  giga pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "MPa"><xsd:annotation><xsd:documentation>The pressure unit is  mega pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "kPa"><xsd:annotation><xsd:documentation>The pressure unit is  kilo pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hPa"><xsd:annotation><xsd:documentation>The pressure unit is hecto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "daPa"><xsd:annotation><xsd:documentation>The pressure unit is  deca pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "Pa"><xsd:annotation><xsd:documentation>The pressure unit is       pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dPa"><xsd:annotation><xsd:documentation>The pressure unit is  deci pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cPa"><xsd:annotation><xsd:documentation>The pressure unit is centi pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mPa"><xsd:annotation><xsd:documentation>The pressure unit is milli pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µPa"><xsd:annotation><xsd:documentation>The pressure unit is micro pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "nPa"><xsd:annotation><xsd:documentation>The pressure unit is  nano pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "pPa"><xsd:annotation><xsd:documentation>The pressure unit is  pico pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fPa"><xsd:annotation><xsd:documentation>The pressure unit is femto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "aPa"><xsd:annotation><xsd:documentation>The pressure unit is  atto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zPa"><xsd:annotation><xsd:documentation>The pressure unit is zepto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "yPa"><xsd:annotation><xsd:documentation>The pressure unit is yocto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "bar"><xsd:annotation><xsd:documentation>The pressure unit is       bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "Mbar"><xsd:annotation><xsd:documentation>The pressure unit is  mega bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "kbar"><xsd:annotation><xsd:documentation>The pressure unit is  kilo bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dbar"><xsd:annotation><xsd:documentation>The pressure unit is  deci bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cbar"><xsd:annotation><xsd:documentation>The pressure unit is centi bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mbar"><xsd:annotation><xsd:documentation>The pressure unit is milli bar.</xsd:documentation><xsd:appinfo><enumName>MILLIBAR</enumName></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "YPa"><xsd:annotation><xsd:documentation>yottapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottapascal" plural="yottapascals" unitsystem="SI.PASCAL" enum="YOTTAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ZPa"><xsd:annotation><xsd:documentation>zettapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettapascal" plural="zettapascals" unitsystem="SI.PASCAL" enum="ZETTAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "EPa"><xsd:annotation><xsd:documentation>exapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exapascal" plural="exapascals" unitsystem="SI.PASCAL" enum="EXAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "PPa"><xsd:annotation><xsd:documentation>petapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petapascal" plural="petapascals" unitsystem="SI.PASCAL" enum="PETAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "TPa"><xsd:annotation><xsd:documentation>terapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="terapascal" plural="terapascals" unitsystem="SI.PASCAL" enum="TERAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "GPa"><xsd:annotation><xsd:documentation>gigapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigapascal" plural="gigapascals" unitsystem="SI.PASCAL" enum="GIGAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "MPa"><xsd:annotation><xsd:documentation>megapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megapascal" plural="megapascals" unitsystem="SI.PASCAL" enum="MEGAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "kPa"><xsd:annotation><xsd:documentation>kilopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilopascal" plural="kilopascals" unitsystem="SI.PASCAL" enum="KILOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hPa"><xsd:annotation><xsd:documentation>hectopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectopascal" plural="hectopascals" unitsystem="SI.PASCAL" enum="HECTOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "daPa"><xsd:annotation><xsd:documentation>decapascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decapascal" plural="decapascals" unitsystem="SI.PASCAL" enum="DECAPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "Pa"><xsd:annotation><xsd:documentation>pascal SI unit.  Note the C++ enum is mixed case due to PASCAL being a macro used by the Microsoft C and C++ compiler.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="pascal" plural="pascals" unitsystem="SI.PASCAL" enum="PASCAL" cppenum="Pascal"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dPa"><xsd:annotation><xsd:documentation>decipascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decipascal" plural="decipascals" unitsystem="SI.PASCAL" enum="DECIPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cPa"><xsd:annotation><xsd:documentation>centipascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centipascal" plural="centipascals" unitsystem="SI.PASCAL" enum="CENTIPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mPa"><xsd:annotation><xsd:documentation>millipascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millipascal" plural="millipascals" unitsystem="SI.PASCAL" enum="MILLIPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µPa"><xsd:annotation><xsd:documentation>micropascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="micropascal" plural="micropascals" unitsystem="SI.PASCAL" enum="MICROPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "nPa"><xsd:annotation><xsd:documentation>nanopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanopascal" plural="nanopascals" unitsystem="SI.PASCAL" enum="NANOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "pPa"><xsd:annotation><xsd:documentation>picopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picopascal" plural="picopascals" unitsystem="SI.PASCAL" enum="PICOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fPa"><xsd:annotation><xsd:documentation>femtopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtopascal" plural="femtopascals" unitsystem="SI.PASCAL" enum="FEMTOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "aPa"><xsd:annotation><xsd:documentation>attopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attopascal" plural="attopascals" unitsystem="SI.PASCAL" enum="ATTOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zPa"><xsd:annotation><xsd:documentation>zeptopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptopascal" plural="zeptopascals" unitsystem="SI.PASCAL" enum="ZEPTOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "yPa"><xsd:annotation><xsd:documentation>yoctopascal SI unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctopascal" plural="yoctopascals" unitsystem="SI.PASCAL" enum="YOCTOPASCAL"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "bar"><xsd:annotation><xsd:documentation>bar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="bar" plural="bars" unitsystem="SI.PASCAL" enum="BAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Mbar"><xsd:annotation><xsd:documentation>megabar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megabar" plural="megabars" unitsystem="SI.PASCAL" enum="MEGABAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "kbar"><xsd:annotation><xsd:documentation>kilobar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilobar" plural="kilobars" unitsystem="SI.PASCAL" enum="KILOBAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dbar"><xsd:annotation><xsd:documentation>decibar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decibar" plural="decibars" unitsystem="SI.PASCAL" enum="DECIBAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cbar"><xsd:annotation><xsd:documentation>centibar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centibar" plural="centibars" unitsystem="SI.PASCAL" enum="CENTIBAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mbar"><xsd:annotation><xsd:documentation>millibar SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millibar" plural="millibars" unitsystem="SI.PASCAL" enum="MILLIBAR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value =  "atm"><xsd:annotation><xsd:documentation>The pressure unit is standard atmosphere.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "atm"><xsd:annotation><xsd:documentation>standard atmosphere SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="atmosphere" plural="atmospheres" unitsystem="SI.PASCAL" enum="ATMOSPHERE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value =  "psi"><xsd:annotation><xsd:documentation>The pressure unit is pound-force per square inch.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "psi"><xsd:annotation><xsd:documentation>pound-force per square inch Imperial unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="psi" unitsystem="SI.PASCAL" enum="PSI"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value =  "Torr"><xsd:annotation><xsd:documentation>The pressure unit is       torr.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "mTorr"><xsd:annotation><xsd:documentation>The pressure unit is milli torr.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "Torr"><xsd:annotation><xsd:documentation>torr SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="torr" plural="torrs" unitsystem="SI.PASCAL" enum="TORR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "mTorr"><xsd:annotation><xsd:documentation>millitorr SI-derived unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millitorr" plural="millitorrs" unitsystem="SI.PASCAL" enum="MILLITORR"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
-      <xsd:enumeration value = "mm Hg"><xsd:annotation><xsd:documentation>The pressure unit is millimetre of mercury.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "mm Hg"><xsd:annotation><xsd:documentation>millimetre of mercury SI-derived unit</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="mmhg" unitsystem="SI.PASCAL" enum="MMHG"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1762,9 +1921,9 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value = "deg"><xsd:annotation><xsd:documentation>The angle unit is degree.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "rad"><xsd:annotation><xsd:documentation>The angle unit is radian.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "gon"><xsd:annotation><xsd:documentation>The angle unit is gradian.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "deg"><xsd:annotation><xsd:documentation>degree unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="degree" plural="degrees" unitsystem="SI.RADIAN" enum="DEGREE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "rad"><xsd:annotation><xsd:documentation>radian unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="radian" plural="radians" unitsystem="SI.RADIAN" enum="RADIAN"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "gon"><xsd:annotation><xsd:documentation>gradian unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gradian" plural="gradians" unitsystem="SI.RADIAN" enum="GRADIAN"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1775,10 +1934,10 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =   "°C"><xsd:annotation><xsd:documentation>The temperature unit is degree Centigrade.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "°F"><xsd:annotation><xsd:documentation>The temperature unit is degree Fahrenheit.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =    "K"><xsd:annotation><xsd:documentation>The temperature unit is        Kelvin.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "°R"><xsd:annotation><xsd:documentation>The temperature unit is degree Rankine.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "°C"><xsd:annotation><xsd:documentation>degree Celsius unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="celsius" unitsystem="SI.KELVIN" enum="CELSIUS"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "°F"><xsd:annotation><xsd:documentation>degree Fahrenheit unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="fahrenheit" unitsystem="SI.KELVIN" enum="FAHRENHEIT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =    "K"><xsd:annotation><xsd:documentation>Kelvin unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kelvin" plural="kelvins" unitsystem="SI.KELVIN" enum="KELVIN"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "°R"><xsd:annotation><xsd:documentation>degree Rankine unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="rankine" unitsystem="SI.KELVIN" enum="RANKINE"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1789,28 +1948,27 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "YV"><xsd:annotation><xsd:documentation>The voltage unit is yotta volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ZV"><xsd:annotation><xsd:documentation>The voltage unit is zetta volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "EV"><xsd:annotation><xsd:documentation>The voltage unit is   exa volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "PV"><xsd:annotation><xsd:documentation>The voltage unit is  peta volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "TV"><xsd:annotation><xsd:documentation>The voltage unit is  tera volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "GV"><xsd:annotation><xsd:documentation>The voltage unit is  giga volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "MV"><xsd:annotation><xsd:documentation>The voltage unit is  mega volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "kV"><xsd:annotation><xsd:documentation>The voltage unit is  kilo volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hV"><xsd:annotation><xsd:documentation>The voltage unit is hecto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "daV"><xsd:annotation><xsd:documentation>The voltage unit is  deca volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "V"><xsd:annotation><xsd:documentation>The voltage unit is       volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dV"><xsd:annotation><xsd:documentation>The voltage unit is  deci volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cV"><xsd:annotation><xsd:documentation>The voltage unit is centi volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mV"><xsd:annotation><xsd:documentation>The voltage unit is milli volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µV"><xsd:annotation><xsd:documentation>The voltage unit is micro volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "nV"><xsd:annotation><xsd:documentation>The voltage unit is  nano volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "pV"><xsd:annotation><xsd:documentation>The voltage unit is  pico volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fV"><xsd:annotation><xsd:documentation>The voltage unit is femto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "aV"><xsd:annotation><xsd:documentation>The voltage unit is  atto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zV"><xsd:annotation><xsd:documentation>The voltage unit is zepto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "yV"><xsd:annotation><xsd:documentation>The voltage unit is yocto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-
+      <xsd:enumeration value =  "YV"><xsd:annotation><xsd:documentation>yottavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottavolt" plural="yottavolts" unitsystem="SI.VOLT" enum="YOTTAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ZV"><xsd:annotation><xsd:documentation>zettavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettavolt" plural="zettavolts" unitsystem="SI.VOLT" enum="ZETTAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "EV"><xsd:annotation><xsd:documentation>exavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exavolt" plural="exavolts" unitsystem="SI.VOLT" enum="EXAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "PV"><xsd:annotation><xsd:documentation>petavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petavolt" plural="petavolts" unitsystem="SI.VOLT" enum="PETAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "TV"><xsd:annotation><xsd:documentation>teravolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="teravolt" plural="teravolts" unitsystem="SI.VOLT" enum="TERAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "GV"><xsd:annotation><xsd:documentation>gigavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigavolt" plural="gigavolts" unitsystem="SI.VOLT" enum="GIGAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "MV"><xsd:annotation><xsd:documentation>megavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megavolt" plural="megavolts" unitsystem="SI.VOLT" enum="MEGAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "kV"><xsd:annotation><xsd:documentation>kilovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilovolt" plural="kilovolts" unitsystem="SI.VOLT" enum="KILOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hV"><xsd:annotation><xsd:documentation>hectovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectovolt" plural="hectovolts" unitsystem="SI.VOLT" enum="HECTOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "daV"><xsd:annotation><xsd:documentation>decavolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decavolt" plural="decavolts" unitsystem="SI.VOLT" enum="DECAVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "V"><xsd:annotation><xsd:documentation>volt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="volt" plural="volts" unitsystem="SI.VOLT" enum="VOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dV"><xsd:annotation><xsd:documentation>decivolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decivolt" plural="decivolts" unitsystem="SI.VOLT" enum="DECIVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cV"><xsd:annotation><xsd:documentation>centivolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centivolt" plural="centivolts" unitsystem="SI.VOLT" enum="CENTIVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mV"><xsd:annotation><xsd:documentation>millivolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millivolt" plural="millivolts" unitsystem="SI.VOLT" enum="MILLIVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µV"><xsd:annotation><xsd:documentation>microvolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="microvolt" plural="microvolts" unitsystem="SI.VOLT" enum="MICROVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "nV"><xsd:annotation><xsd:documentation>nanovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanovolt" plural="nanovolts" unitsystem="SI.VOLT" enum="NANOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "pV"><xsd:annotation><xsd:documentation>picovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picovolt" plural="picovolts" unitsystem="SI.VOLT" enum="PICOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fV"><xsd:annotation><xsd:documentation>femtovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtovolt" plural="femtovolts" unitsystem="SI.VOLT" enum="FEMTOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "aV"><xsd:annotation><xsd:documentation>attovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attovolt" plural="attovolts" unitsystem="SI.VOLT" enum="ATTOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zV"><xsd:annotation><xsd:documentation>zeptovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptovolt" plural="zeptovolts" unitsystem="SI.VOLT" enum="ZEPTOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "yV"><xsd:annotation><xsd:documentation>yoctovolt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctovolt" plural="yoctovolts" unitsystem="SI.VOLT" enum="YOCTOVOLT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1821,27 +1979,27 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "YW"><xsd:annotation><xsd:documentation>The power unit is yotta watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ZW"><xsd:annotation><xsd:documentation>The power unit is zetta watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "EW"><xsd:annotation><xsd:documentation>The power unit is   exa watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "PW"><xsd:annotation><xsd:documentation>The power unit is  peta watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "TW"><xsd:annotation><xsd:documentation>The power unit is  tera watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "GW"><xsd:annotation><xsd:documentation>The power unit is  giga watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "MW"><xsd:annotation><xsd:documentation>The power unit is  mega watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "kW"><xsd:annotation><xsd:documentation>The power unit is  kilo watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hW"><xsd:annotation><xsd:documentation>The power unit is hecto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "daW"><xsd:annotation><xsd:documentation>The power unit is  deca watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "W"><xsd:annotation><xsd:documentation>The power unit is       watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dW"><xsd:annotation><xsd:documentation>The power unit is  deci watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cW"><xsd:annotation><xsd:documentation>The power unit is centi watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mW"><xsd:annotation><xsd:documentation>The power unit is milli watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µW"><xsd:annotation><xsd:documentation>The power unit is micro watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "nW"><xsd:annotation><xsd:documentation>The power unit is  nano watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "pW"><xsd:annotation><xsd:documentation>The power unit is  pico watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fW"><xsd:annotation><xsd:documentation>The power unit is femto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "aW"><xsd:annotation><xsd:documentation>The power unit is  atto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zW"><xsd:annotation><xsd:documentation>The power unit is zepto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "yW"><xsd:annotation><xsd:documentation>The power unit is yocto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "YW"><xsd:annotation><xsd:documentation>yottawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottawatt" plural="yottawatts" unitsystem="SI.WATT" enum="YOTTAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ZW"><xsd:annotation><xsd:documentation>zettawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettawatt" plural="zettawatts" unitsystem="SI.WATT" enum="ZETTAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "EW"><xsd:annotation><xsd:documentation>exawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exawatt" plural="exawatts" unitsystem="SI.WATT" enum="EXAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "PW"><xsd:annotation><xsd:documentation>petawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petawatt" plural="petawatts" unitsystem="SI.WATT" enum="PETAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "TW"><xsd:annotation><xsd:documentation>terawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="terawatt" plural="terawatts" unitsystem="SI.WATT" enum="TERAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "GW"><xsd:annotation><xsd:documentation>gigawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigawatt" plural="gigawatts" unitsystem="SI.WATT" enum="GIGAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "MW"><xsd:annotation><xsd:documentation>megawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megawatt" plural="megawatts" unitsystem="SI.WATT" enum="MEGAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "kW"><xsd:annotation><xsd:documentation>kilowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilowatt" plural="kilowatts" unitsystem="SI.WATT" enum="KILOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hW"><xsd:annotation><xsd:documentation>hectowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectowatt" plural="hectowatts" unitsystem="SI.WATT" enum="HECTOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "daW"><xsd:annotation><xsd:documentation>decawatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decawatt" plural="decawatts" unitsystem="SI.WATT" enum="DECAWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "W"><xsd:annotation><xsd:documentation>watt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="watt" plural="watts" unitsystem="SI.WATT" enum="WATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dW"><xsd:annotation><xsd:documentation>deciwatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="deciwatt" plural="deciwatts" unitsystem="SI.WATT" enum="DECIWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cW"><xsd:annotation><xsd:documentation>centiwatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centiwatt" plural="centiwatts" unitsystem="SI.WATT" enum="CENTIWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mW"><xsd:annotation><xsd:documentation>milliwatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="milliwatt" plural="milliwatts" unitsystem="SI.WATT" enum="MILLIWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µW"><xsd:annotation><xsd:documentation>microwatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="microwatt" plural="microwatts" unitsystem="SI.WATT" enum="MICROWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "nW"><xsd:annotation><xsd:documentation>nanowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanowatt" plural="nanowatts" unitsystem="SI.WATT" enum="NANOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "pW"><xsd:annotation><xsd:documentation>picowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picowatt" plural="picowatts" unitsystem="SI.WATT" enum="PICOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fW"><xsd:annotation><xsd:documentation>femtowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtowatt" plural="femtowatts" unitsystem="SI.WATT" enum="FEMTOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "aW"><xsd:annotation><xsd:documentation>attowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attowatt" plural="attowatts" unitsystem="SI.WATT" enum="ATTOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zW"><xsd:annotation><xsd:documentation>zeptowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptowatt" plural="zeptowatts" unitsystem="SI.WATT" enum="ZEPTOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "yW"><xsd:annotation><xsd:documentation>yoctowatt unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctowatt" plural="yoctowatts" unitsystem="SI.WATT" enum="YOCTOWATT"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1852,34 +2010,34 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:enumeration value =  "YHz"><xsd:annotation><xsd:documentation>The frequency unit is yotta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "ZHz"><xsd:annotation><xsd:documentation>The frequency unit is zetta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "EHz"><xsd:annotation><xsd:documentation>The frequency unit is   exa hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "PHz"><xsd:annotation><xsd:documentation>The frequency unit is  peta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "THz"><xsd:annotation><xsd:documentation>The frequency unit is  tera hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "GHz"><xsd:annotation><xsd:documentation>The frequency unit is  giga hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "MHz"><xsd:annotation><xsd:documentation>The frequency unit is  mega hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "kHz"><xsd:annotation><xsd:documentation>The frequency unit is  kilo hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "hHz"><xsd:annotation><xsd:documentation>The frequency unit is hecto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value = "daHz"><xsd:annotation><xsd:documentation>The frequency unit is  deca hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =   "Hz"><xsd:annotation><xsd:documentation>The frequency unit is       hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "dHz"><xsd:annotation><xsd:documentation>The frequency unit is  deci hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "cHz"><xsd:annotation><xsd:documentation>The frequency unit is centi hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "mHz"><xsd:annotation><xsd:documentation>The frequency unit is milli hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "µHz"><xsd:annotation><xsd:documentation>The frequency unit is micro hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "nHz"><xsd:annotation><xsd:documentation>The frequency unit is  nano hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "pHz"><xsd:annotation><xsd:documentation>The frequency unit is  pico hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "fHz"><xsd:annotation><xsd:documentation>The frequency unit is femto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "aHz"><xsd:annotation><xsd:documentation>The frequency unit is  atto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "zHz"><xsd:annotation><xsd:documentation>The frequency unit is zepto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
-      <xsd:enumeration value =  "yHz"><xsd:annotation><xsd:documentation>The frequency unit is yocto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "YHz"><xsd:annotation><xsd:documentation>yottahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yottahertz" unitsystem="SI.HERTZ" enum="YOTTAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "ZHz"><xsd:annotation><xsd:documentation>zettahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zettahertz" unitsystem="SI.HERTZ" enum="ZETTAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "EHz"><xsd:annotation><xsd:documentation>exahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="exahertz" unitsystem="SI.HERTZ" enum="EXAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "PHz"><xsd:annotation><xsd:documentation>petahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="petahertz" unitsystem="SI.HERTZ" enum="PETAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "THz"><xsd:annotation><xsd:documentation>terahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="terahertz" unitsystem="SI.HERTZ" enum="TERAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "GHz"><xsd:annotation><xsd:documentation>gigahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="gigahertz" unitsystem="SI.HERTZ" enum="GIGAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "MHz"><xsd:annotation><xsd:documentation>megahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="megahertz" unitsystem="SI.HERTZ" enum="MEGAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "kHz"><xsd:annotation><xsd:documentation>kilohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="kilohertz" unitsystem="SI.HERTZ" enum="KILOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "hHz"><xsd:annotation><xsd:documentation>hectohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hectohertz" unitsystem="SI.HERTZ" enum="HECTOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value = "daHz"><xsd:annotation><xsd:documentation>decahertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decahertz" unitsystem="SI.HERTZ" enum="DECAHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =   "Hz"><xsd:annotation><xsd:documentation>hertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="hertz" unitsystem="SI.HERTZ" enum="HERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "dHz"><xsd:annotation><xsd:documentation>decihertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="decihertz" unitsystem="SI.HERTZ" enum="DECIHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "cHz"><xsd:annotation><xsd:documentation>centihertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="centihertz" unitsystem="SI.HERTZ" enum="CENTIHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "mHz"><xsd:annotation><xsd:documentation>millihertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="millihertz" unitsystem="SI.HERTZ" enum="MILLIHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "µHz"><xsd:annotation><xsd:documentation>microhertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="microhertz" unitsystem="SI.HERTZ" enum="MICROHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "nHz"><xsd:annotation><xsd:documentation>nanohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="nanohertz" unitsystem="SI.HERTZ" enum="NANOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "pHz"><xsd:annotation><xsd:documentation>picohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="picohertz" unitsystem="SI.HERTZ" enum="PICOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "fHz"><xsd:annotation><xsd:documentation>femtohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="femtohertz" unitsystem="SI.HERTZ" enum="FEMTOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "aHz"><xsd:annotation><xsd:documentation>attohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="attohertz" unitsystem="SI.HERTZ" enum="ATTOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "zHz"><xsd:annotation><xsd:documentation>zeptohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="zeptohertz" unitsystem="SI.HERTZ" enum="ZEPTOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
+      <xsd:enumeration value =  "yHz"><xsd:annotation><xsd:documentation>yoctohertz unit.</xsd:documentation><xsd:appinfo><xsdfu xmlns=""><enum name="yoctohertz" unitsystem="SI.HERTZ" enum="YOCTOHERTZ"/></xsdfu></xsd:appinfo></xsd:annotation></xsd:enumeration>
     </xsd:restriction>
   </xsd:simpleType>
 
   <!-- Objective elements -->
   <xsd:element name="Objective"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Objectives</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Objectives</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A description of the microscope's objective lens.
         Required elements include the lens numerical aperture,
@@ -1905,7 +2063,7 @@
           <xsd:sequence>
             <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
               </xsd:annotation>
             </xsd:element>
           </xsd:sequence>
@@ -1999,7 +2157,7 @@
   </xsd:element>
   <xsd:element name="Detector"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Detectors</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Detectors</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The type of detector used to capture the image.
         The Detector ID can be used as a reference within the Channel element in the Image element.
@@ -2017,7 +2175,7 @@
           <xsd:sequence>
             <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
               </xsd:annotation>
             </xsd:element>
           </xsd:sequence>
@@ -2097,7 +2255,7 @@
   <!-- Filter elements -->
   <xsd:element name="FilterSet"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>FilterSets</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>FilterSets</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>Filter set manufacturer specification</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -2106,7 +2264,7 @@
           <xsd:sequence>
             <xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><plural>ExcitationFilters</plural><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><plural>ExcitationFilters</plural><manytomany/></xsdfu></xsd:appinfo>
                 <xsd:documentation>
                   The Filters placed in the Excitation light path.
                 </xsd:documentation>
@@ -2115,7 +2273,7 @@
             <xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
                 <xsd:documentation>
                   The Filters placed in the Emission light path.
                 </xsd:documentation>
@@ -2129,7 +2287,7 @@
   </xsd:element>
   <xsd:element name="Filter"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Filters</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Filters</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A filter is either an excitation or emission filters.
         There should be one filter element specified per wavelength in the image.
@@ -2148,7 +2306,7 @@
             <xsd:element ref="TransmittanceRange" minOccurs="0" maxOccurs="1"/>
             <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
               </xsd:annotation>
             </xsd:element>
           </xsd:sequence>
@@ -2180,7 +2338,7 @@
   </xsd:element>
   <xsd:element name="TransmittanceRange"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TransmittanceRanges</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TransmittanceRanges</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This records the range of wavelengths that are transmitted by the filter. It also records the maximum amount of light transmitted.
       </xsd:documentation>
@@ -2246,7 +2404,7 @@
   </xsd:element>
   <xsd:element name="Dichroic"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Dichroics</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Dichroics</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -2255,7 +2413,7 @@
           <xsd:sequence>
             <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
               <xsd:annotation>
-                <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+                <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
               </xsd:annotation>
             </xsd:element>
           </xsd:sequence>
@@ -2266,14 +2424,14 @@
   </xsd:element>
   <xsd:element name="LightPath"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>LightPaths</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>LightPaths</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>A description of the light path</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><plural>ExcitationFilters</plural><parentordered/><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><plural>ExcitationFilters</plural><parentordered/><manytomany/></xsdfu></xsd:appinfo>
             <xsd:documentation>
               The Filters placed in the Excitation light path.
             </xsd:documentation>
@@ -2282,7 +2440,7 @@
         <xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
         <xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
             <xsd:documentation>
               The Filters placed in the Emission light path.
             </xsd:documentation>
@@ -2290,7 +2448,7 @@
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -2310,7 +2468,7 @@
   <xsd:element name="LightSourceGroup" abstract="true" type="LightSource"/> <!-- top level definition -->
   <xsd:complexType name="LightSource">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>LightSources</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>LightSources</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The lightsource for the instrument.  An instrument may have several light sources.
         The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
@@ -2323,7 +2481,7 @@
         <xsd:sequence>
           <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
             <xsd:annotation>
-              <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+              <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
             </xsd:annotation>
           </xsd:element>
         </xsd:sequence>
@@ -2352,7 +2510,7 @@
   </xsd:complexType>
   <xsd:element name="Laser" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Lasers</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Lasers</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Laser types are specified using two attributes - the Type and the LaserMedium.
       </xsd:documentation>
@@ -2513,7 +2671,7 @@
   </xsd:element>
   <xsd:element name="Arc" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Arcs</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Arcs</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, HgXe.
         The Power of the Arc is now stored in the LightSource.
@@ -2543,7 +2701,7 @@
   </xsd:element>
   <xsd:element name="Filament" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Filaments</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Filaments</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
         The Power of the Filament is now stored in the LightSource.
@@ -2572,7 +2730,7 @@
   </xsd:element>
   <xsd:element name="LightEmittingDiode" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>LightEmittingDiodes</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>LightEmittingDiodes</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The LightEmittingDiode element is used to describe
         various kinds of LED lamps.
@@ -2613,7 +2771,7 @@
   </xsd:element>
   <xsd:element name="GenericExcitationSource" substitutionGroup="LightSourceGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>GenericExcitationSources</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>GenericExcitationSources</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The GenericExcitationSource element is used to represent
         a source as a collection of key/value pairs, stored
@@ -2633,7 +2791,7 @@
   </xsd:element>
   <xsd:element name="Pump"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Pumps</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Pumps</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Pump element is a reference to a LightSource.  It is used within the Laser element to specify the light source for the laser's pump (if any).
       </xsd:documentation>
@@ -2649,7 +2807,7 @@
 
   <xsd:element name="Rights"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Rights</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Rights</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The rights holder of this data and the rights held.
       </xsd:documentation>
@@ -2688,7 +2846,7 @@
   <!-- References -->
   <xsd:complexType name="Reference">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Reference is an empty complex type that is contained and extended by all the *Ref elements and also the Settings Complex Type
         Each *Ref element defines an attribute named ID of simple type *ID and no other information
@@ -2847,7 +3005,7 @@
   <!-- Settings -->
   <xsd:complexType name="Settings">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Settings is an empty complex type that is contained and extended by all the *Settings elements
         Each *Settings element defines an attribute named ID of simple type *ID and the other information that is needed.
@@ -2861,7 +3019,7 @@
   </xsd:complexType>
   <xsd:element name="LightSourceSettings"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>LightSourceSettingsCombinations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>LightSourceSettingsCombinations</plural></xsdfu></xsd:appinfo>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
@@ -2895,7 +3053,7 @@
   </xsd:element>
   <xsd:element name="DetectorSettings"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>DetectorSettingsCombinations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>DetectorSettingsCombinations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This holds the setting applied to a detector as well as a
         reference to the detector.
@@ -2963,21 +3121,12 @@
               <xsd:documentation>The units of the ReadOutRate - default:megahertz[Hz].</xsd:documentation>
             </xsd:annotation>
           </xsd:attribute>
-          <xsd:attribute name="Binning" use="optional">
+          <xsd:attribute name="Binning" use="optional" type="Binning">
             <xsd:annotation>
               <xsd:documentation>
                 Represents the number of pixels that are combined to form larger pixels. {used:CCD,EMCCD}
               </xsd:documentation>
             </xsd:annotation>
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="1x1"/>
-                <xsd:enumeration value="2x2"/>
-                <xsd:enumeration value="4x4"/>
-                <xsd:enumeration value="8x8"/>
-                <xsd:enumeration value="Other"/>
-              </xsd:restriction>
-            </xsd:simpleType>
           </xsd:attribute>
           <xsd:attribute name="Integration" use="optional" type="PositiveInt">
             <xsd:annotation>
@@ -2993,7 +3142,7 @@
   </xsd:element>
   <xsd:element name="ObjectiveSettings"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>ObjectiveSettingsCombinations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>ObjectiveSettingsCombinations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This holds the setting applied to an objective as well as a
         reference to the objective.
@@ -3147,9 +3296,12 @@
   </xsd:simpleType>
 
   <!-- BinaryFile -->
+  <xsd:simpleType name="base64Binary">
+    <xsd:restriction base="xsd:base64Binary"/>
+  </xsd:simpleType>
   <xsd:element name = "External"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Externals</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Externals</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>Describes a file location.  Can optionally specify a portion of a file using Offset and a ReadLength.
       If Offset and ReadLength are specified in conjuction with Compression, then they point into the uncompressed file.
       </xsd:documentation>
@@ -3181,12 +3333,12 @@
   </xsd:element>
   <xsd:element name = "BinData"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>BinDataBlocks</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>BinDataBlocks</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>The contents of this element are base64-encoded.  These are not CDATA sections, just a base64 stream.</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:simpleContent>
-        <xsd:extension base = "xsd:base64Binary">
+        <xsd:extension base = "base64Binary">
           <xsd:attribute name = "Compression" default = "none" use="optional">
             <xsd:annotation>
               <xsd:documentation>Specifies the compression scheme used to encode the data. </xsd:documentation>
@@ -3223,7 +3375,7 @@
   </xsd:element>
   <xsd:element name = "BinaryFile"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>BinaryFiles</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>BinaryFiles</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>Describes a binary file.</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
@@ -3313,7 +3465,7 @@ PlaneInfo (as Plane)
   <!-- the base annotation that all others are ultimately derived from -->
   <xsd:complexType name="Annotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Annotations</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Annotations</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An annotation from which all others are ultimately derived.
       </xsd:documentation>
@@ -3334,7 +3486,7 @@ PlaneInfo (as Plane)
       <xsd:sequence>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -3368,7 +3520,7 @@ PlaneInfo (as Plane)
   <!-- Intermediate abstract annotations, not used directly -->
   <xsd:complexType name="BasicAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>BasicAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>BasicAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An abstract Basic Annotation from which some others are derived.
       </xsd:documentation>
@@ -3379,18 +3531,18 @@ PlaneInfo (as Plane)
   </xsd:complexType>
   <xsd:complexType name="NumericAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>NumericAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>NumericAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An abstract Numeric Annotation from which some others are derived.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>
-      <xsd:extension base="Annotation"/>
+      <xsd:extension base="BasicAnnotation"/>
     </xsd:complexContent>
   </xsd:complexType>
   <xsd:complexType name="TextAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TextAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TextAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An abstract Text Annotation from which some others are derived.
       </xsd:documentation>
@@ -3401,7 +3553,7 @@ PlaneInfo (as Plane)
   </xsd:complexType>
   <xsd:complexType name="TypeAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TypeAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TypeAnnotations</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An abstract Type Annotation from which some others are derived.
       </xsd:documentation>
@@ -3415,7 +3567,7 @@ PlaneInfo (as Plane)
   <!-- The annotations used in the instance documents -->
   <xsd:element name="FileAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>FileAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>FileAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A file object annotation
       </xsd:documentation>
@@ -3432,7 +3584,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="XMLAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>XMLAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>XMLAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An general xml annotation. The contents of this is not processed as OME XML but should still be well-formed XML.
       </xsd:documentation>
@@ -3455,7 +3607,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="ListAnnotation">  <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>ListAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>ListAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This annotation is a grouping object. It uses the sequence of
         annotation refs from the base Annotation to form the list.
@@ -3469,7 +3621,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="CommentAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>CommentAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>CommentAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple comment annotation
       </xsd:documentation>
@@ -3486,7 +3638,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="LongAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>LongAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>LongAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple numerical annotation of type xsd:long
       </xsd:documentation>
@@ -3503,7 +3655,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="DoubleAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>DoubleAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>DoubleAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple numerical annotation of type xsd:double
       </xsd:documentation>
@@ -3520,7 +3672,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="BooleanAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>BooleanAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>BooleanAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple boolean annotation of type xsd:boolean
       </xsd:documentation>
@@ -3537,7 +3689,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="TimestampAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TimestampAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TimestampAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A date/time annotation of type xsd:dateTime
       </xsd:documentation>
@@ -3554,7 +3706,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="TagAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TagAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TagAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A tag annotation (represents a tag or a tagset)
       </xsd:documentation>
@@ -3571,7 +3723,7 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="TermAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>TermAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>TermAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A ontology term annotation
       </xsd:documentation>
@@ -3588,14 +3740,14 @@ PlaneInfo (as Plane)
   </xsd:element>
   <xsd:element name="MapAnnotation"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>MapAnnotations</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>MapAnnotations</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         An map annotation. The contents of this is a list of key/value pairs.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
-        <xsd:extension base="TextAnnotation">
+        <xsd:extension base="Annotation">
           <xsd:sequence>
             <xsd:element name="Value"  type="MapPairs" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
@@ -3607,7 +3759,7 @@ PlaneInfo (as Plane)
   <!-- ROI -->
   <xsd:element name="ROI"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>ROIs</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>ROIs</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A four dimensional 'Region of Interest'.
         If they are not used, and the Image has more than one plane,
@@ -3628,7 +3780,7 @@ PlaneInfo (as Plane)
         </xsd:choice>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element name="Description" minOccurs="0" maxOccurs="1">
@@ -3657,7 +3809,7 @@ PlaneInfo (as Plane)
   <xsd:element name="ShapeGroup" abstract="true" type="Shape"/>  <!-- top level definition -->
   <xsd:complexType name="Shape">
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Shapes</plural><abstract/></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The shape element contains a single specific ROI shape and links
         that to any channels, and a timepoint and a z-section. It also
@@ -3676,7 +3828,7 @@ PlaneInfo (as Plane)
       </xsd:element>
       <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
         <xsd:annotation>
-          <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+          <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
@@ -3826,7 +3978,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Rectangle" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Rectangles</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Rectangles</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple rectangle object. If rotation is required apply a
         transformation at the Shape level.
@@ -3870,7 +4022,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Mask" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Masks</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Masks</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Mask ROI shape is a link to a BinData object that is
         a BIT mask drawn on top of the image as an ROI. It is applied
@@ -3882,7 +4034,7 @@ PlaneInfo (as Plane)
       <xsd:complexContent>
         <xsd:extension base="Shape">
           <xsd:sequence>
-            <xsd:element ref="BinData" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element ref="BinData" minOccurs="1" maxOccurs="1"/>
           </xsd:sequence>
           <xsd:attribute name="X" use="required" type="xsd:float">
             <xsd:annotation>
@@ -3919,7 +4071,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Point" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Points</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Points</plural></xsdfu></xsd:appinfo>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:complexContent>
@@ -3945,7 +4097,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Ellipse" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Ellipses</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Ellipses</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A simple ellipse object. If rotation is required apply a
         transformation at the Shape level.
@@ -3989,7 +4141,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Line" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Lines</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Lines</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A straight line defined by it's end points.
       </xsd:documentation>
@@ -4030,7 +4182,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Polyline" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Polylines</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Polylines</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Polyline defines open shapes formed of straight
         lines. Note: Polyline uses counterclockwise winding (this is the
@@ -4056,7 +4208,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Polygon" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Polygons</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Polygons</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Polygon defines closed shapes formed of straight
         lines. Note: Polygon uses counterclockwise winding (this is the
@@ -4080,7 +4232,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Label" substitutionGroup="ShapeGroup"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Labels</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Labels</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The text label. Any transformation should be applied at the
         shape level.
@@ -4148,7 +4300,7 @@ PlaneInfo (as Plane)
 
   <xsd:simpleType name="Marker"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Markers</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Markers</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Shape of marker on the end of a line. [enumeration]
       </xsd:documentation>
@@ -4161,7 +4313,7 @@ PlaneInfo (as Plane)
   <!-- SPW -->
   <xsd:element name="Plate"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Plates</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Plates</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         This element identifies microtiter plates within a screen.
         A plate can belong to more than one screen.
@@ -4188,7 +4340,7 @@ PlaneInfo (as Plane)
         <xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="PlateAcquisition" minOccurs="0" maxOccurs="unbounded"/>
@@ -4359,7 +4511,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Reagent"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Reagents</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Reagents</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         Reagent is used to describe a chemical or some other physical experimental parameter.
       </xsd:documentation>
@@ -4380,7 +4532,7 @@ PlaneInfo (as Plane)
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -4421,7 +4573,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Screen"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Screens</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Screens</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         The Screen element is a grouping for Plates.
         The required attribute is the Screen's Name and ID - both must be unique within the document.
@@ -4448,7 +4600,7 @@ PlaneInfo (as Plane)
         <xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element name="PlateRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
             <xsd:documentation>
               The PlateRef element is a reference to a Plate element.
               Screen elements may have one or more PlateRef elements to define the plates that are part of the screen.
@@ -4465,7 +4617,7 @@ PlaneInfo (as Plane)
         </xsd:element>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -4521,7 +4673,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="PlateAcquisition"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>PlateAcquisitions</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>PlateAcquisitions</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         PlateAcquisition is used to describe a single acquisition run for a plate.
         This object is used to record the set of images acquired in a single
@@ -4546,7 +4698,7 @@ PlaneInfo (as Plane)
         <xsd:element ref="WellSampleRef" minOccurs="0" maxOccurs="unbounded"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -4587,7 +4739,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="Well"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>Wells</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>Wells</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         A Well is a component of the Well/Plate/Screen construct to describe screening applications.
         A Well has a number of WellSample elements that link to the Images collected in this well.
@@ -4600,13 +4752,13 @@ PlaneInfo (as Plane)
       <xsd:sequence>
         <xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><ordered/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
         <xsd:element ref="ReagentRef" minOccurs="0" maxOccurs="1"/>
         <xsd:element ref="AnnotationRef" minOccurs="0" maxOccurs="unbounded">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><manytomany/></xsdfu></xsd:appinfo>
           </xsd:annotation>
         </xsd:element>
       </xsd:sequence>
@@ -4671,7 +4823,7 @@ PlaneInfo (as Plane)
 
   <xsd:element name="WellSample"> <!-- top level definition -->
     <xsd:annotation>
-      <xsd:appinfo><xsdfu><plural>WellSamples</plural></xsdfu></xsd:appinfo>
+      <xsd:appinfo><xsdfu xmlns=""><plural>WellSamples</plural></xsdfu></xsd:appinfo>
       <xsd:documentation>
         WellSample is an individual image that has been captured within a Well.
       </xsd:documentation>
@@ -4680,7 +4832,7 @@ PlaneInfo (as Plane)
       <xsd:sequence>
         <xsd:element ref="ImageRef" minOccurs="0" maxOccurs="1">
           <xsd:annotation>
-            <xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
+            <xsd:appinfo><xsdfu xmlns=""><injected/></xsdfu></xsd:appinfo>
             <xsd:documentation>
               This is the main link to the core Image element
             </xsd:documentation>

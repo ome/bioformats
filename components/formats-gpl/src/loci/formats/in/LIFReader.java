@@ -745,12 +745,12 @@ public class LIFReader extends FormatReader {
                   continue;
                 }
                 Double cutIn =
-                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
                     cutIn = ((Length)
-                      cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
+                      cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
                   }
                   else {
                     break;
@@ -796,7 +796,7 @@ public class LIFReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       if (tSteps[index] != null) {
-        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.SECOND), i);
       }
 
       final List<String> detectors = detectorModels[index];
@@ -883,7 +883,7 @@ public class LIFReader extends FormatReader {
           store.setChannelName(channelNames[index][c], i, c);
         }
         if (pinholes[index] != null) {
-          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROMETER), i, c);
         }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
@@ -955,14 +955,14 @@ public class LIFReader extends FormatReader {
           else if (timestamp == acquiredDate[index] && image > 0) {
             timestamp = timestamps[index][0];
           }
-          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, image);
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
         }
 
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
           if (expTimes[index][c] != null)
           {
-            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.SECOND), i, image);
           }
         }
       }

@@ -215,15 +215,15 @@ public class ImageInfo {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
         else if (args[i].equals("-trace")) {
-          DebugTools.enableLogging("TRACE");
+          DebugTools.setRootLevel("TRACE");
         }
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
-          DebugTools.enableLogging("OFF");
+          DebugTools.setRootLevel("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -969,12 +969,12 @@ public class ImageInfo {
       }
 
       if (omexmlOnly) {
-        DebugTools.enableLogging("INFO");
+        DebugTools.setRootLevel("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
-        DebugTools.enableLogging("OFF");
+        DebugTools.setRootLevel("OFF");
       }
       if (validate) {
         service.validateOMEXML(xml);
@@ -999,7 +999,6 @@ public class ImageInfo {
   public boolean testRead(String[] args)
     throws FormatException, ServiceException, IOException
   {
-    DebugTools.enableLogging("INFO");
 
     for (final String arg : args) {
       if (HELP_ARGUMENTS.contains(arg)) {
@@ -1110,6 +1109,7 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =

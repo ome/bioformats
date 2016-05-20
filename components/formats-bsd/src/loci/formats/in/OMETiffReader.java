@@ -1013,7 +1013,7 @@ public class OMETiffReader extends FormatReader {
       }
     }
 
-    MetadataTools.populatePixels(metadataStore, this, false, false);
+    MetadataTools.populatePixels(metadataStore, this, true, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
         metadataStore.setImageAcquisitionDate(

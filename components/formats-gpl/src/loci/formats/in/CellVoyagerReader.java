@@ -524,7 +524,7 @@ public class CellVoyagerReader extends FormatReader
 
 		// Time interval
 		if (Double.valueOf( readFrameInterval( msDocument ) ) != null) {
-			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.S), 0 );
+			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.SECOND), 0 );
 		}
 
 		/*
@@ -770,7 +770,7 @@ public class CellVoyagerReader extends FormatReader
 				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
 				{
-					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROM), seriesIndex, channelIndex++ );
+					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex++ );
 					store.setChannelName( channelInfos.get( i ).name, seriesIndex, i );
 				}
 			}

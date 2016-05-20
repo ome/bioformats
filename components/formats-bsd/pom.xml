@@ -155,13 +155,6 @@
       </includes>
       <filtering>true</filtering>
     </resource>
-    <resource>
-      <directory>${project.basedir}</directory>
-      <includes>
-        <include>cppwrap/*.cpp</include>
-      </includes>
-      <filtering>true</filtering>
-    </resource>
     </resources>
 
     <plugins>
@@ -175,22 +168,6 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>loci.maven.plugins</groupId>
-        <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.1.1</version>
-        <configuration>
-          <headerFile>cppwrap/header.txt</headerFile>
-          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
-          <coreFile>cppwrap/core.txt</coreFile>
-          <sourceDir>target/classes/cppwrap</sourceDir>
-          <libraries>
-            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:formats-api:jar:${project.version}</library>
-            <library>${project.groupId}:formats-common:jar:${project.version}</library>
-          </libraries>
         </configuration>
       </plugin>
       <plugin>
@@ -312,6 +289,10 @@
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -330,32 +311,5 @@
       <url>http://maven.imagej.net/content/repositories/thirdparty</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <profiles>
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-    </profile>
-
-    <profile>
-      <id>merge-build</id>
-
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
 
 </project>

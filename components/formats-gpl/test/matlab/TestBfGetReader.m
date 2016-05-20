@@ -183,7 +183,7 @@ classdef TestBfGetReader < ReaderTest
             assertFalse(isempty(physicalSizeX));
             assertEqual(physicalSizeX.value().doubleValue(), .3);
             assertEqual(char(physicalSizeX.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeX.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+            assertElementsAlmostEqual(physicalSizeX.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
         end
         
         function testGetPixelsPhysicalSizeY(self)
@@ -193,7 +193,7 @@ classdef TestBfGetReader < ReaderTest
             assertFalse(isempty(physicalSizeY));
             assertEqual(physicalSizeY.value().doubleValue(), .3);
             assertEqual(char(physicalSizeY.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeY.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+            assertElementsAlmostEqual(physicalSizeY.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
         end
         
         function testGetPixelsPhysicalSizeZ(self)
@@ -203,7 +203,7 @@ classdef TestBfGetReader < ReaderTest
             assertFalse(isempty(physicalSizeZ));
             assertEqual(physicalSizeZ.value().doubleValue(), .3);
             assertEqual(char(physicalSizeZ.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+            assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
         end
         
         function testJavaMethod(self)

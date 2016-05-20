@@ -204,7 +204,7 @@ public class KodakReader extends FormatReader {
       else if (key.equals("Exposure Time")) {
         Double exposureTime = new Double(value.substring(0, value.indexOf(" ")));
         if (exposureTime != null) {
-          store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, 0);
+          store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), 0, 0);
         }
       }
       else if (key.equals("Vertical Resolution")) {
@@ -236,7 +236,7 @@ public class KodakReader extends FormatReader {
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));
         store.setImagingEnvironmentTemperature(
-                new Temperature(temp, UNITS.DEGREEC), 0);
+                new Temperature(temp, UNITS.CELSIUS), 0);
       }
     }
   }

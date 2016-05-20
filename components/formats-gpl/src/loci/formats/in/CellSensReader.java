@@ -733,7 +733,7 @@ public class CellSensReader extends FormatReader {
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, i), 0, i);
       store.setObjectiveNominalMagnification(pyramid.magnification, 0, i);
       store.setObjectiveWorkingDistance(
-        FormatTools.createLength(pyramid.workingDistance, UNITS.MICROM), 0, i);
+        FormatTools.createLength(pyramid.workingDistance, UNITS.MICROMETER), 0, i);
 
       for (int q=0; q<pyramid.objectiveTypes.size(); q++) {
         if (pyramid.objectiveTypes.get(q) == 1) {
@@ -815,12 +815,12 @@ public class CellSensReader extends FormatReader {
               }
               if (exp != null) {
                 store.setPlaneExposureTime(
-                  FormatTools.createTime(exp / 1000000.0, UNITS.S), ii, nextPlane);
+                  FormatTools.createTime(exp / 1000000.0, UNITS.SECOND), ii, nextPlane);
               }
               store.setPlanePositionX(
-                FormatTools.createLength(pyramid.originX, UNITS.MICROM), ii, nextPlane);
+                FormatTools.createLength(pyramid.originX, UNITS.MICROMETER), ii, nextPlane);
               store.setPlanePositionY(
-                FormatTools.createLength(pyramid.originY, UNITS.MICROM), ii, nextPlane);
+                FormatTools.createLength(pyramid.originY, UNITS.MICROMETER), ii, nextPlane);
             }
           }
         }

@@ -294,7 +294,7 @@ public class IvisionReader extends FormatReader {
           LOGGER.debug("Failed to parse time increment", e);
         }
         if (increment != null) {
-          store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+          store.setPixelsTimeIncrement(new Time(increment, UNITS.SECOND), 0);
         }
       }
 

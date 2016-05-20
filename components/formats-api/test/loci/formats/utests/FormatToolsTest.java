@@ -115,8 +115,8 @@ public class FormatToolsTest {
       {Constants.EPSILON, null},
       {0.0, null},
       {Double.POSITIVE_INFINITY, null},
-      {1.0, new Length(1.0, UNITS.MICROM)},
-      {.1, new Length(.1, UNITS.MICROM)},
+      {1.0, new Length(1.0, UNITS.MICROMETER)},
+      {.1, new Length(.1, UNITS.MICROMETER)},
     };
   }
 
@@ -127,33 +127,33 @@ public class FormatToolsTest {
       {Constants.EPSILON, "mm", null},
       {0.0, "mm", null},
       {Double.POSITIVE_INFINITY, "mm", null},
-      {1.0, "microns", new Length(1.0, UNITS.MICROM)},
-      {1.0, "mm", new Length(1.0, UNITS.MM)},
-      {.1, "microns", new Length(.1, UNITS.MICROM)},
-      {.1, "mm", new Length(.1, UNITS.MM)},
+      {1.0, "microns", new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {.1, "microns", new Length(.1, UNITS.MICROMETER)},
+      {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
     };
   }
 
   @DataProvider(name = "physicalSizeInvalidStringUnit")
   public Object[][] createValueInvalidStringLengths() {
     return new Object[][] {
-      {1.0, null, new Length(1.0, UNITS.MICROM)},
-      {1.0, "foo", new Length(1.0, UNITS.MICROM)},
-      {1.0, "s", new Length(1.0, UNITS.MICROM)},
+      {1.0, null, new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "foo", new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "s", new Length(1.0, UNITS.MICROMETER)},
     };
   }
 
   @DataProvider(name = "physicalSizeUnit")
   public Object[][] createValueUnitLengths() {
     return new Object[][] {
-      {null, UNITS.MICROM, null},
-      {Constants.EPSILON, UNITS.MICROM, null},
-      {0.0, UNITS.MICROM, null},
-      {Double.POSITIVE_INFINITY, UNITS.MICROM, null},
-      {1.0, UNITS.MICROM, new Length(1.0, UNITS.MICROM)},
-      {1.0, UNITS.MM, new Length(1.0, UNITS.MM)},
-      {.1, UNITS.MICROM, new Length(.1, UNITS.MICROM)},
-      {.1, UNITS.MM, new Length(.1, UNITS.MM)},
+      {null, UNITS.MICROMETER, null},
+      {Constants.EPSILON, UNITS.MICROMETER, null},
+      {0.0, UNITS.MICROMETER, null},
+      {Double.POSITIVE_INFINITY, UNITS.MICROMETER, null},
+      {1.0, UNITS.MICROMETER, new Length(1.0, UNITS.MICROMETER)},
+      {1.0, UNITS.MILLIMETER, new Length(1.0, UNITS.MILLIMETER)},
+      {.1, UNITS.MICROMETER, new Length(.1, UNITS.MICROMETER)},
+      {.1, UNITS.MILLIMETER, new Length(.1, UNITS.MILLIMETER)},
     };
   }
 

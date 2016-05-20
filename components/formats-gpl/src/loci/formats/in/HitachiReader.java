@@ -301,7 +301,7 @@ public class HitachiReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
       store.setObjectiveSettingsID(objective, 0);
-      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
     }
   }
 }

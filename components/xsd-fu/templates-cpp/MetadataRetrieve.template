@@ -21,7 +21,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -36,7 +36,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -48,7 +48,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const = 0;
 
 {% end header%}\
 {% end %}\
@@ -204,15 +204,17 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
         /**
-         * Get the number of BinData elements in Pixels.   
-         *    
-         * @param imageIndex the Image index.   
-         * @returns the number of BinData elements.   
-         */   
-        virtual index_type    
-        getPixelsBinDataCount(index_type imageIndex) const = 0;   
-    
+         * Get the number of BinData elements in Pixels.
+         *
+         * @param imageIndex the Image index.
+         * @returns the number of BinData elements.
+         */
+        virtual index_type
+        getPixelsBinDataCount(index_type imageIndex) const = 0;
+
+{% end %}\
         /**
          * Get the number of links to a BooleanAnnotation.
          *
@@ -447,6 +449,7 @@ namespace ome
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
+{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
         /**
          * Get the BigEndian property of Pixels.
          *
@@ -457,6 +460,7 @@ namespace ome
         virtual bool
         getPixelsBinDataBigEndian(index_type imageIndex,
                                   index_type binDataIndex) const = 0;
+{% end %}\
 
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --

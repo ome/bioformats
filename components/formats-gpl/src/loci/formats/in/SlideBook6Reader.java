@@ -80,11 +80,14 @@ public class SlideBook6Reader  extends FormatReader {
 
 	// -- Static initializers --
 
+	private static boolean initialized = false;
 	private static boolean libraryFound = false;
 
 	static {
 		String errMsg = null;
 		Architecture theArch = NativeLibraryUtil.getArchitecture();
+	private static boolean isLibraryFound() {
+		if (initialized) return libraryFound;
 		try {
 			// load JNI wrapper of SlideBook6Reader.dll
 			if (!libraryFound) {
@@ -105,12 +108,9 @@ public class SlideBook6Reader  extends FormatReader {
 			errMsg = new String("Insufficient permission to load native library" + "["+ theArch.name() + "] " + e);
 			libraryFound = false;
 		}
-		if (errMsg != null) {
-			GenericDialog errDlg = new GenericDialog("SlideBook 6 SLD (native) Bio-formats Reader plugin");
-			errDlg.addMessage(errMsg);
-			errDlg.addHelp(URL_3I_SLD);
-			errDlg.showDialog();
-		}
+
+		initialized = true;
+		return libraryFound;
 	}
 
 	// -- Constructor --
@@ -143,7 +143,7 @@ public class SlideBook6Reader  extends FormatReader {
 	/* @see loci.formats.IFormatReader#isThisType(String, boolean) */
 	public boolean isThisType(String file, boolean open) {
 		// Check the first few bytes to determine if the file can be read by this reader.
-		return libraryFound && super.isThisType(file, open);
+		return super.isThisType(file, open) && isLibraryFound();
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		if (libraryFound) {
+		if (initialized && isLibraryFound()) {
 			closeFile();
 		}
 	}
@@ -301,23 +301,23 @@ public class SlideBook6Reader  extends FormatReader {
 							for (int zplane = 0; zplane < numZPlanes[capture]; zplane++) {
 								for (int channel = 0; channel < numChannels[capture]; channel++, imageIndex++) {
 									// set elapsed time
-									store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
+									store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set exposure time
 									int expTime = getExposureTime(capture, channel);
-									store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(expTime, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = getXPosition(capture, position);
-									Length positionX = new Length(numberX, UNITS.MICROM);
+									Length positionX = new Length(numberX, UNITS.MICROMETER);
 									store.setPlanePositionX(positionX, capture, imageIndex);
 									double numberY = getYPosition(capture, position);
-									Length positionY = new Length(numberY, UNITS.MICROM);
+									Length positionY = new Length(numberY, UNITS.MICROMETER);
 									store.setPlanePositionY(positionY, capture, imageIndex);
 
 									// set tile z position
 									double positionZ = getZPosition(capture, position, zplane);
-									Length zPos = new Length(positionZ, UNITS.MICROM);
+									Length zPos = new Length(positionZ, UNITS.MICROMETER);
 									store.setPlanePositionZ(zPos, capture, imageIndex);
 								}
 							}

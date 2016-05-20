@@ -678,6 +678,30 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        byte[] binData = src.getBinaryFileBinData(i);
+        dest.setBinaryFileBinData(binData, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        boolean bigEndian = src.getBinaryFileBinDataBigEndian(i);
+        dest.setBinaryFileBinDataBigEndian(bigEndian, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NonNegativeLong length = src.getBinaryFileBinDataLength(i);
+        dest.setBinaryFileBinDataLength(length, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Compression compression = src.getBinaryFileBinDataCompression(i);
+        dest.setBinaryFileBinDataCompression(compression, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getFileAnnotationAnnotationCount(i);
@@ -1021,6 +1045,21 @@ public final class MetadataConverter {
           try {
             Boolean bigEndian = src.getPixelsBinDataBigEndian(i, q);
             dest.setPixelsBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            NonNegativeLong length = src.getPixelsBinDataLength(i, q);
+            dest.setPixelsBinDataLength(length, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            Compression compression = src.getPixelsBinDataCompression(i, q);
+            dest.setPixelsBinDataCompression(compression, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            byte[] data = src.getPixelsBinData(i, q);
+            dest.setPixelsBinData(data, i, q);
           }
           catch (NullPointerException e) { }
         }
@@ -2966,6 +3005,30 @@ public final class MetadataConverter {
           try {
             Double x = src.getMaskX(i, q);
             dest.setMaskX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            byte[] binData = src.getMaskBinData(i, q);
+            dest.setMaskBinData(binData, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            boolean bigEndian = src.getMaskBinDataBigEndian(i, q);
+            dest.setMaskBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            NonNegativeLong length = src.getMaskBinDataLength(i, q);
+            dest.setMaskBinDataLength(length, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            Compression compression = src.getMaskBinDataCompression(i, q);
+            dest.setMaskBinDataCompression(compression, i, q);
           }
           catch (NullPointerException e) { }
 

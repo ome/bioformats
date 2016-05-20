@@ -228,8 +228,13 @@ public class ICSWriter extends FormatWriter {
       }
 
       boolean signed = FormatTools.isSigned(pixelType);
-      boolean littleEndian =
-        !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      boolean littleEndian = false;
+      if (meta.getPixelsBigEndian(series) != null) {
+        littleEndian = !meta.getPixelsBigEndian(series).booleanValue();
+      }
+      else if (meta.getPixelsBinDataCount(series) == 0) {
+        littleEndian = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      }
 
       out.writeBytes("representation\tformat\t" +
         (pixelType == FormatTools.FLOAT ? "real\n" : "integer\n"));
@@ -257,26 +262,26 @@ public class ICSWriter extends FormatWriter {
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
-            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
           if (meta.getPixelsPhysicalSizeY(0) != null) {
-            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
           if (meta.getPixelsPhysicalSizeZ(0) != null) {
-            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
           Time valueTime = meta.getPixelsTimeIncrement(0);
           if (valueTime != null) {
-            value = valueTime.value(UNITS.S);
+            value = valueTime.value(UNITS.SECOND);
             units.append("seconds\t");
           }
         }

@@ -354,17 +354,17 @@ public class MicromanagerReader extends FormatReader {
             nextStamp < p.timestamps.length &&
             p.timestamps[nextStamp] != null)
           {
-            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MS), i, q);
+            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MILLISECOND), i, q);
           }
           if (p.positions != null && q < p.positions.length) {
             if (p.positions[q][0] != null) {
-              store.setPlanePositionX(new Length(p.positions[q][0], UNITS.MICROM), i, q);
+              store.setPlanePositionX(new Length(p.positions[q][0], UNITS.MICROMETER), i, q);
             }
             if (p.positions[q][1] != null) {
-              store.setPlanePositionY(new Length(p.positions[q][1], UNITS.MICROM), i, q);
+              store.setPlanePositionY(new Length(p.positions[q][1], UNITS.MICROMETER), i, q);
             }
             if (p.positions[q][2] != null) {
-              store.setPlanePositionZ(new Length(p.positions[q][2], UNITS.MICROM), i, q);
+              store.setPlanePositionZ(new Length(p.positions[q][2], UNITS.MICROMETER), i, q);
             }
           }
         }
@@ -377,7 +377,7 @@ public class MicromanagerReader extends FormatReader {
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
             store.setDetectorSettingsVoltage(
-                    new ElectricPotential(p.voltage.get(c), UNITS.V), i, c);
+                    new ElectricPotential(p.voltage.get(c), UNITS.VOLT), i, c);
           }
           store.setDetectorSettingsID(p.detectorID, i, c);
         }
@@ -398,7 +398,7 @@ public class MicromanagerReader extends FormatReader {
         if (p.cameraMode == null) p.cameraMode = "Other";
         store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
         store.setImagingEnvironmentTemperature(
-                new Temperature(p.temperature, UNITS.DEGREEC), i);
+                new Temperature(p.temperature, UNITS.CELSIUS), i);
       }
     }
   }
@@ -815,7 +815,7 @@ public class MicromanagerReader extends FormatReader {
           addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
-            p.exposureTime = new Time(Double.valueOf(value), UNITS.MS);
+            p.exposureTime = new Time(Double.valueOf(value), UNITS.MILLISECOND);
           }
           else if (key.equals("ElapsedTime-ms")) {
             stamps.add(Double.valueOf(value));

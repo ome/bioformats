@@ -333,10 +333,10 @@ public class GatanDM2Reader extends FormatReader {
       store.setImageName(name, 0);
     }
     if (pixelSizeX != null) {
-      store.setPixelsPhysicalSizeX(FormatTools.createLength(pixelSizeX, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(pixelSizeX, UNITS.MICROMETER), 0);
     }
     if (pixelSizeY != null) {
-      store.setPixelsPhysicalSizeY(FormatTools.createLength(pixelSizeY, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(pixelSizeY, UNITS.MICROMETER), 0);
     }
   }
 

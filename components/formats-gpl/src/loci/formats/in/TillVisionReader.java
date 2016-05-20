@@ -571,7 +571,7 @@ public class TillVisionReader extends FormatReader {
 
         for (int q=0; q<core.get(i).imageCount; q++) {
           if (exposureTimes.get(i) != null) {
-            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.SECOND), i, q);
           }
         }
 

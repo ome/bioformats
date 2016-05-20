@@ -76,7 +76,7 @@ public class GetPhysicalMetadata {
       physicalSizeY.value() + " " + physicalSizeY.unit().getSymbol());
     System.out.println("\tZ spacing = " +
       physicalSizeZ.value() + " " + physicalSizeZ.unit().getSymbol());
-    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.S).doubleValue() + " seconds");
+    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.SECOND).doubleValue() + " seconds");
   }
 
   public static void main(String[] args) throws Exception {

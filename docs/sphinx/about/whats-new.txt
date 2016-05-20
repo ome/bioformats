@@ -1,6 +1,94 @@
 Version history
 ===============
 
+5.1.10 (2016 May 9)
+-------------------
+
+Java bug fixes:
+
+* fixed warnings being thrown for ImageJ and other non-FIJI users on Windows
+  (these warnings were triggered by the removal of the 3i Slidebook DLLs from
+  the source code repository in Bio-Formats 5.1.9 and should now only be
+  triggered when opening Slidebook files without the update site enabled -
+  http://www.openmicroscopy.org/info/slidebook)
+* a fix in the ImageJ plugin for files grouped using the "Dimensions" option
+* a fix for writing TIFF files in tiles
+
+
+5.1.9 (2016 April 14)
+---------------------
+
+* Java bug fixes, including:
+   - SDT
+       - fixed width padding calculation for single-pixel image
+   - Deltavision
+       - fixed the parsing of the new date format
+       - added support for parsing and storing the working distance in native units
+   - Micromanager
+       - cleaned up JSON metadata parsing
+   - Olympus Fluoview
+       - fixed null pointer exceptions while parsing metadata
+   - Leica LIF
+       - fixed large multi-tiled files from having incorrect plane offsets after the 2GB mark
+   - EM formats (MRC and Spider)
+       - added native length support for EM readers
+   - Gatan
+       - fixed erroneous metadata parsing
+       - added support for parsing and storing the physical sizes in native units
+   - OME-TIFF
+       - improved handling of OME-TIFF multi-file fileset’s with partial metadata blocks
+   - Nikon ND2
+       - fixed the parsing of emission wavelength
+   - Olympus CellR (APL)
+       - fixed multiple parsing issues with the mtb file
+   - SlideBook
+       - removed slidebook dlls from Bio-Formats repository
+       - http://www.openmicroscopy.org/info/slidebook
+   - Zeiss CZI
+       - fixed parsing of files with multiple mosaics and positions
+
+* Documentation updates, including:
+   - improved documentation for the export of BigTIFFs in ImageJ
+
+* C++:
+   - no changes.
+
+
+5.1.8 (2016 February 15)
+------------------------
+
+* Java bug fixes, including:
+   - FEI TIFF
+       - fixed stage position parsing and whitespace handling (thanks to Antoine Vandecreme)
+   - Pyramid TIFF
+       - fixed tile reading when a cache (.bfmemo) file is present
+   - MicroManager
+       - updated to parse JSON data from tags 50839 and 51123
+       - fixed to detect :file:`*_metadata.txt` files in addition to :file:`metadata.txt`
+         files
+       - fixed to handle datasets with each stack in a single file
+   - OME-XML
+       - updated to make .ome.xml an official extension
+   - OME-TIFF
+       - fixed to ignore invalid BinaryOnly elements
+   - TIFF
+       - fixed caching of BigTIFF files
+   - Slidebook
+       - fixed handling of montages in Slidebook6Reader (thanks to Richard Myers)
+   - Performance improvement for writing files to disk (thanks to Stephane Dallongeville)
+   - Build system
+       - fixed Maven POMs to reduce calls to artifacts.openmicroscopy.org
+       - fixed bioformats_package.jar to include the loci.formats.tools
+         package
+* Documentation updates, including:
+   - updated format pages to include links to example data
+   - clarified description of Qu for MATLAB (thanks to Carnë Draug)
+   - added installation instructions for Octave (thanks to Carnë Draug)
+* C++:
+   - Bugfixes to the OME-TIFF writer to correct use of the metadata store with
+     multiple series
+   - Ensure file and writer state consistency upon close failure
+
 5.1.7 (2015 December 7)
 -----------------------
 

@@ -708,11 +708,11 @@ public class FlexReader extends FormatReader {
           if (plane - image + c < planeExposureTime.size()) {
             if (planeExposureTime.get(plane - image + c) != null) {
               store.setPlaneExposureTime(
-                new Time(planeExposureTime.get(plane - image + c), UNITS.S), i, image);
+                new Time(planeExposureTime.get(plane - image + c), UNITS.SECOND), i, image);
             }
           }
           if (plane < planeDeltaT.size() && planeDeltaT.get(plane) != null) {
-            store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.S), i, image);
+            store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.SECOND), i, image);
           }
         }
       }

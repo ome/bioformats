@@ -39,6 +39,7 @@ class OMEModelObject(OMEModelEntity):
         self.isAbstractSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.name)
         self.isConcreteSubstitution = self.model.opts.lang.hasSubstitutionGroup(self.base)
         self.topLevelName = element.getName()
+        self.hasPrimitiveBase = False
         if self.isConcreteSubstitution:
             self.topLevelName = self.base
         try:
@@ -67,6 +68,14 @@ class OMEModelObject(OMEModelEntity):
         except AttributeError:
             pass
 
+    def addBaseAttribute(self, delegate, namespace):
+        prop = OMEModelProperty.fromReference(delegate, self, self.model)
+        prop.hasBaseAttribute = True
+        self.hasPrimitiveBase = True
+        prop.isBackReference = False
+        prop.isAttribute = True
+        self.properties[delegate.name] = prop
+                
     def addAttribute(self, attribute):
         """
         Adds an OME XML Schema attribute to the object's data model.

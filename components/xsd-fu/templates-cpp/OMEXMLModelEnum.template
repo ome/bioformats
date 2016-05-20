@@ -101,12 +101,29 @@ namespace ome
           enum enum_value
             {
 {% for value in klass.possibleValues %}\
+{% if klass.enumDocumentation is not None and value in klass.enumDocumentation %}\
+              /**
+              ${klass.enumDocumentation[value]}
+              */
+{% end %}\
+{% if klass.enumDocumentation is None or value not in klass.enumDocumentation %}\
               /// ${value}
+{% end %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
+{% if value == klass.possibleValues[-1] %}\
+              ${klass.enumProperties[value].enum}
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              ${klass.enumProperties[value].enum},
+{% end %}\
+{% end %}\
+{% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}\
 {% if value == klass.possibleValues[-1] %}\
               ${enum_value_name(value, False).upper()}
 {% end %}\
 {% if value != klass.possibleValues[-1] %}\
               ${enum_value_name(value, False).upper()},
+{% end %}\
 {% end %}\
 {% end %}\
             };

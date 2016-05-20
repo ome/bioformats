@@ -1060,7 +1060,7 @@ public final class FormatTools {
       if (retrieve.getPlaneCount(series) > image) {
         Time deltaT = retrieve.getPlaneDeltaT(series, image);
         if (deltaT != null) {
-          stamp = (long) (deltaT.value(UNITS.S).doubleValue() * 1000);
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
         }
       }
       stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
@@ -1414,7 +1414,7 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Length(value, UNITS.NM);
+    return new Length(value, UNITS.NANOMETER);
   }
   
   /**
@@ -1435,7 +1435,7 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Time(value, UNITS.S);
+    return new Time(value, UNITS.SECOND);
   }
   
   public static Length getPhysicalSize(Double value, String unit) {
@@ -1468,7 +1468,7 @@ public final class FormatTools {
         } catch (EnumerationException e) {
         }
       }
-      return new Length(value, UNITS.MICROM);
+      return new Length(value, UNITS.MICROMETER);
     }
     LOGGER.debug("Expected positive value for PhysicalSize; got {}", value);
     return null;
@@ -1483,7 +1483,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value) {
-   return getPhysicalSizeX(value, UNITS.MICROM);
+   return getPhysicalSizeX(value, UNITS.MICROMETER);
   }
   
   /**
@@ -1522,7 +1522,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value) {
-    return getPhysicalSizeY(value, UNITS.MICROM);
+    return getPhysicalSizeY(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1561,7 +1561,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeZ(Double value) {
-    return getPhysicalSizeZ(value, UNITS.MICROM);
+    return getPhysicalSizeZ(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1596,7 +1596,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
@@ -1607,7 +1607,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
@@ -1616,7 +1616,7 @@ public final class FormatTools {
 
   public static Length getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;
@@ -1633,7 +1633,7 @@ public final class FormatTools {
 
   public static Length getCutIn(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutIn; got {}", value);
     return null;
@@ -1641,7 +1641,7 @@ public final class FormatTools {
 
   public static Length getCutOut(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutOut; got {}", value);
     return null;
@@ -1649,7 +1649,7 @@ public final class FormatTools {
 
   public static Length getFontSize(Integer value) {
     if (value != null && value >= 0) {
-      return new Length(value, UNITS.PT);
+      return new Length(value, UNITS.POINT);
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;

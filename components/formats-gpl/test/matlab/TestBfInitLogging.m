@@ -50,6 +50,9 @@ classdef TestBfInitLogging < TestBfMatlab
             bfInitLogging();
             assertTrue(loci.common.DebugTools.isEnabled());
             assertEqual(char(self.root.getLevel.toString()), 'WARN');
+            bfInitLogging('INFO');
+            assertTrue(loci.common.DebugTools.isEnabled());
+            assertEqual(char(self.root.getLevel.toString()), 'WARN');
         end
         
         function testALL(self)
@@ -106,6 +109,16 @@ classdef TestBfInitLogging < TestBfMatlab
             bfInitLogging('WARN');
             assertTrue(loci.common.DebugTools.isEnabled());
             assertEqual(char(self.root.getLevel.toString()), 'WARN');
+        end
+
+        function testSetRootLevel(self)
+            self.disableLogging();
+            loci.common.DebugTools.enableLogging();
+            assertTrue(loci.common.DebugTools.isEnabled());
+            loci.common.DebugTools.setRootLevel('INFO');
+            assertEqual(char(self.root.getLevel.toString()), 'INFO');
+            loci.common.DebugTools.setRootLevel('DEBUG');
+            assertEqual(char(self.root.getLevel.toString()), 'DEBUG');
         end
     end
 end

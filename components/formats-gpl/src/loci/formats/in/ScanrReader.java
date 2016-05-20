@@ -687,10 +687,10 @@ public class ScanrReader extends FormatReader {
             Double time = exposures.get(c);
             if (time != null) {
               time /= 1000;
-              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+              store.setPlaneExposureTime(new Time(time, UNITS.SECOND), i, image);
             }
             if (deltaT != null) {
-              store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
+              store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), i, image);
             }
           }
         }

@@ -150,9 +150,12 @@ public class FlowSightReader extends FormatReader {
     if (channelNamesString != null) {
       channelNames = channelNamesString.split("\\|");
       if (channelNames.length != channelCount) {
-        throw new FormatException(String.format(
-            "Channel count (%d) does not match number of channel names (%d) in string \"%s\"",
-            channelCount, channelNames.length, channelNamesString));
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Channel count (%d) does not match number of " +
+              "channel names (%d) in string \"%s\"",
+              channelCount, channelNames.length, channelNamesString);
+        }
+        channelCount = channelNames.length;
       }
       LOGGER.debug("Found {} channels: {}",
           channelCount, channelNamesString.replace('|', ','));

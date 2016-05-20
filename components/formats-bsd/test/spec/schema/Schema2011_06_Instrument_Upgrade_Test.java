@@ -171,7 +171,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, lightsource0.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource0Model, lightsource0.getModel());
         Assert.assertEquals(ref.Instrument0LightSource0SerialNumber, lightsource0.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MW).doubleValue());
+        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MILLIWATT).doubleValue());
         Assert.assertEquals(Laser.class.getName(), lightsource0.getClass().getName());
         laser0 = (Laser) lightsource0;
         Assert.assertEquals(ref.Instrument0LightSource0LaserType, laser0.getType());
@@ -192,7 +192,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, lightsource1.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource1Model, lightsource1.getModel());
         Assert.assertEquals(ref.Instrument0LightSource1SerialNumber, lightsource1.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MW).doubleValue());
+        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MILLIWATT).doubleValue());
         Assert.assertEquals(Arc.class.getName(), lightsource1.getClass().getName());
         arc1 = (Arc) lightsource1;
         Assert.assertEquals(ref.Instrument0LightSource1ArcType, arc1.getType());

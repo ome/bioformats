@@ -192,7 +192,7 @@ public class FormatReaderTest {
         }
 
         if (c > 4 || plane < 0 || plane != checkPlane ||
-          !TestTools.canFitInMemory(plane))
+          !TestTools.canFitInMemory(plane * 3))
         {
           continue;
         }
@@ -229,6 +229,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -258,7 +262,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!TestTools.canFitInMemory(expected) || expected < 0) {
+        if (!TestTools.canFitInMemory(expected * 3) || expected < 0) {
           continue;
         }
 
@@ -275,6 +279,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -314,9 +322,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbImage(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
 
         int actualX = b.getWidth();
@@ -389,9 +400,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbBytes(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
         success = b.length == expected;
         if (!success) {
@@ -521,8 +535,15 @@ public class FormatReaderTest {
         if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
-          if (reader.isLittleEndian() ==
-            retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
+          boolean littleEndian = false;
+          if (retrieve.getPixelsBigEndian(i) != null)
+          {
+            littleEndian = !retrieve.getPixelsBigEndian(i).booleanValue();
+          }
+          else if (retrieve.getPixelsBinDataCount(i) == 0) {
+            littleEndian = !retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue();
+          }
+          if (reader.isLittleEndian() != littleEndian)
           {
             msg = "BigEndian";
           }
@@ -1119,7 +1140,7 @@ public class FormatReaderTest {
           return;
         }
         if (expectedDeltaT != null) {
-          Double seconds = deltaT.value(UNITS.S).doubleValue();
+          Double seconds = deltaT.value(UNITS.SECOND).doubleValue();
           if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
             result(testName, false, "series " + i + ", plane " + p +
               " (expected " + expectedDeltaT + ", actual " + seconds + ")");
@@ -1456,6 +1477,13 @@ public class FormatReaderTest {
             }
             catch (IOException e) {
               LOGGER.info("", e);
+            }
+            catch (Throwable e) {
+              if (TestTools.isOutOfMemory(e)) {
+                result(testName, true, "Image too large");
+                return;
+              }
+              throw e;
             }
           }
         }
@@ -1901,6 +1929,10 @@ public class FormatReaderTest {
       resolutionReader.close();
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -1948,6 +1980,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -2029,7 +2065,11 @@ public class FormatReaderTest {
           try {
             md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
           }
-          catch (Exception e) {
+          catch (Throwable e) {
+            if (TestTools.isOutOfMemory(e)) {
+              result(testName, true, "Image too large");
+              return;
+            }
             LOGGER.warn("", e);
           }
 
@@ -2078,7 +2118,13 @@ public class FormatReaderTest {
         try {
           md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
         }
-        catch (Exception e) { }
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
+        }
 
         if (md5 == null && expected1 == null && expected2 == null) {
           success = true;
@@ -2384,6 +2430,10 @@ public class FormatReaderTest {
       result(testName, true);
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.warn("", t);
       result(testName, false, t.getMessage());
     }

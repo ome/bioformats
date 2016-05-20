@@ -283,7 +283,7 @@ public class AFIReader extends FormatReader {
 
         if (i < physicalSizes.length &&
           physicalSizes[i] != null &&
-          physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
+          physicalSizes[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0)
         {
           Length size = physicalSizes[i];
           store.setPixelsPhysicalSizeX(size, i);
@@ -300,7 +300,7 @@ public class AFIReader extends FormatReader {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
 
-          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.S), i, c);
+          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
         }
       }
     }

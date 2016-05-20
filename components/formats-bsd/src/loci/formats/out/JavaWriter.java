@@ -76,8 +76,13 @@ public class JavaWriter extends FormatWriter {
     }
     int bpp = FormatTools.getBytesPerPixel(type);
     boolean fp = FormatTools.isFloatingPoint(type);
-    boolean little =
-      Boolean.FALSE.equals(meta.getPixelsBinDataBigEndian(series, 0));
+    boolean little = false;
+    if (meta.getPixelsBigEndian(series) != null) {
+      little = !meta.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (meta.getPixelsBinDataCount(series) == 0) {
+      little = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     // write array
     String varName = "series" + series + "Plane" + no;

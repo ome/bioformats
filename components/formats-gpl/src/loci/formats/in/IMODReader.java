@@ -472,23 +472,23 @@ public class IMODReader extends FormatReader {
       case 0:
         return UNITS.PIXEL;
       case 1:
-        return UNITS.M;
+        return UNITS.METER;
       case 3:
-        return UNITS.KM;
+        return UNITS.KILOMETER;
       case -2:
-        return UNITS.CM;
+        return UNITS.CENTIMETER;
       case -3:
-        return UNITS.MM;
+        return UNITS.MILLIMETER;
       case -6:
-        return UNITS.MICROM;
+        return UNITS.MICROMETER;
       case -9:
-        return UNITS.NM;
+        return UNITS.NANOMETER;
       case -10:
         return UNITS.ANGSTROM;
       case -12:
-        return UNITS.PM;
+        return UNITS.PICOMETER;
     }
-    return UNITS.MICROM;
+    return UNITS.MICROMETER;
   }
 
 }

@@ -18,7 +18,7 @@ Type "ant -p"  for a list of targets.
       file="${testng.xml.template}" overwrite="true"/>
     <testng failureProperty="failedTest">
       <classpath>
-        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
@@ -33,7 +33,7 @@ Type "ant -p"  for a list of targets.
       file="${testng.xml.template}" overwrite="true"/>
     <testng failureProperty="failedTest">
       <classpath>
-        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>

@@ -74,11 +74,11 @@ public class FakeReaderTest {
   @DataProvider(name = "physical sizes")
   public Object[][] physicalSizes() {
     return new Object[][] {
-      {"1", new Length(1.0, UNITS.MICROM)},
-      {"1.0", new Length(1.0, UNITS.MICROM)},
-      {"1mm", new Length(1.0, UNITS.MM)},
-      {"1.0mm", new Length(1.0, UNITS.MM)},
-      {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1", new Length(1.0, UNITS.MICROMETER)},
+      {"1.0", new Length(1.0, UNITS.MICROMETER)},
+      {"1mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0 mm", new Length(1.0, UNITS.MILLIMETER)},
       {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
@@ -106,7 +106,7 @@ public class FakeReaderTest {
       {"ellipses", "Ellipse"},
       {"labels", "Label"},
       {"lines", "Line"},
-      // {"masks", "Mask"},
+      {"masks", "Mask"},
       {"points", "Point"},
       {"polygons", "Polygon"},
       {"polylines", "Polyline"},

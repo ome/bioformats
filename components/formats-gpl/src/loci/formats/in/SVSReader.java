@@ -386,7 +386,7 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
+      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(pixelSize[i], i);
         store.setPixelsPhysicalSizeY(pixelSize[i], i);
       }

@@ -38,6 +38,7 @@ import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,6 +47,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.bind.DatatypeConverter;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -74,6 +77,7 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -599,7 +603,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
-      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
+      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
       else if (key.equals("screens")) screens = intValue;
       else if (key.equals("plates")) plates = intValue;
@@ -943,7 +947,7 @@ public class FakeReader extends FormatReader {
   private void fillRegions(MetadataStore store, int imageIndex) {
     int roiRefCount = 0;
     String roiID;
-
+    Random random = new Random();
     for (int i=0; i<ellipses; i++) {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
@@ -986,7 +990,16 @@ public class FakeReader extends FormatReader {
         roiID = ROI_PREFIX + roiCount;
         store.setROIID(roiID, roiCount);
         store.setMaskID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setMaskX((double)ROI_SPACING, roiCount, 0);
+        store.setMaskY((double)ROI_SPACING, roiCount, 0);
+        store.setMaskWidth((double)ROI_SPACING, roiCount, 0);
+        store.setMaskHeight((double)ROI_SPACING, roiCount, 0);
         store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        byte[] rawBytes = new byte[ROI_SPACING*ROI_SPACING];
+        random.nextBytes(rawBytes);
+        store.setMaskBinData(rawBytes, roiCount, 0);
+        store.setMaskBinDataBigEndian(true, roiCount, 0);
+        store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, 0);
         roiCount++;
         roiRefCount++;
     }

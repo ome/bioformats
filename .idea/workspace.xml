@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1e391d64-5cd6-4a0c-b10a-8464d082f98d" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/testng.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/Schema_Transform_Test.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/components/formats-common/test/loci/common/utests/DebugToolsTest.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/build.sh" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/conflicts.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/core.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/header.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/minimum_writer.cpp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/components/formats-bsd/cppwrap/showinf.cpp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/sphinx/developers/jace/build-linux.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/sphinx/developers/jace/build-macosx.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/sphinx/developers/jace/build-windows.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/sphinx/developers/jace/build.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/docs/sphinx/developers/jace/overview.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/jar/junit-4.8.2.jar" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/matlab/TestBfGetReader.m" afterPath="$PROJECT_DIR$/components/formats-gpl/test/matlab/TestBfGetReader.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ant/java.xml" afterPath="$PROJECT_DIR$/ant/java.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ant/logback.xml" afterPath="$PROJECT_DIR$/ant/logback.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/autogen/pom.xml" afterPath="$PROJECT_DIR$/components/autogen/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/autogen/src/format-pages.txt" afterPath="$PROJECT_DIR$/components/autogen/src/format-pages.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/build.properties" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/build.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/build.xml" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/pom.xml" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/Calibrator.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/Calibrator.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/Colorizer.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/Colorizer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/FilePatternDialog.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/in/FilePatternDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/macro/LociFunctions.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/macro/LociFunctions.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/out/Exporter.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/src/loci/plugins/out/Exporter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/AutoscaleTest.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/AutoscaleTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/ImporterTest.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/ImporterTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/MacroTest.java" afterPath="$PROJECT_DIR$/components/bio-formats-plugins/test/loci/plugins/in/MacroTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-tools/pom.xml" afterPath="$PROJECT_DIR$/components/bio-formats-tools/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java" afterPath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageFaker.java" afterPath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageFaker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java" afterPath="$PROJECT_DIR$/components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/bioformats_package/assembly.xml" afterPath="$PROJECT_DIR$/components/bundles/bioformats_package/assembly.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/bioformats_package/pom.xml" afterPath="$PROJECT_DIR$/components/bundles/bioformats_package/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/loci-tools/assembly.xml" afterPath="$PROJECT_DIR$/components/bundles/loci-tools/assembly.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/loci-tools/pom.xml" afterPath="$PROJECT_DIR$/components/bundles/loci-tools/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/ome-tools/assembly.xml" afterPath="$PROJECT_DIR$/components/bundles/ome-tools/assembly.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/bundles/ome-tools/pom.xml" afterPath="$PROJECT_DIR$/components/bundles/ome-tools/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/forks/jai/pom.xml" afterPath="$PROJECT_DIR$/components/forks/jai/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/forks/mdbtools/pom.xml" afterPath="$PROJECT_DIR$/components/forks/mdbtools/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/forks/poi/pom.xml" afterPath="$PROJECT_DIR$/components/forks/poi/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/forks/turbojpeg/pom.xml" afterPath="$PROJECT_DIR$/components/forks/turbojpeg/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/build.xml" afterPath="$PROJECT_DIR$/components/formats-api/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/pom.xml" afterPath="$PROJECT_DIR$/components/formats-api/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/src/loci/formats/DelegateReader.java" afterPath="$PROJECT_DIR$/components/formats-api/src/loci/formats/DelegateReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/src/loci/formats/FormatTools.java" afterPath="$PROJECT_DIR$/components/formats-api/src/loci/formats/FormatTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/src/loci/formats/MetadataTools.java" afterPath="$PROJECT_DIR$/components/formats-api/src/loci/formats/MetadataTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/src/loci/formats/meta/MetadataConverter.java" afterPath="$PROJECT_DIR$/components/formats-api/src/loci/formats/meta/MetadataConverter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-api/test/loci/formats/utests/FormatToolsTest.java" afterPath="$PROJECT_DIR$/components/formats-api/test/loci/formats/utests/FormatToolsTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/build.xml" afterPath="$PROJECT_DIR$/components/formats-bsd/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/pom.xml" afterPath="$PROJECT_DIR$/components/formats-bsd/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/AxisGuesser.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/AxisGuesser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/FilePattern.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/FilePattern.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/FilePatternBlock.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/FilePatternBlock.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/UpgradeChecker.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/UpgradeChecker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/gui/AWTImageTools.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/gui/AWTImageTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/gui/BufferedImageWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/gui/BufferedImageWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/BaseTiffReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/BaseTiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/DicomReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/DicomReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/FakeReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/FakeReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/FlowSightReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/FlowSightReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/ICSReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/ICSReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/MicromanagerReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/MicromanagerReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OBFReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OBFReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OMETiffReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OMETiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OMEXMLReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/OMEXMLReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/TiffReader.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/in/TiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/APNGWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/APNGWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/ICSWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/ICSWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/JPEG2000Writer.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/JPEG2000Writer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/JavaWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/JavaWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/OMEXMLWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/OMEXMLWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/TiffWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/TiffWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/V3DrawWriter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/src/loci/formats/out/V3DrawWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/AxisGuesserTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/AxisGuesserTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FakeReaderTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FakeReaderTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FilePatternBlockTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FilePatternBlockTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FilePatternTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/FilePatternTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/OMEXMLServiceTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/OMEXMLServiceTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/SPWModelMock.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/SPWModelMock.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/tiff/OMETiffWriterUnicodeTest.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/loci/formats/utests/tiff/OMETiffWriterUnicodeTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/Schema2011_06_Instrument_Upgrade_Test.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/Schema2011_06_Instrument_Upgrade_Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/samples/Instrument2011_06.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/samples/Instrument2011_06.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/samples/Upgrade2011_06.java" afterPath="$PROJECT_DIR$/components/formats-bsd/test/spec/schema/samples/Upgrade2011_06.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-bsd/utils/mipav/PlugInBioFormatsImporter.java" afterPath="$PROJECT_DIR$/components/formats-bsd/utils/mipav/PlugInBioFormatsImporter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/build.xml" afterPath="$PROJECT_DIR$/components/formats-common/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/pom.xml" afterPath="$PROJECT_DIR$/components/formats-common/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/src/loci/common/DebugTools.java" afterPath="$PROJECT_DIR$/components/formats-common/src/loci/common/DebugTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/src/loci/common/Log4jTools.java" afterPath="$PROJECT_DIR$/components/formats-common/src/loci/common/Log4jTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/src/loci/common/LogbackTools.java" afterPath="$PROJECT_DIR$/components/formats-common/src/loci/common/LogbackTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-common/test/loci/common/utests/testng-template.xml" afterPath="$PROJECT_DIR$/components/formats-common/test/loci/common/utests/testng-template.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/build.xml" afterPath="$PROJECT_DIR$/components/formats-gpl/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/matlab/bfInitLogging.m" afterPath="$PROJECT_DIR$/components/formats-gpl/matlab/bfInitLogging.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/pom.xml" afterPath="$PROJECT_DIR$/components/formats-gpl/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AFIReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AFIReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AliconaReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AliconaReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AnalyzeReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/AnalyzeReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BDReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BDReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BaseZeissReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BaseZeissReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BioRadSCNReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/BioRadSCNReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/CellSensReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/CellSensReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/CellVoyagerReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/CellVoyagerReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/DeltavisionReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/DeltavisionReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FEITiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FEITiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FV1000Reader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FV1000Reader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FlexReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FlexReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FluoviewReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/FluoviewReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/GatanDM2Reader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/GatanDM2Reader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/GatanReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/GatanReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HISReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HISReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HamamatsuVMSReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HamamatsuVMSReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HitachiReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/HitachiReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IMODReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IMODReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IPLabReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IPLabReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ImarisReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ImarisReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ImprovisionTiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ImprovisionTiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/InCellReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/InCellReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IvisionReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/IvisionReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/KodakReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/KodakReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LEOReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LEOReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LIFReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LIFReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LeicaHandler.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LeicaHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LeicaReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LeicaReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LiFlimReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/LiFlimReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MIASReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MIASReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MetamorphReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MetamorphReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MetamorphTiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/MetamorphTiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ND2Handler.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ND2Handler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NativeND2Reader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NativeND2Reader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NiftiReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NiftiReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NikonElementsTiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NikonElementsTiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NikonTiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/NikonTiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PCIReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PCIReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PCORAWReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PCORAWReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PerkinElmerReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PerkinElmerReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PrairieReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/PrairieReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SIFReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SIFReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SVSReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SVSReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ScanrReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ScanrReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SimplePCITiffReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SimplePCITiffReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlidebookReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlidebookReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/TillVisionReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/TillVisionReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/VolocityReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/VolocityReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/WlzReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/WlzReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ZeissCZIReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ZeissCZIReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ZeissLSMReader.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/ZeissLSMReader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/out/WlzWriter.java" afterPath="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/out/WlzWriter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/IMetadataBasedOMEModelMock.java" afterPath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/IMetadataBasedOMEModelMock.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/InOutCurrentTest.java" afterPath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/InOutCurrentTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/ObjectBasedOMEModelMock.java" afterPath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/ObjectBasedOMEModelMock.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/xml/Upgrade201006Test.java" afterPath="$PROJECT_DIR$/components/formats-gpl/test/loci/formats/utests/xml/Upgrade201006Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/matlab/ReaderTest.m" afterPath="$PROJECT_DIR$/components/formats-gpl/test/matlab/ReaderTest.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/test/matlab/TestBfInitLogging.m" afterPath="$PROJECT_DIR$/components/formats-gpl/test/matlab/TestBfInitLogging.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/utils/FileWriteSPW.java" afterPath="$PROJECT_DIR$/components/formats-gpl/utils/FileWriteSPW.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/utils/GetPhysicalMetadata.java" afterPath="$PROJECT_DIR$/components/formats-gpl/utils/GetPhysicalMetadata.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/formats-gpl/utils/PrintTimestamps.java" afterPath="$PROJECT_DIR$/components/formats-gpl/utils/PrintTimestamps.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/metakit/build.xml" afterPath="$PROJECT_DIR$/components/metakit/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/metakit/pom.xml" afterPath="$PROJECT_DIR$/components/metakit/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/ome-xml/build.xml" afterPath="$PROJECT_DIR$/components/ome-xml/build.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/ome-xml/pom.xml" afterPath="$PROJECT_DIR$/components/ome-xml/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/ome-xml/src/ome/units/UNITS.java" afterPath="$PROJECT_DIR$/components/ome-xml/src/ome/units/UNITS.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/ome-xml/test/ome/xml/utests/EnumHandlerTest.java" afterPath="$PROJECT_DIR$/components/ome-xml/test/ome/xml/utests/EnumHandlerTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/specification/released-schema/2016-DEV0/ome.xsd" afterPath="$PROJECT_DIR$/components/specification/released-schema/2016-DEV0/ome.xsd" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/specification/src/ome/specification/XMLMockObjects.java" afterPath="$PROJECT_DIR$/components/specification/src/ome/specification/XMLMockObjects.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/stubs/lwf-stubs/pom.xml" afterPath="$PROJECT_DIR$/components/stubs/lwf-stubs/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/stubs/mipav/pom.xml" afterPath="$PROJECT_DIR$/components/stubs/mipav/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/test-suite/pom.xml" afterPath="$PROJECT_DIR$/components/test-suite/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/Configuration.java" afterPath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/Configuration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/FormatReaderTest.java" afterPath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/FormatReaderTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/TestTools.java" afterPath="$PROJECT_DIR$/components/test-suite/src/loci/tests/testng/TestTools.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/cfg/enum_handler.cfg" afterPath="$PROJECT_DIR$/components/xsd-fu/cfg/enum_handler.cfg" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/config.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/config.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/generateds.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/generateds.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/language.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/language.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/model.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/model.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/object.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/object.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/property.py" afterPath="$PROJECT_DIR$/components/xsd-fu/python/ome/modeltools/property.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/AggregateMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/AggregateMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/DummyMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/DummyMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/FilterMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/FilterMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/MetadataRetrieve.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/MetadataRetrieve.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/MetadataStore.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/MetadataStore.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/OMEXMLMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/OMEXMLMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/OMEXMLModelEnum.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-cpp/OMEXMLModelEnum.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/AggregateMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/AggregateMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/DummyMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/DummyMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/FilterMetadata.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/FilterMetadata.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/MetadataRetrieve.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/MetadataRetrieve.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/MetadataStore.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/MetadataStore.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLMetadataImpl.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLMetadataImpl.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelEnum.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelEnum.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelEnumHandler.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelEnumHandler.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelObject.template" afterPath="$PROJECT_DIR$/components/xsd-fu/templates-java/OMEXMLModelObject.template" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/components/xsd-fu/xsd-fu" afterPath="$PROJECT_DIR$/components/xsd-fu/xsd-fu" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cpp/cmake/GTest.cmake" afterPath="$PROJECT_DIR$/cpp/cmake/GTest.cmake" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cpp/test/ome-xml/transform.cpp" afterPath="$PROJECT_DIR$/cpp/test/ome-xml/transform.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/about/whats-new.txt" afterPath="$PROJECT_DIR$/docs/sphinx/about/whats-new.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/conf.py.in" afterPath="$PROJECT_DIR$/docs/sphinx/conf.py.in" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/developers/examples/bftest.m" afterPath="$PROJECT_DIR$/docs/sphinx/developers/examples/bftest.m" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/developers/generating-test-images.txt" afterPath="$PROJECT_DIR$/docs/sphinx/developers/generating-test-images.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/developers/non-java-code.txt" afterPath="$PROJECT_DIR$/docs/sphinx/developers/non-java-code.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/developers/useful-scripts.txt" afterPath="$PROJECT_DIR$/docs/sphinx/developers/useful-scripts.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/formats/varian-fdf.txt" afterPath="$PROJECT_DIR$/docs/sphinx/formats/varian-fdf.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/formats/volocity-library-clipping.txt" afterPath="$PROJECT_DIR$/docs/sphinx/formats/volocity-library-clipping.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/formats/volocity.txt" afterPath="$PROJECT_DIR$/docs/sphinx/formats/volocity.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/formats/zeiss-lsm.txt" afterPath="$PROJECT_DIR$/docs/sphinx/formats/zeiss-lsm.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/docs/sphinx/themes/globalbftoc.html" afterPath="$PROJECT_DIR$/docs/sphinx/themes/globalbftoc.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/test-build" afterPath="$PROJECT_DIR$/tools/test-build" />
+    </list>
+    <ignored path="pom-bio-formats.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/components/bundles/loci-tools/target/" />
+    <ignored path="$PROJECT_DIR$/components/ome-xml/target/maven-archiver/" />
+    <ignored path="$PROJECT_DIR$/components/ome-xml/target/maven-status/" />
+    <ignored path="$PROJECT_DIR$/components/ome-xml/target/generated-sources/groovy-stubs/" />
+    <ignored path="$PROJECT_DIR$/components/formats-api/target/" />
+    <ignored path="$PROJECT_DIR$/components/test-suite/target/" />
+    <ignored path="$PROJECT_DIR$/components/forks/turbojpeg/target/" />
+    <ignored path="$PROJECT_DIR$/components/formats-gpl/target/" />
+    <ignored path="$PROJECT_DIR$/components/bundles/ome-tools/target/" />
+    <ignored path="$PROJECT_DIR$/components/stubs/lwf-stubs/target/" />
+    <ignored path="$PROJECT_DIR$/components/forks/poi/target/" />
+    <ignored path="$PROJECT_DIR$/components/bio-formats-tools/target/" />
+    <ignored path="$PROJECT_DIR$/components/xsd-fu/target/" />
+    <ignored path="$PROJECT_DIR$/components/stubs/mipav/target/" />
+    <ignored path="$PROJECT_DIR$/components/forks/mdbtools/target/" />
+    <ignored path="$PROJECT_DIR$/components/autogen/target/" />
+    <ignored path="$PROJECT_DIR$/components/ome-jxr/target/" />
+    <ignored path="$PROJECT_DIR$/components/forks/jai/target/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <ignored path="$PROJECT_DIR$/components/bio-formats-plugins/target/" />
+    <ignored path="$PROJECT_DIR$/components/specification/target/" />
+    <ignored path="$PROJECT_DIR$/components/formats-bsd/target/" />
+    <ignored path="$PROJECT_DIR$/components/formats-common/target/" />
+    <ignored path="$PROJECT_DIR$/components/bundles/bioformats_package/target/" />
+    <ignored path="$PROJECT_DIR$/components/metakit/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="pom-bio-formats" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="SlideBook6Reader.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.8397329">
+              <caret line="53" column="27" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/components/formats-gpl/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.451613">
+              <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/components/formats-gpl/pom.xml" />
+        <option value="$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Bundled (Maven 3)" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1698" />
+    <option name="height" value="1068" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pom-bio-formats" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnitTestDiscovery" factoryName="JUnit Test Discovery" changeList="All">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Java Scratch" factoryName="Java Scratch">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="SCRATCH_FILE_ID" value="0" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="loci_tools" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Specs2RunConfiguration" factoryName="Specs2">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNGTestDiscovery" factoryName="TestNG Test Discovery" changeList="All">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="executeSpecs" factoryName="Gauge Execution">
+      <setting name="environment" value="" />
+      <setting name="specsToExecute" value="" />
+      <setting name="tags" value="" />
+      <setting name="parallelNodes" value="" />
+      <setting name="execInParallel" value="false" />
+      <setting name="programParameters" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="moduleName" value="" />
+      <envMap />
+      <setting name="rowsRange" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="uTestRunConfiguration" factoryName="utest">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="modificationStamps">
+      <map>
+        <entry key="$PROJECT_DIR$/../../personal/Bytabit/depot/bytabit" value="1448026706472" />
+      </map>
+    </option>
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="ToolWindowManager">
+    <frame x="-9" y="-9" width="1698" height="1068" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32550693" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlidebookReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#44366#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/scijava/native-lib-loader/2.0.2/native-lib-loader-2.0.2-sources.jar!/org/scijava/nativelib/BaseJniExtractor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.8536867">
+          <caret line="164" column="34" selection-start-line="164" selection-start-column="34" selection-end-line="164" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/scijava/native-lib-loader/2.0.2/native-lib-loader-2.0.2-sources.jar!/org/scijava/nativelib/NativeLibraryUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.260434">
+          <caret line="166" column="6" selection-start-line="166" selection-start-column="6" selection-end-line="166" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/components/formats-api/src/loci/formats/meta/MetadataConverter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33222038">
+          <caret line="766" column="36" selection-start-line="766" selection-start-column="36" selection-end-line="766" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/components/formats-gpl/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.451613">
+          <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/components/formats-gpl/src/loci/formats/in/SlideBook6Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.8397329">
+          <caret line="53" column="27" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
