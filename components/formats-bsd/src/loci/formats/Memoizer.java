@@ -37,6 +37,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -115,10 +117,13 @@ public class Memoizer extends ReaderWrapper {
     void saveStop() throws IOException;
 
     void close();
+    
+    void registerReader(Class<? extends IFormatReader> readerClass);
   }
 
   public static class KryoDeser implements Deser {
 
+    final public HashMap<String, Integer> classRegistrationMap = new HashMap<String, Integer>();
     final public Kryo kryo = new Kryo();
     {
       // See https://github.com/EsotericSoftware/kryo/issues/216
@@ -203,6 +208,7 @@ public class Memoizer extends ReaderWrapper {
 
     @Override
     public void saveReader(IFormatReader reader) {
+      registerReader(reader.getClass());
       kryo.writeObject(output, reader.getClass());
       kryo.writeObject(output, reader);
     }
@@ -223,6 +229,17 @@ public class Memoizer extends ReaderWrapper {
       }
     }
 
+    @Override
+    public void registerReader(Class<? extends IFormatReader> readerClass) {
+      String readerName = readerClass.getName();
+      if (!classRegistrationMap.containsKey(readerName)) {
+        int hashCode = readerName.hashCode();
+        hashCode = Math.abs(hashCode);
+        System.out.println("Registring reader: " + readerName + " with : " + hashCode);
+        kryo.register(readerClass, hashCode);
+        classRegistrationMap.put(readerName, hashCode);
+      }
+    }
   }
 
   /**
@@ -924,6 +941,8 @@ public class Memoizer extends ReaderWrapper {
     }
 
     final Deser ser = getDeser();
+    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+    registerReaderClasses(classes);
     final StopWatch sw = stopWatch();
     IFormatReader copy = null;
     ser.loadStart(memoFile);
@@ -1008,6 +1027,8 @@ public class Memoizer extends ReaderWrapper {
     }
 
     final Deser ser = getDeser();
+    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+    registerReaderClasses(classes);
     final StopWatch sw = stopWatch();
     boolean rv = true;
     try {
@@ -1161,6 +1182,14 @@ public class Memoizer extends ReaderWrapper {
       System.out.println(r);
     } finally {
       m.close();
+    }
+  }
+  
+  public void registerReaderClasses(ClassList<IFormatReader> classes) {
+    Class<? extends IFormatReader>[] classList = classes.getClasses();
+    for (int i = 0; i < classList.length; i++) {
+      Class<? extends IFormatReader> readerClass = classList[i];
+      ser.registerReader(readerClass);
     }
   }
 
