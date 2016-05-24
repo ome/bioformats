@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
+                         http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+    <AnnotationRef ID="Annotation:1"/>
+  </Image>
+  <StructuredAnnotations>
+    <!-- First Tag -->
+    <XMLAnnotation ID="Annotation:1" Namespace="openmicroscopy.org/sample/illustration/svg">
+      <Value>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" width="841.89px" height="595.28px" viewBox="0 0 841.89 595.28" enable-background="new 0 0 841.89 595.28" xml:space="preserve">
+          <g>
+            <path fill="#FFFFFF" stroke="#000000" d="M393.353,214.477l-30.583,12.549l-52.221,21.926c2.167,9.625,5.896,29.25,7.36,35.755   l44.86-5.111V392.86h115.712l-0.16-113.793L520,286.137l10.533-36.9l-52.051-22.211l-29.322-11.979L393.353,214.477z"/>
+            <rect x="416.066" y="226.858" fill="#FFFFFF" stroke="#000000" width="10.411" height="36.772"/>
+            <path fill="#FFFFFF" stroke="#000000" d="M421.27,234.66c1.029,0,1.869-0.839,1.869-1.866c0-1.029-0.84-1.867-1.869-1.867   c-1.028,0-1.866,0.838-1.866,1.867C419.404,233.821,420.242,234.66,421.27,234.66"/>
+            <path fill="#FFFFFF" stroke="#000000" d="M421.27,244.791c1.029,0,1.869-0.839,1.869-1.866s-0.84-1.867-1.869-1.867   c-1.028,0-1.866,0.84-1.866,1.867S420.242,244.791,421.27,244.791"/>
+            <path fill="#FFFFFF" stroke="#000000" d="M421.27,254.922c1.029,0,1.869-0.84,1.869-1.867s-0.84-1.866-1.869-1.866   c-1.028,0-1.866,0.839-1.866,1.866S420.242,254.922,421.27,254.922"/>
+            <path fill="none" stroke="#000000" stroke-width="0.5" stroke-miterlimit="2.613" stroke-dasharray="1.1161,0.5581" d="   M362.77,227.284c0,0,8.796,23.781,0,52.569"/>
+            <path fill="none" stroke="#000000" stroke-width="0.5" stroke-miterlimit="2.613" stroke-dasharray="1.1161,0.5581" d="   M478.482,227.284c0,0-8.797,23.781,0,52.569"/>
+
+            <line fill="none" stroke="#000000" stroke-width="0.279" stroke-miterlimit="2.613" stroke-dasharray="1.1161,0.5581" x1="362.77" y1="388.547" x2="478.482" y2="388.547"/>
+            <polygon fill="#FFFFFF" stroke="#000000" points="414.442,216.256 448.225,216.073 438.395,203.69 404.51,203.747 395.199,216.185     "/>
+
+            <rect x="417.052" y="227.912" fill="none" stroke="#000000" stroke-width="0.5" stroke-miterlimit="2.613" stroke-dasharray="1.1161,0.5581" width="8.436" height="34.664"/>
+            <polygon fill="#FFFFFF" stroke="#000000" points="403.423,204.667 418.65,226.973 407.263,237.604 393.353,214.735    404.357,203.041 438.547,202.993 449.16,215.305 434.031,237.559 423.883,227.284 439.457,204.66  "/>
+          </g>
+        </svg>
+      </Value>
+    </XMLAnnotation>
+  </StructuredAnnotations>
+</OME>

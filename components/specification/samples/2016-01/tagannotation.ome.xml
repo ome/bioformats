@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
+                         http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+    <AnnotationRef ID="Annotation:3"/>
+  </Image>
+  <StructuredAnnotations>
+    <!-- First Tag -->
+    <TagAnnotation ID="Annotation:1">
+      <Description>This is the description of the sample tag A</Description>
+      <Value>SampleTagA</Value>
+    </TagAnnotation>
+    <!-- Second Tag -->
+    <TagAnnotation ID="Annotation:2">
+      <Description>This is the description of the sample tag B</Description>
+      <Value>SampleTagB</Value>
+    </TagAnnotation>
+    <!-- A Tagset -->
+    <TagAnnotation ID="Annotation:3" Namespace="openmicroscopy.org/omero/insight/tagset">
+      <Description>This is the description of the sample tagset</Description>
+      <AnnotationRef ID="Annotation:1"/>
+      <AnnotationRef ID="Annotation:2"/>
+      <Value>SampleTagset</Value>
+    </TagAnnotation>
+  </StructuredAnnotations>
+</OME>
