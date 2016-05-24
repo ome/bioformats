@@ -163,10 +163,6 @@ mkdir -p "$root"
 
 for dir in released-schema/20*
 do
-    # Don't copy legacy or other material
-    if [ "$dir" = "released-schema/additions" ]; then
-        continue
-    fi
 
     # Copy dev material, but don't make index
     if contains $dir $devmarker; then
