@@ -49,13 +49,10 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.scijava.nativelib.NativeLibraryUtil;
-import org.scijava.nativelib.NativeLibraryUtil.Architecture;
-
-import ij.gui.GenericDialog;
 
 /**
  * SlideBook6Reader is a file format reader for 3i SlideBook SLD files that uses
- * the SlideBook SBReadFile SDK via the (Windows only) dlls: 
+ * the SlideBook SBReadFile SDK via the (Windows only) dlls:
  *   SBReadFile.dll and SlideBook6Reader.dll
  *
  * @author Richard Myers, richard at intelligent-imaging.com
@@ -75,40 +72,31 @@ public class SlideBook6Reader  extends FormatReader {
 
 	private static final String URL_3I_SLD =
 			"http://www.intelligent-imaging.com/bioformats";
-	private static final String NO_3I_MSG = "3i SlideBook 6 native SLD reader library not found. Press 'Help' button for more details.";
-	private static final String GENERAL_3I_MSG = "3i SlideBook 6 native SLD reader library problem. Press 'Help' button for more details.";
+	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
+			"Please see " + URL_3I_SLD + " for details.";
+	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
+			"Please see " + URL_3I_SLD + " for details.";
 
 	// -- Static initializers --
 
 	private static boolean initialized = false;
 	private static boolean libraryFound = false;
 
-	static {
-		String errMsg = null;
-		Architecture theArch = NativeLibraryUtil.getArchitecture();
 	private static boolean isLibraryFound() {
 		if (initialized) return libraryFound;
 		try {
-			// load JNI wrapper of SlideBook6Reader.dll
-			if (!libraryFound) {
-				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
-				if (!libraryFound) {
-					errMsg = new String(NO_3I_MSG + "["+ theArch.name() + "]");
-				}
-			}
+			// load JNI wrapper of [lib]SlideBook6Reader.[dll, dylib, so]
+			libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
 		}
 		catch (UnsatisfiedLinkError e) {
 			// log level debug, otherwise a warning will be printed every time a file is initialized without the .dll present
-			LOGGER.debug(NO_3I_MSG + "["+ theArch.name() + "] ", e);
-			errMsg = new String(NO_3I_MSG  + "["+ theArch.name() + "]");
+			LOGGER.debug(NO_3I_MSG, e);
 			libraryFound = false;
 		}
 		catch (SecurityException e) {
-			LOGGER.warn("Insufficient permission to load native library"  + "["+ theArch.name() + "] " , e);
-			errMsg = new String("Insufficient permission to load native library" + "["+ theArch.name() + "] " + e);
+			LOGGER.warn("Insufficient permission to load native library", e);
 			libraryFound = false;
 		}
-
 		initialized = true;
 		return libraryFound;
 	}
@@ -135,7 +123,7 @@ public class SlideBook6Reader  extends FormatReader {
 		boolean isMatch = ((magicBytes2 & 0xff00) == SLD_MAGIC_BYTES_1_1 ||
 				(magicBytes2 & 0xff00) == SLD_MAGIC_BYTES_1_2) &&
 				(magicBytes1 == SLD_MAGIC_BYTES_1_0 ||
-				magicBytes1 == SLD_MAGIC_BYTES_2_0);
+						magicBytes1 == SLD_MAGIC_BYTES_2_0);
 
 		return isMatch;
 	}
@@ -223,7 +211,7 @@ public class SlideBook6Reader  extends FormatReader {
 				if (ms.sizeX % 2 != 0) ms.sizeX++;
 				ms.sizeY = getNumYRows(capture);
 				ms.sizeZ = numZPlanes[capture];
-				ms.sizeT = numTimepoints[capture] * numPositions[capture]; 
+				ms.sizeT = numTimepoints[capture] * numPositions[capture];
 				ms.sizeC = numChannels[capture];
 				int bytes = getBytesPerPixel(capture);
 				if (bytes % 3 == 0) {
@@ -235,7 +223,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 				ms.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
 				ms.imageCount = ms.sizeZ * ms.sizeT;
-				if (!ms.rgb) 
+				if (!ms.rgb)
 					ms.imageCount *= ms.sizeC;
 				ms.interleaved = true;
 				ms.littleEndian = true;
@@ -251,7 +239,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 			// add extended meta data
 			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-				
+
 				// set instrument information
 				String instrumentID = MetadataTools.createLSID("Instrument", 0);
 				store.setInstrumentID(instrumentID, 0);
@@ -392,10 +380,10 @@ public class SlideBook6Reader  extends FormatReader {
 	public native int getBytesPerPixel(int inCapture);
 
 	public native boolean readImagePlaneBuf( byte outPlaneBuffer[],
-			int inCapture,
-			int inPosition,
-			int inTimepoint,
-			int inZ,
-			int inChannel );
+											 int inCapture,
+											 int inPosition,
+											 int inTimepoint,
+											 int inZ,
+											 int inChannel );
 
 }
