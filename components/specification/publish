@@ -152,7 +152,7 @@ contains() {
     fi
 }
 
-devmarker="dev"
+devmarker="DEV"
 root=published
 
 
