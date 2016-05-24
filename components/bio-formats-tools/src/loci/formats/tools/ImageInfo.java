@@ -197,7 +197,6 @@ public class ImageInfo {
           return true;
         }
         else if (args[i].equals("-nopix")) pixels = false;
-        else if (args[i].equals(VERSION)) printVersion = true;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
