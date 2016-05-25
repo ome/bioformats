@@ -63,7 +63,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
@@ -1111,17 +1110,7 @@ public class ImageInfo {
 
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
-        DataTools.indexOf(args, CommandLineTools.VERSION) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
+    CommandLineTools.runUpgradeCheck(args);
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

@@ -32,7 +32,9 @@
 
 package loci.formats.tools;
 
+import loci.common.DataTools;
 import loci.formats.FormatTools;
+import loci.formats.UpgradeChecker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +49,23 @@ public final class CommandLineTools {
   private static final Logger LOGGER = LoggerFactory.getLogger(CommandLineTools.class);
   public static final String VERSION = "-version";
 
+  public static final String NO_UPGRADE_CHECK = "-no-upgrade";
+
   public static void printVersion() {
     System.out.println("Version: " + FormatTools.VERSION);
     System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
     System.out.println("Build date: " + FormatTools.DATE);
+  }
+
+  public static void runUpgradeCheck(String[] args) {
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) != -1) return;
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+    if (canUpgrade) {
+      LOGGER.info("*** A new stable version is available. ***");
+      LOGGER.info("*** Install the new version using:     ***");
+      LOGGER.info("***   'upgradechecker -install'        ***");
+    }
   }
 }

@@ -60,7 +60,6 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -87,8 +86,6 @@ public final class ImageConverter {
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger(ImageConverter.class);
-
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
 
   // -- Fields --
 
@@ -189,7 +186,7 @@ public final class ImageConverter {
           }
           catch (NumberFormatException e) { }
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -860,17 +857,7 @@ public final class ImageConverter {
 
   public static void main(String[] args) throws FormatException, IOException {
     DebugTools.enableLogging("INFO");
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
-        DataTools.indexOf(args, CommandLineTools.VERSION) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
+    CommandLineTools.runUpgradeCheck(args);
     ImageConverter converter = new ImageConverter();
     if (!converter.testConvert(new ImageWriter(), args)) System.exit(1);
     System.exit(0);
