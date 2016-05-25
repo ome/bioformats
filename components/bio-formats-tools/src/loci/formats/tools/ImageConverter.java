@@ -294,6 +294,8 @@ public final class ImageConverter {
       return true;
     }
 
+    CommandLineTools.runUpgradeCheck(args);
+
     if (in == null || out == null) {
       printUsage();
       return false;
@@ -857,7 +859,6 @@ public final class ImageConverter {
 
   public static void main(String[] args) throws FormatException, IOException {
     DebugTools.enableLogging("INFO");
-    CommandLineTools.runUpgradeCheck(args);
     ImageConverter converter = new ImageConverter();
     if (!converter.testConvert(new ImageWriter(), args)) System.exit(1);
     System.exit(0);

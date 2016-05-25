@@ -91,8 +91,6 @@ public class ImageInfo {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
 
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
-
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
 
@@ -272,7 +270,7 @@ public class ImageInfo {
             cache = true;
             cachedir = args[++i];
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -1017,6 +1015,7 @@ public class ImageInfo {
       CommandLineTools.printVersion();
       return true;
     }
+    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1110,7 +1109,6 @@ public class ImageInfo {
 
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
-    CommandLineTools.runUpgradeCheck(args);
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 
