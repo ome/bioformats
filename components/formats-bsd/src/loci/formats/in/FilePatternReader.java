@@ -134,7 +134,9 @@ public class FilePatternReader extends FormatReader {
     int planeIndex = fileIndexes[getSeries()][no][1];
     helper.setId(files[fileIndex]);
     helper.setSeries(getSeries());
-    return helper.openBytes(planeIndex, buf, x, y, w, h);
+    byte[] plane = helper.openBytes(planeIndex, buf, x, y, w, h);
+    helper.close();
+    return plane;
   }
 
   @Override
