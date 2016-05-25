@@ -58,7 +58,10 @@ public final class CommandLineTools {
   }
 
   public static void runUpgradeCheck(String[] args) {
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) != -1) return;
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) != -1) {
+      LOGGER.debug("Skipping upgrade check");
+      return;
+    }
     UpgradeChecker checker = new UpgradeChecker();
     boolean canUpgrade =
       checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
