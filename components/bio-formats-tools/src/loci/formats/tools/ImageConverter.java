@@ -89,7 +89,6 @@ public final class ImageConverter {
     LoggerFactory.getLogger(ImageConverter.class);
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
-  private static final String VERSION = "-version";
 
   // -- Fields --
 
@@ -129,7 +128,7 @@ public final class ImageConverter {
     }
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-") && args.length > 1) {
-        if (args[i].equals(VERSION)) {
+        if (args[i].equals(CommandLineTools.VERSION)) {
           printVersion = true;
           return true;
         }
@@ -196,7 +195,7 @@ public final class ImageConverter {
         }
       }
       else {
-        if (args[i].equals(VERSION)) printVersion = true;
+        if (args[i].equals(CommandLineTools.VERSION)) printVersion = true;
         else if (in == null) in = args[i];
         else if (out == null) out = args[i];
         else {
@@ -294,9 +293,7 @@ public final class ImageConverter {
     }
 
     if (printVersion) {
-      System.out.println("Version: " + FormatTools.VERSION);
-      System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
-      System.out.println("Build date: " + FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
 
@@ -864,7 +861,7 @@ public final class ImageConverter {
   public static void main(String[] args) throws FormatException, IOException {
     DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
-        DataTools.indexOf(args, VERSION) == -1) {
+        DataTools.indexOf(args, CommandLineTools.VERSION) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
         checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);

@@ -93,7 +93,6 @@ public class ImageInfo {
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
-  private static final String VERSION = "-version";
 
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
@@ -192,7 +191,7 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals(VERSION)){
+        if (args[i].equals(CommandLineTools.VERSION)){
           printVersion = true;
           return true;
         }
@@ -1016,9 +1015,7 @@ public class ImageInfo {
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
-      System.out.println("Version: " + FormatTools.VERSION);
-      System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
-      System.out.println("Build date: " + FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
 
@@ -1115,7 +1112,7 @@ public class ImageInfo {
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
-        DataTools.indexOf(args, VERSION) == -1) {
+        DataTools.indexOf(args, CommandLineTools.VERSION) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
         checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
