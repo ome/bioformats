@@ -383,6 +383,8 @@ public class Memoizer extends ReaderWrapper {
 
   private boolean skipSave = false;
 
+  private boolean failIfMissing = false;
+
   /**
    * Boolean specifying whether to invalidate the memo file based upon
    * mismatched major/minor version numbers. By default, the Git commit hash
@@ -509,8 +511,71 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
+  /**
+   * Used to inject all the properties necessary for {@link Memoizer}
+   * creation into {@link MetadataOptions}. This is called by every
+   * constructor so that {@link IFormatReader} instances created
+   * internally can also make use of memoization.
+   *
+   * @param options
+   */
+  public void configure(MetadataOptions options) {
+    String k = Memoizer.class.getName();
+    options.setMetadataOption(k + ".cacheDirectory", this.directory);
+    options.setMetadataOption(k + ".inPlace", this.doInPlaceCaching);
+    options.setMetadataOption(k + ".minimumElapsed", this.minimumElapsed);
+    options.setMetadataOption(k + ".failIfMissing", this.failIfMissing);
+    reader.setMetadataOptions(options);
+  }
+
+  public void setMetadataOptions(MetadataOptions options) {
+    configure(options);
+    reader.setMetadataOptions(options);
+  }
+
+  public void setFailIfMissing(boolean failIfMissing) {
+    this.failIfMissing = failIfMissing;
+    reader.getMetadataOptions().setMetadataOption(Memoizer.class.getName() + ".failIfMissing", failIfMissing);
+  }
+
+  /**
+   * If {@link MetadataOptions} have been configured per
+   * {@link #configure(MetadataOptions)}, then wrap the given
+   * {@link IFormatReader} with a {@link Memoizer} instance and return.
+   * Otherwise, return the {@link IFormatReader} unchanged.
+   *
+   * @param options If null, return the reader
+   * @param r
+   * @return Either a {@link Memoizer} or the {@link IFormatReader} argument.
+   */
+  public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
+    if (options == null) {
+      return r;
+    }
+    Long elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
+    if (null == elapsed) {
+      return r;
+    }
+    Boolean inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    Memoizer m = null;
+    if (null != inplace && inplace.booleanValue()) {
+      m = new Memoizer(r, elapsed);
+      r = m;
+    }
+    File cachedir = getMetadataOption(options, "cacheDirectory", File.class);
+    if (null != cachedir) {
+      m = new Memoizer(r, elapsed, cachedir);
+      r = m;
+    }
+    Boolean failIfMissing = getMetadataOption(options, "failIfMissing", Boolean.class);
+    if (m != null && failIfMissing != null) {
+      m.failIfMissing = failIfMissing;
+    }
+    return r;
+  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
@@ -671,6 +736,9 @@ public class Memoizer extends ReaderWrapper {
       }
 
       if (memo == null) {
+        if (failIfMissing) {
+          throw new FormatException("Cache file does not exist: " + memoFile);
+        }
         OMEXMLService service = getService();
         super.setMetadataStore(service.createOMEXMLMetadata());
         long start = System.currentTimeMillis();
