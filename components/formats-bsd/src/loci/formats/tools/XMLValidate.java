@@ -40,7 +40,6 @@ import java.io.StringReader;
 
 import loci.common.Constants;
 import loci.common.xml.XMLTools;
-import loci.formats.UpgradeChecker;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -62,14 +61,7 @@ public class XMLValidate {
   }
 
   public static void main(String[] args) throws Exception {
-    UpgradeChecker checker = new UpgradeChecker();
-    boolean canUpgrade =
-      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-    if (canUpgrade) {
-      System.out.println("*** A new stable version is available. ***");
-      System.out.println("*** Install the new version using:     ***");
-      System.out.println("***   'upgradechecker -install'        ***");
-    }
+    CommandLineTools.runUpgradeCheck(args);
 
     if (args.length == 0) {
       // read from stdin
