@@ -8,7 +8,7 @@ Logging frameworks
 
 Bio-Formats uses `SLF4J <http://www.slf4j.org>`_ as a logging API. SLF4J is a
 facade and needs to be bound to a logging framework at deployment time. Two
-underlying logging framework are currently supported by Bio-Formats:
+underlying logging frameworks are currently supported by Bio-Formats:
 
 - `logback <http://logback.qos.ch/>`_ is the recommended framework and
   natively implements the SL4J API,
