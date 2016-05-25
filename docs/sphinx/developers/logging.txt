@@ -1,7 +1,7 @@
 Logging
 =======
 
-Logging is the process of writing log messages during the execution.
+Logging is the process of writing log messages during execution.
 
 Logging frameworks
 ------------------
@@ -41,7 +41,7 @@ The main methods are described below:
 - ``DebugTools.setRootLevel(level)`` will override the level of the root logger
   independently of how the logging system was initialized.
 
-- ``DebugTools.enableIJLogging()`` (logback-only) will add an ImageJ specific
+- ``DebugTools.enableIJLogging()`` (logback-only) will add an ImageJ-specific
   appender to the root logger.
 
 .. versionchanged:: 5.2.0
