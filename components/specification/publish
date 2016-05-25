@@ -164,28 +164,8 @@ mkdir -p "$root"
 for dir in released-schema/20*
 do
 
-    # Copy dev material, but don't make index
     if contains $dir $devmarker; then
-        echo "DEV Folder Found"
-        for schema in "$dir"/*.xsd
-        do
-            rel=$(basename "$dir")
-            base=${schema%.xsd}
-            base=$(basename "$base")
-            name=$(basename "$schema")
-
-            # For some reason, the OME schema has always been lowercased
-            if [ "$base" = "ome" ]; then
-                base="OME"
-            fi
-
-            path="${root}/${base}/${rel}"
-
-            # Copy schema
-            mkdir -p "$path"
-            cp -v "$schema" "${path}/${name}"
-
-        done
+        echo "Skipping $dir folder"
         continue
     fi
 
@@ -281,6 +261,10 @@ dir="transforms"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
 do
+    if contains $transform $devmarker; then
+        echo "Skipping $transform"
+        continue
+    fi
     cp -v "$transform" "$path"
 done
 
