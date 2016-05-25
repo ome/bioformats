@@ -396,6 +396,8 @@ public class Memoizer extends ReaderWrapper {
 
   private boolean skipSave = false;
 
+  private boolean failIfMissing = false;
+
   /**
    * Boolean specifying whether to invalidate the memo file based upon
    * mismatched major/minor version numbers. By default, the Git commit hash
@@ -543,12 +545,18 @@ public class Memoizer extends ReaderWrapper {
     options.setMetadataOption(k + ".cacheDirectory", this.directory);
     options.setMetadataOption(k + ".inPlace", this.doInPlaceCaching);
     options.setMetadataOption(k + ".minimumElapsed", this.minimumElapsed);
+    options.setMetadataOption(k + ".failIfMissing", this.failIfMissing);
     reader.setMetadataOptions(options);
   }
 
   public void setMetadataOptions(MetadataOptions options) {
     configure(options);
     reader.setMetadataOptions(options);
+  }
+
+  public void setFailIfMissing(boolean failIfMissing) {
+    this.failIfMissing = failIfMissing;
+    reader.getMetadataOptions().setMetadataOption(Memoizer.class.getName() + ".failIfMissing", failIfMissing);
   }
 
   /**
@@ -570,12 +578,19 @@ public class Memoizer extends ReaderWrapper {
       return r;
     }
     Boolean inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    Memoizer m = null;
     if (null != inplace && inplace.booleanValue()) {
-      return new Memoizer(r, elapsed);
+      m = new Memoizer(r, elapsed);
+      r = m;
     }
     File cachedir = getMetadataOption(options, "cacheDirectory", File.class);
     if (null != cachedir) {
-      return new Memoizer(r, elapsed, cachedir);
+      m = new Memoizer(r, elapsed, cachedir);
+      r = m;
+    }
+    Boolean failIfMissing = getMetadataOption(options, "failIfMissing", Boolean.class);
+    if (m != null && failIfMissing != null) {
+      m.failIfMissing = failIfMissing;
     }
     return r;
   }
@@ -740,6 +755,9 @@ public class Memoizer extends ReaderWrapper {
       }
 
       if (memo == null) {
+        if (failIfMissing) {
+          throw new FormatException("Cache file does not exist: " + memoFile);
+        }
         OMEXMLService service = getService();
         OMEXMLMetadata all = service.createOMEXMLMetadata();
         OMEXMLMetadata min = service.createOMEXMLMetadata();
