@@ -43,7 +43,9 @@ same folder.
 
   *
     - `NetCDF <http://www.unidata.ucar.edu/software/netcdf-java/>`_
-    - :downloads:`netcdf-4.3.19.jar <artifacts/netcdf-4.3.19.jar>`
+    - :downloads:`netcdf4-4.6.5.jar <artifacts/netcdf4-4.6.5.jar>`,
+      :downloads:`cdm-4.6.5.jar <artifacts/cdm-4.6.5.jar>`
+      and :downloads:`httpservices-4.6.5.jar <artifacts/httpservices-4.6.5.jar>`
     - LGPL
     - Java library; for HDF5-based formats (Imaris 5.5, MINC MRI)
 
