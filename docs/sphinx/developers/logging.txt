@@ -1,34 +1,38 @@
 Logging
 =======
 
-Bio-Formats uses `SLF4J <http://www.slf4j.org>`_ as a logging API for 
-controlling the logger system.
+Logging is the process of writing log messages during the execution.
 
 Logging frameworks
 ------------------
 
-Two logging framework are currently supported in Bio-Formats:
+Bio-Formats uses `SLF4J <http://www.slf4j.org>`_ as a logging API. SLF4J is a
+facade and needs to be bound to a logging framework at deployment time. Two
+underlying logging framework are currently supported by Bio-Formats:
 
-- `logback <http://logback.qos.ch/>`_ is the recommended framework as it 
-  natively implements the SL4J API
+- `logback <http://logback.qos.ch/>`_ is the recommended framework and
+  natively implements the SL4J API,
 - `log4j <http://logging.apache.org/log4j>`_ is the other logging framework
-  supported by Bio-Formats used notably in the MATLAB toolbox.
+  supported by Bio-Formats and is mainly used in the
+  :ref:`MATLAB toolbox <matlab-dev>`.
 
 Initialization
 --------------
 
 The :javadoc:`DebugTools <loci/common/DebugTools.html>` class contains a 
-series of methods for the initialization and control of the logging system. 
-This class uses reflection to determine the underlying logging backend 
-implementation for the logging framework detected at runtime.
+series of framework-agnostic methods for the initialization and control of the
+logging system. This class uses reflection to detect the underlying logging
+framework and delegate the method calls to either
+:javadoc:`Log4jTools <loci/common/Log4jTools.html>` or
+:javadoc:`LogbackTools <loci/common/LogbackTools.html>`.
 
 The main methods are described below:
 
 - ``DebugTools.enableLogging()`` will initialize the underlying logging 
-  framework. This will result in a no-op if the logging has been initialized
-  either via a binding-specific configuration file (see
+  framework. This call will result in a no-op if the logging has been
+  initialized either via a binding-specific configuration file (see
   `logback configuration <http://logback.qos.ch/manual/configuration.html>`_)
-  or a prior call to ``DebugTools.enableLogging()``.
+  or via a prior call to ``DebugTools.enableLogging()``.
 
 - ``DebugTools.enableLogging(level)`` will initialize the logging framework
   under the same conditions as described above and set the root logger level if
@@ -42,6 +46,6 @@ The main methods are described below:
 
 .. versionchanged:: 5.2.0
 
-  Prioe to Bio-Formats 5.2.0, ``DebugTools.enableLogging(level)``
+  Prior to Bio-Formats 5.2.0, ``DebugTools.enableLogging(level)``
   unconditionally set the logging and root logger level. Use
   ``DebugTools.setRootLevel(level)`` to restore this behavior.
