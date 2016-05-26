@@ -1034,7 +1034,12 @@ public class ImageInfo {
 
     // initialize reader
     long s = System.currentTimeMillis();
-    reader.setId(id);
+    try {
+      reader.setId(id);
+    } catch (FormatException exc) {
+      reader.close();
+      throw(exc);
+    }
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
     LOGGER.info("Initialization took {}s", sec);
