@@ -145,12 +145,11 @@ public class GenericExcitationMapTest {
     assertPair(dataMap, 3, "b", "4");
     assertPair(dataMap, 4, "e", "5");
     assertPair(dataMap, 5, "c", "6");
-
   }
 
   void assertPair(LinkedListMultimap<String, String> dataMap, int idx, String name, String value) {
-      assertEquals(name, dataMap.entries().get(idx).getKey());
-      assertEquals(value, dataMap.entries().get(idx).getValue());
+    assertEquals(name, dataMap.entries().get(idx).getKey());
+    assertEquals(value, dataMap.entries().get(idx).getValue());
   }
 
 }

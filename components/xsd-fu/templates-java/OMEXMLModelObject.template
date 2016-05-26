@@ -350,14 +350,14 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if prop.langTypeNS == 'LinkedListMultimap<String,String>' %}\
                         LinkedListMultimap<String,String> p = LinkedListMultimap.create();
-				NodeList children = ${prop.name}_nodeList.get(0).getChildNodes();
+			NodeList children = ${prop.name}_nodeList.get(0).getChildNodes();
 
-				for (int i=0; i<children.getLength(); i++) {
-					Node child = children.item(i);
-					if (child.getNodeType() == Node.ELEMENT_NODE) {
-					    p.put(((Element) child).getAttribute("K"), child.getTextContent());
-					}
+			for (int i=0; i<children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child.getNodeType() == Node.ELEMENT_NODE) {
+				    p.put(((Element) child).getAttribute("K"), child.getTextContent());
 				}
+			}
 			set${prop.methodName}(p);
 {% end %}\
 {% end %}\
@@ -765,13 +765,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end %}\
 {% if prop.langTypeNS == 'LinkedListMultimap<String,String>' %}\
 			Element ${prop.instanceVariableName}_child =
-					document.createElementNS(NAMESPACE, "Value");
-                        for (Map.Entry<String,String> entry: ${prop.instanceVariableName}.entries()) {
-                                Element pair = document.createElementNS(NAMESPACE, "M");
-                                pair.setAttribute("K", entry.getKey());
-                                pair.setTextContent(entry.getValue());
-                                ${prop.instanceVariableName}_child.appendChild(pair);
-                        }
+					document.createElementNS(NAMESPACE, "${prop.name}");
+			for (Map.Entry<String,String> entry: ${prop.instanceVariableName}.entries()) {
+				Element pair = document.createElementNS(NAMESPACE, "M");
+				pair.setAttribute("K", entry.getKey());
+				pair.setTextContent(entry.getValue());
+				${prop.instanceVariableName}_child.appendChild(pair);
+			}
 
                         ${klass.name}_element.appendChild(${prop.instanceVariableName}_child);
 {% end %}\

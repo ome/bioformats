@@ -868,8 +868,8 @@ public class FakeReader extends FormatReader {
       store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
       LinkedListMultimap<String, String> mapValue = LinkedListMultimap.create();
       for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.put("keyS" + imageIndex + "N" + keyNum,
-                       "val" + (keyNum+1)*(annotationCount+1));
+        mapValue.put("keyS" + imageIndex + "N" + keyNum,
+                     "val" + (keyNum+1)*(annotationCount+1));
       }
       store.setMapAnnotationValue(mapValue, annotationMapCount);
       store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
