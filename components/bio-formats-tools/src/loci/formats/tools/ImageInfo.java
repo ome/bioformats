@@ -1038,7 +1038,9 @@ public class ImageInfo {
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();
-      throw(exc);
+      LOGGER.error("Failure during the reader initialization");
+      LOGGER.debug("", exc);
+      return false;
     }
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
