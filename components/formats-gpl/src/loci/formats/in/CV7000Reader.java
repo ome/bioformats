@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import loci.common.DataTools;
@@ -47,6 +48,10 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Time;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -78,8 +83,10 @@ public class CV7000Reader extends FormatReader {
   private String wppPath;
   private String detailPath;
   private String measurementPath;
+  private String settingsPath;
   private ArrayList<Plane> planeData;
   private int[][] reversePlaneLookup;
+  private ArrayList<LightSource> lightSources;
   private ArrayList<Channel> channels;
   private int fields;
   private int realRows, realCols;
@@ -128,6 +135,9 @@ public class CV7000Reader extends FormatReader {
     if (detailPath != null) {
       files.add(detailPath);
     }
+    if (settingsPath != null) {
+      files.add(settingsPath);
+    }
     if (wppPath != null) {
       files.add(wppPath);
     }
@@ -166,10 +176,12 @@ public class CV7000Reader extends FormatReader {
       measurementPath = null;
       detailPath = null;
       wppPath = null;
+      settingsPath = null;
       planeData = null;
       fields = 0;
       realRows = 0;
       realCols = 0;
+      lightSources = null;
       channels = null;
       startTime = null;
       endTime = null;
@@ -233,6 +245,15 @@ public class CV7000Reader extends FormatReader {
       if (wppPath != null) {
         wppPath = new Location(parent, wppPath).getAbsolutePath();
       }
+      if (settingsPath != null) {
+        settingsPath = new Location(parent, settingsPath).getAbsolutePath();
+      }
+    }
+
+    if (settingsPath != null && new Location(settingsPath).exists()) {
+      lightSources = new ArrayList<LightSource>();
+      MeasurementSettingsHandler settingsHandler = new MeasurementSettingsHandler();
+      XMLTools.parseXML(DataTools.readFile(settingsPath), settingsHandler);
     }
 
     String firstFile = null;
@@ -378,6 +399,36 @@ public class CV7000Reader extends FormatReader {
       store.setPlateDescription(plate.getPlateDescription(), 0);
       store.setPlateExternalIdentifier(plate.getPlateID(), 0);
 
+      String instrument = null;
+      List<String> usedObjectiveIDs = new ArrayList<String>();
+      if (lightSources.size() > 0) {
+        instrument = MetadataTools.createLSID("Instrument", 0);
+
+        store.setInstrumentID(instrument, 0);
+
+        int nextLightSource = 0;
+        for (LightSource l : lightSources) {
+          if ("Laser".equals(l.type)) {
+            String laserID = MetadataTools.createLSID("LightSource", 0, nextLightSource);
+            store.setLaserID(laserID, 0, nextLightSource);
+            store.setLaserWavelength(
+              new Length(l.wavelength, UNITS.NM), 0, nextLightSource);
+            store.setLaserPower(new Power(l.power, UNITS.MW), 0, nextLightSource);
+            nextLightSource++;
+          }
+        }
+
+        for (Channel c : channels) {
+          if (c.objectiveID != null && !usedObjectiveIDs.contains(c.objectiveID)) {
+            int index = usedObjectiveIDs.size();
+            String objectiveID = MetadataTools.createLSID("Objective", 0, index);
+            store.setObjectiveID(objectiveID, 0, index);
+            store.setObjectiveModel(c.objective, 0, index);
+            usedObjectiveIDs.add(c.objectiveID);
+          }
+        }
+      }
+
       for (int i=0; i<getSeriesCount(); i++) {
         if (channels != null) {
           for (int c=0; c<getSizeC(); c++) {
@@ -408,7 +459,51 @@ public class CV7000Reader extends FormatReader {
               store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(channel.xSize), i);
               store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(channel.xSize), i);
             }
+
+            int objective = -1;
+            if (channel.objectiveID != null) {
+              objective = usedObjectiveIDs.indexOf(channel.objectiveID);
+            }
+
+            if (channel.magnification != null && objective >= 0) {
+              store.setObjectiveNominalMagnification(channel.magnification, 0, objective);
+            }
+            if (objective >= 0) {
+              String objectiveID = MetadataTools.createLSID("Objective", 0, objective);
+              store.setObjectiveSettingsID(objectiveID, i);
+            }
+
             store.setChannelName("Channel #" + (channel.index + 1) + ", Camera #" + channel.cameraNumber, i, c);
+
+            if (channel.color != null) {
+              store.setChannelColor(channel.color, i, c);
+            }
+
+            if (channel.excitation != null && channel.lightSourceRefs != null) {
+              int index = -1;
+              for (int ref=0; ref<channel.lightSourceRefs.size(); ref++) {
+                int lightSource = channel.lightSourceRefs.get(ref);
+                if (lightSources.get(lightSource).wavelength < channel.excitation) {
+                  index = lightSource;
+                }
+              }
+              if (index >= 0) {
+                store.setChannelLightSourceSettingsID(
+                  MetadataTools.createLSID("LightSource", 0, index), i, c);
+                store.setChannelExcitationWavelength(
+                  new Length(channel.excitation, UNITS.NM), i, c);
+              }
+            }
+
+            if (channel.exposureTime != null) {
+              Time exposure = new Time(channel.exposureTime, UNITS.MS);
+              for (int z=0; z<getSizeZ(); z++) {
+                for (int t=0; t<getSizeT(); t++) {
+                  int plane = getIndex(z, c, t);
+                  store.setPlaneExposureTime(exposure, i, plane);
+                }
+              }
+            }
           }
         }
 
@@ -589,9 +684,138 @@ public class CV7000Reader extends FormatReader {
       else if (qName.equals("bts:MeasurementDetail")) {
         startTime = attributes.getValue("bts:BeginTime");
         endTime = attributes.getValue("bts:EndTime");
+        settingsPath = attributes.getValue("bts:MeasurementSettingFileName");
       }
     }
 
+  }
+
+  class MeasurementSettingsHandler extends BaseHandler {
+    private Channel currentChannel = null;
+    private StringBuffer currentValue = new StringBuffer();
+
+    // -- DefaultHandler API methods --
+
+    @Override
+    public void characters(char[] ch, int start, int length) {
+      String value = new String(ch, start, length);
+      currentValue.append(value);
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      currentValue.setLength(0);
+      if (qName.equals("bts:LightSource")) {
+        LightSource l = new LightSource();
+        l.name = attributes.getValue("bts:Name");
+        l.type = attributes.getValue("bts:Type");
+
+        String wavelength = attributes.getValue("bts:WaveLength");
+        String power = attributes.getValue("bts:Power");
+
+        if (wavelength != null) {
+          try {
+            l.wavelength = new Double(wavelength);
+          }
+          catch (NumberFormatException e) {
+          }
+        }
+        if (power != null) {
+          try {
+            l.power = new Double(power);
+          }
+          catch (NumberFormatException e) {
+          }
+        }
+
+        lightSources.add(l);
+      }
+      else if (qName.equals("bts:Channel")) {
+        String ch = attributes.getValue("bts:Ch");
+        if (ch != null) {
+          int index = Integer.parseInt(ch) - 1;
+          if (index >= 0 && index < channels.size()) {
+            currentChannel = channels.get(index);
+
+            currentChannel.objectiveID = attributes.getValue("bts:ObjectiveID");
+            currentChannel.objective = attributes.getValue("bts:Objective");
+            currentChannel.binning = attributes.getValue("bts:Binning");
+
+            String mag = attributes.getValue("bts:Magnification");
+            if (mag != null) {
+              try {
+                currentChannel.magnification = new Double(mag);
+              }
+              catch (NumberFormatException e) { }
+            }
+
+            String exposure = attributes.getValue("bts:ExposureTime");
+            if (exposure != null) {
+              try {
+                currentChannel.exposureTime = new Double(exposure);
+              }
+              catch (NumberFormatException e) { }
+            }
+
+            String color = attributes.getValue("bts:Color");
+            if (color != null) {
+              color = color.replaceAll("#", "");
+              // ignore unless at least R, G, B are defined
+              if (color.length() >= 6) {
+                int[] colors = new int[color.length() / 2];
+                for (int i=0; i<color.length(); i+=2) {
+                  colors[i / 2] = Integer.parseInt(color.substring(i, i + 2), 16);
+                }
+                int alpha = colors.length == 4 ? colors[0] : 255;
+                int red = colors[colors.length - 3];
+                int green = colors[colors.length - 2];
+                int blue = colors[colors.length - 1];
+                currentChannel.color = new Color(red, green, blue, alpha);
+              }
+            }
+
+            String acquisition = attributes.getValue("bts:Acquisition");
+            if (acquisition != null) {
+              if (acquisition.indexOf("/") > 0) {
+                acquisition = acquisition.replaceAll("BP", "");
+                String wave = acquisition.substring(0, acquisition.indexOf("/"));
+                try {
+                  currentChannel.excitation = new Double(wave);
+                }
+                catch (NumberFormatException e) { }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) {
+      String value = currentValue.toString();
+
+      if (qName.equals("bts:LightSourceName") && currentChannel != null) {
+        int index = -1;
+        for (int i=0; i<lightSources.size(); i++) {
+          if (lightSources.get(i).name.equals(value)) {
+            index = i;
+          }
+        }
+        if (index >= 0) {
+          currentChannel.lightSourceRefs.add(index);
+        }
+      }
+    }
+
+  }
+
+  class LightSource {
+    public String name;
+    public String type;
+    public Double wavelength;
+    public Double power;
   }
 
   class Channel {
@@ -600,6 +824,15 @@ public class CV7000Reader extends FormatReader {
     public double ySize;
     public int cameraNumber;
     public String correctionFile;
+    public List<Integer> lightSourceRefs = new ArrayList<Integer>();
+    public Double excitation;
+
+    public String objectiveID;
+    public String objective;
+    public Double magnification;
+    public Double exposureTime;
+    public String binning;
+    public Color color;
   }
 
   class Plane {
