@@ -2264,9 +2264,11 @@ public class ZeissCZIReader extends FormatReader {
         Element group = (Element) groups.item(i);
 
         Element position = getFirstNode(group, "Position");
-        if (position != null) {
-          int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
-          int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
+        String tilesXValue = getFirstNodeValue(group, "TilesX");
+        String tilesYValue = getFirstNodeValue(group, "TilesY");
+        if (position != null && tilesXValue != null && !tilesXValue.isEmpty() && tilesYValue != null && !tilesYValue.isEmpty()) {
+          int tilesX = Integer.parseInt(tilesXValue);
+          int tilesY = Integer.parseInt(tilesYValue);
 
           String x = position.getAttribute("X");
           String y = position.getAttribute("Y");
