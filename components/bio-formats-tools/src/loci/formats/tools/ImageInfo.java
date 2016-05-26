@@ -93,6 +93,7 @@ public class ImageInfo {
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
+  private static final String VERSION = "-version";
 
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
@@ -191,8 +192,11 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals("-nopix")) pixels = false;
-        else if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(VERSION)){
+          printVersion = true;
+          return true;
+        }
+        else if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
@@ -1012,9 +1016,9 @@ public class ImageInfo {
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      System.out.println("Version: " + FormatTools.VERSION);
+      System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
+      System.out.println("Build date: " + FormatTools.DATE);
       return true;
     }
 
@@ -1110,7 +1114,8 @@ public class ImageInfo {
 
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
+        DataTools.indexOf(args, VERSION) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
         checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
