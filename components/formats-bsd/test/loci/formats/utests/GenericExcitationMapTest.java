@@ -86,6 +86,7 @@ public class GenericExcitationMapTest {
     dataMap.put("b", "4");
     dataMap.put("e", "5");
     dataMap.put("c", "6");
+    assertEquals(6, dataMap.size());
     geSource.setMap(dataMap);
 
     instrument.addLightSource(geSource);

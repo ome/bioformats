@@ -88,6 +88,7 @@ public class ImagingEnvironmentMapTest {
     map.put("b", "4");
     map.put("e", "5");
     map.put("c", "6");
+    assertEquals(6, map.size());
     imagingEnvironment.setMap(map);
 
     image.setImagingEnvironment(imagingEnvironment);
