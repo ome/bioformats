@@ -1,8 +1,6 @@
 Logging
 =======
 
-Logging is the process of writing log messages during execution.
-
 Logging frameworks
 ------------------
 
@@ -29,8 +27,8 @@ framework and delegate the method calls to either
 The main methods are described below:
 
 - ``DebugTools.enableLogging()`` will initialize the underlying logging 
-  framework. This call will result in a no-op if the logging has been
-  initialized either via a binding-specific configuration file (see
+  framework. This call will result in a no-op if logging has been initialized
+  either via a binding-specific configuration file (see
   `logback configuration <http://logback.qos.ch/manual/configuration.html>`_)
   or via a prior call to ``DebugTools.enableLogging()``.
 
