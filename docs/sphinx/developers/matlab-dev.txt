@@ -179,9 +179,10 @@ To convert the OME metadata into a string, use the ``dumpXML()`` method:
 Changing the logging level
 --------------------------
 
-By default, ``bfopen`` initializes the logging system at the `WARN` level. To
-set the logging level, use
-:javadoc:`loci.common.DebugTools.enableLogging(level) <loci/common/DebugTools.html#enableLogging(java.lang.String)>`:
+By default, ``bfopen`` uses ``bfInitLogging`` to initialize the logging system
+at the `WARN` level. To change the root logging level, use the
+:javadoc:`DebugTools <loci/common/DebugTools.html>` methods as described in
+the :doc:`logging` section.
 
 .. literalinclude:: examples/bftest.m
   :language: matlab

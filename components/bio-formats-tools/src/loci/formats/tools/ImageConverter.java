@@ -89,6 +89,7 @@ public final class ImageConverter {
     LoggerFactory.getLogger(ImageConverter.class);
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
+  private static final String VERSION = "-version";
 
   // -- Fields --
 
@@ -128,9 +129,11 @@ public final class ImageConverter {
     }
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-") && args.length > 1) {
-        if (args[i].equals("-debug")) {
-          DebugTools.setRootLevel("DEBUG");
+        if (args[i].equals(VERSION)) {
+          printVersion = true;
+          return true;
         }
+        else if (args[i].equals("-debug")) DebugTools.setRootLevel("DEBUG");
         else if (args[i].equals("-stitch")) stitch = true;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-merge")) merge = true;
@@ -193,7 +196,7 @@ public final class ImageConverter {
         }
       }
       else {
-        if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(VERSION)) printVersion = true;
         else if (in == null) in = args[i];
         else if (out == null) out = args[i];
         else {
@@ -291,9 +294,9 @@ public final class ImageConverter {
     }
 
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      System.out.println("Version: " + FormatTools.VERSION);
+      System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
+      System.out.println("Build date: " + FormatTools.DATE);
       return true;
     }
 
@@ -860,7 +863,8 @@ public final class ImageConverter {
 
   public static void main(String[] args) throws FormatException, IOException {
     DebugTools.enableLogging("INFO");
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1 &&
+        DataTools.indexOf(args, VERSION) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
         checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);

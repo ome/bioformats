@@ -2370,7 +2370,7 @@ mif = true
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
-developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
+developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision.html>`_
 bsd = no
 versions = 1.0, 2.0
 software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
@@ -2394,9 +2394,6 @@ using the Bio-Formats Importer plugin, you can just remove the \n
 ZVI_Reader.class from the plugins folder. \n
 \n
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
-\n
-.. seealso:: \n
-  `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
 indexExtensions = .czi
