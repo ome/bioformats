@@ -52,7 +52,7 @@ import org.scijava.nativelib.NativeLibraryUtil;
 
 /**
  * SlideBook6Reader is a file format reader for 3i SlideBook SLD files that uses
- * the SlideBook SBReadFile SDK via the (Windows only) dlls: 
+ * the SlideBook SBReadFile SDK via the (Windows only) dlls:
  *   SBReadFile.dll and SlideBook6Reader.dll
  *
  * @author Richard Myers, richard at intelligent-imaging.com
@@ -71,7 +71,7 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook.html";
+			"http://www.intelligent-imaging.com/bioformats";
 	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
 			"Please see " + URL_3I_SLD + " for details.";
 	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
@@ -85,15 +85,8 @@ public class SlideBook6Reader  extends FormatReader {
 	private static boolean isLibraryFound() {
 		if (initialized) return libraryFound;
 		try {
-			// load JNI wrapper of SBReadFile.dll
-			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
-			if (arch != NativeLibraryUtil.Architecture.WINDOWS_64 && arch != NativeLibraryUtil.Architecture.WINDOWS_32) {
-				// TODO: add compiled linux and OS X architecture libraries to class
-				throw new UnsatisfiedLinkError();
-			}
-			if (!libraryFound) {
-				libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
-			}
+			// load JNI wrapper of [lib]SlideBook6Reader.[dll, dylib, so]
+			libraryFound = NativeLibraryUtil.loadNativeLibrary(SlideBook6Reader.class, "SlideBook6Reader");
 		}
 		catch (UnsatisfiedLinkError e) {
 			// log level debug, otherwise a warning will be printed every time a file is initialized without the .dll present
@@ -130,7 +123,7 @@ public class SlideBook6Reader  extends FormatReader {
 		boolean isMatch = ((magicBytes2 & 0xff00) == SLD_MAGIC_BYTES_1_1 ||
 				(magicBytes2 & 0xff00) == SLD_MAGIC_BYTES_1_2) &&
 				(magicBytes1 == SLD_MAGIC_BYTES_1_0 ||
-				magicBytes1 == SLD_MAGIC_BYTES_2_0);
+						magicBytes1 == SLD_MAGIC_BYTES_2_0);
 
 		return isMatch;
 	}
@@ -218,7 +211,7 @@ public class SlideBook6Reader  extends FormatReader {
 				if (ms.sizeX % 2 != 0) ms.sizeX++;
 				ms.sizeY = getNumYRows(capture);
 				ms.sizeZ = numZPlanes[capture];
-				ms.sizeT = numTimepoints[capture] * numPositions[capture]; 
+				ms.sizeT = numTimepoints[capture] * numPositions[capture];
 				ms.sizeC = numChannels[capture];
 				int bytes = getBytesPerPixel(capture);
 				if (bytes % 3 == 0) {
@@ -230,7 +223,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 				ms.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
 				ms.imageCount = ms.sizeZ * ms.sizeT;
-				if (!ms.rgb) 
+				if (!ms.rgb)
 					ms.imageCount *= ms.sizeC;
 				ms.interleaved = true;
 				ms.littleEndian = true;
@@ -246,7 +239,7 @@ public class SlideBook6Reader  extends FormatReader {
 
 			// add extended meta data
 			if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-				
+
 				// set instrument information
 				String instrumentID = MetadataTools.createLSID("Instrument", 0);
 				store.setInstrumentID(instrumentID, 0);
@@ -387,10 +380,10 @@ public class SlideBook6Reader  extends FormatReader {
 	public native int getBytesPerPixel(int inCapture);
 
 	public native boolean readImagePlaneBuf( byte outPlaneBuffer[],
-			int inCapture,
-			int inPosition,
-			int inTimepoint,
-			int inZ,
-			int inChannel );
+											 int inCapture,
+											 int inPosition,
+											 int inTimepoint,
+											 int inZ,
+											 int inChannel );
 
 }
