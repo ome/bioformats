@@ -60,8 +60,8 @@ public class writeMapAnnotationsExample {
 
         // Create MapPair Object and add to List
         java.util.List<ome.xml.model.MapPair> mapList = new java.util.ArrayList<ome.xml.model.MapPair>();
-        mapList.add("Example Key","Example Value");
-        mapList.add("Bio-Formats Version", FormatTools.VERSION);
+        mapList.add(new ome.xml.model.MapPair("Example Key","Example Value"));
+        mapList.add(new ome.xml.model.MapPair("Bio-Formats Version", FormatTools.VERSION));
 
         // create metadata object with minimum required metadata fields
         System.out.println("Populating metadata...");
