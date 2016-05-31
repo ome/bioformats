@@ -378,8 +378,6 @@ EOF
 
     cat <<EOF
 </ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
 </div>
 <div id="schema.list">
 <h2>Schemas</h2>
@@ -468,8 +466,6 @@ EOF
 
     cat <<EOF
 </ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
 </div>
 <div id="schema.list">
 <h2>Schemas</h2>
