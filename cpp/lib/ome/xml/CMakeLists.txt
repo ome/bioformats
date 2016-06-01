@@ -66,6 +66,13 @@ set(OME_XML_STATIC_SOURCES
   model/detail/OMEModelObject.cpp
   model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
+  model/enums/UnitsElectricPotentialConvert.cpp
+  model/enums/UnitsFrequencyConvert.cpp
+  model/enums/UnitsLengthConvert.cpp
+  model/enums/UnitsPowerConvert.cpp
+  model/enums/UnitsPressureConvert.cpp
+  model/enums/UnitsTemperatureConvert.cpp
+  model/enums/UnitsTimeConvert.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
   model/primitives/NonNegativeInteger.cpp
