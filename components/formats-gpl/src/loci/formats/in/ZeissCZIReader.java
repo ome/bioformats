@@ -913,10 +913,18 @@ public class ZeissCZIReader extends FormatReader {
         if (p.timestamp != null) {
           store.setPlaneDeltaT(new Time(p.timestamp - startTime, UNITS.SECOND), i, plane);
         }
-        else if (plane < timestamps.size()) {
+        else if (plane < timestamps.size() && timestamps.size() == getImageCount()) {
+          // only use the plane index if there is one timestamp per plane
            if (timestamps.get(plane) != null) {
              store.setPlaneDeltaT(new Time(timestamps.get(plane), UNITS.SECOND), i, plane);
            }
+        }
+        else if (getZCTCoords(plane)[2] < timestamps.size()) {
+          // otherwise use the timepoint index, to prevent incorrect timestamping of channels
+          int t = getZCTCoords(plane)[2];
+          if (timestamps.get(t) != null) {
+            store.setPlaneDeltaT(new Time(timestamps.get(t), UNITS.S), i, plane);
+          }
         }
         if (p.exposureTime != null) {
           store.setPlaneExposureTime(new Time(p.exposureTime, UNITS.SECOND), i, plane);
