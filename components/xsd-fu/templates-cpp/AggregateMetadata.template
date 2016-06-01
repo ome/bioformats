@@ -558,6 +558,28 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      AggregateMetadata::index_type
+      AggregateMetadata::getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getMapAnnotationAnnotationCount(mapAnnotationIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getMapAnnotationAnnotationCount",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -844,6 +866,52 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      AggregateMetadata::getGenericExcitationSourceMap(index_type instrumentIndex,
+                                                       index_type lightSourceIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getUUID",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      AggregateMetadata::getImagingEnvironmentMap(index_type imageIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getImagingEnvironmentMap(imageIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getUUID",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -879,6 +947,11 @@ ${counter(k, o, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -905,6 +978,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE)%}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -1004,6 +1082,56 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      AggregateMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                       index_type                                          instrumentIndex,
+                                                       index_type                                          lightSourceIndex)
+      {
+        for (delegate_list_type::iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
+            if (store)
+              store->setGenericExcitationSourceMap(value, instrumentIndex, lightSourceIndex);
+          }
+        throw MetadataException("AggregateMetadata", "setUUID",
+                                "no delegate MetadataStore implementation");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      AggregateMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                  index_type                                          imageIndex)
+      {
+        for (delegate_list_type::iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
+            if (store)
+              store->setImagingEnvironmentMap(value, imageIndex);
+          }
+        throw MetadataException("AggregateMetadata", "setUUID",
+                                "no delegate MetadataStore implementation");
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -1038,6 +1166,11 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -1064,6 +1197,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

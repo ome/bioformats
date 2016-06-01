@@ -1,4 +1,5 @@
 {% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
+{% def indexes_string_dummy(indexes) %}${", ".join(map(lambda x: lang.index_string(x, dummy=True),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -161,33 +162,33 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string_dummy(prop.name)})
+      OMEXMLMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+      OMEXMLMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        ${setPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(${prop.metadataStoreArgType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::${setPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(${prop.metadataStoreArgType} ${prop.argumentName})
+      OMEXMLMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end source %}\
 {% end %}\
 {% end %}\
@@ -216,7 +217,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
             ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${obj.langTypeNS}>());
-            o${i}->add${v['name']}(value);
+            o${i}->add${v['concreteName']}(value);
           }
 {% end %}\
 {% when v['max_occurs'] > 1 %}\
@@ -226,7 +227,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
             ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
-            o${i}->add${v['name']}(value);
+            o${i}->add${v['concreteName']}(value);
           }
 {% end %}\
 {% when v['max_occurs'] == 1 %}\
@@ -235,8 +236,14 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
         if (!o${i}->${v['accessor']}) // null
           {
+{% if not v['isAbstractSub'] %}\
             ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
             o${i}->set${v['name']}(value);
+{% end %}\
+{% if v['isAbstractSub'] %}\
+            ome::compat::shared_ptr< ${v['concreteType']}> value(ome::compat::make_shared< ${v['concreteType']}>());
+            o${i}->set${v['name']}(value);
+{% end %}\
           }
 {% end %}\
 {% end %}\
@@ -280,7 +287,7 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
         if (o${i}->sizeOf${v['name']}List() == ${index_name_string(v['name'])})
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['concreteType']}>());
             o${i}->add${v['name']}(value);
           }
 {% end %}\
@@ -290,12 +297,17 @@ OMEXMLMetadata::${getPropMethod(is_multi_path[o.name], parent, obj.name, prop)}(
 {% end %}\
         if (!o${i}->${v['accessor']}) // null
           {
-            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['type']}>());
+            ome::compat::shared_ptr< ${v['type']}> value(ome::compat::make_shared< ${v['concreteType']}>());
             o${i}->set${v['name']}(value);
           }
 {% end %}\
 {% end %}\
+{% if not v['isAbstractSub'] %}\
         ome::compat::shared_ptr< ${v['type']}> o${i + 1} = o${i}->${v['accessor']};
+{% end %}\
+{% if v['isAbstractSub'] %}\
+        ome::compat::shared_ptr< ${v['concreteType']}> o${i + 1} = ome::compat::static_pointer_cast< ${v['concreteType']}>(o${i}->${v['accessor']});
+{% end %}\
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
         ome::compat::shared_ptr< ::${lang.omexml_model_package}::OMEModelObject> o${i + 1}_base(ome::compat::static_pointer_cast< ::${lang.omexml_model_package}::OMEModelObject>(o${i + 1}));
@@ -348,7 +360,7 @@ ${customContent[obj.name][prop.name]}
     if concreteName is None:
       concreteName = name
       isAbstractSub = False
-    to_return = {'level': level, 'name': name, 'type': model.getObjectByName(name).langTypeNS, 'max_occurs': max_occurs, 'isAbstractSub': isAbstractSub, 'concreteName': concreteName}
+    to_return = {'level': level, 'name': name, 'type': model.getObjectByName(name).langTypeNS, 'max_occurs': max_occurs, 'isAbstractSub': isAbstractSub, 'concreteName': concreteName, 'concreteType': model.getObjectByName(concreteName).langTypeNS}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -710,7 +722,7 @@ namespace ome
       OMEXMLMetadata::get${abstractClass}Type(${indexes_string(v)}) const
       {
 {% for k, v in indexes[abstractClass].items() %}\
-        return ${safe_accessor([{'accessor':'root'}]+accessor(abstractClass, k, abstractClass, func=accessor_string_complex)[:-1], "get%sType()" % abstractClass)}->get${abstractClass}Type();
+        return ${safe_accessor([{'accessor':'root'}]+accessor(abstractClass, k, abstractClass, func=accessor_string_complex), "get%sType()" % abstractClass)}->get${abstractClass}Type();
 {% end %}\
       }
 {% end source %}\
@@ -824,6 +836,21 @@ namespace ome
         const char * const sa_method("getLongAnnotationAnnotationCount [getStructuredAnnotations]");
         const char * const annotation_method("getLongAnnotationAnnotationCount [getLongAnnotation]");
         return safe_fetch(safe_fetch(root->getStructuredAnnotations(), sa_method)->getLongAnnotation(longAnnotationIndex), annotation_method)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const
+      {
+        const char * const sa_method("getMapAnnotationAnnotationCount [getStructuredAnnotations]");
+        const char * const annotation_method("getMapAnnotationAnnotationCount [getMapAnnotation]");
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations(), sa_method)->getMapAnnotation(mapAnnotationIndex), annotation_method)->sizeOfLinkedAnnotationList();
       }
 {% end source %}\
 
@@ -1032,8 +1059,35 @@ ${counter(k, o, v)}\
       {
         const char * const sa_method("getMapAnnotationValue [getStructuredAnnotations]");
         const char * const annotation_method("getMapAnnotationValue [getMapAnnotation]");
-        const char * const value_method("getMapAnnotationValue [getValue]");
-        return safe_fetch(safe_fetch(safe_fetch(root->getStructuredAnnotations(), sa_method)->getMapAnnotation(mapAnnotationIndex), annotation_method)->getValue(), value_method);
+        return safe_fetch(safe_fetch(root->getStructuredAnnotations(), sa_method)->getMapAnnotation(mapAnnotationIndex), annotation_method)->getValue();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      OMEXMLMetadata::getGenericExcitationSourceMap(index_type instrumentIndex,
+                                                    index_type lightSourceIndex) const
+      {
+        return *safe_fetch(safe_fetch(ome::compat::dynamic_pointer_cast<ome::xml::model::GenericExcitationSource>(safe_fetch(safe_fetch(safe_fetch(root, "getGenericExcitationSourceMap [root]")->getInstrument(instrumentIndex), "getGenericExcitationSourceMap [getInstrument(instrumentIndex)]")->getLightSource(lightSourceIndex), "getGenericExcitationSourceMap [getLightSource(lightSourceIndex)]")), "getGenericExcitationSourceMap [is GenericExcitationSource]")->getMap(), "getGenericExcitationSourceMap [getMap()]");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      OMEXMLMetadata::getImagingEnvironmentMap(index_type imageIndex) const
+      {
+        return *safe_fetch(safe_fetch(safe_fetch(safe_fetch(root, "getImagingEnvironmentMap [root]")->getImage(imageIndex), "getImagingEnvironmentMap [getImage(imageIndex)]")->getImagingEnvironment(), "getImagingEnvironmentMap [getImagingEnvironment()]")->getMap(), "getImagingEnvironmentMap [getMap()]");
       }
 {% end source %}\
 
@@ -1078,7 +1132,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
@@ -1104,6 +1158,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -1193,6 +1252,40 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      OMEXMLMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                    index_type                                          instrumentIndex,
+                                                    index_type                                          lightSourceIndex)
+      {
+        ome::compat::shared_ptr<ome::xml::model::primitives::OrderedMultimap> map(ome::compat::make_shared<ome::xml::model::primitives::OrderedMultimap>(value));
+        safe_fetch(ome::compat::dynamic_pointer_cast<ome::xml::model::GenericExcitationSource>(safe_fetch(safe_fetch(safe_fetch(root, "getGenericExcitationSourceMap [root]")->getInstrument(instrumentIndex), "getGenericExcitationSourceMap [getInstrument(instrumentIndex)]")->getLightSource(lightSourceIndex), "getGenericExcitationSourceMap [getLightSource(lightSourceIndex)]")), "getGenericExcitationSourceMap [is GenericExcitationSource]")->setMap(map);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      OMEXMLMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                               index_type                                          imageIndex)
+      {
+        ome::compat::shared_ptr<ome::xml::model::primitives::OrderedMultimap> map(ome::compat::make_shared<ome::xml::model::primitives::OrderedMultimap>(value));
+        safe_fetch(safe_fetch(safe_fetch(root, "getImagingEnvironmentMap [root]")->getImage(imageIndex), "getImagingEnvironmentMap [getImage(imageIndex)]")->getImagingEnvironment(), "getImagingEnvironmentMap [getImagingEnvironment()]")->setMap(map);
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -1231,7 +1324,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
@@ -1257,6 +1350,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

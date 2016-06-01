@@ -292,6 +292,38 @@ namespace ome
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                    index_type                                          instrumentIndex,
+                                                    index_type                                          lightSourceIndex)
+      {
+        store->setGenericExcitationSourceMap(value, instrumentIndex, lightSourceIndex);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                               index_type                                          imageIndex)
+      {
+        store->setImagingEnvironmentMap(value, imageIndex);
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% if debug %}\
 	// -- Entity storage (manual definitions) --
@@ -375,6 +407,11 @@ namespace ome
 {% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -396,6 +433,11 @@ ${setter(k, o, prop, v)}\
 {% when prop.isBackReference %}\
 {% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\

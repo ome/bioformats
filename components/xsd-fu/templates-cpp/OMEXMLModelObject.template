@@ -69,6 +69,9 @@
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <sstream>
 
+{% if klass.hasPrimitiveBase %}\
+#include <ome/common/base64.h>
+{% end primitive base %}\
 #include <ome/common/xml/String.h>
 
 #include <ome/xml/Document.h>
@@ -82,6 +85,7 @@
 {% end for%}\
 
 using boost::format;
+
 {% end source%}\
 
 namespace ome
@@ -406,6 +410,21 @@ ${customUpdatePropertyContent[prop.name]}
         // -- END custom content from ${prop.name} property template --
 {% end debug %}\
 {% end %}\
+{% when prop.hasBaseAttribute %}\
+        // Element's text data
+        std::string value_textContent(element.getTextContent());
+        if (value_textContent.length() > 0)
+          {
+{% if prop.type == 'base64Binary' %}\
+            std::vector<uint8_t> rawBytes;
+            ome::common::base64_decode(value_textContent, std::back_inserter(rawBytes));
+            set${prop.methodName}(rawBytes);
+{% end if prop.type %}\
+{% if not prop.type == 'base64Binary' %}\
+            set${prop.methodName}(value_textContent);
+{% end if not prop.type %}\
+		}
+{% end when %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
         std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
@@ -449,14 +468,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isAttribute %}\
         if (element.hasAttribute("${prop.name}"))
           {
-{% if prop.isEnumeration %}\
 {% choose %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
            // *** Ignoring *** units enumeration ${prop.name}
 {% end debug %}\
-{% end when %}\
-{% when prop.isEnumeration and not prop.isUnitsEnumeration%}\
+{% end when prop.isUnitsEnumeration %}\
+{% when prop.isEnumeration and not prop.isUnitsEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
             std::string text(element.getAttribute("${prop.name}"));
@@ -466,24 +484,22 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.minOccurs > 0 %}\
             set${prop.methodName}(${prop.langTypeNS}(element.getAttribute("${prop.name}")));
 {% end prop.minOccurs > 0 %}\
-{% end when %}\
+{% end when prop.isEnumeration and not prop.isUnitsEnumeration %}\
 {% when prop.hasUnitsCompanion %}\
-            // Attribute property b${prop.name} with unit companion ${prop.unitsCompanion.name}
-            std::string unitSymbol("${prop.defaultXsdValue}");
+            // Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+            std::string unitSymbol("${prop.unitsDefault}");
             if (element.hasAttribute("${prop.unitsCompanion.name}"))
               {
-                unitSymbol = element.getAttribute("${prop.unitsCompanion.name}"));
+                unitSymbol = element.getAttribute("${prop.unitsCompanion.name}");
                 if(unitSymbol.empty())
-                  unitSymbol = "${prop.defaultXsdValue}";
+                  unitSymbol = "${prop.unitsDefault}";
               }
 
             set_quantity(element.getAttribute("${prop.name}"), unitSymbol,
                          *this, &${klass.name}::set${prop.methodName},
                          "${klass.name}", "${prop.name}");
-{% end when %}\
-{% end choose %}\
-{% end prop.isEnumeration %}\
-{% if not prop.isEnumeration %}\
+{% end when prop.hasUnitsCompanion %}\
+{% when not prop.isEnumeration %}\
             // Attribute property ${prop.name}
             {
 {% if prop.instanceVariableType != 'std::string' %}\
@@ -495,6 +511,7 @@ ${customUpdatePropertyContent[prop.name]}
               set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
             } // b
+{% end choose %}\
 {% end %}\
           } // c
 {% end %}\
@@ -519,7 +536,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if prop.langTypeNS == 'ome::xml::model::primitives::OrderedMultimap' %}\
             ${prop.instanceVariableType} p(ome::compat::make_shared< ${prop.langTypeNS}>());
-            ome::xml::model::primitives::OrderedMultimap map;
 
             std::vector<common::xml::dom::Element> children(getChildrenByTagName(elem, "M"));
             for (std::vector<common::xml::dom::Element>::iterator child = children.begin();
@@ -527,9 +543,9 @@ ${customUpdatePropertyContent[prop.name]}
                  ++child)
               {
                 if (child->hasAttribute("K"))
-                  map.get<0>().insert(map.end(),
-                                      ome::xml::model::primitives::OrderedMultimap::value_type(child->getAttribute("K"),
-                                                                                          child->getTextContent()));
+                  p->get<0>().insert(p->end(),
+                                     ome::xml::model::primitives::OrderedMultimap::value_type(child->getAttribute("K"),
+                                                                                              child->getTextContent()));
                 else
                   {
                     BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
@@ -539,7 +555,29 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %}\
-            ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
+            common::xml::dom::Element elem(${prop.name}_nodeList.at(0));
+{% if prop.langTypeNS != 'ome::xml::model::primitives::OrderedMultimap' %}\
+            ${prop.langTypeNS} p(elem, model);
+{% end %}\
+{% if prop.langTypeNS == 'ome::xml::model::primitives::OrderedMultimap' %}\
+            ${prop.instanceVariableType} p;
+
+            std::vector<common::xml::dom::Element> children(getChildrenByTagName(elem, "M"));
+            for (std::vector<common::xml::dom::Element>::iterator child = children.begin();
+                 child != children.end();
+                 ++child)
+              {
+                if (child->hasAttribute("K"))
+                  p.get<0>().insert(p.end(),
+                                    ome::xml::model::primitives::OrderedMultimap::value_type(child->getAttribute("K"),
+                                                                                             child->getTextContent()));
+                else
+                  {
+                    BOOST_LOG_SEV(logger, ome::logging::trivial::warning)
+                      << "MapAnnotation entry M does not contain key attribute K";
+                  }
+              }
+{% end %}\
 {% end %}\
             set${prop.methodName}(p);
 {% end %}\
@@ -751,6 +789,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end not object %}\
 \
 {% for prop in klass.properties.values() %}\
+{% if not prop.isUnitsEnumeration %}\
 {% choose %}\
 {% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -1178,7 +1217,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end debug %}\
 {% end %}\
 {% end %}\
-{% end %}\
+{% end not prop.isUnitsEnumeration %}\
+{% end for %}\
 
 {% if klass.isConcreteSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -1276,6 +1316,7 @@ ${customUpdatePropertyContent[prop.name]}
         element = ${klass.parentName}::asXMLElementInternal(document, element);
 {% end if isAnnotation %}\
 {% for prop in klass.properties.values() %}\
+{% if not prop.isUnitsEnumeration %}\
 {% if not klass.isAbstract or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
         {
 {% choose %}\
@@ -1287,7 +1328,19 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% if debug %}\
           // -- END custom content from ${prop.name} property template --
 {% end debug %}\
-{% end %}\
+{% end when %}\
+{% when prop.hasBaseAttribute %}\
+          // Element's text data
+{% if not prop.type == 'base64Binary' %}\
+          ${klass.name}_element.setTextContent(this->impl->${prop.instanceVariableName});
+{% end if not prop.type %}\
+{% if prop.type == 'base64Binary' %}\
+          std::string encodedString = ome::common::base64_encode(this->impl->${prop.instanceVariableName}.begin(),
+                                                                 this->impl->${prop.instanceVariableName}.end(),
+                                                                 0);
+          element.setTextContent(encodedString);
+{% end if prop.type %}\
+{% end when %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
           {
             // Reference property ${prop.name} which occurs more than once
@@ -1331,6 +1384,31 @@ ${customAsXMLElementPropertyContent[prop.name]}
           // *** IGNORING *** Skipped back reference ${prop.name}
 {% end debug %}\
 {% end %}\
+{% when prop.hasUnitsCompanion and prop.isAttribute and prop.maxOccurs == 1%}\
+{% if prop.minOccurs == 1 %}\
+          {
+            // Attribute property ${prop.name} with units companion ${prop.unitsCompanion.name}
+            std::ostringstream os;
+            os.imbue(std::locale::classic());
+            os << this->impl->${prop.instanceVariableName}.getValue();
+            element.setAttribute("${prop.name}", os.str());
+            element.setAttribute("${prop.unitsCompanion.name}",
+                                 this->impl->${prop.instanceVariableName}.getUnit());
+          }
+{% end prop.minOccurs == 0 %}\
+{% if prop.minOccurs == 0 %}\
+          if (this->impl->${prop.instanceVariableName})
+            {
+              // Attribute property ${prop.name} with units companion ${prop.unitsCompanion.name}
+              std::ostringstream os;
+              os.imbue(std::locale::classic());
+              os << this->impl->${prop.instanceVariableName}->getValue();
+              element.setAttribute("${prop.name}", os.str());
+              element.setAttribute("${prop.unitsCompanion.name}",
+                                   this->impl->${prop.instanceVariableName}->getUnit());
+            }
+{% end prop.minOccurs == 0 %}\
+{% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
           // Attribute property ${prop.name}
           {
@@ -1486,6 +1564,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
         }
 {% end %}\
 {% end %}\
+{% end for %}\
 {% choose %}\
 {% when klass.isAnnotation %}\
         return element;

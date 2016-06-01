@@ -399,6 +399,20 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      BaseMetadata::index_type
+      DummyMetadata::getMapAnnotationAnnotationCount(index_type /* mapAnnotationIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getMapAnnotationAnnotationCount",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -594,6 +608,36 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      DummyMetadata::getGenericExcitationSourceMap(index_type /* instrumentIndex */,
+                                                   index_type /* lightSourceIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getGenericExcitationSourceMap",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      DummyMetadata::getImagingEnvironmentMap(index_type /* imageIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getImagingEnvironmentMap",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -629,6 +673,11 @@ ${counter(k, o, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -655,6 +704,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -724,6 +778,36 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& /* value */,
+                                                   index_type                                          /* instrumentIndex */,
+                                                   index_type                                          /* lightSourceIndex */)
+      {
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& /* value */,
+                                              index_type                                          /* imageIndex */)
+      {
+      }
+{% end source %}\
+
 {% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -758,6 +842,11 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -784,6 +873,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

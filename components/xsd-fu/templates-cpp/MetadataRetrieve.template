@@ -291,6 +291,18 @@ namespace ome
         getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const = 0;
 
         /**
+         * Get the number of links to a MapAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified MapAnnotation held by all model objects.
+         *
+         * @param mapAnnotationIndex the MapAnnotation index.
+         * @returns the number of MapAnnotation links.
+         */
+        virtual index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const = 0;
+
+        /**
          * Get the number of links to a TagAnnotation.
          *
          * This method returns the number of references to the
@@ -464,6 +476,25 @@ namespace ome
         virtual const ome::xml::model::primitives::OrderedMultimap&
         getMapAnnotationValue(index_type mapAnnotationIndex) const = 0;
 
+       /**
+         * Get the map value of GenericExcitationSource.
+         *
+         * @param instrumentIndex the LightSource index.
+         * @param lightSourceIndex the LightSource index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const = 0;
+
+       /**
+         * Get the map value of ImagingEnvironment.
+         *
+         * @param imageIndex the Image index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const = 0;
 {% end model not 2013-06 %}\
 {% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -501,7 +532,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
@@ -516,7 +547,7 @@ ${getter(k, o, prop, v)}\
 \
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
-{% when prop.isBackReference %}\
+{% when prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
@@ -524,6 +555,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

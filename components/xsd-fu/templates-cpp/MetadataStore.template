@@ -280,6 +280,28 @@ namespace ome
         setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
                               index_type                                          mapAnnotationIndex) = 0;
 
+       /**
+         * Set the map value of GenericExcitationSource.
+         *
+         * @param map the map value to set.
+         * @param instrumentIndex the Instrument index.
+         * @param lightSourceIndex the LightSource index.
+         */
+        virtual void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& map,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex) = 0;
+
+       /**
+         * Set the map value of ImagingEnvironment.
+         *
+         * @param map the map value to set.
+         * @param imageIndex the Image index.
+         */
+        virtual void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& map,
+                                 index_type                                          imageIndex) = 0;
+
 {% end model not 2013-06 %}\
 {% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -332,7 +354,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
   // ${prop.name} accessor from parent ${k}
 {% end debug %}\
@@ -355,6 +377,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
