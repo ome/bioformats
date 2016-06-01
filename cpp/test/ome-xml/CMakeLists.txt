@@ -84,6 +84,10 @@ if(BUILD_TESTS)
   target_link_libraries(model OME::XML)
   target_link_libraries(model ome-test)
 
+  add_executable(quantity quantity.cpp)
+  target_link_libraries(quantity OME::XML)
+  target_link_libraries(quantity OME::Test Boost::iostreams)
+
   add_executable(version version.cpp)
   target_link_libraries(version OME::XML)
   target_link_libraries(version ome-test)
@@ -95,6 +99,7 @@ if(BUILD_TESTS)
   ome_xml_add_test(ome-xml/transform-resolver transform-resolver)
   ome_xml_add_test(ome-xml/transform transform)
   ome_xml_add_test(ome-xml/model model)
+  ome_xml_add_test(ome-xml/quantity quantity)
 
   if(extended-tests)
     header_test_from_file(ome-xml OME::XML ome/xml)
