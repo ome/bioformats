@@ -359,6 +359,7 @@ public interface MetadataRetrieve extends BaseMetadata {
          * Get the MapAnnotation values from a GenericExcitationSource.
          *
          * @param instrumentIndex the Instrument index.
+         * @param lightSourceIndex the LightSource index.
          * @return the MapAnnotation values.
          */
 	List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
