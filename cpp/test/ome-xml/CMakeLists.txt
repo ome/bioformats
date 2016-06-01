@@ -100,6 +100,7 @@ if(BUILD_TESTS)
   ome_xml_add_test(ome-xml/transform transform)
   ome_xml_add_test(ome-xml/model model)
   ome_xml_add_test(ome-xml/quantity quantity)
+  ome_xml_add_test(ome-xml/version version)
 
   if(extended-tests)
     header_test_from_file(ome-xml OME::XML ome/xml)
