@@ -55,13 +55,16 @@ public final class DataTools {
   private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
   // Character used for the decimal sign in the current locale
-  private static final char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+  private static char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
 
   // -- Constructor --
 
   private DataTools() { }
 
   // -- Data reading --
+  public static void reset() {
+    decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+  }
 
   /** Reads the contents of the given file into a string. */
   public static String readFile(String id) throws IOException {

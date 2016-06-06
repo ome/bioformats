@@ -32,10 +32,12 @@
 
 package loci.common.utests;
 
+import loci.common.DataTools;
+import java.util.Locale;
+
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
-import loci.common.DataTools;
-
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -43,8 +45,12 @@ import org.testng.annotations.Test;
  */
 public class DataToolsTest {
 
-  // -- Tests --
+  @DataProvider(name = "locales")
+  public Object[][] createData() {
+    return new Object[][] {{"FR"}, {"DE"}, {"US"}, {"GB"}};
+  }
 
+  // -- Tests --
   @Test
   public void testSafeMultiply32() {
     // test vacuous edge cases
@@ -198,8 +204,10 @@ public class DataToolsTest {
     assertEquals(DataTools.parseLong("not a number"), null);
   }
 
-  @Test
-  public void testParseFloat() {
+  @Test(dataProvider="locales")
+  public void testParseFloat(String locale) {
+    Locale.setDefault(new Locale(locale));
+    DataTools.reset();
     assertEquals(DataTools.parseFloat(null), null);
     assertEquals(DataTools.parseFloat(""), null);
     assertEquals(DataTools.parseFloat("0"), 0.0f);
@@ -210,8 +218,10 @@ public class DataToolsTest {
     assertEquals(DataTools.parseFloat("not a number"), null);
   }
 
-  @Test
-  public void testParseDouble() {
+  @Test(dataProvider="locales")
+  public void testParseDouble(String locale) {
+    Locale.setDefault(new Locale(locale));
+    DataTools.reset();
     assertEquals(DataTools.parseDouble(null), null);
     assertEquals(DataTools.parseDouble(""), null);
     assertEquals(DataTools.parseDouble("0"), 0.0d);
