@@ -65,7 +65,6 @@ if(BUILD_TESTS)
   target_link_libraries(constrained-numeric ome-test)
 
   add_executable(orderedmultimap orderedmultimap.cpp)
-  target_link_libraries(orderedmultimap)
   target_link_libraries(orderedmultimap ome-test)
 
   add_executable(timestamp timestamp.cpp)
