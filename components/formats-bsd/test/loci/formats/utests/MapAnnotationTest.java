@@ -129,7 +129,7 @@ public class MapAnnotationTest {
     assertNotNull(ome.getImage(0).getLinkedAnnotation(0)); 
 
     MapAnnotation mapAnnotation = (MapAnnotation) ome.getImage(0).getLinkedAnnotation(0); 
-    java.util.List<ome.xml.model.MapPair> dataMap = mapAnnotation.getValue();
+    List<MapPair> dataMap = mapAnnotation.getValue();
 
     assertEquals(6, dataMap.size());
     assertEquals("a", dataMap.get(0).getName());

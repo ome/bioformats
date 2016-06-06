@@ -137,7 +137,7 @@ public class GenericExcitationMapTest {
 
     assertNotNull(ome.getInstrument(0).getLightSource(0));
     GenericExcitationSource geSource = (GenericExcitationSource) ome.getInstrument(0).getLightSource(0); 
-    java.util.List<ome.xml.model.MapPair> dataMap = geSource.getMap();
+    List<MapPair> dataMap = geSource.getMap();
 
     assertEquals(6, dataMap.size());
     assertPair(dataMap, 0, "a", "1");

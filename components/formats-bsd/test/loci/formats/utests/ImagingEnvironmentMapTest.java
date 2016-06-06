@@ -126,7 +126,7 @@ public class ImagingEnvironmentMapTest {
     assertNotNull(ome.getImage(0).getImagingEnvironment()); 
 
     ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
-    java.util.List<ome.xml.model.MapPair> dataMap = imagingEnvironment.getMap();
+    List<MapPair> dataMap = imagingEnvironment.getMap();
 
     assertEquals(6, dataMap.size());
     assertPair(dataMap, 0, "a", "1");
@@ -137,7 +137,7 @@ public class ImagingEnvironmentMapTest {
     assertPair(dataMap, 5, "c", "6");
   }
 
-  void assertPair(java.util.List<ome.xml.model.MapPair> dataMap, int idx, String name, String value) {
+  void assertPair(List<MapPair> dataMap, int idx, String name, String value) {
     assertEquals(name, dataMap.get(idx).getName());
     assertEquals(value, dataMap.get(idx).getValue());
   }

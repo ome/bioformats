@@ -865,10 +865,9 @@ public class FakeReader extends FormatReader {
       annotationID = ANNOTATION_PREFIX + annotationCount;
       store.setMapAnnotationID(annotationID, annotationMapCount);
       store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-      java.util.List<ome.xml.model.MapPair> mapValue = new java.util.ArrayList<MapPair>();
+      List<MapPair> mapValue = new ArrayList<MapPair>();
       for (int keyNum=0; keyNum<10; keyNum++) {
-        mapValue.add(new MapPair("keyS" + imageIndex + "N" + keyNum,
-                                 "val" + (keyNum+1)*(annotationCount+1)));
+        mapValue.add(new MapPair("keyS" + imageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
       }
       store.setMapAnnotationValue(mapValue, annotationMapCount);
       store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);

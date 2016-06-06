@@ -28,6 +28,7 @@
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import loci.formats.FormatTools;
 import loci.formats.ImageWriter;
@@ -38,6 +39,7 @@ import loci.formats.services.OMEXMLService;
 import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 
+import ome.xml.model.*;
 
 public class writeMapAnnotationsExample {
 
@@ -59,9 +61,9 @@ public class writeMapAnnotationsExample {
         for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
 
         // Create MapPair Object and add to List
-        java.util.List<ome.xml.model.MapPair> mapList = new java.util.ArrayList<ome.xml.model.MapPair>();
-        mapList.add(new ome.xml.model.MapPair("Example Key","Example Value"));
-        mapList.add(new ome.xml.model.MapPair("Bio-Formats Version", FormatTools.VERSION));
+        List<MapPair> mapList = new ArrayList<MapPair>();
+        mapList.add(new MapPair("Example Key","Example Value"));
+        mapList.add(new MapPair("Bio-Formats Version", FormatTools.VERSION));
 
         // create metadata object with minimum required metadata fields
         System.out.println("Populating metadata...");

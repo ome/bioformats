@@ -884,7 +884,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        java.util.List<ome.xml.model.MapPair> map = src.getImagingEnvironmentMap(i);
+        List<MapPair> map = src.getImagingEnvironmentMap(i);
         dest.setImagingEnvironmentMap(map, i);
       }
       catch (NullPointerException e) { }
@@ -2075,7 +2075,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        java.util.List<ome.xml.model.MapPair> value = src.getMapAnnotationValue(i);
+        List<MapPair> value = src.getMapAnnotationValue(i);
         dest.setMapAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
@@ -4124,7 +4124,7 @@ public final class MetadataConverter {
         }
 
         try {
-          java.util.List<ome.xml.model.MapPair> map =
+          List<MapPair> map =
             src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
           dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
         }
