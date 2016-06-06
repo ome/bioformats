@@ -112,6 +112,8 @@
 
 package ${lang.metadata_package};
 
+import java.util.List;
+
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
@@ -197,7 +199,7 @@ public interface MetadataStore extends BaseMetadata
          * @param value the MapAnnotation values to set.
          * @param mapAnnotationIndex the MapAnnotation index.
          */
-	void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex);
+	void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex);
 
         /**
          * Set the MapAnnotation values of a GenericExcitationSource.
@@ -205,7 +207,7 @@ public interface MetadataStore extends BaseMetadata
          * @param map the MapAnnotation values to set.
          * @param instrumentIndex the Instrument index.
          */
-	void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex);
+	void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex);
 
         /**
          * Set the MapAnnotation values of an ImagingEnvironment.
@@ -213,7 +215,7 @@ public interface MetadataStore extends BaseMetadata
          * @param map the MapAnnotation values to set.
          * @param imageIndex the Image index.
          */
-	void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex);
+	void setImagingEnvironmentMap(List<MapPair> map, int imageIndex);
 
 	// -- Entity storage (code generated definitions) --
 

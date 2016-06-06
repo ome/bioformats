@@ -241,7 +241,7 @@ class Java(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
         self.primitive_type_map['base64Binary'] = 'byte[]'
-        self.primitive_type_map['Map'] = 'java.util.List<ome.xml.model.MapPair>'
+        self.primitive_type_map['Map'] = 'List<MapPair>'
 
         self.model_type_map['Map'] = None
         self.model_type_map['M'] = None

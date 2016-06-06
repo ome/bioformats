@@ -341,12 +341,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary and not klass.isAbstract %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
-{% if prop.langTypeNS != 'java.util.List<ome.xml.model.MapPair>' %}\
+{% if prop.langTypeNS != 'List<MapPair>' %}\
 			set${prop.methodName}(new ${prop.langType}(
 					(Element) ${prop.name}_nodeList.get(0), model));
 {% end %}\
-{% if prop.langTypeNS == 'java.util.List<ome.xml.model.MapPair>' %}\
-			java.util.List<ome.xml.model.MapPair> p = new java.util.ArrayList<MapPair>();
+{% if prop.langTypeNS == 'List<MapPair>' %}\
+			List<MapPair> p = new java.util.ArrayList<MapPair>();
 			NodeList children = ${prop.name}_nodeList.get(0).getChildNodes();
 
 			for (int i=0; i<children.getLength(); i++) {
@@ -757,13 +757,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
-{% if prop.langTypeNS != 'java.util.List<ome.xml.model.MapPair>' %}\
+{% if prop.langTypeNS != 'List<MapPair>' %}\
 			${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
 {% end %}\
-{% if prop.langTypeNS == 'java.util.List<ome.xml.model.MapPair>' %}\
+{% if prop.langTypeNS == 'List<MapPair>' %}\
 			Element ${prop.instanceVariableName}_child =
 			document.createElementNS(NAMESPACE, "${prop.name}");
-			for (ome.xml.model.MapPair entry: ${prop.instanceVariableName}) {
+			for (MapPair entry: ${prop.instanceVariableName}) {
 				Element pair = document.createElementNS(NAMESPACE, "M");
 				pair.setAttribute("K", entry.getName());
 				pair.setTextContent(entry.getValue());
