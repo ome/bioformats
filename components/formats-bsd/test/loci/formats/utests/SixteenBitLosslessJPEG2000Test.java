@@ -66,12 +66,21 @@ public class SixteenBitLosslessJPEG2000Test {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SixteenBitLosslessJPEG2000Test.class);
 
+  private int increment = 1024;
+
+  public SixteenBitLosslessJPEG2000Test() {
+  }
+
+  public SixteenBitLosslessJPEG2000Test(int increment) {
+      this.increment=increment;
+  }
+
   @Test
   public void testLosslessPixels() throws Exception {
     int failureCount = 0;
-    for (short v=Short.MIN_VALUE; v<Short.MAX_VALUE; v++) {
+    for (int v=Short.MIN_VALUE; v<Short.MAX_VALUE; v+=increment) {
       int index = v + Short.MAX_VALUE + 1;
-      byte[] pixels = DataTools.shortToBytes(v, false);
+      byte[] pixels = DataTools.shortToBytes((short) v, false);
 
       String file = index + ".jp2";
       ByteArrayHandle tmpFile = new ByteArrayHandle(1);
