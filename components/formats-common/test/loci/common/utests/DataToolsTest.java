@@ -207,7 +207,6 @@ public class DataToolsTest {
   @Test(dataProvider="locales")
   public void testParseFloat(String locale) {
     Locale.setDefault(new Locale(locale));
-    DataTools.reset();
     assertEquals(DataTools.parseFloat(null), null);
     assertEquals(DataTools.parseFloat(""), null);
     assertEquals(DataTools.parseFloat("0"), 0.0f);
@@ -221,7 +220,6 @@ public class DataToolsTest {
   @Test(dataProvider="locales")
   public void testParseDouble(String locale) {
     Locale.setDefault(new Locale(locale));
-    DataTools.reset();
     assertEquals(DataTools.parseDouble(null), null);
     assertEquals(DataTools.parseDouble(""), null);
     assertEquals(DataTools.parseDouble("0"), 0.0d);

@@ -35,6 +35,10 @@ package loci.common;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Locale;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -54,17 +58,10 @@ public final class DataTools {
   // -- Static fields --
   private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
-  // Character used for the decimal sign in the current locale
-  private static char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
-
+  private static NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
   // -- Constructor --
 
   private DataTools() { }
-
-  // -- Data reading --
-  public static void reset() {
-    decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
-  }
 
   /** Reads the contents of the given file into a string. */
   public static String readFile(String id) throws IOException {
@@ -479,8 +476,8 @@ public final class DataTools {
   public static Float parseFloat(String value) {
     if (value == null) return null;
     try {
-      return Float.valueOf(sanitizeDecimalString(value));
-    } catch (NumberFormatException e) {
+      return nf.parse(value.replaceAll(",", ".")).floatValue();
+    } catch (ParseException e) {
       LOGGER.debug("Could not parse float value", e);
     }
     return null;
@@ -494,18 +491,11 @@ public final class DataTools {
   public static Double parseDouble(String value) {
     if (value == null) return null;
     try {
-      return Double.valueOf(sanitizeDecimalString(value));
-    } catch (NumberFormatException e) {
+      return nf.parse(value.replaceAll(",", ".")).doubleValue();
+    } catch (ParseException e) {
       LOGGER.debug("Could not parse double value", e);
     }
     return null;
-  }
-
-  /** Normalizes the decimal separator of a string for the user's locale. */
-  private static String sanitizeDecimalString(String value) {
-    value = value.replaceAll("[^0-9,\\.]", "");
-    char usedSeparator = decimalSeparator == '.' ? ',' : '.';
-    return value.replace(usedSeparator, decimalSeparator);
   }
 
   /**
