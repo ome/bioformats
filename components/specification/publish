@@ -310,7 +310,7 @@ createlink() {
         link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
     if [ -z "$2" ]; then
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
+        line="<li><a href=\"${shortname}/index.html\">${shortname}</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
     else
         line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${2}</a>]${reldesc}</li>"
     fi
