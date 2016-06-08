@@ -463,15 +463,15 @@ ${customUpdatePropertyContent[prop.name]}
              model.addModelObject(getID(), thisptr);
            }
 {% end when prop.isAttribute and prop.name == "ID" %}\
-{% when prop.isAttribute %}\
-        if (element.hasAttribute("${prop.name}"))
-          {
-{% choose %}\
-{% when prop.isUnitsEnumeration %}\
+{% when prop.isAttribute and prop.isUnitsEnumeration %}\
 {% if debug %}\
            // *** Ignoring *** units enumeration ${prop.name}
 {% end debug %}\
-{% end when prop.isUnitsEnumeration %}\
+{% end when prop.isAttribute and prop.isUnitsEnumeration %}\
+{% when prop.isAttribute and not prop.isUnitsEnumeration %}\
+        if (element.hasAttribute("${prop.name}"))
+          {
+{% choose %}\
 {% when prop.isEnumeration and not prop.isUnitsEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
