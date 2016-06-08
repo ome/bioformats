@@ -1,5 +1,4 @@
 {% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
-{% def indexes_string_dummy(indexes) %}${", ".join(map(lambda x: lang.index_string(x, dummy=True),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
