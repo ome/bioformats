@@ -495,9 +495,6 @@ public class FileStitcher extends ReaderWrapper {
 
     if (ino < r.getImageCount()) {
       byte[] b = r.openBytes(ino, buf, x, y, w, h);
-      if (!noStitch && ino == r.getImageCount() - 1) {
-        r.close();
-      }
       return b;
     }
 
@@ -702,21 +699,11 @@ public class FileStitcher extends ReaderWrapper {
 
       DimensionSwapper[] readers = s.getReaders();
       for (int i=0; i<readers.length; i++) {
-        try {
-          readers[i].setId(f[i]);
           String[] used = readers[i].getUsedFiles();
           for (String file : used) {
             String path = new Location(file).getAbsolutePath();
             files.add(path);
           }
-          readers[i].close();
-        }
-        catch (FormatException e) {
-          LOGGER.debug("", e);
-        }
-        catch (IOException e) {
-          LOGGER.debug("", e);
-        }
       }
     }
     return files.toArray(new String[files.size()]);
@@ -1249,11 +1236,9 @@ public class FileStitcher extends ReaderWrapper {
   protected void initReader(int sno, int fno) {
     int external = getExternalSeries(sno);
     DimensionSwapper r = externals[external].getReader(fno);
-    try {
       if (r.getCurrentFile() == null) {
         r.setGroupFiles(false);
       }
-      r.setId(externals[external].getFiles()[fno]);
       r.setSeries(reader.getSeriesCount() > 1 ? sno : 0);
       String newOrder = ((DimensionSwapper) reader).getInputOrder();
       if ((externals[external].getFiles().length > 1 || !r.isOrderCertain()) &&
@@ -1263,13 +1248,6 @@ public class FileStitcher extends ReaderWrapper {
         r.swapDimensions(newOrder);
       }
       r.setOutputOrder(newOrder);
-    }
-    catch (FormatException e) {
-      LOGGER.debug("", e);
-    }
-    catch (IOException e) {
-      LOGGER.debug("", e);
-    }
   }
 
   // -- Helper classes --
