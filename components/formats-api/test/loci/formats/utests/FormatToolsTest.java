@@ -131,12 +131,7 @@ public class FormatToolsTest {
       {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
       {.1, "microns", new Length(.1, UNITS.MICROMETER)},
       {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
-    };
-  }
-
-  @DataProvider(name = "physicalSizeInvalidStringUnit")
-  public Object[][] createValueInvalidStringLengths() {
-    return new Object[][] {
+      // Invalid length units
       {1.0, null, new Length(1.0, UNITS.MICROMETER)},
       {1.0, "foo", new Length(1.0, UNITS.MICROMETER)},
       {1.0, "s", new Length(1.0, UNITS.MICROMETER)},
@@ -169,10 +164,6 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
-  }
-
-  @Test(dataProvider = "physicalSizeInvalidStringUnit")
-  public void testGetPhysicalSizeInvalidStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
