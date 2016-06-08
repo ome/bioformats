@@ -39,7 +39,7 @@ import loci.formats.services.OMEXMLService;
 import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 
-import ome.xml.model.*;
+import ome.xml.model.MapPair;
 
 public class writeMapAnnotationsExample {
 
