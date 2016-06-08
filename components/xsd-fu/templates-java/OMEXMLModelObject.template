@@ -667,7 +667,6 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% for prop in klass.properties.values() %}\
 {% if not prop.isUnitsEnumeration %}\
-{% if not klass.isAbstract or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
 {% choose %}\
@@ -794,7 +793,6 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end otherwise %}\
 {% end choose %}\
 		}
-{% end if %}\
 {% end if %}\
 {% end for %}\
 
