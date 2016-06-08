@@ -64,6 +64,9 @@ if(BUILD_TESTS)
   target_link_libraries(constrained-numeric OME::XML)
   target_link_libraries(constrained-numeric ome-test)
 
+  add_executable(orderedmultimap orderedmultimap.cpp)
+  target_link_libraries(orderedmultimap ome-test)
+
   add_executable(timestamp timestamp.cpp)
   target_link_libraries(timestamp OME::XML)
   target_link_libraries(timestamp ome-test)

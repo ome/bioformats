@@ -341,8 +341,22 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary and not klass.isAbstract %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
+{% if prop.langTypeNS != 'List<MapPair>' %}\
 			set${prop.methodName}(new ${prop.langType}(
 					(Element) ${prop.name}_nodeList.get(0), model));
+{% end %}\
+{% if prop.langTypeNS == 'List<MapPair>' %}\
+			List<MapPair> p = new java.util.ArrayList<MapPair>();
+			NodeList children = ${prop.name}_nodeList.get(0).getChildNodes();
+
+			for (int i=0; i<children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child.getNodeType() == Node.ELEMENT_NODE) {
+					p.add(new MapPair(((Element) child).getAttribute("K"), child.getTextContent()));
+				}
+			}
+			set${prop.methodName}(p);
+{% end %}\
 {% end %}\
 {% if not prop.isComplex() %}\
 			// Element property ${prop.name} which is not complex (has no
@@ -743,7 +757,21 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
+{% if prop.langTypeNS != 'List<MapPair>' %}\
 			${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
+{% end %}\
+{% if prop.langTypeNS == 'List<MapPair>' %}\
+			Element ${prop.instanceVariableName}_child =
+			document.createElementNS(NAMESPACE, "${prop.name}");
+			for (MapPair entry: ${prop.instanceVariableName}) {
+				Element pair = document.createElementNS(NAMESPACE, "M");
+				pair.setAttribute("K", entry.getName());
+				pair.setTextContent(entry.getValue());
+				${prop.instanceVariableName}_child.appendChild(pair);
+			}
+
+                        ${klass.name}_element.appendChild(${prop.instanceVariableName}_child);
+{% end %}\
 {% end when %}\
 {% when prop.maxOccurs == 1 %}\
 			// Element property ${prop.name} which is not complex (has no

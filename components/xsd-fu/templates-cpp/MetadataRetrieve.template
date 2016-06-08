@@ -134,6 +134,9 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+#include <ome/xml/model/primitives/OrderedMultimap.h>
+{% end model not 2013-06 %}\
 #include <ome/xml/model/primitives/PercentFraction.h>
 #include <ome/xml/model/primitives/PositiveFloat.h>
 #include <ome/xml/model/primitives/PositiveInteger.h>
@@ -476,7 +479,18 @@ namespace ome
         virtual const std::string&
         getUUID() const = 0;
 
-{% end header%}\
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+        /**
+         * Get the map value of MapAnnotation.
+         *
+         * @param mapAnnotationIndex the MapAnnotation index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getMapAnnotationValue(index_type mapAnnotationIndex) const = 0;
+
+{% end model not 2013-06 %}\
+{% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}

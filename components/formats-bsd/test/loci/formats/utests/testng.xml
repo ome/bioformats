@@ -139,4 +139,22 @@
         <class name="loci.formats.utests.FakeReaderTest"/>
       </classes>
     </test>
+    <test name="GenericExcitationMapTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.GenericExcitationMapTest"/>
+      </classes>
+    </test>
+    <test name="ImagingEnvironmentMapTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ImagingEnvironmentMapTest"/>
+      </classes>
+    </test>
+    <test name="MapAnnotationTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.MapAnnotationTest"/>
+      </classes>
+    </test>
 </suite>

@@ -276,6 +276,23 @@ namespace ome
       }
 {% end source %}\
 
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                              index_type                                          mapAnnotationIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                                            index_type                                          mapAnnotationIndex)
+      {
+        store->setMapAnnotationValue(value, mapAnnotationIndex);
+      }
+{% end source %}\
+
+{% end model not 2013-06 %}\
 {% if debug %}\
 	// -- Entity storage (manual definitions) --
 

@@ -139,6 +139,8 @@
 
 package ${lang.metadata_package};
 
+import java.util.List;
+
 import loci.common.DataTools;
 
 import ${lang.omexml_model_package}.*;
@@ -217,19 +219,19 @@ public class FilterMetadata implements MetadataStore
 	// -- Entity storage (manual definitions) --
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex)
 	{
 		store.setMapAnnotationValue(value, mapAnnotationIndex);
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 		store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
+	public void setImagingEnvironmentMap(List<MapPair> map, int imageIndex)
 	{
 		store.setImagingEnvironmentMap(map, imageIndex);
 	}

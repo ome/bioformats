@@ -864,6 +864,30 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getMapAnnotationValue(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      AggregateMetadata::getMapAnnotationValue(index_type mapAnnotationIndex) const
+      {
+        for (delegate_list_type::const_iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
+            if (retrieve)
+              return retrieve->getMapAnnotationValue(mapAnnotationIndex);
+          }
+        throw MetadataException("AggregateMetadata", "getUUID",
+                                "no delegate MetadataRetrieve implementation");
+      }
+{% end source %}\
+
+{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
@@ -998,6 +1022,32 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
+{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                              index_type                                          mapAnnotationIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      AggregateMetadata::setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                                               index_type                                          mapAnnotationIndex)
+      {
+        for (delegate_list_type::iterator i = delegates.begin();
+             i != delegates.end();
+             ++i)
+          {
+            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
+            if (store)
+              store->setMapAnnotationValue(value, mapAnnotationIndex);
+          }
+        throw MetadataException("AggregateMetadata", "setUUID",
+                                "no delegate MetadataStore implementation");
+      }
+{% end source %}\
+
+{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}

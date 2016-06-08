@@ -116,6 +116,7 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/NonNegativeFloat.h
     model/primitives/NonNegativeInteger.h
     model/primitives/NonNegativeLong.h
+    model/primitives/OrderedMultimap.h
     model/primitives/PercentFraction.h
     model/primitives/PositiveFloat.h
     model/primitives/PositiveInteger.h

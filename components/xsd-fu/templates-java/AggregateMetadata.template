@@ -554,7 +554,7 @@ ${counter(k, o, v)}\
 	}
 	
 	/** Gets the Map value associated with this annotation */
-	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
+	public List<MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -562,7 +562,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.List<ome.xml.model.MapPair> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
+				List<MapPair> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
@@ -570,7 +570,7 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	public List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -578,7 +578,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.List<ome.xml.model.MapPair> result = retrieve.getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
+				List<MapPair> result = retrieve.getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
 				if (result != null) return result;
 			}
 		}
@@ -586,7 +586,7 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this imaging environment */
-	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
+	public List<MapPair> getImagingEnvironmentMap(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -594,7 +594,7 @@ ${counter(k, o, v)}\
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				java.util.List<ome.xml.model.MapPair> result = retrieve.getImagingEnvironmentMap(imageIndex);
+				List<MapPair> result = retrieve.getImagingEnvironmentMap(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -702,7 +702,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -716,7 +716,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -730,7 +730,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
+	public void setImagingEnvironmentMap(List<MapPair> map, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{

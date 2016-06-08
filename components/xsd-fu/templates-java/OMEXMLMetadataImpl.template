@@ -299,6 +299,8 @@ ${customContent[obj.name][prop.name]}
 
 package ${lang.omexml_metadata_package};
 
+import java.util.List;
+
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
@@ -481,30 +483,22 @@ ${counter(k, o, v)}\
 	}
  
 	/** Gets the Map value associated with this annotation */
-	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
+	public List<MapPair> getMapAnnotationValue(int mapAnnotationIndex)
 	{
-		// The getValue returns an ${lang.omexml_model_package}.MapPairs, 
-		// the getMap returns the java.util.Map holding the MapPairs
-		return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).getValue().getPairs();
+		return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).getValue();
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	public List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
     GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
-    // The first getMap returns an ${lang.omexml_model_package}.Map which
-    // extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
-    // the java.util.Map holding the MapPairs
-    return o.getMap().getPairs();
+    return o.getMap();
 	}
 
 	/** Gets the Map value associated with this imaging environment */
-	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
+	public List<MapPair> getImagingEnvironmentMap(int imageIndex)
 	{
-		// The first getMap returns an ${lang.omexml_model_package}.Map which
-		// extends ${lang.omexml_model_package}.MapPairs, the second getMap returns
-		// the java.util.Map holding the MapPairs
-		return root.getImage(imageIndex).getImagingEnvironment().getMap().getPairs();
+		return root.getImage(imageIndex).getImagingEnvironment().getMap();
 	}
 
 	// -- Entity retrieval (code generated definitions) --
@@ -593,7 +587,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
+	public void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex)
 	{
 		OME o0 = root;
 		if (o0.getStructuredAnnotations() == null)
@@ -606,30 +600,28 @@ ${getter(k, o, prop, v)}\
 			o1.addMapAnnotation(new MapAnnotation());
 		}
 		MapAnnotation o2 = o1.getMapAnnotation(mapAnnotationIndex);
-        ${lang.omexml_model_package}.MapPairs valueAsPairs = new ${lang.omexml_model_package}.MapPairs(value);
-		o2.setValue(valueAsPairs);
+		o2.setValue(value);
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex)
 	{
-    OME o0 = root;
-    if (o0.sizeOfInstrumentList() == instrumentIndex)
-    {
-      o0.addInstrument(new Instrument());
-    }
-    Instrument o1 = o0.getInstrument(instrumentIndex);
-    if (o1.sizeOfLightSourceList() == lightSourceIndex)
-    {
-      o1.addLightSource(new GenericExcitationSource());
-    }
-    LightSource o2 = o1.getLightSource(lightSourceIndex);
-    ome.xml.model.Map mapAsOmeMap = new ome.xml.model.Map(map);
-    ((GenericExcitationSource)o2).setMap(mapAsOmeMap);
+		OME o0 = root;
+		if (o0.sizeOfInstrumentList() == instrumentIndex)
+		{
+			o0.addInstrument(new Instrument());
+		}
+		Instrument o1 = o0.getInstrument(instrumentIndex);
+		if (o1.sizeOfLightSourceList() == lightSourceIndex)
+		{
+			o1.addLightSource(new GenericExcitationSource());
+		}
+		LightSource o2 = o1.getLightSource(lightSourceIndex);
+		((GenericExcitationSource)o2).setMap(map);
 	}
 
 	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
+	public void setImagingEnvironmentMap(List<MapPair> map, int imageIndex)
 	{
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -642,8 +634,7 @@ ${getter(k, o, prop, v)}\
 			o1.setImagingEnvironment(new ImagingEnvironment());
 		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
-		${lang.omexml_model_package}.Map mapAsOmeMap = new ${lang.omexml_model_package}.Map(map);
-		o2.setMap(mapAsOmeMap);
+		o2.setMap(map);
 	}
 
 	// -- Entity storage (code generated definitions) --
