@@ -38,6 +38,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -2267,8 +2268,8 @@ public class ZeissCZIReader extends FormatReader {
         String tilesXValue = getFirstNodeValue(group, "TilesX");
         String tilesYValue = getFirstNodeValue(group, "TilesY");
         if (position != null && tilesXValue != null && !tilesXValue.isEmpty() && tilesYValue != null && !tilesYValue.isEmpty()) {
-          int tilesX = Integer.parseInt(tilesXValue);
-          int tilesY = Integer.parseInt(tilesYValue);
+          Integer tilesX = DataTools.parseInteger(tilesXValue);
+          Integer tilesY = DataTools.parseInteger(tilesYValue);
 
           String x = position.getAttribute("X");
           String y = position.getAttribute("Y");
@@ -2276,21 +2277,22 @@ public class ZeissCZIReader extends FormatReader {
 
           Length xPos = null;
           try {
-            xPos = new Length(Double.valueOf(x), UNITS.REFERENCEFRAME);
+            xPos = new Length(DataTools.parseDouble(x), UNITS.REFERENCEFRAME);
           }
-          catch (NumberFormatException e) { }
+          catch (NullPointerException e) { }
           Length yPos = null;
           try {
-            yPos = new Length(Double.valueOf(y), UNITS.REFERENCEFRAME);
+            yPos = new Length(DataTools.parseDouble(y), UNITS.REFERENCEFRAME);
           }
-          catch (NumberFormatException e) { }
+          catch (NullPointerException e) { }
           Length zPos = null;
           try {
-            zPos = new Length(Double.valueOf(z), UNITS.REFERENCEFRAME);
+            zPos = new Length(DataTools.parseDouble(z), UNITS.REFERENCEFRAME);
           }
-          catch (NumberFormatException e) { }
+          catch (NullPointerException e) { }
 
-          for (int tile=0; tile<tilesX * tilesY; tile++) {
+          int numTiles = (tilesX == null || tilesY == null) ? 0 : tilesX * tilesY;
+          for (int tile=0; tile<numTiles; tile++) {
             int index = i * tilesX * tilesY + tile;
             if (index < positionsX.length) {
               positionsX[index] = xPos;
