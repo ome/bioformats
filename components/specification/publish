@@ -62,7 +62,9 @@ iscurrent() {
         [ "${1%.xsd}" = "CA" ] || \
         [ "${1%.xsd}" = "CLI" ] || \
         [ "${1%.xsd}" = "DataHistory" ] || \
+        [ "${1%.xsd}" = "Editor" ] || \
         [ "${1%.xsd}" = "MLI" ] || \
+        [ "${1%.xsd}" = "OMERO" ] || \
         [ "${1%.xsd}" = "STD" ]
     then
         return 1
