@@ -85,7 +85,6 @@
 {% end for%}\
 
 using boost::format;
-
 {% end source%}\
 
 namespace ome
@@ -361,7 +360,6 @@ namespace ome
 ${customContent}\
 {% end custom content %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-
         // -- OMEModelObject API methods --
 
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::update
@@ -391,7 +389,7 @@ ${customContent}\
 {% if klass.langBaseType == 'std::string' %}\
           this->impl->value = text;
 {% end %}\
-        } //a
+        }
 {% end %}\
         const std::string tagName(stripNamespacePrefix(element.getTagName()));
         if (!validElementName(tagName))
@@ -423,7 +421,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.type == 'base64Binary' %}\
             set${prop.methodName}(value_textContent);
 {% end if not prop.type %}\
-		}
+          }
 {% end when %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
@@ -510,10 +508,10 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.instanceVariableType == 'std::string' %}\
               set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
-            } // b
+            }
 {% end choose %}\
 {% end %}\
-          } // c
+          }
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstract or not prop.isAttribute) %}\
         std::vector<common::xml::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
@@ -600,7 +598,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-          } // d
+          }
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstract %}\
 {% if prop.isAbstract %}\
@@ -645,7 +643,7 @@ ${customUpdatePropertyContent[prop.name]}
                    }
 {% end %}\
 {% end %}\
-          } // f
+          }
 {% end %}\
 {% end %}\
 {% if not prop.isAbstract %}\
@@ -683,7 +681,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
-      } // g
+      }
 
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -787,7 +785,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 {% end not object %}\
-\
+
 {% for prop in klass.properties.values() %}\
 {% if not prop.isUnitsEnumeration %}\
 {% choose %}\
@@ -968,6 +966,7 @@ ${customUpdatePropertyContent[prop.name]}
         return found;
       }
 {% end source %}\
+
 {% end %}\
 {% when prop.isReference %}\
 {% for qualifier in prop.retType.keys() %}\
@@ -1031,6 +1030,7 @@ ${customUpdatePropertyContent[prop.name]}
           }
       }
 {% end source %}\
+
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstract or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}\
 {% for qualifier in prop.retType.keys() %}\
@@ -1070,6 +1070,7 @@ ${customUpdatePropertyContent[prop.name]}
         this->impl->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
+
 {% end %}\
 {% when prop.maxOccurs > 1 and not klass.isAbstract %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -1210,6 +1211,7 @@ ${customUpdatePropertyContent[prop.name]}
           this->impl->${prop.instanceVariableName}.erase(i);
       }
 {% end source %}\
+
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
@@ -1219,7 +1221,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end not prop.isUnitsEnumeration %}\
 {% end for %}\
-
 {% if klass.isConcreteSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         const std::string&
@@ -1233,6 +1234,7 @@ ${customUpdatePropertyContent[prop.name]}
         return type;
       }
 {% end source %}\
+
 {% end  %}\
 {% if klass.isAbstractSubstitution %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -1244,8 +1246,8 @@ ${customUpdatePropertyContent[prop.name]}
         virtual const std::string&
         get${klass.name}Type() const = 0;
 {% end header %}\
-{% end %}\
 
+{% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /// @copydoc ${lang.omexml_model_package}::OMEModelObject::asXMLElement
         virtual common::xml::dom::Element
