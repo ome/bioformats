@@ -164,9 +164,6 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
   }
 
   @Test(dataProvider = "physicalSizeUnit")
@@ -174,5 +171,64 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+  @DataProvider(name = "positionNoUnit")
+  public Object[][] createPositionNoUnit() {
+    return new Object[][] {
+      {null, null},
+      {0.0, new Length(0.0, UNITS.REFERENCEFRAME)},
+      {1.0, new Length(1.0, UNITS.REFERENCEFRAME)},
+      {.1, new Length(.1, UNITS.REFERENCEFRAME)},
+      {Constants.EPSILON, new Length(Constants.EPSILON, UNITS.REFERENCEFRAME)},
+      {-Constants.EPSILON, new Length(-Constants.EPSILON, UNITS.REFERENCEFRAME)},
+      {Double.POSITIVE_INFINITY, null},
+      {-Double.POSITIVE_INFINITY, null},
+    };
+  }
+
+  @DataProvider(name = "positionStringUnit")
+  public Object[][] createPositionStringUnit() {
+    return new Object[][] {
+      {null, "mm", null},
+      {0.0, "mm", new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, "mm", new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, "mm", new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, "mm", null},
+      {-Double.POSITIVE_INFINITY, "mm", null},
+    };
+  }
+
+  @DataProvider(name = "positionUnit")
+  public Object[][] createPositionUnit() {
+    return new Object[][] {
+      {null, UNITS.MILLIMETER, null},
+      {0.0, UNITS.MILLIMETER, new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, UNITS.MILLIMETER, new Length(1.0, UNITS.MILLIMETER)},
+      {.1, UNITS.MILLIMETER, new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, UNITS.MILLIMETER, new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, UNITS.MILLIMETER, new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {-Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+    };
+  }
+
+  @Test(dataProvider = "positionNoUnit")
+  public void testGetPositionNoUnit(Double value, Length length) {
+    assertEquals(length, FormatTools.getPosition(value));
+    assertEquals(length, FormatTools.getPosition(value, ""));
+  }
+
+  @Test(dataProvider = "positionStringUnit")
+  public void testGetPositionStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getPosition(value, unit));
+  }
+
+
+  @Test(dataProvider = "positionUnit")
+  public void testGetPositionUnit(Double value, Unit<Length> unit, Length length) {
+    assertEquals(length, FormatTools.getPosition(value, unit));
   }
 }

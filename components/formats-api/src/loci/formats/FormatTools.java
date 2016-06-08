@@ -1437,7 +1437,57 @@ public final class FormatTools {
     }
     return new Time(value, UNITS.SECOND);
   }
-  
+
+  /**
+   * Formats the input value for the position into a length.
+   *
+   * @param value  the value of the position
+   * @param unit   the unit of the position. If {@code null} or invalid,
+   *               default to reference frame.
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPosition(Double value, String unit) {
+    if (value == null || value == Double.POSITIVE_INFINITY ||
+        value == -Double.POSITIVE_INFINITY) {
+      LOGGER.debug("Expected float value for position; got {}", value);
+      return null;
+    }
+
+    if (unit == null) return new Length(value, UNITS.REFERENCEFRAME);
+
+    try {
+      return UnitsLength.create(value, UnitsLength.fromString(unit));
+    } catch (EnumerationException e) {
+      LOGGER.debug(e.getMessage());
+      return new Length(value, UNITS.REFERENCEFRAME);
+    }
+  }
+
+  /**
+   * Formats the input value for the position into a length.
+   *
+   * @param value  the value of the position
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPosition(Double value) {
+   return getPosition(value, UNITS.REFERENCEFRAME);
+  }
+
+  /**
+   * Formats the input value for the position into a length of the given unit.
+   *
+   * @param value  the value of the position
+   * @param unit   the unit of the position. If {@code null} or invalid,
+   *               default to reference frame.
+   *
+   * @return       the position formatted as a {@link Length}
+   */
+  public static Length getPosition(Double value, Unit<Length> unit) {
+      return getPosition(value, unit.getSymbol());
+  }
+
   public static Length getPhysicalSize(Double value, String unit) {
     if (value != null && value != 0 && value < Double.POSITIVE_INFINITY) {
       if (unit != null) {
@@ -1554,7 +1604,7 @@ public final class FormatTools {
 
   /**
    * Formats the input value for the physical size in Z into a length in
-   * microns
+   * microns.
    *
    * @param value  the value of the physical size in Z in microns
    *
@@ -1586,7 +1636,6 @@ public final class FormatTools {
    * @param unit   the unit of the physical size in Z
    *
    * @return       the physical size formatted as a {@link Length}
-
    */
   public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
       return getPhysicalSize(value, unit.getSymbol());
