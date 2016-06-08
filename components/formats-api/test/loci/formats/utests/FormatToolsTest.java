@@ -49,58 +49,26 @@ import org.testng.annotations.Test;
  */
 public class FormatToolsTest {
 
-  @Test
-  public void testDefaultMinMaxInt8() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT8);
-    assertEquals(lim[0], -128);
-    assertEquals(lim[1], 127);
+
+  @DataProvider(name = "pixelTypes")
+  public Object[][] createPixelTypes() {
+    return new Object[][] {
+      {FormatTools.INT8, -128L, 127L},
+      {FormatTools.INT16, -32768L, 32767L},
+      {FormatTools.INT32, -2147483648L, 2147483647L},
+      {FormatTools.UINT8, 0L, 255L},
+      {FormatTools.UINT16, 0L, 65535L},
+      {FormatTools.UINT32, 0L, 4294967295L},
+      {FormatTools.FLOAT, -2147483648L, 2147483647L},
+      {FormatTools.DOUBLE, -2147483648L, 2147483647L},
+    };
   }
 
-  @Test
-  public void testDefaultMinMaxInt16() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT16);
-    assertEquals(lim[0], -32768);
-    assertEquals(lim[1], 32767);
-  }
-
-  @Test
-  public void testDefaultMinMaxInt32() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT32);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint8() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT8);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 255);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint16() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT16);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 65535);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint32() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT32);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 4294967295L);
-  }
-
-  public void testDefaultMinMaxFloat() throws IllegalArgumentException {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.FLOAT);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
-  }
-
-  public void testDefaultMinMaxDouble() throws IllegalArgumentException {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.DOUBLE);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
+  @Test(dataProvider = "pixelTypes")
+  public void testDefaultMinMax(int type, long min, long max) {
+    long[] lim = FormatTools.defaultMinMax(type);
+    assertEquals(lim[0], min);
+    assertEquals(lim[1], max);
   }
 
   @Test(expectedExceptions={IllegalArgumentException.class})
