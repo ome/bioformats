@@ -1114,7 +1114,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, units enumeration
+        // Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -1270,7 +1270,7 @@ ${setter(k, o, prop, v)}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, units enumeration
+        // Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

@@ -531,7 +531,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, unit enumeration property
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

@@ -281,14 +281,14 @@ namespace ome
 {% end %}\
             }
           if (i != string_map.end())
-	    {
-	      this->value = i->second;
-	    }
-	  else if (li != lowercase_string_map.end())
-	    {
-	      this->value = li->second;
-	    }
-	  else
+            {
+              this->value = i->second;
+            }
+          else if (li != lowercase_string_map.end())
+            {
+              this->value = li->second;
+            }
+          else
             {
               format fmt("‘%1%’ not a supported value of %2%");
               fmt % name % "${klass.langType}";
@@ -315,8 +315,8 @@ namespace ome
         const ${klass.langType}::string_map_type&
         ${klass.langType}::strings()
         {
-	  const smap init_string_values[] =
-	    {
+          const smap init_string_values[] =
+            {
 {% for value in klass.possibleValues %}\
 {% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
 {% if value == klass.possibleValues[-1] %}\
@@ -335,7 +335,7 @@ namespace ome
 {% end %}\
 {% end %}\
 {% end for %}\
-	    };
+            };
 
           static const string_map_type string_map(init_string_values,
                                                   init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
@@ -346,8 +346,8 @@ namespace ome
         const ${klass.langType}::value_map_type&
         ${klass.langType}::values()
         {
-	  vmap init_value_values[] =
-	    {
+          vmap init_value_values[] =
+            {
 {% for value in klass.possibleValues %}\
 {% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
 {% if value == klass.possibleValues[-1] %}\
@@ -366,7 +366,7 @@ namespace ome
 {% end %}\
 {% end %}\
 {% end for %}\
-	    };
+            };
 
           static const value_map_type value_map(init_value_values,
                                                 init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
@@ -377,8 +377,8 @@ namespace ome
         const ${klass.langType}::string_map_type&
         ${klass.langType}::lowercase_strings()
         {
-	  smap init_lcase_string_values[] =
-	    {
+          smap init_lcase_string_values[] =
+            {
 {% if klass.isUnitsEnumeration %}\
 {% for value in klass.possibleValues %}\
 {% if klass.enumProperties is not None and value in klass.enumProperties %}\
@@ -418,7 +418,7 @@ namespace ome
 {% end %}\
 {% end %}\
 {% end for %}\
-	    };
+            };
 
           static const string_map_type lcase_string_map(init_lcase_string_values,
                                                         init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));

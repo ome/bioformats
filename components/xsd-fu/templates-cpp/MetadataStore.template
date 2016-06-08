@@ -3,7 +3,7 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -12,14 +12,14 @@
 {% end for %}\
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
          */
-	virtual void
+        virtual void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${lang.index_string(lang.index_signature(prop.name, 0, 0))} = 0) = 0;
 
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -27,19 +27,19 @@
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	virtual void
+        virtual void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;
 
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
          */
-	virtual void
+        virtual void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;
 
 {% end header%}\
@@ -245,12 +245,12 @@ namespace ome
         // -- Entity storage (code generated definitions) --
 
 {% end debug %}\
-	/**
+        /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
          */
-	virtual void
+        virtual void
         setUUID(const std::string& uuid) = 0;
 
         /**
@@ -290,7 +290,7 @@ namespace ome
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the text value of ${o.name}.
          *
          * @param value text value.
@@ -298,27 +298,27 @@ namespace ome
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	virtual void
+        virtual void
         set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
 
 {% end header%}\
 {% end %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 
 {% end debug %}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -331,7 +331,7 @@ namespace ome
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -353,17 +353,17 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, unit enumeration property
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
