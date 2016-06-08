@@ -472,7 +472,6 @@ ${customUpdatePropertyContent[prop.name]}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
 		return false;
 	}
-
 {% if klass.langBaseType != 'Object' %}\
 	// Element's text data getter
 	public ${klass.langBaseType} getValue()
