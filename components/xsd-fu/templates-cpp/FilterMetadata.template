@@ -276,7 +276,6 @@ namespace ome
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -324,30 +323,10 @@ namespace ome
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% if debug %}\
 	// -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-      void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      FilterMetadata::setPixelsBinDataBigEndian(bool bigEndian,
-                                                index_type imageIndex,
-                                                index_type binDataIndex)
-      {
-        store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-      }
-{% end source %}\
-{% end %}\
-
 {% if debug %}\
 	// -- Entity storage (code generated definitions) --
 

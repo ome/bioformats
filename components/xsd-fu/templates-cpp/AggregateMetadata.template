@@ -399,30 +399,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPixelsBinDataCount(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::getPixelsBinDataCount(index_type imageIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getPixelsBinDataCount(imageIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getPixelsBinDataCount",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-{% end %}\
-
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -791,32 +767,6 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      bool
-      AggregateMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
-                                                   index_type binDataIndex) const
-      {
-        for (delegate_list_type::const_iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataRetrieve> retrieve = ome::compat::dynamic_pointer_cast<MetadataRetrieve>(*i);
-            if (retrieve)
-              return retrieve->getPixelsBinDataBigEndian(imageIndex, binDataIndex);
-          }
-        throw MetadataException("AggregateMetadata", "getPixelsBinDataBigEndian",
-                                "no delegate MetadataRetrieve implementation");
-      }
-{% end source %}\
-{% end %}\
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -843,7 +793,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         const ome::xml::model::primitives::OrderedMultimap&
@@ -912,7 +861,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
@@ -1003,34 +951,6 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      AggregateMetadata::setPixelsBinDataBigEndian(bool bigEndian,
-                                                   index_type imageIndex,
-                                                   index_type binDataIndex)
-      {
-        for (delegate_list_type::iterator i = delegates.begin();
-             i != delegates.end();
-             ++i)
-          {
-            ome::compat::shared_ptr<MetadataStore> store = ome::compat::dynamic_pointer_cast<MetadataStore>(*i);
-            if (store)
-              store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
-          }
-        throw MetadataException("AggregateMetadata", "setPixelsBinDataBigEndian",
-                                "no delegate MetadataStore implementation");
-      }
-{% end source %}\
-{% end %}\
-
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -1057,7 +977,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -1132,7 +1051,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}

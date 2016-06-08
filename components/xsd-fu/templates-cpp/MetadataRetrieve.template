@@ -134,9 +134,7 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 #include <ome/xml/model/primitives/OrderedMultimap.h>
-{% end model not 2013-06 %}\
 #include <ome/xml/model/primitives/PercentFraction.h>
 #include <ome/xml/model/primitives/PositiveFloat.h>
 #include <ome/xml/model/primitives/PositiveInteger.h>
@@ -207,17 +205,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-        /**
-         * Get the number of BinData elements in Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @returns the number of BinData elements.
-         */
-        virtual index_type
-        getPixelsBinDataCount(index_type imageIndex) const = 0;
-
-{% end %}\
         /**
          * Get the number of links to a BooleanAnnotation.
          *
@@ -439,19 +426,6 @@ namespace ome
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-        /**
-         * Get the BigEndian property of Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         * @returns @c true if big endian, or @c false if little endian.
-         */
-        virtual bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const = 0;
-{% end %}\
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -466,7 +440,6 @@ namespace ome
         virtual const std::string&
         getUUID() const = 0;
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
         /**
          * Get the map value of MapAnnotation.
          *
@@ -495,7 +468,6 @@ namespace ome
          */
         virtual const ome::xml::model::primitives::OrderedMultimap&
         getImagingEnvironmentMap(index_type imageIndex) const = 0;
-{% end model not 2013-06 %}\
 {% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\

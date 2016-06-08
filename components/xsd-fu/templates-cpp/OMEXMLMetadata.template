@@ -732,23 +732,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPixelsBinDataCount(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      OMEXMLMetadata::index_type
-      OMEXMLMetadata::getPixelsBinDataCount(index_type imageIndex) const
-      {
-        const char * const image_method("getPixelsBinDataCount [getImage]");
-        const char * const pixels_method("getPixelsBinDataCount [getPixels]");
-        return safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->sizeOfBinDataList();
-      }
-{% end source %}\
-
-{% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -997,34 +980,6 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      bool
-      OMEXMLMetadata::getPixelsBinDataBigEndian(index_type imageIndex,
-                                                index_type binDataIndex) const
-      {
-        const char * const image_method("getPixelsBinDataBigEndian [getImage]");
-        const char * const pixels_method("getPixelsBinDataBigEndian [getPixels]");
-        const char * const bindata_method("getPixelsBinDataBigEndian [getBinData]");
-
-        ome::compat::shared_ptr<bool> bigEndian = safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBigEndian();
-
-        if (bigEndian) { // not null
-          return *bigEndian;
-        }
-
-        // Fall back to BinData
-        return safe_fetch(safe_fetch(safe_fetch(root->getImage(imageIndex), image_method)->getPixels(), pixels_method)->getBinData(binDataIndex), bindata_method)->getBigEndian();
-      }
-{% end source %}\
-
-{% end %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
@@ -1047,7 +1002,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         const ome::xml::model::primitives::OrderedMultimap&
@@ -1091,7 +1045,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-03 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
@@ -1182,40 +1135,6 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setPixelsBinDataBigEndian(bool       bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      OMEXMLMetadata::setPixelsBinDataBigEndian(bool       bigEndian,
-                                                index_type imageIndex,
-                                                index_type /* binDataIndex */)
-      {
-        // Parents: {u'Image': {u'OME': None}}
-        // Type is not a reference
-        if (root->sizeOfImageList() == imageIndex)
-          {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> newImage(ome::compat::make_shared< ::${lang.omexml_model_package}::Image>());
-            root->addImage(newImage);
-          }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Image> o1 = root->getImage(imageIndex);
-        if (!o1->getPixels()) // null
-          {
-            ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> newPixels(ome::compat::make_shared< ::${lang.omexml_model_package}::Pixels>());
-            o1->setPixels(newPixels);
-          }
-        ome::compat::shared_ptr< ::${lang.omexml_model_package}::Pixels> o2 = o1->getPixels();
-        ome::compat::shared_ptr<bool> newBool(ome::compat::make_shared<bool>(bigEndian));
-        o2->setBigEndian(newBool);
-      }
-{% end source %}\
-{% end %}\
-
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
@@ -1234,7 +1153,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -1286,7 +1204,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\

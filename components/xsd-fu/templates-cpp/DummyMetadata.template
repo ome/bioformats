@@ -296,22 +296,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
-        getPixelsBinDataCount(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-{% end %}\
-
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
@@ -557,24 +541,6 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      bool
-      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
-                                               index_type /* binDataIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-{% end %}\
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -593,7 +559,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         const ome::xml::model::primitives::OrderedMultimap&
@@ -638,7 +603,6 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
@@ -729,24 +693,6 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setPixelsBinDataBigEndian(bool       bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,
-                                               index_type /* imageIndex */,
-                                               index_type /* binDataIndex */)
-      {
-      }
-{% end source %}\
-{% end %}\
-
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -763,7 +709,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -808,7 +753,6 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}

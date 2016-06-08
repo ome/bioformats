@@ -127,9 +127,7 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 #include <ome/xml/model/primitives/OrderedMultimap.h>
-{% end model not 2013-06 %}\
 #include <ome/xml/model/primitives/PercentFraction.h>
 #include <ome/xml/model/primitives/PositiveFloat.h>
 #include <ome/xml/model/primitives/PositiveInteger.h>
@@ -243,20 +241,6 @@ namespace ome
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-        /**
-         * Set the BigEndian property of Pixels.
-         *
-         * @param bigEndian @c true if big endian, or @c false if little endian.
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         */
-        virtual void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex = 0) = 0;
-{% end %}\
-
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -269,7 +253,6 @@ namespace ome
 	virtual void
         setUUID(const std::string& uuid) = 0;
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
         /**
          * Set the map value of MapAnnotation.
          *
@@ -302,7 +285,6 @@ namespace ome
         setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& map,
                                  index_type                                          imageIndex) = 0;
 
-{% end model not 2013-06 %}\
 {% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
