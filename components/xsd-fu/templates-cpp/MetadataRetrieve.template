@@ -357,7 +357,7 @@ namespace ome
          */
         virtual const std::string&
         get${abstractClass}Type(${indexes_string(v)}) const = 0;
- 
+
         /**
          * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
          *

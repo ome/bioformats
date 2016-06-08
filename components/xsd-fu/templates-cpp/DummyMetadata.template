@@ -487,7 +487,7 @@ namespace ome
 {% end %}\
 {% end %}\
 {% if debug %}\
-        // -- Entity counting (code generated definitions) --  
+        // -- Entity counting (code generated definitions) --
 {% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\

@@ -56,7 +56,7 @@
 
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
- 
+
 #include <ome/xml/model/enums/${klass.langType}.h>
 #include <ome/xml/model/primitives/${quantityType}.h>
 

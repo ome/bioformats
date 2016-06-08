@@ -377,7 +377,7 @@ ${customContent[obj.name][prop.name]}
     if parent not in results.keys():
       raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop.name, results))
     return results[parent]
-      
+
   def basic_accessor(name):
     results = dict()
     o = model.getObjectByName(name)
@@ -395,7 +395,7 @@ ${customContent[obj.name][prop.name]}
       fu.resolve_hierarchy(results, model, {name: parents[o.parentName]}, func, min_occurs=1)
       parentObj = model.getObjectByName(o.parentName)
       return len(results[parents[parentObj.name].keys()[0]])
-          
+
   def safe_accessor(calls, method):
     ret = None
     if len(calls) == 1:
