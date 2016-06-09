@@ -356,7 +356,7 @@ createmainindex() {
 <h2>Introduction</h2>
 <p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
 </p>
-<p>Auto generated documentation for the schemas is available on the development server: <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a> and <a  href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html</a>
+<p>Auto generated documentation for the schemas is available at: <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a></a>
 </p>
 </div>
 EOF
