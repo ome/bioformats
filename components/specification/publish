@@ -348,8 +348,8 @@ createmainindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
@@ -362,25 +362,6 @@ createmainindex() {
 EOF
 
     cat <<EOF
-<div id="history">
-<h2>History</h2>
-<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model.
-</p>
-<ul>
-EOF
-
-    for release in $(ls -1d released-schema/20* | grep -v 2003 | grep -v $devmarker | xargs $XARGSOPTS -n1 basename | sort -r); do
-        reldate=$(parsedate "$release")
-        echo "<li>$reldate - namespace /$release/</li>"
-    done
-    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/*.xsd</li>"
-    done
-
-    cat <<EOF
-</ul>
-</div>
 <div id="schema.list">
 <h2>Schemas</h2>
 <p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
@@ -402,6 +383,25 @@ EOF
     for schema in $(find published -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq); do
         createlink "$schema" "" "legacy" "true" "current" "$1"
     done
+    cat <<EOF
+</ul>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model.
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d released-schema/20* | grep -v 2003 | grep -v $devmarker | xargs $XARGSOPTS -n1 basename | sort -r); do
+        reldate=$(parsedate "$release")
+        echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
+        reldate="2003 ($release)"
+        echo "<li>$reldate - namespace /$release/*.xsd</li>"
+    done
+
     cat <<EOF
 </ul>
 </div>
@@ -437,8 +437,8 @@ createintermediateindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
@@ -449,26 +449,6 @@ createintermediateindex() {
 EOF
 
     cat <<EOF
-<div id="history">
-<h2>History</h2>
-<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model.
-</p>
-<ul>
-EOF
-
-    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r ); do
-        reldate=$(parsedate "$release")
-        echo "<li>$reldate - namespace /$release/</li>"
-    done
-    for release in $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/$schema</li>"
-    done
-
-
-    cat <<EOF
-</ul>
-</div>
 <div id="schema.list">
 <h2>Schemas</h2>
 <p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
@@ -497,6 +477,26 @@ EOF
     for year in $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
         createlink "$schema" "$year" "legacy" "false" "legacy"
     done
+
+    cat <<EOF
+</ul>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model.
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r ); do
+        reldate=$(parsedate "$release")
+        echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
+        reldate="2003 ($release)"
+        echo "<li>$reldate - namespace /$release/$schema</li>"
+    done
+
 
     cat <<EOF
 </ul>
