@@ -42,7 +42,7 @@ public class SixteenBitLosslessJPEG2000LongRunningTest {
 
   @Factory
   public Object[] factoryMethod() {
-    return new Object[] { new SixteenBitLosslessJPEG2000Test(1)};
+    return new Object[] {new SixteenBitLosslessJPEG2000Test(1)};
   }
 
 }

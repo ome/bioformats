@@ -66,13 +66,14 @@ public class SixteenBitLosslessJPEG2000Test {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SixteenBitLosslessJPEG2000Test.class);
 
-  private int increment = 1024;
+  private final int increment;
 
   public SixteenBitLosslessJPEG2000Test() {
+    this(1024);
   }
 
   public SixteenBitLosslessJPEG2000Test(int increment) {
-      this.increment=increment;
+      this.increment = increment;
   }
 
   @Test
