@@ -388,7 +388,8 @@ EOF
 </div>
 <div id="history">
 <h2>History</h2>
-<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model.
+<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model. See the
+<a href="https://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a> for more information.
 </p>
 <ul>
 EOF
@@ -483,7 +484,8 @@ EOF
 </div>
 <div id="history">
 <h2>History</h2>
-<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model.
+<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model. See the
+<a href="https://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a> for more information.
 </p>
 <ul>
 EOF
