@@ -235,7 +235,7 @@ do
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the ${base} Schema created by the Open Microscopy Environment Group. Detailed information on the schema and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the ${base} Schema created by the Open Microscopy Environment Group. Detailed information on the schema and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. The main OME website is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
 </p>
 </div>
 <div id="status">
@@ -354,7 +354,7 @@ createmainindex() {
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. The main OME website is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
 </p>
 <p>Auto generated documentation for the schemas is available at: <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a></a>
 </p>
@@ -443,7 +443,7 @@ createintermediateindex() {
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML $1 Schemas created by the Open Microscopy Environment Group. This is the $(schemadesc "$1")  Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the XML $1 Schemas created by the Open Microscopy Environment Group. This is the $(schemadesc "$1")  Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">http://www.openmicroscopy.org/site/support/ome-model/index.html</a>. The main OME website is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
 </p>
 </div>
 EOF
