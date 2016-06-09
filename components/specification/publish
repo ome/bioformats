@@ -312,7 +312,7 @@ createlink() {
     if [ -z "$2" ]; then
         line="<li><a href=\"${shortname}/index.html\">${shortname}</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
     else
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${2}</a>]${reldesc}</li>"
+        line="<li><a href=\"$2/index.html\">$2</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>] ${reldesc}</li>"
     fi
     if [ -z "$2" ]; then
         if iscurrent "$name" && [ "$3" = "current" ]; then
