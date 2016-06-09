@@ -404,6 +404,7 @@ public class OMETiffReader extends FormatReader {
     super.close(fileOnly);
     if (info != null) {
       for (OMETiffPlane[] dimension : info) {
+        if (dimension == null) continue;
         for (OMETiffPlane plane : dimension) {
           if (plane.reader != null) {
             try {
