@@ -197,7 +197,10 @@ public class FormatToolsTest {
       {Constants.EPSILON, "mm", new Length(Constants.EPSILON, UNITS.MILLIMETER)},
       {-Constants.EPSILON, "mm", new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
       {Double.POSITIVE_INFINITY, "mm", null},
-      {-Double.POSITIVE_INFINITY, "mm", null},
+      // Invalid length string units
+      {1.0, null, new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "foo", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "s", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
   }
 
@@ -212,6 +215,7 @@ public class FormatToolsTest {
       {-Constants.EPSILON, UNITS.MILLIMETER, new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
       {Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
       {-Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {1.0, null, new Length(1.0, UNITS.REFERENCEFRAME)},
     };
   }
 
