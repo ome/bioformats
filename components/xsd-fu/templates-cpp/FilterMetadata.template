@@ -16,7 +16,7 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -34,7 +34,7 @@
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -52,7 +52,7 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -75,7 +75,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-        (o.isAbstract or o.isAbstractProprietary):
+        (o.isAbstract):
       return True
     return False
 
@@ -189,9 +189,9 @@ namespace ome
       {
       private:
         /// The wrapped metadata store.
-	ome::compat::shared_ptr<MetadataStore> store;
+        ome::compat::shared_ptr<MetadataStore> store;
         /// Is filtering enabled?
-	bool filter;
+        bool filter;
 
       public:
         /**
@@ -226,7 +226,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         createRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -240,7 +240,7 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ome::compat::shared_ptr<MetadataRoot>&
-	getRoot();
+        getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ome::compat::shared_ptr<MetadataRoot>&
@@ -252,7 +252,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -265,7 +265,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         setUUID(const std::string& uuid);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -276,7 +276,6 @@ namespace ome
       }
 {% end source %}\
 
-{% if model.getObjectByName('OME').namespace != "http://www.openmicroscopy.org/Schemas/OME/2013-06" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
@@ -292,32 +291,44 @@ namespace ome
       }
 {% end source %}\
 
-{% end model not 2013-06 %}\
-{% if debug %}\
-	// -- Entity storage (manual definitions) --
-
-{% end debug %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-      void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setPixelsBinDataBigEndian(bool bigEndian,
-                                                index_type imageIndex,
-                                                index_type binDataIndex)
+      FilterMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                    index_type                                          instrumentIndex,
+                                                    index_type                                          lightSourceIndex)
       {
-        store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+        store->setGenericExcitationSourceMap(value, instrumentIndex, lightSourceIndex);
       }
 {% end source %}\
-{% end %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                               index_type                                          imageIndex)
+      {
+        store->setImagingEnvironmentMap(value, imageIndex);
+      }
+{% end source %}\
 
 {% if debug %}\
-	// -- Entity storage (code generated definitions) --
+        // -- Entity storage (manual definitions) --
+
+{% end debug %}\
+{% if debug %}\
+        // -- Entity storage (code generated definitions) --
 
 {% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -325,11 +336,11 @@ namespace ome
 {% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
+        // Element's text data
+        // ${repr(indexes[o.name])}
 {% end debug %}\
         // Documented in base class.
-	void
+        void
         set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -345,22 +356,22 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 
 {% end debug %}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -373,14 +384,19 @@ namespace ome
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
 {% if debug %}\
-	// ${prop.name} accessor from parent ${k}
+        // ${prop.name} accessor from parent ${k}
 {% end debug %}\
 ${setter(k, o, prop, v)}\
 {% end %}\
@@ -395,12 +411,17 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

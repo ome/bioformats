@@ -41,6 +41,7 @@ class Language(object):
             'ENUM': 'OMEXMLModelEnum.template',
             'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
             'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'QUANTITY': 'OMEXMLModelQuantity.template',
             'CLASS': 'OMEXMLModelObject.template',
             'METADATA_STORE': 'MetadataStore.template',
             'METADATA_RETRIEVE': 'MetadataRetrieve.template',
@@ -97,6 +98,7 @@ class Language(object):
 
         self.omexml_model_package = None
         self.omexml_model_enums_package = None
+        self.omexml_model_quantity_package = None
         self.omexml_model_omexml_model_enum_handlers_package = None
         self.metadata_package = None
         self.omexml_metadata_package = None
@@ -365,6 +367,7 @@ class CXX(Language):
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
+        self.omexml_model_quantity_package = "ome::xml::model::primitives"
         self.omexml_model_omexml_model_enum_handlers_package = \
             "ome::xml::model::enums::handlers"
         self.metadata_package = "ome::xml::meta"
@@ -374,7 +377,7 @@ class CXX(Language):
         return "detail::OMEModelObject"
 
     def typeToUnitsType(self, valueType):
-        return "Unit<" + valueType + ">"
+        return "%s::Quantity<%s > " % (self.omexml_model_quantity_package, valueType)
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a C++ method signature dictionary from an index name."""

@@ -465,12 +465,17 @@ TEST(Enum, PixelTypeStreamInputFail)
   ASSERT_EQ(PixelType::UINT16, e); // Unchanged.
 }
 
-void
-check_pt(PixelType::enum_value pt_expected,
-         PixelType pt)
+namespace
 {
-  std::cout << "Test type: " << PixelType(pt) <<'\n';
-  ASSERT_EQ(pt_expected, pt);
+
+  void
+  check_pt(PixelType::enum_value pt_expected,
+           PixelType pt)
+  {
+    std::cout << "Test type: " << PixelType(pt) <<'\n';
+    ASSERT_EQ(pt_expected, pt);
+  }
+
 }
 
 #define MAKE_PT(maR, maProperty, maType)        \
@@ -492,16 +497,29 @@ TEST(Enum, PixelTypePreprocess)
 #define PP_SEQ_FOR_EACH_R_ID() BOOST_PP_SEQ_FOR_EACH_R
 #define PP_DEFER(x) x BOOST_PP_EMPTY()
 
-void check_nested(LaserType expected_a,
-                  LaserType a,
-                  LaserType expected_b,
-                  LaserType b)
+namespace
 {
-  std::cout << "Test nested: first=" << a
-            << " second=" << b << '\n';
-  EXPECT_EQ(expected_a, a);
-  EXPECT_EQ(expected_b, b);
+
+  void check_nested(LaserType expected_a,
+                    LaserType a,
+                    LaserType expected_b,
+                    LaserType b)
+  {
+    std::cout << "Test nested: first=" << a
+              << " second=" << b << '\n';
+    EXPECT_EQ(expected_a, a);
+    EXPECT_EQ(expected_b, b);
+  }
+
 }
+
+// No switch default to avoid -Wunreachable-code errors.
+// However, this then makes -Wswitch-default complain.  Disable
+// temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
 
 #define LT_NESTED(maR, maToplevelType, maNestedType)                    \
   case LaserType::maNestedType:                                         \
@@ -522,14 +540,23 @@ void check_nested(LaserType expected_a,
   }                                                                     \
   break;
 
-void check_switch(LaserType a,
-                  LaserType b)
+namespace
 {
-  switch(a)
-    {
-      BOOST_PP_EXPAND(BOOST_PP_SEQ_FOR_EACH(LT_TOPLEVEL, %%, OME_XML_MODEL_ENUMS_LASERTYPE_VALUES));
-    }
+
+  void check_switch(LaserType a,
+                    LaserType b)
+  {
+    switch(a)
+      {
+        BOOST_PP_EXPAND(BOOST_PP_SEQ_FOR_EACH(LT_TOPLEVEL, %%, OME_XML_MODEL_ENUMS_LASERTYPE_VALUES));
+      }
+  }
+
 }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 #define NESTED_TEST(r, product)                                      \
   check_switch(LaserType(LaserType::BOOST_PP_SEQ_ELEM(0, product)),  \
