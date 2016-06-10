@@ -54,6 +54,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
@@ -1438,42 +1439,6 @@ public final class FormatTools {
     return new Time(value, UNITS.SECOND);
   }
 
-  /**
-   * Formats the input value for the position into a length.
-   *
-   * @param value  the value of the position
-   * @param unit   the unit of the position. If {@code null} or invalid,
-   *               default to reference frame.
-   *
-   * @return       the physical size formatted as a {@link Length}
-   */
-  public static Length getPosition(Double value, String unit) {
-    if (value == null || value == Double.POSITIVE_INFINITY ||
-        value == -Double.POSITIVE_INFINITY) {
-      LOGGER.debug("Expected float value for position; got {}", value);
-      return null;
-    }
-
-    if (unit == null) return new Length(value, UNITS.REFERENCEFRAME);
-
-    try {
-      return UnitsLength.create(value, UnitsLength.fromString(unit));
-    } catch (EnumerationException e) {
-      LOGGER.debug(e.getMessage());
-      return new Length(value, UNITS.REFERENCEFRAME);
-    }
-  }
-
-  /**
-   * Formats the input value for the position into a length.
-   *
-   * @param value  the value of the position
-   *
-   * @return       the physical size formatted as a {@link Length}
-   */
-  public static Length getPosition(Double value) {
-   return getPosition(value, UNITS.REFERENCEFRAME);
-  }
 
   /**
    * Formats the input value for the position into a length of the given unit.
@@ -1485,7 +1450,47 @@ public final class FormatTools {
    * @return       the position formatted as a {@link Length}
    */
   public static Length getPosition(Double value, Unit<Length> unit) {
-      return getPosition(value, unit.getSymbol());
+    if (value == null || value == Double.POSITIVE_INFINITY ||
+        value == -Double.POSITIVE_INFINITY) {
+      LOGGER.debug("Expected float value for position; got {}", value);
+      return null;
+    }
+
+    if (unit == null) unit = UNITS.REFERENCEFRAME;
+
+    return new Length(value, unit);
+  }
+
+
+  /**
+   * Formats the input value for the position into a length of the given unit
+   *
+   * @param value  the value of the position
+   * @param unit   the unit of the position. If {@code null} or invalid,
+   *               default to reference frame.
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPosition(Double value, String unit) {
+      try {
+        Unit<Length> baseunit =  UnitsLengthEnumHandler.getBaseUnit(
+          UnitsLength.fromString(unit));
+        return getPosition(value, baseunit);
+      } catch (EnumerationException e) {
+        LOGGER.debug(e.getMessage());
+      }
+      return getPosition(value, UNITS.REFERENCEFRAME);
+  }
+
+  /**
+   * Formats the input value for the position into a length.
+   *
+   * @param value  the value of the position
+   *
+   * @return       the physical size formatted as a {@link Length}
+   */
+  public static Length getPosition(Double value) {
+   return getPosition(value, UNITS.REFERENCEFRAME);
   }
 
   public static Length getPhysicalSize(Double value, String unit) {
