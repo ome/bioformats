@@ -3,7 +3,6 @@
          xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
                              http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
   <Image ID="Image:1" Name="Name92">
-    <AcquisitionDate>2009-03-16T15:41:51.0Z</AcquisitionDate>
     <Pixels
        ID="Pixels:1"
        DimensionOrder="XYZCT"
