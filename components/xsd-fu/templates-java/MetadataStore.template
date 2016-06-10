@@ -11,9 +11,9 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if debug %}\
-	// MARKER [A-GET]
+        // MARKER [A-GET]
 {% end debug %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -22,13 +22,13 @@
 {% end for %}\
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
+        void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
-	// MARKER [B-GET]
+        // MARKER [B-GET]
 {% end debug %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -36,29 +36,29 @@
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
+        void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
-	// MARKER [C-GET]
+        // MARKER [C-GET]
 {% end debug %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
          */
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});\
+        void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});\
 {% end %}\
 {% end %}\
 {% end %}\
 \
 {% python
   def is_abstract(name):
-	  o = model.getObjectByName(name)
-	  if o is not None and \
-		   (o.isAbstract):
-		  return True
-	  return False
+          o = model.getObjectByName(name)
+          if o is not None and \
+                   (o.isAbstract):
+                  return True
+          return False
 
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
@@ -170,7 +170,7 @@ public interface MetadataStore extends BaseMetadata
          * Create root node.  The action taken here is specific to the
          * concrete metadata implementation.
          */
-	void createRoot();
+        void createRoot();
 
         /**
          * Get the root node of the metadata.  Note that the root node
@@ -179,7 +179,7 @@ public interface MetadataStore extends BaseMetadata
          *
          * @return the root node.
          */
-	MetadataRoot getRoot();
+        MetadataRoot getRoot();
 
         /**
          * Set the root node of the metadata.  Note that the root node
@@ -189,9 +189,9 @@ public interface MetadataStore extends BaseMetadata
          *
          * @param root the root node.
          */
-	void setRoot(MetadataRoot root);
+        void setRoot(MetadataRoot root);
 
-	// -- Entity storage (manual definitions) --
+        // -- Entity storage (manual definitions) --
 
         /**
          * Set the values of a MapAnnotation.
@@ -199,7 +199,7 @@ public interface MetadataStore extends BaseMetadata
          * @param value the MapAnnotation values to set.
          * @param mapAnnotationIndex the MapAnnotation index.
          */
-	void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex);
+        void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex);
 
         /**
          * Set the MapAnnotation values of a GenericExcitationSource.
@@ -207,7 +207,7 @@ public interface MetadataStore extends BaseMetadata
          * @param map the MapAnnotation values to set.
          * @param instrumentIndex the Instrument index.
          */
-	void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex);
+        void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex);
 
         /**
          * Set the MapAnnotation values of an ImagingEnvironment.
@@ -215,25 +215,25 @@ public interface MetadataStore extends BaseMetadata
          * @param map the MapAnnotation values to set.
          * @param imageIndex the Image index.
          */
-	void setImagingEnvironmentMap(List<MapPair> map, int imageIndex);
+        void setImagingEnvironmentMap(List<MapPair> map, int imageIndex);
 
-	// -- Entity storage (code generated definitions) --
+        // -- Entity storage (code generated definitions) --
 
         /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
          */
-	void setUUID(String uuid);
+        void setUUID(String uuid);
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
 {% if debug %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
+        // Element's text data
+        // ${repr(indexes[o.name])}
 {% end debug %}\
-	/**
+        /**
          * Set the text value of ${o.name}.
          *
          * @param value text value.
@@ -241,26 +241,26 @@ public interface MetadataStore extends BaseMetadata
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
+        void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
-	// MARKER [EEE]
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        // MARKER [EEE]
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 {% end debug %}\
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -273,20 +273,20 @@ public interface MetadataStore extends BaseMetadata
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// MARKER [CCC]
+        // MARKER [CCC]
 {% end debug %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
-	// MARKER [DDD]
+        // MARKER [DDD]
 {% end debug %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+        // MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
   // ${prop.name} accessor from parent ${k}   
 ${setter(k, o, prop, v)}
@@ -302,26 +302,26 @@ ${setter(k, o, prop, v)}
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE)%}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [FFF]
+        // MARKER [FFF]
 {% end debug %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, unit enumeration property
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
-	// MARKER [BBB]
+        // MARKER [BBB]
 {% end debug %}\
 ${setter(k, o, prop, v)}
 

@@ -11,7 +11,7 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if debug %}\
-	// MARKER [A-GET]
+        // MARKER [A-GET]
 {% end debug %}\
         /**
          * Get the ${prop.name} property of ${o.name}.
@@ -22,11 +22,11 @@
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index.
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)});\
+        ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
-	// MARKER [B-GET]
+        // MARKER [B-GET]
 {% end debug %}\
         /**
          * Get the ${prop.name} property of ${o.name}.
@@ -36,18 +36,18 @@
 {% end for %}\
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)});\
+        ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
-	// MARKER [C-GET]
+        // MARKER [C-GET]
 {% end debug %}\
         /**
          * Get the ${prop.name} property of ${o.name}.
          *
          * @return the ${prop.name} property.
          */
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}();\
+        ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}();\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -306,8 +306,8 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
 {% if debug %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
+        // Element's text data
+        // ${repr(indexes[o.name])}
 {% end debug %}\
         /**
          * Get the text value of ${o.name}.
@@ -317,7 +317,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end for %}\
          * @return the text value.
          */
-	${o.langBaseType} get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])});
+        ${o.langBaseType} get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])});
 
 {% end %}\
 
@@ -325,7 +325,7 @@ public interface MetadataRetrieve extends BaseMetadata {
   
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	// ${o.name} entity counting
+        // ${o.name} entity counting
 {% end debug %}\
 {% for k, v in indexes[o.topLevelName].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
@@ -337,7 +337,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end for %}\
          * @return the number of ${o.name} elements.
          */
-	int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])});
+        int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])});
 
 {% end %}\
 {% end %}\
@@ -345,7 +345,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end %}\
 {% end %}\
 
-	// -- Entity retrieval (manual definitions) --
+        // -- Entity retrieval (manual definitions) --
 
         /**
          * Get the values from a MapAnnotation.
@@ -353,7 +353,7 @@ public interface MetadataRetrieve extends BaseMetadata {
          * @param mapAnnotationIndex the MapAnnotation index.
          * @return the MapAnnotation values.
          */
-	List<MapPair> getMapAnnotationValue(int mapAnnotationIndex);
+        List<MapPair> getMapAnnotationValue(int mapAnnotationIndex);
 
         /**
          * Get the MapAnnotation values from a GenericExcitationSource.
@@ -362,7 +362,7 @@ public interface MetadataRetrieve extends BaseMetadata {
          * @param lightSourceIndex the LightSource index.
          * @return the MapAnnotation values.
          */
-	List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
+        List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
 
         /**
          * Get the MapAnnotation values from a ImagingEnvironment.
@@ -370,37 +370,37 @@ public interface MetadataRetrieve extends BaseMetadata {
          * @param imageIndex the Image index.
          * @return the MapAnnotation values.
          */
-	List<MapPair> getImagingEnvironmentMap(int imageIndex);
+        List<MapPair> getImagingEnvironmentMap(int imageIndex);
 
         /**
          * Get the UUID associated with this collection of metadata.
          *
          * @return the UUID.
          */
-	/** Gets the UUID associated with this collection of metadata. */
-	String getUUID();
+        /** Gets the UUID associated with this collection of metadata. */
+        String getUUID();
 
-	// -- Entity retrieval (code generated definitions) --
+        // -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	// MARKER [EEE]
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        // MARKER [EEE]
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 {% end debug %}\
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -413,20 +413,20 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// MARKER [CCC]
-	// Ignoring ${prop.name} of parent abstract type
+        // MARKER [CCC]
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
-	// MARKER [DDD]
+        // MARKER [DDD]
 {% end debug %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+        // MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k}
+        // ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}
 
 {% end %}\
@@ -441,24 +441,24 @@ ${getter(k, o, prop, v)}
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [FFF]
-	// Ignoring ${prop.name} element, unit enumeration property
+        // MARKER [FFF]
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
-	// MARKER [BBB]
+        // MARKER [BBB]
 {% end debug %}\
 ${getter(k, o, prop, v)}
 
