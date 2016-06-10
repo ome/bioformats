@@ -276,7 +276,7 @@ public interface MetadataRetrieve extends BaseMetadata {
    * @return the number of XMLAnnotation links.
    */
   int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex);
-  
+
 {% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
 {% for k, v in indexes[abstractClass].items() %}\
   /**
@@ -288,7 +288,7 @@ public interface MetadataRetrieve extends BaseMetadata {
    * @return the ${abstractClass} type.
    */
   String get${abstractClass}Type(${indexes_string(v)});
-    
+
   /**
    * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
    *
@@ -298,7 +298,7 @@ public interface MetadataRetrieve extends BaseMetadata {
    * @return the number of ${abstractClass} elements.
    */
   int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])});
-    
+
 {% end %}\
 {% end %}\
 
@@ -322,7 +322,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% end %}\
 
   // -- Entity counting (code generated definitions) --
-  
+
 {% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         // ${o.name} entity counting

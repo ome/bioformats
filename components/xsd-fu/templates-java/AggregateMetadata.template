@@ -307,7 +307,7 @@ public class AggregateMetadata implements IMetadata
 
 
         // -- Entity counting (manual definitions) --
- 
+
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
@@ -470,8 +470,8 @@ public class AggregateMetadata implements IMetadata
       }
     }
     return null;
-  }    
-    
+  }
+
   public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
@@ -484,8 +484,8 @@ public class AggregateMetadata implements IMetadata
       }
     }
     return -1;
-  } 
-     
+  }
+
 {% end %}\
 {% end %}\
 
@@ -552,7 +552,7 @@ ${counter(k, o, v)}\
                 }
                 return null;
         }
-        
+
         /** Gets the Map value associated with this annotation */
         public List<MapPair> getMapAnnotationValue(int mapAnnotationIndex)
         {
@@ -643,7 +643,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
   // ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
- 
+
 {% end %}\
 {% end %}\
 {% end %}\

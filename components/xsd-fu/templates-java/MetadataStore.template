@@ -288,7 +288,7 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
         // MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
-  // ${prop.name} accessor from parent ${k}   
+  // ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}
 {% end %}\
 {% end %}\

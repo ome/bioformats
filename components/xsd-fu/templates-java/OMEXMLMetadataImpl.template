@@ -238,7 +238,7 @@ ${customContent[obj.name][prop.name]}
     if parent not in results.keys():
       raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop.name, results))
     return results[parent]
-      
+
   def basic_accessor(name):
     results = dict()
     o = model.getObjectByName(name)
@@ -415,10 +415,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {% for k, v in indexes[abstractClass].items() %}\
   public String get${abstractClass}Type(${indexes_string(v)})
   {
-    ${abstractClass} o = (${abstractClass}) root.${".".join(basic_accessor(abstractClass))};   
+    ${abstractClass} o = (${abstractClass}) root.${".".join(basic_accessor(abstractClass))};
     String className = o.getClass().getName();
     return className.substring(
-      className.lastIndexOf('.') + 1, className.length());  
+      className.lastIndexOf('.') + 1, className.length());
   }
 {% end %}\
 {% end %}\
@@ -475,13 +475,13 @@ ${counter(k, o, v)}\
 {% end %}\
 
         // -- Entity retrieval (manual definitions) --
-  
+
         /** Gets the UUID associated with this collection of metadata. */
         public String getUUID()
         {
                 return root.getUUID();
         }
- 
+
         /** Gets the Map value associated with this annotation */
         public List<MapPair> getMapAnnotationValue(int mapAnnotationIndex)
         {

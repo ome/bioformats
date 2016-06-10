@@ -189,7 +189,7 @@ public class DummyMetadata implements IMetadata
         }
 
         // -- Entity counting (manual definitions) --
- 
+
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return -1;
   }
@@ -235,7 +235,7 @@ public class DummyMetadata implements IMetadata
     return -1;
   }
 
-  
+
         // -- Entity counting (code generated definitions) --
 
 {% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
@@ -243,13 +243,13 @@ public class DummyMetadata implements IMetadata
   public String get${abstractClass}Type(${indexes_string(v)})
   {
     return null;
-  }    
-    
+  }
+
   public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
   {
     return -1;
-  } 
-     
+  }
+
 {% end %}\
 {% end %}\
 
@@ -357,7 +357,7 @@ ${counter(k, o, v)}\
 {% end debug %}\
   // ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
- 
+
 {% end %}\
 {% end %}\
 {% end %}\
