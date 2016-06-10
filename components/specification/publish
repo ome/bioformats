@@ -379,8 +379,7 @@ EOF
 <div id="schema.list">
 <h2>Schemas</h2>
 <p>This has the schema name, the current version, a link to the XSD file, and
-a short description</p>
-<p>Generated documentation for the schemas is available at:
+a short description. Generated documentation for the schemas is available at:
 <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a></a>
 </p>
 <p><em>Note: Some browsers will try to render XSD files when you view them.
