@@ -38,11 +38,11 @@
                 xmlns:exsl="http://exslt.org/common"
                 extension-element-prefixes="exsl" version="1.0">
 
-  <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-  <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-  <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-  <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
-  <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/OME/2016-DEV0</xsl:variable>
+  <xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2016-06</xsl:variable>
+  <xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/OME/2016-06</xsl:variable>
+  <xsl:variable name="newBINNS">http://www.openmicroscopy.org/Schemas/OME/2016-06</xsl:variable>
+  <xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/OME/2016-06</xsl:variable>
+  <xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/OME/2016-06</xsl:variable>
 
   <xsl:output method="xml" indent="yes"/>
   <xsl:preserve-space elements="*"/>
@@ -79,7 +79,7 @@
       <xsl:with-param name="string" select="'Line,Rectangle,Mask,Ellipse,Point,Polyline,Polygon,Label'"/>
     </xsl:call-template>
   </xsl:variable>
-    
+
   <xsl:template match="OME:LightSource">
     <xsl:variable name="lightSourceRoot" select="." />
     <xsl:variable name="lightSourceType"  >
@@ -97,13 +97,13 @@
       <xsl:apply-templates select="*[name()=concat('OME:',$lightSourceType)]/node()"/>
     </xsl:element>
   </xsl:template>
-  
+
   <xsl:template match="OME:Laser"/>
   <xsl:template match="OME:Arc"/>
   <xsl:template match="OME:Filament"/>
   <xsl:template match="OME:LightEmittingDiode"/>
   <xsl:template match="OME:GenericExcitationSource"/>
-  
+
   <xsl:template match="ROI:Shape">
     <xsl:variable name="shapeRoot" select="." />
     <xsl:variable name="shapeType"  >
@@ -120,8 +120,8 @@
       <xsl:apply-templates select="*[name()=$shapeType]/node()"/>
       <xsl:apply-templates select="*[name()=concat('ROI:',$shapeType)]/node()"/>
     </xsl:element>
-  </xsl:template>  
-  
+  </xsl:template>
+
   <xsl:template match="ROI:Line"/>
   <xsl:template match="ROI:Rectangle"/>
   <xsl:template match="ROI:Mask"/>
@@ -130,7 +130,7 @@
   <xsl:template match="ROI:Polyline"/>
   <xsl:template match="ROI:Polygon"/>
   <xsl:template match="ROI:Label"/>
-  
+
   <!-- strip Namespace from ROI -->
   <xsl:template match="ROI:ROI/@Namespace"/>
 
@@ -171,11 +171,11 @@
   <!-- Rewrite all namespaces -->
 
   <xsl:template match="OME:OME">
-    <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
-         xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+    <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+         xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-06"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
-                             http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+         xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                             http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
       <xsl:apply-templates select="@UUID|@Creator|node()"/> <!-- copy UUID and Creator attributes and nodes -->
     </OME>
   </xsl:template>

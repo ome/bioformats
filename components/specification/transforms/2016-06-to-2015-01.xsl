@@ -26,7 +26,7 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+                xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-06"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:xml="http://www.w3.org/XML/1998/namespace"
                 exclude-result-prefixes="OME"
@@ -46,10 +46,10 @@
   <xsl:template match="OME:Line | OME:Rectangle | OME:Mask | OME:Ellipse | OME:Point | OME:Polyline | OME:Polygon | OME:Label">
     <xsl:element name="ROI:Shape"  namespace="{$newROINS}">
       <xsl:apply-templates select="@FillRule | @FillColor | @StrokeColor | @StrokeWidth | @StrokeWidthUnit | @StrokeDashArray | @LineCap |@Text |  @FontFamily | @FontSize | @FontSizeUnit | @FontStyle | @Locked | @ID | @TheZ | @TheT | @TheC"/>
-      <xsl:apply-templates select="node()[local-name() = 'Transform' or local-name() = 'AnnotationRef']"/>             
+      <xsl:apply-templates select="node()[local-name() = 'Transform' or local-name() = 'AnnotationRef']"/>
       <xsl:element name="ROI:{name()}"  namespace="{$newROINS}">
         <xsl:apply-templates select="@*[not(name() = 'FillRule' or name() = 'FillColor' or name() = 'StrokeColor' or name() = 'StrokeWidth' or name() = 'StrokeWidthUnit' or name() = 'StrokeDashArray' or name() = 'LineCap' or name() = 'Text' or  name() = 'FontFamily' or name() = 'FontSize' or name() = 'FontSizeUnit' or name() = 'FontStyle' or name() = 'Locked' or name() = 'ID' or name() = 'TheZ' or name() = 'TheT' or name() = 'TheC')]"/>
-        <xsl:apply-templates select="node()[not(local-name() = 'Transform' or local-name() = 'AnnotationRef')]"/>     
+        <xsl:apply-templates select="node()[not(local-name() = 'Transform' or local-name() = 'AnnotationRef')]"/>
       </xsl:element>
     </xsl:element>
   </xsl:template>
@@ -57,14 +57,14 @@
   <xsl:template match="OME:Laser | OME:Arc | OME:Filament | OME:LightEmittingDiode | OME:GenericExcitationSource">
     <xsl:element name="OME:LightSource"  namespace="{$newOMENS}">
       <xsl:apply-templates select="@ID | @Power | @PowerUnit |@Type"/>
-      <xsl:apply-templates select="node()[local-name() = 'AnnotationRef']"/>             
+      <xsl:apply-templates select="node()[local-name() = 'AnnotationRef']"/>
       <xsl:element name="OME:{name()}"  namespace="{$newOMENS}">
         <xsl:apply-templates select="@*[not(name() = 'ID' or name() = 'Power' or name() = 'PowerUnit' or name() = 'Type')]"/>
-        <xsl:apply-templates select="node()[not(local-name() = 'AnnotationRef')]"/>     
+        <xsl:apply-templates select="node()[not(local-name() = 'AnnotationRef')]"/>
       </xsl:element>
     </xsl:element>
   </xsl:template>
-  
+
   <!-- Rewrite all namespaces -->
 
   <xsl:template match="OME:OME">

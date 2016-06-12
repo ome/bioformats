@@ -97,7 +97,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
 
   /** Latest OME-XML version namespace. */
-  public static final String LATEST_VERSION = "2016-DEV0";
+  public static final String LATEST_VERSION = "2016-06";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -131,7 +131,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final String XSLT_201306 =
     XSLT_PATH + "2013-06-to-2015-01.xsl";
   private static final String XSLT_201501 =
-    XSLT_PATH + "2015-01-to-2016-DEV0.xsl";
+    XSLT_PATH + "2015-01-to-2016-06.xsl";
 
   // -- Cached stylesheets --
 
@@ -318,7 +318,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2015-01");
 
-      if (version.compareTo("2016-DEV0") < 0) {
+      if (version.compareTo("2016-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201501 stylesheet.");
         if (update201501 == null) {
@@ -328,7 +328,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         transformed = XMLTools.transformXML(transformed, update201501);
       }
       else transformed = xml;
-      LOGGER.debug("XML updated to at least 2016-DEV0");
+      LOGGER.debug("XML updated to at least 2016-06");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
