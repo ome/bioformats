@@ -1450,8 +1450,7 @@ public final class FormatTools {
    * @return       the position formatted as a {@link Length}
    */
   public static Length getPosition(Double value, Unit<Length> unit) {
-    if (value == null || value == Double.POSITIVE_INFINITY ||
-        value == -Double.POSITIVE_INFINITY) {
+    if (value == null || value.isInfinite()) {
       LOGGER.debug("Expected float value for position; got {}", value);
       return null;
     }
