@@ -1444,52 +1444,42 @@ public final class FormatTools {
    * Formats the input value for the position into a length of the given unit.
    *
    * @param value  the value of the position
-   * @param unit   the unit of the position. If {@code null} or invalid,
-   *               default to reference frame.
+   * @param unit   the unit of the position
    *
    * @return       the position formatted as a {@link Length}
    */
-  public static Length getPosition(Double value, Unit<Length> unit) {
+  public static Length getStagePosition(Double value, Unit<Length> unit) {
     if (value == null || value.isInfinite()) {
-      LOGGER.debug("Expected float value for position; got {}", value);
+      LOGGER.debug("Expected float value for stage position; got {}", value);
       return null;
     }
 
-    if (unit == null) unit = UNITS.REFERENCEFRAME;
+    if (unit == null) {
+      LOGGER.debug("Expected valid unit for stage position; got {}", unit);
+      return null;
+    }
 
     return new Length(value, unit);
   }
 
-
   /**
-   * Formats the input value for the position into a length of the given unit
+   * Formats the input value for the stage position into a length of the given
+   * unit.
    *
    * @param value  the value of the position
-   * @param unit   the unit of the position. If {@code null} or invalid,
-   *               default to reference frame.
+   * @param unit   the unit of the position
    *
    * @return       the physical size formatted as a {@link Length}
    */
-  public static Length getPosition(Double value, String unit) {
+  public static Length getStagePosition(Double value, String unit) {
+      Unit<Length> baseunit = null;
       try {
-        Unit<Length> baseunit =  UnitsLengthEnumHandler.getBaseUnit(
+        baseunit = UnitsLengthEnumHandler.getBaseUnit(
           UnitsLength.fromString(unit));
-        return getPosition(value, baseunit);
       } catch (EnumerationException e) {
         LOGGER.debug(e.getMessage());
       }
-      return getPosition(value, UNITS.REFERENCEFRAME);
-  }
-
-  /**
-   * Formats the input value for the position into a length.
-   *
-   * @param value  the value of the position
-   *
-   * @return       the physical size formatted as a {@link Length}
-   */
-  public static Length getPosition(Double value) {
-   return getPosition(value, UNITS.REFERENCEFRAME);
+      return getStagePosition(value, baseunit);
   }
 
   public static Length getPhysicalSize(Double value, String unit) {
