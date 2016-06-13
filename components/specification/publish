@@ -62,7 +62,9 @@ iscurrent() {
         [ "${1%.xsd}" = "CA" ] || \
         [ "${1%.xsd}" = "CLI" ] || \
         [ "${1%.xsd}" = "DataHistory" ] || \
+        [ "${1%.xsd}" = "Editor" ] || \
         [ "${1%.xsd}" = "MLI" ] || \
+        [ "${1%.xsd}" = "OMERO" ] || \
         [ "${1%.xsd}" = "STD" ]
     then
         return 1
@@ -213,8 +215,11 @@ do
         echo "HTML [1] -> ${path}/index.html"
         cat <<EOF > "${path}/index.html"
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment ${base} Schema</title>
 </head>
@@ -233,18 +238,25 @@ do
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the ${base} Schema created by the Open Microscopy Environment Group. Detailed information on the schema and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the ${base} Schema created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>.
+Detailed information on the schema is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 <div id="status">
 <h2>Status</h2>
-<p>This schema is <strong>${type}</strong> and at version <strong>${version}</strong>.</p>
-<p>A list of the current versions of all the Open Microscopy Environment Group schemas is available at <a href="http://www.openmicroscopy.org/Schemas/">http://www.openmicroscopy.org/Schemas/</a></p>
+<p>This schema is <strong>${type}</strong> and at version 
+<strong>${version}</strong>.</p>
+<p>A list of the current versions of all the Open Microscopy Environment
+schemas is available <a href="../../index.html">here</a>.</p>
 </div>
 <div id="schema">
 <h2>Schema</h2>
 <p>The schema XSD file is <a href="${name}">${name}</a>.</p>
-<p>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</p>
+<p>Note: Some browsers will try to render XSD files when you view them. This
+can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</p>
 </div>
 <hr/>
 </body>
@@ -308,9 +320,9 @@ createlink() {
         link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
     if [ -z "$2" ]; then
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
+        line="<li><a href=\"${shortname}/index.html\">${shortname}</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
     else
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${2}</a>]${reldesc}</li>"
+        line="<li><a href=\"$2/index.html\">$2</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>] ${reldesc}</li>"
     fi
     if [ -z "$2" ]; then
         if iscurrent "$name" && [ "$3" = "current" ]; then
@@ -332,8 +344,11 @@ createlink() {
 createmainindex() {
     cat <<EOF
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment Schemas</title>
 </head>
@@ -346,45 +361,30 @@ createmainindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
-</p>
-<p>Auto generated documentation for the schemas is available on the development server: <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a> and <a  href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html</a>
+<p>This document outlines the XML Schemas created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>.
+Detailed information on the schemas is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 EOF
 
     cat <<EOF
-<div id="history">
-<h2>History</h2>
-<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model.
-</p>
-<ul>
-EOF
-
-    for release in $(ls -1d released-schema/20* | grep -v 2003 | grep -v $devmarker | xargs $XARGSOPTS -n1 basename | sort -r); do
-        reldate=$(parsedate "$release")
-        echo "<li>$reldate - namespace /$release/</li>"
-    done
-    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/*.xsd</li>"
-    done
-
-    cat <<EOF
-</ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
-</div>
 <div id="schema.list">
 <h2>Schemas</h2>
-<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
-<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<p>This has the schema name, the current version, a link to the XSD file, and
+a short description. Generated documentation for the schemas is available at:
+<a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a></a>
+</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them.
+This can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</em></p>
 <h4>Active Schemas</h4>
 <ul>
 EOF
@@ -402,6 +402,28 @@ EOF
     for schema in $(find published -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq); do
         createlink "$schema" "" "legacy" "true" "current" "$1"
     done
+    cat <<EOF
+</ul>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This lists the most recent version of past schemas. The schemas are in a
+process of constant development to extend and refine the OME Data Model. See
+the
+<a href="http://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a> for more information.
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d released-schema/20* | grep -v 2003 | grep -v $devmarker | xargs $XARGSOPTS -n1 basename | sort -r); do
+        reldate=$(parsedate "$release")
+        echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
+        reldate="2003 ($release)"
+        echo "<li>$reldate - namespace /$release/*.xsd</li>"
+    done
+
     cat <<EOF
 </ul>
 </div>
@@ -423,8 +445,11 @@ createintermediateindex() {
 
     cat <<EOF
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment $1 Schemas</title>
 </head>
@@ -437,44 +462,28 @@ createintermediateindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML $1 Schemas created by the Open Microscopy Environment Group. This is the $(schemadesc "$1")  Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the XML $1 Schemas created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>. This
+is the $(schemadesc "$1") Detailed information on the schemas is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 EOF
 
     cat <<EOF
-<div id="history">
-<h2>History</h2>
-<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model.
-</p>
-<ul>
-EOF
-
-    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r ); do
-        reldate=$(parsedate "$release")
-        echo "<li>$reldate - namespace /$release/</li>"
-    done
-    for release in $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
-        reldate="2003 ($release)"
-        echo "<li>$reldate - namespace /$release/$schema</li>"
-    done
-
-
-    cat <<EOF
-</ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
-</div>
 <div id="schema.list">
 <h2>Schemas</h2>
-<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
-<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<p>This has the schema name, the current version, a link to the XSD file, and
+a short description</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them.
+This can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</em></p>
 <p><b>$current</b></p>
 <h4>Most recent schema</h4>
 <ul>
@@ -499,6 +508,30 @@ EOF
     for year in $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
         createlink "$schema" "$year" "legacy" "false" "legacy"
     done
+
+    cat <<EOF
+</ul>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This lists the current and prior versions of the $1 schema. The schemas are
+in a process of constant development to extend and refine the OME Data Model.
+See the
+<a href="https://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a>
+for more information.
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r ); do
+        reldate=$(parsedate "$release")
+        echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
+        reldate="2003 ($release)"
+        echo "<li>$reldate - namespace /$release/$schema</li>"
+    done
+
 
     cat <<EOF
 </ul>
