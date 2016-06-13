@@ -1,11 +1,11 @@
-                /**
-                 * Retrieves the reference's target object ID.
-                 * @return See above.
-                 */
-                public abstract String getID();
+  /**
+   * Retrieves the reference's target object ID.
+   * @return See above.
+   */
+  public abstract String getID();
 
-                /**
-                 * Sets the reference's target object ID.
-                 * @param id The object ID to set.
-                 */
-                public abstract void setID(String id);
+  /**
+   * Sets the reference's target object ID.
+   * @param id The object ID to set.
+   */
+  public abstract void setID(String id);
