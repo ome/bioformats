@@ -57,6 +57,12 @@ public class ClassListTest {
   }
 
   @Test
+  public void testNullFileConstructor() throws IOException {
+      c = new ClassList<Iterable>(null, Iterable.class);
+      assertEquals(c.getClasses().length, 0);
+  }
+
+  @Test
   public void testFileConstructor() throws IOException {
       c = new ClassList<Iterable>("iterables.txt", Iterable.class, ClassListTest.class);
       assertEquals(c.getClasses().length, 2);
@@ -84,6 +90,8 @@ public class ClassListTest {
       c.removeClass(AbstractList.class);
       assertEquals(c.getClasses().length, 1);
       assertEquals(c.getClasses()[0], ArrayList.class);
+      c.removeClass(ArrayList.class);
+      assertEquals(c.getClasses().length, 0);
       c.removeClass(ArrayList.class);
       assertEquals(c.getClasses().length, 0);
   }
