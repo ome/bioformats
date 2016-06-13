@@ -4,7 +4,7 @@
     if model.opts.lang.hasSubstitutionGroup(abstractClass):
       for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)):
           if o.parentName == abstractClass:
-            returnList.append(o.name)  
+            returnList.append(o.name)
     return returnList
 %}\
 /*
@@ -295,11 +295,11 @@ ${customUpdatePropertyContent[prop.name]}
                                 // Use default value specified in the xsd model
                                 unitSymbol = get${prop.unitsCompanion.name}XsdDefault();
                         }
-                        ${prop.unitsCompanion.langType} modelUnit = 
+                        ${prop.unitsCompanion.langType} modelUnit =
                                 ${prop.unitsCompanion.langType}.fromString(unitSymbol);
                         ${prop.langType} baseValue = ${prop.langType}.valueOf(
                                         element.getAttribute("${prop.name}"));
-                        if (baseValue != null) 
+                        if (baseValue != null)
                         {
                                 set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
                         }

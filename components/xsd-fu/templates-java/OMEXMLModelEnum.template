@@ -131,7 +131,7 @@ public enum ${klass.langType} implements Enumeration
   public static <T extends PrimitiveNumber> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
   {
     ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
-    
+
     try
     {
       theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
@@ -145,7 +145,7 @@ public enum ${klass.langType} implements Enumeration
   public static <T extends Number> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
   {
     ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
-    
+
     try
     {
       theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
