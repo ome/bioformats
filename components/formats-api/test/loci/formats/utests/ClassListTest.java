@@ -32,7 +32,10 @@
 
 package loci.formats.utests;
 
+import java.io.IOException;
 import java.lang.Iterable;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 import loci.formats.ClassList;
 
@@ -50,6 +53,38 @@ public class ClassListTest {
   @Test
   public void testDefaultConstructor() {
       c = new ClassList<Iterable>(Iterable.class);
+      assertEquals(c.getClasses().length, 0);
+  }
+
+  @Test
+  public void testFileConstructor() throws IOException {
+      c = new ClassList<Iterable>("iterables.txt", Iterable.class, ClassListTest.class);
+      assertEquals(c.getClasses().length, 2);
+      assertEquals(c.getClasses()[0], AbstractList.class);
+      assertEquals(c.getClasses()[1], ArrayList.class);
+  }
+
+  @Test
+  public void testAddClass() {
+      c = new ClassList<Iterable>(Iterable.class);
+      c.addClass(AbstractList.class);
+      assertEquals(c.getClasses().length, 1);
+      assertEquals(c.getClasses()[0], AbstractList.class);
+      c.addClass(ArrayList.class);
+      assertEquals(c.getClasses().length, 2);
+      assertEquals(c.getClasses()[1], ArrayList.class);
+      c.addClass(ArrayList.class);
+      assertEquals(c.getClasses().length, 3);
+      assertEquals(c.getClasses()[2], ArrayList.class);
+  }
+
+  @Test
+  public void testRemoveClass() throws IOException {
+      c = new ClassList<Iterable>("iterables.txt", Iterable.class, ClassListTest.class);
+      c.removeClass(AbstractList.class);
+      assertEquals(c.getClasses().length, 1);
+      assertEquals(c.getClasses()[0], ArrayList.class);
+      c.removeClass(ArrayList.class);
       assertEquals(c.getClasses().length, 0);
   }
 }
