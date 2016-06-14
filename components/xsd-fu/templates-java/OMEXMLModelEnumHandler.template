@@ -131,7 +131,7 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
 {% end %}\
 {% if 'Other' not in klass.possibleValues %}\
     throw new EnumerationException(this.getClass().getName() +
-     " could not find enumeration for " + value);
+      " could not find enumeration for " + value);
 {% end %}\
   }
 
@@ -169,32 +169,32 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     if (inValue instanceof NonNegativeFloat) {
-        NonNegativeFloat typedValue = (NonNegativeFloat) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      NonNegativeFloat typedValue = (NonNegativeFloat) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof NonNegativeInteger) {
-        NonNegativeInteger typedValue = (NonNegativeInteger) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      NonNegativeInteger typedValue = (NonNegativeInteger) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof NonNegativeLong) {
-        NonNegativeLong typedValue = (NonNegativeLong) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      NonNegativeLong typedValue = (NonNegativeLong) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof PercentFraction) {
-        PercentFraction typedValue = (PercentFraction) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      PercentFraction typedValue = (PercentFraction) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof PositiveFloat) {
-        PositiveFloat typedValue = (PositiveFloat) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      PositiveFloat typedValue = (PositiveFloat) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof PositiveInteger) {
-        PositiveInteger typedValue = (PositiveInteger) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      PositiveInteger typedValue = (PositiveInteger) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     if (inValue instanceof PositiveLong) {
-        PositiveLong typedValue = (PositiveLong) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
+      PositiveLong typedValue = (PositiveLong) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(typedValue.getValue(), getBaseUnit(inModelUnit));
     }
     LOGGER.warn("Unknown type '{}' cannot be used to create a '${klass.model.opts.lang.typeToUnitsType(klass.langType)}' quantity",
       inValue.getClass().getName());
@@ -206,12 +206,12 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     throws EnumerationException
   {
     if (inValue instanceof Double) {
-        Double doubleValue = (Double) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, getBaseUnit(inModelUnit));
+      Double doubleValue = (Double) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, getBaseUnit(inModelUnit));
     }
     if (inValue instanceof Integer) {
-        Integer intValue = (Integer) inValue;
-        return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(intValue, getBaseUnit(inModelUnit));
+      Integer intValue = (Integer) inValue;
+      return new ome.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(intValue, getBaseUnit(inModelUnit));
     }
     LOGGER.warn("Unknown type '{}' cannot be used to create a '${klass.model.opts.lang.typeToUnitsType(klass.langType)}' quantity",
       inValue.getClass().getName());
