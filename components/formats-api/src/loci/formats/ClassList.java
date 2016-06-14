@@ -90,7 +90,7 @@ public class ClassList<T> {
    * @param file Configuration file containing the list of classes.
    * @param base Base class to which all classes are assignable.
    * @param location Class indicating which package to search for the file.
-   *  If null, 'file' is interpreted as an absolute path name.
+   *        If {@code null}, 'file' is interpreted as an absolute path name.
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class<T> base, Class<?> location)
@@ -103,6 +103,20 @@ public class ClassList<T> {
 
   // -- ClassList API methods --
 
+  /**
+   * Parses a list of classes from a configuration file.
+   * @param file Configuration file containing the list of classes.
+   * @param location Class indicating which package to search for the file.
+   *        If {@code null}, 'file' is interpreted as an absolute path name.
+   * @return A list of classes parsed from the file
+   * @throws IOException if the file cannot be read.
+   */
+  public List<Class<? extends T>> parseFile(String file, Class<?> location)
+    throws IOException
+  {
+    return parseFile(file, location, true);
+  }
+
    /**
     * Parses a list of classes from a configuration file.
     * @param file Configuration file containing the list of classes.
@@ -111,7 +125,7 @@ public class ClassList<T> {
     * @return A list of classes parsed from the file
     * @throws IOException if the file cannot be read.
     */
-  public List<Class<? extends T>> parseFile(String file, Class<?> location)
+  public List<Class<? extends T>> parseFile(String file, Class<?> location, boolean strict)
     throws IOException
   {
     List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
@@ -158,7 +172,7 @@ public class ClassList<T> {
         LOGGER.debug("", exc);
       }
       if (c == null) {
-        LOGGER.error("\"{}\" is not valid.", line);
+        if (strict) LOGGER.error("\"{}\" is not valid.", line);
         continue;
       }
       parsedClasses.add(c);
