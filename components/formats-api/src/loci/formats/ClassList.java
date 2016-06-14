@@ -96,19 +96,34 @@ public class ClassList<T> {
   public ClassList(String file, Class<T> base, Class<?> location)
     throws IOException
   {
-    this.base = base;
-    classes = new ArrayList<Class<? extends T>>();
+    this(base);
     if (file == null) return;
+    classes = parseFile(file, location);
+  }
 
+  // -- ClassList API methods --
+
+   /**
+    * Parses a list of classes from a configuration file.
+    * @param file Configuration file containing the list of classes.
+    * @param location Class indicating which package to search for the file.
+    *        If {@code null}, 'file' is interpreted as an absolute path name.
+    * @return A list of classes parsed from the file
+    * @throws IOException if the file cannot be read.
+    */
+  private List<Class<? extends T>> parseFile(String file, Class<?> location)
+    throws IOException
+  {
+    List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
     // read classes from file
     BufferedReader in = null;
     if (location == null) {
-      in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(file), Constants.ENCODING));
+    in = new BufferedReader(new InputStreamReader(
+      new FileInputStream(file), Constants.ENCODING));
     }
     else {
-      in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file), Constants.ENCODING));
+    in = new BufferedReader(new InputStreamReader(
+      location.getResourceAsStream(file), Constants.ENCODING));
     }
     while (true) {
       String line = null;
@@ -146,12 +161,11 @@ public class ClassList<T> {
         LOGGER.error("\"{}\" is not valid.", line);
         continue;
       }
-      classes.add(c);
+      parsedClasses.add(c);
     }
     in.close();
+    return parsedClasses;
   }
-
-  // -- ClassList API methods --
 
   /**
    * Adds the given class, which must be assignable
