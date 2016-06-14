@@ -111,7 +111,7 @@ public class ClassList<T> {
     * @return A list of classes parsed from the file
     * @throws IOException if the file cannot be read.
     */
-  private List<Class<? extends T>> parseFile(String file, Class<?> location)
+  public List<Class<? extends T>> parseFile(String file, Class<?> location)
     throws IOException
   {
     List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
