@@ -58,6 +58,9 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Name of current file. */
   protected String currentId;
+  
+  /** Whether or not to validate files. */
+  protected boolean validate = true;
 
   // -- Constructors --
 
@@ -97,6 +100,18 @@ public abstract class FormatHandler implements IFormatHandler {
   public Class<?> getNativeDataType() {
     // NB: Handlers use byte arrays by default as the native type.
     return byte[].class;
+  }
+  
+  /* @see IFormatHandler#setValidate(boolean) */
+  @Override
+  public void setValidate(boolean validateFile) {
+    validate = validateFile;
+  }
+
+  /* @see IFormatHandler#isValidate() */
+  @Override
+  public boolean isValidate() {
+    return validate;
   }
 
   // -- Utility methods --

@@ -980,9 +980,6 @@ public class ImageInfo {
       if (omexmlOnly) {
         DebugTools.setRootLevel("OFF");
       }
-      if (validate) {
-        service.validateOMEXML(xml);
-      }
     }
     else {
       LOGGER.info("The metadata could not be converted to OME-XML.");
@@ -1035,6 +1032,7 @@ public class ImageInfo {
     // initialize reader
     long s = System.currentTimeMillis();
     try {
+      reader.setValidate(validate);
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();
@@ -1063,7 +1061,7 @@ public class ImageInfo {
       printOriginalMetadata();
     }
 
-    // output and validate OME-XML
+    // output OME-XML
     if (omexml) printOMEXML();
 
     if (!pixels) {

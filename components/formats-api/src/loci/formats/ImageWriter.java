@@ -64,6 +64,9 @@ public class ImageWriter implements IFormatWriter {
 
   /** Default list of writer classes, for use with noargs constructor. */
   private static ClassList<IFormatWriter> defaultClasses;
+  
+  /** Whether or not to validate files. */
+  protected boolean validate = true;
 
   // -- Static utility methods --
 
@@ -437,6 +440,18 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public void close() throws IOException {
     getWriter().close();
+  }
+  
+  /* @see IFormatHandler#setValidate(boolean) */
+  @Override
+  public void setValidate(boolean validateFile) {
+    validate = validateFile;
+  }
+
+  /* @see IFormatHandler#isValidate() */
+  @Override
+  public boolean isValidate() {
+    return validate;
   }
 
 }

@@ -41,9 +41,16 @@ import ome.xml.model.primitives.PositiveInteger;
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.codec.CodecOptions;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Abstract superclass of all biological file format writers.
@@ -86,6 +93,9 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Whether or not we are writing planes sequentially. */
   protected boolean sequential;
+
+  private ServiceFactory factory;
+  private OMEXMLService service;
 
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
@@ -317,6 +327,20 @@ public abstract class FormatWriter extends FormatHandler
     initialized = new boolean[r.getImageCount()][];
     for (int i=0; i<r.getImageCount(); i++) {
       initialized[i] = new boolean[getPlaneCount(i)];
+    }
+    
+    if (validate) {
+      try {
+        String omexml = service.getOMEXML(r);
+        if (!XMLTools.validateXML(omexml)) {
+          LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+        if (!service.validateOMEXML(omexml)) {
+          LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+      } catch (ServiceException e) {
+        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+      }
     }
   }
 

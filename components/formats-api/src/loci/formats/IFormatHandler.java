@@ -60,5 +60,11 @@ public interface IFormatHandler extends Closeable {
 
   /** Sets the current file name. */
   void setId(String id) throws FormatException, IOException;
+  
+  /** Specifies whether or not to validate files when reading. */
+  void setValidate(boolean validate);
+
+  /** Returns true if files should be validated when read.*/
+  boolean isValidate();
 
 }

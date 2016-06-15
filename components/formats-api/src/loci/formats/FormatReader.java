@@ -46,13 +46,16 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -1459,7 +1462,21 @@ public abstract class FormatReader extends FormatHandler
       if (store instanceof OMEXMLMetadata) {
         ((OMEXMLMetadata) store).resolveReferences();
         setupService();
-
+        
+        if (validate) {
+          try {
+            String omexml = service.getOMEXML((MetadataRetrieve)store);
+            if (!XMLTools.validateXML(omexml)) {
+              LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+            }
+            if (!service.validateOMEXML(omexml)) {
+              LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+            }
+          } catch (ServiceException e) {
+            LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+          }
+        }
+        
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
 

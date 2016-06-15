@@ -43,9 +43,16 @@ import java.util.Set;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +72,12 @@ public class ImageReader implements IFormatReader {
     LoggerFactory.getLogger(ImageReader.class);
 
   // -- Static fields --
+  
+  private ServiceFactory factory;
+  private OMEXMLService service;
+  
+  /** Whether or not to validate files upon reading. */
+  protected boolean validate = true;
 
   /** Default list of reader classes, for use with noargs constructor. */
   private static ClassList<IFormatReader> defaultClasses;
@@ -833,6 +846,20 @@ public class ImageReader implements IFormatReader {
     LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
     currentReader.setId(id);
+    if (validate) {
+      setupService();
+      try {
+        String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
+        if (!XMLTools.validateXML(omexml)) {
+          LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+        if (!service.validateOMEXML(omexml)) {
+          LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+      } catch (ServiceException e) {
+        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+      }
+    }
   }
 
   /* @see IFormatReader#reopenFile() */
@@ -844,5 +871,30 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
+
+  /* @see IFormatReader#setValidate(boolean) */
+  @Override
+  public void setValidate(boolean validateFile) {
+    validate = validateFile;
+  }
+
+  /* @see IFormatReader#isValidate() */
+  @Override
+  public boolean isValidate() {
+    return validate;
+  }
+  
+  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
+  private void setupService() {
+    try {
+      if (factory == null) factory = new ServiceFactory();
+      if (service == null) {
+        service = factory.getInstance(OMEXMLService.class);
+      }
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available.", e);
+    }
+  }
 
 }

@@ -107,7 +107,8 @@ public final class ImageConverter {
   private int channel = -1, zSection = -1, timepoint = -1;
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
-
+  private boolean validate = true;
+  
   private IFormatReader reader;
   private MinMaxCalculator minMax;
 
@@ -143,6 +144,7 @@ public final class ImageConverter {
         else if (args[i].equals("-compression")) compression = args[++i];
         else if (args[i].equals("-nogroup")) group = false;
         else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-overwrite")) {
           overwrite = true;
         }
@@ -287,6 +289,7 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
+    writer.setValidate(validate);
     firstTile = true;
     boolean success = parseArgs(args);
     if (!success) {
@@ -350,6 +353,7 @@ public final class ImageConverter {
       minMax = (MinMaxCalculator) reader;
     }
 
+    reader.setValidate(validate);
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
