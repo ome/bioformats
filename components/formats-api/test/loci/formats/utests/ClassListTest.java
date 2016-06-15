@@ -32,6 +32,10 @@
 
 package loci.formats.utests;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.IOException;
 import java.lang.Iterable;
 import java.util.AbstractList;
@@ -50,6 +54,16 @@ import org.testng.annotations.Test;
 public class ClassListTest {
 
   private ClassList<Iterable> c;
+
+  public void writeConfigFile(File file, String content) {
+    try {
+      BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+      bw.write(content);
+      bw.close();
+    } catch(IOException e){
+      e.printStackTrace();
+    }
+  }
   
   @Test
   public void testDefaultConstructor() {
@@ -58,13 +72,24 @@ public class ClassListTest {
   }
 
   @Test
-  public void testNullFileConstructor() throws IOException {
+  public void testNullConstructor() throws IOException {
     c = new ClassList<Iterable>(null, Iterable.class);
     assertEquals(c.getClasses().length, 0);
   }
 
   @Test
-  public void testFileConstructor() throws IOException {
+  public void testConfigFileConstructor1() throws IOException {
+    File configFile = File.createTempFile("iterables", ".tmp");
+    configFile.deleteOnExit();
+    writeConfigFile(configFile, "java.util.ArrayList\njava.util.AbstractList");
+    c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
+    assertEquals(c.getClasses().length, 2);
+    assertEquals(c.getClasses()[0], ArrayList.class);
+    assertEquals(c.getClasses()[1], AbstractList.class);
+  }
+
+  @Test
+  public void testConfigFileConstructor2() throws IOException {
     c = new ClassList<Iterable>("iterables.txt", Iterable.class, ClassListTest.class);
     assertEquals(c.getClasses().length, 2);
     assertEquals(c.getClasses()[0], AbstractList.class);
