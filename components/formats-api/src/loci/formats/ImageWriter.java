@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import loci.common.Region;
 import loci.common.services.DependencyException;
@@ -45,6 +46,8 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.codec.CodecOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 
@@ -69,9 +72,6 @@ public class ImageWriter implements IFormatWriter {
 
   /** Default list of writer classes, for use with noargs constructor. */
   private static ClassList<IFormatWriter> defaultClasses;
-  
-  /** Whether or not to validate files. */
-  protected boolean validate = true;
   
   private ServiceFactory factory;
   private OMEXMLService service;
@@ -193,6 +193,30 @@ public class ImageWriter implements IFormatWriter {
     IFormatWriter[] w = new IFormatWriter[writers.length];
     System.arraycopy(writers, 0, w, 0, writers.length);
     return w;
+  }
+  
+  // -- IMetadataConfigurable API methods --
+
+  /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
+  @Override
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    return getWriters()[0].getSupportedMetadataLevels();
+  }
+
+  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
+  @Override
+  public MetadataOptions getMetadataOptions() {
+    return getWriters()[0].getMetadataOptions();
+  }
+
+  /**
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(MetadataOptions)
+   */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    for (IFormatWriter writer : writers) {
+      writer.setMetadataOptions(options);
+    }
   }
 
   // -- IFormatWriter API methods --
@@ -443,7 +467,7 @@ public class ImageWriter implements IFormatWriter {
   public void setId(String id) throws FormatException, IOException {
     IFormatWriter writer = getWriter(id);
     writer.setId(id);
-    if (validate) {
+    if (getMetadataOptions().isValidate()) {
       setupService();
       try {
         String omexml = service.getOMEXML((MetadataRetrieve)writer.getMetadataRetrieve());
@@ -463,18 +487,6 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public void close() throws IOException {
     getWriter().close();
-  }
-  
-  /* @see IFormatHandler#setValidate(boolean) */
-  @Override
-  public void setValidate(boolean validateFile) {
-    validate = validateFile;
-  }
-
-  /* @see IFormatHandler#isValidate() */
-  @Override
-  public boolean isValidate() {
-    return validate;
   }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */

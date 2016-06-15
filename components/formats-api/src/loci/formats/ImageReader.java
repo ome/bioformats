@@ -75,9 +75,6 @@ public class ImageReader implements IFormatReader {
   
   private ServiceFactory factory;
   private OMEXMLService service;
-  
-  /** Whether or not to validate files upon reading. */
-  protected boolean validate = true;
 
   /** Default list of reader classes, for use with noargs constructor. */
   private static ClassList<IFormatReader> defaultClasses;
@@ -846,7 +843,7 @@ public class ImageReader implements IFormatReader {
     LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
     currentReader.setId(id);
-    if (validate) {
+    if (getMetadataOptions().isValidate()) {
       setupService();
       try {
         String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
@@ -871,18 +868,6 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
-
-  /* @see IFormatReader#setValidate(boolean) */
-  @Override
-  public void setValidate(boolean validateFile) {
-    validate = validateFile;
-  }
-
-  /* @see IFormatReader#isValidate() */
-  @Override
-  public boolean isValidate() {
-    return validate;
-  }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */
   private void setupService() {

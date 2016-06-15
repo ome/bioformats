@@ -329,7 +329,7 @@ public abstract class FormatWriter extends FormatHandler
       initialized[i] = new boolean[getPlaneCount(i)];
     }
     
-    if (validate) {
+    if (getMetadataOptions().isValidate()) {
       try {
         String omexml = service.getOMEXML(r);
         if (!XMLTools.validateXML(omexml)) {
