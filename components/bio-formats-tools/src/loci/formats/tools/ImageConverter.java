@@ -62,6 +62,8 @@ import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.UpgradeChecker;
 import loci.formats.gui.Index16ColorModel;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -289,7 +291,9 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
-    writer.setValidate(validate);
+    MetadataOptions options= new DefaultMetadataOptions();
+    options.setValidate(validate);
+    writer.setMetadataOptions(options);
     firstTile = true;
     boolean success = parseArgs(args);
     if (!success) {
@@ -353,7 +357,7 @@ public final class ImageConverter {
       minMax = (MinMaxCalculator) reader;
     }
 
-    reader.setValidate(validate);
+    reader.setMetadataOptions(options);
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);

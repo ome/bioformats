@@ -1032,7 +1032,9 @@ public class ImageInfo {
     // initialize reader
     long s = System.currentTimeMillis();
     try {
-      reader.setValidate(validate);
+      MetadataOptions options= new DefaultMetadataOptions();
+      options.setValidate(validate);
+      reader.setMetadataOptions(options);
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();
