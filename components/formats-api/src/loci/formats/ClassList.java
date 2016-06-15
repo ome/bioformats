@@ -34,7 +34,9 @@ package loci.formats;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,16 +131,24 @@ public class ClassList<T> {
     throws IOException
   {
     List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
-    // read classes from file
-    BufferedReader in = null;
+
+    // locate an input stream
+    InputStream stream = null;
     if (location == null) {
-    in = new BufferedReader(new InputStreamReader(
-      new FileInputStream(file), Constants.ENCODING));
+      try {
+        stream = new FileInputStream(file);
+      } catch (FileNotFoundException e) {
+        LOGGER.debug(e.getMessage());
+      }
+    } else stream = location.getResourceAsStream(file);
+    if (stream == null) {
+      LOGGER.warn("Could not find " + file);
+      return parsedClasses;
     }
-    else {
-    in = new BufferedReader(new InputStreamReader(
-      location.getResourceAsStream(file), Constants.ENCODING));
-    }
+
+    // Read classes from file
+    BufferedReader in = null;
+    in = new BufferedReader(new InputStreamReader(stream, Constants.ENCODING));
     while (true) {
       String line = null;
       line = in.readLine();

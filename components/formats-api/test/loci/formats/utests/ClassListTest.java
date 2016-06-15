@@ -97,6 +97,18 @@ public class ClassListTest {
   }
 
   @Test
+  public void testInvalidFileConstructor1() throws IOException {
+    c = new ClassList<Iterable>("invalid", Iterable.class, null);
+    assertEquals(c.getClasses().length, 0);
+  }
+
+  @Test
+  public void testInvalidFileConstructor2() throws IOException {
+    c = new ClassList<Iterable>("invalid", Iterable.class, ClassListTest.class);
+    assertEquals(c.getClasses().length, 0);
+  }
+
+  @Test
   public void testParseFile() throws IOException {
     c = new ClassList<Iterable>(null, Iterable.class);
     List<Class<? extends Iterable>> classes = c.parseFile(
