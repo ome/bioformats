@@ -100,7 +100,7 @@ public class ClassList<T> {
   {
     this(base);
     if (file == null) return;
-    classes = parseFile(file, location);
+    classes = parseFile(file, location, true);
   }
 
   // -- ClassList API methods --
@@ -116,7 +116,7 @@ public class ClassList<T> {
   public List<Class<? extends T>> parseFile(String file, Class<?> location)
     throws IOException
   {
-    return parseFile(file, location, true);
+    return parseFile(file, location, false);
   }
 
    /**
@@ -195,6 +195,14 @@ public class ClassList<T> {
    * Adds the given class, which must be assignable
    * to the base class, to the list.
    */
+  public void addClass(int index, Class<? extends T> c) {
+    classes.add(index, c);
+  }
+
+  /**
+   * Adds the given class, which must be assignable
+   * to the base class, to the list.
+   */
   public void addClass(Class<? extends T> c) {
     classes.add(c);
   }
@@ -202,6 +210,24 @@ public class ClassList<T> {
   /** Removes the given class from the list. */
   public void removeClass(Class<? extends T> c) {
     classes.remove(c);
+  }
+
+  /**
+   * Appends a list of classes which must be assignable to the base class
+   */
+  public void append(List<Class<? extends T>> l) {
+    for (int i = 0; i < l.size(); i++) {
+      addClass(l.get(i));
+    }
+  }
+
+  /**
+   * Prepends a list of classes which must be assignable to the base class
+   */
+  public void prepend(List<Class<? extends T>> l) {
+    for (int i = l.size() -1; i >= 0; i--) {
+      addClass(0, l.get(i));
+    }
   }
 
   /** Gets the list of classes as an array. */

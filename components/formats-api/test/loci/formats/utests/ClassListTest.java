@@ -141,5 +141,41 @@ public class ClassListTest {
     c.removeClass(ArrayList.class);
     assertEquals(c.getClasses().length, 0);
   }
+
+  @Test
+  public void testAppend()  throws IOException{
+      File configFile = File.createTempFile("iterables1", ".tmp");
+      configFile.deleteOnExit();
+      writeConfigFile(configFile, "java.util.ArrayList");
+      c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
+      assertEquals(c.getClasses().length, 1);
+      assertEquals(c.getClasses()[0], ArrayList.class);
+
+      File configFile2 = File.createTempFile("iterables2", ".tmp");
+      configFile2.deleteOnExit();
+      writeConfigFile(configFile2, "java.util.AbstractList");
+      c.append(c.parseFile(configFile2.getAbsolutePath(), null));
+      assertEquals(c.getClasses().length, 2);
+      assertEquals(c.getClasses()[0], ArrayList.class);
+      assertEquals(c.getClasses()[1], AbstractList.class);
+  }
+
+  @Test
+  public void testPrepend()  throws IOException{
+      File configFile = File.createTempFile("iterables1", ".tmp");
+      configFile.deleteOnExit();
+      writeConfigFile(configFile, "java.util.ArrayList");
+      c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
+      assertEquals(c.getClasses().length, 1);
+      assertEquals(c.getClasses()[0], ArrayList.class);
+
+      File configFile2 = File.createTempFile("iterables2", ".tmp");
+      configFile2.deleteOnExit();
+      writeConfigFile(configFile2, "java.util.AbstractList");
+      c.prepend(c.parseFile(configFile2.getAbsolutePath(), null));
+      assertEquals(c.getClasses().length, 2);
+      assertEquals(c.getClasses()[0], AbstractList.class);
+      assertEquals(c.getClasses()[1], ArrayList.class);
+  }
 }
 
