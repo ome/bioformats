@@ -790,6 +790,7 @@ public class ZeissCZIReader extends FormatReader {
 
     ms0.dimensionOrder = "XYCZT";
 
+    ArrayList<Integer> pixelTypes = new ArrayList<Integer>();
     if (seriesCount > 1 || maxResolution > 0) {
       core.clear();
       for (int i=0; i<seriesCount; i++) {
@@ -801,6 +802,17 @@ public class ZeissCZIReader extends FormatReader {
           resolution.resolutionCount = 1;
           core.add(resolution);
         }
+      }
+    }
+    else {
+      // check for case where each channel has a different pixel type
+
+      pixelTypes.add(planes.get(0).directoryEntry.pixelType);
+      for (SubBlock plane : planes) {
+        if (!pixelTypes.contains(plane.directoryEntry.pixelType)) {
+          pixelTypes.add(plane.directoryEntry.pixelType);
+        }
+        plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
       }
     }
 
@@ -891,6 +903,23 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       segment.close();
+    }
+
+    if (seriesCount * pixelTypes.size() > 1) {
+      core.clear();
+      for (int j=0; j<pixelTypes.size(); j++) {
+        for (int i=0; i<seriesCount; i++) {
+          CoreMetadata add = new CoreMetadata(ms0);
+          if (pixelTypes.size() > 1) {
+            int newC = originalC / pixelTypes.size();
+            add.sizeC = newC;
+            add.imageCount = add.sizeZ * add.sizeT;
+            add.rgb = false;
+            convertPixelType(add, pixelTypes.get(j));
+          }
+          core.add(add);
+        }
+      }
     }
 
     // populate the OME metadata
@@ -1433,6 +1462,12 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+    int allLengths = 1;
+    for (int len : extraLengths) {
+      if (len > 0) {
+        allLengths *= len;
+      }
+    }
 
     for (int p=0; p<planes.size(); p++) {
       LOGGER.trace("  processing plane #{} of {}", p, planes.size());
@@ -1456,7 +1491,7 @@ public class ZeissCZIReader extends FormatReader {
         int extraIndex = extraDimOrder.indexOf(dimension.dimension.charAt(0));
         switch (dimension.dimension.charAt(0)) {
           case 'C':
-            c = dimension.start;
+            c = dimension.start - plane.pixelTypeIndex;
             break;
           case 'Z':
             z = dimension.start;
@@ -2833,6 +2868,10 @@ public class ZeissCZIReader extends FormatReader {
 
   private void convertPixelType(int pixelType) throws FormatException {
     CoreMetadata ms0 = core.get(0);
+    convertPixelType(ms0, pixelType);
+  }
+
+  private void convertPixelType(CoreMetadata ms0, int pixelType) throws FormatException {
     switch (pixelType) {
       case GRAY8:
         ms0.pixelType = FormatTools.UINT8;
@@ -3102,6 +3141,7 @@ public class ZeissCZIReader extends FormatReader {
     public int coreIndex;
     public int resolutionIndex;
     public int planeIndex;
+    public int pixelTypeIndex;
 
     private long dataOffset;
 
