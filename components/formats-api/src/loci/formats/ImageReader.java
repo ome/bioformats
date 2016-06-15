@@ -851,13 +851,13 @@ public class ImageReader implements IFormatReader {
       try {
         String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
         if (!XMLTools.validateXML(omexml)) {
-          LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+          throw new FormatException("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
         }
         if (!service.validateOMEXML(omexml)) {
-          LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+          throw new FormatException("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
         }
       } catch (ServiceException e) {
-        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+        throw new FormatException("OMEXMLService unable to create OME-XML metadata object.", e);
       }
     }
   }

@@ -40,8 +40,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import loci.common.Region;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +72,9 @@ public class ImageWriter implements IFormatWriter {
   
   /** Whether or not to validate files. */
   protected boolean validate = true;
+  
+  private ServiceFactory factory;
+  private OMEXMLService service;
 
   // -- Static utility methods --
 
@@ -433,7 +441,22 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    getWriter(id).setId(id);
+    IFormatWriter writer = getWriter(id);
+    writer.setId(id);
+    if (validate) {
+      setupService();
+      try {
+        String omexml = service.getOMEXML((MetadataRetrieve)writer.getMetadataRetrieve());
+        if (!XMLTools.validateXML(omexml)) {
+          throw new FormatException("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+        if (!service.validateOMEXML(omexml)) {
+          throw new FormatException("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+        }
+      } catch (ServiceException e) {
+        throw new FormatException("OMEXMLService unable to create OME-XML metadata object.", e);
+      }
+    }
   }
 
   /* @see IFormatHandler#close() */
@@ -452,6 +475,19 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public boolean isValidate() {
     return validate;
+  }
+  
+  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
+  private void setupService() {
+    try {
+      if (factory == null) factory = new ServiceFactory();
+      if (service == null) {
+        service = factory.getInstance(OMEXMLService.class);
+      }
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available.", e);
+    }
   }
 
 }
