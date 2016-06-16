@@ -110,8 +110,8 @@ namespace ome
                 {
                   // This pointer check is unnecessary--the Element
                   // class would throw; but this avoids the need to
-                  // throw and catch many exceptions during document
-                  // processing.
+                  // throw and catch many std::logic_error exceptions
+                  // during document processing.
                   if (dynamic_cast<const xercesc::DOMElement *>(pos->get()))
                     {
                       common::xml::dom::Element child(pos->get(), false);
