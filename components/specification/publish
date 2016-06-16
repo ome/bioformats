@@ -99,18 +99,18 @@ schemaversion() {
 schemadesc() {
     case "${1%.xsd}" in
         BinaryFile)
-            echo "Binary File schema used to describe a file location, or the location of a fragment within a file." ;;
+            echo "Binary File schema used to describe a file location, or the location of a fragment within a file. It is combined with the main OME schema as of 2016-06." ;;
         OME|ome)
-            echo "main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
+            echo "main schema which defines the OME ontology for microscopy." ;;
 
         OMERO)
             echo "schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
         ROI)
-            echo "Region Of Interest schema." ;;
+            echo "Region Of Interest schema. It is combined with the main OME schema as of 2016-06." ;;
         SA)
-            echo "Structured Annotation schema." ;;
+            echo "Structured Annotation schema. It is combined with the main OME schema as of 2016-06." ;;
         SPW)
-            echo "Screen/Plate/Well schema." ;;
+            echo "Screen/Plate/Well schema. It is combined with the main OME schema as of 2016-06." ;;
         AnalysisChain)
             echo "Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
         AnalysisModule)
