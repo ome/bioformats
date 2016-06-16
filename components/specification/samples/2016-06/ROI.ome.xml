@@ -33,7 +33,7 @@
       <Point ID="Shape:2" FillColor="1" FillRule="NonZero" FontFamily="sans-serif"
                  FontSize="1" FontStyle="Bold" LineCap="Butt" StrokeColor="1" StrokeDashArray="1"
                  StrokeWidth="1" Text="Hello" TheC="2" X="1" Y="1"/>
-      <Line ID="Shape:5" X1="1" Y1="1" X2="2" Y2="2" MarkerStart="Arrow" MarkerEnd="Circle"/>
+      <Line ID="Shape:5" X1="1" Y1="1" X2="2" Y2="2" MarkerStart="Arrow" MarkerEnd="Arrow"/>
     </Union>
   </ROI>
   <ROI ID="3">

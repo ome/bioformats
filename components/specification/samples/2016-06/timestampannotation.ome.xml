@@ -206,9 +206,9 @@
       <Polyline ID="Shape:5" StrokeWidth="2" StrokeColor="16" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
                  MarkerEnd="Arrow"/>
       <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="161" Points="1.1,1.1 10.1,20.1, 20.1,20.1 20.1,10.1" 
-                 MarkerStart="Circle"/>
-      <Line ID="Shape:7" StrokeWidth="2" StrokeColor="17" X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Square"
-                 MarkerEnd="Circle"/>
+                 MarkerStart="Arrow"/>
+      <Line ID="Shape:7" StrokeWidth="2" StrokeColor="17" X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Arrow"
+                 MarkerEnd="Arrow"/>
       <Line ID="Shape:8" StrokeWidth="2" StrokeColor="171" X1="1.71" Y1="2.71" X2="3.71" Y2="4.71" MarkerEnd="Circle"/>
       <Line ID="Shape:9" StrokeWidth="2" StrokeColor="172" X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Circle"/>
     </Union>
