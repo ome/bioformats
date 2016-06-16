@@ -845,6 +845,7 @@ public class ImageReader implements IFormatReader {
     currentReader.setId(id);
     if (getMetadataOptions().isValidate()) {
       try {
+        setupService();
         String omexml = service.getOMEXML((MetadataRetrieve)currentReader);
         service.validateOMEXML(omexml);
       } catch (ServiceException e) {
