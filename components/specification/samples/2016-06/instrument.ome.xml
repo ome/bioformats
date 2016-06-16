@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
-                         http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
   <Instrument ID="Instrument:0">
     <Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3"
                SerialNumber="L3-1234"/>

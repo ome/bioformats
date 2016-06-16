@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
-                         http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
   <Image ID="Image:0" Name="18x24y1z5t1c8b-text">
     <AcquisitionDate>2010-03-02T10:01:15</AcquisitionDate>
     <Pixels DimensionOrder="XYZCT" ID="Pixels:0:0" Type="uint8" SizeX="18" SizeY="24"

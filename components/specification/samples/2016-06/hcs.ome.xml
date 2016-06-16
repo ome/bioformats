@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OME xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0
-                         http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd">
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
 
   <Plate
      ID="Plate:1"
