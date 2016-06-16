@@ -175,7 +175,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * anything other than {@link FormatTools#INT8} or {@link FormatTools#UINT8},
    * this method will return null.
    *
-   * @deprecated Superseded by stateless get8BitLookupTable(int).
+   * @deprecated Superseded by stateless {@link #get8BitLookupTable(int)}.
    */
   byte[][] get8BitLookupTable() throws FormatException, IOException;
 
@@ -187,7 +187,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * anything other than {@link FormatTools#INT16} or {@link
    * FormatTools#UINT16}, this method will return null.
    *
-   * @deprecated Superseded by stateless get16BitLookupTable(int).
+   * @deprecated Superseded by stateless {@link #get16BitLookupTable(int)}.
    */
   short[][] get16BitLookupTable() throws FormatException, IOException;
 
