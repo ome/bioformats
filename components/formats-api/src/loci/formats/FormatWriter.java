@@ -331,13 +331,8 @@ public abstract class FormatWriter extends FormatHandler
     
     if (getMetadataOptions().isValidate()) {
       try {
-        String omexml = service.getOMEXML(r);
-        if (!XMLTools.validateXML(omexml)) {
-          LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
-        }
-        if (!service.validateOMEXML(omexml)) {
-          LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
-        }
+        String omexml = service.getOMEXML((MetadataRetrieve)r);
+        service.validateOMEXML(omexml);
       } catch (ServiceException e) {
         LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
       }
