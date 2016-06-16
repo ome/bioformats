@@ -41,6 +41,7 @@ import ome.xml.model.primitives.PositiveInteger;
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
+import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
@@ -331,11 +332,25 @@ public abstract class FormatWriter extends FormatHandler
     
     if (getMetadataOptions().isValidate()) {
       try {
-        String omexml = service.getOMEXML((MetadataRetrieve)r);
+        setupService();
+        String omexml = service.getOMEXML(r);
         service.validateOMEXML(omexml);
       } catch (ServiceException e) {
         LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
       }
+    }
+  }
+  
+  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
+  private void setupService() {
+    try {
+      if (factory == null) factory = new ServiceFactory();
+      if (service == null) {
+        service = factory.getInstance(OMEXMLService.class);
+      }
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available.", e);
     }
   }
 
