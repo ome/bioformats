@@ -113,12 +113,16 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
+    if (readers == null)
+    {
+      return super.get8BitLookupTable(0);
+    }
+
     int[] zct = getZCTCoords(no);
     int lastFile = FormatTools.getIndex("XYZCT", getSizeZ(), getEffectiveSizeC(),
       getSizeT(), getImageCount(), zct[0], zct[1], zct[2]) % files.length;
 
-    if (readers == null || lastFile >= readers.length ||
-      readers[lastFile] == null)
+    if (lastFile >= readers.length || readers[lastFile] == null)
     {
       return super.get8BitLookupTable(0);
     }
@@ -130,12 +134,16 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
+    if (readers == null)
+    {
+      return super.get16BitLookupTable(0);
+    }
+
     int[] zct = getZCTCoords(no);
     int lastFile = FormatTools.getIndex("XYZCT", getSizeZ(), getEffectiveSizeC(),
       getSizeT(), getImageCount(), zct[0], zct[1], zct[2]) % files.length;
 
-    if (readers == null || lastFile >= readers.length ||
-      readers[lastFile] == null)
+    if (lastFile >= readers.length || readers[lastFile] == null)
     {
       return super.get16BitLookupTable(0);
     }
