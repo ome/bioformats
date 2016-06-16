@@ -472,13 +472,13 @@ public class ImageWriter implements IFormatWriter {
       try {
         String omexml = service.getOMEXML((MetadataRetrieve)writer.getMetadataRetrieve());
         if (!XMLTools.validateXML(omexml)) {
-          throw new FormatException("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
+          LOGGER.warn("Invalid XML when retrieving OME-XML from OMEXMLMetadata object.");
         }
         if (!service.validateOMEXML(omexml)) {
-          throw new FormatException("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
+          LOGGER.warn("Invalid OME-XML when retrieving OME-XML from OMEXMLMetadata object.");
         }
       } catch (ServiceException e) {
-        throw new FormatException("OMEXMLService unable to create OME-XML metadata object.", e);
+        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
       }
     }
   }
