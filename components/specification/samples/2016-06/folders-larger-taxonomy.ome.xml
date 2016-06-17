@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06” xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Creator="OME Bio-Formats 5.2.0-SNAPSHOT" UUID="urn:uuid:9995d69a-7b56-4f88-9a5e-1e70560daa92" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06 http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06” xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" UUID="urn:uuid:9995d69a-7b56-4f88-9a5e-1e70560daa92" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06 http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
 <Folder ID="Folder:13" Name="increased duration of cell migration process"></Folder>
 <Folder ID="Folder:30" Name="cellular component phenotype"></Folder>
 <Folder ID="Folder:16" Name="increased substrate-dependent cell migration, cell extension"></Folder>
