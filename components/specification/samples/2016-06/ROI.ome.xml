@@ -19,9 +19,9 @@
       <BinData BigEndian="false" Length="32"
                    >//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BinData>
     </Pixels>
-    <ROIRef ID="1"/>
-    <ROIRef ID="2"/>
-    <ROIRef ID="3"/>
+    <ROIRef ID="ROI:1"/>
+    <ROIRef ID="ROI:2"/>
+    <ROIRef ID="ROI:3"/>
   </Image>
   <ROI ID="ROI:1">
     <Union>

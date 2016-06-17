@@ -126,9 +126,9 @@
       <BinData BigEndian="false" Length="32"
                    >//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BinData>
     </Pixels>
-    <ROIRef ID="0"/>
-    <ROIRef ID="1"/>
-    <ROIRef ID="2"/>
+    <ROIRef ID="ROI:0"/>
+    <ROIRef ID="ROI:1"/>
+    <ROIRef ID="ROI:2"/>
     <AnnotationRef ID="Annotation:P0:0"/>
   </Image>
   <StructuredAnnotations>
