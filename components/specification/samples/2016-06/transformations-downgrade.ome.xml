@@ -154,7 +154,7 @@
   <ROI ID="2">
     <Union>
       <Point ID="Shape:2" FillRule="NonZero" FontFamily="sans-serif" FontSize="1"
-                 FontStyle="Bold" LineCap="Butt" StrokeDashArray="1" StrokeWidth="1" TheC="2"
+                 FontStyle="Bold" StrokeDashArray="1" StrokeWidth="1" TheC="2"
                  FillColor="1" StrokeColor="1" Text="Hello" Locked="true" X="1" Y="1"/>
     </Union>
   </ROI>
@@ -163,7 +163,7 @@
       <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4"/>
       <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
       <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
-                 Text="Hello" FillColor="1" FontSize="1" LineCap="Butt" StrokeColor="1"
+                 Text="Hello" FillColor="1" FontSize="1" StrokeColor="1"
                  StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" Visible="true" X="1" Y="1"/>
       <Polygon ID="Shape:5" StrokeWidth="2" StrokeColor="1" Points="1,1 10,20, 20,20 20,10"/>
       <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="1" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"

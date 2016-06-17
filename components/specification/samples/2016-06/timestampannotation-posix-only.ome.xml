@@ -163,7 +163,7 @@
   <ROI ID="1">
     <Union>
       <Point ID="Shape:1" FillRule="NonZero" FontFamily="sans-serif" FontSize="1"
-                 FontStyle="Bold" LineCap="Butt" StrokeDashArray="1" StrokeWidth="1" TheC="2"
+                 FontStyle="Bold" StrokeDashArray="1" StrokeWidth="1" TheC="2"
                  FillColor="1" StrokeColor="1" Text="Hello" X="1" Y="1"/>
     </Union>
     <Description>ROI 1 Upgradable description.</Description>
