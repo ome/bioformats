@@ -23,12 +23,12 @@
     <ROIRef ID="2"/>
     <ROIRef ID="3"/>
   </Image>
-  <ROI ID="1">
+  <ROI ID="ROI:1">
     <Union>
       <Point ID="Shape:1" TheC="0" X="1" Y="1"/>
     </Union>
   </ROI>
-  <ROI ID="2">
+  <ROI ID="ROI:2">
     <Union>
       <Point ID="Shape:2" FillColor="1" FillRule="NonZero" FontFamily="sans-serif"
                  FontSize="1" FontStyle="Bold" StrokeColor="1" StrokeDashArray="1"
@@ -36,7 +36,7 @@
       <Line ID="Shape:5" X1="1" Y1="1" X2="2" Y2="2" MarkerStart="Arrow" MarkerEnd="Arrow"/>
     </Union>
   </ROI>
-  <ROI ID="3">
+  <ROI ID="ROI:3">
     <Union>
       <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4"/>
       <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif" X="1" Y="1"/>
