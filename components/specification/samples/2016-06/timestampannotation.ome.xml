@@ -215,13 +215,13 @@
   </ROI>
   <ROI ID="ROI:3">
     <Union>
-      <Label ID="Shape:11" Visible="false" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:11" Text="Removed Path" X="0" Y="0"/>
     </Union>
   </ROI>
   <ROI ID="ROI:4">
     <Union>
-      <Label ID="Shape:12" Visible="false" Text="Removed Path" X="0" Y="0"/>
-      <Label ID="Shape:13" Visible="false" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:12" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:13" Text="Removed Path" X="0" Y="0"/>
     </Union>
   </ROI>
 </OME>

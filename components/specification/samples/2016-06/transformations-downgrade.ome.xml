@@ -165,7 +165,7 @@
       </Rectangle>
       <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
                  Text="Hello" FillColor="1" FontSize="1" StrokeColor="1"
-                 StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" Visible="true" X="1" Y="1"/>
+                 StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" X="1" Y="1"/>
       <Polygon ID="Shape:5" StrokeWidth="2" StrokeColor="1" Points="1,1 10,20, 20,20 20,10"/>
       <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="1" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
                       MarkerEnd="Arrow"/>
@@ -177,13 +177,13 @@
   </ROI>
   <ROI ID="ROI:4">
     <Union>
-      <Label ID="Shape:9" Visible="false" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:9" Text="Removed Path" X="0" Y="0"/>
     </Union>
   </ROI>
   <ROI ID="ROI:5">
     <Union>
-      <Label ID="Shape:10" Visible="false" Text="Removed Path" X="0" Y="0"/>
-      <Label ID="Shape:11" Visible="false" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:10" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:11" Text="Removed Path" X="0" Y="0"/>
     </Union>
   </ROI>
 </OME>
