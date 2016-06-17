@@ -101,24 +101,10 @@ public class ClassList<T> {
   {
     this(base);
     if (file == null) return;
-    classes = parseFile(file, location, true);
+    classes = parseFile(file, location);
   }
 
   // -- ClassList API methods --
-
-  /**
-   * Parses a list of classes from a configuration file.
-   * @param file Configuration file containing the list of classes.
-   * @param location Class indicating which package to search for the file.
-   *        If {@code null}, 'file' is interpreted as an absolute path name.
-   * @return A list of classes parsed from the file
-   * @throws IOException if the file cannot be read.
-   */
-  public List<Class<? extends T>> parseFile(String file, Class<?> location)
-    throws IOException
-  {
-    return parseFile(file, location, false);
-  }
 
    /**
     * Parses a list of classes from a configuration file.
@@ -128,7 +114,7 @@ public class ClassList<T> {
     * @return A list of classes parsed from the file
     * @throws IOException if the file cannot be read.
     */
-  public List<Class<? extends T>> parseFile(String file, Class<?> location, boolean strict)
+  public List<Class<? extends T>> parseFile(String file, Class<?> location)
     throws IOException
   {
     List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
@@ -183,7 +169,7 @@ public class ClassList<T> {
         LOGGER.debug("", exc);
       }
       if (c == null) {
-        if (strict) LOGGER.error("\"{}\" is not valid.", line);
+        LOGGER.error("\"{}\" is not valid.", line);
         continue;
       }
       parsedClasses.add(c);
