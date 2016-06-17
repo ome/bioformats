@@ -111,9 +111,8 @@ public class ClassListTest {
   @Test
   public void testParseFile() throws IOException {
     c = new ClassList<Iterable>(null, Iterable.class);
-    List<Class<? extends Iterable>> classes = c.parseFile(
-      "iterables.txt",ClassListTest.class);
-    assertEquals(classes.toArray(new Class[0]).length, 2);
+    c.parseFile("iterables.txt",ClassListTest.class);
+    assertEquals(c.getClasses().length, 2);
   }
 
   @Test
@@ -150,20 +149,6 @@ public class ClassListTest {
     assertEquals(c.getClasses()[0], ArrayList.class);
 
     String configFile2 = writeConfigFile("java.util.AbstractList");
-    c.append(c.parseFile(configFile2, null));
-    assertEquals(c.getClasses().length, 2);
-    assertEquals(c.getClasses()[0], ArrayList.class);
-    assertEquals(c.getClasses()[1], AbstractList.class);
-  }
-
-  @Test
-  public void testAppend2() throws IOException {
-    configFile = writeConfigFile("java.util.ArrayList");
-    c = new ClassList<Iterable>(configFile, Iterable.class, null);
-    assertEquals(c.getClasses().length, 1);
-    assertEquals(c.getClasses()[0], ArrayList.class);
-
-    String configFile2 = writeConfigFile("java.util.AbstractList");
     ClassList<Iterable> c2 = new ClassList<Iterable>(configFile2, Iterable.class, null);
     c.append(c2);
     assertEquals(c.getClasses().length, 2);
@@ -186,20 +171,33 @@ public class ClassListTest {
     assertEquals(c.getClasses()[1], ArrayList.class);
   }
 
+  @DataProvider(name = "skipped lines")
+  public Object[][] createLines() throws ClassNotFoundException {
+    return new Object[][] {
+      {""}, {"  # comment"}, {"# comment"},
+    };
+  }
+
+  @Test(dataProvider = "skipped lines")
+  public void testParseSkippedLine(String line) throws IOException  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    c.parseLine(line);
+    assertEquals(c.getClasses().length, 0);
+  }
+
   @DataProvider(name = "configuration lines")
   public Object[][] createConfigurationLines() throws ClassNotFoundException {
     return new Object[][] {
-      {"", null},
-      {"java.util.ArrayList", Class.forName("java.util.ArrayList")},
-      {"java.util.ArrayList  ", Class.forName("java.util.ArrayList")},
-      {"java.util.ArrayList  # comment", Class.forName("java.util.ArrayList")},
+      {"java.util.ArrayList", ArrayList.class},
+      {"java.util.ArrayList  ", ArrayList.class},
+      {"java.util.ArrayList  # comment", ArrayList.class},
     };
   }
 
   @Test(dataProvider = "configuration lines")
   public void testParseLine(String line, Object output) throws IOException  {
     c = new ClassList<Iterable>(null, Iterable.class);
-    Class<? extends Iterable> c2 = c.parseLine(line);
-    assertEquals(c2, output);
+    c.parseLine(line);
+    assertEquals(c.getClasses()[0], output);
   }
 }

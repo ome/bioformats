@@ -41,7 +41,6 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
-
 import loci.common.Constants;
 
 import org.slf4j.Logger;
@@ -101,7 +100,7 @@ public class ClassList<T> {
   {
     this(base);
     if (file == null) return;
-    classes = parseFile(file, location);
+    parseFile(file, location);
   }
 
   // -- ClassList API methods --
@@ -112,13 +111,13 @@ public class ClassList<T> {
    *             must be formatted as "package.class  # comments".
    * @return A class parsed from the input string or {@code null}.
    */
- public Class<? extends T> parseLine(String line)
+  public void parseLine(String line)
    {
       // ignore characters following # sign (comments)
       int ndx = line.indexOf("#");
       if (ndx >= 0) line = line.substring(0, ndx);
       line = line.trim();
-      if (line.equals("")) return null;
+      if (line.equals("")) return;
 
       // load class
       Class<? extends T> c = null;
@@ -143,8 +142,9 @@ public class ClassList<T> {
       }
       if (c == null) {
         LOGGER.error("\"{}\" is not valid.", line);
+      } else {
+        classes.add(c);
       }
-      return c;
   }
 
    /**
@@ -155,11 +155,9 @@ public class ClassList<T> {
     * @return A list of classes parsed from the file
     * @throws IOException if the file cannot be read.
     */
-  public List<Class<? extends T>> parseFile(String file, Class<?> location)
+  public void parseFile(String file, Class<?> location)
     throws IOException
   {
-    List<Class<? extends T>> parsedClasses = new ArrayList<Class<? extends T>>();
-
     // locate an input stream
     InputStream stream = null;
     if (location == null) {
@@ -171,24 +169,19 @@ public class ClassList<T> {
     } else stream = location.getResourceAsStream(file);
     if (stream == null) {
       LOGGER.warn("Could not find " + file);
-      return parsedClasses;
+      return;
     }
 
     // Read classes from file
     BufferedReader in = null;
     in = new BufferedReader(new InputStreamReader(stream, Constants.ENCODING));
-    Class<? extends T> c;
     while (true) {
       String line = null;
       line = in.readLine();
       if (line == null) break;
-
-      c = parseLine(line);
-      if (c == null) continue;
-      parsedClasses.add(c);
+      parseLine(line);
     }
     in.close();
-    return parsedClasses;
   }
 
   /**
