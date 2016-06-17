@@ -168,8 +168,9 @@
   </ROI>
   <ROI ID="2">
     <Union>
-      <Rectangle ID="Shape:2" FillRule="EvenOdd" Text="Hi There! (from shape 2)" X="1" Y="2" Width="3" Height="4"/>
-      <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      <Rectangle ID="Shape:2" FillRule="EvenOdd" Text="Hi There! (from shape 2)" X="1" Y="2" Width="3" Height="4">
+        <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      </Rectangle>
       <Label ID="Shape:3" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
                  Text="Hello World Text Value!(from shape 3)" X="1" Y="1"/>
       <Polygon ID="Shape:4" StrokeWidth="2" StrokeColor="15" Points="1,1 10,20, 20,20 20,10"/>

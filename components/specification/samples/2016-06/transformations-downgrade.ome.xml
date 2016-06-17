@@ -160,8 +160,9 @@
   </ROI>
   <ROI ID="3">
     <Union>
-      <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4"/>
-      <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4">
+        <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      </Rectangle>
       <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
                  Text="Hello" FillColor="1" FontSize="1" StrokeColor="1"
                  StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" Visible="true" X="1" Y="1"/>
