@@ -469,6 +469,7 @@ public class ImageWriter implements IFormatWriter {
     writer.setId(id);
     if (getMetadataOptions().isValidate()) {
       try {
+        setupService();
         String omexml = service.getOMEXML(writer.getMetadataRetrieve());
         service.validateOMEXML(omexml);
       } catch (ServiceException e) {
