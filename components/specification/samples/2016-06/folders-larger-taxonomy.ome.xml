@@ -73,12 +73,6 @@
 <LightPath></LightPath></Channel>
 <Channel Color="65535" ID="Channel:0:2" Name="Blue" SamplesPerPixel="1">
 <LightPath></LightPath></Channel>
-<TiffData FirstC="0" FirstT="0" FirstZ="0" IFD="0" PlaneCount="1">
-<UUID FileName="larger-taxonomy-updated.ome.tiff">urn:uuid:9995d69a-7b56-4f88-9a5e-1e70560daa92</UUID></TiffData>
-<TiffData FirstC="1" FirstT="0" FirstZ="0" IFD="1" PlaneCount="1">
-<UUID FileName="larger-taxonomy-updated.ome.tiff">urn:uuid:9995d69a-7b56-4f88-9a5e-1e70560daa92</UUID></TiffData>
-<TiffData FirstC="2" FirstT="0" FirstZ="0" IFD="2" PlaneCount="1">
-<UUID FileName="larger-taxonomy-updated.ome.tiff">urn:uuid:9995d69a-7b56-4f88-9a5e-1e70560daa92</UUID></TiffData>
 <Plane TheC="0" TheT="0" TheZ="0"></Plane>
 <Plane TheC="1" TheT="0" TheZ="0"></Plane>
 <Plane TheC="2" TheT="0" TheZ="0"></Plane>

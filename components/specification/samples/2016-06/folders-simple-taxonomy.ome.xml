@@ -29,12 +29,6 @@
 <LightPath></LightPath></Channel>
 <Channel Color="65535" ID="Channel:0:2" Name="Blue" SamplesPerPixel="1">
 <LightPath></LightPath></Channel>
-<TiffData FirstC="0" FirstT="0" FirstZ="0" IFD="0" PlaneCount="1">
-<UUID FileName="simple-taxonomy-updated.ome.tif">urn:uuid:f3cd571f-d966-4179-9e39-29564e09c4ff</UUID></TiffData>
-<TiffData FirstC="1" FirstT="0" FirstZ="0" IFD="1" PlaneCount="1">
-<UUID FileName="simple-taxonomy-updated.ome.tif">urn:uuid:f3cd571f-d966-4179-9e39-29564e09c4ff</UUID></TiffData>
-<TiffData FirstC="2" FirstT="0" FirstZ="0" IFD="2" PlaneCount="1">
-<UUID FileName="simple-taxonomy-updated.ome.tif">urn:uuid:f3cd571f-d966-4179-9e39-29564e09c4ff</UUID></TiffData>
 <Plane TheC="0" TheT="0" TheZ="0"></Plane>
 <Plane TheC="1" TheT="0" TheZ="0"></Plane>
 <Plane TheC="2" TheT="0" TheZ="0"></Plane>
