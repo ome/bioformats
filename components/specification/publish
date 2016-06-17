@@ -57,7 +57,7 @@ ismostrecent() {
 # Check if a schema is current (not necessarily the latest version).
 # $1=schema name
 iscurrent() {
-    if [ "${1%.xsd}" = "ome" ]
+    if [ "${1%.xsd}" = "ome" ] || [ "${1%.xsd}" = "OME" ]
     then
         return 0
     fi
