@@ -5,7 +5,7 @@ If you wish to make use of Bio-Formats within your own software, you can
 :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to use it as
 a library. Just add **formats-gpl.jar** to your CLASSPATH or build path. You
 will also need **common.jar** for common I/O functions, **ome-xml.jar** for
-metadata standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
+metadata standardization, and `SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
 
 There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the

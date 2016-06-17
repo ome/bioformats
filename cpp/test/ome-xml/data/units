@@ -1,0 +1,967 @@
+# Unit conversion test data                               -*-  tab-width:30  -*-
+#
+# Format: tab-separated fields; # for comments; blank lines allowed
+# From-unit	To-unit	From	To	    To-string	From-unit	To-unit	Model-to-string	Precision (10^x)
+
+## FREQUENCY
+
+# Frequency conversions to base unit (Hz)
+
+yoctohertz	hertz	1	1E-24	1e-24 Hz	yHz	Hz	1e-24 Hz	-10
+yoctohertz	hertz	233	2.33E-22	2.33e-22 Hz	yHz	Hz	2.33e-22 Hz	-10
+yoctohertz	hertz	1000000	1E-18	1e-18 Hz	yHz	Hz	1e-18 Hz	-10
+zeptohertz	hertz	1	1E-21	1e-21 Hz	zHz	Hz	1e-21 Hz	-10
+zeptohertz	hertz	233	2.33E-19	2.33e-19 Hz	zHz	Hz	2.33e-19 Hz	-10
+zeptohertz	hertz	1000000	1E-15	1e-15 Hz	zHz	Hz	1e-15 Hz	-10
+attohertz	hertz	1	1E-18	1e-18 Hz	aHz	Hz	1e-18 Hz	-10
+attohertz	hertz	233	2.33E-16	2.33e-16 Hz	aHz	Hz	2.33e-16 Hz	-10
+attohertz	hertz	1000000	1E-12	1e-12 Hz	aHz	Hz	1e-12 Hz	-10
+femtohertz	hertz	1	1E-15	1e-15 Hz	fHz	Hz	1e-15 Hz	-10
+femtohertz	hertz	233	2.33E-13	2.33e-13 Hz	fHz	Hz	2.33e-13 Hz	-10
+femtohertz	hertz	1000000	0.000000001	1e-09 Hz	fHz	Hz	1e-09 Hz	-10
+picohertz	hertz	1	1E-12	1e-12 Hz	pHz	Hz	1e-12 Hz	-10
+picohertz	hertz	233	2.33E-10	2.33e-10 Hz	pHz	Hz	2.33e-10 Hz	-10
+picohertz	hertz	1000000	0.000001	1e-06 Hz	pHz	Hz	1e-06 Hz	-10
+nanohertz	hertz	1	0.000000001	1e-09 Hz	nHz	Hz	1e-09 Hz	-10
+nanohertz	hertz	233	0.000000233	2.33e-07 Hz	nHz	Hz	2.33e-07 Hz	-10
+nanohertz	hertz	1000000	0.001	0.001 Hz	nHz	Hz	0.001 Hz	-10
+microhertz	hertz	1	0.000001	1e-06 Hz	µHz	Hz	1e-06 Hz	-10
+microhertz	hertz	233	0.000233	0.000233 Hz	µHz	Hz	0.000233 Hz	-10
+microhertz	hertz	1000000	1	1 Hz	µHz	Hz	1 Hz	-10
+millihertz	hertz	1	0.001	0.001 Hz	mHz	Hz	0.001 Hz	-10
+millihertz	hertz	233	0.233	0.233 Hz	mHz	Hz	0.233 Hz	-10
+millihertz	hertz	1000000	1000	1000 Hz	mHz	Hz	1000 Hz	-10
+centihertz	hertz	1	0.01	0.01 Hz	cHz	Hz	0.01 Hz	-10
+centihertz	hertz	233	2.33	2.33 Hz	cHz	Hz	2.33 Hz	-10
+centihertz	hertz	1000000	10000	1e+04 Hz	cHz	Hz	1e+04 Hz	-10
+decihertz	hertz	1	0.1	0.1 Hz	dHz	Hz	0.1 Hz	-10
+decihertz	hertz	233	23.3	23.3 Hz	dHz	Hz	23.3 Hz	-10
+decihertz	hertz	1000000	100000	1e+05 Hz	dHz	Hz	1e+05 Hz	-10
+hertz	hertz	1	1	1 Hz	Hz	Hz	1 Hz	-10
+hertz	hertz	233	233	233 Hz	Hz	Hz	233 Hz	-10
+hertz	hertz	1000000	1000000	1e+06 Hz	Hz	Hz	1e+06 Hz	-10
+dekahertz	hertz	1	10	10 Hz	daHz	Hz	10 Hz	-10
+dekahertz	hertz	233	2330	2330 Hz	daHz	Hz	2330 Hz	-10
+dekahertz	hertz	1000000	10000000	1e+07 Hz	daHz	Hz	1e+07 Hz	-10
+#decahertz	hertz	1	10	10 Hz	daHz	Hz	10 Hz	-10
+#decahertz	hertz	233	2330	2330 Hz	daHz	Hz	2330 Hz	-10
+#decahertz	hertz	1000000	10000000	1e+07 Hz	daHz	Hz	1e+07 Hz	-10
+hectohertz	hertz	1	100	100 Hz	hHz	Hz	100 Hz	-10
+hectohertz	hertz	233	23300	2.33e+04 Hz	hHz	Hz	2.33e+04 Hz	-10
+hectohertz	hertz	1000000	100000000	1e+08 Hz	hHz	Hz	1e+08 Hz	-10
+kilohertz	hertz	1	1000	1000 Hz	kHz	Hz	1000 Hz	-10
+kilohertz	hertz	233	233000	2.33e+05 Hz	kHz	Hz	2.33e+05 Hz	-10
+kilohertz	hertz	1000000	1000000000	1e+09 Hz	kHz	Hz	1e+09 Hz	-10
+megahertz	hertz	1	1000000	1e+06 Hz	MHz	Hz	1e+06 Hz	-10
+megahertz	hertz	233	233000000	2.33e+08 Hz	MHz	Hz	2.33e+08 Hz	-10
+megahertz	hertz	1000000	1000000000000	1e+12 Hz	MHz	Hz	1e+12 Hz	-10
+gigahertz	hertz	1	1000000000	1e+09 Hz	GHz	Hz	1e+09 Hz	-10
+gigahertz	hertz	233	233000000000	2.33e+11 Hz	GHz	Hz	2.33e+11 Hz	-10
+gigahertz	hertz	1000000	1000000000000000	1e+15 Hz	GHz	Hz	1e+15 Hz	-10
+terahertz	hertz	1	1000000000000	1e+12 Hz	THz	Hz	1e+12 Hz	-10
+terahertz	hertz	233	233000000000000	2.33e+14 Hz	THz	Hz	2.33e+14 Hz	-10
+terahertz	hertz	1000000	1E+018	1e+18 Hz	THz	Hz	1e+18 Hz	-10
+petahertz	hertz	1	1000000000000000	1e+15 Hz	PHz	Hz	1e+15 Hz	-10
+petahertz	hertz	233	2.33E+017	2.33e+17 Hz	PHz	Hz	2.33e+17 Hz	-10
+petahertz	hertz	1000000	1E+021	1e+21 Hz	PHz	Hz	1e+21 Hz	-10
+exahertz	hertz	1	1E+018	1e+18 Hz	EHz	Hz	1e+18 Hz	-10
+exahertz	hertz	233	2.33E+020	2.33e+20 Hz	EHz	Hz	2.33e+20 Hz	-10
+exahertz	hertz	1000000	1E+024	1e+24 Hz	EHz	Hz	1e+24 Hz	-10
+zettahertz	hertz	1	1E+021	1e+21 Hz	ZHz	Hz	1e+21 Hz	-10
+zettahertz	hertz	233	2.33E+023	2.33e+23 Hz	ZHz	Hz	2.33e+23 Hz	-10
+zettahertz	hertz	1000000	1E+027	1e+27 Hz	ZHz	Hz	1e+27 Hz	-10
+yottahertz	hertz	1	1E+024	1e+24 Hz	YHz	Hz	1e+24 Hz	-10
+yottahertz	hertz	233	2.33E+026	2.33e+26 Hz	YHz	Hz	2.33e+26 Hz	-10
+yottahertz	hertz	1000000	1E+030	1e+30 Hz	YHz	Hz	1e+30 Hz	-10
+
+# Frequency conversions from base unit (Hz)
+
+hertz	yoctohertz	1	1E+024	1e+24 yHz	Hz	yHz	1e+24 yHz	-10
+hertz	yoctohertz	233	2.33E+026	2.33e+26 yHz	Hz	yHz	2.33e+26 yHz	-10
+hertz	yoctohertz	1000000	1E+030	1e+30 yHz	Hz	yHz	1e+30 yHz	-10
+hertz	zeptohertz	1	1E+021	1e+21 zHz	Hz	zHz	1e+21 zHz	-10
+hertz	zeptohertz	233	2.33E+023	2.33e+23 zHz	Hz	zHz	2.33e+23 zHz	-10
+hertz	zeptohertz	1000000	1E+027	1e+27 zHz	Hz	zHz	1e+27 zHz	-10
+hertz	attohertz	1	1E+018	1e+18 aHz	Hz	aHz	1e+18 aHz	-10
+hertz	attohertz	233	2.33E+020	2.33e+20 aHz	Hz	aHz	2.33e+20 aHz	-10
+hertz	attohertz	1000000	1E+024	1e+24 aHz	Hz	aHz	1e+24 aHz	-10
+hertz	femtohertz	1	1000000000000000	1e+15 fHz	Hz	fHz	1e+15 fHz	-10
+hertz	femtohertz	233	2.33E+017	2.33e+17 fHz	Hz	fHz	2.33e+17 fHz	-10
+hertz	femtohertz	1000000	1E+021	1e+21 fHz	Hz	fHz	1e+21 fHz	-10
+hertz	picohertz	1	1000000000000	1e+12 pHz	Hz	pHz	1e+12 pHz	-10
+hertz	picohertz	233	233000000000000	2.33e+14 pHz	Hz	pHz	2.33e+14 pHz	-10
+hertz	picohertz	1000000	1E+018	1e+18 pHz	Hz	pHz	1e+18 pHz	-10
+hertz	nanohertz	1	1000000000	1e+09 nHz	Hz	nHz	1e+09 nHz	-10
+hertz	nanohertz	233	233000000000	2.33e+11 nHz	Hz	nHz	2.33e+11 nHz	-10
+hertz	nanohertz	1000000	1000000000000000	1e+15 nHz	Hz	nHz	1e+15 nHz	-10
+hertz	microhertz	1	1000000	1e+06 uHz	Hz	µHz	1e+06 µHz	-10
+hertz	microhertz	233	233000000	2.33e+08 uHz	Hz	µHz	2.33e+08 µHz	-10
+hertz	microhertz	1000000	1000000000000	1e+12 uHz	Hz	µHz	1e+12 µHz	-10
+hertz	millihertz	1	1000	1000 mHz	Hz	mHz	1000 mHz	-10
+hertz	millihertz	233	233000	2.33e+05 mHz	Hz	mHz	2.33e+05 mHz	-10
+hertz	millihertz	1000000	1000000000	1e+09 mHz	Hz	mHz	1e+09 mHz	-10
+hertz	centihertz	1	100	100 cHz	Hz	cHz	100 cHz	-10
+hertz	centihertz	233	23300	2.33e+04 cHz	Hz	cHz	2.33e+04 cHz	-10
+hertz	centihertz	1000000	100000000	1e+08 cHz	Hz	cHz	1e+08 cHz	-10
+hertz	decihertz	1	10	10 dHz	Hz	dHz	10 dHz	-10
+hertz	decihertz	233	2330	2330 dHz	Hz	dHz	2330 dHz	-10
+hertz	decihertz	1000000	10000000	1e+07 dHz	Hz	dHz	1e+07 dHz	-10
+hertz	hertz	1	1	1 Hz	Hz	Hz	1 Hz	-10
+hertz	hertz	233	233	233 Hz	Hz	Hz	233 Hz	-10
+hertz	hertz	1000000	1000000	1e+06 Hz	Hz	Hz	1e+06 Hz	-10
+hertz	dekahertz	1	0.1	0.1 daHz	Hz	daHz	0.1 daHz	-10
+hertz	dekahertz	233	23.3	23.3 daHz	Hz	daHz	23.3 daHz	-10
+hertz	dekahertz	1000000	100000	1e+05 daHz	Hz	daHz	1e+05 daHz	-10
+hertz	decahertz	1	0.1	0.1 daHz	Hz	daHz	0.1 daHz	-10
+hertz	decahertz	233	23.3	23.3 daHz	Hz	daHz	23.3 daHz	-10
+hertz	decahertz	1000000	100000	1e+05 daHz	Hz	daHz	1e+05 daHz	-10
+hertz	hectohertz	1	0.01	0.01 hHz	Hz	hHz	0.01 hHz	-10
+hertz	hectohertz	233	2.33	2.33 hHz	Hz	hHz	2.33 hHz	-10
+hertz	hectohertz	1000000	10000	1e+04 hHz	Hz	hHz	1e+04 hHz	-10
+hertz	kilohertz	1	0.001	0.001 kHz	Hz	kHz	0.001 kHz	-10
+hertz	kilohertz	233	0.233	0.233 kHz	Hz	kHz	0.233 kHz	-10
+hertz	kilohertz	1000000	1000	1000 kHz	Hz	kHz	1000 kHz	-10
+hertz	megahertz	1	0.000001	1e-06 MHz	Hz	MHz	1e-06 MHz	-10
+hertz	megahertz	233	0.000233	0.000233 MHz	Hz	MHz	0.000233 MHz	-10
+hertz	megahertz	1000000	1	1 MHz	Hz	MHz	1 MHz	-10
+hertz	gigahertz	1	0.000000001	1e-09 GHz	Hz	GHz	1e-09 GHz	-10
+hertz	gigahertz	233	0.000000233	2.33e-07 GHz	Hz	GHz	2.33e-07 GHz	-10
+hertz	gigahertz	1000000	0.001	0.001 GHz	Hz	GHz	0.001 GHz	-10
+hertz	terahertz	1	1E-12	1e-12 THz	Hz	THz	1e-12 THz	-10
+hertz	terahertz	233	2.33E-10	2.33e-10 THz	Hz	THz	2.33e-10 THz	-10
+hertz	terahertz	1000000	0.000001	1e-06 THz	Hz	THz	1e-06 THz	-10
+hertz	petahertz	1	1E-15	1e-15 PHz	Hz	PHz	1e-15 PHz	-10
+hertz	petahertz	233	2.33E-13	2.33e-13 PHz	Hz	PHz	2.33e-13 PHz	-10
+hertz	petahertz	1000000	0.000000001	1e-09 PHz	Hz	PHz	1e-09 PHz	-10
+hertz	exahertz	1	1E-18	1e-18 EHz	Hz	EHz	1e-18 EHz	-10
+hertz	exahertz	233	2.33E-16	2.33e-16 EHz	Hz	EHz	2.33e-16 EHz	-10
+hertz	exahertz	1000000	1E-12	1e-12 EHz	Hz	EHz	1e-12 EHz	-10
+hertz	zettahertz	1	1E-21	1e-21 ZHz	Hz	ZHz	1e-21 ZHz	-10
+hertz	zettahertz	233	2.33E-19	2.33e-19 ZHz	Hz	ZHz	2.33e-19 ZHz	-10
+hertz	zettahertz	1000000	1E-15	1e-15 ZHz	Hz	ZHz	1e-15 ZHz	-10
+hertz	yottahertz	1	1E-24	1e-24 YHz	Hz	YHz	1e-24 YHz	-10
+hertz	yottahertz	233	2.33E-22	2.33e-22 YHz	Hz	YHz	2.33e-22 YHz	-10
+hertz	yottahertz	1000000	1E-18	1e-18 YHz	Hz	YHz	1e-18 YHz	-10
+
+# Frequency conversions between non-base units
+
+kilohertz	gigahertz	4.272	0.000004272	4.272e-06 GHz	kHz	GHz	4.272e-06 GHz	-10
+dekahertz	nanohertz	9.282	92820000000	9.282e+10 nHz	daHz	nHz	9.282e+10 nHz	-10
+attohertz	megahertz	8.193	8.193E-24	8.193e-24 MHz	aHz	MHz	8.193e-24 MHz	-10
+
+## LENGTH
+
+# Length conversions to base unit (m)
+
+yoctometer	meter	1	1E-24	1e-24 m	ym	m	1e-24 m	-10
+yoctometer	meter	233	2.33E-22	2.33e-22 m	ym	m	2.33e-22 m	-10
+yoctometer	meter	1000000	1E-18	1e-18 m	ym	m	1e-18 m	-10
+zeptometer	meter	1	1E-21	1e-21 m	zm	m	1e-21 m	-10
+zeptometer	meter	233	2.33E-19	2.33e-19 m	zm	m	2.33e-19 m	-10
+zeptometer	meter	1000000	1E-15	1e-15 m	zm	m	1e-15 m	-10
+attometer	meter	1	1E-18	1e-18 m	am	m	1e-18 m	-10
+attometer	meter	233	2.33E-16	2.33e-16 m	am	m	2.33e-16 m	-10
+attometer	meter	1000000	1E-12	1e-12 m	am	m	1e-12 m	-10
+femtometer	meter	1	1E-15	1e-15 m	fm	m	1e-15 m	-10
+femtometer	meter	233	2.33E-13	2.33e-13 m	fm	m	2.33e-13 m	-10
+femtometer	meter	1000000	0.000000001	1e-09 m	fm	m	1e-09 m	-10
+picometer	meter	1	1E-12	1e-12 m	pm	m	1e-12 m	-10
+picometer	meter	233	2.33E-10	2.33e-10 m	pm	m	2.33e-10 m	-10
+picometer	meter	1000000	0.000001	1e-06 m	pm	m	1e-06 m	-10
+nanometer	meter	1	0.000000001	1e-09 m	nm	m	1e-09 m	-10
+nanometer	meter	233	0.000000233	2.33e-07 m	nm	m	2.33e-07 m	-10
+nanometer	meter	1000000	0.001	0.001 m	nm	m	0.001 m	-10
+micrometer	meter	1	0.000001	1e-06 m	µm	m	1e-06 m	-10
+micrometer	meter	233	0.000233	0.000233 m	µm	m	0.000233 m	-10
+micrometer	meter	1000000	1	1 m	µm	m	1 m	-10
+millimeter	meter	1	0.001	0.001 m	mm	m	0.001 m	-10
+millimeter	meter	233	0.233	0.233 m	mm	m	0.233 m	-10
+millimeter	meter	1000000	1000	1000 m	mm	m	1000 m	-10
+centimeter	meter	1	0.01	0.01 m	cm	m	0.01 m	-10
+centimeter	meter	233	2.33	2.33 m	cm	m	2.33 m	-10
+centimeter	meter	1000000	10000	1e+04 m	cm	m	1e+04 m	-10
+decimeter	meter	1	0.1	0.1 m	dm	m	0.1 m	-10
+decimeter	meter	233	23.3	23.3 m	dm	m	23.3 m	-10
+decimeter	meter	1000000	100000	1e+05 m	dm	m	1e+05 m	-10
+meter	meter	1	1	1 m	m	m	1 m	-10
+meter	meter	233	233	233 m	m	m	233 m	-10
+meter	meter	1000000	1000000	1e+06 m	m	m	1e+06 m	-10
+dekameter	meter	1	10	10 m	dam	m	10 m	-10
+dekameter	meter	233	2330	2330 m	dam	m	2330 m	-10
+dekameter	meter	1000000	10000000	1e+07 m	dam	m	1e+07 m	-10
+hectometer	meter	1	100	100 m	hm	m	100 m	-10
+hectometer	meter	233	23300	2.33e+04 m	hm	m	2.33e+04 m	-10
+hectometer	meter	1000000	100000000	1e+08 m	hm	m	1e+08 m	-10
+kilometer	meter	1	1000	1000 m	km	m	1000 m	-10
+kilometer	meter	233	233000	2.33e+05 m	km	m	2.33e+05 m	-10
+kilometer	meter	1000000	1000000000	1e+09 m	km	m	1e+09 m	-10
+megameter	meter	1	1000000	1e+06 m	Mm	m	1e+06 m	-10
+megameter	meter	233	233000000	2.33e+08 m	Mm	m	2.33e+08 m	-10
+megameter	meter	1000000	1000000000000	1e+12 m	Mm	m	1e+12 m	-10
+gigameter	meter	1	1000000000	1e+09 m	Gm	m	1e+09 m	-10
+gigameter	meter	233	233000000000	2.33e+11 m	Gm	m	2.33e+11 m	-10
+gigameter	meter	1000000	1000000000000000	1e+15 m	Gm	m	1e+15 m	-10
+terameter	meter	1	1000000000000	1e+12 m	Tm	m	1e+12 m	-10
+terameter	meter	233	233000000000000	2.33e+14 m	Tm	m	2.33e+14 m	-10
+terameter	meter	1000000	1E+018	1e+18 m	Tm	m	1e+18 m	-10
+petameter	meter	1	1000000000000000	1e+15 m	Pm	m	1e+15 m	-10
+petameter	meter	233	2.33E+017	2.33e+17 m	Pm	m	2.33e+17 m	-10
+petameter	meter	1000000	1E+021	1e+21 m	Pm	m	1e+21 m	-10
+exameter	meter	1	1E+018	1e+18 m	Em	m	1e+18 m	-10
+exameter	meter	233	2.33E+020	2.33e+20 m	Em	m	2.33e+20 m	-10
+exameter	meter	1000000	1E+024	1e+24 m	Em	m	1e+24 m	-10
+zettameter	meter	1	1E+021	1e+21 m	Zm	m	1e+21 m	-10
+zettameter	meter	233	2.33E+023	2.33e+23 m	Zm	m	2.33e+23 m	-10
+zettameter	meter	1000000	1E+027	1e+27 m	Zm	m	1e+27 m	-10
+yottameter	meter	1	1E+024	1e+24 m	Ym	m	1e+24 m	-10
+yottameter	meter	233	2.33E+026	2.33e+26 m	Ym	m	2.33e+26 m	-10
+yottameter	meter	1000000	1E+030	1e+30 m	Ym	m	1e+30 m	-10
+
+# Length conversions from base unit (m)
+
+meter	yoctometer	1	1E+024	1e+24 ym	m	ym	1e+24 ym	-10
+meter	yoctometer	233	2.33E+026	2.33e+26 ym	m	ym	2.33e+26 ym	-10
+meter	yoctometer	1000000	1E+030	1e+30 ym	m	ym	1e+30 ym	-10
+meter	zeptometer	1	1E+021	1e+21 zm	m	zm	1e+21 zm	-10
+meter	zeptometer	233	2.33E+023	2.33e+23 zm	m	zm	2.33e+23 zm	-10
+meter	zeptometer	1000000	1E+027	1e+27 zm	m	zm	1e+27 zm	-10
+meter	attometer	1	1E+018	1e+18 am	m	am	1e+18 am	-10
+meter	attometer	233	2.33E+020	2.33e+20 am	m	am	2.33e+20 am	-10
+meter	attometer	1000000	1E+024	1e+24 am	m	am	1e+24 am	-10
+meter	femtometer	1	1000000000000000	1e+15 fm	m	fm	1e+15 fm	-10
+meter	femtometer	233	2.33E+017	2.33e+17 fm	m	fm	2.33e+17 fm	-10
+meter	femtometer	1000000	1E+021	1e+21 fm	m	fm	1e+21 fm	-10
+meter	picometer	1	1000000000000	1e+12 pm	m	pm	1e+12 pm	-10
+meter	picometer	233	233000000000000	2.33e+14 pm	m	pm	2.33e+14 pm	-10
+meter	picometer	1000000	1E+018	1e+18 pm	m	pm	1e+18 pm	-10
+meter	nanometer	1	1000000000	1e+09 nm	m	nm	1e+09 nm	-10
+meter	nanometer	233	233000000000	2.33e+11 nm	m	nm	2.33e+11 nm	-10
+meter	nanometer	1000000	1000000000000000	1e+15 nm	m	nm	1e+15 nm	-10
+meter	micrometer	1	1000000	1e+06 um	m	µm	1e+06 µm	-10
+meter	micrometer	233	233000000	2.33e+08 um	m	µm	2.33e+08 µm	-10
+meter	micrometer	1000000	1000000000000	1e+12 um	m	µm	1e+12 µm	-10
+meter	millimeter	1	1000	1000 mm	m	mm	1000 mm	-10
+meter	millimeter	233	233000	2.33e+05 mm	m	mm	2.33e+05 mm	-10
+meter	millimeter	1000000	1000000000	1e+09 mm	m	mm	1e+09 mm	-10
+meter	centimeter	1	100	100 cm	m	cm	100 cm	-10
+meter	centimeter	233	23300	2.33e+04 cm	m	cm	2.33e+04 cm	-10
+meter	centimeter	1000000	100000000	1e+08 cm	m	cm	1e+08 cm	-10
+meter	decimeter	1	10	10 dm	m	dm	10 dm	-10
+meter	decimeter	233	2330	2330 dm	m	dm	2330 dm	-10
+meter	decimeter	1000000	10000000	1e+07 dm	m	dm	1e+07 dm	-10
+meter	meter	1	1	1 m	m	m	1 m	-10
+meter	meter	233	233	233 m	m	m	233 m	-10
+meter	meter	1000000	1000000	1e+06 m	m	m	1e+06 m	-10
+meter	dekameter	1	0.1	0.1 dam	m	dam	0.1 dam	-10
+meter	dekameter	233	23.3	23.3 dam	m	dam	23.3 dam	-10
+meter	dekameter	1000000	100000	1e+05 dam	m	dam	1e+05 dam	-10
+meter	decameter	1	0.1	0.1 dam	m	dam	0.1 dam	-10
+meter	decameter	233	23.3	23.3 dam	m	dam	23.3 dam	-10
+meter	decameter	1000000	100000	1e+05 dam	m	dam	1e+05 dam	-10
+meter	hectometer	1	0.01	0.01 hm	m	hm	0.01 hm	-10
+meter	hectometer	233	2.33	2.33 hm	m	hm	2.33 hm	-10
+meter	hectometer	1000000	10000	1e+04 hm	m	hm	1e+04 hm	-10
+meter	kilometer	1	0.001	0.001 km	m	km	0.001 km	-10
+meter	kilometer	233	0.233	0.233 km	m	km	0.233 km	-10
+meter	kilometer	1000000	1000	1000 km	m	km	1000 km	-10
+meter	megameter	1	0.000001	1e-06 Mm	m	Mm	1e-06 Mm	-10
+meter	megameter	233	0.000233	0.000233 Mm	m	Mm	0.000233 Mm	-10
+meter	megameter	1000000	1	1 Mm	m	Mm	1 Mm	-10
+meter	gigameter	1	0.000000001	1e-09 Gm	m	Gm	1e-09 Gm	-10
+meter	gigameter	233	0.000000233	2.33e-07 Gm	m	Gm	2.33e-07 Gm	-10
+meter	gigameter	1000000	0.001	0.001 Gm	m	Gm	0.001 Gm	-10
+meter	terameter	1	1E-12	1e-12 Tm	m	Tm	1e-12 Tm	-10
+meter	terameter	233	2.33E-10	2.33e-10 Tm	m	Tm	2.33e-10 Tm	-10
+meter	terameter	1000000	0.000001	1e-06 Tm	m	Tm	1e-06 Tm	-10
+meter	petameter	1	1E-15	1e-15 Pm	m	Pm	1e-15 Pm	-10
+meter	petameter	233	2.33E-13	2.33e-13 Pm	m	Pm	2.33e-13 Pm	-10
+meter	petameter	1000000	0.000000001	1e-09 Pm	m	Pm	1e-09 Pm	-10
+meter	exameter	1	1E-18	1e-18 Em	m	Em	1e-18 Em	-10
+meter	exameter	233	2.33E-16	2.33e-16 Em	m	Em	2.33e-16 Em	-10
+meter	exameter	1000000	1E-12	1e-12 Em	m	Em	1e-12 Em	-10
+meter	zettameter	1	1E-21	1e-21 Zm	m	Zm	1e-21 Zm	-10
+meter	zettameter	233	2.33E-19	2.33e-19 Zm	m	Zm	2.33e-19 Zm	-10
+meter	zettameter	1000000	1E-15	1e-15 Zm	m	Zm	1e-15 Zm	-10
+meter	yottameter	1	1E-24	1e-24 Ym	m	Ym	1e-24 Ym	-10
+meter	yottameter	233	2.33E-22	2.33e-22 Ym	m	Ym	2.33e-22 Ym	-10
+meter	yottameter	1000000	1E-18	1e-18 Ym	m	Ym	1e-18 Ym	-10
+
+# Length conversions between non-base units
+
+nanometer	micrometer	4.272	0.004272	0.004272 um	nm	µm	0.004272 µm	-10
+millimeter	centimeter	9.282	0.9282	0.9282 cm	mm	cm	0.9282 cm	-10
+micrometer	millimeter	5	0.005	0.005 mm	µm	mm	0.005 mm	-10
+
+# Length conversions between standard and non-standard units
+
+angstrom	nanometer	42.121	4.2121	4.212 nm	Å	nm	4.212 nm	-10
+micrometer	angstrom	8.7123	87123	8.712e+04 A	µm	Å	8.712e+04 Å	-10
+thou	millimeter	20	0.508	0.508 mm	thou	mm	0.508 mm	-10
+centimeter	thou	8	3149.6062992126	3150 thou	cm	thou	3150 thou	-10
+line	millimeter	1	2.1166666667	2.117 mm	light year	mm	2.117 mm	-10
+centimeter	line	2.2	10.3937007874	10.39 li	cm	li	10.39 li	-10
+inch	centimeter	2	5.08	5.08 cm	in	cm	5.08 cm	-10
+meter	inch	1.2	47.2440944882	47.24 in	m	in	47.24 in	-10
+foot	meter	0.1	0.03048	0.03048 m	ft	m	0.03048 m	-10
+millimeter	foot	52.5	0.1722440945	0.1722 ft	mm	ft	0.1722 ft	-10
+yard	centimeter	0.2	18.288	18.29 cm	yd	cm	18.29 cm	-10
+decimeter	yard	5	0.5468066492	0.5468 yd	dm	yd	0.5468 yd	-10
+mile	dekameter	0.5	80.4672	80.47 dam	mi	dam	80.47 dam	-10
+kilometer	mile	2	1.2427423845	1.243 mi	km	mi	1.243 mi	-10
+astronomical unit	gigameter	2.87	429.345888909	429.3 Gm	ua	Gm	429.3 Gm	-6
+terameter	astronomical unit	8	53.4766969781	53.48 a.u.	Tm	ua	53.48 ua	-7
+light year	terameter	4.2	39735.0679848394	3.974e+04 Tm	ly	Tm	3.974e+04 Tm	-10
+petameter	light year	102	10.7814085071	10.78 ly	Pm	ly	10.78 ly	-10
+parsec	petameter	12.9	398.0524080093	398.1 Pm	pc	Pm	398.1 Pm	-5
+exameter	parsec	2.4	77.7787029473	77.78 psc	Em	pc	77.78 pc	-7
+point	centimeter	60	2.1166666667	2.117 cm	pt	cm	2.117 cm	-10
+millimeter	point	53.2	150.8031496063	150.8 pt	mm	pt	150.8 pt	-10
+
+# Reference frame has no conversions (undefined scale)
+reference frame	reference frame	10	10	10 r.f.	reference frame	reference frame	10 reference frame	-10
+
+# Pixel has no conversions (undefined scale)
+pixel	pixel	512	512	512 px	pixel	pixel	512 pixel	-10
+
+## POWER
+
+# Power conversions to base unit (W)
+
+yoctowatt	watt	1	1E-24	1e-24 W	yW	W	1e-24 W	-10
+yoctowatt	watt	233	2.33E-22	2.33e-22 W	yW	W	2.33e-22 W	-10
+yoctowatt	watt	1000000	1E-18	1e-18 W	yW	W	1e-18 W	-10
+zeptowatt	watt	1	1E-21	1e-21 W	zW	W	1e-21 W	-10
+zeptowatt	watt	233	2.33E-19	2.33e-19 W	zW	W	2.33e-19 W	-10
+zeptowatt	watt	1000000	1E-15	1e-15 W	zW	W	1e-15 W	-10
+attowatt	watt	1	1E-18	1e-18 W	aW	W	1e-18 W	-10
+attowatt	watt	233	2.33E-16	2.33e-16 W	aW	W	2.33e-16 W	-10
+attowatt	watt	1000000	1E-12	1e-12 W	aW	W	1e-12 W	-10
+femtowatt	watt	1	1E-15	1e-15 W	fW	W	1e-15 W	-10
+femtowatt	watt	233	2.33E-13	2.33e-13 W	fW	W	2.33e-13 W	-10
+femtowatt	watt	1000000	0.000000001	1e-09 W	fW	W	1e-09 W	-10
+picowatt	watt	1	1E-12	1e-12 W	pW	W	1e-12 W	-10
+picowatt	watt	233	2.33E-10	2.33e-10 W	pW	W	2.33e-10 W	-10
+picowatt	watt	1000000	0.000001	1e-06 W	pW	W	1e-06 W	-10
+nanowatt	watt	1	0.000000001	1e-09 W	nW	W	1e-09 W	-10
+nanowatt	watt	233	0.000000233	2.33e-07 W	nW	W	2.33e-07 W	-10
+nanowatt	watt	1000000	0.001	0.001 W	nW	W	0.001 W	-10
+microwatt	watt	1	0.000001	1e-06 W	µW	W	1e-06 W	-10
+microwatt	watt	233	0.000233	0.000233 W	µW	W	0.000233 W	-10
+microwatt	watt	1000000	1	1 W	µW	W	1 W	-10
+milliwatt	watt	1	0.001	0.001 W	mW	W	0.001 W	-10
+milliwatt	watt	233	0.233	0.233 W	mW	W	0.233 W	-10
+milliwatt	watt	1000000	1000	1000 W	mW	W	1000 W	-10
+centiwatt	watt	1	0.01	0.01 W	cW	W	0.01 W	-10
+centiwatt	watt	233	2.33	2.33 W	cW	W	2.33 W	-10
+centiwatt	watt	1000000	10000	1e+04 W	cW	W	1e+04 W	-10
+deciwatt	watt	1	0.1	0.1 W	dW	W	0.1 W	-10
+deciwatt	watt	233	23.3	23.3 W	dW	W	23.3 W	-10
+deciwatt	watt	1000000	100000	1e+05 W	dW	W	1e+05 W	-10
+watt	watt	1	1	1 W	W	W	1 W	-10
+watt	watt	233	233	233 W	W	W	233 W	-10
+watt	watt	1000000	1000000	1e+06 W	W	W	1e+06 W	-10
+dekawatt	watt	1	10	10 W	daW	W	10 W	-10
+dekawatt	watt	233	2330	2330 W	daW	W	2330 W	-10
+dekawatt	watt	1000000	10000000	1e+07 W	daW	W	1e+07 W	-10
+hectowatt	watt	1	100	100 W	hW	W	100 W	-10
+hectowatt	watt	233	23300	2.33e+04 W	hW	W	2.33e+04 W	-10
+hectowatt	watt	1000000	100000000	1e+08 W	hW	W	1e+08 W	-10
+kilowatt	watt	1	1000	1000 W	kW	W	1000 W	-10
+kilowatt	watt	233	233000	2.33e+05 W	kW	W	2.33e+05 W	-10
+kilowatt	watt	1000000	1000000000	1e+09 W	kW	W	1e+09 W	-10
+megawatt	watt	1	1000000	1e+06 W	MW	W	1e+06 W	-10
+megawatt	watt	233	233000000	2.33e+08 W	MW	W	2.33e+08 W	-10
+megawatt	watt	1000000	1000000000000	1e+12 W	MW	W	1e+12 W	-10
+gigawatt	watt	1	1000000000	1e+09 W	GW	W	1e+09 W	-10
+gigawatt	watt	233	233000000000	2.33e+11 W	GW	W	2.33e+11 W	-10
+gigawatt	watt	1000000	1000000000000000	1e+15 W	GW	W	1e+15 W	-10
+terawatt	watt	1	1000000000000	1e+12 W	TW	W	1e+12 W	-10
+terawatt	watt	233	233000000000000	2.33e+14 W	TW	W	2.33e+14 W	-10
+terawatt	watt	1000000	1E+018	1e+18 W	TW	W	1e+18 W	-10
+petawatt	watt	1	1000000000000000	1e+15 W	PW	W	1e+15 W	-10
+petawatt	watt	233	2.33E+017	2.33e+17 W	PW	W	2.33e+17 W	-10
+petawatt	watt	1000000	1E+021	1e+21 W	PW	W	1e+21 W	-10
+exawatt	watt	1	1E+018	1e+18 W	EW	W	1e+18 W	-10
+exawatt	watt	233	2.33E+020	2.33e+20 W	EW	W	2.33e+20 W	-10
+exawatt	watt	1000000	1E+024	1e+24 W	EW	W	1e+24 W	-10
+zettawatt	watt	1	1E+021	1e+21 W	ZW	W	1e+21 W	-10
+zettawatt	watt	233	2.33E+023	2.33e+23 W	ZW	W	2.33e+23 W	-10
+zettawatt	watt	1000000	1E+027	1e+27 W	ZW	W	1e+27 W	-10
+yottawatt	watt	1	1E+024	1e+24 W	YW	W	1e+24 W	-10
+yottawatt	watt	233	2.33E+026	2.33e+26 W	YW	W	2.33e+26 W	-10
+yottawatt	watt	1000000	1E+030	1e+30 W	YW	W	1e+30 W	-10
+
+# Power conversions from base unit (W)
+
+watt	yoctowatt	1	1E+024	1e+24 yW	W	yW	1e+24 yW	-10
+watt	yoctowatt	233	2.33E+026	2.33e+26 yW	W	yW	2.33e+26 yW	-10
+watt	yoctowatt	1000000	1E+030	1e+30 yW	W	yW	1e+30 yW	-10
+watt	zeptowatt	1	1E+021	1e+21 zW	W	zW	1e+21 zW	-10
+watt	zeptowatt	233	2.33E+023	2.33e+23 zW	W	zW	2.33e+23 zW	-10
+watt	zeptowatt	1000000	1E+027	1e+27 zW	W	zW	1e+27 zW	-10
+watt	attowatt	1	1E+018	1e+18 aW	W	aW	1e+18 aW	-10
+watt	attowatt	233	2.33E+020	2.33e+20 aW	W	aW	2.33e+20 aW	-10
+watt	attowatt	1000000	1E+024	1e+24 aW	W	aW	1e+24 aW	-10
+watt	femtowatt	1	1000000000000000	1e+15 fW	W	fW	1e+15 fW	-10
+watt	femtowatt	233	2.33E+017	2.33e+17 fW	W	fW	2.33e+17 fW	-10
+watt	femtowatt	1000000	1E+021	1e+21 fW	W	fW	1e+21 fW	-10
+watt	picowatt	1	1000000000000	1e+12 pW	W	pW	1e+12 pW	-10
+watt	picowatt	233	233000000000000	2.33e+14 pW	W	pW	2.33e+14 pW	-10
+watt	picowatt	1000000	1E+018	1e+18 pW	W	pW	1e+18 pW	-10
+watt	nanowatt	1	1000000000	1e+09 nW	W	nW	1e+09 nW	-10
+watt	nanowatt	233	233000000000	2.33e+11 nW	W	nW	2.33e+11 nW	-10
+watt	nanowatt	1000000	1000000000000000	1e+15 nW	W	nW	1e+15 nW	-10
+watt	microwatt	1	1000000	1e+06 uW	W	µW	1e+06 µW	-10
+watt	microwatt	233	233000000	2.33e+08 uW	W	µW	2.33e+08 µW	-10
+watt	microwatt	1000000	1000000000000	1e+12 uW	W	µW	1e+12 µW	-10
+watt	milliwatt	1	1000	1000 mW	W	mW	1000 mW	-10
+watt	milliwatt	233	233000	2.33e+05 mW	W	mW	2.33e+05 mW	-10
+watt	milliwatt	1000000	1000000000	1e+09 mW	W	mW	1e+09 mW	-10
+watt	centiwatt	1	100	100 cW	W	cW	100 cW	-10
+watt	centiwatt	233	23300	2.33e+04 cW	W	cW	2.33e+04 cW	-10
+watt	centiwatt	1000000	100000000	1e+08 cW	W	cW	1e+08 cW	-10
+watt	deciwatt	1	10	10 dW	W	dW	10 dW	-10
+watt	deciwatt	233	2330	2330 dW	W	dW	2330 dW	-10
+watt	deciwatt	1000000	10000000	1e+07 dW	W	dW	1e+07 dW	-10
+watt	watt	1	1	1 W	W	W	1 W	-10
+watt	watt	233	233	233 W	W	W	233 W	-10
+watt	watt	1000000	1000000	1e+06 W	W	W	1e+06 W	-10
+watt	dekawatt	1	0.1	0.1 daW	W	daW	0.1 daW	-10
+watt	dekawatt	233	23.3	23.3 daW	W	daW	23.3 daW	-10
+watt	dekawatt	1000000	100000	1e+05 daW	W	daW	1e+05 daW	-10
+watt	decawatt	1	0.1	0.1 daW	W	daW	0.1 daW	-10
+watt	decawatt	233	23.3	23.3 daW	W	daW	23.3 daW	-10
+watt	decawatt	1000000	100000	1e+05 daW	W	daW	1e+05 daW	-10
+watt	hectowatt	1	0.01	0.01 hW	W	hW	0.01 hW	-10
+watt	hectowatt	233	2.33	2.33 hW	W	hW	2.33 hW	-10
+watt	hectowatt	1000000	10000	1e+04 hW	W	hW	1e+04 hW	-10
+watt	kilowatt	1	0.001	0.001 kW	W	kW	0.001 kW	-10
+watt	kilowatt	233	0.233	0.233 kW	W	kW	0.233 kW	-10
+watt	kilowatt	1000000	1000	1000 kW	W	kW	1000 kW	-10
+watt	megawatt	1	0.000001	1e-06 MW	W	MW	1e-06 MW	-10
+watt	megawatt	233	0.000233	0.000233 MW	W	MW	0.000233 MW	-10
+watt	megawatt	1000000	1	1 MW	W	MW	1 MW	-10
+watt	gigawatt	1	0.000000001	1e-09 GW	W	GW	1e-09 GW	-10
+watt	gigawatt	233	0.000000233	2.33e-07 GW	W	GW	2.33e-07 GW	-10
+watt	gigawatt	1000000	0.001	0.001 GW	W	GW	0.001 GW	-10
+watt	terawatt	1	1E-12	1e-12 TW	W	TW	1e-12 TW	-10
+watt	terawatt	233	2.33E-10	2.33e-10 TW	W	TW	2.33e-10 TW	-10
+watt	terawatt	1000000	0.000001	1e-06 TW	W	TW	1e-06 TW	-10
+watt	petawatt	1	1E-15	1e-15 PW	W	PW	1e-15 PW	-10
+watt	petawatt	233	2.33E-13	2.33e-13 PW	W	PW	2.33e-13 PW	-10
+watt	petawatt	1000000	0.000000001	1e-09 PW	W	PW	1e-09 PW	-10
+watt	exawatt	1	1E-18	1e-18 EW	W	EW	1e-18 EW	-10
+watt	exawatt	233	2.33E-16	2.33e-16 EW	W	EW	2.33e-16 EW	-10
+watt	exawatt	1000000	1E-12	1e-12 EW	W	EW	1e-12 EW	-10
+watt	zettawatt	1	1E-21	1e-21 ZW	W	ZW	1e-21 ZW	-10
+watt	zettawatt	233	2.33E-19	2.33e-19 ZW	W	ZW	2.33e-19 ZW	-10
+watt	zettawatt	1000000	1E-15	1e-15 ZW	W	ZW	1e-15 ZW	-10
+watt	yottawatt	1	1E-24	1e-24 YW	W	YW	1e-24 YW	-10
+watt	yottawatt	233	2.33E-22	2.33e-22 YW	W	YW	2.33e-22 YW	-10
+watt	yottawatt	1000000	1E-18	1e-18 YW	W	YW	1e-18 YW	-10
+
+# Power conversions between non-base units
+
+nanowatt	microwatt	4.272	0.004272	0.004272 uW	nW	µW	0.004272 µW	-10
+milliwatt	centiwatt	9.282	0.9282	0.9282 cW	mW	cW	0.9282 cW	-10
+microwatt	milliwatt	5	0.005	0.005 mW	µW	mW	0.005 mW	-10
+
+## PRESSURE
+
+# Pressure conversions to base unit (Pa)
+
+yoctopascal	pascal	1	1E-24	1e-24 Pa	yPa	Pa	1e-24 Pa	-10
+yoctopascal	pascal	233	2.33E-22	2.33e-22 Pa	yPa	Pa	2.33e-22 Pa	-10
+yoctopascal	pascal	1000000	1E-18	1e-18 Pa	yPa	Pa	1e-18 Pa	-10
+zeptopascal	pascal	1	1E-21	1e-21 Pa	zPa	Pa	1e-21 Pa	-10
+zeptopascal	pascal	233	2.33E-19	2.33e-19 Pa	zPa	Pa	2.33e-19 Pa	-10
+zeptopascal	pascal	1000000	1E-15	1e-15 Pa	zPa	Pa	1e-15 Pa	-10
+attopascal	pascal	1	1E-18	1e-18 Pa	aPa	Pa	1e-18 Pa	-10
+attopascal	pascal	233	2.33E-16	2.33e-16 Pa	aPa	Pa	2.33e-16 Pa	-10
+attopascal	pascal	1000000	1E-12	1e-12 Pa	aPa	Pa	1e-12 Pa	-10
+femtopascal	pascal	1	1E-15	1e-15 Pa	fPa	Pa	1e-15 Pa	-10
+femtopascal	pascal	233	2.33E-13	2.33e-13 Pa	fPa	Pa	2.33e-13 Pa	-10
+femtopascal	pascal	1000000	0.000000001	1e-09 Pa	fPa	Pa	1e-09 Pa	-10
+picopascal	pascal	1	1E-12	1e-12 Pa	pPa	Pa	1e-12 Pa	-10
+picopascal	pascal	233	2.33E-10	2.33e-10 Pa	pPa	Pa	2.33e-10 Pa	-10
+picopascal	pascal	1000000	0.000001	1e-06 Pa	pPa	Pa	1e-06 Pa	-10
+nanopascal	pascal	1	0.000000001	1e-09 Pa	nPa	Pa	1e-09 Pa	-10
+nanopascal	pascal	233	0.000000233	2.33e-07 Pa	nPa	Pa	2.33e-07 Pa	-10
+nanopascal	pascal	1000000	0.001	0.001 Pa	nPa	Pa	0.001 Pa	-10
+micropascal	pascal	1	0.000001	1e-06 Pa	µPa	Pa	1e-06 Pa	-10
+micropascal	pascal	233	0.000233	0.000233 Pa	µPa	Pa	0.000233 Pa	-10
+micropascal	pascal	1000000	1	1 Pa	µPa	Pa	1 Pa	-10
+millipascal	pascal	1	0.001	0.001 Pa	mPa	Pa	0.001 Pa	-10
+millipascal	pascal	233	0.233	0.233 Pa	mPa	Pa	0.233 Pa	-10
+millipascal	pascal	1000000	1000	1000 Pa	mPa	Pa	1000 Pa	-10
+centipascal	pascal	1	0.01	0.01 Pa	cPa	Pa	0.01 Pa	-10
+centipascal	pascal	233	2.33	2.33 Pa	cPa	Pa	2.33 Pa	-10
+centipascal	pascal	1000000	10000	1e+04 Pa	cPa	Pa	1e+04 Pa	-10
+decipascal	pascal	1	0.1	0.1 Pa	dPa	Pa	0.1 Pa	-10
+decipascal	pascal	233	23.3	23.3 Pa	dPa	Pa	23.3 Pa	-10
+decipascal	pascal	1000000	100000	1e+05 Pa	dPa	Pa	1e+05 Pa	-10
+pascal	pascal	1	1	1 Pa	Pa	Pa	1 Pa	-10
+pascal	pascal	233	233	233 Pa	Pa	Pa	233 Pa	-10
+pascal	pascal	1000000	1000000	1e+06 Pa	Pa	Pa	1e+06 Pa	-10
+dekapascal	pascal	1	10	10 Pa	daPa	Pa	10 Pa	-10
+dekapascal	pascal	233	2330	2330 Pa	daPa	Pa	2330 Pa	-10
+dekapascal	pascal	1000000	10000000	1e+07 Pa	daPa	Pa	1e+07 Pa	-10
+hectopascal	pascal	1	100	100 Pa	hPa	Pa	100 Pa	-10
+hectopascal	pascal	233	23300	2.33e+04 Pa	hPa	Pa	2.33e+04 Pa	-10
+hectopascal	pascal	1000000	100000000	1e+08 Pa	hPa	Pa	1e+08 Pa	-10
+kilopascal	pascal	1	1000	1000 Pa	kPa	Pa	1000 Pa	-10
+kilopascal	pascal	233	233000	2.33e+05 Pa	kPa	Pa	2.33e+05 Pa	-10
+kilopascal	pascal	1000000	1000000000	1e+09 Pa	kPa	Pa	1e+09 Pa	-10
+megapascal	pascal	1	1000000	1e+06 Pa	MPa	Pa	1e+06 Pa	-10
+megapascal	pascal	233	233000000	2.33e+08 Pa	MPa	Pa	2.33e+08 Pa	-10
+megapascal	pascal	1000000	1000000000000	1e+12 Pa	MPa	Pa	1e+12 Pa	-10
+gigapascal	pascal	1	1000000000	1e+09 Pa	GPa	Pa	1e+09 Pa	-10
+gigapascal	pascal	233	233000000000	2.33e+11 Pa	GPa	Pa	2.33e+11 Pa	-10
+gigapascal	pascal	1000000	1000000000000000	1e+15 Pa	GPa	Pa	1e+15 Pa	-10
+terapascal	pascal	1	1000000000000	1e+12 Pa	TPa	Pa	1e+12 Pa	-10
+terapascal	pascal	233	233000000000000	2.33e+14 Pa	TPa	Pa	2.33e+14 Pa	-10
+terapascal	pascal	1000000	1E+018	1e+18 Pa	TPa	Pa	1e+18 Pa	-10
+petapascal	pascal	1	1000000000000000	1e+15 Pa	PPa	Pa	1e+15 Pa	-10
+petapascal	pascal	233	2.33E+017	2.33e+17 Pa	PPa	Pa	2.33e+17 Pa	-10
+petapascal	pascal	1000000	1E+021	1e+21 Pa	PPa	Pa	1e+21 Pa	-10
+exapascal	pascal	1	1E+018	1e+18 Pa	EPa	Pa	1e+18 Pa	-10
+exapascal	pascal	233	2.33E+020	2.33e+20 Pa	EPa	Pa	2.33e+20 Pa	-10
+exapascal	pascal	1000000	1E+024	1e+24 Pa	EPa	Pa	1e+24 Pa	-10
+zettapascal	pascal	1	1E+021	1e+21 Pa	ZPa	Pa	1e+21 Pa	-10
+zettapascal	pascal	233	2.33E+023	2.33e+23 Pa	ZPa	Pa	2.33e+23 Pa	-10
+zettapascal	pascal	1000000	1E+027	1e+27 Pa	ZPa	Pa	1e+27 Pa	-10
+yottapascal	pascal	1	1E+024	1e+24 Pa	YPa	Pa	1e+24 Pa	-10
+yottapascal	pascal	233	2.33E+026	2.33e+26 Pa	YPa	Pa	2.33e+26 Pa	-10
+yottapascal	pascal	1000000	1E+030	1e+30 Pa	YPa	Pa	1e+30 Pa	-10
+
+# Pressure conversions from base unit (Pa)
+
+pascal	yoctopascal	1	1E+024	1e+24 yPa	Pa	yPa	1e+24 yPa	-10
+pascal	yoctopascal	233	2.33E+026	2.33e+26 yPa	Pa	yPa	2.33e+26 yPa	-10
+pascal	yoctopascal	1000000	1E+030	1e+30 yPa	Pa	yPa	1e+30 yPa	-10
+pascal	zeptopascal	1	1E+021	1e+21 zPa	Pa	zPa	1e+21 zPa	-10
+pascal	zeptopascal	233	2.33E+023	2.33e+23 zPa	Pa	zPa	2.33e+23 zPa	-10
+pascal	zeptopascal	1000000	1E+027	1e+27 zPa	Pa	zPa	1e+27 zPa	-10
+pascal	attopascal	1	1E+018	1e+18 aPa	Pa	aPa	1e+18 aPa	-10
+pascal	attopascal	233	2.33E+020	2.33e+20 aPa	Pa	aPa	2.33e+20 aPa	-10
+pascal	attopascal	1000000	1E+024	1e+24 aPa	Pa	aPa	1e+24 aPa	-10
+pascal	femtopascal	1	1000000000000000	1e+15 fPa	Pa	fPa	1e+15 fPa	-10
+pascal	femtopascal	233	2.33E+017	2.33e+17 fPa	Pa	fPa	2.33e+17 fPa	-10
+pascal	femtopascal	1000000	1E+021	1e+21 fPa	Pa	fPa	1e+21 fPa	-10
+pascal	picopascal	1	1000000000000	1e+12 pPa	Pa	pPa	1e+12 pPa	-10
+pascal	picopascal	233	233000000000000	2.33e+14 pPa	Pa	pPa	2.33e+14 pPa	-10
+pascal	picopascal	1000000	1E+018	1e+18 pPa	Pa	pPa	1e+18 pPa	-10
+pascal	nanopascal	1	1000000000	1e+09 nPa	Pa	nPa	1e+09 nPa	-10
+pascal	nanopascal	233	233000000000	2.33e+11 nPa	Pa	nPa	2.33e+11 nPa	-10
+pascal	nanopascal	1000000	1000000000000000	1e+15 nPa	Pa	nPa	1e+15 nPa	-10
+pascal	micropascal	1	1000000	1e+06 uPa	Pa	µPa	1e+06 µPa	-10
+pascal	micropascal	233	233000000	2.33e+08 uPa	Pa	µPa	2.33e+08 µPa	-10
+pascal	micropascal	1000000	1000000000000	1e+12 uPa	Pa	µPa	1e+12 µPa	-10
+pascal	millipascal	1	1000	1000 mPa	Pa	mPa	1000 mPa	-10
+pascal	millipascal	233	233000	2.33e+05 mPa	Pa	mPa	2.33e+05 mPa	-10
+pascal	millipascal	1000000	1000000000	1e+09 mPa	Pa	mPa	1e+09 mPa	-10
+pascal	centipascal	1	100	100 cPa	Pa	cPa	100 cPa	-10
+pascal	centipascal	233	23300	2.33e+04 cPa	Pa	cPa	2.33e+04 cPa	-10
+pascal	centipascal	1000000	100000000	1e+08 cPa	Pa	cPa	1e+08 cPa	-10
+pascal	decipascal	1	10	10 dPa	Pa	dPa	10 dPa	-10
+pascal	decipascal	233	2330	2330 dPa	Pa	dPa	2330 dPa	-10
+pascal	decipascal	1000000	10000000	1e+07 dPa	Pa	dPa	1e+07 dPa	-10
+pascal	pascal	1	1	1 Pa	Pa	Pa	1 Pa	-10
+pascal	pascal	233	233	233 Pa	Pa	Pa	233 Pa	-10
+pascal	pascal	1000000	1000000	1e+06 Pa	Pa	Pa	1e+06 Pa	-10
+pascal	dekapascal	1	0.1	0.1 daPa	Pa	daPa	0.1 daPa	-10
+pascal	dekapascal	233	23.3	23.3 daPa	Pa	daPa	23.3 daPa	-10
+pascal	dekapascal	1000000	100000	1e+05 daPa	Pa	daPa	1e+05 daPa	-10
+pascal	decapascal	1	0.1	0.1 daPa	Pa	daPa	0.1 daPa	-10
+pascal	decapascal	233	23.3	23.3 daPa	Pa	daPa	23.3 daPa	-10
+pascal	decapascal	1000000	100000	1e+05 daPa	Pa	daPa	1e+05 daPa	-10
+pascal	hectopascal	1	0.01	0.01 hPa	Pa	hPa	0.01 hPa	-10
+pascal	hectopascal	233	2.33	2.33 hPa	Pa	hPa	2.33 hPa	-10
+pascal	hectopascal	1000000	10000	1e+04 hPa	Pa	hPa	1e+04 hPa	-10
+pascal	kilopascal	1	0.001	0.001 kPa	Pa	kPa	0.001 kPa	-10
+pascal	kilopascal	233	0.233	0.233 kPa	Pa	kPa	0.233 kPa	-10
+pascal	kilopascal	1000000	1000	1000 kPa	Pa	kPa	1000 kPa	-10
+pascal	megapascal	1	0.000001	1e-06 MPa	Pa	MPa	1e-06 MPa	-10
+pascal	megapascal	233	0.000233	0.000233 MPa	Pa	MPa	0.000233 MPa	-10
+pascal	megapascal	1000000	1	1 MPa	Pa	MPa	1 MPa	-10
+pascal	gigapascal	1	0.000000001	1e-09 GPa	Pa	GPa	1e-09 GPa	-10
+pascal	gigapascal	233	0.000000233	2.33e-07 GPa	Pa	GPa	2.33e-07 GPa	-10
+pascal	gigapascal	1000000	0.001	0.001 GPa	Pa	GPa	0.001 GPa	-10
+pascal	terapascal	1	1E-12	1e-12 TPa	Pa	TPa	1e-12 TPa	-10
+pascal	terapascal	233	2.33E-10	2.33e-10 TPa	Pa	TPa	2.33e-10 TPa	-10
+pascal	terapascal	1000000	0.000001	1e-06 TPa	Pa	TPa	1e-06 TPa	-10
+pascal	petapascal	1	1E-15	1e-15 PPa	Pa	PPa	1e-15 PPa	-10
+pascal	petapascal	233	2.33E-13	2.33e-13 PPa	Pa	PPa	2.33e-13 PPa	-10
+pascal	petapascal	1000000	0.000000001	1e-09 PPa	Pa	PPa	1e-09 PPa	-10
+pascal	exapascal	1	1E-18	1e-18 EPa	Pa	EPa	1e-18 EPa	-10
+pascal	exapascal	233	2.33E-16	2.33e-16 EPa	Pa	EPa	2.33e-16 EPa	-10
+pascal	exapascal	1000000	1E-12	1e-12 EPa	Pa	EPa	1e-12 EPa	-10
+pascal	zettapascal	1	1E-21	1e-21 ZPa	Pa	ZPa	1e-21 ZPa	-10
+pascal	zettapascal	233	2.33E-19	2.33e-19 ZPa	Pa	ZPa	2.33e-19 ZPa	-10
+pascal	zettapascal	1000000	1E-15	1e-15 ZPa	Pa	ZPa	1e-15 ZPa	-10
+pascal	yottapascal	1	1E-24	1e-24 YPa	Pa	YPa	1e-24 YPa	-10
+pascal	yottapascal	233	2.33E-22	2.33e-22 YPa	Pa	YPa	2.33e-22 YPa	-10
+pascal	yottapascal	1000000	1E-18	1e-18 YPa	Pa	YPa	1e-18 YPa	-10
+
+# Pressure conversions between non-base units
+
+nanopascal	micropascal	4.272	0.004272	0.004272 uPa	nPa	µPa	0.004272 µPa	-10
+millipascal	centipascal	9.282	0.9282	0.9282 cPa	mPa	cPa	0.9282 cPa	-10
+micropascal	millipascal	5	0.005	0.005 mPa	µPa	mPa	0.005 mPa	-10
+
+# Pressure conversions between standard and non-standard units
+
+millibar	pascal	10	1000	1000 Pa	mbar	Pa	1000 Pa	-10
+kilopascal	millibar	4.1	41	41 mbar	kPa	mbar	41 mbar	-10
+centibar	dekapascal	8.421	842.1	842.1 daPa	cbar	daPa	842.1 daPa	-10
+hectopascal	centibar	7.232	0.7232	0.7232 cbar	hPa	cbar	0.7232 cbar	-10
+decibar	kilopascal	12.3	123	123 kPa	dbar	kPa	123 kPa	-10
+megapascal	decibar	0.321	32.1	32.1 dbar	Mpa	dbar	32.1 dbar	-10
+bar	megapascal	32.84	3.284	3.284 MPa	bar	MPa	3.284 MPa	-10
+gigapascal	bar	0.7722	7722	7722 bar	Gpa	bar	7722 bar	-10
+decibar	gigapascal	12.8722	0.000128722	0.0001287 GPa	dbar	GPa	0.0001287 GPa	-10
+kilopascal	decibar	12.84	1.284	1.284 dbar	kPa	dbar	1.284 dbar	-10
+hectobar	kilopascal	43.291	432910	4.329e+05 kPa	hbar	kPa	4.329e+05 kPa	-10
+gigapascal	hectobar	8.8232	882.32	882.3 hbar	Gpa	hbar	882.3 hbar	-10
+kilobar	terapascal	231.7422	0.02317422	0.02317 TPa	kbar	TPa	0.02317 TPa	-10
+gigapascal	kilobar	5.87744	58.7744	58.77 kbar	Gpa	kbar	58.77 kbar	-10
+megabar	exapascal	483.982	4.83982E-05	4.84e-05 EPa	Mbar	EPa	4.84e-05 EPa	-10
+gigapascal	megabar	54.23	0.5423	0.5423 Mbar	Gpa	Mbar	0.5423 Mbar	-10
+
+# ! Note Boost.Units appears to use low-precision constants for mmHg
+"# conversion; these data use ""133.322"" and will need updating once"
+# Boost has updated its constants
+
+atmosphere	kilopascal	2.3	233.0475	233 kPa	atm	kPa	233 kPa	-10
+megapascal	atmosphere	0.123	1.2139156181	1.214 atm	Mpa	atm	1.214 atm	-10
+pound-force per square inch	kilopascal	81.32	560.6816630805	560.7 kPa$	psi	kPa	560.7 kPa	-6
+$hectopascal	pound-force per square inch	8.655	0.125530162	0.1255 psi	hPa	psi	0.1255 psi	-8
+torr	pascal	8.755	1167.2373	1167 Pa	torr	Pa	1167 Pa	-10
+dekapascal	torr	125	9.375771	9.376 Torr	daPa	Torr	9.376 Torr	-7
+millitorr	pascal	12.7778	1.7035666	1.704 Pa	mTorr	Pa	1.704 Pa	-6
+centipascal	millitorr	34.882	2.6163652	2.616 mTorr	cPa	mTorr	2.616 mTorr	-6
+millimeters mercury	pascal	43	5732.846	5733 Pa	mm Hg	Pa	5733 Pa	-10
+hectopascal	millimeters mercury	34.887	26.16747	26.17 mm Hg	hPa	mm Hg	26.17 mm Hg	-5
+
+## TEMPERATURE
+
+# Angle conversions to and from base unit (K) and between other units
+
+celsius	kelvin	0	273.15	273.1 K	°C	K	273.1 K	-10
+kelvin	celsius	10	-263.15	-263.1 °C	K	°C	-263.1 °C	-10
+fahrenheit	kelvin	20	266.48333	266.5 K	°F	K	266.5 K	-5
+kelvin	fahrenheit	300	80.33	80.33 °F	K	°F	80.33 °F	-10
+rankine	kelvin	400	222.22222	222.2 K	°R	K	222.2 K	-5
+kelvin	rankine	200	360	360 °R	K	°R	360 °R	-10
+celsius	fahrenheit	50	122	122 °F	°C	°F	122 °F	-10
+fahrenheit	celsius	250	121.1111	121.1 °C	°F	°C	121.1 °C	-3
+rankine	fahrenheit	459.67	0.0	0 °F	°R	°F	0 °F	-10
+fahrenheit	rankine	100.0	559.67	559.7 °R	°F	°R	559.67 °R	-10
+rankine	celsius	500	4.62778	4.628 °C	°R	°C	4.6 °C	-5
+celsius	rankine	-273.15	0.0	0 °R	°C	°R	0 °R	-10
+
+## TIME
+
+# Time conversions to base unit (s)
+
+yoctosecond	second	1	1E-24	1e-24 s	ys	s	1e-24 s	-10
+yoctosecond	second	233	2.33E-22	2.33e-22 s	ys	s	2.33e-22 s	-10
+yoctosecond	second	1000000	1E-18	1e-18 s	ys	s	1e-18 s	-10
+zeptosecond	second	1	1E-21	1e-21 s	zs	s	1e-21 s	-10
+zeptosecond	second	233	2.33E-19	2.33e-19 s	zs	s	2.33e-19 s	-10
+zeptosecond	second	1000000	1E-15	1e-15 s	zs	s	1e-15 s	-10
+attosecond	second	1	1E-18	1e-18 s	as	s	1e-18 s	-10
+attosecond	second	233	2.33E-16	2.33e-16 s	as	s	2.33e-16 s	-10
+attosecond	second	1000000	1E-12	1e-12 s	as	s	1e-12 s	-10
+femtosecond	second	1	1E-15	1e-15 s	fs	s	1e-15 s	-10
+femtosecond	second	233	2.33E-13	2.33e-13 s	fs	s	2.33e-13 s	-10
+femtosecond	second	1000000	0.000000001	1e-09 s	fs	s	1e-09 s	-10
+picosecond	second	1	1E-12	1e-12 s	ps	s	1e-12 s	-10
+picosecond	second	233	2.33E-10	2.33e-10 s	ps	s	2.33e-10 s	-10
+picosecond	second	1000000	0.000001	1e-06 s	ps	s	1e-06 s	-10
+nanosecond	second	1	0.000000001	1e-09 s	ns	s	1e-09 s	-10
+nanosecond	second	233	0.000000233	2.33e-07 s	ns	s	2.33e-07 s	-10
+nanosecond	second	1000000	0.001	0.001 s	ns	s	0.001 s	-10
+microsecond	second	1	0.000001	1e-06 s	µs	s	1e-06 s	-10
+microsecond	second	233	0.000233	0.000233 s	µs	s	0.000233 s	-10
+microsecond	second	1000000	1	1 s	µs	s	1 s	-10
+millisecond	second	1	0.001	0.001 s	ms	s	0.001 s	-10
+millisecond	second	233	0.233	0.233 s	ms	s	0.233 s	-10
+millisecond	second	1000000	1000	1000 s	ms	s	1000 s	-10
+centisecond	second	1	0.01	0.01 s	cs	s	0.01 s	-10
+centisecond	second	233	2.33	2.33 s	cs	s	2.33 s	-10
+centisecond	second	1000000	10000	1e+04 s	cs	s	1e+04 s	-10
+decisecond	second	1	0.1	0.1 s	ds	s	0.1 s	-10
+decisecond	second	233	23.3	23.3 s	ds	s	23.3 s	-10
+decisecond	second	1000000	100000	1e+05 s	ds	s	1e+05 s	-10
+second	second	1	1	1 s	s	s	1 s	-10
+second	second	233	233	233 s	s	s	233 s	-10
+second	second	1000000	1000000	1e+06 s	s	s	1e+06 s	-10
+dekasecond	second	1	10	10 s	das	s	10 s	-10
+dekasecond	second	233	2330	2330 s	das	s	2330 s	-10
+dekasecond	second	1000000	10000000	1e+07 s	das	s	1e+07 s	-10
+hectosecond	second	1	100	100 s	hs	s	100 s	-10
+hectosecond	second	233	23300	2.33e+04 s	hs	s	2.33e+04 s	-10
+hectosecond	second	1000000	100000000	1e+08 s	hs	s	1e+08 s	-10
+kilosecond	second	1	1000	1000 s	ks	s	1000 s	-10
+kilosecond	second	233	233000	2.33e+05 s	ks	s	2.33e+05 s	-10
+kilosecond	second	1000000	1000000000	1e+09 s	ks	s	1e+09 s	-10
+megasecond	second	1	1000000	1e+06 s	Ms	s	1e+06 s	-10
+megasecond	second	233	233000000	2.33e+08 s	Ms	s	2.33e+08 s	-10
+megasecond	second	1000000	1000000000000	1e+12 s	Ms	s	1e+12 s	-10
+gigasecond	second	1	1000000000	1e+09 s	Gs	s	1e+09 s	-10
+gigasecond	second	233	233000000000	2.33e+11 s	Gs	s	2.33e+11 s	-10
+gigasecond	second	1000000	1000000000000000	1e+15 s	Gs	s	1e+15 s	-10
+terasecond	second	1	1000000000000	1e+12 s	Ts	s	1e+12 s	-10
+terasecond	second	233	233000000000000	2.33e+14 s	Ts	s	2.33e+14 s	-10
+terasecond	second	1000000	1E+018	1e+18 s	Ts	s	1e+18 s	-10
+petasecond	second	1	1000000000000000	1e+15 s	Ps	s	1e+15 s	-10
+petasecond	second	233	2.33E+017	2.33e+17 s	Ps	s	2.33e+17 s	-10
+petasecond	second	1000000	1E+021	1e+21 s	Ps	s	1e+21 s	-10
+exasecond	second	1	1E+018	1e+18 s	Es	s	1e+18 s	-10
+exasecond	second	233	2.33E+020	2.33e+20 s	Es	s	2.33e+20 s	-10
+exasecond	second	1000000	1E+024	1e+24 s	Es	s	1e+24 s	-10
+zettasecond	second	1	1E+021	1e+21 s	Zs	s	1e+21 s	-10
+zettasecond	second	233	2.33E+023	2.33e+23 s	Zs	s	2.33e+23 s	-10
+zettasecond	second	1000000	1E+027	1e+27 s	Zs	s	1e+27 s	-10
+yottasecond	second	1	1E+024	1e+24 s	Ys	s	1e+24 s	-10
+yottasecond	second	233	2.33E+026	2.33e+26 s	Ys	s	2.33e+26 s	-10
+yottasecond	second	1000000	1E+030	1e+30 s	Ys	s	1e+30 s	-10
+
+# Time conversions from base unit (s)
+
+second	yoctosecond	1	1E+024	1e+24 ys	s	ys	1e+24 ys	-10
+second	yoctosecond	233	2.33E+026	2.33e+26 ys	s	ys	2.33e+26 ys	-10
+second	yoctosecond	1000000	1E+030	1e+30 ys	s	ys	1e+30 ys	-10
+second	zeptosecond	1	1E+021	1e+21 zs	s	zs	1e+21 zs	-10
+second	zeptosecond	233	2.33E+023	2.33e+23 zs	s	zs	2.33e+23 zs	-10
+second	zeptosecond	1000000	1E+027	1e+27 zs	s	zs	1e+27 zs	-10
+second	attosecond	1	1E+018	1e+18 as	s	as	1e+18 as	-10
+second	attosecond	233	2.33E+020	2.33e+20 as	s	as	2.33e+20 as	-10
+second	attosecond	1000000	1E+024	1e+24 as	s	as	1e+24 as	-10
+second	femtosecond	1	1000000000000000	1e+15 fs	s	fs	1e+15 fs	-10
+second	femtosecond	233	2.33E+017	2.33e+17 fs	s	fs	2.33e+17 fs	-10
+second	femtosecond	1000000	1E+021	1e+21 fs	s	fs	1e+21 fs	-10
+second	picosecond	1	1000000000000	1e+12 ps	s	ps	1e+12 ps	-10
+second	picosecond	233	233000000000000	2.33e+14 ps	s	ps	2.33e+14 ps	-10
+second	picosecond	1000000	1E+018	1e+18 ps	s	ps	1e+18 ps	-10
+second	nanosecond	1	1000000000	1e+09 ns	s	ns	1e+09 ns	-10
+second	nanosecond	233	233000000000	2.33e+11 ns	s	ns	2.33e+11 ns	-10
+second	nanosecond	1000000	1000000000000000	1e+15 ns	s	ns	1e+15 ns	-10
+second	microsecond	1	1000000	1e+06 us	s	µs	1e+06 µs	-10
+second	microsecond	233	233000000	2.33e+08 us	s	µs	2.33e+08 µs	-10
+second	microsecond	1000000	1000000000000	1e+12 us	s	µs	1e+12 µs	-10
+second	millisecond	1	1000	1000 ms	s	ms	1000 ms	-10
+second	millisecond	233	233000	2.33e+05 ms	s	ms	2.33e+05 ms	-10
+second	millisecond	1000000	1000000000	1e+09 ms	s	ms	1e+09 ms	-10
+second	centisecond	1	100	100 cs	s	cs	100 cs	-10
+second	centisecond	233	23300	2.33e+04 cs	s	cs	2.33e+04 cs	-10
+second	centisecond	1000000	100000000	1e+08 cs	s	cs	1e+08 cs	-10
+second	decisecond	1	10	10 ds	s	ds	10 ds	-10
+second	decisecond	233	2330	2330 ds	s	ds	2330 ds	-10
+second	decisecond	1000000	10000000	1e+07 ds	s	ds	1e+07 ds	-10
+second	second	1	1	1 s	s	s	1 s	-10
+second	second	233	233	233 s	s	s	233 s	-10
+second	second	1000000	1000000	1e+06 s	s	s	1e+06 s	-10
+second	dekasecond	1	0.1	0.1 das	s	das	0.1 das	-10
+second	dekasecond	233	23.3	23.3 das	s	das	23.3 das	-10
+second	dekasecond	1000000	100000	1e+05 das	s	das	1e+05 das	-10
+second	decasecond	1	0.1	0.1 das	s	das	0.1 das	-10
+second	decasecond	233	23.3	23.3 das	s	das	23.3 das	-10
+second	decasecond	1000000	100000	1e+05 das	s	das	1e+05 das	-10
+second	hectosecond	1	0.01	0.01 hs	s	hs	0.01 hs	-10
+second	hectosecond	233	2.33	2.33 hs	s	hs	2.33 hs	-10
+second	hectosecond	1000000	10000	1e+04 hs	s	hs	1e+04 hs	-10
+second	kilosecond	1	0.001	0.001 ks	s	ks	0.001 ks	-10
+second	kilosecond	233	0.233	0.233 ks	s	ks	0.233 ks	-10
+second	kilosecond	1000000	1000	1000 ks	s	ks	1000 ks	-10
+second	megasecond	1	0.000001	1e-06 Ms	s	Ms	1e-06 Ms	-10
+second	megasecond	233	0.000233	0.000233 Ms	s	Ms	0.000233 Ms	-10
+second	megasecond	1000000	1	1 Ms	s	Ms	1 Ms	-10
+second	gigasecond	1	0.000000001	1e-09 Gs	s	Gs	1e-09 Gs	-10
+second	gigasecond	233	0.000000233	2.33e-07 Gs	s	Gs	2.33e-07 Gs	-10
+second	gigasecond	1000000	0.001	0.001 Gs	s	Gs	0.001 Gs	-10
+second	terasecond	1	1E-12	1e-12 Ts	s	Ts	1e-12 Ts	-10
+second	terasecond	233	2.33E-10	2.33e-10 Ts	s	Ts	2.33e-10 Ts	-10
+second	terasecond	1000000	0.000001	1e-06 Ts	s	Ts	1e-06 Ts	-10
+second	petasecond	1	1E-15	1e-15 Ps	s	Ps	1e-15 Ps	-10
+second	petasecond	233	2.33E-13	2.33e-13 Ps	s	Ps	2.33e-13 Ps	-10
+second	petasecond	1000000	0.000000001	1e-09 Ps	s	Ps	1e-09 Ps	-10
+second	exasecond	1	1E-18	1e-18 Es	s	Es	1e-18 Es	-10
+second	exasecond	233	2.33E-16	2.33e-16 Es	s	Es	2.33e-16 Es	-10
+second	exasecond	1000000	1E-12	1e-12 Es	s	Es	1e-12 Es	-10
+second	zettasecond	1	1E-21	1e-21 Zs	s	Zs	1e-21 Zs	-10
+second	zettasecond	233	2.33E-19	2.33e-19 Zs	s	Zs	2.33e-19 Zs	-10
+second	zettasecond	1000000	1E-15	1e-15 Zs	s	Zs	1e-15 Zs	-10
+second	yottasecond	1	1E-24	1e-24 Ys	s	Ys	1e-24 Ys	-10
+second	yottasecond	233	2.33E-22	2.33e-22 Ys	s	Ys	2.33e-22 Ys	-10
+second	yottasecond	1000000	1E-18	1e-18 Ys	s	Ys	1e-18 Ys	-10
+
+# Time conversions between non-base units
+
+nanosecond	microsecond	4.272	0.004272	0.004272 us	ns	µs	0.004272 µs	-10
+millisecond	centisecond	9.282	0.9282	0.9282 cs	ms	cs	0.9282 cs	-10
+microsecond	millisecond	5	0.005	0.005 ms	µs	ms	0.005 ms	-10
+
+# Time conversions between standard and non-standard units
+
+minute	second	2	120	120 s	min	s	120 s	-10
+dekasecond	minute	20	3.3333333333	3.333 min	das	min	3.333 min	-10
+hour	dekasecond	1.5	540	540 das	h	das	540 das	-10
+hectosecond	hour	15.2	0.4222222222	0.4222 h	hs	h	0.4222 h	-10
+day	kilosecond	1	86.4	86.4 ks	d	ks	86.4 ks	-10
+centisecond	day	10000000	1.1574074074	1.157 d	cs	d	1.157 d	-10
+
+## ELECTRIC POTENTIAL
+
+# Electric Potential conversions to base unit (V)
+
+yoctovolt	volt	1	1E-24	1e-24 V	yV	V	1e-24 V	-10
+yoctovolt	volt	233	2.33E-22	2.33e-22 V	yV	V	2.33e-22 V	-10
+yoctovolt	volt	1000000	1E-18	1e-18 V	yV	V	1e-18 V	-10
+zeptovolt	volt	1	1E-21	1e-21 V	zV	V	1e-21 V	-10
+zeptovolt	volt	233	2.33E-19	2.33e-19 V	zV	V	2.33e-19 V	-10
+zeptovolt	volt	1000000	1E-15	1e-15 V	zV	V	1e-15 V	-10
+attovolt	volt	1	1E-18	1e-18 V	aV	V	1e-18 V	-10
+attovolt	volt	233	2.33E-16	2.33e-16 V	aV	V	2.33e-16 V	-10
+attovolt	volt	1000000	1E-12	1e-12 V	aV	V	1e-12 V	-10
+femtovolt	volt	1	1E-15	1e-15 V	fV	V	1e-15 V	-10
+femtovolt	volt	233	2.33E-13	2.33e-13 V	fV	V	2.33e-13 V	-10
+femtovolt	volt	1000000	0.000000001	1e-09 V	fV	V	1e-09 V	-10
+picovolt	volt	1	1E-12	1e-12 V	pV	V	1e-12 V	-10
+picovolt	volt	233	2.33E-10	2.33e-10 V	pV	V	2.33e-10 V	-10
+picovolt	volt	1000000	0.000001	1e-06 V	pV	V	1e-06 V	-10
+nanovolt	volt	1	0.000000001	1e-09 V	nV	V	1e-09 V	-10
+nanovolt	volt	233	0.000000233	2.33e-07 V	nV	V	2.33e-07 V	-10
+nanovolt	volt	1000000	0.001	0.001 V	nV	V	0.001 V	-10
+microvolt	volt	1	0.000001	1e-06 V	µV	V	1e-06 V	-10
+microvolt	volt	233	0.000233	0.000233 V	µV	V	0.000233 V	-10
+microvolt	volt	1000000	1	1 V	µV	V	1 V	-10
+millivolt	volt	1	0.001	0.001 V	mV	V	0.001 V	-10
+millivolt	volt	233	0.233	0.233 V	mV	V	0.233 V	-10
+millivolt	volt	1000000	1000	1000 V	mV	V	1000 V	-10
+centivolt	volt	1	0.01	0.01 V	cV	V	0.01 V	-10
+centivolt	volt	233	2.33	2.33 V	cV	V	2.33 V	-10
+centivolt	volt	1000000	10000	1e+04 V	cV	V	1e+04 V	-10
+decivolt	volt	1	0.1	0.1 V	dV	V	0.1 V	-10
+decivolt	volt	233	23.3	23.3 V	dV	V	23.3 V	-10
+decivolt	volt	1000000	100000	1e+05 V	dV	V	1e+05 V	-10
+volt	volt	1	1	1 V	V	V	1 V	-10
+volt	volt	233	233	233 V	V	V	233 V	-10
+volt	volt	1000000	1000000	1e+06 V	V	V	1e+06 V	-10
+dekavolt	volt	1	10	10 V	daV	V	10 V	-10
+dekavolt	volt	233	2330	2330 V	daV	V	2330 V	-10
+dekavolt	volt	1000000	10000000	1e+07 V	daV	V	1e+07 V	-10
+hectovolt	volt	1	100	100 V	hV	V	100 V	-10
+hectovolt	volt	233	23300	2.33e+04 V	hV	V	2.33e+04 V	-10
+hectovolt	volt	1000000	100000000	1e+08 V	hV	V	1e+08 V	-10
+kilovolt	volt	1	1000	1000 V	kV	V	1000 V	-10
+kilovolt	volt	233	233000	2.33e+05 V	kV	V	2.33e+05 V	-10
+kilovolt	volt	1000000	1000000000	1e+09 V	kV	V	1e+09 V	-10
+megavolt	volt	1	1000000	1e+06 V	MV	V	1e+06 V	-10
+megavolt	volt	233	233000000	2.33e+08 V	MV	V	2.33e+08 V	-10
+megavolt	volt	1000000	1000000000000	1e+12 V	MV	V	1e+12 V	-10
+gigavolt	volt	1	1000000000	1e+09 V	GV	V	1e+09 V	-10
+gigavolt	volt	233	233000000000	2.33e+11 V	GV	V	2.33e+11 V	-10
+gigavolt	volt	1000000	1000000000000000	1e+15 V	GV	V	1e+15 V	-10
+teravolt	volt	1	1000000000000	1e+12 V	TV	V	1e+12 V	-10
+teravolt	volt	233	233000000000000	2.33e+14 V	TV	V	2.33e+14 V	-10
+teravolt	volt	1000000	1E+018	1e+18 V	TV	V	1e+18 V	-10
+petavolt	volt	1	1000000000000000	1e+15 V	PV	V	1e+15 V	-10
+petavolt	volt	233	2.33E+017	2.33e+17 V	PV	V	2.33e+17 V	-10
+petavolt	volt	1000000	1E+021	1e+21 V	PV	V	1e+21 V	-10
+exavolt	volt	1	1E+018	1e+18 V	EV	V	1e+18 V	-10
+exavolt	volt	233	2.33E+020	2.33e+20 V	EV	V	2.33e+20 V	-10
+exavolt	volt	1000000	1E+024	1e+24 V	EV	V	1e+24 V	-10
+zettavolt	volt	1	1E+021	1e+21 V	ZV	V	1e+21 V	-10
+zettavolt	volt	233	2.33E+023	2.33e+23 V	ZV	V	2.33e+23 V	-10
+zettavolt	volt	1000000	1E+027	1e+27 V	ZV	V	1e+27 V	-10
+yottavolt	volt	1	1E+024	1e+24 V	YV	V	1e+24 V	-10
+yottavolt	volt	233	2.33E+026	2.33e+26 V	YV	V	2.33e+26 V	-10
+yottavolt	volt	1000000	1E+030	1e+30 V	YV	V	1e+30 V	-10
+
+# Electric Potential conversions from base unit (V)
+
+volt	yoctovolt	1	1E+024	1e+24 yV	V	yV	1e+24 yV	-10
+volt	yoctovolt	233	2.33E+026	2.33e+26 yV	V	yV	2.33e+26 yV	-10
+volt	yoctovolt	1000000	1E+030	1e+30 yV	V	yV	1e+30 yV	-10
+volt	zeptovolt	1	1E+021	1e+21 zV	V	zV	1e+21 zV	-10
+volt	zeptovolt	233	2.33E+023	2.33e+23 zV	V	zV	2.33e+23 zV	-10
+volt	zeptovolt	1000000	1E+027	1e+27 zV	V	zV	1e+27 zV	-10
+volt	attovolt	1	1E+018	1e+18 aV	V	aV	1e+18 aV	-10
+volt	attovolt	233	2.33E+020	2.33e+20 aV	V	aV	2.33e+20 aV	-10
+volt	attovolt	1000000	1E+024	1e+24 aV	V	aV	1e+24 aV	-10
+volt	femtovolt	1	1000000000000000	1e+15 fV	V	fV	1e+15 fV	-10
+volt	femtovolt	233	2.33E+017	2.33e+17 fV	V	fV	2.33e+17 fV	-10
+volt	femtovolt	1000000	1E+021	1e+21 fV	V	fV	1e+21 fV	-10
+volt	picovolt	1	1000000000000	1e+12 pV	V	pV	1e+12 pV	-10
+volt	picovolt	233	233000000000000	2.33e+14 pV	V	pV	2.33e+14 pV	-10
+volt	picovolt	1000000	1E+018	1e+18 pV	V	pV	1e+18 pV	-10
+volt	nanovolt	1	1000000000	1e+09 nV	V	nV	1e+09 nV	-10
+volt	nanovolt	233	233000000000	2.33e+11 nV	V	nV	2.33e+11 nV	-10
+volt	nanovolt	1000000	1000000000000000	1e+15 nV	V	nV	1e+15 nV	-10
+volt	microvolt	1	1000000	1e+06 uV	V	µV	1e+06 µV	-10
+volt	microvolt	233	233000000	2.33e+08 uV	V	µV	2.33e+08 µV	-10
+volt	microvolt	1000000	1000000000000	1e+12 uV	V	µV	1e+12 µV	-10
+volt	millivolt	1	1000	1000 mV	V	mV	1000 mV	-10
+volt	millivolt	233	233000	2.33e+05 mV	V	mV	2.33e+05 mV	-10
+volt	millivolt	1000000	1000000000	1e+09 mV	V	mV	1e+09 mV	-10
+volt	centivolt	1	100	100 cV	V	cV	100 cV	-10
+volt	centivolt	233	23300	2.33e+04 cV	V	cV	2.33e+04 cV	-10
+volt	centivolt	1000000	100000000	1e+08 cV	V	cV	1e+08 cV	-10
+volt	decivolt	1	10	10 dV	V	dV	10 dV	-10
+volt	decivolt	233	2330	2330 dV	V	dV	2330 dV	-10
+volt	decivolt	1000000	10000000	1e+07 dV	V	dV	1e+07 dV	-10
+volt	volt	1	1	1 V	V	V	1 V	-10
+volt	volt	233	233	233 V	V	V	233 V	-10
+volt	volt	1000000	1000000	1e+06 V	V	V	1e+06 V	-10
+volt	dekavolt	1	0.1	0.1 daV	V	daV	0.1 daV	-10
+volt	dekavolt	233	23.3	23.3 daV	V	daV	23.3 daV	-10
+volt	dekavolt	1000000	100000	1e+05 daV	V	daV	1e+05 daV	-10
+volt	decavolt	1	0.1	0.1 daV	V	daV	0.1 daV	-10
+volt	decavolt	233	23.3	23.3 daV	V	daV	23.3 daV	-10
+volt	decavolt	1000000	100000	1e+05 daV	V	daV	1e+05 daV	-10
+volt	hectovolt	1	0.01	0.01 hV	V	hV	0.01 hV	-10
+volt	hectovolt	233	2.33	2.33 hV	V	hV	2.33 hV	-10
+volt	hectovolt	1000000	10000	1e+04 hV	V	hV	1e+04 hV	-10
+volt	kilovolt	1	0.001	0.001 kV	V	kV	0.001 kV	-10
+volt	kilovolt	233	0.233	0.233 kV	V	kV	0.233 kV	-10
+volt	kilovolt	1000000	1000	1000 kV	V	kV	1000 kV	-10
+volt	megavolt	1	0.000001	1e-06 MV	V	MV	1e-06 MV	-10
+volt	megavolt	233	0.000233	0.000233 MV	V	MV	0.000233 MV	-10
+volt	megavolt	1000000	1	1 MV	V	MV	1 MV	-10
+volt	gigavolt	1	0.000000001	1e-09 GV	V	GV	1e-09 GV	-10
+volt	gigavolt	233	0.000000233	2.33e-07 GV	V	GV	2.33e-07 GV	-10
+volt	gigavolt	1000000	0.001	0.001 GV	V	GV	0.001 GV	-10
+volt	teravolt	1	1E-12	1e-12 TV	V	TV	1e-12 TV	-10
+volt	teravolt	233	2.33E-10	2.33e-10 TV	V	TV	2.33e-10 TV	-10
+volt	teravolt	1000000	0.000001	1e-06 TV	V	TV	1e-06 TV	-10
+volt	petavolt	1	1E-15	1e-15 PV	V	PV	1e-15 PV	-10
+volt	petavolt	233	2.33E-13	2.33e-13 PV	V	PV	2.33e-13 PV	-10
+volt	petavolt	1000000	0.000000001	1e-09 PV	V	PV	1e-09 PV	-10
+volt	exavolt	1	1E-18	1e-18 EV	V	EV	1e-18 EV	-10
+volt	exavolt	233	2.33E-16	2.33e-16 EV	V	EV	2.33e-16 EV	-10
+volt	exavolt	1000000	1E-12	1e-12 EV	V	EV	1e-12 EV	-10
+volt	zettavolt	1	1E-21	1e-21 ZV	V	ZV	1e-21 ZV	-10
+volt	zettavolt	233	2.33E-19	2.33e-19 ZV	V	ZV	2.33e-19 ZV	-10
+volt	zettavolt	1000000	1E-15	1e-15 ZV	V	ZV	1e-15 ZV	-10
+volt	yottavolt	1	1E-24	1e-24 YV	V	YV	1e-24 YV	-10
+volt	yottavolt	233	2.33E-22	2.33e-22 YV	V	YV	2.33e-22 YV	-10
+volt	yottavolt	1000000	1E-18	1e-18 YV	V	YV	1e-18 YV	-10
+
+# Electric Potential conversions between non-base unitV
+
+nanovolt	microvolt	4.272	0.004272	0.004272 uV	nV	µV	0.004272 µV	-10
+millivolt	centivolt	9.282	0.9282	0.9282 cV	mV	cV	0.9282 cV	-10
+microvolt	millivolt	5	0.005	0.005 mV	µV	mV	0.005 mV	-10
+
+## ANGLE
+
+# Angle conversions to and from base unit (radians) and between other units
+
+radian	gradian	3.1415926536	200	200 gon	rad	gon	200 gon	-10
+radian	degree	3.1415926536	180	180 deg	rad	deg	180 deg	-10
+gradian	radian	200	3.1415926536	3.142 rad	gon	rad	3.142 rad	-10
+gradian	degree	200	180	180 deg	gon	deg	180 deg	-10
+degree	radian	180	3.1415926536	3.142 rad	deg	rad	3.142 rad	-10
+degree	gradian	180	200	200 gon	deg	gon	200 gon	-10

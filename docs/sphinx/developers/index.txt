@@ -37,6 +37,7 @@ Using Bio-Formats as a Java library
     java-library
     export
     export2
+    logging
     conversion
     matlab-dev
     python-dev

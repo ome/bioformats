@@ -42,8 +42,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
 xsd_fu(omexml_model_all model_headers OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
 
-# Set ${OME_XML_GENERATED_MODEL_HEADERS}, ${OME_XML_GENERATED_ENUMS_HEADERS}
-# and ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+# Set ${OME_XML_GENERATED_MODEL_HEADERS}, ${OME_XML_GENERATED_ENUMS_HEADERS},
+# ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS} ${OME_XML_GENERATED_QUANTITY_HEADERS}
 foreach(hdr ${model_headers})
   get_filename_component(hdr_name ${hdr} NAME)
   get_filename_component(hdr_dir ${hdr} PATH)
@@ -66,6 +66,13 @@ set(OME_XML_STATIC_SOURCES
   model/detail/OMEModelObject.cpp
   model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
+  model/enums/UnitsElectricPotentialConvert.cpp
+  model/enums/UnitsFrequencyConvert.cpp
+  model/enums/UnitsLengthConvert.cpp
+  model/enums/UnitsPowerConvert.cpp
+  model/enums/UnitsPressureConvert.cpp
+  model/enums/UnitsTemperatureConvert.cpp
+  model/enums/UnitsTimeConvert.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
   model/primitives/NonNegativeInteger.cpp
@@ -116,10 +123,12 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/NonNegativeFloat.h
     model/primitives/NonNegativeInteger.h
     model/primitives/NonNegativeLong.h
+    model/primitives/OrderedMultimap.h
     model/primitives/PercentFraction.h
     model/primitives/PositiveFloat.h
     model/primitives/PositiveInteger.h
     model/primitives/PositiveLong.h
+    model/primitives/Quantity.h
     model/primitives/NumericConstraints.h
     model/primitives/Timestamp.h)
 

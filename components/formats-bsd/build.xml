@@ -12,8 +12,9 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <target name="test" depends="jar,compile-tests,test-no-ome-xml,
-    test-no-lurawave, test-no-jai, test-no-exif, test-no-xerces, test-spec"
+  <target name="test" depends="jar,compile-tests,test-long-running,
+      test-no-ome-xml,test-no-lurawave,test-no-jai,test-no-exif,
+      test-no-xerces,test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
@@ -128,6 +129,23 @@ Type "ant -p" for a list of targets.
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
     </testng>
+  </target>
+
+  <target name="test-long-running" depends="compile-tests"
+    description="run long-running test " if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-long-running.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="jar-formats-bsd-tests" depends="compile, compile-tests, copy-test-source"

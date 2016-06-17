@@ -25,7 +25,6 @@ class OMEModelObject(OMEModelEntity):
         self.type = element.getType()
         self.properties = odict()
         self.isAbstract = False
-        self.isAbstractProprietary = False
         self.isParentOrdered = False
         self.isChildOrdered = False
         self.isOrdered = False
@@ -50,8 +49,6 @@ class OMEModelObject(OMEModelEntity):
                 raise
             if root.find('abstract') is not None:
                 self.isAbstract = True
-            if root.find('abstractproprietary') is not None:    
-                self.isAbstractProprietary = True
             if root.find('unique') is not None:
                 self.isUnique = True
             if root.find('immutable') is not None:
@@ -249,10 +246,11 @@ class OMEModelObject(OMEModelEntity):
                 self.langBaseType, "value", None, "Element's text data",
                 False])
         for prop in self.properties.values():
-            props.append([
-                prop.instanceVariableType, prop.instanceVariableName,
-                prop.instanceVariableDefault, prop.instanceVariableComment,
-                prop.isUnitsEnumeration])
+            if not prop.isUnitsEnumeration:
+                props.append([
+                    prop.instanceVariableType, prop.instanceVariableName,
+                    prop.instanceVariableDefault, prop.instanceVariableComment,
+                    prop.isUnitsEnumeration])
         return props
     instanceVariables = property(
         _get_instanceVariables,
@@ -362,7 +360,7 @@ class OMEModelObject(OMEModelEntity):
         parent = self._get_parent()
         name = self.modelBaseType
 
-        if (parent is not None and parent.isAbstractProprietary and
+        if (parent is not None and parent.isAbstract and
                 self.name not in config.ANNOTATION_OVERRIDE):
             name = parent.name
 
@@ -370,20 +368,20 @@ class OMEModelObject(OMEModelEntity):
     parentName = property(
         _get_parentName, doc="""The parent class name for this object.""")
 
-    def _get_isParentAbstractProprietary(self):
+    def _get_isParentAbstract(self):
         parent = self._get_parent()
 
         abstract = False
 
-        if (parent is not None and parent.isAbstractProprietary and
+        if (parent is not None and parent.isAbstract and
                 self.name not in config.ANNOTATION_OVERRIDE):
             abstract = True
 
         return abstract
-    isParentAbstractProprietary = property(
-        _get_isParentAbstractProprietary,
+    isParentAbstract = property(
+        _get_isParentAbstract,
         doc="""Returns whether or not the model object has an abstract"""
-        """ proprietary parent.""")
+        """ parent.""")
 
     def __str__(self):
         return self.__repr__()
