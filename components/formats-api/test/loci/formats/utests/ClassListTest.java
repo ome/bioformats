@@ -54,17 +54,17 @@ import org.testng.annotations.Test;
 public class ClassListTest {
 
   private ClassList<Iterable> c;
+  String configFile;
 
-  public void writeConfigFile(File file, String content) {
-    try {
-      BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-      bw.write(content);
-      bw.close();
-    } catch(IOException e){
-      e.printStackTrace();
-    }
+  public String writeConfigFile(String content) throws IOException {
+    File file = File.createTempFile("iterables", ".tmp");
+    file.deleteOnExit();
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+    bw.write(content);
+    bw.close();
+    return file.getAbsolutePath();
   }
-  
+
   @Test
   public void testDefaultConstructor() {
     c = new ClassList<Iterable>(Iterable.class);
@@ -79,10 +79,9 @@ public class ClassListTest {
 
   @Test
   public void testConfigFileConstructor1() throws IOException {
-    File configFile = File.createTempFile("iterables", ".tmp");
-    configFile.deleteOnExit();
-    writeConfigFile(configFile, "java.util.ArrayList\njava.util.AbstractList");
-    c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
+    configFile = writeConfigFile(
+      "java.util.ArrayList\njava.util.AbstractList");
+    c = new ClassList<Iterable>(configFile, Iterable.class, null);
     assertEquals(c.getClasses().length, 2);
     assertEquals(c.getClasses()[0], ArrayList.class);
     assertEquals(c.getClasses()[1], AbstractList.class);
@@ -143,39 +142,46 @@ public class ClassListTest {
   }
 
   @Test
-  public void testAppend()  throws IOException{
-      File configFile = File.createTempFile("iterables1", ".tmp");
-      configFile.deleteOnExit();
-      writeConfigFile(configFile, "java.util.ArrayList");
-      c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
-      assertEquals(c.getClasses().length, 1);
-      assertEquals(c.getClasses()[0], ArrayList.class);
+  public void testAppend() throws IOException {
+    configFile = writeConfigFile("java.util.ArrayList");
+    c = new ClassList<Iterable>(configFile, Iterable.class, null);
+    assertEquals(c.getClasses().length, 1);
+    assertEquals(c.getClasses()[0], ArrayList.class);
 
-      File configFile2 = File.createTempFile("iterables2", ".tmp");
-      configFile2.deleteOnExit();
-      writeConfigFile(configFile2, "java.util.AbstractList");
-      c.append(c.parseFile(configFile2.getAbsolutePath(), null));
-      assertEquals(c.getClasses().length, 2);
-      assertEquals(c.getClasses()[0], ArrayList.class);
-      assertEquals(c.getClasses()[1], AbstractList.class);
+    String configFile2 = writeConfigFile("java.util.AbstractList");
+    c.append(c.parseFile(configFile2, null));
+    assertEquals(c.getClasses().length, 2);
+    assertEquals(c.getClasses()[0], ArrayList.class);
+    assertEquals(c.getClasses()[1], AbstractList.class);
   }
 
   @Test
-  public void testPrepend()  throws IOException{
-      File configFile = File.createTempFile("iterables1", ".tmp");
-      configFile.deleteOnExit();
-      writeConfigFile(configFile, "java.util.ArrayList");
-      c = new ClassList<Iterable>(configFile.getAbsolutePath(), Iterable.class, null);
-      assertEquals(c.getClasses().length, 1);
-      assertEquals(c.getClasses()[0], ArrayList.class);
+  public void testAppend2() throws IOException {
+    configFile = writeConfigFile("java.util.ArrayList");
+    c = new ClassList<Iterable>(configFile, Iterable.class, null);
+    assertEquals(c.getClasses().length, 1);
+    assertEquals(c.getClasses()[0], ArrayList.class);
 
-      File configFile2 = File.createTempFile("iterables2", ".tmp");
-      configFile2.deleteOnExit();
-      writeConfigFile(configFile2, "java.util.AbstractList");
-      c.prepend(c.parseFile(configFile2.getAbsolutePath(), null));
-      assertEquals(c.getClasses().length, 2);
-      assertEquals(c.getClasses()[0], AbstractList.class);
-      assertEquals(c.getClasses()[1], ArrayList.class);
+    String configFile2 = writeConfigFile("java.util.AbstractList");
+    ClassList<Iterable> c2 = new ClassList<Iterable>(configFile2, Iterable.class, null);
+    c.append(c2);
+    assertEquals(c.getClasses().length, 2);
+    assertEquals(c.getClasses()[0], ArrayList.class);
+    assertEquals(c.getClasses()[1], AbstractList.class);
+  }
+
+  @Test
+  public void testPrepend() throws IOException {
+    configFile = writeConfigFile("java.util.ArrayList");
+    c = new ClassList<Iterable>(configFile, Iterable.class, null);
+    assertEquals(c.getClasses().length, 1);
+    assertEquals(c.getClasses()[0], ArrayList.class);
+
+    String configFile2 = writeConfigFile("java.util.AbstractList");
+    ClassList<Iterable> c2 = new ClassList<Iterable>(configFile2, Iterable.class, null);
+    c.prepend(c2);
+    assertEquals(c.getClasses().length, 2);
+    assertEquals(c.getClasses()[0], AbstractList.class);
+    assertEquals(c.getClasses()[1], ArrayList.class);
   }
 }
-

@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -215,10 +216,24 @@ public class ClassList<T> {
   /**
    * Appends a list of classes which must be assignable to the base class
    */
+  public void append(ClassList<T> c) {
+    append(Arrays.asList(c.getClasses()));
+  }
+
+  /**
+   * Appends a list of classes which must be assignable to the base class
+   */
   public void append(List<Class<? extends T>> l) {
     for (int i = 0; i < l.size(); i++) {
       addClass(l.get(i));
     }
+  }
+
+  /**
+   * Appends a list of classes which must be assignable to the base class
+   */
+  public void prepend(ClassList<T> c) {
+    prepend(Arrays.asList(c.getClasses()));
   }
 
   /**
