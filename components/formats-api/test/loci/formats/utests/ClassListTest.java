@@ -45,6 +45,7 @@ import java.util.List;
 import loci.formats.ClassList;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -171,22 +172,23 @@ public class ClassListTest {
     assertEquals(c.getClasses()[1], ArrayList.class);
   }
 
-  @DataProvider(name = "skipped lines")
-  public Object[][] createLines() throws ClassNotFoundException {
+  @DataProvider(name = "escaped lines")
+  public Object[][] createEscapedLines() throws ClassNotFoundException {
     return new Object[][] {
       {""}, {"  # comment"}, {"# comment"},
     };
   }
 
-  @Test(dataProvider = "skipped lines")
-  public void testParseSkippedLine(String line) throws IOException  {
+  @Test(dataProvider = "escaped lines")
+  public void testParseEscapedLine(String line) throws IOException  {
     c = new ClassList<Iterable>(null, Iterable.class);
     c.parseLine(line);
     assertEquals(c.getClasses().length, 0);
+    assertTrue(c.getOptions().isEmpty());
   }
 
-  @DataProvider(name = "configuration lines")
-  public Object[][] createConfigurationLines() throws ClassNotFoundException {
+  @DataProvider(name = "classes")
+  public Object[][] createClassesNoOptions() throws ClassNotFoundException {
     return new Object[][] {
       {"java.util.ArrayList", ArrayList.class},
       {"java.util.ArrayList  ", ArrayList.class},
@@ -194,10 +196,29 @@ public class ClassListTest {
     };
   }
 
-  @Test(dataProvider = "configuration lines")
-  public void testParseLine(String line, Object output) throws IOException  {
+  @Test(dataProvider = "classes")
+  public void testParseClasses(String line, Object output) throws IOException   {
     c = new ClassList<Iterable>(null, Iterable.class);
     c.parseLine(line);
     assertEquals(c.getClasses()[0], output);
+    assertTrue(c.getOptions().isEmpty());
+  }
+
+  @DataProvider(name = "classes with options")
+  public Object[][] createClassesWithOptions() throws ClassNotFoundException {
+    return new Object[][] {
+      {"java.util.ArrayList[a=b]", ArrayList.class},
+      {"java.util.ArrayList[a=b]  ", ArrayList.class},
+      {"java.util.ArrayList[a=b]  # comment", ArrayList.class},
+    };
+  }
+
+  @Test(dataProvider = "classes with options")
+  public void testParseClassesWithOptions(String line, Object output) throws IOException  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    c.parseLine(line);
+    assertEquals(c.getClasses()[0], output);
+    assertEquals(c.getOptions().size(), 1);
+    assertEquals(c.getOptions().get("java.util.ArrayList.a"), "b");
   }
 }

@@ -41,6 +41,10 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
 import loci.common.Constants;
 
 import org.slf4j.Logger;
@@ -66,6 +70,9 @@ public class ClassList<T> {
   /** List of classes. */
   private List<Class<? extends T>> classes;
 
+  /** List of options. */
+  private Map<String, String> options;
+
   // -- Constructor --
 
   /**
@@ -75,6 +82,7 @@ public class ClassList<T> {
   public ClassList(Class<T> base) {
     this.base = base;
     classes = new ArrayList<Class<? extends T>>();
+    options = new HashMap<String, String>();
   }
 
   /**
@@ -106,18 +114,47 @@ public class ClassList<T> {
   // -- ClassList API methods --
 
   /**
-   * Parses a class from a configuration line
-   * @param line A line containing the class followed by comments. This line
-   *             must be formatted as "package.class  # comments".
-   * @return A class parsed from the input string or {@code null}.
+   * Parses one or more options from a string.
+   * @param s  A string containing a series of options formatted as
+   *           key1=value1,key2=value2
+   * @return a map populated with the parsed key/value pairs
+   */
+  public Map<String, String> parseOptions(String s)
+   {
+      Map<String, String> map = new HashMap<String, String>();
+      StringTokenizer st = new StringTokenizer(s, ",=");
+      while (st.hasMoreTokens()) {
+        map.put(st.nextToken(), st.nextToken());
+      }
+      return map;
+   }
+
+  /**
+   * Parses a class from a string including options and comments.
+   *
+   * This function assumes the string is formatted as
+   * "package.class[key1=value1,key2=value2] # comments". Options will be
+   * parsed and stored in a local map. If the class can be loaded, then each
+   * key/value pair will be stored in the options as package.class.key/value.
+   *
+   * @param line A string containing the class, options and comments
    */
   public void parseLine(String line)
    {
-      // ignore characters following # sign (comments)
+      // Ignore characters following # sign (comments)
       int ndx = line.indexOf("#");
       if (ndx >= 0) line = line.substring(0, ndx);
       line = line.trim();
       if (line.equals("")) return;
+
+      Map<String, String> o = new HashMap<String, String>();
+      if (line.endsWith("]")) {
+        ndx = line.indexOf("[");
+        if (ndx >= 0) {
+          o = parseOptions(line.substring(ndx + 1, line.length() - 1));
+          line = line.substring(0, ndx).trim();
+        }
+      }
 
       // load class
       Class<? extends T> c = null;
@@ -144,6 +181,10 @@ public class ClassList<T> {
         LOGGER.error("\"{}\" is not valid.", line);
       } else {
         classes.add(c);
+        for (Map.Entry<String, String> entry : o.entrySet())
+        {
+          options.put(line + "." + entry.getKey(), entry.getValue());
+        }
       }
   }
 
@@ -222,7 +263,7 @@ public class ClassList<T> {
   }
 
   /**
-   * Appends a list of classes which must be assignable to the base class
+   * Prepends a list of classes which must be assignable to the base class
    */
   public void prepend(ClassList<T> c) {
     prepend(Arrays.asList(c.getClasses()));
@@ -241,6 +282,11 @@ public class ClassList<T> {
   @SuppressWarnings("unchecked")
   public Class<? extends T>[] getClasses() {
     return classes.toArray(new Class[0]);
+  }
+
+  /** Gets the list of classes as an array. */
+  public Map<String, String> getOptions() {
+    return options;
   }
 
   // -- Helper methods --
