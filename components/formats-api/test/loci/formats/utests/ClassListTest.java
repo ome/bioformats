@@ -45,6 +45,7 @@ import java.util.List;
 import loci.formats.ClassList;
 
 import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 
@@ -183,5 +184,22 @@ public class ClassListTest {
     assertEquals(c.getClasses().length, 2);
     assertEquals(c.getClasses()[0], AbstractList.class);
     assertEquals(c.getClasses()[1], ArrayList.class);
+  }
+
+  @DataProvider(name = "configuration lines")
+  public Object[][] createConfigurationLines() throws ClassNotFoundException {
+    return new Object[][] {
+      {"", null},
+      {"java.util.ArrayList", Class.forName("java.util.ArrayList")},
+      {"java.util.ArrayList  ", Class.forName("java.util.ArrayList")},
+      {"java.util.ArrayList  # comment", Class.forName("java.util.ArrayList")},
+    };
+  }
+
+  @Test(dataProvider = "configuration lines")
+  public void testParseLine(String line, Object output) throws IOException  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    Class<? extends Iterable> c2 = c.parseLine(line);
+    assertEquals(c2, output);
   }
 }
