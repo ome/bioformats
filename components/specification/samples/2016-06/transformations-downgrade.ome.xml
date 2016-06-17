@@ -170,8 +170,8 @@
                       MarkerEnd="Arrow"/>
       <Polyline ID="Shape:6a" StrokeWidth="2" StrokeColor="1" Points="1,1 10,20, 20,20 20,10" MarkerStart="Arrow"/>
       <Line ID="Shape:7" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerStart="Arrow" MarkerEnd="Arrow"/>
-      <Line ID="Shape:7a" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Circle"/>
-      <Line ID="Shape:7b" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Circle"/>
+      <Line ID="Shape:7a" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Arrow"/>
+      <Line ID="Shape:7b" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Arrow"/>
     </Union>
   </ROI>
   <ROI ID="4">

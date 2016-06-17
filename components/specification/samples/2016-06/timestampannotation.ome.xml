@@ -209,8 +209,8 @@
                  MarkerStart="Arrow"/>
       <Line ID="Shape:7" StrokeWidth="2" StrokeColor="17" X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Arrow"
                  MarkerEnd="Arrow"/>
-      <Line ID="Shape:8" StrokeWidth="2" StrokeColor="171" X1="1.71" Y1="2.71" X2="3.71" Y2="4.71" MarkerEnd="Circle"/>
-      <Line ID="Shape:9" StrokeWidth="2" StrokeColor="172" X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Circle"/>
+      <Line ID="Shape:8" StrokeWidth="2" StrokeColor="171" X1="1.71" Y1="2.71" X2="3.71" Y2="4.71" MarkerEnd="Arrow"/>
+      <Line ID="Shape:9" StrokeWidth="2" StrokeColor="172" X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Arrow"/>
     </Union>
   </ROI>
   <ROI ID="3">
