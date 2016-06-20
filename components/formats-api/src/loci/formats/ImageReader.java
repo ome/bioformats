@@ -848,7 +848,7 @@ public class ImageReader implements IFormatReader {
         setupService();
         String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
         service.validateOMEXML(omexml);
-      } catch (ServiceException e) {
+      } catch (ServiceException | NullPointerException e) {
         LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
       }
     }

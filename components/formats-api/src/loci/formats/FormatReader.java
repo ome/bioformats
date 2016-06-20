@@ -1434,7 +1434,7 @@ public abstract class FormatReader extends FormatHandler
           try {
             String omexml = service.getOMEXML((MetadataRetrieve)store);
             service.validateOMEXML(omexml);
-          } catch (ServiceException e) {
+          } catch (ServiceException | NullPointerException e) {
             LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
           }
         }
