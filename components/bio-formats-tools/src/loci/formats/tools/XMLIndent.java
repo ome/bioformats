@@ -1,6 +1,6 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Bio-Formats command line tools for reading and converting files
  * %%
  * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
