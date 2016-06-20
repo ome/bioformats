@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,57 +32,43 @@
 
 package loci.formats.tools;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import loci.common.DataTools;
+import loci.formats.FormatTools;
+import loci.formats.UpgradeChecker;
 
-import loci.common.Constants;
-import loci.common.xml.XMLTools;
-import loci.formats.tiff.TiffParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Attempts to validate the given XML files.
+ * An utility class for various methods used in command-line tools
  */
-public class XMLValidate {
+public final class CommandLineTools {
 
-  public static void process(String label, BufferedReader in)
-    throws IOException
-  {
-    StringBuffer sb = new StringBuffer();
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      sb.append(line);
-    }
-    in.close();
-    XMLTools.validateXML(sb.toString(), label);
+  // -- Constants --
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommandLineTools.class);
+  public static final String VERSION = "-version";
+
+  public static final String NO_UPGRADE_CHECK = "-no-upgrade";
+
+  public static void printVersion() {
+    System.out.println("Version: " + FormatTools.VERSION);
+    System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
+    System.out.println("Build date: " + FormatTools.DATE);
   }
 
-  public static void main(String[] args) throws Exception {
-    CommandLineTools.runUpgradeCheck(args);
-
-    if (args.length == 0) {
-      // read from stdin
-      process("<stdin>", new BufferedReader(
-        new InputStreamReader(System.in, Constants.ENCODING)));
+  public static void runUpgradeCheck(String[] args) {
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) != -1) {
+      LOGGER.debug("Skipping upgrade check");
+      return;
     }
-    else {
-      // read from file(s)
-      for (int i=0; i<args.length; i++) {
-        if (args[i].toLowerCase().endsWith("tif") ||
-          args[i].toLowerCase().endsWith("tiff"))
-        {
-          String comment = new TiffParser(args[i]).getComment();
-          process(args[i], new BufferedReader(new StringReader(comment)));
-        }
-        else {
-          process(args[i], new BufferedReader(new InputStreamReader(
-            new FileInputStream(args[i]), Constants.ENCODING)));
-        }
-      }
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+    if (canUpgrade) {
+      LOGGER.info("*** A new stable version is available. ***");
+      LOGGER.info("*** Install the new version using:     ***");
+      LOGGER.info("***   'upgradechecker -install'        ***");
     }
   }
-
 }

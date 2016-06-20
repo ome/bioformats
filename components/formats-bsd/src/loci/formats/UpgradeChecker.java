@@ -42,6 +42,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,6 +248,9 @@ public class UpgradeChecker {
         LOGGER.debug("UPGRADE AVAILABLE:" + result);
         return true;
       }
+    }
+    catch (UnknownHostException e) {
+      LOGGER.warn("Failed to reach the update site");
     }
     catch (IOException e) {
       LOGGER.warn("Failed to compare version numbers", e);
