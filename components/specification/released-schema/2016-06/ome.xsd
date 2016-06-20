@@ -19,11 +19,6 @@
 #       http://www.openmicroscopy.org/info/attribution
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Written by: Ilya G. Goldberg, Andrew J Patterson
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
 <xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -38,7 +33,6 @@
     <xsd:documentation>
       Open Microscopy Environment
       OME XML Schema January 2015
-      Author:  Ilya G. Goldberg, Andrew J Patterson
     </xsd:documentation>
   </xsd:annotation>
 
