@@ -14,13 +14,13 @@
      >
     <Description></Description>
 
-    <!-- repeat SPW:Well for # of wells in the plate that contain images -->
+    <!-- repeat Well for # of wells in the plate that contain images -->
     <Well ID="Well:1" Column="0" Row="0">
-      <!-- repeat SPW:WellSample for # of images taken in the well -->
+      <!-- repeat WellSample for # of images taken in the well -->
       <WellSample ID="WellSample:1" Index="0">
         <!--
              if there is an image associated with this SPW:WellSample
-             it is linked using an SPW:ImageRef
+             it is linked using an ImageRef
           -->
         <ImageRef ID="Image:0"/>
       </WellSample>
@@ -28,9 +28,9 @@
   </Plate>
   <!-- plus one more Plate for each Plate in this set -->
 
-  <!-- SPW:Screen is not required -->
+  <!-- Screen is not required -->
 
-  <!-- The OME:Image element follows the structure for the OME Compliant File Specification -->
+  <!-- The Image element follows the structure for the OME Compliant File Specification -->
   <Image ID="Image:0" Name="Series 1">
     <AcquisitionDate>2008-02-06T13:43:19</AcquisitionDate>
     <Description>An example OME compliant file, based on Olympus.oib</Description>
