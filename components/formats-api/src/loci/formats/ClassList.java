@@ -51,8 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ClassList is a list of classes for use with ImageReader or ImageWriter,
- * parsed from a configuration file such as readers.txt or writers.txt.
+ * ClassList is a list of classes for use with {@link ImageReader} or
+ * {@link ImageWriter}, parsed from a configuration file such as readers.txt
+ * or writers.txt.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -116,7 +117,7 @@ public class ClassList<T> {
   /**
    * Parses one or more options from a string.
    * @param s  A string containing a series of options formatted as
-   *           key1=value1,key2=value2
+   *           <i>key1=value1,key2=value2</i>.
    * @return a map populated with the parsed key/value pairs
    */
   public Map<String, String> parseOptions(String s)
@@ -133,7 +134,7 @@ public class ClassList<T> {
    * Parses a class from a string including options and comments.
    *
    * This function assumes the string is formatted as
-   * "package.class[key1=value1,key2=value2] # comments". Options will be
+   * <i>package.class[key1=value1,key2=value2] # comments</i>. Options will be
    * parsed and stored in a local map. If the class can be loaded, then each
    * key/value pair will be stored in the options as package.class.key/value.
    *
@@ -193,7 +194,6 @@ public class ClassList<T> {
     * @param file Configuration file containing the list of classes.
     * @param location Class indicating which package to search for the file.
     *        If {@code null}, 'file' is interpreted as an absolute path name.
-    * @return A list of classes parsed from the file
     * @throws IOException if the file cannot be read.
     */
   public void parseFile(String file, Class<?> location)
@@ -247,7 +247,7 @@ public class ClassList<T> {
   }
 
   /**
-   * Appends a list of classes which must be assignable to the base class
+   * Appends a class list which must be assignable to the base class
    */
   public void append(ClassList<T> c) {
     append(Arrays.asList(c.getClasses()));
@@ -263,7 +263,7 @@ public class ClassList<T> {
   }
 
   /**
-   * Prepends a list of classes which must be assignable to the base class
+   * Prepends a class list which must be assignable to the base class
    */
   public void prepend(ClassList<T> c) {
     prepend(Arrays.asList(c.getClasses()));
@@ -284,7 +284,7 @@ public class ClassList<T> {
     return classes.toArray(new Class[0]);
   }
 
-  /** Gets the list of classes as an array. */
+  /** Gets the list of options as a map. */
   public Map<String, String> getOptions() {
     return options;
   }
