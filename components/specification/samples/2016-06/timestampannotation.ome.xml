@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+
+  <Project ID="Project:0">
+    <DatasetRef ID="Dataset:0"/>
+    <AnnotationRef ID="Annotation:0"/>
+  </Project>
+  <Dataset ID="Dataset:0">
+    <ImageRef ID="Image:0"/>
+    <AnnotationRef ID="Annotation:1"/>
+  </Dataset>
+  <Plate ID="Plate:0">
+    <Description>Plate 0 Description</Description>
+    <Well ID="Well:0" Column="1" Row="1" Color="-2147483648" Type="TheWell0Status">
+      <WellSample ID="WellSample:0" Index="1">
+        <ImageRef ID="Image:0"/>
+      </WellSample>
+    </Well>
+    <AnnotationRef ID="Annotation:0"/>
+    <PlateAcquisition ID="PlateAcquisition:0">
+      <Description>Plate Acquisition 0 Description</Description>
+      <AnnotationRef ID="Annotation:1"/>
+    </PlateAcquisition>
+  </Plate>
+  <Plate ID="Plate:1"/>
+  <Screen ID="Screen:0" Name="ScreenName0" ProtocolDescription="Protocol Description Test0"
+              ProtocolIdentifier="ProtocolTest0ID" ReagentSetDescription="Reagents Set XYZ"
+              ReagentSetIdentifier="ReagentsXYZ-ID" Type="ScreenType0">
+    <Description>Screen 0 Description</Description>
+    <Reagent ID="Reagent:0"/>
+    <PlateRef ID="Plate:0"/>
+    <AnnotationRef ID="Annotation:1"/>
+  </Screen>
+
+  <Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1"
+              ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR"
+              ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
+    <Description>Screen 1 Description</Description>
+    <Reagent ID="Reagent:1"/>
+    <PlateRef ID="Plate:1"/>
+    <PlateRef ID="Plate:0"/>
+    <AnnotationRef ID="Annotation:1"/>
+  </Screen>
+
+  <Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2"
+              ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK"
+              ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
+    <Description>Screen 2 Description</Description>
+    <Reagent ID="Reagent:2"/>
+    <AnnotationRef ID="Annotation:1"/>
+  </Screen>
+
+  <Screen ID="Screen:3" Name="ScreenName3" ProtocolDescription="Protocol Description Test3"
+              ProtocolIdentifier="ProtocolTest3ID" ReagentSetDescription="Reagents Set AJP"
+              ReagentSetIdentifier="ReagentsAJP-ID" Type="ScreenType3">
+    <Description>Screen 3 Description</Description>
+    <Reagent ID="Reagent:3"/>
+    <PlateRef ID="Plate:0"/>
+    <AnnotationRef ID="Annotation:1"/>
+  </Screen>
+
+  <Experimenter ID="Experimenter:0"/>
+  <Experimenter ID="Experimenter:1" FirstName="John" MiddleName="Andrew" LastName="Smith"
+                    Email="john@example.org"> </Experimenter>
+  <Experimenter ID="Experimenter:2"/>
+  <Experimenter ID="Experimenter:3"/>
+  <Experimenter ID="Experimenter:4"/>
+  <Experimenter ID="Experimenter:5"/>
+  <Experimenter ID="Experimenter:6"/>
+
+  <ExperimenterGroup Name="MyGroup - Leader+Contact match" ID="ExperimenterGroup:Group:0">
+    <Description>A description for my group 0. Complete with basic formatting, like new
+      lines.</Description>
+    <ExperimenterRef ID="Experimenter:5"/>
+    <Leader ID="Experimenter:0"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="MyOtherGroup" ID="ExperimenterGroup:Group:1">
+    <Description>A description for my group 1. Complete with basic formatting, like new
+      lines.</Description>
+    <ExperimenterRef ID="Experimenter:2"/>
+    <ExperimenterRef ID="Experimenter:3"/>
+    <Leader ID="Experimenter:0"/>
+    <Leader ID="Experimenter:1"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="NoMatch" ID="ExperimenterGroup:Group:2">
+    <Description>A description for my group 2. Complete with basic formatting, like new
+      lines.</Description>
+    <ExperimenterRef ID="Experimenter:4"/>
+    <Leader ID="Experimenter:6"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="LeaderMatch" ID="ExperimenterGroup:Group:3">
+    <Description>A description for my group 3. Complete with basic formatting, like new
+      lines.</Description>
+    <Leader ID="Experimenter:0"/>
+  </ExperimenterGroup>
+  <ExperimenterGroup Name="ContactMatch" ID="ExperimenterGroup:Group:4">
+    <Description>A description for my group 4. Complete with basic formatting, like new
+      lines.</Description>
+    <Leader ID="Experimenter:0"/>
+  </ExperimenterGroup>
+
+  <Instrument ID="Instrument:0">
+    <Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
+               NominalMagnification="20" CalibratedMagnification="20.34"/>
+  </Instrument>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2012-03-05T02:48:38</AcquisitionDate>
+    <ExperimenterRef ID="Experimenter:1"/>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+            PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
+               ID="Channel:0"> </Channel>
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
+               ID="Channel:1"> </Channel>
+      <Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BinData>
+    </Pixels>
+    <ROIRef ID="ROI:0"/>
+    <ROIRef ID="ROI:1"/>
+    <ROIRef ID="ROI:2"/>
+  </Image>
+  <StructuredAnnotations>
+    <XMLAnnotation ID="Annotation:0">
+      <Value>
+        <test1/>
+      </Value>
+    </XMLAnnotation>
+    <XMLAnnotation ID="Annotation:1">
+      <Value>
+        <test2/>
+      </Value>
+    </XMLAnnotation>
+    <!-- A range of dates, valid in the schema designed to test/stretch/break the model API -->
+    <TimestampAnnotation ID="Annotation:2"
+                            Namespace="sample.openmicroscopy.org/time/retirement">
+      <Value>2037-12-15T17:30:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:3"
+                            Namespace="sample.openmicroscopy.org/time/post1972">
+      <Value>1996-03-23T14:45:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:4"
+                            Namespace="sample.openmicroscopy.org/time/1970-1972">
+      <Value>1971-05-06T18:34:59</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:5"
+                            Namespace="sample.openmicroscopy.org/time/oldestlivingDOB">
+      <Value>1898-03-05T02:48:38+03:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:6"
+                            Namespace="sample.openmicroscopy.org/time/houseofstewart">
+      <Value>1714-08-01T00:00:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:7"
+                            Namespace="sample.openmicroscopy.org/time/gregorian-start">
+      <Value>1582-10-15T00:00:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:8"
+                            Namespace="sample.openmicroscopy.org/time/kingjohn">
+      <Value>1199-05-27T00:00:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:9"
+                            Namespace="sample.openmicroscopy.org/time/romefire">
+      <Value>0066-07-18T00:00:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:10"
+                            Namespace="sample.openmicroscopy.org/time/birthday">
+      <Value>-0005-12-25T00:00:00</Value>
+    </TimestampAnnotation>
+    <TimestampAnnotation ID="Annotation:11"
+                            Namespace="sample.openmicroscopy.org/time/dinosaur">
+      <Value>-231400000-01-01T00:00:00</Value>
+    </TimestampAnnotation>
+  </StructuredAnnotations>
+  <ROI ID="ROI:0">
+    <Union>
+      <Point ID="Shape:0" TheC="0" X="1" Y="1"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:1">
+    <Union>
+      <Point ID="Shape:1" FillRule="NonZero" FontFamily="sans-serif" FontSize="1"
+                 FontStyle="Bold" StrokeDashArray="1" StrokeWidth="1" TheC="2"
+                 FillColor="1" StrokeColor="1" Text="Hello" X="1" Y="1"/>
+    </Union>
+    <Description>ROI 1 Upgradable description.</Description>
+  </ROI>
+  <ROI ID="ROI:2">
+    <Union>
+      <Rectangle ID="Shape:2" FillRule="EvenOdd" Text="Hi There! (from shape 2)" X="1" Y="2" Width="3" Height="4">
+        <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      </Rectangle>
+      <Label ID="Shape:3" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
+                 Text="Hello World Text Value!(from shape 3)" X="1" Y="1"/>
+      <Polygon ID="Shape:4" StrokeWidth="2" StrokeColor="15"> Points="1,1 10,20, 20,20 20,10"></Polygon>
+      <Polyline ID="Shape:5" StrokeWidth="2" StrokeColor="16" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
+                 MarkerEnd="Arrow"/>
+      <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="161" Points="1.1,1.1 10.1,20.1, 20.1,20.1 20.1,10.1" 
+                 MarkerStart="Arrow"/>
+      <Line ID="Shape:7" StrokeWidth="2" StrokeColor="17" X1="1.7" Y1="2.7" X2="3.7" Y2="4.7" MarkerStart="Arrow"
+                 MarkerEnd="Arrow"/>
+      <Line ID="Shape:8" StrokeWidth="2" StrokeColor="171" X1="1.71" Y1="2.71" X2="3.71" Y2="4.71" MarkerEnd="Arrow"/>
+      <Line ID="Shape:9" StrokeWidth="2" StrokeColor="172" X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Arrow"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:3">
+    <Union>
+      <Label ID="Shape:11" Text="Removed Path" X="0" Y="0"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:4">
+    <Union>
+      <Label ID="Shape:12" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:13" Text="Removed Path" X="0" Y="0"/>
+    </Union>
+  </ROI>
+</OME>

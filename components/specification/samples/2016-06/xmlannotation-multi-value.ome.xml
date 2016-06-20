@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+    <AnnotationRef ID="Annotation:1"/>
+  </Image>
+  <StructuredAnnotations>
+    <!-- First Tag -->
+    <XMLAnnotation ID="Annotation:1" Namespace="openmicroscopy.org/sample/body/multivalue">
+      <Value>
+        <valueA>A</valueA>
+        <valueB xmlns="http://example.com/xmlschema/"
+                >B<nestedA><nestedB/></nestedA></valueB>
+      </Value>
+    </XMLAnnotation>
+  </StructuredAnnotations>
+</OME>

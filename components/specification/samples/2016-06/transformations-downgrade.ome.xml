@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Rights>
+    <RightsHolder>Holder</RightsHolder>
+    <RightsHeld>Held</RightsHeld>
+  </Rights>
+  <Experimenter ID="Experimenter:1"/>
+  <Experimenter ID="Experimenter:2" FirstName="John" MiddleName="Andrew" LastName="Smith"
+                    Email="john@example.org"/>
+  <Experimenter ID="Experimenter:3" FirstName="Mr" MiddleName="Group" LastName="Member"/>
+  <Experimenter ID="Experimenter:11"/>
+  <Experimenter ID="Experimenter:12" FirstName="John" MiddleName="Andrew" LastName="Smith"
+                    Email="john@example.org"/>
+  <Experimenter ID="Experimenter:13"/>
+  <Experimenter ID="Experimenter:14"/>
+  <Experimenter ID="Experimenter:15"/>
+  <Experimenter ID="Experimenter:16"/>
+  <Experimenter ID="Experimenter:17"/>
+
+  <ExperimenterGroup Name="MyGroup" ID="ExperimenterGroup:1">
+    <Description>A description for my group. Complete with basic formating, like new
+      lines.</Description>
+    <ExperimenterRef ID="Experimenter:3"/>
+    <Leader ID="Experimenter:1"/>
+    <Leader ID="Experimenter:2"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="MyGroup - Leader+Contact match" ID="ExperimenterGroup:11">
+    <ExperimenterRef ID="Experimenter:16"/>
+    <Leader ID="Experimenter:11"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="MyOtherGroup" ID="ExperimenterGroup:12">
+    <ExperimenterRef ID="Experimenter:13"/>
+    <ExperimenterRef ID="Experimenter:14"/>
+    <Leader ID="Experimenter:11"/>
+    <Leader ID="Experimenter:12"/>
+    <Leader ID="Experimenter:17"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="NoMatch" ID="ExperimenterGroup:13">
+    <ExperimenterRef ID="Experimenter:15"/>
+    <Leader ID="Experimenter:17"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="LeaderMatch" ID="ExperimenterGroup:14">
+    <Leader ID="Experimenter:11"/>
+  </ExperimenterGroup>
+
+  <ExperimenterGroup Name="ContactMatch" ID="ExperimenterGroup:15">
+    <Leader ID="Experimenter:11"/>
+  </ExperimenterGroup>
+
+  <Instrument ID="Instrument:1">
+    <Detector ID="Detector:1"/>
+    <Objective ID="Objective:1" LotNumber="123" Manufacturer="OME-Labs"
+                   NominalMagnification="20.5" CalibratedMagnification="20.34"/>
+  </Instrument>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <ExperimenterRef ID="Experimenter:2"/>
+    <ExperimenterGroupRef ID="ExperimenterGroup:1"/>
+    <Pixels BigEndian="false" Interleaved="false" SignificantBits="7" DimensionOrder="XYCZT"
+                ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="3"
+                SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-2147483648"
+                   ID="Channel:0">
+        <DetectorSettings ID="Detector:1" Integration="3" Zoom="2"/>
+      </Channel>
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-2147483648"
+                   ID="Channel:1"/>
+      <Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2147483648" ID="Channel:2"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BinData>
+    </Pixels>
+    <ROIRef ID="ROI:1"/>
+    <ROIRef ID="ROI:2"/>
+    <ROIRef ID="ROI:3"/>
+    <AnnotationRef ID="Annotation:3"/>
+    <AnnotationRef ID="Annotation:4"/>
+    <AnnotationRef ID="Annotation:5"/>
+    <AnnotationRef ID="Annotation:6"/>
+    <AnnotationRef ID="Annotation:7"/>
+    <AnnotationRef ID="Annotation:8"/>
+    <AnnotationRef ID="Annotation:9"/>
+    <AnnotationRef ID="Annotation:10"/>
+    <AnnotationRef ID="Annotation:11"/>
+  </Image>
+  <StructuredAnnotations>
+    <XMLAnnotation ID="Annotation:1" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>
+        <test1 xmlns=""/>
+      </Value>
+    </XMLAnnotation>
+    <XMLAnnotation ID="Annotation:2" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>
+        <test2 xmlns=""/>
+      </Value>
+    </XMLAnnotation>
+    <BooleanAnnotation ID="Annotation:3" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>true</Value>
+    </BooleanAnnotation>
+    <CommentAnnotation ID="Annotation:4" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value/>
+    </CommentAnnotation>
+    <DoubleAnnotation ID="Annotation:5" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>3.14</Value>
+    </DoubleAnnotation>
+    <FileAnnotation ID="Annotation:6" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <BinaryFile FileName="dummy.txt" Size="8">
+        <BinData BigEndian="false" Length="8">12345678</BinData>
+      </BinaryFile>
+    </FileAnnotation>
+    <ListAnnotation ID="Annotation:7" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <AnnotationRef ID="Annotation:1"/>
+      <AnnotationRef ID="Annotation:2"/>
+    </ListAnnotation>
+    <LongAnnotation ID="Annotation:8" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>8</Value>
+    </LongAnnotation>
+    <TagAnnotation ID="Annotation:9" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>Pink</Value>
+    </TagAnnotation>
+    <TermAnnotation ID="Annotation:10" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>Blue</Value>
+    </TermAnnotation>
+    <TimestampAnnotation ID="Annotation:11" Annotator="Experimenter:2">
+      <Description>Abc123</Description>
+      <Value>2010-02-23T12:51:30</Value>
+    </TimestampAnnotation>
+  </StructuredAnnotations>
+  <ROI ID="ROI:1">
+    <Union>
+      <Point ID="Shape:1" TheC="0" X="1" Y="1"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:2">
+    <Union>
+      <Point ID="Shape:2" FillRule="NonZero" FontFamily="sans-serif" FontSize="1"
+                 FontStyle="Bold" StrokeDashArray="1" StrokeWidth="1" TheC="2"
+                 FillColor="1" StrokeColor="1" Text="Hello" Locked="true" X="1" Y="1"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:3">
+    <Union>
+      <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4">
+        <Transform A00="10" A10="20" A01="30" A11="40" A02="50" A12="60"/>
+      </Rectangle>
+      <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
+                 Text="Hello" FillColor="1" FontSize="1" StrokeColor="1"
+                 StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" X="1" Y="1"/>
+      <Polygon ID="Shape:5" StrokeWidth="2" StrokeColor="1" Points="1,1 10,20, 20,20 20,10"/>
+      <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="1" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
+                      MarkerEnd="Arrow"/>
+      <Polyline ID="Shape:6a" StrokeWidth="2" StrokeColor="1" Points="1,1 10,20, 20,20 20,10" MarkerStart="Arrow"/>
+      <Line ID="Shape:7" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerStart="Arrow" MarkerEnd="Arrow"/>
+      <Line ID="Shape:7a" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Arrow"/>
+      <Line ID="Shape:7b" StrokeWidth="2" StrokeColor="1" X1="1" Y1="2" X2="3" Y2="4" MarkerEnd="Arrow"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:4">
+    <Union>
+      <Label ID="Shape:9" Text="Removed Path" X="0" Y="0"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:5">
+    <Union>
+      <Label ID="Shape:10" Text="Removed Path" X="0" Y="0"/>
+      <Label ID="Shape:11" Text="Removed Path" X="0" Y="0"/>
+    </Union>
+  </ROI>
+</OME>
