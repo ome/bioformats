@@ -234,7 +234,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -242,7 +242,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
   public SPWModelMock(boolean makeLightSources) {
     ome = new OME();

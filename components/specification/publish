@@ -57,20 +57,12 @@ ismostrecent() {
 # Check if a schema is current (not necessarily the latest version).
 # $1=schema name
 iscurrent() {
-    if [ "${1%.xsd}" = "AnalysisChain" ] || \
-        [ "${1%.xsd}" = "AnalysisModule" ] || \
-        [ "${1%.xsd}" = "CA" ] || \
-        [ "${1%.xsd}" = "CLI" ] || \
-        [ "${1%.xsd}" = "DataHistory" ] || \
-        [ "${1%.xsd}" = "Editor" ] || \
-        [ "${1%.xsd}" = "MLI" ] || \
-        [ "${1%.xsd}" = "OMERO" ] || \
-        [ "${1%.xsd}" = "STD" ]
+    if [ "${1%.xsd}" = "ome" ] || [ "${1%.xsd}" = "OME" ]
     then
-        return 1
+        return 0
     fi
 
-    return 0
+    return 1
 }
 
 # Check if the a schema is the most recent version (return true) or legacy (return false)
@@ -107,18 +99,18 @@ schemaversion() {
 schemadesc() {
     case "${1%.xsd}" in
         BinaryFile)
-            echo "Binary File schema used to describe a file location, or the location of a fragment within a file." ;;
+            echo "Binary File schema used to describe a file location, or the location of a fragment within a file. It is combined with the main OME schema as of 2016-06." ;;
         OME|ome)
-            echo "main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
+            echo "main schema which defines the OME ontology for microscopy." ;;
 
         OMERO)
             echo "schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
         ROI)
-            echo "Region Of Interest schema." ;;
+            echo "Region Of Interest schema. It is combined with the main OME schema as of 2016-06." ;;
         SA)
-            echo "Structured Annotation schema." ;;
+            echo "Structured Annotation schema. It is combined with the main OME schema as of 2016-06." ;;
         SPW)
-            echo "Screen/Plate/Well schema." ;;
+            echo "Screen/Plate/Well schema. It is combined with the main OME schema as of 2016-06." ;;
         AnalysisChain)
             echo "Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
         AnalysisModule)

@@ -24,12 +24,12 @@
 # Written by: Ilya G. Goldberg, Andrew J Patterson
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
-            targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+            targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-DEV0"
+            xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             xmlns:xml="http://www.w3.org/XML/1998/namespace"
-            version="2"
+            version="1"
             elementFormDefault="qualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>

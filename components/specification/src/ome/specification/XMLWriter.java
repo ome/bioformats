@@ -122,11 +122,11 @@ public class XMLWriter
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2016-DEV0";
+		"http://www.openmicroscopy.org/Schemas/OME/2016-06";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -134,7 +134,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =

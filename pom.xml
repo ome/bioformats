@@ -63,7 +63,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
 
-    <xsdfu.schemaver>2016-DEV0</xsdfu.schemaver>
+    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
 

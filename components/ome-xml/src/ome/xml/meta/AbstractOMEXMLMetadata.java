@@ -73,7 +73,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** OME-XML schema location. */
   public static final String SCHEMA =
-    "http://www.openmicroscopy.org/Schemas/OME/2016-DEV0/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
   protected static final Logger LOGGER =
     LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
