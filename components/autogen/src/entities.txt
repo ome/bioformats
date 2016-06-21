@@ -1091,6 +1091,14 @@ type = Double
 [Mask Y]
 type = Double
 
+[Mask BinData]
+
+[Mask BinDataCompression]
+
+[Mask BinDataBigEndian]
+
+[Mask BinDataBigLength]
+
 [MicrobeamManipulation]
 countable = true
 path = Experiment+/MicrobeamManipulation+
