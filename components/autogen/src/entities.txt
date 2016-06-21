@@ -39,7 +39,6 @@ type = ArcType
 [BooleanAnnotation]
 countable = true
 path = BooleanAnnotation+
-schema = SA_xsd.html
 
 [BooleanAnnotation AnnotationRef]
 countable = true
@@ -73,7 +72,6 @@ type = AcquisitionMode
 countable = true
 path = Image+/Channel+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Channel Color]
@@ -131,7 +129,6 @@ anchor = LightSourceSettings_Wavelength
 [CommentAnnotation]
 countable = true
 path = CommentAnnotation+
-schema = SA_xsd.html
 
 [CommentAnnotation AnnotationRef]
 countable = true
@@ -162,7 +159,6 @@ path = Dataset+
 countable = true
 path = Dataset+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Dataset Description]
@@ -194,6 +190,12 @@ path = Instrument+/Detector+
 
 [Detector AmplificationGain]
 type = Double
+
+[Detector AnnotationRef]
+countable = true
+path = Detector+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
 
 [Detector Gain]
 type = Double
@@ -255,6 +257,12 @@ type = Double
 countable = true
 path = Instrument+/Dichroic+
 
+[Dichroic AnnotationRef]
+countable = true
+path = Instrument+/Dichroic+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
 [Dichroic ID]
 type = String
 
@@ -277,7 +285,6 @@ anchor = ManufacturerSpec_SerialNumber
 [DoubleAnnotation]
 countable = true
 path = DoubleAnnotation+
-schema = SA_xsd.html
 
 [DoubleAnnotation AnnotationRef]
 countable = true
@@ -303,7 +310,6 @@ type = Double
 [Ellipse]
 countable = false
 path = ROI+/Shape+/Ellipse
-schema = ROI_xsd.html
 
 [Ellipse FillColor]
 type = Color
@@ -328,10 +334,6 @@ anchor = Shape_FontStyle
 [Ellipse ID]
 type = String
 anchor = Shape_ID
-
-[Ellipse LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Ellipse Locked]
 type = Boolean
@@ -369,10 +371,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Ellipse Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Ellipse RadiusX]
 type = Double
 
@@ -388,6 +386,12 @@ type = Double
 [Experiment]
 countable = true
 path = Experiment+
+
+[Experiment AnnotationRef]
+countable = true
+path = Experiment+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
 
 [Experiment Description]
 type = String
@@ -410,7 +414,6 @@ path = Experimenter+
 countable = true
 path = Experimenter+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Experimenter Email]
@@ -442,7 +445,6 @@ path = ExperimenterGroup+
 countable = true
 path = ExperimenterGroup+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [ExperimenterGroup Description]
@@ -499,7 +501,6 @@ type = FilamentType
 [FileAnnotation]
 countable = true
 path = FileAnnotation+
-schema = SA_xsd.html
 
 [FileAnnotation AnnotationRef]
 countable = true
@@ -522,6 +523,12 @@ anchor = Annotation_Namespace
 [Filter]
 countable = true
 path = Instrument+/Filter+
+
+[Filter AnnotationRef]
+countable = true
+path = Instrument+/Filter+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
 
 [Filter FilterWheel]
 type = String
@@ -587,6 +594,43 @@ anchor = ManufacturerSpec_Model
 type = String
 anchor = ManufacturerSpec_SerialNumber
 
+[Folder]
+countable = true
+path = Folder+
+
+[Folder AnnotationRef]
+countable = true
+path = Folder+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[Folder Description]
+type = String
+
+[Folder FolderRef]
+countable = true
+path = Folder+/FolderRef+
+type = String
+anchor = FolderRef_ID
+
+[Folder ID]
+type = String
+
+[Folder ImageRef]
+countable = true
+path = Folder+/ImageRef+
+type = String
+anchor = ImageRef_ID
+
+[Folder Name]
+type = String
+
+[Folder ROIRef]
+countable = true
+path = Folder+/ROIRef+
+type = String
+anchor = ROIRef_ID
+
 [Image]
 countable = true
 path = Image+
@@ -598,7 +642,6 @@ type = Timestamp
 countable = true
 path = Image+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Image Description]
@@ -636,7 +679,6 @@ type = String
 countable = true
 path = Image+/ROIRef+
 type = String
-schema = ROI_xsd.html
 anchor = ROIRef_ID
 
 [ImagingEnvironment]
@@ -659,13 +701,18 @@ type = Double
 countable = true
 path = Instrument+
 
+[Instrument AnnotationRef]
+countable = true
+path = Instrument+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
 [Instrument ID]
 type = String
 
 [Label]
 countable = true
 path = ROI+/Shape+/Label
-schema = ROI_xsd.html
 
 [Label FillColor]
 type = Color
@@ -690,10 +737,6 @@ anchor = Shape_FontStyle
 [Label ID]
 anchor = Shape_ID
 type = String
-
-[Label LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Label Locked]
 type = Boolean
@@ -730,10 +773,6 @@ anchor = Shape_TheZ
 [Label Transform]
 type = AffineTransform
 anchor = Shape_Transform
-
-[Label Visible]
-type = Boolean
-anchor = Shape_Visible
 
 [Label X]
 type = Double
@@ -829,6 +868,12 @@ anchor = ManufacturerSpec_SerialNumber
 countable = false
 path = Image+/Channel+/LightPath
 
+[LightPath AnnotationRef]
+countable = true
+path = Image+/Channel+/LightPath/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
 [LightPath DichroicRef]
 type = String
 anchor = DichroicRef_ID
@@ -848,7 +893,6 @@ anchor = FilterRef_ID
 [Line]
 countable = false
 path = ROI+/Shape+/Line
-schema = ROI_xsd.html
 
 [Line FillColor]
 type = Color
@@ -873,10 +917,6 @@ anchor = Shape_FontStyle
 [Line ID]
 type = String
 anchor = Shape_ID
-
-[Line LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Line Locked]
 type = Boolean
@@ -914,10 +954,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Line Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Line MarkerEnd]
 type = Marker
 
@@ -939,7 +975,6 @@ type = Double
 [ListAnnotation]
 countable = true
 path = ListAnnotation+
-schema = SA_xsd.html
 
 [ListAnnotation AnnotationRef]
 countable = true
@@ -962,7 +997,6 @@ anchor = Annotation_Namespace
 [LongAnnotation]
 countable = true
 path = LongAnnotation+
-schema = SA_xsd.html
 
 [LongAnnotation AnnotationRef]
 countable = true
@@ -988,7 +1022,6 @@ type = Long
 [Mask]
 countable = false
 path = ROI+/Shape+/Mask
-schema = ROI_xsd.html
 
 [Mask FillColor]
 type = Color
@@ -1009,10 +1042,6 @@ anchor = Shape_FontSize
 [Mask ID]
 type = String
 anchor = Shape_ID
-
-[Mask LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Mask Locked]
 type = Boolean
@@ -1050,10 +1079,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Mask Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Mask Height]
 type = Double
 
@@ -1081,7 +1106,6 @@ type = String
 countable = true
 path = Experiment+/MicrobeamManipulation+/ROIRef+
 type = String
-schema = ROI_xsd.html
 anchor = ROIRef_ID
 
 [MicrobeamManipulation Type]
@@ -1129,6 +1153,12 @@ type = MicroscopeType
 [Objective]
 countable = true
 path = Instrument+/Objective+
+
+[Objective AnnotationRef]
+countable = true
+path = Instrument+/Objective+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
 
 [Objective CalibratedMagnification]
 type = Double
@@ -1194,7 +1224,6 @@ path = Image+/Pixels
 countable = true
 path = Image+/Pixels/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Pixels DimensionOrder]
@@ -1250,7 +1279,6 @@ path = Image+/Pixels/Plane+
 countable = true
 path = Image+/Pixels/Plane+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Plane DeltaT]
@@ -1283,13 +1311,11 @@ type = NonNegativeInteger
 [Plate]
 countable = true
 path = Plate+
-schema = SPW_xsd.html
 
 [Plate AnnotationRef]
 countable = true
 path = Plate+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Plate ColumnNamingConvention]
@@ -1328,13 +1354,11 @@ type = Double
 [PlateAcquisition]
 countable = true
 path = Plate+/PlateAcquisition+
-schema = SPW_xsd.html
 
 [PlateAcquisition AnnotationRef]
 countable = true
 path = Plate+/PlateAcquisition+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [PlateAcquisition Description]
@@ -1364,7 +1388,6 @@ anchor = WellSampleRef_ID
 [Point]
 countable = false
 path = ROI+/Shape+/Point
-schema = ROI_xsd.html
 
 [Point FillColor]
 type = Color
@@ -1389,10 +1412,6 @@ anchor = Shape_FontStyle
 [Point ID]
 type = String
 anchor = Shape_ID
-
-[Point LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Point Locked]
 type = Boolean
@@ -1430,10 +1449,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Point Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Point X]
 type = Double
 
@@ -1443,7 +1458,6 @@ type = Double
 [Polygon]
 countable = false
 path = ROI+/Shape+/Polygon
-schema = ROI_xsd.html
 
 [Polygon FillColor]
 type = FillColor
@@ -1468,10 +1482,6 @@ anchor = Shape_FontStyle
 [Polygon ID]
 type = String
 anchor = Shape_ID
-
-[Polygon LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Polygon Locked]
 type = Boolean
@@ -1509,17 +1519,12 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Polygon Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Polygon Points]
 type = String
 
 [Polyline]
 countable = false
 path = ROI+/Shape+/Polyline
-schema = ROI_xsd.html
 
 [Polyline FillColor]
 type = Color
@@ -1544,10 +1549,6 @@ anchor = Shape_FontStyle
 [Polyline ID]
 type = String
 anchor = Shape_ID
-
-[Polyline LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Polyline Locked]
 type = Boolean
@@ -1585,10 +1586,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Polyline Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Polyline MarkerEnd]
 type = Marker
 
@@ -1606,7 +1603,6 @@ path = Project+
 countable = true
 path = Project+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Project DatasetRef]
@@ -1635,13 +1631,11 @@ type = String
 [ROI]
 countable = true
 path = ROI+
-schema = ROI_xsd.html
 
 [ROI AnnotationRef]
 countable = true
 path = ROI+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [ROI Description]
@@ -1653,19 +1647,14 @@ type = String
 [ROI Name]
 type = String
 
-[ROI Namespace]
-type = String
-
 [Reagent]
 countable = true
 path = Screen+/Reagent+
-schema = SPW_xsd.html
 
 [Reagent AnnotationRef]
 countable = true
 path = Screen+/Reagent+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Reagent Description]
@@ -1683,7 +1672,6 @@ type = String
 [Rectangle]
 countable = false
 path = ROI+/Shape+/Rectangle
-schema = ROI_xsd.html
 
 [Rectangle FillColor]
 type = Color
@@ -1708,10 +1696,6 @@ anchor = Shape_FontStyle
 [Rectangle ID]
 type = String
 anchor = Shape_ID
-
-[Rectangle LineCap]
-type = LineCap
-anchor = Shape_LineCap
 
 [Rectangle Locked]
 type = Boolean
@@ -1749,10 +1733,6 @@ anchor = Shape_TheZ
 type = AffineTransform
 anchor = Shape_Transform
 
-[Rectangle Visible]
-type = Boolean
-anchor = Shape_Visible
-
 [Rectangle Height]
 type = Double
 
@@ -1768,13 +1748,11 @@ type = Double
 [Screen]
 countable = true
 path = Screen+
-schema = SPW_xsd.html
 
 [Screen AnnotationRef]
 countable = true
 path = Screen+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Screen Description]
@@ -1826,7 +1804,6 @@ type = Double
 [TagAnnotation]
 countable = true
 path = TagAnnotation+
-schema = SA_xsd.html
 
 [TagAnnotation AnnotationRef]
 countable = true
@@ -1852,7 +1829,6 @@ type = String
 [TermAnnotation]
 countable = true
 path = TermAnnotation+
-schema = SA_xsd.html
 
 [TermAnnotation AnnotationRef]
 countable = true
@@ -1897,7 +1873,6 @@ type = NonNegativeInteger
 [TimestampAnnotation]
 countable = true
 path = TimestampAnnotation+
-schema = SA_xsd.html
 
 [TimestampAnnotation AnnotationRef]
 countable = true
@@ -1954,13 +1929,11 @@ anchor = UniversallyUniqueIdentifier
 [Well]
 countable = true
 path = Plate+/Well+
-schema = SPW_xsd.html
 
 [Well AnnotationRef]
 countable = true
 path = Plate+/Well+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [Well Color]
@@ -1991,13 +1964,11 @@ type = String
 [WellSample]
 countable = true
 path = Plate+/Well+/WellSample+
-schema = SPW_xsd.html
 
 [WellSample AnnotationRef]
 countable = true
 path = Plate+/Well+/WellSample+/AnnotationRef+
 type = String
-schema = SA_xsd.html
 anchor = AnnotationRef_ID
 
 [WellSample ID]
@@ -2005,7 +1976,6 @@ type = String
 
 [WellSample ImageRef]
 type = String
-schema = ome_xsd.html
 anchor = ImageRef_ID
 
 [WellSample Index]
@@ -2023,7 +1993,6 @@ type = Timestamp
 [XMLAnnotation]
 countable = true
 path = XMLAnnotation+
-schema = SA_xsd.html
 
 [XMLAnnotation AnnotationRef]
 countable = true
