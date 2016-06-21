@@ -67,11 +67,7 @@ public class MetaEntityList extends EntityList {
   // -- MetaEntityList API methods - entities --
 
   public String schema() {
-    String schema = value("schema");
-    if (schema == null) {
-      schema = "ome_xsd.html";
-    }
-    return schema;
+    return "ome_xsd.html";
   }
 
   public String anchor() {
