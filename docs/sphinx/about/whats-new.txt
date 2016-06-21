@@ -1,6 +1,38 @@
 Version history
 ===============
 
+5.2.0-m4 (2016 June 24)
+-----------------------
+
+Top-level Bio-Formats API changes:
+
+* Java 1.7 is now the minimum supported version
+* The native-lib-loader dependency has been bumped to version 2.1.4
+* All the ome.jxr classes have been deprecated to make clear that there is no
+  jeg-xr support implemented in Bio-Formats as yet
+* The DataTools API has been extended to add a number of utility functions to:
+   - account for decimal separators in different locales
+   - parse a String into Double, Flat, Integer etc
+   - handle NumberFormatException thrown when parsing Unit tests
+* The Logging API has been updated to respect logging frameworks
+  (log4j/logback) initialized via a binding-specific configurations file and
+  to prevent `DebugTools.enableLogging(String)` from overriding initialized
+  logger levels
+
+The Bio-Formats C++ native implementation has been completely decoupled from
+the Java codebase and will be released as OME-Files C++ from now on.
+
+Data Model and OME-XML changes:
+
+* The Data Model version 2016-06 has been released to introduce
+  `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
+  and to simplify both the graphical aspects of the model and code generation.
+  Full details will be available in the
+  :model_doc:`OME Model and Formats Documentation <>` shortly.
+* 
+
+Java format support improvements include:
+
 5.1.10 (2016 May 9)
 -------------------
 
