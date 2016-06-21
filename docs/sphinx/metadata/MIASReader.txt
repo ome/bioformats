@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 474 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 64 of them (13%).
-  * Of those, Bio-Formats fully or partially converts 64 (100%).
+Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 65 of them (13%).
+  * Of those, Bio-Formats fully or partially converts 65 (100%).
 
 Supported fields
 ===============================================================================
@@ -39,13 +39,14 @@ These fields are fully supported by the Bio-Formats MIAS format reader:
   * :schema:`Image : Name <OME-2016-06/ome_xsd.html#Image_Name>`
   * :schema:`Image : ROIRef <OME-2016-06/ome_xsd.html#ROIRef_ID>`
   * :schema:`Instrument : ID <OME-2016-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Mask : BinData <OME-2016-06/ome_xsd.html#Mask_BinData>`
+  * :schema:`Mask : BinData <OME-2016-06/ome_xsd.html#BinData>`
   * :schema:`Mask : FillColor <OME-2016-06/ome_xsd.html#Shape_FillColor>`
   * :schema:`Mask : Height <OME-2016-06/ome_xsd.html#Mask_Height>`
   * :schema:`Mask : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
   * :schema:`Mask : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
   * :schema:`Mask : Width <OME-2016-06/ome_xsd.html#Mask_Width>`
   * :schema:`Mask : X <OME-2016-06/ome_xsd.html#Mask_X>`
+  * :schema:`Mask : Y <OME-2016-06/ome_xsd.html#Mask_Y>`
   * :schema:`Objective : ID <OME-2016-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : Model <OME-2016-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Objective : NominalMagnification <OME-2016-06/ome_xsd.html#Objective_NominalMagnification>`
@@ -82,6 +83,6 @@ These fields are fully supported by the Bio-Formats MIAS format reader:
   * :schema:`WellSample : ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
 
-**Total supported: 64**
+**Total supported: 65**
 
-**Total unknown or missing: 410**
+**Total unknown or missing: 411**

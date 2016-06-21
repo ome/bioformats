@@ -25,852 +25,852 @@ Format readers
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`AIMReader <metadata/AIMReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`APLReader <metadata/APLReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`APNGReader <metadata/APNGReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ARFReader <metadata/ARFReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`AVIReader <metadata/AVIReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`AliconaReader <metadata/AliconaReader>`
      - 33
      - 0
      - 0
-     - 441
+     - 443
    * - :doc:`AmiraReader <metadata/AmiraReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`AnalyzeReader <metadata/AnalyzeReader>`
      - 24
      - 0
      - 0
-     - 450
+     - 452
    * - :doc:`BDReader <metadata/BDReader>`
      - 57
      - 0
      - 0
-     - 417
+     - 419
    * - :doc:`BIFormatReader <metadata/BIFormatReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`BMPReader <metadata/BMPReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`BaseTiffReader <metadata/BaseTiffReader>`
      - 28
      - 0
      - 0
-     - 446
+     - 448
    * - :doc:`BaseZeissReader <metadata/BaseZeissReader>`
      - 83
      - 0
      - 0
-     - 391
+     - 393
    * - :doc:`BioRadGelReader <metadata/BioRadGelReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`BioRadReader <metadata/BioRadReader>`
      - 40
      - 0
      - 0
-     - 434
+     - 436
    * - :doc:`BioRadSCNReader <metadata/BioRadSCNReader>`
      - 29
      - 0
      - 0
-     - 445
+     - 447
    * - :doc:`BrukerReader <metadata/BrukerReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`BurleighReader <metadata/BurleighReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`CanonRawReader <metadata/CanonRawReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`CellH5Reader <metadata/CellH5Reader>`
      - 41
      - 0
      - 0
-     - 433
+     - 435
    * - :doc:`CellSensReader <metadata/CellSensReader>`
      - 46
      - 0
      - 0
-     - 428
+     - 430
    * - :doc:`CellVoyagerReader <metadata/CellVoyagerReader>`
      - 34
      - 0
      - 0
-     - 440
+     - 442
    * - :doc:`CellWorxReader <metadata/CellWorxReader>`
      - 45
      - 0
      - 0
-     - 429
+     - 431
    * - :doc:`CellomicsReader <metadata/CellomicsReader>`
      - 31
      - 0
      - 0
-     - 443
+     - 445
    * - :doc:`DNGReader <metadata/DNGReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`DeltavisionReader <metadata/DeltavisionReader>`
      - 52
      - 0
      - 0
-     - 422
+     - 424
    * - :doc:`DicomReader <metadata/DicomReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`EPSReader <metadata/EPSReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`Ecat7Reader <metadata/Ecat7Reader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`FEIReader <metadata/FEIReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`FEITiffReader <metadata/FEITiffReader>`
      - 39
      - 0
      - 0
-     - 435
+     - 437
    * - :doc:`FV1000Reader <metadata/FV1000Reader>`
      - 113
      - 0
      - 0
-     - 361
+     - 363
    * - :doc:`FakeReader <metadata/FakeReader>`
-     - 83
+     - 84
      - 0
      - 0
-     - 391
+     - 392
    * - :doc:`FilePatternReader <metadata/FilePatternReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`FitsReader <metadata/FitsReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`FlexReader <metadata/FlexReader>`
      - 69
      - 0
      - 0
-     - 405
+     - 407
    * - :doc:`FlowSightReader <metadata/FlowSightReader>`
      - 20
      - 0
      - 0
-     - 454
+     - 456
    * - :doc:`FluoviewReader <metadata/FluoviewReader>`
      - 49
      - 0
      - 0
-     - 425
+     - 427
    * - :doc:`FujiReader <metadata/FujiReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`GIFReader <metadata/GIFReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`GatanDM2Reader <metadata/GatanDM2Reader>`
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`GatanReader <metadata/GatanReader>`
      - 36
      - 0
      - 0
-     - 438
+     - 440
    * - :doc:`GelReader <metadata/GelReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`HISReader <metadata/HISReader>`
      - 27
      - 0
      - 0
-     - 447
+     - 449
    * - :doc:`HRDGDFReader <metadata/HRDGDFReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`HamamatsuVMSReader <metadata/HamamatsuVMSReader>`
      - 26
      - 0
      - 0
-     - 448
+     - 450
    * - :doc:`HitachiReader <metadata/HitachiReader>`
      - 31
      - 0
      - 0
-     - 443
+     - 445
    * - :doc:`I2IReader <metadata/I2IReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ICSReader <metadata/ICSReader>`
      - 72
      - 0
      - 0
-     - 402
+     - 404
    * - :doc:`IM3Reader <metadata/IM3Reader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`IMODReader <metadata/IMODReader>`
      - 44
      - 0
      - 0
-     - 430
+     - 432
    * - :doc:`INRReader <metadata/INRReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`IPLabReader <metadata/IPLabReader>`
      - 31
      - 0
      - 0
-     - 443
+     - 445
    * - :doc:`IPWReader <metadata/IPWReader>`
      - 20
      - 0
      - 0
-     - 454
+     - 456
    * - :doc:`ImaconReader <metadata/ImaconReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`ImageIOReader <metadata/ImageIOReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ImagicReader <metadata/ImagicReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`ImarisHDFReader <metadata/ImarisHDFReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`ImarisReader <metadata/ImarisReader>`
      - 32
      - 0
      - 0
-     - 442
+     - 444
    * - :doc:`ImarisTiffReader <metadata/ImarisTiffReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`ImprovisionTiffReader <metadata/ImprovisionTiffReader>`
      - 25
      - 0
      - 0
-     - 449
+     - 451
    * - :doc:`ImspectorReader <metadata/ImspectorReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`InCell3000Reader <metadata/InCell3000Reader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`InCellReader <metadata/InCellReader>`
      - 67
      - 0
      - 0
-     - 407
+     - 409
    * - :doc:`InveonReader <metadata/InveonReader>`
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`IvisionReader <metadata/IvisionReader>`
      - 34
      - 0
      - 0
-     - 440
+     - 442
    * - :doc:`JEOLReader <metadata/JEOLReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`JPEG2000Reader <metadata/JPEG2000Reader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`JPEGReader <metadata/JPEGReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`JPKReader <metadata/JPKReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`JPXReader <metadata/JPXReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`KhorosReader <metadata/KhorosReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`KodakReader <metadata/KodakReader>`
      - 26
      - 0
      - 0
-     - 448
+     - 450
    * - :doc:`L2DReader <metadata/L2DReader>`
      - 29
      - 0
      - 0
-     - 445
+     - 447
    * - :doc:`LEOReader <metadata/LEOReader>`
      - 27
      - 0
      - 0
-     - 447
+     - 449
    * - :doc:`LIFReader <metadata/LIFReader>`
      - 85
      - 0
      - 0
-     - 389
+     - 391
    * - :doc:`LIMReader <metadata/LIMReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`LegacyND2Reader <metadata/LegacyND2Reader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`LegacyQTReader <metadata/LegacyQTReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`LeicaReader <metadata/LeicaReader>`
      - 56
      - 0
      - 0
-     - 418
+     - 420
    * - :doc:`LeicaSCNReader <metadata/LeicaSCNReader>`
      - 33
      - 0
      - 0
-     - 441
+     - 443
    * - :doc:`LiFlimReader <metadata/LiFlimReader>`
      - 25
      - 0
      - 0
-     - 449
+     - 451
    * - :doc:`MIASReader <metadata/MIASReader>`
-     - 64
+     - 65
      - 0
      - 0
-     - 410
+     - 411
    * - :doc:`MINCReader <metadata/MINCReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`MNGReader <metadata/MNGReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`MRCReader <metadata/MRCReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`MRWReader <metadata/MRWReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`MetamorphReader <metadata/MetamorphReader>`
      - 46
      - 0
      - 0
-     - 428
+     - 430
    * - :doc:`MetamorphTiffReader <metadata/MetamorphTiffReader>`
      - 38
      - 0
      - 0
-     - 436
+     - 438
    * - :doc:`MicromanagerReader <metadata/MicromanagerReader>`
      - 41
      - 0
      - 0
-     - 433
+     - 435
    * - :doc:`MinimalTiffReader <metadata/MinimalTiffReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`MolecularImagingReader <metadata/MolecularImagingReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`NAFReader <metadata/NAFReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ND2Reader <metadata/ND2Reader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`NDPIReader <metadata/NDPIReader>`
      - 28
      - 0
      - 0
-     - 446
+     - 448
    * - :doc:`NDPISReader <metadata/NDPISReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`NRRDReader <metadata/NRRDReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`NativeND2Reader <metadata/NativeND2Reader>`
      - 52
      - 0
      - 0
-     - 422
+     - 424
    * - :doc:`NativeQTReader <metadata/NativeQTReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`NiftiReader <metadata/NiftiReader>`
      - 24
      - 0
      - 0
-     - 450
+     - 452
    * - :doc:`NikonElementsTiffReader <metadata/NikonElementsTiffReader>`
      - 50
      - 0
      - 0
-     - 424
+     - 426
    * - :doc:`NikonReader <metadata/NikonReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`NikonTiffReader <metadata/NikonTiffReader>`
      - 47
      - 0
      - 0
-     - 427
+     - 429
    * - :doc:`OBFReader <metadata/OBFReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`OMETiffReader <metadata/OMETiffReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`OMEXMLReader <metadata/OMEXMLReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`OpenlabRawReader <metadata/OpenlabRawReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`OpenlabReader <metadata/OpenlabReader>`
      - 32
      - 0
      - 0
-     - 442
+     - 444
    * - :doc:`OperettaReader <metadata/OperettaReader>`
      - 43
      - 0
      - 0
-     - 431
+     - 433
    * - :doc:`OxfordInstrumentsReader <metadata/OxfordInstrumentsReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`PCIReader <metadata/PCIReader>`
      - 29
      - 0
      - 0
-     - 445
+     - 447
    * - :doc:`PCORAWReader <metadata/PCORAWReader>`
      - 26
      - 0
      - 0
-     - 448
+     - 450
    * - :doc:`PCXReader <metadata/PCXReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PDSReader <metadata/PDSReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`PGMReader <metadata/PGMReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PQBinReader <metadata/PQBinReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`PSDReader <metadata/PSDReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PerkinElmerReader <metadata/PerkinElmerReader>`
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`PhotoshopTiffReader <metadata/PhotoshopTiffReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PictReader <metadata/PictReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PovrayReader <metadata/PovrayReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`PrairieReader <metadata/PrairieReader>`
      - 46
      - 0
      - 0
-     - 428
+     - 430
    * - :doc:`PyramidTiffReader <metadata/PyramidTiffReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`QTReader <metadata/QTReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`QuesantReader <metadata/QuesantReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`RHKReader <metadata/RHKReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`SBIGReader <metadata/SBIGReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`SDTReader <metadata/SDTReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`SEQReader <metadata/SEQReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`SIFReader <metadata/SIFReader>`
      - 20
      - 0
      - 0
-     - 454
+     - 456
    * - :doc:`SISReader <metadata/SISReader>`
      - 33
      - 0
      - 0
-     - 441
+     - 443
    * - :doc:`SMCameraReader <metadata/SMCameraReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`SPCReader <metadata/SPCReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`SPEReader <metadata/SPEReader>`
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`SVSReader <metadata/SVSReader>`
      - 29
      - 0
      - 0
-     - 445
+     - 447
    * - :doc:`ScanrReader <metadata/ScanrReader>`
      - 43
      - 0
      - 0
-     - 431
+     - 433
    * - :doc:`ScreenReader <metadata/ScreenReader>`
      - 34
      - 0
      - 0
-     - 440
+     - 442
    * - :doc:`SeikoReader <metadata/SeikoReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`SimplePCITiffReader <metadata/SimplePCITiffReader>`
      - 33
      - 0
      - 0
-     - 441
+     - 443
    * - :doc:`SlideBook6Reader <metadata/SlideBook6Reader>`
      - 37
      - 0
      - 0
-     - 437
+     - 439
    * - :doc:`SlidebookReader <metadata/SlidebookReader>`
      - 34
      - 0
      - 0
-     - 440
+     - 442
    * - :doc:`SlidebookTiffReader <metadata/SlidebookTiffReader>`
      - 30
      - 0
      - 0
-     - 444
+     - 446
    * - :doc:`SpiderReader <metadata/SpiderReader>`
      - 21
      - 0
      - 0
-     - 453
+     - 455
    * - :doc:`TCSReader <metadata/TCSReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`TargaReader <metadata/TargaReader>`
      - 20
      - 0
      - 0
-     - 454
+     - 456
    * - :doc:`TextReader <metadata/TextReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`TiffDelegateReader <metadata/TiffDelegateReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`TiffJAIReader <metadata/TiffJAIReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`TiffReader <metadata/TiffReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`TileJPEGReader <metadata/TileJPEGReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`TillVisionReader <metadata/TillVisionReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`TopometrixReader <metadata/TopometrixReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`TrestleReader <metadata/TrestleReader>`
-     - 26
+     - 27
      - 0
      - 0
-     - 448
+     - 449
    * - :doc:`UBMReader <metadata/UBMReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`UnisokuReader <metadata/UnisokuReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`VGSAMReader <metadata/VGSAMReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`VarianFDFReader <metadata/VarianFDFReader>`
      - 25
      - 0
      - 0
-     - 449
+     - 451
    * - :doc:`VeecoReader <metadata/VeecoReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`VisitechReader <metadata/VisitechReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`VolocityClippingReader <metadata/VolocityClippingReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`VolocityReader <metadata/VolocityReader>`
      - 38
      - 0
      - 0
-     - 436
+     - 438
    * - :doc:`WATOPReader <metadata/WATOPReader>`
      - 22
      - 0
      - 0
-     - 452
+     - 454
    * - :doc:`WlzReader <metadata/WlzReader>`
      - 26
      - 0
      - 0
-     - 448
+     - 450
    * - :doc:`ZeissCZIReader <metadata/ZeissCZIReader>`
      - 158
      - 0
      - 0
-     - 316
+     - 318
    * - :doc:`ZeissLMSReader <metadata/ZeissLMSReader>`
      - 23
      - 0
      - 0
-     - 451
+     - 453
    * - :doc:`ZeissLSMReader <metadata/ZeissLSMReader>`
      - 101
      - 0
      - 0
-     - 373
+     - 375
    * - :doc:`ZeissTIFFReader <metadata/ZeissTIFFReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ZeissZVIReader <metadata/ZeissZVIReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
    * - :doc:`ZipReader <metadata/ZipReader>`
      - 19
      - 0
      - 0
-     - 455
+     - 457
 
 Metadata fields
 ---------------
@@ -2053,17 +2053,22 @@ Metadata fields
      - 0
      - 0
      - 169
-   * - :schema:`Mask - BinData <OME-2016-06/ome_xsd.html#Mask_BinData>`
+   * - :schema:`Mask - BinData <OME-2016-06/ome_xsd.html#BinData>`
      - 3
      - 0
      - 0
      - 167
-   * - :schema:`Mask - BinDataBigEndian <OME-2016-06/ome_xsd.html#Mask_BinDataBigEndian>`
+   * - :schema:`Mask - BinDataBigEndian <OME-2016-06/ome_xsd.html#BinData_BigEndian>`
      - 1
      - 0
      - 0
      - 169
-   * - :schema:`Mask - BinDataBigLength <OME-2016-06/ome_xsd.html#Mask_BinDataBigLength>`
+   * - :schema:`Mask - BinDataBigLength <OME-2016-06/ome_xsd.html#BinData_Length>`
+     - 0
+     - 0
+     - 0
+     - 170
+   * - :schema:`Mask - BinDataCompression <OME-2016-06/ome_xsd.html#BinData_Compression>`
      - 0
      - 0
      - 0
@@ -2149,6 +2154,11 @@ Metadata fields
      - 0
      - 167
    * - :schema:`Mask - X <OME-2016-06/ome_xsd.html#Mask_X>`
+     - 3
+     - 0
+     - 0
+     - 167
+   * - :schema:`Mask - Y <OME-2016-06/ome_xsd.html#Mask_Y>`
      - 3
      - 0
      - 0

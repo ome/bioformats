@@ -1092,12 +1092,16 @@ type = Double
 type = Double
 
 [Mask BinData]
+anchor = BinData
 
 [Mask BinDataCompression]
+anchor =  BinData_Compression
 
 [Mask BinDataBigEndian]
+anchor =  BinData_BigEndian
 
 [Mask BinDataBigLength]
+anchor =  BinData_Length
 
 [MicrobeamManipulation]
 countable = true

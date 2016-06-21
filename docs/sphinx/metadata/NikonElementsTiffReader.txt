@@ -9,7 +9,7 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 474 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
   * The file format itself supports 50 of them (10%).
   * Of those, Bio-Formats fully or partially converts 50 (100%).
 
@@ -70,4 +70,4 @@ These fields are fully supported by the Bio-Formats Nikon Elements TIFF format r
 
 **Total supported: 50**
 
-**Total unknown or missing: 424**
+**Total unknown or missing: 426**

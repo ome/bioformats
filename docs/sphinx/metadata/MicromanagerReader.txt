@@ -9,7 +9,7 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 474 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
   * The file format itself supports 41 of them (8%).
   * Of those, Bio-Formats fully or partially converts 41 (100%).
 
@@ -61,4 +61,4 @@ These fields are fully supported by the Bio-Formats Micro-Manager format reader:
 
 **Total supported: 41**
 
-**Total unknown or missing: 433**
+**Total unknown or missing: 435**
