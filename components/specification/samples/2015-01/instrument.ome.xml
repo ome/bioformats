@@ -21,6 +21,14 @@
                  SerialNumber="A123456">
       <Arc Type="Xe"/>
     </LightSource>
+    <LightSource ID="LightSource:2">
+      <GenericExcitationSource>
+        <Map>
+          <M K="LightSourceKey-1">LightSourceValue-1</M>
+          <M K="LightSourceKey-2">LightSourceValue-2</M>
+        </Map>
+      </GenericExcitationSource>
+    </LightSource>
     <Detector ID="Detector:0" Type="CCD" Manufacturer="OME Detectors" Model="Standard CCD Mk2"/>
     <Objective Correction="UV" Immersion="Air" LensNA="1.2" NominalMagnification="60"
                CalibratedMagnification="60.12" WorkingDistance="20" ID="Objective:0"
@@ -53,6 +61,11 @@
     <OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
     <Description>This image is linked to the Control Set</Description>
     <InstrumentRef ID="Instrument:0"/>
+    <ImagingEnvironment Temperature="-80.0" TemperatureUnit="°C">
+      <Map>
+        <M K="ImagingKey-1">ImagingValue-1</M>
+      </Map>
+    </ImagingEnvironment>
     <OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
                 PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
       <OME:Channel Color="-2147483648" ID="Channel:0:1">
