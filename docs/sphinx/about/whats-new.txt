@@ -7,31 +7,51 @@ Version history
 Top-level Bio-Formats API changes:
 
 * Java 1.7 is now the minimum supported version
-* The native-lib-loader dependency has been bumped to version 2.1.4
-* All the ome.jxr classes have been deprecated to make clear that there is no
+* the native-lib-loader dependency has been bumped to version 2.1.4
+* all the ome.jxr classes have been deprecated to make clear that there is no
   jeg-xr support implemented in Bio-Formats as yet
-* The DataTools API has been extended to add a number of utility functions to:
+* the DataTools API has been extended to add a number of utility functions to:
    - account for decimal separators in different locales
    - parse a String into Double, Flat, Integer etc
    - handle NumberFormatException thrown when parsing Unit tests
-* The Logging API has been updated to respect logging frameworks
+* the Logging API has been updated to respect logging frameworks
   (log4j/logback) initialized via a binding-specific configurations file and
   to prevent `DebugTools.enableLogging(String)` from overriding initialized
   logger levels
 
+The Data Model version 2016-06 has been released to introduce
+`Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
+and to simplify both the graphical aspects of the model and code generation.
+Full details will be available in the
+:model_doc:`OME Model and Formats Documentation <>` shortly. OME-XML changes
+include:
+
+* `Map` is now a complexType rather than an element and `MapPairs` has been
+  dropped
+* extended enum metadata has been introduced to better support units
+* `Shape` and `LightSource` are now complexTypes rather than elements
+* BinData has been added to codegen to handle raw binary data
+* various code generation improvements to allow the model to be implemented in
+  C++
+
 The Bio-Formats C++ native implementation has been completely decoupled from
 the Java codebase and will be released as OME-Files C++ from now on.
 
-Data Model and OME-XML changes:
+Other general improvements include:
 
-* The Data Model version 2016-06 has been released to introduce
-  `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
-  and to simplify both the graphical aspects of the model and code generation.
-  Full details will be available in the
-  :model_doc:`OME Model and Formats Documentation <>` shortly.
-* 
+* improved performance of `getUsedFiles`
+* fixes for `FilePatternBlock`, `AxisGuesser`, `FilePattern`
+* fixes for the detection of csv pattern blocks by `FilePatternBlock`
 
 Java format support improvements include:
+
+* added support for Becker & Hickl .spc FIFO files
+* added support for Princeton Instruments .spe files
+* bug fixes for many formats including:
+   - TIff
+       - fixed integer overflow to read resolutions correctly
+       - fixed handling of tiled images with tile width less than 64
+   - 
 
 5.1.10 (2016 May 9)
 -------------------
