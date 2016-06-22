@@ -9,15 +9,15 @@ Top-level Bio-Formats API changes:
 * Java 1.7 is now the minimum supported version
 * the native-lib-loader dependency has been bumped to version 2.1.4
 * all the ome.jxr classes have been deprecated to make clear that there is no
-  jeg-xr support implemented in Bio-Formats as yet
+  JPEG-XR support implemented in Bio-Formats as yet
 * the DataTools API has been extended to add a number of utility functions to:
    - account for decimal separators in different locales
-   - parse a String into Double, Flat, Integer etc
+   - parse a String into Double, Float, Integer etc
    - handle NumberFormatException thrown when parsing Unit tests
 * the Logging API has been updated to respect logging frameworks
   (log4j/logback) initialized via a binding-specific configurations file and
   to prevent `DebugTools.enableLogging(String)` from overriding initialized
-  logger levels
+  logger levels (see :doc:`/developers/logging` for more information)
 
 The Data Model version 2016-06 has been released to introduce
 `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
