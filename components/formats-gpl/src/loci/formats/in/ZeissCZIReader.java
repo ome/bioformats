@@ -646,7 +646,11 @@ public class ZeissCZIReader extends FormatReader {
 
     // finish populating the core metadata
 
-    int seriesCount = positions * acquisitions * mosaics * angles;
+    int seriesCount = positions * acquisitions * angles;
+    boolean isPyramid = true;
+    if (!isPyramid) {
+      seriesCount *= mosaics;
+    }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
@@ -719,6 +723,36 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     ms0.dimensionOrder = "XYCZT";
+    assignPlaneIndices();
+
+    if (isPyramid) {
+      // calculate total stitched size
+      int minRow = Integer.MAX_VALUE;
+      int maxRow = Integer.MIN_VALUE;
+      int minCol = Integer.MAX_VALUE;
+      int maxCol = Integer.MIN_VALUE;
+      for (SubBlock plane : planes) {
+        if (plane.seriesIndex != 0) {
+          continue;
+        }
+        if (plane.row < minRow) {
+          minRow = plane.row;
+        }
+        if (plane.row > maxRow) {
+          maxRow = plane.row;
+        }
+        if (plane.col < minCol) {
+          minCol = plane.col;
+        }
+        if (plane.col > maxCol) {
+          maxCol = plane.col;
+        }
+      }
+      for (int s=0; s<getSeriesCount(); s++) {
+        core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
+        core.get(s).sizeY = (core.get(s).sizeY + maxRow) - minRow;
+      }
+    }
 
     // populate the OME metadata
 
@@ -802,8 +836,6 @@ public class ZeissCZIReader extends FormatReader {
       ms0.moduloT.labels = phaseLabels;
       ms0.moduloT.end = ms0.moduloT.start;
     }
-
-    assignPlaneIndices();
 
     for (int i=0; i<planes.size(); i++) {
       SubBlock p = planes.get(i);
@@ -1218,7 +1250,7 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'M':
             if (dimension.start > prevM) {
-              if (!extraDimOrder.contains('M')) {
+              if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount()) {
                 extraLengths[extraDimOrder.size()] = mosaics;
                 extraDimOrder.add('M');
               }
@@ -3292,6 +3324,13 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    @Override
+    public String toString() {
+      return "schemaType = " + schemaType + ", pixelType = " + pixelType + ", filePosition = " +
+        filePosition + ", filePart = " + filePart + ", compression = " + compression +
+        ", pyramidType = " + pyramidType + ", dimensionCount = " + dimensionCount;
     }
   }
 
