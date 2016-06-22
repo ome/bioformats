@@ -161,6 +161,8 @@ public class ZeissCZIReader extends FormatReader {
 
   private transient DocumentBuilder parser;
 
+  private ArrayList<Attachment> extraImages = new ArrayList<Attachment>();
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -292,6 +294,13 @@ public class ZeissCZIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (isThumbnailSeries()) {
+      // thumbnail, label, or preview image stored as an attachment
+
+      int index = getSeries() - (getSeriesCount() - extraImages.size());
+      return extraImages.get(index).attachmentData;
+    }
 
     previousChannel = getZCTCoords(no)[1];
 
@@ -467,6 +476,7 @@ public class ZeissCZIReader extends FormatReader {
       phaseLabels = null;
       indexIntoPlanes.clear();
       parser = null;
+      extraImages.clear();
     }
   }
 
@@ -737,8 +747,9 @@ public class ZeissCZIReader extends FormatReader {
       }
       else if (segment instanceof Attachment) {
         AttachmentEntry entry = ((Attachment) segment).attachment;
+        String name = entry.name.trim();
 
-        if (entry.name.trim().equals("TimeStamps")) {
+        if (name.equals("TimeStamps")) {
           segment.fillInData();
           RandomAccessInputStream s =
             new RandomAccessInputStream(((Attachment) segment).attachmentData);
@@ -752,6 +763,28 @@ public class ZeissCZIReader extends FormatReader {
           finally {
             s.close();
           }
+        }
+        else if (name.equals("Label") ||
+          name.equals("SlidePreview"))
+        {
+          segment.fillInData();
+
+          // label and preview are CZI files embedded as attachments
+
+          ZeissCZIReader thumbReader = new ZeissCZIReader();
+          ByteArrayHandle stream = new ByteArrayHandle(((Attachment) segment).attachmentData);
+          Location.mapFile("image.czi", stream);
+          thumbReader.setId("image.czi");
+
+          CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
+          core.add(new CoreMetadata(c));
+          core.get(core.size() - 1).thumbnail = true;
+          ((Attachment) segment).attachmentData = thumbReader.openBytes(0);
+          thumbReader.close();
+
+          stream.close();
+          Location.mapFile("image.czi", null);
+          extraImages.add((Attachment) segment);
         }
       }
       segment.close();
@@ -3294,6 +3327,13 @@ public class ZeissCZIReader extends FormatReader {
       contentGUID = s.readString(16);
       contentFileType = s.readString(8);
       name = s.readString(80);
+    }
+
+    @Override
+    public String toString() {
+      return "schemaType = " + schemaType + ", filePosition = " + filePosition +
+        ", filePart = " + filePart + ", contentGUID = " + contentGUID +
+        ", contentFileType = " + contentFileType;
     }
   }
 
