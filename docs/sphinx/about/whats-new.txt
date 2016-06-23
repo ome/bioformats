@@ -30,12 +30,18 @@ include:
   dropped
 * extended enum metadata has been introduced to better support units
 * `Shape` and `LightSource` are now complexTypes rather than elements
-* BinData has been added to codegen to handle raw binary data
-* various code generation improvements to allow the model to be implemented in
-  C++
+* BinData has been added to code generation to handle raw binary data
+* various code generation improvements to:
+   - simplify and standardize the generation process
+   - remove a number of hard-coded exceptional cases allowing for easier
+     maintenance and growth
+   - allow for genuine abstract model types and enable C++ model
+     implementation
 
-The Bio-Formats C++ native implementation has been completely decoupled from
-the Java codebase and will be released as OME-Files C++ from now on.
+The Bio-Formats C++ native implementation has been decoupled from
+the Java codebase and will be released as OME-Files C++ from now on, with the
+exception of OME-XML which is still within Bio-Formats at present (there is a
+plan to decouple both the Java and the C++ versions of OME-XML in future).
 
 Java format support improvements include:
 
@@ -100,7 +106,7 @@ Other general improvements include:
 * MATLAB fixes
    - improved integration with Octave (thanks to Carnë Draug)
    - added logging initialization
-* CL tools fixes
+* Command-line tools fixes
    - upgrade check no longer run when passing -version
    - common methods refactoring
    - showinf improvements to preload format
