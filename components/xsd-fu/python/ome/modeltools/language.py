@@ -292,11 +292,11 @@ class Java(Language):
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return self.model_unit_map[valueType]
+    def typeToUnitsType(self, unitType):
+        return self.model_unit_map[unitType]
 
-    def typeToDefault(self, valueType):
-        return self.model_unit_default[valueType]
+    def typeToDefault(self, unitType):
+        return self.model_unit_default[unitType]
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
@@ -376,8 +376,11 @@ class CXX(Language):
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return "%s::Quantity<%s > " % (self.omexml_model_quantity_package, valueType)
+    def typeToUnitsType(self, unitType, valueType=None):
+        if valueType is None:
+            return "%s::Quantity<%s > " % (self.omexml_model_quantity_package, unitType)
+        else:
+            return "%s::Quantity<%s, %s > " % (self.omexml_model_quantity_package, unitType, valueType)
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a C++ method signature dictionary from an index name."""

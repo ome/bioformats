@@ -208,8 +208,14 @@ class OMEModelProperty(OMEModelEntity):
         name = self.langType
         if isinstance(self.model.opts.lang, language.CXX):
             if self.hasUnitsCompanion:
-                name = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                if name == "double":
+                    name = self.model.opts.lang.typeToUnitsType(
+                        self.unitsCompanion.langTypeNS)
+                else:
+                    name = self.model.opts.lang.typeToUnitsType(
+                        self.unitsCompanion.langTypeNS,
+                        "%s::primitives::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
             elif self.isEnumeration:
                 name = ("%s::enums::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
@@ -231,8 +237,11 @@ class OMEModelProperty(OMEModelEntity):
         mstype = None
 
         if self.hasUnitsCompanion:
-            mstype = self.model.opts.lang.typeToUnitsType(
-                self.unitsCompanion.metadataStoreArgType)
+            if isinstance(self.model.opts.lang, language.Java):
+                mstype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.metadataStoreArgType)
+            elif isinstance(self.model.opts.lang, language.CXX):
+                mstype = self.langTypeNS
 
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
@@ -268,8 +277,11 @@ class OMEModelProperty(OMEModelEntity):
         mstype = None
 
         if self.hasUnitsCompanion:
-            mstype = self.model.opts.lang.typeToUnitsType(
-                self.unitsCompanion.metadataStoreRetType)
+            if isinstance(self.model.opts.lang, language.Java):
+                mstype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.metadataStoreRetType)
+            elif isinstance(self.model.opts.lang, language.CXX):
+                mstype = self.langTypeNS
 
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
@@ -525,8 +537,7 @@ class OMEModelProperty(OMEModelEntity):
                     self.minOccurs > 0):
                 itype = self.langTypeNS
             elif self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
                         itype = "const ome::compat::shared_ptr<%s>&" % qtype
@@ -579,8 +590,7 @@ class OMEModelProperty(OMEModelEntity):
                     self.minOccurs > 0):
                 itype = {' const': self.langTypeNS}
             elif self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
                         itype = {' const': "const ome::compat::shared_ptr<%s>&" % qtype,
@@ -825,8 +835,7 @@ class OMEModelProperty(OMEModelEntity):
             if ns_sep.startswith('::'):
                 ns_sep = ' ' + ns_sep
             if self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
                         itype = "ome::compat::shared_ptr<%s>" % qtype
