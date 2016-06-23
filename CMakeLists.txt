@@ -49,10 +49,12 @@ list(APPEND CMAKE_MODULE_PATH
 
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
-project(ome-xml)
-message(STATUS "Configuring OME-XML C++")
-
 include(cpp/cmake/Version.cmake)
+ome_project_version("OME XML C++" "${CMAKE_CURRENT_SOURCE_DIR}")
+
+project(ome-xml
+        VERSION "${OME_VERSION_MAJOR}.${OME_VERSION_MINOR}.${OME_VERSION_PATCH}"
+        LANGUAGES CXX)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
   message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
@@ -83,7 +85,8 @@ include(HeaderTest)
 # has been split out.
 option(model-source-only "Generate model source only" OFF)
 if(NOT model-source-only)
-  find_package(OME 5.2.0 REQUIRED Compat Common)
+  find_package(OMECompat 5.2.0 REQUIRED)
+  find_package(OMECommon 5.2.0 REQUIRED)
 else()
   add_library(OME::Compat INTERFACE IMPORTED)
   add_library(OME::Common INTERFACE IMPORTED)
