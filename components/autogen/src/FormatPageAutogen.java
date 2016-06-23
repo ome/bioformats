@@ -167,7 +167,7 @@ public class FormatPageAutogen {
       }
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,
-        "../../docs/sphinx/" + filename + ".txt");
+        "../../docs/sphinx/" + filename + ".rst");
     }
   }
 
@@ -205,7 +205,7 @@ public class FormatPageAutogen {
     context.put("count", sortedTable.length);
 
     VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
-      "../../docs/sphinx/supported-formats.txt");
+      "../../docs/sphinx/supported-formats.rst");
   }
 
   // -- Helper methods --
