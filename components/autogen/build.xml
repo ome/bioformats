@@ -24,7 +24,7 @@ Type "ant -p" for a list of targets.
     description="generate dataset structure table">
     <java classname="MakeDatasetStructureTable"
       classpath="${classes.dir}:${component.runtime-cp}" fork="true" failonerror="true">
-       <arg value="../../docs/sphinx/formats/dataset-table.txt"/>
+       <arg value="../../docs/sphinx/formats/dataset-table.rst"/>
     </java>
   </target>
 

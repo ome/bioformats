@@ -1044,7 +1044,7 @@ Type "ant -p" for a list of targets.
                   prefix="bioformats/" excludes="DESCRIPTION.in"/>
       <tarfileset file="${temp.file}" fullpath="bioformats/DESCRIPTION"/>
       <tarfileset file="${root.dir}/LICENSE.txt" fullpath="bioformats/COPYING"/>
-      <tarfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
+      <tarfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
                   fullpath="bioformats/NEWS"/>
       <tarfileset dir="${root.dir}/components/formats-gpl/matlab"
                   prefix="bioformats/inst/"/>
