@@ -565,6 +565,7 @@ public class MicromanagerReader extends FormatReader {
     // using key alone will result in conflicts with metadata.txt values
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
+      if (i >= p.positions.length) continue;
       if (key.equals("XPositionUm")) {
         try {
           p.positions[i][0] = new Double(value);
