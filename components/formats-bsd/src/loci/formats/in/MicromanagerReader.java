@@ -541,7 +541,7 @@ public class MicromanagerReader extends FormatReader {
                 }
               }
               if (!value.equals("PropVal")) {
-                parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
+                parseKeyAndValue(key, value, digits, plane + i, 1);
               }
               propType = null;
               key = null;
