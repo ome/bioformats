@@ -172,30 +172,58 @@ set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 add_library(OME::XML ALIAS ome-xml)
 
+if(WIN32)
+  set(ome_xml_config_dir "cmake")
+else()
+  set(ome_xml_config_dir "${CMAKE_INSTALL_LIBDIR}/cmake/OMEXML")
+endif()
+
 install(TARGETS ome-xml
         EXPORT OMEXMLInternal
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT "runtime"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(EXPORT OMEXMLInternal
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEXML)
-install(FILES OMEXMLConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OMEXML)
+        DESTINATION "${ome_xml_config_dir}"
+        NAMESPACE "ome_xml_"
+        COMPONENT "development")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/OMEXMLConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/OMEXMLConfig.cmake"
+  INSTALL_DESTINATION "${ome_xml_config_dir}")
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/OMEXMLConfigVersion.cmake
+  VERSION "${PROJECT_VERSION}"
+  COMPATIBILITY SameMajorVersion)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/OMEXMLConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/OMEXMLConfigVersion.cmake
+        DESTINATION "${ome_xml_config_dir}"
+        COMPONENT "development")
 
 set(ome_xml_includedir "${CMAKE_INSTALL_INCLUDEDIR}/ome/xml")
 
 install(FILES ${OME_XML_STATIC_HEADERS} ${OME_XML_GENERATED_HEADERS}
-        DESTINATION ${ome_xml_includedir})
+        DESTINATION ${ome_xml_includedir}
+        COMPONENT "development")
 install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS}
-        DESTINATION ${ome_xml_includedir}/meta)
+        DESTINATION ${ome_xml_includedir}/meta
+        COMPONENT "development")
 install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS}
-        DESTINATION ${ome_xml_includedir}/model)
+        DESTINATION ${ome_xml_includedir}/model
+        COMPONENT "development")
 install(FILES ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
-        DESTINATION ${ome_xml_includedir}/model/detail)
+        DESTINATION ${ome_xml_includedir}/model/detail
+        COMPONENT "development")
 install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_MODEL_ENUMS_HEADERS}
-        DESTINATION ${ome_xml_includedir}/model/enums)
+        DESTINATION ${ome_xml_includedir}/model/enums
+        COMPONENT "development")
 install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVES_HEADERS}
-        DESTINATION ${ome_xml_includedir}/model/primitives)
+        DESTINATION ${ome_xml_includedir}/model/primitives
+        COMPONENT "development")
 
 # Dump header list for testing
 header_include_list_write(OME_XML_PUBLIC_STATIC_HEADERS
@@ -220,7 +248,8 @@ file(GLOB OME_SCHEMAS RELATIVE "${PROJECT_SOURCE_DIR}/components/specification/r
 foreach(schema ${OME_SCHEMAS})
   get_filename_component(SCHEMA_RELEASE ${schema} PATH)
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/released-schema/${schema}"
-          DESTINATION "${OME_XML_INSTALL_SCHEMADIR}/${SCHEMA_RELEASE}")
+          DESTINATION "${OME_XML_INSTALL_SCHEMADIR}/${SCHEMA_RELEASE}"
+          COMPONENT "runtime")
 endforeach(schema)
 
 # Find and install all transforms
@@ -229,7 +258,8 @@ file(GLOB OME_TRANSFORMS RELATIVE "${PROJECT_SOURCE_DIR}/components/specificatio
 foreach(transform ${OME_TRANSFORMS})
   get_filename_component(TRANSFORM ${transform} PATH)
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/transforms/${transform}"
-          DESTINATION "${OME_XML_INSTALL_TRANSFORMDIR}/${TRANSFORM}")
+          DESTINATION "${OME_XML_INSTALL_TRANSFORMDIR}/${TRANSFORM}"
+          COMPONENT "runtime")
 endforeach(transform)
 
 # Find and install all samples
@@ -237,5 +267,6 @@ file(GLOB_RECURSE OME_SAMPLES RELATIVE "${PROJECT_SOURCE_DIR}/components/specifi
 foreach(sample ${OME_SAMPLES})
   get_filename_component(SAMPLE_FILE ${sample} PATH)
   install(FILES "${PROJECT_SOURCE_DIR}/components/specification/samples/${sample}"
-          DESTINATION "${OME_XML_INSTALL_SAMPLEDIR}/${SAMPLE_FILE}")
+          DESTINATION "${OME_XML_INSTALL_SAMPLEDIR}/${SAMPLE_FILE}"
+          COMPONENT "runtime")
 endforeach(sample)
