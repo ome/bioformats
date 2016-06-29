@@ -21,7 +21,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -36,7 +36,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -48,7 +48,7 @@
          * @returns the ${prop.name} property.
          */
         virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const = 0;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const = 0;
 
 {% end header%}\
 {% end %}\
@@ -56,15 +56,15 @@
 {% end %}\
 \
 {% python
-        def is_abstract(name):
-                o = model.getObjectByName(name)
-                if o is not None and \
-                   (o.isAbstract or o.isAbstractProprietary):
-                        return True
-                return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+      (o.isAbstract):
+        return True
+    return False
 
-        def sorted_properties(o):
-                return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 %}\
 \
 \
@@ -72,7 +72,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -134,6 +134,7 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+#include <ome/xml/model/primitives/OrderedMultimap.h>
 #include <ome/xml/model/primitives/PercentFraction.h>
 #include <ome/xml/model/primitives/PositiveFloat.h>
 #include <ome/xml/model/primitives/PositiveInteger.h>
@@ -204,15 +205,6 @@ namespace ome
         // -- Entity counting (manual definitions) --
 
 {% end debug %}\
-        /**
-         * Get the number of BinData elements in Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @returns the number of BinData elements.
-         */
-        virtual index_type
-        getPixelsBinDataCount(index_type imageIndex) const = 0;
-
         /**
          * Get the number of links to a BooleanAnnotation.
          *
@@ -286,6 +278,18 @@ namespace ome
         getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const = 0;
 
         /**
+         * Get the number of links to a MapAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified MapAnnotation held by all model objects.
+         *
+         * @param mapAnnotationIndex the MapAnnotation index.
+         * @returns the number of MapAnnotation links.
+         */
+        virtual index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const = 0;
+
+        /**
          * Get the number of links to a TagAnnotation.
          *
          * This method returns the number of references to the
@@ -333,32 +337,40 @@ namespace ome
         virtual index_type
         getXMLAnnotationAnnotationCount(index_type xmlAnnotationIndex) const = 0;
 
+{% end header%}\
+{% if debug %}\
+        // -- Entity counting (code generated definitions) --
+
+{% end debug %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
+{% for k, v in indexes[abstractClass].items() %}\
         /**
-         * Get the type of a LightSource.
+         * Get the type of a ${abstractClass}.
          *
-         * @param instrumentIndex the Instrument index.
-         * @param lightSourceIndex the LightSource index.
-         * @returns the LightSource type.
+{% for param in v %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @returns the ${abstractClass} type.
          *
          * @todo Can this be a const reference?
          */
         virtual const std::string&
-        getLightSourceType(index_type instrumentIndex,
-                           index_type lightSourceIndex) const = 0;
+        get${abstractClass}Type(${indexes_string(v)}) const = 0;
 
         /**
-         * Get the type of a Shape.
+         * Get the number of ${abstractClass} elements{% if is_multi_path[abstractClass] %} in ${k}{% end %}.
          *
-         * @param roiIndex the ROI index.
-         * @param shapeIndex the Shape index.
-         * @returns the Shape type.
-         *
-         * @todo Can this be a const reference?
+{% for param in v[:-1] %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @return the number of ${abstractClass} elements.
          */
-        virtual const std::string&
-        getShapeType(index_type roiIndex,
-                     index_type shapeIndex) const = 0;
+        virtual index_type
+        get${abstractClass}Count(${indexes_string(v[:-1])}) const = 0;
 
+{% end %}\
+{% end %}\
 {% end header%}\
 {% if debug %}\
         // -- Entity counting (code generated definitions) --
@@ -375,13 +387,13 @@ namespace ome
         /**
          * Get the text value of ${o.name}.
          *
-{% for param in indexes[o.name].items()[0][1] %}\
+{% for param in indexes[o.topLevelName].items()[0][1] %}\
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          * @returns the text value.
          */
         virtual ${o.langBaseType}
-        get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const = 0;
+        get${o.topLevelName}Value(${indexes_string(indexes[o.topLevelName].items()[0][1])}) const = 0;
 
 {% end header%}\
 {% end %}\
@@ -414,17 +426,6 @@ namespace ome
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-        /**
-         * Get the BigEndian property of Pixels.
-         *
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         * @returns @c true if big endian, or @c false if little endian.
-         */
-        virtual bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const = 0;
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -439,10 +440,38 @@ namespace ome
         virtual const std::string&
         getUUID() const = 0;
 
-{% end header%}\
+        /**
+         * Get the map value of MapAnnotation.
+         *
+         * @param mapAnnotationIndex the MapAnnotation index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getMapAnnotationValue(index_type mapAnnotationIndex) const = 0;
+
+       /**
+         * Get the map value of GenericExcitationSource.
+         *
+         * @param instrumentIndex the LightSource index.
+         * @param lightSourceIndex the LightSource index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const = 0;
+
+       /**
+         * Get the map value of ImagingEnvironment.
+         *
+         * @param imageIndex the Image index.
+         * @returns the map value.
+         */
+        virtual const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const = 0;
+{% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -464,7 +493,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
@@ -475,7 +504,7 @@ namespace ome
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
         // ${prop.name} accessor from parent ${k}
 {% end debug %}\
@@ -490,18 +519,23 @@ ${getter(k, o, prop, v)}\
 \
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
-{% when prop.isBackReference %}\
+{% when prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
         // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\

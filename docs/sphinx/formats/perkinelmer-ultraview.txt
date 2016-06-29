@@ -1,7 +1,7 @@
-.. index:: PerkinElmer UltraView
+.. index:: PerkinElmer UltraVIEW
 .. index:: .tif, .2, .3, .4
 
-PerkinElmer UltraView
+PerkinElmer UltraVIEW
 ===============================================================================
 
 Extensions: .tif, .2, .3, .4, etc.
@@ -25,7 +25,7 @@ Reader: PerkinElmerReader (:bfreader:`Source Code <PerkinElmerReader.java>`, :do
 
 We currently have:
 
-* several UltraView datasets
+* several UltraVIEW datasets
 
 We would like to have:
 
@@ -43,12 +43,7 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Other associated extensions include: .tim, .zpo, .csv, .htm, 
@@ -60,4 +55,4 @@ Commercial applications that support this format include:
 * `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
 .. seealso:: 
-  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
+  `PerkinElmer UltraVIEW system overview <http://www.perkinelmer.com/product/ultraview-vox-3d-live-cell-imaging-system-l7267000>`_

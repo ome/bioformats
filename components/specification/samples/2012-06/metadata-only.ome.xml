@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
+                                                                                                                                                                                                                                                                                                                                                                                                      http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
+  <Image ID="Image:0" Name="18x24y1z5t1c8b-text">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-03-02T10:01:15</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYZCT" ID="Pixels:0:0" Type="uint8" SizeX="18" SizeY="24" SizeZ="5" SizeC="1" SizeT="5">
+      <OME:Channel Color="-2147483648" ID="Channel:0"/>
+      <MetadataOnly/>
+    </OME:Pixels>
+  </Image>
+</OME>

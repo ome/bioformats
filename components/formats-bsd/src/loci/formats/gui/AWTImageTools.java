@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -450,8 +450,14 @@ public final class AWTImageTools {
       LOGGER.warn("SamplesPerPixel is null; it is assumed to be 1.");
     }
     int channels = nChannels == null ? 1 : nChannels.getValue();
-    boolean littleEndian =
-      !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    boolean littleEndian = false;
+    if (meta.getPixelsBigEndian(series) != null)
+    {
+      littleEndian = !meta.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (meta.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
     return makeImage(data, width, height, channels,
       interleaved, FormatTools.getBytesPerPixel(type),
       FormatTools.isFloatingPoint(type), littleEndian,

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -249,7 +249,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           for (int trow=0; trow<intersection.height; trow++) {
             int realRow = trow + intersection.y - tileBoundary.y;
             int inputOffset =
-              3 * (realRow * tileBoundary.width + intersectionX);
+              3 * (realRow * tileDim + intersectionX);
             System.arraycopy(tile, inputOffset, buf, outputOffset, rowLen);
             outputOffset += outputRowLen;
           }

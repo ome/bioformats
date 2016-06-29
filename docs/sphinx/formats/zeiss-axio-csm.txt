@@ -44,12 +44,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 This should not be confused with the more common Zeiss LSM format, 

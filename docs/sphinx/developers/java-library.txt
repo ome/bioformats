@@ -5,7 +5,7 @@ If you wish to make use of Bio-Formats within your own software, you can
 :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to use it as
 a library. Just add **formats-gpl.jar** to your CLASSPATH or build path. You
 will also need **common.jar** for common I/O functions, **ome-xml.jar** for
-metadata standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
+metadata standardization, and `SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
 
 There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
@@ -60,12 +60,39 @@ all be found in our :sourcedir:`Git repository <jar>`.
 Examples of usage
 -----------------
 
+File reading and performance:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:source:`MultiFileExample <components/formats-gpl/utils/MultiFileExample.java>` -
+Simple example of how to open multiple files simultaneously.
+
+:source:`ParallelRead <components/formats-gpl/utils/ParallelRead.java>` -
+Reads all files in given directory in parallel, using a separate thread for each.
+
+:source:`ReadWriteInMemory <components/formats-gpl/utils/ReadWriteInMemory.java>` -
+Tests the Bio-Formats I/O logic to and from byte arrays in memory.
+
+File writing:
+^^^^^^^^^^^^^
+
 :source:`MinimumWriter <components/formats-gpl/utils/MinimumWriter.java>` -
 A command line utility demonstrating the minimum amount of metadata needed to
 write a file.
 
-:source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` -
-A simple command line tool for converting between formats.
+:source:`TiledExport <components/formats-gpl/utils/TiledExportExample.java>` -
+Shows how to convert a file one tile at a time, instead of one plane at a time (needed for very large images).
+
+File compression:
+^^^^^^^^^^^^^^^^^
+
+:source:`makeLZW <components/formats-gpl/utils/MakeLZW.java>` -
+Converts the given image file to an LZW-compressed TIFF.
+
+Metadata extract/print:
+^^^^^^^^^^^^^^^^^^^^^^^
+
+:source:`GetPhysicalMetadata <components/formats-gpl/utils/GetPhysicalMetadata.java>` -
+Uses Bio-Formats to extract some basic standardized (format-independent) metadata.
 
 :source:`ImageInfo <components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java>` -
 A more involved command line utility for thoroughly reading an input file,
@@ -74,6 +101,46 @@ onscreen using the Bio-Formats viewer.
 
 :source:`PrintTimestamps <components/formats-gpl/utils/PrintTimestamps.java>` -
 A command line example demonstrating how to extract timestamps from a file.
+
+:source:`PrintLensNA <components/formats-gpl/utils/PrintLensNA.java>` -
+Uses Bio-Formats to extract lens numerical aperture in a format-independent manner from a dataset.
+
+:source:`PrintROIs <components/formats-gpl/utils/PrintROIs.java>` -
+A simple example of how to retrieve ROI data parsed from a file.
+
+:source:`SubResolutionExample <components/formats-gpl/utils/SubResolutionExample.java>` -
+Demonstration of the sub-resolution API.
+
+Metadata add/edit:
+^^^^^^^^^^^^^^^^^^
+
+:source:`EditImageName <components/formats-gpl/utils/EditImageName.java>` -
+Edits the given file's image name (but does not save back to disk).
+
+:source:`EditTiffComment <components/formats-gpl/utils/EditTiffComment.java>` -
+Allows raw user TIFF comment editing for the given TIFF files.
+
+:source:`writeMapAnnotations <components/formats-gpl/utils/writeMapAnnotationsExample.java>` -
+Example method to write MapAnnotations to the ome-xml.
+
+:source:`CommentSurgery <components/formats-gpl/utils/CommentSurgery.java>` -
+Edits a TIFF ImageDescription comment, particularly the OME-XML comment found in OME-TIFF files.
+
+Image converters:
+^^^^^^^^^^^^^^^^^
+
+:source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` -
+A simple command line tool for converting between formats.
+
+:source:`ConvertToOmeTiff <components/formats-gpl/utils/ConvertToOmeTiff.java>` -
+Converts the given files to OME-TIFF format.
+
+:source:`WritePreCompressedPlanes <components/formats-gpl/utils/WritePrecompressedPlanes.java>` -
+Writes the pixels from a set of JPEG files to a single TIFF. The pixel data is used as-is, 
+so no decompression or re-compression is performed.
+
+ImageJ plugins:
+^^^^^^^^^^^^^^^
 
 :source:`Simple_Read <components/bio-formats-plugins/utils/Simple_Read.java>` -
 A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into
@@ -87,6 +154,15 @@ image planes one by one (see :doc:`/users/imagej/index`).
 A simple plugin for ImageJ that demonstrates how to open all image files in a
 directory using Bio-Formats, grouping files with similar names to avoiding
 opening the same dataset more than once (see :doc:`/users/imagej/index`).
+
+Image processing utilities:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:source:`SewTiffs <components/formats-gpl/utils/SewTiffs.java>` -
+Stitches the first plane from a collection of TIFFs into a single file.
+
+:source:`SumPlanes <components/formats-gpl/utils/SumPlanes.java>` -
+Sums together the image planes from the given file,and saves the result to a 16-bit TIFF.
 
 
 A Note on Java Web Start (bioformats\_package.jar vs. formats-gpl.jar)

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,9 +37,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-import ome.units.quantity.Length;
 
 /**
  * UnisokuReader is the file format reader for Unisoku STM files.
@@ -152,6 +153,8 @@ public class UnisokuReader extends FormatReader {
 
     String header = DataTools.readFile(id);
     String[] lines = header.split("\r");
+    Length sizeX = null;
+    Length sizeY = null;
 
     String imageName = null, remark = null, date = null;
     double pixelSizeX = 0d, pixelSizeY = 0d;
@@ -197,17 +200,13 @@ public class UnisokuReader extends FormatReader {
             String unit = v[0];
             pixelSizeX = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
             pixelSizeX /= getSizeX();
-            if (unit.equals("nm")) {
-              pixelSizeX /= 1000;
-            }
+            sizeX = FormatTools.getPhysicalSizeX(pixelSizeX, unit);
           }
           else if (key.startsWith(":y_data ->")) {
             String unit = v[0];
             pixelSizeY = Double.parseDouble(v[2]) - Double.parseDouble(v[1]);
             pixelSizeY /= getSizeY();
-            if (unit.equals("nm")) {
-              pixelSizeY /= 1000;
-            }
+            sizeY = FormatTools.getPhysicalSizeY(pixelSizeY, unit);
           }
         }
       }
@@ -234,8 +233,6 @@ public class UnisokuReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
 
-      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -211,14 +211,14 @@ public class BioRadSCNReader extends FormatReader {
     }
 
     if (exposureTime != null) {
-      store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, 0);
+      store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), 0, 0);
     }
 
     if (physicalSizeX != null) {
-      store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROMETER), 0);
     }
     if (physicalSizeY != null) {
-      store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROMETER), 0);
     }
   }
 

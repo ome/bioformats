@@ -2,7 +2,7 @@
  * #%L
  * Tests for OME-XML specification classes.
  * %%
- * Copyright (C) 2010-2014 Glencoe Software, Inc.
+ * Copyright (C) 2010 - 2016 Glencoe Software, Inc.
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -54,7 +54,7 @@ public class SchemaResolverTest {
       {"/Schemas/2008-02"}, {"/Schemas/2008-04"}, {"/Schemas/2008-09"},
       {"/Schemas/2009-09"}, {"/Schemas/2010-04"}, {"/Schemas/2010-06"},
       {"/Schemas/2011-06"}, {"/Schemas/2012-06"}, {"/Schemas/2012-06"},
-      {"/Schemas/2013-06"}, {"/Schemas/2015-01"}};
+      {"/Schemas/2013-06"}, {"/Schemas/2015-01"}, {"/Schemas/2016-06"}};
 
     /** Holds the error, info, warning. */
     protected Logger log = LoggerFactory.getLogger(getClass());

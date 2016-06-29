@@ -1,7 +1,7 @@
-.. index:: IPLab-Mac
+.. index:: IVision
 .. index:: .ipm
 
-IPLab-Mac
+IVision
 ===============================================================================
 
 Extensions: .ipm
@@ -25,12 +25,12 @@ Reader: IvisionReader (:bfreader:`Source Code <IvisionReader.java>`, :doc:`Suppo
 
 We currently have:
 
-* a few IPLab-Mac datasets 
+* a few iVision-Mac datasets
 * a specification document
 
 We would like to have:
 
-* more IPLab-Mac datasets
+* more iVision-Mac datasets
 
 **Ratings**
 
@@ -45,13 +45,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+iVision-Mac was formerly called IPLab for Macintosh.

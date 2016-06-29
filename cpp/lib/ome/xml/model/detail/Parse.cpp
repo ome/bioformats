@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -55,7 +55,7 @@ namespace ome
                          const std::string& klass,
                          const std::string& property)
         {
-          boost::format fmt("Failed to parse %1% %2% property value ‘%1%’");
+          boost::format fmt("Failed to parse %1% %2% property value ‘%3%’");
           fmt % klass % property % text;
           throw ModelException(fmt.str());
         }

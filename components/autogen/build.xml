@@ -20,6 +20,14 @@ Type "ant -p" for a list of targets.
     </java>
   </target>
 
+  <target name="gen-structure-table" depends="compile"
+    description="generate dataset structure table">
+    <java classname="MakeDatasetStructureTable"
+      classpath="${classes.dir}:${component.runtime-cp}" fork="true" failonerror="true">
+       <arg value="../../docs/sphinx/formats/dataset-table.txt"/>
+    </java>
+  </target>
+
   <target name="gen-original-meta-support" depends="compile"
     description="generate docs for Bio-Formats original metadata support">
     <java classname="OriginalMetadataAutogen"

@@ -6,7 +6,7 @@ Improvision Openlab LIFF
 
 Extensions: .liff
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
@@ -47,15 +47,8 @@ Presence: |Good|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso:: 
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_

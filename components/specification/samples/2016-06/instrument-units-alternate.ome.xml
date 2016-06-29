@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Instrument ID="Instrument:0">
+    <Microscope Type="Inverted" Manufacturer="OME Instruments" Model="Lab Mk3"
+                SerialNumber="L3-1234"/>
+
+    <Laser ID="LightSource:0" Power="0.200" PowerUnit="W" Manufacturer="OME Lights"
+               Model="Ruby60" SerialNumber="A654321" Type="SolidState" LaserMedium="Ruby" RepetitionRate="1200"
+               RepetitionRateUnit="kHz" Wavelength="590500" WavelengthUnit="pm">
+      <Pump ID="LightSource:1"/>
+    </Laser>
+    <Arc ID="LightSource:1" Power="3" PowerUnit="dW" Manufacturer="OME Lights"
+                 Model="Arc60" SerialNumber="A123456" Type="Xe"/>
+    <Detector ID="Detector:0" Voltage="120" VoltageUnit="kV" Type="CCD"
+              Manufacturer="OME Detectors" Model="Standard CCD Mk2"/>
+    <Objective Correction="UV" Immersion="Air" LensNA="1.2" NominalMagnification="60"
+               CalibratedMagnification="60.12" WorkingDistance=".02" WorkingDistanceUnit="mm"
+               ID="Objective:0" Manufacturer="OME Objectives" Model="60xUV-Air"/>
+    <FilterSet ID="FilterSet:0" Manufacturer="OME Filters" Model="Standard Mk3"
+               LotNumber="Lot174-A">
+      <ExcitationFilterRef ID="Filter:0"/>
+      <DichroicRef ID="Dichroic:0"/>
+      <EmissionFilterRef ID="Filter:1"/>
+    </FilterSet>
+    <Filter ID="Filter:0" Manufacturer="OME Filters" Model="Model1" FilterWheel="Disc A">
+      <TransmittanceRange CutIn="350000" CutInUnit="pm" CutOut="450000" CutOutUnit="pm"
+                          CutInTolerance="100" CutInToleranceUnit="Å" CutOutTolerance="200"
+                          CutOutToleranceUnit="Å" Transmittance="0.3"/>
+    </Filter>
+    <Filter ID="Filter:1" Manufacturer="OME Filters" Model="Delux Mk4" Type="BandPass">
+      <TransmittanceRange CutIn="560000" CutInUnit="pm" CutOut="630000" CutOutUnit="pm"
+                          CutInTolerance="250" CutInToleranceUnit="Å" CutOutTolerance="300"
+                          CutOutToleranceUnit="Å" Transmittance="0.8"/>
+    </Filter>
+    <Filter ID="Filter:2" Manufacturer="OME Filters" Model="Delux Mk5" Type="BandPass">
+      <TransmittanceRange CutIn="562000" CutInUnit="pm" CutOut="633000" CutOutUnit="pm"
+                          CutInTolerance="110" CutInToleranceUnit="Å" CutOutTolerance="230"
+                          CutOutToleranceUnit="Å" Transmittance="0.5"/>
+    </Filter>
+    <Filter ID="Filter:3" Manufacturer="OME Filters" Model="Delux Mk6" Type="BandPass">
+      <TransmittanceRange CutIn="463000" CutInUnit="pm" CutOut="535000" CutOutUnit="pm"
+                          CutInTolerance="210" CutInToleranceUnit="Å" CutOutTolerance="340"
+                          CutOutToleranceUnit="Å" Transmittance="0.7"/>
+    </Filter>
+    <Dichroic ID="Dichroic:0" Model="Standard Mk3" Manufacturer="OME Insturuments"/>
+  </Instrument>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Description>This image is linked to the Control Set</Description>
+    <InstrumentRef ID="Instrument:0"/>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="1.0"
+            PhysicalSizeXUnit="cm" PhysicalSizeY="1.0" PhysicalSizeYUnit="cm" Type="uint8"
+            SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:0:1" EmissionWavelength="488600"
+               ExcitationWavelengthUnit="pm" ExcitationWavelength="610500"
+               EmissionWavelengthUnit="pm" PinholeSize="0.0015" PinholeSizeUnit="mm">
+        <LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="0.51"
+                             WavelengthUnit="µm"/>
+        <DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7"
+                          ReadOutRate="32" ReadOutRateUnit="hHz" Voltage="12" VoltageUnit="daV"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:3"/>
+          <EmissionFilterRef ID="Filter:2"/>
+        </LightPath>
+      </Channel>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+</OME>

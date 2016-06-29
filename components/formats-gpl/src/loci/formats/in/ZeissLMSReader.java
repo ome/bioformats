@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -69,7 +69,7 @@ public class ZeissLMSReader extends FormatReader {
     if (!FormatTools.validStream(stream, checkLen, false)) {
       return false;
     }
-    return in.readString(checkLen).indexOf(CHECK) >= 0;
+    return stream.readString(checkLen).indexOf(CHECK) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */

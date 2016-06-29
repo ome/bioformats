@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.1.5-SNAPSHOT</version>
+  <version>5.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -49,10 +49,10 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.1.5-SNAPSHOT</release.version>
+    <release.version>5.2.0-SNAPSHOT</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
-    <year>2013</year>
+    <year>2016</year>
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.48s</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
@@ -63,13 +63,9 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
 
-    <xsdfu.schemaver>2015-01</xsdfu.schemaver>
+    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
-    <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
-    <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
-    <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
-    <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -105,13 +101,14 @@
         <directory>${project.basedir}/src</directory>
         <includes>
           <include>**/*.properties</include>
+          <include>**/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
       <resource>
         <directory>${project.basedir}</directory>
         <includes>
-          <include>**/*.cpp</include>
+          <include>utils/*.cpp</include>
         </includes>
         <filtering>true</filtering>
       </resource>
@@ -286,7 +283,6 @@
             <root>test</root>
             <root>utils</root>
             <root>doc</root>
-            <root>cppwrap</root>
           </roots>
         </configuration>
       </plugin>
@@ -317,10 +313,10 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
-          <!-- Require the Java 6 platform. -->
+          <!-- Require the Java 7 platform. -->
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.7</source>
+            <target>1.7</target>
           </configuration>
         </plugin>
 
@@ -344,6 +340,7 @@
           <version>2.4</version>
           <!-- Always add classpath to JAR manifests. -->
           <configuration>
+            <skipIfEmpty>true</skipIfEmpty>
             <archive>
               <manifest>
                 <addClasspath>true</addClasspath>
@@ -362,6 +359,13 @@
               <exclude>**/*.h</exclude>
             </excludes>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -377,8 +381,8 @@
                  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
             <use>false</use>
             <links>
-              <!-- Java 6 -->
-              <link>http://docs.oracle.com/javase/6/docs/api/</link>
+              <!-- Java 7 -->
+              <link>http://docs.oracle.com/javase/7/docs/api/</link>
 
               <!-- ImageJ1 -->
               <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
@@ -615,8 +619,8 @@
                http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
           <use>false</use>
           <links>
-            <!-- Java 6 -->
-            <link>http://docs.oracle.com/javase/6/docs/api/</link>
+            <!-- Java 7 -->
+            <link>http://docs.oracle.com/javase/7/docs/api/</link>
 
             <!-- ImageJ1 -->
             <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
@@ -684,6 +688,10 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+    <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
     </repository>
@@ -701,6 +709,13 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
     <pluginRepository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
@@ -710,105 +725,20 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <distributionManagement>
+    <repository>
+      <id>ome.staging</id>
+      <name>OME Staging Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+    </repository>
+    <snapshotRepository>
+      <id>ome.snapshots</id>
+      <name>OME Snapshots Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <profiles>
-    <profile>
-      <id>merge-build</id>
-
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-
-      <pluginRepositories>
-        <pluginRepository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-
-      <distributionManagement>
-        <repository>
-          <id>ome.unstable</id>
-          <name>OME Unstable Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-        <snapshotRepository>
-          <id>ome.unstable</id>
-          <name>OME Unstable Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-
-      <pluginRepositories>
-        <pluginRepository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-
-      <distributionManagement>
-        <repository>
-          <id>ome.staging</id>
-          <name>OME Staging Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
-        </repository>
-        <snapshotRepository>
-          <id>ome.snapshots</id>
-          <name>OME Snapshots Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-
-    <!-- Build test artifact when tests are present. -->
-    <profile>
-      <id>test-jar</id>
-      <activation>
-        <file>
-          <!-- NB: Cannot use ${project.build.testSourceDirectory} because
-               Maven only limitedly interpolates this section of the POM.
-               See: http://maven.apache.org/pom.html#Activation -->
-          <exists>${basedir}/src/test/java</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <!-- Run integration tests when "-P run-its" is passed.
          This works using the maven-invoker-plugin. -->
     <profile>

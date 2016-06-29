@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -38,16 +38,6 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS OFF)
 
-# Log is header only for some Boost versions, so check is optional.
-#if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
-#  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is probably header-only for this Boost version; reset for FindBoost" FORCE)
-#endif()
-#find_package(Boost COMPONENTS log)
-#if (NOT Boost_LOG_LIBRARY_RELEASE)
-#  message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (header-only, no library available)")
-#  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably header-only for this Boost version" FORCE)
-#endif()
-
 # Log is missing for some Boost versions, so check is optional.
 if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
   set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is missing for this Boost version; reset for FindBoost" FORCE)
@@ -60,13 +50,13 @@ if (NOT Boost_LOG_LIBRARY_RELEASE)
   message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (no library available)")
   set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably missing for this Boost version" FORCE)
 endif()
-if (NOT Boost_LOG_LIBRARY_RELEASE)
+if (NOT Boost_LOG_SETUP_LIBRARY_RELEASE)
   message(WARNING "Boost.Log (setup) not found.  This might be an error, but is more likely to be harmless (no library available)")
   set(Boost_LOG_SETUP_LIBRARY_RELEASE "" CACHE FILEPATH "Logging (setup) is probably missing for this Boost version" FORCE)
 endif()
 
 find_package(Boost 1.46 REQUIRED
-             COMPONENTS date_time filesystem system iostreams
+             COMPONENTS date_time filesystem iostreams
                         program_options regex thread)
 
 include(CheckIncludeFileCXX)

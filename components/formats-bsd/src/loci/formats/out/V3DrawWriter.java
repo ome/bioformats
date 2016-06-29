@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -106,7 +106,13 @@ public class V3DrawWriter extends FormatWriter {
         }
         String endianString = "L";
         MetadataRetrieve meta = getMetadataRetrieve();
-        boolean bigendian =  meta.getPixelsBinDataBigEndian(series, 0);
+        boolean bigendian = false;
+        if (meta.getPixelsBigEndian(series) != null) {
+          bigendian = meta.getPixelsBigEndian(series).booleanValue();
+        }
+        else if (meta.getPixelsBinDataCount(series) == 0) {
+          bigendian = meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+        }
         if (!bigendian) {
             endianString = "L";
         }else{

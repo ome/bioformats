@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -283,7 +283,7 @@ public class AFIReader extends FormatReader {
 
         if (i < physicalSizes.length &&
           physicalSizes[i] != null &&
-          physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
+          physicalSizes[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0)
         {
           Length size = physicalSizes[i];
           store.setPixelsPhysicalSizeX(size, i);
@@ -300,7 +300,7 @@ public class AFIReader extends FormatReader {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
 
-          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.S), i, c);
+          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
         }
       }
     }

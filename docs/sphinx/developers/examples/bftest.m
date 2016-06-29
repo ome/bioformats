@@ -1,9 +1,7 @@
 bfCheckJavaPath();
 
 % Create local file for testing
-java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
-uuid = char(java.util.UUID.randomUUID());
-tmpdir = fullfile(java_tmpdir, uuid);
+tmpdir = tempname();
 mkdir(tmpdir);
 
 % Create fake file for testing purposes
@@ -54,8 +52,7 @@ imagesc(series1_plane1);
 % displaying-images-end
 
 % animated-movie-start
-v = linspace(0, 1, 256)';
-cmap = [v v v];
+cmap = gray(256);
 for p = 1 : size(series1, 1)
   M(p) = im2frame(uint8(series1{p, 1}), cmap);
 end
@@ -89,11 +86,11 @@ stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
 
 voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
 voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
-voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeXdouble = voxelSizeX.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeYdouble = voxelSizeY.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeZdouble = voxelSizeZ.doubleValue();                                  % The numeric value represented by this object after conversion to type double
 % read-ome-metadata-end
 
@@ -114,14 +111,19 @@ delete('multiple-planes.ome.tiff');
 % bfsave-metadata-start
 plane = zeros(64, 64, 1, 2, 2, 'uint8');
 metadata = createMinimalOMEXMLMetadata(plane);
-pixelSize = ome.units.quantity.Length(java.lang.Double(.05), ome.units.UNITS.MICROM);
+pixelSize = ome.units.quantity.Length(java.lang.Double(.05), ome.units.UNITS.MICROMETER);
 metadata.setPixelsPhysicalSizeX(pixelSize, 0);
 metadata.setPixelsPhysicalSizeY(pixelSize, 0);
-pixelSizeZ = ome.units.quantity.Length(java.lang.Double(.2), ome.units.UNITS.MICROM);
+pixelSizeZ = ome.units.quantity.Length(java.lang.Double(.2), ome.units.UNITS.MICROMETER);
 metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
 bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
 % bfsave-metadata-end
 delete('metadata.ome.tiff');
+
+% logging-start
+% Set the logging level to DEBUG
+loci.common.DebugTools.enableLogging('DEBUG');
+% logging-end
 
 % memoizer-start
 % Construct an empty Bio-Formats reader
@@ -162,6 +164,8 @@ nWorkers = 4;
 
 % Enter parallel loop
 parfor i = 1 : nWorkers
+    % Initialize logging at INFO level
+    bfInitLogging('INFO');
     % Initialize a new reader per worker as Bio-Formats is not thread safe
     r2 = javaObject('loci.formats.Memoizer', bfGetReader(), 0);
     % Initialization should use the memo file cached before entering the

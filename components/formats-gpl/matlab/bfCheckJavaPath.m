@@ -7,23 +7,24 @@ function [status, version] = bfCheckJavaPath(varargin)
 %
 % Input
 %
-%    autoloadBioFormats - Optional. A boolean specifying the action to take
-%    if no Bio-Formats JAR file is in the Java class path. If true, looks
-%    for and adds a Bio-Formats JAR file to the dynamic Java path.
+%    autoloadBioFormats - Optional. A boolean specifying the action
+%    to take if Bio-Formats is not in the javaclasspath.  If true,
+%    tries to find a Bio-Formats jar file and adds it to the java
+%    class path.
 %    Default - true
 %
 % Output
 %
-%    status - Boolean. True if a Bio-Formats JAR file is in the Java class
-%    path.
+%    status - Boolean. True if the Bio-Formats classes are in the Java
+%    class path.
 %
 %
 %    version - String specifying the current version of Bio-Formats if
-%    a Bio-Formats JAR file is in the Java class path. Empty string else.
+%    Bio-Formats is in the Java class path. Empty string otherwise.
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2015 Open Microscopy Environment:
+% Copyright (C) 2012 - 2016 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -47,55 +48,36 @@ ip = inputParser;
 ip.addOptional('autoloadBioFormats', true, @isscalar);
 ip.parse(varargin{:});
 
-% Check if a Bio-Formats JAR file is in the Java class path
-% Can be in either static or dynamic Java class path
-jPath = javaclasspath('-all');
-bfJarFiles = {'bioformats_package.jar', 'loci_tools.jar'};
-hasBFJar =  false(numel(bfJarFiles), 1);
-for i = 1: numel(bfJarFiles);
-    isBFJar =  @(x) ~isempty(regexp(x, ['.*' bfJarFiles{i} '$'], 'once'));
-    hasBFJar(i) = any(cellfun(isBFJar, jPath));
-end
-
-% Check conflicting JARs are not loaded
-status = any(hasBFJar);
-if all(hasBFJar),
-    warning('bf:jarConflict', ['Multiple Bio-Formats JAR files  found'...
-        'in the Java class path. Please check.'])
-end
+[status, version] = has_working_bioformats();
 
 if ~status && ip.Results.autoloadBioFormats,
-    jarPath = getJarPath(bfJarFiles);
-    assert(~isempty(jarPath), 'bf:jarNotFound',...
-        'Cannot automatically locate a Bio-Formats JAR file');
-
-    % Add the Bio-Formats JAR file to dynamic Java class path
-    javaaddpath(jarPath);
-    status = true;
+    jarPath = fullfile(fileparts(mfilename('fullpath')), ...
+                       'bioformats_package.jar');
+    if (exist(jarPath) == 2)
+        javaaddpath(jarPath);
+        [status, version] = has_working_bioformats();
+        if (~status)
+            javarmpath(jarPath);
+        end
+    end
 end
 
-if status
-    % Read Bio-Formats version
+% Return true if bioformats java interface is working, false otherwise.
+% Not working will probably mean that the classes are not in
+% the javaclasspath.
+function [status, version] = has_working_bioformats()
+
+status = true;
+version = '';
+try
+    % If the following fails for any reason, then bioformats is not working.
+    % Getting the version number and creating a reader is the bare minimum.
+    reader = javaObject('loci.formats.in.FakeReader');
     if is_octave()
         version = char(java_get('loci.formats.FormatTools', 'VERSION'));
     else
         version = char(loci.formats.FormatTools.VERSION);
     end
-else
-    version = '';
-end
-
-function path = getJarPath(files)
-
-
-% Assume the jar is either in the Matlab path or under the same folder as
-% this file
-for i = 1 : numel(files)
-    path = which(files{i});
-    if isempty(path)
-        path = fullfile(fileparts(mfilename('fullpath')), files{i});
-    end
-    if ~isempty(path) && exist(path, 'file') == 2
-        return
-    end
+catch
+    status = false;
 end

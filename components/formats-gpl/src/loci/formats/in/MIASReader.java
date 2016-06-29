@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -617,8 +617,13 @@ public class MIASReader extends FormatReader {
 
       Location firstTiff = new Location(tiffFiles[0]);
 
-      FilePattern fp = new FilePattern(
-        firstTiff.getName(), firstTiff.getParentFile().getAbsolutePath());
+      List<String> names = new ArrayList<String>();
+      for (Location f: firstTiff.getParentFile().listFiles()) {
+        names.add(f.getName());
+      }
+
+      FilePattern fp = new FilePattern(FilePattern.findPattern(
+        firstTiff.getName(), null, names.toArray(new String[names.size()])));
       String[] blocks = fp.getPrefixes();
 
       order[j] = "XY";
@@ -1117,7 +1122,7 @@ public class MIASReader extends FormatReader {
 
       if (exposure != null) {
         for (int i=0; i<getImageCount(); i++) {
-          store.setPlaneExposureTime(new Time(exposure, UNITS.S), well, i);
+          store.setPlaneExposureTime(new Time(exposure, UNITS.SECOND), well, i);
         }
       }
     }

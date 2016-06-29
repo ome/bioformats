@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,10 +32,12 @@
 
 package loci.common.utests;
 
+import loci.common.DataTools;
+import java.util.Locale;
+
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
-import loci.common.DataTools;
-
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -43,8 +45,12 @@ import org.testng.annotations.Test;
  */
 public class DataToolsTest {
 
-  // -- Tests --
+  @DataProvider(name = "locales")
+  public Object[][] createData() {
+    return new Object[][] {{"FR"}, {"DE"}, {"US"}, {"GB"}};
+  }
 
+  // -- Tests --
   @Test
   public void testSafeMultiply32() {
     // test vacuous edge cases
@@ -150,4 +156,77 @@ public class DataToolsTest {
     fail("Safe multiply succeeded with value: " + actual);
   }
 
+  @Test
+  public void testParseByte() {
+    assertEquals(DataTools.parseByte(null), null);
+    assertEquals(DataTools.parseByte(""), null);
+    assertEquals(DataTools.parseByte("0"), new Byte((byte)0));
+    assertEquals(DataTools.parseByte("1"), new Byte((byte)1));
+    assertEquals(DataTools.parseByte("1.0"), null);
+    assertEquals(DataTools.parseByte("0.1"), null);
+    assertEquals(DataTools.parseByte("0,1"), null);
+    assertEquals(DataTools.parseByte("not a number"), null);
+  }
+
+  @Test
+  public void testParseShort() {
+    assertEquals(DataTools.parseShort(null), null);
+    assertEquals(DataTools.parseShort(""), null);
+    assertEquals(DataTools.parseShort("0"), new Short((short)0));
+    assertEquals(DataTools.parseShort("1"), new Short((short)1));
+    assertEquals(DataTools.parseShort("1.0"), null);
+    assertEquals(DataTools.parseShort("0.1"), null);
+    assertEquals(DataTools.parseShort("0,1"), null);
+    assertEquals(DataTools.parseShort("not a number"), null);
+  }
+
+  @Test
+  public void testParseInteger() {
+    assertEquals(DataTools.parseInteger(null), null);
+    assertEquals(DataTools.parseInteger(""), null);
+    assertEquals(DataTools.parseInteger("0"), Integer.valueOf(0));
+    assertEquals(DataTools.parseInteger("1"), Integer.valueOf(1));
+    assertEquals(DataTools.parseInteger("1.0"), null);
+    assertEquals(DataTools.parseInteger("0.1"), null);
+    assertEquals(DataTools.parseInteger("0,1"), null);
+    assertEquals(DataTools.parseInteger("not a number"), null);
+  }
+
+  @Test
+  public void testParseLong() {
+    assertEquals(DataTools.parseLong(null), null);
+    assertEquals(DataTools.parseLong(""), null);
+    assertEquals(DataTools.parseLong("0"), Long.valueOf(0));
+    assertEquals(DataTools.parseLong("1"), Long.valueOf(1));
+    assertEquals(DataTools.parseLong("1.0"), null);
+    assertEquals(DataTools.parseLong("0.1"), null);
+    assertEquals(DataTools.parseLong("0,1"), null);
+    assertEquals(DataTools.parseLong("not a number"), null);
+  }
+
+  @Test(dataProvider="locales")
+  public void testParseFloat(String locale) {
+    Locale.setDefault(new Locale(locale));
+    assertEquals(DataTools.parseFloat(null), null);
+    assertEquals(DataTools.parseFloat(""), null);
+    assertEquals(DataTools.parseFloat("0"), 0.0f);
+    assertEquals(DataTools.parseFloat("1"), 1.0f);
+    assertEquals(DataTools.parseFloat("1.0"), 1.0f);
+    assertEquals(DataTools.parseFloat("0.1"), 0.1f);
+    assertEquals(DataTools.parseFloat("0,1"), 0.1f);
+    assertEquals(DataTools.parseFloat("not a number"), null);
+  }
+
+  @Test(dataProvider="locales")
+  public void testParseDouble(String locale) {
+    Locale.setDefault(new Locale(locale));
+    assertEquals(DataTools.parseDouble(null), null);
+    assertEquals(DataTools.parseDouble(""), null);
+    assertEquals(DataTools.parseDouble("0"), 0.0d);
+    assertEquals(DataTools.parseDouble("1"), 1.0d);
+    assertEquals(DataTools.parseDouble("1.0"), 1.0d);
+    assertEquals(DataTools.parseDouble("0.1"), 0.1d);
+    assertEquals(DataTools.parseDouble("0,1"), 0.1d);
+    assertEquals(DataTools.parseDouble("not a number"), null);
+  }
 }

@@ -1,7 +1,7 @@
-.. index:: InCell 1000
+.. index:: InCell 1000/2000
 .. index:: .xdce, .tif
 
-InCell 1000
+InCell 1000/2000
 ===============================================================================
 
 Extensions: .xdce, .tif
@@ -26,6 +26,7 @@ Reader: InCellReader (:bfreader:`Source Code <InCellReader.java>`, :doc:`Support
 We currently have:
 
 * a few InCell 1000 datasets
+* `public InCell 2000 sample images <http://downloads.openmicroscopy.org/images/HCS/INCELL2000/>`_
 
 We would like to have:
 
@@ -45,11 +46,5 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

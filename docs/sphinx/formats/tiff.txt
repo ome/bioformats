@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Reader: TiffReader (:bsd-reader:`Source Code <TiffReader.java>`, :doc:`Supported Metadata Fields </metadata/TiffReader>`)
 
+Writer: TiffWriter (:bsd-writer:`Source Code <TiffWriter.java>`)
 
 
 Sample Datasets:
@@ -50,13 +51,7 @@ Presence: |Outstanding|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-Writer: TiffWriter (:bsd-writer:`Source Code <TiffWriter.java>`)
-
-Notes:
 
 
 Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). 

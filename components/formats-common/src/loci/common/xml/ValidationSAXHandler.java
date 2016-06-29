@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -61,11 +61,18 @@ class ValidationSAXHandler extends BaseHandler {
     if (!first) return;
     first = false;
 
+    String namespace_attribute = "xmlns" ;
+    final int colon = qName.indexOf( ':' ) ;
+    if (colon > 0)
+    {
+        final String namespace_prefix = qName.substring( 0, colon ) ;
+        namespace_attribute += ':' + namespace_prefix ;
+    }
     int len = attributes.getLength();
     String xmlns = null, xsiSchemaLocation = null;
     for (int i=0; i<len; i++) {
       String name = attributes.getQName(i);
-      if (name.equals("xmlns")) xmlns = attributes.getValue(i);
+      if (name.equals(namespace_attribute)) xmlns = attributes.getValue(i);
       else if (name.equals("schemaLocation") ||
         name.endsWith(":schemaLocation"))
       {

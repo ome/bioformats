@@ -14,7 +14,7 @@ function fileExt = bfGetFileExtensions
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2015 Open Microscopy Environment:
+% Copyright (C) 2012 - 2016 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -48,7 +48,7 @@ for i = 1:numel(readers)
     else
         fileExt{i, 1} = arrayfun(@char, suffixes, 'Unif', false);
     end
-    fileExt{i, 2} = char(readers(i).getFormat().toString);
+    fileExt{i, 2} = char(readers(i).getFormat());
 end
 
 % Concatenate all unique formats

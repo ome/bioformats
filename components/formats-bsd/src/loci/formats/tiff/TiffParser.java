@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -533,11 +533,11 @@ public class TiffParser {
     }
     else if (type == IFDType.LONG || type == IFDType.IFD) {
       // 32-bit (4-byte) unsigned integer
-      if (count == 1) return new Long(in.readInt());
+      if (count == 1) return new Long(in.readUnsignedInt());
       long[] longs = new long[count];
       for (int j=0; j<count; j++) {
         if (in.getFilePointer() + 4 <= in.length()) {
-          longs[j] = in.readInt();
+          longs[j] = in.readUnsignedInt();
         }
       }
       return longs;
@@ -571,10 +571,10 @@ public class TiffParser {
     else if (type == IFDType.RATIONAL || type == IFDType.SRATIONAL) {
       // Two LONGs or SLONGs: the first represents the numerator
       // of a fraction; the second, the denominator
-      if (count == 1) return new TiffRational(in.readInt(), in.readInt());
+      if (count == 1) return new TiffRational(in.readUnsignedInt(), in.readUnsignedInt());
       TiffRational[] rationals = new TiffRational[count];
       for (int j=0; j<count; j++) {
-        rationals[j] = new TiffRational(in.readInt(), in.readInt());
+        rationals[j] = new TiffRational(in.readUnsignedInt(), in.readUnsignedInt());
       }
       return rationals;
     }
@@ -672,13 +672,13 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
+      if (counts != null) {
         counts.setStream(in);
       }
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
+      if (counts != null) {
         counts.setStream(in);
       }
     }
@@ -707,9 +707,7 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
-      if (stripOffsets.getStream() == null) {
-        stripOffsets.setStream(in);
-      }
+      stripOffsets.setStream(in);
       stripOffset = stripOffsets.get(offsetIndex);
       nStrips = stripOffsets.size();
     }
@@ -852,9 +850,7 @@ public class TiffParser {
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray offsets = ifd.getOnDemandStripOffsets();
-      if (offsets.getStream() == null) {
-        offsets.setStream(in);
-      }
+      offsets.setStream(in);
       stripOffsets = offsets.toArray();
     }
     else {
@@ -863,13 +859,13 @@ public class TiffParser {
 
     if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
+      if (counts != null) {
         counts.setStream(in);
       }
     }
     if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
       OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
-      if (counts != null && counts.getStream() == null) {
+      if (counts != null) {
         counts.setStream(in);
       }
     }
@@ -1242,7 +1238,7 @@ public class TiffParser {
     if (bigTiff || fakeBigTiff) {
       return in.readLong();
     }
-    long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);
+    long offset = (previous & ~0xffffffffL) | (in.readUnsignedInt());
 
     // Only adjust the offset if we know that the file is too large for 32-bit
     // offsets to be accurate; otherwise, we're making the incorrect assumption

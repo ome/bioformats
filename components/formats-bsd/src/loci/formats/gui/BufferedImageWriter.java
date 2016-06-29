@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -113,7 +113,14 @@ public class BufferedImageWriter extends WriterWrapper {
 
     MetadataRetrieve r = writer.getMetadataRetrieve();
     if (r != null) {
-      Boolean bigEndian = r.getPixelsBinDataBigEndian(writer.getSeries(), 0);
+      Boolean bigEndian = false;
+      if (r.getPixelsBigEndian(writer.getSeries()) != null)
+      {
+        bigEndian = r.getPixelsBigEndian(writer.getSeries()).booleanValue();
+      }
+      else if (r.getPixelsBinDataCount(writer.getSeries()) == 0) {
+        bigEndian = r.getPixelsBinDataBigEndian(writer.getSeries(), 0).booleanValue();
+      }
       if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
     }
 

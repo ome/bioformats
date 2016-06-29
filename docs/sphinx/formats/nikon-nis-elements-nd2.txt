@@ -18,7 +18,10 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Reader: NativeND2Reader (:bfreader:`Source Code <NativeND2Reader.java>`, :doc:`Supported Metadata Fields </metadata/NativeND2Reader>`)
+Readers:
+
+- NativeND2Reader (:bfreader:`Source Code <NativeND2Reader.java>`, :doc:`Supported Metadata Fields </metadata/NativeND2Reader>`)
+- LegacyND2Reader (:bfreader:`Source Code <LegacyND2Reader.java>`, :doc:`Supported Metadata Fields </metadata/LegacyND2Reader>`)
 
 
 Freely Available Software:
@@ -47,12 +50,7 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 There are two distinct versions of ND2: an old version, which uses 

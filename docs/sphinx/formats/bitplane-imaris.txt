@@ -54,12 +54,7 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 - There are three distinct Imaris formats: 

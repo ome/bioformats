@@ -16,7 +16,7 @@ BSD-licensed: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 4.0, 4.1
 
 Reader: ImspectorReader (:bfreader:`Source Code <ImspectorReader.java>`, :doc:`Supported Metadata Fields </metadata/ImspectorReader>`)
 
@@ -43,11 +43,5 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

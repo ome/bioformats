@@ -1,6 +1,301 @@
 Version history
 ===============
 
+5.2.0-m4 (2016 June 24)
+-----------------------
+
+Top-level Bio-Formats API changes:
+
+* Java 1.7 is now the minimum supported version
+* the native-lib-loader dependency has been bumped to version 2.1.4
+* all the ome.jxr classes have been deprecated to make clear that there is no
+  JPEG-XR support implemented in Bio-Formats as yet
+* the DataTools API has been extended to add a number of utility functions to:
+   - account for decimal separators in different locales
+   - parse a String into Double, Float, Integer etc
+   - handle NumberFormatException thrown when parsing Unit tests
+* the Logging API has been updated to respect logging frameworks
+  (log4j/logback) initialized via a binding-specific configurations file and
+  to prevent `DebugTools.enableLogging(String)` from overriding initialized
+  logger levels (see :doc:`/developers/logging` for more information)
+
+The Data Model version 2016-06 has been released to introduce
+`Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
+and to simplify both the graphical aspects of the model and code generation.
+Full details will be available in the
+:model_doc:`OME Model and Formats Documentation <>` shortly. OME-XML changes
+include:
+
+* `Map` is now a complexType rather than an element and `MapPairs` has been
+  dropped
+* extended enum metadata has been introduced to better support units
+* `Shape` and `LightSource` are now complexTypes rather than elements
+* BinData has been added to code generation to handle raw binary data
+* various code generation improvements to:
+   - simplify and standardize the generation process
+   - remove a number of hard-coded exceptional cases allowing for easier
+     maintenance and growth
+   - allow for genuine abstract model types and enable C++ model
+     implementation
+
+The Bio-Formats C++ native implementation has been decoupled from
+the Java codebase and will be released as OME-Files C++ from now on, with the
+exception of OME-XML which is still within Bio-Formats at present (there is a
+plan to decouple both the Java and the C++ versions of OME-XML in future).
+
+Java format support improvements include:
+
+* added support for Becker & Hickl .spc FIFO files
+* added support for Princeton Instruments .spe files
+* bug fixes for many formats including:
+   - Tiff
+       - fixed integer overflow to read resolutions correctly
+       - fixed handling of tiled images with tile width less than 64
+   - PNG writing
+   - Zeiss ZVI
+       - reworked image ordering calculation to allow for tiles
+   - Leica LIF
+       - fixed incorrect plane offsets for large multi-tile files
+   - MRC and Spider
+       - fixes for format type checking
+   - OME-XML
+       - fixed metadata store
+   - CellSens VSI
+       - fixes for correctly reading dimensions
+   - ICS writing
+       - fixed dimension population for split files
+   - FlowSight
+       - fixes to infer channel count from channel names (thanks to Lee
+         Kamentsky)
+   - Hamamatsu VMS
+       - fixed dimensions of full-resolution images
+   - PicoQuant
+       - updated reader to always buffer data
+   - Zeiss LSM
+       - fixed Plane population errors
+   - Nifti
+       - fixed planeSize to prevent crashes when loading large files (thanks 
+         to Christian Niedworok)
+   - LiFlim
+       - fixed ExposureTime check and units usage
+   - SDT
+       - performance improvements for loading of large files
+   - OME-TIFF
+       - fixed Plane population errors
+       - fixed NullPointerException when closing reader for partial multi-file
+         filesets
+   - Zeiss CZI
+       - fixed timestamp indexing when multiple separate channels are present
+   - SVS
+       - fixed FormatNumberException
+
+Other general improvements include:
+
+* improved performance of `getUsedFiles`
+* fixes for `FilePatternBlock`, `AxisGuesser`, `FilePattern`
+* fixes for the detection of csv pattern blocks by `FilePatternBlock`
+* bioformats_package.jar now includes bio-formats-tools as a dependency so
+  ImageConverter, ImageFaker and ImageInfo classes are included in the bundle
+* the JACE C++ implementation has been decoupled as it does not function with
+  Java 1.7 (see `legacy repo <https://github.com/ome/bio-formats-jace>`_)
+* ImageJ fixes
+   - to allow reader delegation when a legacy reader is enabled
+     but not working
+   - to allow ROIs to be imported to the ImageJ ROI manager or added to a new
+     overlay
+* MATLAB fixes
+   - improved integration with Octave (thanks to Carnë Draug)
+   - added logging initialization
+* Command-line tools fixes
+   - upgrade check no longer run when passing -version
+   - common methods refactoring
+   - showinf improvements to preload format
+* Added more Java examples to the developer documentation
+* Added many automated tests and improved FakeReader testing framework
+
+5.1.10 (2016 May 9)
+-------------------
+
+Java bug fixes:
+
+* fixed warnings being thrown for ImageJ and other non-FIJI users on Windows
+  (these warnings were triggered by the removal of the 3i Slidebook DLLs from
+  the source code repository in Bio-Formats 5.1.9 and should now only be
+  triggered when opening Slidebook files without the update site enabled -
+  http://www.openmicroscopy.org/info/slidebook)
+* a fix in the ImageJ plugin for files grouped using the "Dimensions" option
+* a fix for writing TIFF files in tiles
+
+
+5.1.9 (2016 April 14)
+---------------------
+
+* Java bug fixes, including:
+   - SDT
+       - fixed width padding calculation for single-pixel image
+   - Deltavision
+       - fixed the parsing of the new date format
+       - added support for parsing and storing the working distance in native units
+   - Micromanager
+       - cleaned up JSON metadata parsing
+   - Olympus Fluoview
+       - fixed null pointer exceptions while parsing metadata
+   - Leica LIF
+       - fixed large multi-tiled files from having incorrect plane offsets after the 2GB mark
+   - EM formats (MRC and Spider)
+       - added native length support for EM readers
+   - Gatan
+       - fixed erroneous metadata parsing
+       - added support for parsing and storing the physical sizes in native units
+   - OME-TIFF
+       - improved handling of OME-TIFF multi-file fileset’s with partial metadata blocks
+   - Nikon ND2
+       - fixed the parsing of emission wavelength
+   - Olympus CellR (APL)
+       - fixed multiple parsing issues with the mtb file
+   - SlideBook
+       - removed slidebook dlls from Bio-Formats repository
+       - http://www.openmicroscopy.org/info/slidebook
+   - Zeiss CZI
+       - fixed parsing of files with multiple mosaics and positions
+
+* Documentation updates, including:
+   - improved documentation for the export of BigTIFFs in ImageJ
+
+* C++:
+   - no changes.
+
+
+5.1.8 (2016 February 15)
+------------------------
+
+* Java bug fixes, including:
+   - FEI TIFF
+       - fixed stage position parsing and whitespace handling (thanks to Antoine Vandecreme)
+   - Pyramid TIFF
+       - fixed tile reading when a cache (.bfmemo) file is present
+   - MicroManager
+       - updated to parse JSON data from tags 50839 and 51123
+       - fixed to detect :file:`*_metadata.txt` files in addition to :file:`metadata.txt`
+         files
+       - fixed to handle datasets with each stack in a single file
+   - OME-XML
+       - updated to make .ome.xml an official extension
+   - OME-TIFF
+       - fixed to ignore invalid BinaryOnly elements
+   - TIFF
+       - fixed caching of BigTIFF files
+   - Slidebook
+       - fixed handling of montages in Slidebook6Reader (thanks to Richard Myers)
+   - Performance improvement for writing files to disk (thanks to Stephane Dallongeville)
+   - Build system
+       - fixed Maven POMs to reduce calls to artifacts.openmicroscopy.org
+       - fixed bioformats_package.jar to include the loci.formats.tools
+         package
+* Documentation updates, including:
+   - updated format pages to include links to example data
+   - clarified description of Qu for MATLAB (thanks to Carnë Draug)
+   - added installation instructions for Octave (thanks to Carnë Draug)
+* C++:
+   - Bugfixes to the OME-TIFF writer to correct use of the metadata store with
+     multiple series
+   - Ensure file and writer state consistency upon close failure
+
+5.1.7 (2015 December 7)
+-----------------------
+
+* Java bug fixes, including:
+   - Prevent physical pixel sizes from being rounded to 0, for all formats
+   - Metamorph
+       - fixed calculation of Z step size
+       - fixed detection of post-processed dual camera acquisitions (thanks to Mark Kittisopikul)
+   - OME-XML
+       - fixed XML validation when an 'xmlns' value is not present (thanks to Bjoern Thiel)
+   - MINC
+       - fixed endianness of image data
+   - Andor/Fluoview TIFF
+       - fixed calculation of Z step size
+   - MATLAB
+       - improved performance by reducing static classpath checks (thanks to Mark Kittisopikul)
+   - Gatan
+       - fixed physical size parsing in non-English locales
+   - Automated testing
+       - fixed handling of non-default physical size and plane position units
+* Documentation updates, including:
+   - updated MapAnnotation example to show linkage of annotations to images
+* C++:
+   - no changes, released to keep version numbers in sync with Bio-Formats Java
+
+
+5.1.6 (2015 November 16)
+------------------------
+
+* Java bug fixes, including:
+   - Updated to use native units for following formats:
+       - IMOD
+       - Analyze
+       - Unisoku
+       - Olympus CellR (APL)
+   - Metamorph TIFF
+       - fixed handling of multi-line descriptions
+       - added support for dual camera acquisitions
+   - Zeiss LMS
+       - fixed exception in type detection
+   - Zeiss CZI
+       - fixed detection of line scan Airyscan data
+   - Slidebook
+       - fixed calculation of physical Z size
+   - ImageJ plugins
+       - fixed handling of non-default units
+       - fixed setting of preferences via macros
+   - Automated testing
+       - fixed handling of non-default units for physical sizes and timings
+* C++ changes, including:
+   - allow relocatable installation on Windows
+   - reduce time required for debug builds
+* Documentation updates, including:
+   - addition of "Multiple Images" column to the supported formats table
+   - addition of a MapAnnotation example
+
+5.1.5 (2015 October 12)
+-----------------------
+
+* Java bug fixes, including:
+   - ImageJ plugins
+       - fixed use of "Group files..." and "Open files individually" options
+       - fixed placement of ROIs
+       - fixed size of the "About Plugins > Bio-Formats Plugins" window
+   - xsd-fu (code generation)
+       - removed OMERO-specific logic
+   - Metamorph
+       - fixed physical Z size calculation
+   - Gatan DM3/DM4
+       - fixed physical pixel size parsing
+   - BMP
+       - added support for RLE compression
+   - DICOM
+       - updated to respect the WINDOW_CENTER tag
+       - fixed image dimensions when multiple sets of width and height values
+         are present
+   - Fluoview and Andor TIFF
+       - fixed physical Z size calculation
+   - Imspector OBF
+       - updated to parse OME-XML metadata (thanks to Bjoern Thiel)
+* C++ changes:
+   - TIFF strip/tile row and column calulations corrected to compute
+     the correct row and column count
+   - Several compiler warnings removed (false positive warnings in
+     third-party headers disabled, and additional warnings fixed)
+   - It is now possible to build with Boost 1.59 and compile with a
+     C++14 compiler
+* The source release is now provided in both tar.xz and zip formats
+* Documentation updates, including:
+   - substantial updates to the format pages
+       - improved linking of reader/writer classes to each format page
+       - improved supported metadata pages for each format
+       - updated format page formatting for clarity
+       - added developer documentation for adding and modifying format pages
+
 5.1.4 (2015 September 7)
 ------------------------
 
@@ -161,7 +456,7 @@ Version history
 
 * Improvements to performance with network file systems
 * Improvements to developer documentation
-* Initial version of :doc:`native C++ implementation </developers/cpp/overview>`
+* Initial version of `native C++ implementation <http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/cpp/overview.html>`__
 * Improved support for opening and saving ROI data with ImageJ
 * Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christophe Sommer)
 * Added support for :doc:`Perkin Elmer Nuance </formats/perkinelmer-nuance>` data (thanks to Lee Kamentsky)

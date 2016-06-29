@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,6 +38,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * SpiderReader is the file format reader for SPIDER files.
@@ -73,6 +74,11 @@ public class SpiderReader extends FormatReader {
     final int blockLen = 104;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     int size = (int) stream.readFloat() * 4;
+    if (size == 0) {
+      stream.seek(0);
+      stream.order(false);
+      size = (int) stream.readFloat() * 4;
+    }
     stream.skipBytes(4);
     size *= (int) stream.readFloat();
     stream.seek(44);
@@ -84,7 +90,7 @@ public class SpiderReader extends FormatReader {
     if (slices > 0) {
       size *= slices;
     }
-    return size + headerSize == stream.length();
+    return size + headerSize == stream.length() || size == stream.length();
   }
 
   /**
@@ -130,6 +136,13 @@ public class SpiderReader extends FormatReader {
     in.order(isLittleEndian());
 
     int nSlice = (int) in.readFloat();
+    m.littleEndian = nSlice > 0;
+    if (!isLittleEndian()) {
+      in.order(isLittleEndian());
+      in.seek(0);
+      nSlice = (int) in.readFloat();
+    }
+
     int nRow = (int) in.readFloat();
     int irec = (int) in.readFloat();
     in.skipBytes(4);
@@ -262,9 +275,9 @@ public class SpiderReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      Double size = new Double(pixelSize * 0.0001);
-      Length sizeX = FormatTools.getPhysicalSizeX(size);
-      Length sizeY = FormatTools.getPhysicalSizeY(size);
+      Double size = new Double(pixelSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(size, UNITS.ANGSTROM);
+      Length sizeY = FormatTools.getPhysicalSizeY(size, UNITS.ANGSTROM);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

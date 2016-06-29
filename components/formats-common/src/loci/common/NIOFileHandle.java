@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -198,8 +198,10 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /* @see AbstractNIOHandle.setLength(long) */
   @Override
   public void setLength(long length) throws IOException {
+    if (raf.length() < length) {
+      raf.setLength(length);
+    }
     raf.seek(length - 1);
-    raf.write((byte) 0);
     buffer = null;
   }
 

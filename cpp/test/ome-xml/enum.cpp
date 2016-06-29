@@ -6,6 +6,8 @@
 
 #include <sstream>
 
+#include <boost/preprocessor.hpp>
+
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
 using ome::xml::model::enums::EnumerationException;
@@ -462,6 +464,116 @@ TEST(Enum, PixelTypeStreamInputFail)
   ASSERT_FALSE(!!is);
   ASSERT_EQ(PixelType::UINT16, e); // Unchanged.
 }
+
+namespace
+{
+
+  void
+  check_pt(PixelType::enum_value pt_expected,
+           PixelType pt)
+  {
+    std::cout << "Test type: " << PixelType(pt) <<'\n';
+    ASSERT_EQ(pt_expected, pt);
+  }
+
+}
+
+#define MAKE_PT(maR, maProperty, maType)        \
+  {                                             \
+    PixelType pt(PixelType::maType);            \
+    check_pt(PixelType::maType, pt);            \
+  }                                             \
+
+TEST(Enum, PixelTypePreprocess)
+{
+  BOOST_PP_SEQ_FOR_EACH(MAKE_PT, %%, OME_XML_MODEL_ENUMS_PIXELTYPE_VALUES);
+}
+
+#undef MAKE_PT
+
+// Nested lists don't work on Windows due to its broken preprocessor.
+#ifndef _MSC_VER
+
+#define PP_SEQ_FOR_EACH_R_ID() BOOST_PP_SEQ_FOR_EACH_R
+#define PP_DEFER(x) x BOOST_PP_EMPTY()
+
+namespace
+{
+
+  void check_nested(LaserType expected_a,
+                    LaserType a,
+                    LaserType expected_b,
+                    LaserType b)
+  {
+    std::cout << "Test nested: first=" << a
+              << " second=" << b << '\n';
+    EXPECT_EQ(expected_a, a);
+    EXPECT_EQ(expected_b, b);
+  }
+
+}
+
+// No switch default to avoid -Wunreachable-code errors.
+// However, this then makes -Wswitch-default complain.  Disable
+// temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
+#define LT_NESTED(maR, maToplevelType, maNestedType)                    \
+  case LaserType::maNestedType:                                         \
+  {                                                                     \
+    check_nested(a, LaserType(LaserType::maToplevelType),               \
+                 b, LaserType(LaserType::maNestedType));                \
+  }                                                                     \
+  break;
+
+#define LT_TOPLEVEL(maR, maUnused, maType)                              \
+  case LaserType::maType:                                               \
+  {                                                                     \
+    switch(b)                                                           \
+      {                                                                 \
+        PP_DEFER(PP_SEQ_FOR_EACH_R_ID)()(maR, LT_NESTED, maType,        \
+                                         OME_XML_MODEL_ENUMS_LASERTYPE_VALUES); \
+      }                                                                 \
+  }                                                                     \
+  break;
+
+namespace
+{
+
+  void check_switch(LaserType a,
+                    LaserType b)
+  {
+    switch(a)
+      {
+        BOOST_PP_EXPAND(BOOST_PP_SEQ_FOR_EACH(LT_TOPLEVEL, %%, OME_XML_MODEL_ENUMS_LASERTYPE_VALUES));
+      }
+  }
+
+}
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
+#define NESTED_TEST(r, product)                                      \
+  check_switch(LaserType(LaserType::BOOST_PP_SEQ_ELEM(0, product)),  \
+               LaserType(LaserType::BOOST_PP_SEQ_ELEM(1, product)));
+
+TEST(Enum, PixelTypePreprocessNested)
+{
+  BOOST_PP_SEQ_FOR_EACH_PRODUCT(NESTED_TEST, (OME_XML_MODEL_ENUMS_LASERTYPE_VALUES)(OME_XML_MODEL_ENUMS_LASERTYPE_VALUES));
+}
+
+#undef PP_SEQ_FOR_EACH_R_ID
+#undef PP_DEFER
+#undef LT_NESTED
+#undef LT_TOPLEVEL
+#undef NESTED_TEST
+
+#endif // !_MSC_VER
 
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.

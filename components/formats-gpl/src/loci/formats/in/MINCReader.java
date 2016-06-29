@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -153,7 +153,8 @@ public class MINCReader extends FormatReader {
         pixels = netcdf.getVariableValue("/minc-2.0/image/0/image");
         isMINC2 = true;
       }
-
+      m.littleEndian = isMINC2;
+      
       if (pixels instanceof byte[][][]) {
         m.pixelType = FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
@@ -225,8 +226,6 @@ public class MINCReader extends FormatReader {
     catch (ServiceException e) {
       throw new FormatException(e);
     }
-
-    m.littleEndian = isMINC2;
 
     Double physicalX = null;
     Double physicalY = null;

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -289,7 +290,7 @@ public class SVSReader extends BaseTiffReader {
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = FormatTools.getPhysicalSizeX(Double.parseDouble(value));
+                pixelSize[i] = FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -298,19 +299,19 @@ public class SVSReader extends BaseTiffReader {
                 time = value;
               }
               else if (key.equals("Emission Wavelength")) {
-                emissionWavelength = new Double(value);
+                emissionWavelength = DataTools.parseDouble(value);
               }
               else if (key.equals("Excitation Wavelength")) {
-                excitationWavelength = new Double(value);
+                excitationWavelength = DataTools.parseDouble(value);
               }
               else if (key.equals("Exposure Time")) {
-                exposureTime = new Double(value);
+                exposureTime = DataTools.parseDouble(value);
               }
               else if (key.equals("Exposure Scale")) {
-                exposureScale = new Double(value);
+                exposureScale = DataTools.parseDouble(value);
               }
               else if (key.equals("AppMag")) {
-                magnification = new Double(value);
+                magnification = DataTools.parseDouble(value);
               }
             }
           }
@@ -386,7 +387,7 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
+      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(pixelSize[i], i);
         store.setPixelsPhysicalSizeY(pixelSize[i], i);
       }

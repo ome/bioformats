@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -212,7 +212,7 @@ public class PCORAWReader extends FormatReader {
           Double parsedExp = new Double(exp);
           Time exposure = null;
           if (parsedExp != null) {
-            exposure = new Time(parsedExp / 1000, UNITS.S);
+            exposure = new Time(parsedExp / 1000, UNITS.SECOND);
           }
 
           for (int plane=0; plane<getImageCount(); plane++) {

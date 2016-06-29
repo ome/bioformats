@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.1.5-SNAPSHOT</version>
+    <version>5.2.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -82,9 +82,9 @@
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -98,6 +98,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+            <suiteXmlFiles>
+              <suiteXmlFile>test/loci/plugins/in/testng.xml</suiteXmlFile>
+            </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
@@ -168,33 +171,10 @@ Data Browser and Stack Slicer.</projectName>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
   </repositories>
-
-  <profiles>
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-    </profile>
-
-    <profile>
-      <id>merge-build</id>
-
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
 
 </project>

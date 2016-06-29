@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,24 +34,10 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.2.0)
 
-# Default policy is from 2.8.12
-cmake_policy(VERSION 2.8.12)
-# Set MacOSX @rpath usage globally.
-if (POLICY CMP0020)
-  cmake_policy(SET CMP0020 NEW)
-endif(POLICY CMP0020)
-if (POLICY CMP0042)
-  cmake_policy(SET CMP0042 NEW)
-endif(POLICY CMP0042)
-# Use new variable expansion policy.
-if (POLICY CMP0053)
-  cmake_policy(SET CMP0053 NEW)
-endif(POLICY CMP0053)
-if (POLICY CMP0054)
-  cmake_policy(SET CMP0054 NEW)
-endif(POLICY CMP0054)
+# Default policy is from 3.2.0
+cmake_policy(VERSION 3.2.0)
 
 # For MSVC
 enable_language(CXX)
@@ -63,10 +49,12 @@ list(APPEND CMAKE_MODULE_PATH
 
 include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
-project(bioformats)
-message(STATUS "Configuring Bio-Formats main build")
-
 include(cpp/cmake/Version.cmake)
+ome_project_version("OME XML C++" "${CMAKE_CURRENT_SOURCE_DIR}")
+
+project(ome-xml
+        VERSION "${OME_VERSION_MAJOR}.${OME_VERSION_MINOR}.${OME_VERSION_PATCH}"
+        LANGUAGES CXX)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
   message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
@@ -86,12 +74,23 @@ include(BoostChecks)
 include(RegexChecks)
 include(ThreadChecks)
 include(XercesChecks)
-include(ImageLibraries)
-include(QtGLChecks)
+include(XalanChecks)
 include(XsdFu)
 include(GTest)
 include(Doxygen)
 include(HeaderTest)
+
+# This is a hack to generate the model sources without having to have
+# ome-common available.  It will be removed or moved once the model
+# has been split out.
+option(model-source-only "Generate model source only" OFF)
+if(NOT model-source-only)
+  find_package(OMECompat 5.2.0 REQUIRED)
+  find_package(OMECommon 5.2.0 REQUIRED)
+else()
+  add_library(OME::Compat INTERFACE IMPORTED)
+  add_library(OME::Common INTERFACE IMPORTED)
+endif()
 
 if(MSVC)
   # Debug library suffix.
@@ -104,58 +103,34 @@ if(MSVC)
 endif()
 
 
-if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
-  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
-      CACHE PATH "Bio-Formats-specific datadir")
+if(NOT DEFINED OME_XML_INSTALL_PKGDATADIR)
+  set(OME_XML_INSTALL_PKGDATADIR "${CMAKE_INSTALL_DATADIR}/ome/xml"
+      CACHE PATH "OME-XML-specific datadir")
 endif()
 
-# Use standard path if using a prefix.
-if(CMAKE_INSTALL_PREFIX)
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
-        CACHE PATH "Icon directory")
-  endif()
-else()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
-    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
-        CACHE PATH "Bio-Formats-specific libexecdir")
-  endif()
-  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
-    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
-        CACHE PATH "Icon directory")
-  endif()
+if (NOT DEFINED OME_XML_INSTALL_SCHEMADIR)
+  set(OME_XML_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+      CACHE PATH "OME-XML schema directory")
 endif()
-
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
-  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
-      CACHE PATH "Bio-Formats schema directory")
+if (NOT DEFINED OME_XML_INSTALL_TRANSFORMDIR)
+  set(OME_XML_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+      CACHE PATH "OME-XML transform directory")
 endif()
-if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
-  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
-      CACHE PATH "Bio-Formats transform directory")
+if (NOT DEFINED OME_XML_INSTALL_SAMPLEDIR)
+  set(OME_XML_INSTALL_SAMPLEDIR "${OME_XML_INSTALL_PKGDATADIR}/samples"
+      CACHE PATH "OME XML sample directory")
 endif()
 
 foreach(dir
     DATADIR
-    LIBEXECDIR
-    ICONDIR
     SCHEMADIR
     TRANSFORMDIR
+    SAMPLEDIR
     )
-  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
-  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
-  else()
-    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
-  endif()
+  mark_as_advanced(OME_XML_INSTALL_${dir})
 endforeach()
 
 add_subdirectory(docs/doxygen)
-add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
@@ -164,23 +139,15 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
                ${PROJECT_BINARY_DIR}/config @ONLY)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
                ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
-               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
 file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
      DESTINATION ${PROJECT_BINARY_DIR}
      FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
      GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
-        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 if(WIN32)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
                  ${PROJECT_BINARY_DIR}/config.bat @ONLY)
   configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
                  ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
-  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
-                 ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
-  install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
-          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
   endif()
 return()
 

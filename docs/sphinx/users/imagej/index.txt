@@ -138,3 +138,11 @@ Usage tips
    (and :file:`loci_tools.jar` or any other Bio-Formats jars) and download a
    fresh version.
 
+-  The Bio-Formats Exporter plugin's file chooser will automatically add the
+   first listed file extension to the file name if a specific file format is selected in the
+   ``Files of Type`` box (e.g. ``.ome.tif`` for OME-TIFF).  This can prevent
+   BigTIFF and OME BigTIFF files from being created, as the ``.btf`` or ``.ome.btf``
+   file extension will be overwritten.  To ensure that the desired extension
+   is used, select :menuselection:`All files` or :menuselection:`All supported
+   file types` in the ``Files of type`` box, as an extension will not be
+   automatically added in those cases.

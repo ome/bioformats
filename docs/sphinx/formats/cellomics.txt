@@ -1,10 +1,10 @@
 .. index:: Cellomics
-.. index:: .c01
+.. index:: .c01, .dib
 
 Cellomics
 ===============================================================================
 
-Extensions: .c01
+Extensions: .c01, .dib
 
 Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 
@@ -26,6 +26,7 @@ Reader: CellomicsReader (:bfreader:`Source Code <CellomicsReader.java>`, :doc:`S
 We currently have:
 
 * a few Cellomics .c01 datasets
+* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
 
 We would like to have:
 
@@ -45,11 +46,5 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

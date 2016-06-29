@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -687,10 +687,10 @@ public class ScanrReader extends FormatReader {
             Double time = exposures.get(c);
             if (time != null) {
               time /= 1000;
-              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+              store.setPlaneExposureTime(new Time(time, UNITS.SECOND), i, image);
             }
             if (deltaT != null) {
-              store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
+              store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), i, image);
             }
           }
         }

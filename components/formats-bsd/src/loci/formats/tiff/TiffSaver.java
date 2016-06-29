@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -353,14 +353,14 @@ public class TiffSaver {
                   }
                   else {
                     off = c * blockSize + ndx + n;
+                    int realStrip = (c * (nStrips / nChannels)) + strip;
                     if (row >= h || col >= w) {
-                      stripOut[strip].writeByte(0);
+                      stripOut[realStrip].writeByte(0);
                     } else if (off < buf.length) {
-                      stripOut[c * (nStrips / nChannels) + strip].writeByte(
-                          buf[off]);
+                      stripOut[realStrip].writeByte(buf[off]);
                     }
                     else {
-                      stripOut[strip].writeByte(0);
+                      stripOut[realStrip].writeByte(0);
                     }
                   }
                 }
@@ -501,9 +501,31 @@ public class TiffSaver {
     long fp = out.getFilePointer();
     writeIFD(ifd, 0);
 
+    // strips.length is the total number of strips being written during
+    // this method call, which is no more than the total number of
+    // strips in the image
+    //
+    // for single-channel or interleaved image data, the strips are written
+    // in order
+    // for multi-channel non-interleaved image data, the strip indexing has
+    // to correct for the fact that each strip represents a single channel
+    //
+    // for example, in a 3 channel non-interleaved image with 2 calls to
+    // writeImageIFD each of which writes half of the image:
+    //  - we expect 6 strips to be written in total; the first call writes
+    //    {0, 2, 4}, the second writes {1, 3, 5}
+    //  - in each call to writeImageIFD:
+    //      * strips.length is 3
+    //      * interleaved is false
+    //      * nChannels is 3
+    //      * tileCount is 2
+
+    int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
     for (int i=0; i<strips.length; i++) {
       out.seek(out.length());
-      int thisOffset = firstOffset + i;
+      int index = interleaved ? i : (i / nChannels) * nChannels;
+      int c = interleaved ? 0 : i % nChannels;
+      int thisOffset = firstOffset + index + (c * tileCount);
       offsets.set(thisOffset, out.getFilePointer());
       byteCounts.set(thisOffset, new Long(strips[i].length));
       if (LOGGER.isDebugEnabled()) {
@@ -941,7 +963,7 @@ public class TiffSaver {
       ifd.putIFDValue(IFD.Y_RESOLUTION, new TiffRational(1, 1));
     }
     if (ifd.get(IFD.SOFTWARE) == null) {
-      ifd.putIFDValue(IFD.SOFTWARE, "OME Bio-Formats");
+      ifd.putIFDValue(IFD.SOFTWARE, FormatTools.CREATOR);
     }
     if (ifd.get(IFD.ROWS_PER_STRIP) == null &&
       ifd.get(IFD.TILE_WIDTH) == null && ifd.get(IFD.TILE_LENGTH) == null)

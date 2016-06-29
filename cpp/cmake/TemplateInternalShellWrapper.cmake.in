@@ -2,18 +2,12 @@
 
 set -e
 
-export BIOFORMATS_ICONDIR="@PROJECT_SOURCE_DIR@/cpp/share/icons"
-export BIOFORMATS_MANDIR="@PROJECT_BINARY_DIR@/cpp/man"
-export BIOFORMATS_SCHEMADIR="@PROJECT_SOURCE_DIR@/components/specification/released-schema"
+export OME_XML_MANDIR="@PROJECT_BINARY_DIR@/cpp/man"
+export OME_XML_SCHEMADIR="@PROJECT_SOURCE_DIR@/components/specification/released-schema"
+export OME_XML_TRANSFORMDIR="@PROJECT_SOURCE_DIR@/components/specification/transforms"
+export OME_XML_SAMPLEDIR="@PROJECT_SOURCE_DIR@/components/specification/samples"
 
 cmd=$1
 shift
-
-if [ "$cmd" = "info" -o "$cmd" = "showinf" ]; then
-  cmd=cpp/libexec/info/info
-fi
-if [ "$cmd" = "view" -o "$cmd" = "glview" ]; then
-  cmd=cpp/libexec/view/view
-fi
 
 exec "$cmd" "$@"

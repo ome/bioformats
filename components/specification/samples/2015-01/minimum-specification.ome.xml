@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ome:OME xmlns:bf="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+         xmlns:ome="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+                             http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
+  <ome:Image ID="Image:1" Name="Name92">
+    <ome:AcquisitionDate>2009-03-16T15:41:51.0Z</ome:AcquisitionDate>
+    <ome:Pixels
+       ID="Pixels:1"
+       DimensionOrder="XYZCT"
+       Type="int8"
+       SizeX="2"
+       SizeY="2"
+       SizeZ="2"
+       SizeC="2"
+       SizeT="2">
+      <bf:BinData
+         BigEndian="false"
+         Compression="none"
+         Length="12"
+         >ZGVmYXVsdA==</bf:BinData>
+    </ome:Pixels>
+  </ome:Image>
+</ome:OME>

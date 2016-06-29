@@ -53,6 +53,9 @@ to open/import a dataset in a particular format.
    * - Animated PNG
      - .png
      - Single file
+   * - Aperio AFI
+     - .afi
+     - One .afi file and several similarly-named .svs files
    * - Aperio SVS
      - .svs
      - Single file
@@ -68,6 +71,9 @@ to open/import a dataset in a particular format.
    * - Bio-Rad PIC
      - .pic, .xml, .raw
      - One or more .pic files and an optional lse.xml file
+   * - Bio-Rad SCN
+     - .scn
+     - Single file
    * - Bitplane Imaris
      - .ims
      - Single file
@@ -86,9 +92,15 @@ to open/import a dataset in a particular format.
    * - Canon RAW
      - .cr2, .crw, .jpg, .thm, .wav
      - Single file
+   * - CellH5 (HDF)
+     - .ch5
+     - Single file
    * - CellSens VSI
      - .vsi, .ets
      - One .vsi file and an optional directory with a similar name that contains at least one subdirectory with .ets files
+   * - CellVoyager
+     - .tif, .xml
+     - Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stitch together several TIF files.
    * - CellWorx
      - .pnl, .htd, .log
      - One .htd file plus one or more .pnl or .tif files and optionally one or more .log files
@@ -125,6 +137,9 @@ to open/import a dataset in a particular format.
    * - Flexible Image Transport System
      - .fits, .fts
      - Single file
+   * - FlowSight
+     - .cif
+     - Single file
    * - Fuji LAS 3000
      - .img, .inf
      - Single file
@@ -132,7 +147,7 @@ to open/import a dataset in a particular format.
      - .dm2
      - Single file
    * - Gatan Digital Micrograph
-     - .dm3
+     - .dm3, .dm4
      - Single file
    * - Graphics Interchange Format
      - .gif
@@ -155,6 +170,9 @@ to open/import a dataset in a particular format.
    * - Hitachi
      - .txt
      - One .txt file plus one similarly-named .tif, .bmp, or .jpg file
+   * - I2I
+     - .i2i
+     - Single file
    * - IMAGIC
      - .hed, .img
      - One .hed file plus one similarly-named .img file
@@ -191,6 +209,9 @@ to open/import a dataset in a particular format.
    * - InCell 3000
      - .frm
      - Single file
+   * - Inveon
+     - .hdr
+     - One .hdr file plus one similarly-named file
    * - JEOL
      - .dat, .img, .par
      - A single .dat file or an .img file with a similarly-named .par file
@@ -221,6 +242,9 @@ to open/import a dataset in a particular format.
    * - Laboratory Imaging
      - .lim
      - Single file
+   * - Lavision Imspector
+     - .msr
+     - Single file
    * - Leica
      - .lei, .tif, .tiff, .raw
      - One .lei file with at least one .tif/.tiff file and an optional .txt file
@@ -243,7 +267,7 @@ to open/import a dataset in a particular format.
      - .mnc
      - Single file
    * - Medical Research Council
-     - .mrc, .st, .ali, .map, .rec
+     - .mrc, .st, .ali, .map, .rec, .mrcs
      - Single file
    * - Metamorph STK
      - .stk, .nd, .tif, .tiff
@@ -253,14 +277,14 @@ to open/import a dataset in a particular format.
      - One or more .tif/.tiff files
    * - Micro-Manager
      - .tif, .tiff, .txt, .xml
-     - A 'metadata.txt' file plus or or more .tif files
+     - A file ending in 'metadata.txt' plus one or more .tif files
    * - Minolta MRW
      - .mrw
      - Single file
    * - Molecular Imaging
      - .stp
      - Single file
-   * - Multiple Network Graphics
+   * - Multiple-image Network Graphics
      - .mng
      - Single file
    * - NIfTI
@@ -284,11 +308,14 @@ to open/import a dataset in a particular format.
    * - Nikon TIFF
      - .tif, .tiff
      - Single file
+   * - OBF
+     - .obf, .msr
+     - OBF file
    * - OME-TIFF
-     - .ome.tif, .ome.tiff
+     - .ome.tif, .ome.tiff, .companion.ome
      - One or more .ome.tiff files
    * - OME-XML
-     - .ome
+     - .ome, .ome.xml
      - Single file
    * - Olympus APL
      - .apl, .tnb, .mtb, .tif
@@ -317,6 +344,9 @@ to open/import a dataset in a particular format.
    * - Oxford Instruments
      - .top
      - Single file
+   * - PCO-RAW
+     - .pcoraw, .rec
+     - A single .pcoraw file with a similarly-named .rec file
    * - PCX
      - .pcx
      - Single file
@@ -329,18 +359,27 @@ to open/import a dataset in a particular format.
    * - Perkin Elmer Densitometer
      - .hdr, .img
      - One .hdr file and a similarly-named .img file
+   * - Perkin-Elmer Nuance IM3
+     - .im3
+     - Single file
    * - PerkinElmer
      - .ano, .cfg, .csv, .htm, .rec, .tim, .zpo, .tif
      - One .htm file, several other metadata files (.tim, .ano, .csv, …) and either .tif files or .2, .3, .4, etc. files
    * - PerkinElmer Operetta
      - .tif, .tiff, .xml
      - Directory with XML file and one .tif/.tiff file per plane
-   * - Portable Gray Map
-     - .pgm
+   * - PicoQuant Bin
+     - .bin
+     - Single file
+   * - Portable Any Map
+     - .pbm, .pgm, .ppm
      - Single file
    * - Prairie TIFF
-     - .tif, .tiff, .cfg, .xml
+     - .tif, .tiff, .cfg, .env, .xml
      - One .xml file, one .cfg file, and one or more .tif/.tiff files
+   * - Princeton Instruments SPE
+     - .spe
+     - Single file
    * - Pyramid TIFF
      - .tif, .tiff
      - Single file
@@ -362,6 +401,9 @@ to open/import a dataset in a particular format.
    * - SPCImage Data
      - .sdt
      - Single file
+   * - SPCImage Data
+     - .spc, .set
+     - One .spc file and similarly named .set file
    * - SPIDER
      - .spi
      - Single file
@@ -373,6 +415,12 @@ to open/import a dataset in a particular format.
      - Single file
    * - Simulated data
      - .fake
+     - Single file
+   * - SlideBook 6 SLD (native)
+     - .sld
+     - Single file
+   * - Slidebook TIFF
+     - .tif, .tiff
      - Single file
    * - Tagged Image File Format
      - .tif, .tiff, .tf2, .tf8, .btf
@@ -404,6 +452,9 @@ to open/import a dataset in a particular format.
    * - Varian FDF
      - .fdf
      - Single file
+   * - Veeco
+     - .hdf
+     - Single file
    * - Visitech XYS
      - .xys, .html
      - One .html file plus one or more .xys files
@@ -419,11 +470,17 @@ to open/import a dataset in a particular format.
    * - Windows Bitmap
      - .bmp
      - Single file
+   * - Woolz
+     - .wlz
+     - Single file
    * - Zeiss AxioVision TIFF
      - .tif, .xml
      - Single file
    * - Zeiss CZI
      - .czi
+     - Single file
+   * - Zeiss LMS
+     - .lms
      - Single file
    * - Zeiss Laser-Scanning Microscopy
      - .lsm, .mdb

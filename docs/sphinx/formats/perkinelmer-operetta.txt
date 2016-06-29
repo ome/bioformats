@@ -26,6 +26,7 @@ Reader: OperettaReader (:bfreader:`Source Code <OperettaReader.java>`, :doc:`Sup
 We currently have:
 
 * a few sample datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/HCS/Operetta/>`__
 
 We would like to have:
 
@@ -45,11 +46,5 @@ Presence: |Fair|
 
 Utility: |Good|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

@@ -6,7 +6,7 @@ Improvision Openlab Raw
 
 Extensions: .raw
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
@@ -46,12 +46,4 @@ Presence: |Poor|
 Utility: |Fair|
 
 
-**Additional Information**
 
-
-
-Notes:
-
-
-.. seealso:: 
-  `Openlab software review <http://www.improvision.com/products/openlab/>`_

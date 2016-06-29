@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -115,18 +115,18 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setLaserID(InOutCurrentTest.LIGHTSOURCE_LASER_ID, 0, 0);
     store.setLaserModel(InOutCurrentTest.LIGHTSOURCE_LASER_MODEL, 0, 0);
     store.setLaserType(InOutCurrentTest.LASER_TYPE, 0, 0);
-    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_LASER_POWER, UNITS.MW), 0, 0);
+    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_LASER_POWER, UNITS.MILLIWATT), 0, 0);
     // Create <Annotation/> under <Laser/>
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 1);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE, 1);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 0, 0, 0);
+    store.setLaserAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 0, 0, 0);
 
     // with a Pump>
     store.setLaserID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID, 0, 1);
     store.setLaserModel(InOutCurrentTest.LIGHTSOURCE_PUMP_MODEL, 0, 1);
     store.setLaserType(InOutCurrentTest.LASER_TYPE, 0, 1);
-    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER, UNITS.MW), 0, 1);
+    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER, UNITS.MILLIWATT), 0, 1);
     // and link them
     store.setLaserPump(InOutCurrentTest.LIGHTSOURCE_PUMP_ID, 0, 0);
 
@@ -134,28 +134,28 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setArcID(InOutCurrentTest.LIGHTSOURCE_ARC_ID, 0, 2);
     store.setArcModel(InOutCurrentTest.LIGHTSOURCE_ARC_MODEL, 0, 2);
     store.setArcType(InOutCurrentTest.ARC_TYPE, 0, 2);
-    store.setArcPower(new Power(InOutCurrentTest.LIGHTSOURCE_ARC_POWER, UNITS.MW), 0, 2);
+    store.setArcPower(new Power(InOutCurrentTest.LIGHTSOURCE_ARC_POWER, UNITS.MILLIWATT), 0, 2);
     // Create <Annotation/> under <Arc/>
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 2);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE, 2);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 0, 2, 0);
+    store.setArcAnnotationRef(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 0, 2, 0);
     
     // Create <Filament/> under <Instrument/>
     store.setFilamentID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ID, 0, 3);
     store.setFilamentModel(InOutCurrentTest.LIGHTSOURCE_FILAMENT_MODEL, 0, 3);
     store.setFilamentType(InOutCurrentTest.FILAMENT_TYPE, 0, 3);
-    store.setFilamentPower(new Power(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER, UNITS.MW), 0, 3);
+    store.setFilamentPower(new Power(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER, UNITS.MILLIWATT), 0, 3);
     // Create <Annotation/> under <Filament/>
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 3);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 3);
     store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE, 3);
-    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 0, 3, 0);
+    store.setFilamentAnnotationRef(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 0, 3, 0);
 
     // Create <LightEmittingDiode/> under <Instrument/>
     store.setLightEmittingDiodeID(InOutCurrentTest.LIGHTSOURCE_LED_ID, 0, 4);
     store.setLightEmittingDiodeModel(InOutCurrentTest.LIGHTSOURCE_LED_MODEL, 0, 4);
-    store.setLightEmittingDiodePower(new Power(InOutCurrentTest.LIGHTSOURCE_LED_POWER, UNITS.MW), 0, 4);
+    store.setLightEmittingDiodePower(new Power(InOutCurrentTest.LIGHTSOURCE_LED_POWER, UNITS.MILLIWATT), 0, 4);
     // Create <Annotation/> under <LightEmittingDiode/>
     store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID, 4);
     store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 4);

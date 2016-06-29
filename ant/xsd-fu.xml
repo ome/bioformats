@@ -7,14 +7,10 @@ Include this in components generating sources using xsd-fu.
 
 <project>
 
-  <property name="xsdfu.schemaver" value="2015-01"/>
+  <property name="xsdfu.schemaver" value="2016-06"/>
   <property name="xsdfu.schemapath" value="${root.dir}/components/specification/released-schema/${xsdfu.schemaver}"/>
   <property name="xsdfu.templatepath" value="${root.dir}/components/xsd-fu"/>
   <property name="xsdfu.schema.ome" value="${xsdfu.schemapath}/ome.xsd"/>
-  <property name="xsdfu.schema.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
-  <property name="xsdfu.schema.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
-  <property name="xsdfu.schema.sa" value="${xsdfu.schemapath}/SA.xsd"/>
-  <property name="xsdfu.schema.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
 
   <macrodef name="xsd_fu" description="Run xsd_fu">
     <attribute name="omexml-model-package" default="ome.xml.model"/>
@@ -39,10 +35,6 @@ Include this in components generating sources using xsd-fu.
         <arg value="--output-directory=@{output}/"/>
         <arg value="--print-generated"/>
         <arg value="${xsdfu.schema.ome}"/>
-        <arg value="${xsdfu.schema.binaryfile}"/>
-        <arg value="${xsdfu.schema.roi}"/>
-        <arg value="${xsdfu.schema.sa}"/>
-        <arg value="${xsdfu.schema.spw}"/>
       </exec>
     </sequential>
   </macrodef>

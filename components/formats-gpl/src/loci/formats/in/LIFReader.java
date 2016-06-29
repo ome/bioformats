@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -323,7 +323,8 @@ public class LIFReader extends FormatReader {
       tile -= tileCount[i];
     }
 
-    in.skipBytes((int) (tile * planeSize * getImageCount()));
+    // seek instead of skipBytes to prevent dangerous int cast
+    in.seek(in.getFilePointer() + tile * planeSize * getImageCount());
     in.skipBytes(bytesToSkip * getSizeY() * no);
 
     if (bytesToSkip == 0) {
@@ -744,12 +745,12 @@ public class LIFReader extends FormatReader {
                   continue;
                 }
                 Double cutIn =
-                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
                     cutIn = ((Length)
-                      cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
+                      cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
                   }
                   else {
                     break;
@@ -795,7 +796,7 @@ public class LIFReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       if (tSteps[index] != null) {
-        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.SECOND), i);
       }
 
       final List<String> detectors = detectorModels[index];
@@ -882,7 +883,7 @@ public class LIFReader extends FormatReader {
           store.setChannelName(channelNames[index][c], i, c);
         }
         if (pinholes[index] != null) {
-          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROMETER), i, c);
         }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
@@ -954,14 +955,14 @@ public class LIFReader extends FormatReader {
           else if (timestamp == acquiredDate[index] && image > 0) {
             timestamp = timestamps[index][0];
           }
-          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, image);
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
         }
 
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
           if (expTimes[index][c] != null)
           {
-            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.SECOND), i, image);
           }
         }
       }
@@ -2019,17 +2020,22 @@ public class LIFReader extends FormatReader {
     ms.indexed = !ms.rgb;
     ms.imageCount = ms.sizeZ * ms.sizeT;
     if (!ms.rgb) ms.imageCount *= ms.sizeC;
+    else {
+      ms.imageCount *= (ms.sizeC / 3);
+    }
 
     Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
-    if (getSizeC() > 1 && getSizeT() > 1) {
-      ms.dimensionOrder += "C";
-    }
-    for (Long nBytes : bytes) {
-      String axis = bytesPerAxis.get(nBytes);
-      if (ms.dimensionOrder.indexOf(axis) == -1) {
-        ms.dimensionOrder += axis;
+    if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
+      if (getSizeC() > 1 && getSizeT() > 1) {
+        ms.dimensionOrder += "C";
+      }
+      for (Long nBytes : bytes) {
+        String axis = bytesPerAxis.get(nBytes);
+        if (ms.dimensionOrder.indexOf(axis) == -1) {
+          ms.dimensionOrder += axis;
+        }
       }
     }
 

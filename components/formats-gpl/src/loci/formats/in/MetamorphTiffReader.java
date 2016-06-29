@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -74,6 +74,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   private int wellCount = 0;
   private int fieldRowCount = 0;
   private int fieldColumnCount = 0;
+  private boolean dualCamera = false;
 
   // -- Constructor --
 
@@ -114,6 +115,19 @@ public class MetamorphTiffReader extends BaseTiffReader {
     return noPixels ? new String[0] : files;
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      files = null;
+      wellCount = 0;
+      fieldRowCount = 0;
+      fieldColumnCount = 0;
+      dualCamera = false;
+    }
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -121,7 +135,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1 && files.length == 1) {
+    if (getSeriesCount() == 1 && files.length == 1 && !dualCamera) {
       return super.openBytes(no, buf, x, y, w, h);
     }
 
@@ -133,6 +147,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
     int[] position = new int[] {zct[0], zct[1], well.fieldCol,
       well.fieldRow, well.well, zct[2]};
 
+    if (dualCamera) {
+      position[1] = 0;
+    }
+
     int fileIndex = FormatTools.positionToRaster(lengths, position);
     RandomAccessInputStream s = null;
     if (fileIndex < files.length) {
@@ -142,9 +160,18 @@ public class MetamorphTiffReader extends BaseTiffReader {
       s = new RandomAccessInputStream(files[0]);
     }
     TiffParser parser = new TiffParser(s);
-    IFD ifd = files.length == 1 ?
-      ifds.get(getSeries() * getImageCount() + no) : parser.getFirstIFD();
-    parser.getSamples(ifd, buf, x, y, w, h);
+    int ndx = getSeries() * getSizeZ() * getSizeT() + no;
+    int[] pos = getZCTCoords(no);
+    if (dualCamera) {
+      int channel = pos[1];
+      pos[1] = 0;
+      ndx = getSeries() * getSizeZ() * getSizeT() +
+        FormatTools.positionToRaster(new int[] {getSizeZ(), 1, getSizeT()}, pos);
+      pos[1] = channel;
+    }
+    IFD ifd = files.length == 1 ? ifds.get(ndx) : parser.getFirstIFD();
+    int realX = dualCamera ? (pos[1] == 0 ? x : x + pos[1] * getSizeX()) : x;
+    parser.getSamples(ifd, buf, realX, y, w, h);
     s.close();
 
     return buf;
@@ -272,6 +299,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     Vector<Integer> wavelengths = handler.getWavelengths();
     Vector<Double> zPositions = handler.getZPositions();
+    dualCamera = handler.hasDualCamera();
 
     // calculate axis sizes
 
@@ -317,6 +345,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     m.imageCount = getSizeZ() * getSizeT() * effectiveC;
+
+    if (dualCamera) {
+      m.sizeX /= 2;
+      m.sizeC *= 2;
+      m.imageCount *= 2;
+    }
 
     if (seriesCount > 1) {
       core.clear();
@@ -429,10 +463,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
             if (t < timestamps.size()) {
               String stamp = timestamps.get(t);
               long ms = DateTools.getTime(stamp, DATE_FORMAT, ".");
-              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
+              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.SECOND), s, image);
             }
-            if (image < exposures.size() && exposures.get(image) != null) {
-              store.setPlaneExposureTime(new Time(exposures.get(image), UNITS.S), s, image);
+            int exposureIndex = image;
+            if (dualCamera) {
+              exposureIndex /= getEffectiveSizeC();
+            }
+            if (exposureIndex < exposures.size() && exposures.get(exposureIndex) != null) {
+              store.setPlaneExposureTime(new Time(exposures.get(exposureIndex), UNITS.SECOND), s, image);
             }
             if (s < stageX.size()) {
               store.setPlanePositionX(stageX.get(s), s, image);
@@ -445,7 +483,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(
-                new Temperature(handler.getTemperature(), UNITS.DEGREEC), s);
+                new Temperature(handler.getTemperature(), UNITS.CELSIUS), s);
 
         Length sizeX =
           FormatTools.getPhysicalSizeX(handler.getPixelSizeX());

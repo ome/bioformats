@@ -1,10 +1,10 @@
-.. index:: PGM (Portable Gray Map)
-.. index:: .pgm
+.. index:: Portable Any Map
+.. index:: .pbm, .pgm, .ppm
 
-PGM (Portable Gray Map)
+Portable Any Map
 ===============================================================================
 
-Extensions: .pgm
+Extensions: .pbm, .pgm, .ppm
 
 Developer: Netpbm developers
 
@@ -29,7 +29,7 @@ Freely Available Software:
 We currently have:
 
 * a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) 
-* a few PGM files
+* a few PBM, PPM and PGM files
 
 We would like to have:
 
@@ -47,11 +47,5 @@ Presence: |Good|
 
 Utility: |Poor|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

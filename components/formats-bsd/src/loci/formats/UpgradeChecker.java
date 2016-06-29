@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.1.4";
+  public static final String STABLE_VERSION = "5.2.0-m4";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
@@ -247,6 +248,9 @@ public class UpgradeChecker {
         LOGGER.debug("UPGRADE AVAILABLE:" + result);
         return true;
       }
+    }
+    catch (UnknownHostException e) {
+      LOGGER.warn("Failed to reach the update site");
     }
     catch (IOException e) {
       LOGGER.warn("Failed to compare version numbers", e);

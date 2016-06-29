@@ -172,7 +172,7 @@ Type "ant -p" for a list of targets.
       additionalparam="${javadoc.doclint}">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
@@ -356,33 +356,33 @@ Type "ant -p" for a list of targets.
     depends="jar-formats-common, jar-formats-bsd"/>
 
   <target name="compile-ome-jxr" depends="deps-ome-jxr"
-    description="compile classes for OME JPEG XR Java library">
+    description="compile classes for OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="ome-jxr.compile"/>
   </target>
 
   <target name="jar-ome-jxr" depends="deps-ome-jxr"
-    description="generate JAR file for OME JPEG XR Java library">
+    description="generate JAR file for OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="ome-jxr.jar"/>
   </target>
 
   <target name="osgi-ome-jxr" depends="jar-ome-jxr"
-    description="generate OSGi bundle for OME JPEG XR Java library">
+    description="generate OSGi bundle for OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="ome-jxr.osgi"/>
   </target>
 
   <target name="findbugs-ome-jxr" depends="jar-ome-jxr"
-    description="run findbugs on OME JPEG XR Java library">
+    description="run findbugs on OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="ome-jxr.findbugs"/>
   </target>
 
   <target name="clean-ome-jxr"
     depends="clean-formats-common"
-    description="remove build files for OME JPEG XR Java library">
+    description="remove build files for OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="ome-jxr.clean"/>
   </target>
 
   <target name="test-ome-jxr" depends="jar-ome-jxr, testing-deps"
-    description="compile and run tests for OME JPEG XR Java library">
+    description="compile and run tests for OME JPEG XR Java library (deprecated)">
     <ant dir="components/ome-jxr" target="test"/>
   </target>
 

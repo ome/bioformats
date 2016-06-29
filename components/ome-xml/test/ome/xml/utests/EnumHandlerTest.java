@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -90,27 +90,27 @@ public class EnumHandlerTest {
   public void testBinning1x1WithWhitespace() throws EnumerationException {
     BinningEnumHandler handler = new BinningEnumHandler();
     Binning v = (Binning) handler.getEnumeration("   1 x 1  ");
-    assertEquals(Binning.ONEXONE, v);
+    assertEquals(Binning.ONEBYONE, v);
   }
 
   @Test
   public void testBinning2x2WithWhitespace() throws EnumerationException {
     BinningEnumHandler handler = new BinningEnumHandler();
     Binning v = (Binning) handler.getEnumeration("   2 x 2  ");
-    assertEquals(Binning.TWOXTWO, v);
+    assertEquals(Binning.TWOBYTWO, v);
   }
 
   @Test
   public void testBinning4x4WithWhitespace() throws EnumerationException {
     BinningEnumHandler handler = new BinningEnumHandler();
     Binning v = (Binning) handler.getEnumeration("   4 x 4  ");
-    assertEquals(Binning.FOURXFOUR, v);
+    assertEquals(Binning.FOURBYFOUR, v);
   }
 
   @Test
   public void testBinning8x8WithWhitespace() throws EnumerationException {
     BinningEnumHandler handler = new BinningEnumHandler();
     Binning v = (Binning) handler.getEnumeration("   8 x 8  ");
-    assertEquals(Binning.EIGHTXEIGHT, v);
+    assertEquals(Binning.EIGHTBYEIGHT, v);
   }
 }

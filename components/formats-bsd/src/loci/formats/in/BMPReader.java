@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -149,7 +149,7 @@ public class BMPReader extends FormatReader {
     in.skipBytes(rowsToSkip * pad);
 
     int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
-    
+
     if (compression == RAW) {
       for (int row=h-1; row>=0; row--) {
         int rowIndex = invertY ? h - 1 - row : row;
@@ -167,7 +167,7 @@ public class BMPReader extends FormatReader {
         }
         if (row > 0) {
           int nBits = (getSizeX() - w - x) * bpp * effectiveC + pad * 8;
-  
+
           if (in.getFilePointer() + (nBits / 8) < in.length()) {
             in.skipBits(nBits);
           }
@@ -180,6 +180,7 @@ public class BMPReader extends FormatReader {
     else if (compression == RLE_8 || compression == RLE_4) {
       boolean endOfFile = false;
       int index = 0;
+      byte[] plane = new byte[getSizeX() * getSizeY() * getRGBChannelCount()];
       while(!endOfFile) {
         byte firstByte = (byte) (in.readBits(bpp) & 0xff);
         byte secondByte = (byte) (in.readBits(bpp) & 0xff);
@@ -197,7 +198,7 @@ public class BMPReader extends FormatReader {
             if (compression == RLE_8) {
               for (int i = 0; i < secondByte; i++) {
                   byte absoluteByte = (byte) (in.readBits(bpp) & 0xff);
-                  buf[index] = absoluteByte;
+                  plane[index] = absoluteByte;
                   index++;
               }
               // In absolute mode, each run must be aligned on a word boundary
@@ -208,10 +209,10 @@ public class BMPReader extends FormatReader {
                 byte absoluteByte = (byte) (in.readBits(bpp) & 0xff);
                 byte firstNibble = (byte)(absoluteByte & 0xf);
                 byte secondNibble = (byte)((byte)(absoluteByte >> 4) & 0xf);
-                buf[index] = firstNibble;
+                plane[index] = firstNibble;
                 index++;
                 if (i + 1 < secondByte) {
-                  buf[index] = secondNibble;
+                  plane[index] = secondNibble;
                   index++;
                 }
               }
@@ -223,7 +224,7 @@ public class BMPReader extends FormatReader {
         else {
           if (compression == RLE_8) {
             for (int i = 0; i < firstByte; i++) {
-              buf[index] = secondByte;
+              plane[index] = secondByte;
               index++;
             }
           }
@@ -232,16 +233,19 @@ public class BMPReader extends FormatReader {
             byte secondNibble = (byte)((byte)(secondByte >> 4) & 0xf);
             for (int i = 0; i < firstByte; i++) {
               if (i % 2 == 0) {
-                buf[index] = firstNibble;
+                plane[index] = firstNibble;
               }
               else {
-                buf[index] = secondNibble;
+                plane[index] = secondNibble;
               }
               index++;
             }
           }
         }
       }
+      RandomAccessInputStream s = new RandomAccessInputStream(plane);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
 
     if (getRGBChannelCount() > 1) {

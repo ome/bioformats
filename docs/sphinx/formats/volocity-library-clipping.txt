@@ -6,7 +6,7 @@ Volocity Library Clipping
 
 Extensions: .acff
 
-Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+Developer: `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 
 
 **Support**
@@ -45,12 +45,7 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 RGB .acff files are not yet supported.  See :ticket:`6413`.

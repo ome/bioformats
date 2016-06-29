@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,6 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -39,7 +43,6 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -107,7 +110,8 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** Timestamps for each plane, in seconds. */
   private double[][] stamps = null;
-
+  private double[] zPositions = null;
+  
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
   private String mag, detectorManufacturer, objectiveManufacturer, comment;
@@ -304,12 +308,45 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("y")) {
         voxelY = voxel;
       }
-      else if (name.equals("z") || name.equals("event")) {
+      else if (name.equals("event")) {
         m.sizeZ *= size;
         if (dimensionOrder.indexOf("Z") == -1) {
           dimensionOrder += "Z";
         }
-        voxelZ = voxel;
+        if (Double.compare(voxelZ, 1) == 0) {
+          voxelZ = voxel;
+        }
+      }
+      else if (name.equals("z")) {
+        m.sizeZ *= size;
+        if (dimensionOrder.indexOf("Z") == -1) {
+          dimensionOrder += "Z";
+        }
+        
+        ArrayList<Double> uniqueZ = new ArrayList<Double>();
+        if (i > 1 && stamps != null) {
+          zPositions = stamps[i - 2];
+          if (zPositions != null) {
+            for (Double z : zPositions) {
+              BigDecimal bd = new BigDecimal(z);
+              bd = bd.setScale(10, RoundingMode.HALF_UP);
+              if (!uniqueZ.contains(bd.doubleValue())) uniqueZ.add(bd.doubleValue());
+            }
+          }
+        }
+        if (uniqueZ.size() > 1 && uniqueZ.size() == size) {
+          BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
+          BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
+          BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
+          BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          voxelZ = zRange.divide(zSize, mc).doubleValue();
+          // Need to convert from millimetre to micrometre
+          voxelZ *= Math.pow(10, 3);
+        }
+        else {
+          voxelZ = voxel;
+        }
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
@@ -423,7 +460,7 @@ public class FluoviewReader extends BaseTiffReader {
         setSeries(s);
         for (int i=0; i<getImageCount(); i++) {
           int index = getImageIndex(i);
-          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.S), s, i);
+          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.SECOND), s, i);
         }
       }
       setSeries(0);
@@ -443,7 +480,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.S), i);
+      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.SECOND), i);
 
       int montage = getMontage(i);
       int field = getField(i);
@@ -476,7 +513,10 @@ public class FluoviewReader extends BaseTiffReader {
       for (int image=0; image<getImageCount(); image++) {
         final Length xl = new Length(posX, UNITS.REFERENCEFRAME);
         final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
-        final Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
+        if (zPositions != null && zPositions.length > image) {
+          zl = new Length(zPositions[image], UNITS.MICROMETER);
+        }
         store.setPlanePositionX(xl, i, image);
         store.setPlanePositionY(yl, i, image);
         store.setPlanePositionZ(zl, i, image);
@@ -498,7 +538,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltages[i]), UNITS.V), 0, i);
+                new ElectricPotential(new Double(voltages[i]), UNITS.VOLT), 0, i);
       }
       if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
@@ -613,7 +653,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Temperature(new Double(temperature.floatValue()), UNITS.DEGREEC), 0);
+      new Temperature(new Double(temperature.floatValue()), UNITS.CELSIUS), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -625,14 +665,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     if (exposureTime != null) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.SECOND), 0, i);
       }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Frequency(new Double(readoutTime.floatValue()), UNITS.HZ), 0, i);
+        new Frequency(new Double(readoutTime.floatValue()), UNITS.HERTZ), 0, i);
     }
   }
 

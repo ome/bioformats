@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -35,23 +35,26 @@
 # #L%
 
 if(BUILD_DOXYGEN)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bioformats.dox.cmake
-                 ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox @ONLY)
+  set(OME_COMMON_TAGFILE "${CMAKE_INSTALL_FULL_DATADIR}/doc/ome-common/api/ome-common.tag")
 
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log
-                     COMMAND ${CMAKE_COMMAND} -E remove_directory bioformats
-                     COMMAND ${CMAKE_COMMAND} -E make_directory bioformats
-                     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox
-                     DEPENDS gensrc ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ome-xml.dox.cmake
+                 ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.dox @ONLY)
+
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.log
+                     COMMAND ${CMAKE_COMMAND} -E remove_directory ome-xml
+                     COMMAND ${CMAKE_COMMAND} -E make_directory ome-xml
+                     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.dox
+                     DEPENDS gensrc ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.dox)
 
   add_custom_target(doc-check
-                    COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake
-                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log)
+                    COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/ome-xml.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake
+                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.log)
 
-  add_custom_target(doc-api ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+  add_custom_target(doc-api ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ome-xml.log doc-check)
   # For backward compatibility
   add_custom_target(doc DEPENDS doc-api)
 
-  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bioformats/"
-          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/cpp-api")
+  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ome-xml/"
+          DESTINATION "${CMAKE_INSTALL_DOCDIR}/api"
+          COMPONENT "development")
 endif(BUILD_DOXYGEN)

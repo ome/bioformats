@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -130,7 +130,7 @@ public class CellVoyagerReader extends FormatReader
 		this.suffixNecessary = false;
 		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
-		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stich together several TIF files.";
+		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stitch together several TIF files.";
 		this.domains = new String[] { FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN };
 	}
 
@@ -524,7 +524,7 @@ public class CellVoyagerReader extends FormatReader
 
 		// Time interval
 		if (Double.valueOf( readFrameInterval( msDocument ) ) != null) {
-			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.S), 0 );
+			omeMD.setPixelsTimeIncrement(new Time( Double.valueOf( readFrameInterval( msDocument ) ), UNITS.SECOND), 0 );
 		}
 
 		/*
@@ -770,7 +770,7 @@ public class CellVoyagerReader extends FormatReader
 				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
 				{
-					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROM), seriesIndex, channelIndex++ );
+					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex++ );
 					store.setChannelName( channelInfos.get( i ).name, seriesIndex, i );
 				}
 			}

@@ -34,9 +34,7 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_policy(SET CMP0007 NEW)
-
-function(ome_version)
+function(ome_version GITDIR)
   set(OME_VERSION UNKNOWN)
   set(OME_VERSION_SHORT UNKNOWN)
   set(OME_VCS_SHORTREVISION UNKNOWN)
@@ -44,10 +42,10 @@ function(ome_version)
   set(OME_VCS_DATE UNKNOWN)
   set(OME_VCS_DATE_S UNKNOWN)
 
-  if(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
+  if(EXISTS "${GITDIR}/cpp/cmake/GitVersion.cmake")
     message(STATUS "Obtaining release version from source")
-    include("${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
-  else(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
+    include("${GITDIR}/cpp/cmake/GitVersion.cmake")
+  else(EXISTS "${GITDIR}/cpp/cmake/GitVersion.cmake")
     message(STATUS "Obtaining version from git")
 
     find_package(Git)
@@ -58,7 +56,7 @@ function(ome_version)
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 HEAD --pretty=%h
       OUTPUT_VARIABLE commit_hash_short RESULT_VARIABLE git_log_fail ERROR_QUIET
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+      WORKING_DIRECTORY ${GITDIR})
     if (git_log_fail)
       message(FATAL_ERROR "Could not obtain release commit hash from git")
     endif (git_log_fail)
@@ -66,7 +64,7 @@ function(ome_version)
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 HEAD --pretty=%H
       OUTPUT_VARIABLE commit_hash RESULT_VARIABLE git_log_fail ERROR_QUIET
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+      WORKING_DIRECTORY ${GITDIR})
     if (git_log_fail)
       message(FATAL_ERROR "Could not obtain release commit hash from git")
     endif (git_log_fail)
@@ -74,7 +72,7 @@ function(ome_version)
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 "${commit_hash}" --pretty=%ai
       OUTPUT_VARIABLE commit_date_string RESULT_VARIABLE git_log_fail ERROR_QUIET
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+      WORKING_DIRECTORY ${GITDIR})
     if (git_log_fail)
       message(FATAL_ERROR "Could not obtain release commit timestamp string from git")
     endif (git_log_fail)
@@ -82,7 +80,7 @@ function(ome_version)
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" log -1 "${commit_hash}" --pretty=%at
       OUTPUT_VARIABLE commit_date_unix RESULT_VARIABLE git_log_fail ERROR_QUIET
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+      WORKING_DIRECTORY ${GITDIR})
     if (git_log_fail)
       message(FATAL_ERROR "Could not obtain release commit timestamp from git")
     endif (git_log_fail)
@@ -97,14 +95,14 @@ function(ome_version)
                     OUTPUT_VARIABLE describe_exact_output
                     RESULT_VARIABLE describe_exact_fail
                     ERROR_QUIET
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+                    WORKING_DIRECTORY ${GITDIR})
     string(REPLACE "\n" "" describe_exact_output "${describe_exact_output}")
 
     execute_process(COMMAND "${GIT_EXECUTABLE}" describe --match=v[0-9]*
                     OUTPUT_VARIABLE describe_output
                     RESULT_VARIABLE describe_fail
                     ERROR_QUIET
-                    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+                    WORKING_DIRECTORY ${GITDIR})
     string(REPLACE "\n" "" describe_output "${describe_output}")
 
     if(NOT describe_exact_fail)
@@ -118,7 +116,7 @@ function(ome_version)
         message(FATAL_ERROR "Release version is not known")
       endif(NOT describe_fail)
     endif(NOT describe_exact_fail)
-  endif(EXISTS "${PROJECT_SOURCE_DIR}/cpp/cmake/GitVersion.cmake")
+  endif(EXISTS "${GITDIR}/cpp/cmake/GitVersion.cmake")
 
   set(OME_VCS_SHORTREVISION "${OME_VCS_SHORTREVISION}" PARENT_SCOPE)
   set(OME_VCS_REVISION "${OME_VCS_REVISION}" PARENT_SCOPE)
@@ -153,9 +151,11 @@ function(ome_version)
   endif(commit_valid)
 endfunction(ome_version)
 
-ome_version()
+macro(ome_project_version OME_PROJECT GITDIR)
+  ome_version("${GITDIR}")
 
-message(STATUS "Configuring Bio-Formats version ${OME_VERSION}")
-if(OME_VCS_SHORTREVISION AND OME_VCS_DATE_S)
-  message(STATUS "Using git commit ${OME_VCS_SHORTREVISION} on ${OME_VCS_DATE_S}")
-endif()
+  message(STATUS "Configuring ${OME_PROJECT} version ${OME_VERSION}")
+  if(OME_VCS_SHORTREVISION AND OME_VCS_DATE_S)
+    message(STATUS "Using git commit ${OME_VCS_SHORTREVISION} on ${OME_VCS_DATE_S}")
+  endif()
+endmacro()

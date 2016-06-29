@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -84,6 +85,8 @@ import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -107,9 +110,6 @@ public final class XMLTools {
   private static final String XML_SCHEMA_PATH =
     "http://www.w3.org/2001/XMLSchema";
 
-  private static final SchemaFactory FACTORY =
-    SchemaFactory.newInstance(XML_SCHEMA_PATH);
-
   private static final TransformerFactory transformFactory = createTransformFactory();
 
   private static TransformerFactory createTransformFactory() {
@@ -117,6 +117,22 @@ public final class XMLTools {
     factory.setErrorListener(new XMLListener());
     return factory;
   };
+
+  // -- Interfaces --
+
+  /**
+   * A schema reader can provide {@link InputStream}s for certain XML schemas.
+   */
+  public interface SchemaReader {
+
+    /**
+     * Get the given XML schema definition as an {@link InputStream}.
+     * @param systemId the system ID of the sought XML schema definition
+     * @return a stream from which to read the schema,
+     * or {@code null} if one is not available
+     */
+    InputStream getSchemaAsStream(String systemId);
+  }
 
   // -- Fields --
 
@@ -592,22 +608,36 @@ public final class XMLTools {
 
   /**
    * Attempts to validate the given XML string using
-   * Java's XML validation facility. Requires Java 1.5+.
+   * Java's XML validation facility.
    * @param xml The XML string to validate.
    * @return whether or not validation was successful.
    */
   public static boolean validateXML(String xml) {
-    return validateXML(xml, null);
+    return validateXML(xml, null, null);
   }
 
   /**
    * Attempts to validate the given XML string using
-   * Java's XML validation facility. Requires Java 1.5+.
+   * Java's XML validation facility.
    * @param xml The XML string to validate.
    * @param label String describing the type of XML being validated.
    * @return whether or not validation was successful.
    */
   public static boolean validateXML(String xml, String label) {
+      return validateXML(xml, label, null);
+  }
+
+  /**
+   * Attempts to validate the given XML string using
+   * Java's XML validation facility.
+   * @param xml The XML string to validate.
+   * @param label String describing the type of XML being validated.
+   * @param schemaReader turns schema system IDs into input streams,
+   * may be {@code null}
+   * @return whether or not validation was successful.
+   */
+  public static boolean validateXML(String xml, String label,
+      final SchemaReader schemaReader) {
     if (label == null) label = "XML";
     Exception exception = null;
 
@@ -647,13 +677,48 @@ public final class XMLTools {
       LOGGER.info("Error accessing schema at {}", schemaPath, exc);
       return false;
     }
+    final SchemaFactory schemaFactory =
+        SchemaFactory.newInstance(XML_SCHEMA_PATH);
+    if (schemaReader != null) {
+      final LSResourceResolver resolver = new LSResourceResolver() {
+        @Override
+        public LSInput resolveResource(String type, String namespaceURI,
+            String publicId, String systemId, String baseURI) {
+          InputStream stream = schemaReader.getSchemaAsStream(systemId);
+          if (stream == null) {
+            return null;
+          }
+
+          final LSInput input = new LSInputI();
+          input.setPublicId(publicId);
+          input.setSystemId(systemId);
+          input.setBaseURI(baseURI);
+          try {
+            input.setCharacterStream(new InputStreamReader(stream, "UTF-8"));
+          } catch (UnsupportedEncodingException e) {
+            LOGGER.warn("no UTF-8 character encoding available");
+            return null;
+          }
+          return input;
+        }
+      };
+      schemaFactory.setResourceResolver(resolver);
+    }
     Schema schema = schemas.get().get(schemaLocation);
     if (schema == null) {
       try {
-        schema = FACTORY.newSchema(schemaLocation.toURL());
+        final InputStream schemaIn = schemaReader == null ? null :
+            schemaReader.getSchemaAsStream(schemaPath);
+        if (schemaIn == null) {
+          schema = schemaFactory.newSchema(schemaLocation.toURL());
+        } else {
+          final Source schemaSource = new StreamSource(schemaIn, schemaPath);
+          schema = schemaFactory.newSchema(schemaSource);
+          schemaIn.close();
+        }
         schemas.get().put(schemaLocation, schema);
       }
-      catch (MalformedURLException exc) {
+      catch (IOException exc) {
         LOGGER.info("Error parsing schema at {}", schemaPath, exc);
         return false;
       }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -285,7 +285,7 @@ public class InOutCurrentTest {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2015-01";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -293,7 +293,7 @@ public class InOutCurrentTest {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
   private Document document;
 
@@ -511,7 +511,7 @@ public class InOutCurrentTest {
     assertNotNull(laser);
     assertEquals(LIGHTSOURCE_LASER_ID, laser.getID());
     assertEquals(LIGHTSOURCE_LASER_MODEL, laser.getModel());
-    assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, laser.getType());
   }
 
@@ -519,7 +519,7 @@ public class InOutCurrentTest {
   public void testValidLaserMetadata() {
     assertEquals(LIGHTSOURCE_LASER_ID, metadata.getLaserID(0, 0));
     assertEquals(LIGHTSOURCE_LASER_MODEL, metadata.getLaserModel(0, 0));
-    assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, metadata.getLaserType(0, 0));
   }
 
@@ -541,7 +541,7 @@ public class InOutCurrentTest {
     assertNotNull(laserPump);
     assertEquals(LIGHTSOURCE_PUMP_ID, laserPump.getID());
     assertEquals(LIGHTSOURCE_PUMP_MODEL, laserPump.getModel());
-    assertEquals(LIGHTSOURCE_PUMP_POWER, laserPump.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_PUMP_POWER, laserPump.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, laserPump.getType());
     assertEquals(laser.getLinkedPump(),laserPump);
   }
@@ -550,7 +550,7 @@ public class InOutCurrentTest {
   public void testValidPumpMetadata() {
     assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserID(0, 1));
     assertEquals(LIGHTSOURCE_PUMP_MODEL, metadata.getLaserModel(0, 1));
-    assertEquals(LIGHTSOURCE_PUMP_POWER, metadata.getLaserPower(0, 1).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_PUMP_POWER, metadata.getLaserPower(0, 1).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, metadata.getLaserType(0, 1));
     assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserPump(0, 0));
   }
@@ -562,7 +562,7 @@ public class InOutCurrentTest {
     assertNotNull(arc);
     assertEquals(LIGHTSOURCE_ARC_ID, arc.getID());
     assertEquals(LIGHTSOURCE_ARC_MODEL, arc.getModel());
-    assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(ARC_TYPE, arc.getType());
   }
 
@@ -570,7 +570,7 @@ public class InOutCurrentTest {
   public void testValidArcMetadata() {
     assertEquals(LIGHTSOURCE_ARC_ID, metadata.getArcID(0, 2));
     assertEquals(LIGHTSOURCE_ARC_MODEL, metadata.getArcModel(0, 2));
-    assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(ARC_TYPE, metadata.getArcType(0, 2));
   }
 
@@ -592,7 +592,7 @@ public class InOutCurrentTest {
     assertNotNull(filament);
     assertEquals(LIGHTSOURCE_FILAMENT_ID, filament.getID());
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, filament.getModel());
-    assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(FILAMENT_TYPE, filament.getType());
   }
 
@@ -601,7 +601,7 @@ public class InOutCurrentTest {
   public void testValidFilamentMetadata() {
     assertEquals(LIGHTSOURCE_FILAMENT_ID, metadata.getFilamentID(0, 3));
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, metadata.getFilamentModel(0, 3));
-    assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(FILAMENT_TYPE, metadata.getFilamentType(0, 3));
   }
 
@@ -623,7 +623,7 @@ public class InOutCurrentTest {
     assertNotNull(led);
     assertEquals(LIGHTSOURCE_LED_ID, led.getID());
     assertEquals(LIGHTSOURCE_LED_MODEL, led.getModel());
-    assertEquals(LIGHTSOURCE_LED_POWER, led.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LED_POWER, led.getPower().value(UNITS.MILLIWATT).doubleValue());
   }
 
   @Test(dependsOnMethods={"testValidLightEmittingDiodeNode"},enabled=false)

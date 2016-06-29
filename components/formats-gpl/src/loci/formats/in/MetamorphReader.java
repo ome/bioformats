@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,6 +28,8 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -763,7 +765,7 @@ public class MetamorphReader extends BaseTiffReader {
       store.setImageDescription("", i);
 
       store.setImagingEnvironmentTemperature(
-              new Temperature(handler.getTemperature(), UNITS.DEGREEC), i);
+              new Temperature(handler.getTemperature(), UNITS.CELSIUS), i);
 
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
@@ -807,7 +809,8 @@ public class MetamorphReader extends BaseTiffReader {
           BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
           BigDecimal zRange = (lastZ.subtract(firstZ)).abs();
           BigDecimal zSize = BigDecimal.valueOf((double)(getSizeZ() - 1));
-          stepSize = zRange.divide(zSize).doubleValue();
+          MathContext mc = new MathContext(10, RoundingMode.HALF_UP);
+          stepSize = zRange.divide(zSize, mc).doubleValue();
         }
       }
       
@@ -848,7 +851,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(
-                  new Frequency(handler.getReadOutRate(), UNITS.HZ), i, c);
+                  new Frequency(handler.getReadOutRate(), UNITS.HERTZ), i, c);
         }
 
         if (gain == null) {
@@ -1022,10 +1025,10 @@ public class MetamorphReader extends BaseTiffReader {
           expTime = exposureTimes.get(index);
         }
         if (deltaT != null) {
-          store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, p);
+          store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), i, p);
         }
         if (expTime != null) {
-          store.setPlaneExposureTime(new Time(expTime, UNITS.S), i, p);
+          store.setPlaneExposureTime(new Time(expTime, UNITS.SECOND), i, p);
         }
 
         if (stageX != null && p < stageX.length) {

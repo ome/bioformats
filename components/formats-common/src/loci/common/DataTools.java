@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,6 +35,13 @@ package loci.common;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * A utility class with convenience methods for
@@ -49,12 +56,12 @@ public final class DataTools {
   // -- Constants --
 
   // -- Static fields --
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
+  private static NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
   // -- Constructor --
 
   private DataTools() { }
-
-  // -- Data reading --
 
   /** Reads the contents of the given file into a string. */
   public static String readFile(String id) throws IOException {
@@ -409,7 +416,93 @@ public final class DataTools {
     return sb.toString();
   }
 
-  /** Normalize the decimal separator for the user's locale. */
+  /**
+   * Parses the input string into a short
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Short parseShort(String value) {
+    try {
+      return Short.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a byte
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Byte parseByte(String value) {
+    try {
+      return Byte.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into an integer
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Integer parseInteger(String value) {
+    try {
+      return Integer.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a long
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Long parseLong(String value) {
+    try {
+      return Long.valueOf(value);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Could not parse integer value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a float accounting for the locale decimal
+   * separator
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Float parseFloat(String value) {
+    if (value == null) return null;
+    try {
+      return nf.parse(value.replaceAll(",", ".")).floatValue();
+    } catch (ParseException e) {
+      LOGGER.debug("Could not parse float value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Parses the input string into a double accounting for the locale decimal
+   * separator
+   * @return {@code null} if the string could not be parsed
+   */
+  public static Double parseDouble(String value) {
+    if (value == null) return null;
+    try {
+      return nf.parse(value.replaceAll(",", ".")).doubleValue();
+    } catch (ParseException e) {
+      LOGGER.debug("Could not parse double value", e);
+    }
+    return null;
+  }
+
+  /**
+   * Normalizes the decimal separator for the user's locale.
+   * @deprecated Use {@link #parseDouble(String)} instead
+   */
+  @Deprecated
   public static String sanitizeDouble(String value) {
     value = value.replaceAll("[^0-9,\\.]", "");
     char separator = new DecimalFormatSymbols().getDecimalSeparator();

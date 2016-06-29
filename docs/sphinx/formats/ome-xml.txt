@@ -1,10 +1,10 @@
 .. index:: OME-XML
-.. index:: .ome
+.. index:: .ome, .ome.xml
 
 OME-XML
 ===============================================================================
 
-Extensions: `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+Extensions: `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
@@ -16,17 +16,19 @@ BSD-licensed: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
+Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
 
 Reader: OMEXMLReader (:bsd-reader:`Source Code <OMEXMLReader.java>`, :doc:`Supported Metadata Fields </metadata/OMEXMLReader>`)
 
+Writer: OMEXMLWriter (:bsd-writer:`Source Code <OMEXMLWriter.java>`)
 
 
 
 We currently have:
 
-* `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ 
-* many OME-XML datasets 
+* `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_
+* many OME-XML datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__
 * the ability to produce more datasets
 
 We would like to have:
@@ -45,13 +47,7 @@ Presence: |Fair|
 
 Utility: |Outstanding|
 
-
 **Additional Information**
-
-
-Writer: OMEXMLWriter (:bsd-writer:`Source Code <OMEXMLWriter.java>`)
-
-Notes:
 
 
 Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` 

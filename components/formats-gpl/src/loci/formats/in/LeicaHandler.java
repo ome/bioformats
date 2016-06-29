@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -209,7 +209,7 @@ public class LeicaHandler extends BaseHandler {
         int nChannels = coreMeta.rgb ? 0 : numChannels;
 
         for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROM), numDatasets, c);
+          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
         }
 
         for (int i=0; i<xPos.size(); i++) {
@@ -263,7 +263,7 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorSettingsID(id, numDatasets, index);
         }
         for (int c=0; c<nChannels; c++) {
-          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROM), numDatasets, c);
+          store.setChannelPinholeSize(new Length(pinhole, UNITS.MICROMETER), numDatasets, c);
         }
       }
     }
@@ -343,7 +343,7 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorModel(d.model, numDatasets, detectorChannel);
           store.setDetectorZoom(d.zoom, numDatasets, detectorChannel);
           store.setDetectorOffset(d.offset, numDatasets, detectorChannel);
-          store.setDetectorVoltage(new ElectricPotential(d.voltage, UNITS.V),
+          store.setDetectorVoltage(new ElectricPotential(d.voltage, UNITS.VOLT),
                   numDatasets, detectorChannel);
 
           if (c < numChannels) {
@@ -533,7 +533,7 @@ public class LeicaHandler extends BaseHandler {
       else if (id.equals("nDelayTime_s")) {
         Double timeIncrement = new Double(value);
         if (timeIncrement != null) {
-          store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), numDatasets);
+          store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.SECOND), numDatasets);
         }
       }
       else if (id.equals("CameraName")) {
@@ -551,7 +551,7 @@ public class LeicaHandler extends BaseHandler {
           try {
             Double exposureTime = new Double(value);
             if (exposureTime != null) {
-              store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), numDatasets, c);
+              store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), numDatasets, c);
             }
           }
           catch (IndexOutOfBoundsException e) { }
@@ -807,7 +807,7 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorZoom(detector.zoom, numDatasets, nextChannel);
           store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
           store.setDetectorVoltage(
-                  new ElectricPotential(detector.voltage, UNITS.V),
+                  new ElectricPotential(detector.voltage, UNITS.VOLT),
                   numDatasets, nextChannel);
         }
 
@@ -880,14 +880,14 @@ public class LeicaHandler extends BaseHandler {
           store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
-        store.setPlaneDeltaT(new Time(0.0, UNITS.S), numDatasets, count);
+        store.setPlaneDeltaT(new Time(0.0, UNITS.SECOND), numDatasets, count);
       }
       else if (level != MetadataLevel.MINIMUM) {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
           ms -= firstStamp;
-          store.setPlaneDeltaT(new Time(ms / 1000.0, UNITS.S), numDatasets, count);
+          store.setPlaneDeltaT(new Time(ms / 1000.0, UNITS.SECOND), numDatasets, count);
         }
       }
 
@@ -899,7 +899,7 @@ public class LeicaHandler extends BaseHandler {
       if (count < nImages) {
         Double time = new Double(attributes.getValue("Time"));
         if (time != null) {
-          store.setPlaneDeltaT(new Time(time, UNITS.S), numDatasets, count++);
+          store.setPlaneDeltaT(new Time(time, UNITS.SECOND), numDatasets, count++);
         }
       }
     }

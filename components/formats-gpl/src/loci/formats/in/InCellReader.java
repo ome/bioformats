@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -601,10 +601,10 @@ public class InCellReader extends FormatReader {
             if (img == null) continue;
             int plane = time * getSizeZ() * c + q;
             if (img.deltaT != null) {
-              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.S), i, plane);
+              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.SECOND), i, plane);
             }
             if (img.exposure != null) {
-              store.setPlaneExposureTime(new Time(img.exposure, UNITS.S), i, plane);
+              store.setPlaneExposureTime(new Time(img.exposure, UNITS.SECOND), i, plane);
             }
 
             store.setPlanePositionX(posX.get(field), i, plane);
@@ -645,15 +645,15 @@ public class InCellReader extends FormatReader {
         }
         if (temperature != null) {
           store.setImagingEnvironmentTemperature(
-                  new Temperature(temperature, UNITS.DEGREEC), i);
+                  new Temperature(temperature, UNITS.CELSIUS), i);
         }
       }
       setSeries(0);
 
       // populate Plate data
 
-      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROM), 0);
-      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROM), 0);
+      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROMETER), 0);
+      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROMETER), 0);
     }
   }
 

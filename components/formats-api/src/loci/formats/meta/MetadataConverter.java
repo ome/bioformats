@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,13 +32,13 @@
 
 package loci.formats.meta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
-
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -90,15 +90,16 @@ public final class MetadataConverter {
     convertXMLAnnotations(src, dest);
 
     convertROIs(src, dest);
-    convertInstruments(src, dest);
+    List<String> lightSourceIds = convertInstruments(src, dest);
     convertExperimenters(src, dest);
     convertExperimenterGroups(src, dest);
     convertExperiments(src, dest);
-    convertImages(src, dest);
+    convertImages(src, dest, lightSourceIds);
     convertPlates(src, dest);
     convertScreens(src, dest);
     convertDatasets(src, dest);
     convertProjects(src, dest);
+    convertFolders(src, dest);
 
     convertRootAttributes(src, dest);
   }
@@ -677,6 +678,30 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        byte[] binData = src.getBinaryFileBinData(i);
+        dest.setBinaryFileBinData(binData, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        boolean bigEndian = src.getBinaryFileBinDataBigEndian(i);
+        dest.setBinaryFileBinDataBigEndian(bigEndian, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NonNegativeLong length = src.getBinaryFileBinDataLength(i);
+        dest.setBinaryFileBinDataLength(length, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Compression compression = src.getBinaryFileBinDataCompression(i);
+        dest.setBinaryFileBinDataCompression(compression, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getFileAnnotationAnnotationCount(i);
@@ -693,11 +718,97 @@ public final class MetadataConverter {
   }
 
   /**
-   * Convert all Image attributes.
+   * Convert all Folder attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
    */
-  private static void convertImages(MetadataRetrieve src, MetadataStore dest) {
+  private static void convertFolders(MetadataRetrieve src, MetadataStore dest)
+  {
+    int folders = 0;
+    try {
+      folders = src.getFolderCount();
+    }
+    catch (NullPointerException e) { }
+
+    for (int i=0; i<folders; i++) {
+      try {
+        String id = src.getFolderID(i);
+        dest.setFolderID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getFolderDescription(i);
+        dest.setFolderDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getFolderName(i);
+        dest.setFolderName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int folderRefCount = src.getFolderRefCount(i);
+        for (int q=0; q<folderRefCount; q++) {
+          try {
+            String folderRef = src.getFolderFolderRef(i, q);
+            dest.setFolderFolderRef(folderRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int imageRefCount = src.getFolderImageRefCount(i);
+        for (int q=0; q<imageRefCount; q++) {
+          try {
+            String imageRef = src.getFolderImageRef(i, q);
+            dest.setFolderImageRef(imageRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int roiRefCount = src.getFolderROIRefCount(i);
+        for (int q=0; q<roiRefCount; q++) {
+          try {
+            String roiRef = src.getFolderROIRef(i, q);
+            dest.setFolderROIRef(roiRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int annotationRefCount = src.getFolderAnnotationRefCount(i);
+        for (int q=0; q<annotationRefCount; q++) {
+          try {
+            String annotationRef = src.getFolderAnnotationRef(i, q);
+            dest.setFolderAnnotationRef(annotationRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  /**
+   * Convert all Image attributes.
+   * @param src the MetadataRetrieve from which to copy
+   * @param dest the MetadataStore to which to copy
+   * @param lightSourceIds the collection of light source identifiers.
+   */
+  private static void convertImages(MetadataRetrieve src, MetadataStore dest,
+    List<String> lightSourceIds) {
     int imageCount = 0;
     try {
       imageCount = src.getImageCount();
@@ -936,6 +1047,21 @@ public final class MetadataConverter {
             dest.setPixelsBinDataBigEndian(bigEndian, i, q);
           }
           catch (NullPointerException e) { }
+          try {
+            NonNegativeLong length = src.getPixelsBinDataLength(i, q);
+            dest.setPixelsBinDataLength(length, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            Compression compression = src.getPixelsBinDataCompression(i, q);
+            dest.setPixelsBinDataCompression(compression, i, q);
+          }
+          catch (NullPointerException e) { }
+          try {
+            byte[] data = src.getPixelsBinData(i, q);
+            dest.setPixelsBinData(data, i, q);
+          }
+          catch (NullPointerException e) { }
         }
       }
       catch (NullPointerException e) { }
@@ -1104,7 +1230,7 @@ public final class MetadataConverter {
 
         try {
           String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
-          if (lightSourceID != null) {
+          if (lightSourceID != null && lightSourceIds.contains(lightSourceID)) {
             dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
 
             try {
@@ -1331,10 +1457,12 @@ public final class MetadataConverter {
    * Convert all Instrument attributes.
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
+   * @return Collection of light source identifiers.
    */
-  private static void convertInstruments(MetadataRetrieve src,
+  private static List<String> convertInstruments(MetadataRetrieve src,
     MetadataStore dest)
   {
+    List<String> lightSourceIds = new ArrayList<String>();
     int instrumentCount = 0;
     try {
       instrumentCount = src.getInstrumentCount();
@@ -1779,7 +1907,7 @@ public final class MetadataConverter {
         }
       }
 
-      convertLightSources(src, dest, i);
+      convertLightSources(src, dest, i, lightSourceIds);
 
       int instrumentRefCount = 0;
       try {
@@ -1794,6 +1922,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
     }
+    return lightSourceIds;
   }
 
   /**
@@ -2370,12 +2499,6 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
-      try {
-        String namespace = src.getROINamespace(i);
-        dest.setROINamespace(namespace, i);
-      }
-      catch (NullPointerException e) { }
-
       int shapeCount = 0;
       try {
         shapeCount = src.getShapeCount(i);
@@ -2420,12 +2543,6 @@ public final class MetadataConverter {
           try {
             FontStyle fontStyle = src.getEllipseFontStyle(i, q);
             dest.setEllipseFontStyle(fontStyle, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            LineCap lineCap = src.getEllipseLineCap(i, q);
-            dest.setEllipseLineCap(lineCap, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2480,12 +2597,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getEllipseTransform(i, q);
             dest.setEllipseTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getEllipseVisible(i, q);
-            dest.setEllipseVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2566,12 +2677,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getLabelLineCap(i, q);
-            dest.setLabelLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getLabelLocked(i, q);
             dest.setLabelLocked(locked, i, q);
           }
@@ -2622,12 +2727,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getLabelTransform(i, q);
             dest.setLabelTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getLabelVisible(i, q);
-            dest.setLabelVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2696,12 +2795,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getLineLineCap(i, q);
-            dest.setLineLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getLineLocked(i, q);
             dest.setLineLocked(locked, i, q);
           }
@@ -2752,12 +2845,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getLineTransform(i, q);
             dest.setLineTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getLineVisible(i, q);
-            dest.setLineVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2850,12 +2937,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getMaskLineCap(i, q);
-            dest.setMaskLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getMaskLocked(i, q);
             dest.setMaskLocked(locked, i, q);
           }
@@ -2910,12 +2991,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            Boolean visible = src.getMaskVisible(i, q);
-            dest.setMaskVisible(visible, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Double height = src.getMaskHeight(i, q);
             dest.setMaskHeight(height, i, q);
           }
@@ -2930,6 +3005,30 @@ public final class MetadataConverter {
           try {
             Double x = src.getMaskX(i, q);
             dest.setMaskX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            byte[] binData = src.getMaskBinData(i, q);
+            dest.setMaskBinData(binData, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            boolean bigEndian = src.getMaskBinDataBigEndian(i, q);
+            dest.setMaskBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            NonNegativeLong length = src.getMaskBinDataLength(i, q);
+            dest.setMaskBinDataLength(length, i, q);
+          }
+          catch (NullPointerException e) { }
+          
+          try {
+            Compression compression = src.getMaskBinDataCompression(i, q);
+            dest.setMaskBinDataCompression(compression, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -2992,12 +3091,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPointLineCap(i, q);
-            dest.setPointLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPointLocked(i, q);
             dest.setPointLocked(locked, i, q);
           }
@@ -3048,12 +3141,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getPointTransform(i, q);
             dest.setPointTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getPointVisible(i, q);
-            dest.setPointVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3122,12 +3209,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPolygonLineCap(i, q);
-            dest.setPolygonLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPolygonLocked(i, q);
             dest.setPolygonLocked(locked, i, q);
           }
@@ -3178,12 +3259,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getPolygonTransform(i, q);
             dest.setPolygonTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getPolygonVisible(i, q);
-            dest.setPolygonVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3246,12 +3321,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getPolylineLineCap(i, q);
-            dest.setPolylineLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getPolylineLocked(i, q);
             dest.setPolylineLocked(locked, i, q);
           }
@@ -3302,12 +3371,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getPolylineTransform(i, q);
             dest.setPolylineTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getPolylineVisible(i, q);
-            dest.setPolylineVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3382,12 +3445,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            LineCap lineCap = src.getRectangleLineCap(i, q);
-            dest.setRectangleLineCap(lineCap, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
             Boolean locked = src.getRectangleLocked(i, q);
             dest.setRectangleLocked(locked, i, q);
           }
@@ -3438,12 +3495,6 @@ public final class MetadataConverter {
           try {
             AffineTransform transform = src.getRectangleTransform(i, q);
             dest.setRectangleTransform(transform, i, q);
-          }
-          catch (NullPointerException e) { }
-
-          try {
-            Boolean visible = src.getRectangleVisible(i, q);
-            dest.setRectangleVisible(visible, i, q);
           }
           catch (NullPointerException e) { }
 
@@ -3892,9 +3943,10 @@ public final class MetadataConverter {
    * @param src the MetadataRetrieve from which to copy
    * @param dest the MetadataStore to which to copy
    * @param instrumentIndex the index of the Instrument to convert
+   * @param lightSourceIds the collection of light source to populate
    */
   private static void convertLightSources(MetadataRetrieve src,
-    MetadataStore dest, int instrumentIndex)
+    MetadataStore dest, int instrumentIndex, List<String> lightSourceIds)
   {
     int lightSourceCount = 0;
     try {
@@ -3907,7 +3959,10 @@ public final class MetadataConverter {
       if (type.equals("Arc")) {
         try {
           String id = src.getArcID(instrumentIndex, lightSource);
-          if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setArcID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -3979,7 +4034,10 @@ public final class MetadataConverter {
       else if (type.equals("Filament")) {
         try {
           String id = src.getFilamentID(instrumentIndex, lightSource);
-          if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setFilamentID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4056,7 +4114,10 @@ public final class MetadataConverter {
         try {
           String id =
             src.getGenericExcitationSourceID(instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4125,7 +4186,10 @@ public final class MetadataConverter {
       else if (type.equals("Laser")) {
         try {
           String id = src.getLaserID(instrumentIndex, lightSource);
-          if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
+            dest.setLaserID(id, instrumentIndex, lightSource);
+          }
         }
         catch (NullPointerException e) {
           continue;
@@ -4271,7 +4335,8 @@ public final class MetadataConverter {
       else if (type.equals("LightEmittingDiode")) {
         try {
           String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
-          if (id != null) {
+          if (id != null && id.trim().length() > 0) {
+            lightSourceIds.add(id);
             dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
           }
         }

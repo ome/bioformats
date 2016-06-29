@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -361,8 +361,11 @@ public final class MetadataTools {
           " is null");
       }
     }
-    if (src.getPixelsBinDataBigEndian(n, 0) == null) {
-      throw new FormatException("BigEndian #" + n + " is null");
+    if (src.getPixelsBigEndian(n) == null)
+    {
+      if (src.getPixelsBinDataCount(n) == 0 || src.getPixelsBinDataBigEndian(n, 0) == null) {
+        throw new FormatException("BigEndian #" + n + " is null");
+      }
     }
     if (src.getPixelsDimensionOrder(n) == null) {
       throw new FormatException("DimensionOrder #" + n + " is null");

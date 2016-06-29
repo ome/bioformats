@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -24,24 +24,6 @@
  */
 /*
  * unit.XMLMockFactory
- *
- *------------------------------------------------------------------------------
- *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
- *
- * 	This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- *------------------------------------------------------------------------------
  */
 package ome.specification;
 
@@ -72,6 +54,7 @@ import ome.xml.model.Filament;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
 import ome.xml.model.FilterSet;
+import ome.xml.model.GenericExcitationSource;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -82,7 +65,6 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Line;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.Map;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.Mask;
 import ome.xml.model.MicrobeamManipulation;
@@ -210,7 +192,7 @@ public class XMLMockObjects
     MICROBEAM_MANIPULATION_TYPE = MicrobeamManipulationType.FLIP;
 
   /** The default binning value. */
-  public static final Binning BINNING = Binning.TWOXTWO;
+  public static final Binning BINNING = Binning.TWOBYTWO;
 
   /** The default medium for the objective. */
   public static final Medium MEDIUM = Medium.AIR;
@@ -250,14 +232,11 @@ public class XMLMockObjects
     Arc.class.getName(), Filament.class.getName(),
     LightEmittingDiode.class.getName(), Laser.class.getName()};
 
-  /**
-   * The shapes to handle.
-   * Do not use Masks, as BinData is not appropriately supported.
-   **/
+  /** The shapes to handle. */
   public static final String[] SHAPES = {Line.class.getName(),
     Point.class.getName(), Rectangle.class.getName(),
     Ellipse.class.getName(), Polyline.class.getName(),
-    /*Mask.class.getName()*/};
+    Mask.class.getName()};
 
   /** The supported types of annotations. */
   public static final String[] ANNOTATIONS = {
@@ -334,7 +313,7 @@ public class XMLMockObjects
     detector.setAmplificationGain(0.0);
     detector.setGain(1.0);
     detector.setOffset(2.0);
-    detector.setVoltage(new ElectricPotential(100, UNITS.V));
+    detector.setVoltage(new ElectricPotential(100, UNITS.VOLT));
     detector.setType(DETECTOR_TYPE);
     detector.setZoom(3.0);
     return detector;
@@ -410,7 +389,7 @@ public class XMLMockObjects
     objective.setIris(true);
     objective.setLensNA(0.5);
     objective.setNominalMagnification(1.5);
-    objective.setWorkingDistance(new Length(1.0, UNITS.MICROM));
+    objective.setWorkingDistance(new Length(1.0, UNITS.MICROMETER));
     return objective;
   }
 
@@ -433,10 +412,10 @@ public class XMLMockObjects
     filter.setType(FILTER_TYPE);
 
     TransmittanceRange transmittance = new TransmittanceRange();
-    transmittance.setCutIn(new Length(cutIn, UNITS.NM));
-    transmittance.setCutOut(new Length(cutOut, UNITS.NM));
-    transmittance.setCutInTolerance(new Length(1.0, UNITS.NM));
-    transmittance.setCutOutTolerance(new Length(1.0, UNITS.NM));
+    transmittance.setCutIn(new Length(cutIn, UNITS.NANOMETRE));
+    transmittance.setCutOut(new Length(cutOut, UNITS.NANOMETER));
+    transmittance.setCutInTolerance(new Length(1.0, UNITS.NANOMETER));
+    transmittance.setCutOutTolerance(new Length(1.0, UNITS.NANOMETER));
     transmittance.setTransmittance(new PercentFraction(0.5f));
     filter.setTransmittanceRange(transmittance);
     return filter;
@@ -458,14 +437,14 @@ public class XMLMockObjects
       laser.setManufacturer(COMPONENT_MANUFACTURER);
       laser.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       laser.setLotNumber(COMPONENT_LOT_NUMBER);
-      laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
+      laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MILLIWATT));
       laser.setType(LASER_TYPE);
       laser.setFrequencyMultiplication(new PositiveInteger(30));
       laser.setLaserMedium(LASER_MEDIUM);
       laser.setPockelCell(false);
-      laser.setRepetitionRate(new Frequency(30.0, UNITS.AHZ));
+      laser.setRepetitionRate(new Frequency(30.0, UNITS.ATTOHERTZ));
       laser.setTuneable(false);
-      laser.setWavelength(new Length(200.0, UNITS.NM));
+      laser.setWavelength(new Length(200.0, UNITS.NANOMETER));
       return laser;
     } else if (Arc.class.getName().equals(type)) {
       Arc arc = new Arc();
@@ -474,7 +453,7 @@ public class XMLMockObjects
       arc.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       arc.setLotNumber(COMPONENT_LOT_NUMBER);
       arc.setModel(COMPONENT_MODEL);
-      arc.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
+      arc.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MILLIWATT));
       arc.setType(ARC_TYPE);
       return arc;
     } else if (Filament.class.getName().equals(type)) {
@@ -484,7 +463,7 @@ public class XMLMockObjects
       filament.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       filament.setLotNumber(COMPONENT_LOT_NUMBER);
       filament.setModel(COMPONENT_MODEL);
-      filament.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
+      filament.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MILLIWATT));
       filament.setType(FILAMENT_TYPE);
       return filament;
     } else if (LightEmittingDiode.class.getName().equals(type)) {
@@ -494,7 +473,7 @@ public class XMLMockObjects
       light.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       light.setLotNumber(COMPONENT_LOT_NUMBER);
       light.setModel(COMPONENT_MODEL);
-      light.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
+      light.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MILLIWATT));
       return light;
     }
     return null;
@@ -546,10 +525,10 @@ public class XMLMockObjects
   public ImagingEnvironment createImageEnvironment()
   {
     ImagingEnvironment env = new ImagingEnvironment();
-    env.setAirPressure(new Pressure(1.0, UNITS.MBAR));
+    env.setAirPressure(new Pressure(1.0, UNITS.MILLIBAR));
     env.setCO2Percent(new PercentFraction(1.0f));
     env.setHumidity(new PercentFraction(1.0f));
-    env.setTemperature(new Temperature(1.0, UNITS.DEGREEC));
+    env.setTemperature(new Temperature(1.0, UNITS.CELSIUS));
     return env;
   }
 
@@ -580,7 +559,7 @@ public class XMLMockObjects
     LightSourceSettings settings = new LightSourceSettings();
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
-    settings.setWavelength(new Length(200.2, UNITS.NM));
+    settings.setWavelength(new Length(200.2, UNITS.NANOMETRE));
     settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
@@ -671,8 +650,8 @@ public class XMLMockObjects
     settings.setBinning(BINNING);
     settings.setGain(1.0);
     settings.setOffset(1.0);
-    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
-    settings.setVoltage(new ElectricPotential(1.0, UNITS.V));
+    settings.setReadOutRate(new Frequency(1.0, UNITS.HERTZ));
+    settings.setVoltage(new ElectricPotential(1.0, UNITS.VOLT));
     settings.setIntegration(new PositiveInteger(20));
     settings.setZoom(3.0);
     return settings;
@@ -755,6 +734,7 @@ public class XMLMockObjects
       m.setY(0.0);
       m.setWidth(new Double(SIZE_X));
       m.setHeight(new Double(SIZE_Y));
+      m.setBinData(createBinData(SIZE_X,SIZE_Y,BYTES_PER_PIXEL));
       shape = m;
     }
     if (shape != null) {
@@ -906,24 +886,98 @@ public class XMLMockObjects
       int index, int rows, int columns, int fields,
       int numberOfPlateAcquisition)
   {
+    return createPlate(numberOfPlates, index, rows, columns,
+        fields, numberOfPlateAcquisition, true);
+  }
+
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfPlates The total number of plates.
+   * @param index The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfPlates,
+      int index, int rows, int columns, int fields,
+      int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
+    return createPlate(1, 0, numberOfPlates, index, rows, columns,
+        fields, numberOfPlateAcquisition, withMicrobeam);
+  }
+
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfScreens The total number of screens.
+   * @param screenIndex The index of the screen.
+   * @param numberOfPlates The total number of plates.
+   * @param plateIndex The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfScreens, int screenIndex,
+      int numberOfPlates, int plateIndex, int rows, int columns,
+      int fields, int numberOfPlateAcquisition)
+  {
+      return createPlate(numberOfScreens, screenIndex, numberOfPlates,
+          plateIndex, rows, columns, fields, numberOfPlateAcquisition, true);
+  }
+  /**
+   * Creates a populated plate with images.
+   *
+   * @param numberOfScreens The total number of screens.
+   * @param screenIndex The index of the screen.
+   * @param numberOfPlates The total number of plates.
+   * @param plateIndex The index of the plate.
+   * @param rows  The number of rows.
+   * @param columns The number of columns.
+   * @param fields  The number of fields.
+   * @param numberOfPlateAcquisition  The number of plate acquisition to add.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public Plate createPlate(int numberOfScreens, int screenIndex,
+      int numberOfPlates, int plateIndex, int rows, int columns,
+      int fields, int numberOfPlateAcquisition, boolean withMicrobeam)
+  {
+    if (numberOfScreens == 0) {
+      numberOfScreens = 1;
+      screenIndex = 0;
+    }
     // ticket:3102
-    Experiment exp = createExperimentWithMicrobeam(index);
+    int totalPlateIndex = numberOfPlates*screenIndex+plateIndex;
+    Experiment exp;
+    if (withMicrobeam) {
+      exp = createExperimentWithMicrobeam(totalPlateIndex);
+    } else {
+      exp = createExperiment(totalPlateIndex);
+    }
+
     ome.addExperiment(exp);
 
     if (numberOfPlateAcquisition < 0) {
       numberOfPlateAcquisition = 0;
     }
     Plate plate = new Plate();
-    plate.setID("Plate:"+index);
-    plate.setName("Plate Name "+index);
-    plate.setDescription("Plate Description "+index);
+    plate.setID("Plate:"+totalPlateIndex);
+    plate.setName("Plate Name "+totalPlateIndex);
+    plate.setDescription(String.format("Plate %d of %d",
+        plateIndex, numberOfPlates));
     plate.setExternalIdentifier("External Identifier");
     plate.setRows(new PositiveInteger(rows));
     plate.setColumns(new PositiveInteger(columns));
     plate.setRowNamingConvention(ROW_NAMING_CONVENTION);
     plate.setColumnNamingConvention(COLUMN_NAMING_CONVENTION);
-    plate.setWellOriginX(new Length(0.0, UNITS.MICROM));
-    plate.setWellOriginY(new Length(1.0, UNITS.MICROM));
+    plate.setWellOriginX(new Length(0.0, UNITS.MICROMETER));
+    plate.setWellOriginY(new Length(1.0, UNITS.MICROMETER));
     plate.setStatus("Plate status");
     PlateAcquisition pa = null;
     List<PlateAcquisition> pas = new ArrayList<PlateAcquisition>();
@@ -931,10 +985,11 @@ public class XMLMockObjects
     if (numberOfPlateAcquisition > 0) {
       for (int i = 0; i < numberOfPlateAcquisition; i++) {
         pa = new PlateAcquisition();
-        v = i+index*numberOfPlates;
+        v = i+totalPlateIndex*numberOfPlateAcquisition;
         pa.setID("PlateAcquisition:"+v);
         pa.setName("PlateAcquisition Name "+v);
-        pa.setDescription("PlateAcquisition Description "+v);
+        pa.setDescription(String.format("PlateAcquisition %d of %d",
+            i, numberOfPlateAcquisition));
         pa.setEndTime(new Timestamp(TIME));
         pa.setStartTime(new Timestamp(TIME));
         plate.addPlateAcquisition(pa);
@@ -945,13 +1000,14 @@ public class XMLMockObjects
     Well well;
     WellSample sample;
     Image image;
-    int i = index*rows*columns*fields*numberOfPlateAcquisition;
+    int i = totalPlateIndex*rows*columns*fields*numberOfPlateAcquisition;
     Iterator<PlateAcquisition> k;
     int kk = 0;
     for (int row = 0; row < rows; row++) {
       for (int column = 0; column < columns; column++) {
         well = new Well();
-        well.setID(String.format("Well:%d_%d_%d", row, column, index));
+        well.setID(String.format("Well:%d_%d_%d_%d",
+            screenIndex, plateIndex, row, column));
         well.setRow(new NonNegativeInteger(row));
         well.setColumn(new NonNegativeInteger(column));
         well.setType("Transfection: done");
@@ -964,8 +1020,8 @@ public class XMLMockObjects
             sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
             sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
-            sample.setID(String.format("WellSample:%d_%d_%d_%d",
-                index, row, column, field));
+            sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
+                screenIndex, plateIndex, row, column, field));
             sample.setIndex(new NonNegativeInteger(i));
             //create an image. and register it
             image = createImageWithExperiment(i, true, exp);
@@ -981,13 +1037,13 @@ public class XMLMockObjects
           while (k.hasNext()) {
             pa = k.next();
             for (int field = 0; field < fields; field++) {
-              v = kk+index*numberOfPlates;
+              v = kk+totalPlateIndex*numberOfPlates*numberOfScreens;
               sample = new WellSample();
               sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
               sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
-              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
-                  index, row, column, field, v));
+              sample.setID(String.format("WellSample:%d_%d_%d_%d_%d_%d",
+                  screenIndex, plateIndex, row, column, field, v));
               sample.setIndex(new NonNegativeInteger(i));
               //create an image. and register it
               //image = createImage(i, true);
@@ -1019,8 +1075,8 @@ public class XMLMockObjects
   public Plane createPlane(int z, int c, int t)
   {
     Plane plane = new Plane();
-    plane.setDeltaT(new Time(0.1, UNITS.S));
-    plane.setExposureTime(new Time(10.0, UNITS.S));
+    plane.setDeltaT(new Time(0.1, UNITS.SECOND));
+    plane.setExposureTime(new Time(10.0, UNITS.SECOND));
     plane.setPositionX(new Length(1.0, UNITS.REFERENCEFRAME));
     plane.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
     plane.setPositionZ(new Length(1.0, UNITS.REFERENCEFRAME));
@@ -1059,15 +1115,17 @@ public class XMLMockObjects
     pixels.setSizeZ(new PositiveInteger(SIZE_Z));
     pixels.setSizeC(new PositiveInteger(SIZE_C));
     pixels.setSizeT(new PositiveInteger(SIZE_T));
-    pixels.setPhysicalSizeX(new Length(1, UNITS.MICROM));
-    pixels.setPhysicalSizeY(new Length(1, UNITS.MICROM));
-    pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeX(new Length(1, UNITS.MICROMETER));
+    pixels.setPhysicalSizeY(new Length(1, UNITS.MICROMETER));
+    pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROMETER));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
-    BinData data;
-    for (int i = 0; i < SIZE_Z*SIZE_C*SIZE_T; i++) {
-      data = createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL);
-      pixels.addBinData(data);
+    if (!metadata) {
+      BinData data;
+      for (int i = 0; i < SIZE_Z*SIZE_C*SIZE_T; i++) {
+        data = createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL);
+        pixels.addBinData(data);
+      }
     }
     for (int z = 0; z < SIZE_Z; z++) {
       for (int t = 0; t < SIZE_T; t++) {
@@ -1113,12 +1171,12 @@ public class XMLMockObjects
     channel.setColor(new ome.xml.model.primitives.Color(rgba));
     channel.setName("Name");
     channel.setIlluminationType(IlluminationType.OBLIQUE);
-    channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
+    channel.setPinholeSize(new Length(0.5, UNITS.MICROMETER));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-	PositiveFloat emWave = new PositiveFloat(300.3);
-    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
+    PositiveFloat emWave = new PositiveFloat(300.3);
+    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NANOMETER));
     PositiveFloat exWave = new PositiveFloat(400.3);
-    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
+    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NANOMETER));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);
@@ -1512,6 +1570,92 @@ public class XMLMockObjects
   }
 
   /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs)
+  {
+      return createPopulatedPlate(plates, rows, cols, fields, acqs, true);
+  }
+
+  /**
+   * Creates several plates but no containing screen.
+   *
+   * @param plates The number of plates to create.
+   * @param rows   The number of rows for plate.
+   * @param cols   The number of columns for plate.
+   * @param fields The number of fields.
+   * @param acqs   The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedPlate(int plates, int rows, int cols, int fields,
+      int acqs, boolean withMicrobeam)
+  {
+    Plate plate;
+    for (int p = 0; p < plates; p++) {
+      plate = createPlate(plates, p, rows, cols, fields, acqs, withMicrobeam);
+      ome.addPlate(plate);
+    }
+    return ome;
+  }
+
+  /**
+   * Creates several screens each with several plates.
+   *
+   * @param screens The number of screens to create.
+   * @param plates  The number of plates to create.
+   * @param rows    The number of rows for plate.
+   * @param cols    The number of columns for plate.
+   * @param fields  The number of fields.
+   * @param acqs    The number of plate acquisitions.
+   * @return See above.
+   */
+  public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
+      int fields, int acqs)
+  {
+      return createPopulatedScreen(screens, plates, rows, cols, fields, acqs, 
+          true);
+  }
+
+  /**
+   * Creates several screens each with several plates.
+   *
+   * @param screens The number of screens to create.
+   * @param plates  The number of plates to create.
+   * @param rows    The number of rows for plate.
+   * @param cols    The number of columns for plate.
+   * @param fields  The number of fields.
+   * @param acqs    The number of plate acquisitions.
+   * @param withMicrobeam  Whether the experiment should contain a microbeam
+   * @return See above.
+   */
+  public OME createPopulatedScreen(int screens, int plates, int rows, int cols,
+      int fields, int acqs, boolean withMicrobeam)
+  {
+    Screen screen;
+    Plate plate;
+    for (int s = 0; s < screens; s++) {
+      screen = createScreen(s);
+      for (int p = 0; p < plates; p++) {
+        plate = createPlate(screens, s, plates, p, rows, cols, fields, acqs,
+            withMicrobeam);
+        screen.linkPlate(plate);
+        ome.addPlate(plate);
+      }
+      ome.addScreen(screen);
+    }
+    return ome;
+  }
+
+  /**
    * Creates a screen with several plates.
    *
    * @param plates The number of plates to create.
@@ -1524,15 +1668,7 @@ public class XMLMockObjects
   public OME createPopulatedScreen(int plates, int rows, int cols, int fields,
       int acqs)
   {
-    Screen screen = createScreen(0);
-    Plate plate;
-    for (int p = 0; p < plates; p++) {
-      plate = createPlate(plates, p, rows, cols, fields, acqs);
-      screen.linkPlate(plate);
-      ome.addPlate(plate);
-    }
-    ome.addScreen(screen);
-    return ome;
+    return createPopulatedScreen(1, plates, rows, cols, fields, acqs);
   }
 
   /**

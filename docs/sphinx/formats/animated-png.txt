@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: APNGReader (:bsd-reader:`Source Code <APNGReader.java>`, :doc:`Supported Metadata Fields </metadata/APNGReader>`)
 
+Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Freely Available Software:
 
@@ -49,11 +50,5 @@ Presence: |Good|
 
 Utility: |Poor|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

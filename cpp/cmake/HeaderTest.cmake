@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2015 Open Microscopy Environment:
+# Copyright © 2006 - 2016 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -94,7 +94,7 @@ function(header_test_from_file component library path)
       string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
       string(REPLACE "${headerdir}/" "" include ${include})
       string(REGEX REPLACE "\\.h$" "-${repeat}.cpp" genheader ${genheader})
-      string(REGEX REPLACE "[/.]" "_" safeheader ${include})
+      string(REGEX REPLACE "[/.-]" "_" safeheader ${include})
       string(CONFIGURE "#include <@include@>
 
 #include <ome/test/test.h>

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -375,6 +375,7 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
+      boolean foundAttributes = false;
       boolean useLastText = false;
       int blockCount = 0;
 
@@ -492,13 +493,14 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
-          if (foundMetadata) {
+          if (foundMetadata && foundAttributes) {
             imageOffsets.clear();
             imageNames.clear();
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
             foundMetadata = false;
+            foundAttributes = false;
             extraZDataCount = 0;
             useLastText = true;
           }
@@ -531,7 +533,7 @@ public class NativeND2Reader extends FormatReader {
           blockType.startsWith("CustomDataVa"))
         {
           if (blockType.equals("ImageAttribu")) {
-            foundMetadata = true;
+            foundAttributes = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -677,6 +679,10 @@ public class NativeND2Reader extends FormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
+            if (blockType.startsWith("ImageMetadat")) {
+              foundMetadata = true;
+            }
+
             int length = len - 12;
             byte[] b = new byte[length];
             in.read(b);
@@ -1893,7 +1899,7 @@ public class NativeND2Reader extends FormatReader {
           }
           if (stampIndex < tsT.size()) {
             double stamp = tsT.get(stampIndex).doubleValue();
-            store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+            store.setPlaneDeltaT(new Time(stamp, UNITS.SECOND), i, n);
           }
 
           int index = i * getSizeC() + coords[1];
@@ -1901,7 +1907,7 @@ public class NativeND2Reader extends FormatReader {
             index = coords[1];
           }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
-            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.SECOND), i, n);
           }
         }
       }
@@ -1980,7 +1986,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
@@ -2020,7 +2026,7 @@ public class NativeND2Reader extends FormatReader {
         }
         if (index < speed.size()) {
           store.setDetectorSettingsReadOutRate(
-                  new Frequency(speed.get(index), UNITS.HZ), i, c);
+                  new Frequency(speed.get(index), UNITS.HERTZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }
@@ -2030,7 +2036,7 @@ public class NativeND2Reader extends FormatReader {
       if (i * getSizeC() < temperature.size()) {
         Double temp = temperature.get(i * getSizeC());
         store.setImagingEnvironmentTemperature(
-                new Temperature(temp, UNITS.DEGREEC), i);
+                new Temperature(temp, UNITS.CELSIUS), i);
       }
     }
 
@@ -2038,7 +2044,7 @@ public class NativeND2Reader extends FormatReader {
     Double voltage = handler.getVoltage();
     if (voltage != null) {
       store.setDetectorSettingsVoltage(
-              new ElectricPotential(voltage, UNITS.V), 0, 0);
+              new ElectricPotential(voltage, UNITS.VOLT), 0, 0);
     }
 
     // populate Objective
@@ -2235,9 +2241,12 @@ public class NativeND2Reader extends FormatReader {
           if (value.endsWith("Active")) {
             int first = key.lastIndexOf(":") + 1;
             int last = key.lastIndexOf(";");
+            if (last-first < 0){
+                last = first + key.substring(first).indexOf(' ');
+            }
             try {
               textEmissionWavelengths.add(
-                new Double(key.substring(first, last)) + 20);
+                new Double(key.substring(first, last).trim()) + 20);
             }
             catch (NumberFormatException nfe) {
               LOGGER.trace("Could not parse emission wavelength", nfe);

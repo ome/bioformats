@@ -24,11 +24,11 @@ Reader: NiftiReader (:bfreader:`Source Code <NiftiReader.java>`, :doc:`Supported
 
 Sample Datasets:
 
-- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+- `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_
 
 We currently have:
 
-* `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
+* `NIfTI specification documents <http://afni.nimh.nih.gov/pub/dist/doc/nifti/nifti_revised.html>`_ 
 * several NIfTI datasets
 
 We would like to have:
@@ -47,11 +47,5 @@ Presence: |Good|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -308,13 +308,16 @@ public class NDPIReader extends BaseTiffReader {
         long prevByteCount =
           i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
 
-        while (stripOffsets[j] < prevOffset || stripOffsets[j] < prevOffset + prevByteCount) {
-          long newOffset = stripOffsets[j] + 0x100000000L;
+        long currentOffset = (int) stripOffsets[j];
+
+        while (currentOffset < prevOffset || currentOffset < prevOffset + prevByteCount) {
+          long newOffset = currentOffset + 0x100000000L;
           if (newOffset < stream.length() && ((j > 0 &&
-            (stripOffsets[j] < stripOffsets[j - 1])) ||
-            (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
+            (currentOffset < stripOffsets[j - 1])) ||
+            (i > 0 && currentOffset < prevOffset + prevByteCount)))
           {
             stripOffsets[j] = newOffset;
+            currentOffset = stripOffsets[j];
             neededAdjustment = true;
           }
         }
@@ -327,8 +330,9 @@ public class NDPIReader extends BaseTiffReader {
 
       long[] stripByteCounts = ifd.getStripByteCounts();
       for (int j=0; j<stripByteCounts.length; j++) {
-        long newByteCount = stripByteCounts[j] + 0x100000000L;
-        if (stripByteCounts[j] < 0 || neededAdjustment ||
+        long currentCount = (int) stripByteCounts[j];
+        long newByteCount = currentCount + 0x100000000L;
+        if (currentCount < 0 || neededAdjustment ||
           newByteCount + stripOffsets[j] < in.length())
         {
           if (newByteCount < ifd.getImageWidth() * ifd.getImageLength()) {

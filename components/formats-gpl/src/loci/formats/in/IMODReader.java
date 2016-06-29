@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,9 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.units.UNITS;
+import ome.units.unit.Unit;
 import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -441,45 +443,52 @@ public class IMODReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      Unit<Length> physicalSizeUnit = convertUnits(pixSizeUnits);
       if (physicalX > 0) {
-        store.setPixelsPhysicalSizeX(
-          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);
+        Length x = FormatTools.getPhysicalSizeX(physicalX, physicalSizeUnit);
+        if (x != null) {
+          store.setPixelsPhysicalSizeX(x, 0);
+        }
       }
       if (physicalY > 0) {
-        store.setPixelsPhysicalSizeY(
-          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalY), UNITS.MICROM), 0);
+        Length y = FormatTools.getPhysicalSizeY(physicalY, physicalSizeUnit);
+        if (y != null) {
+          store.setPixelsPhysicalSizeY(y, 0);
+        }
       }
       if (physicalZ > 0) {
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalZ), UNITS.MICROM), 0);
+        Length z = FormatTools.getPhysicalSizeZ(physicalZ, physicalSizeUnit);
+        if (z != null) {
+          store.setPixelsPhysicalSizeZ(z, 0);
+        }
       }
     }
   }
 
   // -- Helper methods --
 
-  private double adjustForUnits(int units, double value) {
+  private Unit<Length> convertUnits(int units) {
     switch (units) {
-      case 0:   // pixels
-        return value;
-      case 1:   // m
-        return value * 100000000.0;
-      case 3:   // km
-        return value * 100000000000.0;
-      case -2:  // cm
-        return value * 1000000.0;
-      case -3:  // mm
-        return value * 1000.0;
-      case -6:  // µm
-        return value;
-      case -9:  // nm
-        return value / 1000.0;
-      case -10: // Å
-        return value / 10000.0;
-      case -12: // pm
-        return value / 1000000.0;
+      case 0:
+        return UNITS.PIXEL;
+      case 1:
+        return UNITS.METER;
+      case 3:
+        return UNITS.KILOMETER;
+      case -2:
+        return UNITS.CENTIMETER;
+      case -3:
+        return UNITS.MILLIMETER;
+      case -6:
+        return UNITS.MICROMETER;
+      case -9:
+        return UNITS.NANOMETER;
+      case -10:
+        return UNITS.ANGSTROM;
+      case -12:
+        return UNITS.PICOMETER;
     }
-    return value;
+    return UNITS.MICROMETER;
   }
 
 }

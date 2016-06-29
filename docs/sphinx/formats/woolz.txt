@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: WlzReader (:bfreader:`Source Code <WlzReader.java>`, :doc:`Supported Metadata Fields </metadata/WlzReader>`)
 
+Writer: WlzWriter (:bfwriter:`Source Code <WlzWriter.java>`)
 
 Freely Available Software:
 
@@ -46,12 +47,5 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
-**Additional Information**
-
-
-Writer: WlzWriter (:bfwriter:`Source Code <WlzWriter.java>`)
-
-Notes:
 
 

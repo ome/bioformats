@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -387,7 +387,7 @@ public abstract class BaseZeissReader extends FormatReader {
           try { exp = new Double(exposure); }
           catch (NumberFormatException e) { }
           catch (NullPointerException e) { }
-          store.setPlaneExposureTime(new Time(exp, UNITS.S), i, plane);
+          store.setPlaneExposureTime(new Time(exp, UNITS.SECOND), i, plane);
 
           int posIndex = i * getImageCount() + plane;
 
@@ -395,7 +395,7 @@ public abstract class BaseZeissReader extends FormatReader {
             String timestamp = timestamps.get(posIndex);
             long stamp = parseTimestamp(timestamp);
             stamp -= firstStamp;
-            store.setPlaneDeltaT(new Time((double) stamp / 1600000, UNITS.S), i, plane);
+            store.setPlaneDeltaT(new Time((double) stamp / 1600000, UNITS.SECOND), i, plane);
           }
 
           if (stageX.get(posIndex) != null) {
@@ -937,7 +937,7 @@ public abstract class BaseZeissReader extends FormatReader {
           }
         }
         else if (key.startsWith("Objective Working Distance")) {
-          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROM), 0, 0);
+          store.setObjectiveWorkingDistance(new Length(new Double(value), UNITS.MICROMETER), 0, 0);
         }
         else if (key.startsWith("Objective Immersion Type")) {
           String immersion = "Other";

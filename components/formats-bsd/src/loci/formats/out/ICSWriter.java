@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,6 +34,8 @@ package loci.formats.out;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -59,6 +61,8 @@ public class ICSWriter extends FormatWriter {
   private long pixelOffset;
   private int lastPlane = -1;
   private RandomAccessOutputStream pixels;
+
+  private List<String> uniqueFiles = new ArrayList<String>();
 
   // NB: write in ZTC order by default.  Certain software (e.g. Volocity)
   //     lacks the capacity to import files with any other dimension
@@ -119,6 +123,9 @@ public class ICSWriter extends FormatWriter {
     int realIndex =
       FormatTools.getIndex(outputOrder, sizeZ, sizeC, sizeT, planes,
       coords[0], coords[1], coords[2]);
+    if (uniqueFiles.size() > 1) {
+      realIndex = no;
+    }
 
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
@@ -156,7 +163,10 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = realIndex;
+    lastPlane = no;
+    if (lastPlane != getPlaneCount() - 1 || uniqueFiles.size() > 1) {
+      overwriteDimensions(getMetadataRetrieve());
+    }
 
     pixels.close();
     pixels = null;
@@ -180,6 +190,10 @@ public class ICSWriter extends FormatWriter {
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
+
+    if (!uniqueFiles.contains(id)) {
+      uniqueFiles.add(id);
+    }
 
     if (checkSuffix(currentId, "ids")) {
       String metadataFile = currentId.substring(0, currentId.lastIndexOf("."));
@@ -214,8 +228,13 @@ public class ICSWriter extends FormatWriter {
       }
 
       boolean signed = FormatTools.isSigned(pixelType);
-      boolean littleEndian =
-        !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      boolean littleEndian = false;
+      if (meta.getPixelsBigEndian(series) != null) {
+        littleEndian = !meta.getPixelsBigEndian(series).booleanValue();
+      }
+      else if (meta.getPixelsBinDataCount(series) == 0) {
+        littleEndian = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      }
 
       out.writeBytes("representation\tformat\t" +
         (pixelType == FormatTools.FLOAT ? "real\n" : "integer\n"));
@@ -243,26 +262,26 @@ public class ICSWriter extends FormatWriter {
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
-            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
           if (meta.getPixelsPhysicalSizeY(0) != null) {
-            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
           if (meta.getPixelsPhysicalSizeZ(0) != null) {
-            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
+            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
           Time valueTime = meta.getPixelsTimeIncrement(0);
           if (valueTime != null) {
-            value = valueTime.value(UNITS.S);
+            value = valueTime.value(UNITS.SECOND);
             units.append("seconds\t");
           }
         }
@@ -288,10 +307,6 @@ public class ICSWriter extends FormatWriter {
   /* @see loci.formats.IFormatHandler#close() */
   @Override
   public void close() throws IOException {
-    if (lastPlane != getPlaneCount() - 1 && out != null) {
-      overwriteDimensions(getMetadataRetrieve());
-    }
-
     super.close();
     pixelOffset = 0;
     lastPlane = -1;
@@ -301,6 +316,7 @@ public class ICSWriter extends FormatWriter {
       pixels.close();
     }
     pixels = null;
+    uniqueFiles.clear();
   }
 
   // -- Helper methods --
@@ -320,7 +336,6 @@ public class ICSWriter extends FormatWriter {
     if (lastPlane < 0) lastPlane = z * c * t - 1;
     int[] pos =
       FormatTools.getZCTCoords(outputOrder, z, c, t, z * c * t, lastPlane);
-    lastPlane = -1;
 
     StringBuffer dimOrder = new StringBuffer();
     int[] sizes = new int[6];

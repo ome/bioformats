@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: AVIReader (:bsd-reader:`Source Code <AVIReader.java>`, :doc:`Supported Metadata Fields </metadata/AVIReader>`)
 
+Writer: AVIWriter (:bsd-writer:`Source Code <AVIWriter.java>`)
 
 Freely Available Software:
 
@@ -52,12 +53,7 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 * Bio-Formats can save image stacks as AVI (uncompressed). 

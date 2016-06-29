@@ -25,7 +25,8 @@ Reader: SVSReader (:bfreader:`Source Code <SVSReader.java>`, :doc:`Supported Met
 
 We currently have:
 
-* many SVS datasets 
+* many SVS datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__
 * an SVS specification document 
 * the ability to generate additional SVS datasets
 
@@ -45,12 +46,7 @@ Presence: |Good|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**

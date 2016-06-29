@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -65,7 +65,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void testGetLatestVersion() {
-    assertEquals("2015-01", service.getLatestVersion());
+    assertEquals("2016-06", service.getLatestVersion());
   }
 
   @Test
@@ -91,7 +91,7 @@ public class OMEXMLServiceTest {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2015-01",
+    assertEquals("2016-06",
       service.getOMEXMLVersion(service.createOMEXMLMetadata(xml)));
   }
 

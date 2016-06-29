@@ -211,17 +211,6 @@ Java implementation of the `Metakit database specification
 :ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
 Bio-Formats API.
 
-.. _ome-jxr:
-
-:source:`ome-jxr (OME JPEG XR codec library) <components/ome-jxr>`:
-
-`Ant: jar-ome-jxr`
-
-Experimental implementation of `JPEG-XR
-<http://en.wikipedia.org/wiki/JPEG_XR>`_ in Java.  This uses classes from
-:ref:`formats-common <formats-common>`, but is otherwise independent of
-Bio-Formats.
-
 .. _ome-xml:
 
 :source:`ome-xml (OME-XML Java library) <components/ome-xml>`:

@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
+                                                                                                                                                                                                                                                                                                                                                                                                      http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
+  <SPW:Plate ID="Plate:1">
+    <SPW:Description>Plate 1 description.</SPW:Description>
+    <SPW:Well ID="Well:1.1.1" Column="1" Row="1">
+      <SPW:WellSample ID="WellSample:1.1.1.1" Index="1">
+        <ImageRef ID="Image:0"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.1.1.2" Index="5">
+        <ImageRef ID="Image:1"/>
+      </SPW:WellSample>
+      <SPW:ReagentRef ID="Reagent:1"/>
+    </SPW:Well>
+    <SPW:Well ID="Well:1.2.1" Column="2" Row="1">
+      <SPW:WellSample ID="WellSample:1.2.1.1" Index="2">
+        <ImageRef ID="Image:2"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.2.1.2" Index="6">
+        <ImageRef ID="Image:3"/>
+      </SPW:WellSample>
+      <SPW:ReagentRef ID="Reagent:1"/>
+    </SPW:Well>
+    <SPW:Well ID="Well:1.1.2" Column="1" Row="2">
+      <SPW:WellSample ID="WellSample:1.1.2.1" Index="3">
+        <ImageRef ID="Image:4"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.1.2.2" Index="7">
+        <ImageRef ID="Image:5"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.1.2.3" Index="11">
+        <ImageRef ID="Image:6"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.1.2.4" Index="15">
+        <ImageRef ID="Image:7"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.1.2.5" Index="19">
+        <ImageRef ID="Image:8"/>
+      </SPW:WellSample>
+      <SPW:ReagentRef ID="Reagent:1"/>
+    </SPW:Well>
+    <SPW:Well ID="Well:1.2.2" Column="2" Row="2">
+      <SPW:WellSample ID="WellSample:1.2.2.1" Index="4">
+        <ImageRef ID="Image:9"/>
+      </SPW:WellSample>
+      <SPW:WellSample ID="WellSample:1.2.2.2" Index="8">
+        <ImageRef ID="Image:10"/>
+      </SPW:WellSample>
+      <SPW:ReagentRef ID="Reagent:1"/>
+    </SPW:Well>
+    <PlateAcquisition xmlns="http://www.openmicroscopy.org/Schemas/SPW/2012-06" ID="PlateAcquisition:Plate:1:ScreenAcquisition:1" StartTime="2010-02-23T12:49:30" EndTime="2010-02-23T12:50:30">
+      <SPW:WellSampleRef ID="WellSample:1.1.1.1"/>
+      <SPW:WellSampleRef ID="WellSample:1.2.1.1"/>
+      <SPW:WellSampleRef ID="WellSample:1.1.2.1"/>
+      <SPW:WellSampleRef ID="WellSample:1.2.2.1"/>
+    </PlateAcquisition>
+    <PlateAcquisition xmlns="http://www.openmicroscopy.org/Schemas/SPW/2012-06" ID="PlateAcquisition:Plate:1:ScreenAcquisition:2" StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+      <SPW:WellSampleRef ID="WellSample:1.1.1.2"/>
+      <SPW:WellSampleRef ID="WellSample:1.2.1.2"/>
+      <SPW:WellSampleRef ID="WellSample:1.1.2.2"/>
+      <SPW:WellSampleRef ID="WellSample:1.2.2.2"/>
+    </PlateAcquisition>
+  </SPW:Plate>
+  <SPW:Screen ID="Screen:1" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription="" ReagentSetIdentifier="" Name="" Type="">
+    <SPW:Description/>
+    <SPW:Reagent ID="Reagent:1" Name="" ReagentIdentifier="">
+      <SPW:Description/>
+    </SPW:Reagent>
+    <SPW:PlateRef ID="Plate:1"/>
+  </SPW:Screen>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:0"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:1" Name="6x6x1x8-swatch.tif-1">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:1:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:1"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:2" Name="6x6x1x8-swatch.tif-2">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:2:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:2"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:3" Name="6x6x1x8-swatch.tif-3">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:3:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:3"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:4" Name="6x6x1x8-swatch.tif-4">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:4:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:4"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:5" Name="6x6x1x8-swatch.tif-5">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:5:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:5"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:6" Name="6x6x1x8-swatch.tif-6">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:6:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:6"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:7" Name="6x6x1x8-swatch.tif-7">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:7:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:7"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:8" Name="6x6x1x8-swatch.tif-8">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:8:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:8"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:9" Name="6x6x1x8-swatch.tif-9">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:9:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:9"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+  <Image ID="Image:10" Name="6x6x1x8-swatch.tif-10">
+    <OME:AcquisitionDate xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06">2010-02-23T12:51:30</OME:AcquisitionDate>
+    <OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:10:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <OME:Channel Color="-2147483648" ID="Channel:10"/>
+      <Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+</OME>

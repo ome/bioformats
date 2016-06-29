@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: JPEGReader (:bsd-reader:`Source Code <JPEGReader.java>`, :doc:`Supported Metadata Fields </metadata/JPEGReader>`)
 
+Writer: JPEGWriter (:bsd-writer:`Source Code <JPEGWriter.java>`)
 
 
 
@@ -45,17 +46,11 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-
 **Additional Information**
 
 
-Writer: JPEGWriter (:bsd-writer:`Source Code <JPEGWriter.java>`)
-
-Notes:
-
-
 Bio-Formats can save individual planes as JPEG. 
-Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. 
+Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. 
 JPEG stands for "Joint Photographic Experts Group". 
 
 .. seealso:: 

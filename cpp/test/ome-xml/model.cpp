@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2014 - 2015 Open Microscopy Environment:
+ * Copyright © 2014 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -40,16 +40,21 @@
 
 #include <boost/filesystem.hpp>
 
-#include <ome/internal/config.h>
-#include <ome/internal/version.h>
-
 #include <ome/test/config.h>
 #include <ome/test/test.h>
 
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/common/xsl/Platform.h>
+#include <ome/common/xsl/Transformer.h>
+
+#include <ome/xml/config-internal.h>
+#include <ome/xml/version.h>
 #include <ome/xml/Document.h>
+#include <ome/xml/OMEEntityResolver.h>
+#include <ome/xml/OMETransformResolver.h>
+#include <ome/xml/OMETransform.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -78,7 +83,7 @@ namespace
 
     /// @todo Use the correct model version when available.
     /// @todo Use all model versions when transforms available.
-    path dir(PROJECT_SOURCE_DIR "/components/specification/samples/" "2013-06");
+    path dir(PROJECT_SOURCE_DIR "/components/specification/samples/" "2015-01");
     if (exists(dir) && is_directory(dir))
       {
         for(directory_iterator i(dir); i != directory_iterator(); ++i)
@@ -87,7 +92,7 @@ namespace
             p.file = *i;
 
             // Contains non-POSIX timestamps.
-            if (p.file.filename() == path("2013-06-datetests.ome"))
+            if (p.file.filename() == path("timestampannotation.ome.xml"))
               continue;
 
             if (p.file.extension() == path(".ome") ||
@@ -101,13 +106,13 @@ namespace
 
 }
 
-std::vector<ModelTestParameters> tile_params(find_model_tests());
+std::vector<ModelTestParameters> model_params(find_model_tests());
 
 class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
 {
 public:
   ome::common::xml::Platform xmlplat;
-  std::string xmltext;
+  std::string original_xml;
   ome::common::xml::dom::Document doc;
 
   virtual void SetUp()
@@ -118,26 +123,42 @@ public:
 
     ASSERT_TRUE(!!in);
     in.seekg(0, std::ios::end);
-    xmltext.reserve(in.tellg());
+    original_xml.reserve(in.tellg());
     in.seekg(0, std::ios::beg);
 
-    xmltext.assign(std::istreambuf_iterator<char>(in),
-                   std::istreambuf_iterator<char>());
+    original_xml.assign(std::istreambuf_iterator<char>(in),
+                        std::istreambuf_iterator<char>());
 
-    doc = ome::xml::createDocument(xmltext);
+    if (std::string("2015") != OME_XML_MODEL_VERSION)
+      {
+        // Apply upgrade if needed.
+        ome::common::xsl::Platform xslplat;
+        ome::common::xml::dom::Document upgraded_doc;
+        ome::common::xml::dom::Element docroot;
+
+        ome::xml::OMEEntityResolver entity_resolver;
+        ome::xml::OMETransformResolver transform_resolver;
+
+        std::string upgraded_xml;
+        ome::xml::transform(OME_XML_MODEL_VERSION, original_xml, upgraded_xml,
+                            entity_resolver, transform_resolver);
+
+        doc = ome::xml::createDocument(upgraded_xml);
+      }
+    else
+      {
+        doc = ome::xml::createDocument(original_xml);
+      }
   }
 };
 
 
 TEST_P(ModelTest, Parse)
 {
-  const ModelTestParameters& params = GetParam();
 }
 
 TEST_P(ModelTest, Update)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
@@ -148,8 +169,6 @@ TEST_P(ModelTest, Update)
 
 TEST_P(ModelTest, CreateXML)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
@@ -166,8 +185,6 @@ TEST_P(ModelTest, CreateXML)
 
 TEST_P(ModelTest, CreateXMLRoundTrip)
 {
-  const ModelTestParameters& params = GetParam();
-
   // Read into OME model objects.
   ome::xml::meta::OMEXMLMetadata meta;
   ome::xml::model::detail::OMEModel model;
@@ -216,4 +233,4 @@ TEST(ModelObject, StripNamespacePrefix)
 #  pragma GCC diagnostic ignored "-Wmissing-declarations"
 #endif
 
-INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(tile_params));
+INSTANTIATE_TEST_CASE_P(ModelVariants, ModelTest, ::testing::ValuesIn(model_params));

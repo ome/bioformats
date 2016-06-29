@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2014 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -21,12 +21,6 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
- */
-/*
- * $Id$
- *
- *   Copyright 2014 University of Dundee. All rights reserved.
- *   Use is subject to license terms supplied in LICENSE.txt
  */
 
 package ome.units.unit;

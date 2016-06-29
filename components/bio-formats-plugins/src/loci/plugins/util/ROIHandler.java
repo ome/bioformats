@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,6 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.plugins.in.ImporterOptions;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.Ellipse;
@@ -95,6 +96,20 @@ public class ROIHandler {
    */
   public static void openROIs(IMetadata retrieve, ImagePlus[] images,
           boolean isOMERO) {
+    openROIs(retrieve, images, isOMERO, ImporterOptions.ROIS_MODE_MANAGER);  
+  }
+  
+  /**
+   * Opens the rois and converts them into ImageJ Rois.
+   *
+   * @param retrieve The OMEXML store.
+   * @param images The imageJ object.
+   * @param isOMERO <code>true</code> if data stored in OMERO,
+   *        <code>false</code> otherwise.
+   * @param roisMode Determines whether to import Rois to overlay or RoiManager
+   */
+  public static void openROIs(IMetadata retrieve, ImagePlus[] images,
+          boolean isOMERO, String roisMode) {
     if (!(retrieve instanceof OMEXMLMetadata)) return;
     int nextRoi = 0;
     RoiManager manager = RoiManager.getInstance();
@@ -108,7 +123,8 @@ public class ROIHandler {
     int imageCount = images.length;
     for (int imageNum=0; imageNum<imageCount; imageNum++) {
       int roiCount = root.sizeOfROIList();
-      if (roiCount > 0 && manager == null) {
+      if (roiCount > 0 && manager == null
+    		  && roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
         manager = new RoiManager();
       }
 
@@ -397,7 +413,18 @@ public class ROIHandler {
             if (sc != null) {
               roi.setStrokeColor(sc);
             }
-            manager.add(images[imageNum], roi, nextRoi++);
+            
+            if (roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
+                manager.add(images[imageNum], roi, nextRoi++);
+            } else if (roisMode.equals(ImporterOptions.ROIS_MODE_OVERLAY)) {
+                Overlay overlay = images[imageNum].getOverlay();                        
+                if (overlay == null) {
+                    overlay = new Overlay(roi);
+                    images[imageNum].setOverlay(overlay);
+                } else {
+                    overlay.add(roi);
+                }
+            }
           }
         }
       }
@@ -406,7 +433,6 @@ public class ROIHandler {
         manager.runCommand("show all with labels");
       }
     }
-
   }
 
   /**

@@ -44,12 +44,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_.

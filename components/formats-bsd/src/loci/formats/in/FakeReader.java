@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,6 +38,7 @@ import static ome.xml.model.Pixels.getPhysicalSizeZUnitXsdDefault;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,6 +48,9 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.DatatypeConverter;
+
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -73,6 +77,7 @@ import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -93,6 +98,9 @@ import ome.units.UNITS;
  *  <li>showinf '32bit-floating&amp;pixelType=float&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
+ *  <li>showinf 'SPW&amp;screens=2&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=1&amp;plateAcqs=1.fake'</li>
+ *  <li>showinf 'Plate&amp;screens=0&amp;plates=1&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
+ *  <li>showinf 'regions&amp;points=10&amp;ellipses=5&amp;rectangles=10.fake'</li>
  * </ul></p>
  */
 public class FakeReader extends FormatReader {
@@ -109,8 +117,11 @@ public class FakeReader extends FormatReader {
   private static final String ANN_COMMENT_VALUE = "Comment:";
   private static final String ANN_XML_VALUE_START = "<dummyXml>";
   private static final String ANN_XML_VALUE_END = "</dummyXml>";
+  private static final String ROI_PREFIX = "ROI:";
+  private static final String SHAPE_PREFIX = "Shape:";
 
   public static final int BOX_SIZE = 10;
+  private static final int ROI_SPACING = 10;
 
   public static final int DEFAULT_SIZE_X = 512;
   public static final int DEFAULT_SIZE_Y = 512;
@@ -126,11 +137,50 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /* dimensions per image */
+  private int sizeX = DEFAULT_SIZE_X;
+  private int sizeY = DEFAULT_SIZE_Y;
+  private int sizeZ = DEFAULT_SIZE_Z;
+  private int sizeC = DEFAULT_SIZE_C;
+  private int sizeT = DEFAULT_SIZE_T;
+
   /** exposure time per plane info */
   private Time exposureTime = null;
 
   /* physical sizes */
   private Length physicalSizeX, physicalSizeY, physicalSizeZ;
+
+  /* annotation counts per file */
+  private int annBool = 0;
+  private int annComment = 0;
+  private int annDouble = 0;
+  private int annLong = 0;
+  private int annMap = 0;
+  private int annTime = 0;
+  private int annTag = 0;
+  private int annTerm = 0;
+  private int annXml = 0;
+  private int annotationCount = 0;
+  private int annotationBoolCount = 0;
+  private int annotationCommentCount = 0;
+  private int annotationDoubleCount = 0;
+  private int annotationLongCount = 0;
+  private int annotationMapCount = 0;
+  private int annotationTagCount = 0;
+  private int annotationTermCount = 0;
+  private int annotationTimeCount = 0;
+  private int annotationXmlCount = 0;
+
+  /* ROIs per image*/
+  private int ellipses = 0;
+  private int labels = 0;
+  private int lines = 0;
+  private int masks = 0;
+  private int points = 0;
+  private int polygons = 0;
+  private int polylines = 0;
+  private int rectangles = 0;
+  private int roiCount = 0;
 
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
@@ -156,6 +206,74 @@ public class FakeReader extends FormatReader {
   private OMEXMLMetadata omeXmlMetadata;
 
   private OMEXMLService omeXmlService;
+
+  /**
+   * Read byte-encoded metadata from the given plane.
+   * @see FakeReader#readSpecialPixels(byte[], int, boolean, int, boolean)
+   */
+  public static int[] readSpecialPixels(byte[] plane) {
+    return readSpecialPixels(plane, FormatTools.UINT8, true);
+  }
+
+  /**
+   * Read byte-encoded metadata from the given plane.
+   * @see FakeReader#readSpecialPixels(byte[], int, boolean, int, boolean)
+   */
+  public static int[] readSpecialPixels(
+      byte[] plane, int pixelType, boolean little) {
+    return readSpecialPixels(plane, pixelType, little, 1, false);
+  }
+
+  /**
+   * Read byte-encoded metadata from the given plane.
+   * <p>
+   * FakeReader encodes the following information in the upper-left
+   * section of each plane: series, plane number, Z index, C index, T
+   * index. Given an image plane generated by FakeReader (or by
+   * anything that follows the same encoding rules), this method
+   * decodes the above information and returns it as an array of
+   * integers.
+   * <p>
+   * Note that the above numbers are encoded as valid pixels, so that
+   * the information is still retrievable after conversion to a
+   * pixel-oriented image format (this allows to use the class for
+   * testing the ImageJ plugin). Among other things, this implies that
+   * the maximum encodable values depend on the pixel type.
+   * <p>
+   * <b>Note:</b>
+   * <p>
+   * In the case of indexed color data, the returned values will be
+   * the indices of the actual values in the relevant lookup table
+   * (see {@link FakeReader#get8BitLookupTable} and
+   * {@link FakeReader#get16BitLookupTable}).
+   *
+   * @param plane an image plane as a byte array
+   * @param pixelType the pixel type of the image; see
+   *   {@link loci.formats.FormatTools}
+   * @param little true if the byte order is little-endian, false otherwise
+   * @param rgb the RGB channel count
+   * @param interleaved true if the channels are interleaved, false otherwise
+   * @return an array of integers representing, in order: series;
+   *   plane number; Z index; C index, T index
+   */
+  public static int[] readSpecialPixels(byte[] plane, int pixelType,
+      boolean little, int rgb, boolean interleaved) {
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    int[] idx = new int[5];  // S, no., Z, C, T
+    for (int i = 0; i < idx.length; i++) {
+      int offset = i * BOX_SIZE * bpp * (interleaved ? rgb : 1);
+      if (pixelType == FormatTools.FLOAT) {
+        idx[i] = (int) DataTools.bytesToFloat(plane, offset, bpp, little);
+      } else if (pixelType == FormatTools.DOUBLE) {
+        idx[i] = (int) DataTools.bytesToDouble(plane, offset, bpp, little);
+      } else if (2 == bpp) {
+        idx[i] = (int) DataTools.bytesToShort(plane, offset, bpp, little);
+      } else {
+        idx[i] = DataTools.bytesToInt(plane, offset, bpp, little);
+      }
+    }
+    return idx;
+  }
 
   // -- Constructor --
 
@@ -322,6 +440,46 @@ public class FakeReader extends FormatReader {
   @Override
   public void close(boolean fileOnly) throws IOException {
     iniFile = null;
+    sizeX = DEFAULT_SIZE_X;
+    sizeY = DEFAULT_SIZE_Y;
+    sizeZ = DEFAULT_SIZE_Z;
+    sizeC = DEFAULT_SIZE_C;
+    sizeT = DEFAULT_SIZE_T;
+    exposureTime = null;
+    physicalSizeX = null;
+    physicalSizeY = null;
+    physicalSizeZ = null;
+    annBool = 0;
+    annComment = 0;
+    annDouble = 0;
+    annLong = 0;
+    annMap = 0;
+    annTime = 0;
+    annTag = 0;
+    annTerm = 0;
+    annXml = 0;
+    annotationCount = 0;
+    annotationBoolCount = 0;
+    annotationCommentCount = 0;
+    annotationDoubleCount = 0;
+    annotationLongCount = 0;
+    annotationMapCount = 0;
+    annotationTagCount = 0;
+    annotationTermCount = 0;
+    annotationTimeCount = 0;
+    annotationXmlCount = 0;
+    ellipses = 0;
+    labels = 0;
+    lines = 0;
+    masks = 0;
+    points = 0;
+    polygons = 0;
+    polylines = 0;
+    rectangles = 0;
+    roiCount = 0;
+    scaleFactor = 1;
+    lut8 = null;
+    lut16 = null;
     super.close(fileOnly);
   }
 
@@ -405,11 +563,7 @@ public class FakeReader extends FormatReader {
     }
 
     String name = null;
-    int sizeX = DEFAULT_SIZE_X;
-    int sizeY = DEFAULT_SIZE_Y;
-    int sizeZ = DEFAULT_SIZE_Z;
-    int sizeC = DEFAULT_SIZE_C;
-    int sizeT = DEFAULT_SIZE_T;
+
     int thumbSizeX = 0; // default
     int thumbSizeY = 0; // default
     int pixelType = DEFAULT_PIXEL_TYPE;
@@ -423,32 +577,19 @@ public class FakeReader extends FormatReader {
     boolean falseColor = false;
     boolean metadataComplete = true;
     boolean thumbnail = false;
+    boolean withMicrobeam = false;
 
     int seriesCount = 1;
     int lutLength = 3;
 
     String acquisitionDate = null;
 
+    int screens = 0;
     int plates = 0;
     int plateRows = 0;
     int plateCols = 0;
     int fields = 0;
     int plateAcqs = 0;
-
-/*
- *  Other annotation types that could be added
- *  int annFile = 0; // FileAnnotation
- *  int annList = 0; // ListAnnotation
- */
-    int annLong = 0;
-    int annDouble = 0;
-    int annComment = 0;
-    int annBool = 0;
-    int annTime = 0;
-    int annTag = 0;
-    int annTerm = 0;
-    int annXml = 0;
-    int annMap = 0;
 
     Integer defaultColor = null;
     ArrayList<Integer> color = new ArrayList<Integer>();
@@ -530,13 +671,15 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
-      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.S);
+      else if (key.equals("exposureTime")) exposureTime = new Time((float) doubleValue, UNITS.SECOND);
       else if (key.equals("acquisitionDate")) acquisitionDate = value;
+      else if (key.equals("screens")) screens = intValue;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
       else if (key.equals("plateCols")) plateCols = intValue;
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
+      else if (key.equals("withMicrobeam")) withMicrobeam = boolValue;
       else if (key.equals("annLong")) annLong = intValue;
       else if (key.equals("annDouble")) annDouble = intValue;
       else if (key.equals("annMap")) annMap = intValue;
@@ -546,6 +689,14 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annTag")) annTag = intValue;
       else if (key.equals("annTerm")) annTerm = intValue;
       else if (key.equals("annXml")) annXml = intValue;
+      else if (key.equals("ellipses")) ellipses = intValue;
+      else if (key.equals("labels")) labels = intValue;
+      else if (key.equals("lines")) lines = intValue;
+      else if (key.equals("masks")) masks = intValue;
+      else if (key.equals("points")) points = intValue;
+      else if (key.equals("polygons")) polygons = intValue;
+      else if (key.equals("polylines")) polylines = intValue;
+      else if (key.equals("rectangles")) rectangles = intValue;
       else if (key.equals("physicalSizeX")) physicalSizeX = parseLength(value, getPhysicalSizeXUnitXsdDefault());
       else if (key.equals("physicalSizeY")) physicalSizeY = parseLength(value, getPhysicalSizeYUnitXsdDefault());
       else if (key.equals("physicalSizeZ")) physicalSizeZ = parseLength(value, getPhysicalSizeZUnitXsdDefault());
@@ -594,12 +745,18 @@ public class FakeReader extends FormatReader {
 
     // populate SPW metadata
     MetadataStore store = makeFilterMetadata();
-    boolean hasSPW = plates > 0 && plateRows > 0 &&
-      plateCols > 0 && fields > 0 && plateAcqs > 0;
+    boolean hasSPW = screens > 0 || plates > 0 || plateRows > 0 ||
+      plateCols > 0 || fields > 0 || plateAcqs > 0;
     if (hasSPW) {
+      if (screens<0) screens = 0;
+      if (plates<=0) plates = 1;
+      if (plateRows<=0) plateRows = 1;
+      if (plateCols<=0) plateCols = 1;
+      if (fields<=0) fields = 1;
+      if (plateAcqs<=0) plateAcqs = 1;
       // generate SPW metadata and override series count to match
       int imageCount =
-        populateSPW(store, plates, plateRows, plateCols, fields, plateAcqs);
+        populateSPW(store, screens, plates, plateRows, plateCols, fields, plateAcqs, withMicrobeam);
       if (imageCount > 0) seriesCount = imageCount;
       else hasSPW = false; // failed to generate SPW metadata
     }
@@ -633,32 +790,14 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
-    // per file counts
-    int annotationCount = 0;
-    int annotationDoubleCount = 0;
-    int annotationLongCount = 0;
-    int annotationBoolCount = 0;
-    int annotationCommentCount = 0;
-    int annotationTagCount = 0;
-    int annotationTermCount = 0;
-    int annotationTimeCount = 0;
-    int annotationXmlCount = 0;
-    int annotationMapCount = 0;
-    // per image count
-    int annotationRefCount = 0;
 
-    String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
     fillPhysicalSizes(store);
     for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
-      if (acquisitionDate != null) {
-        if(DateTools.getTime(acquisitionDate, DateTools.FILENAME_FORMAT) != -1) {
-          store.setImageAcquisitionDate(new Timestamp(DateTools.formatDate(acquisitionDate, DateTools.FILENAME_FORMAT)), currentImageIndex);
-        }
-      }
+      fillAcquisitionDate(store, acquisitionDate, currentImageIndex);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         Color channel = defaultColor == null ? null: new Color(defaultColor);
@@ -669,112 +808,8 @@ public class FakeReader extends FormatReader {
           store.setChannelColor(channel, currentImageIndex, c);
         }
       }
-
-      // new image so reset annotationRefCount
-      annotationRefCount = 0;
-      for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
-        store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
-        store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationLongCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annDouble; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
-        store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
-        store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationDoubleCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annMap; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
-        store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-        List<MapPair> mapValue = new ArrayList<MapPair>();
-        for (int keyNum=0; keyNum<10; keyNum++) {
-          mapValue.add(new MapPair("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
-        }
-        store.setMapAnnotationValue(mapValue, annotationMapCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationMapCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annComment; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setCommentAnnotationID(nextAnnotationID, annotationCommentCount);
-        store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationCommentCount);
-        store.setCommentAnnotationValue(ANN_COMMENT_VALUE + (annotationCount+1), annotationCommentCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationCommentCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annBool; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setBooleanAnnotationID(nextAnnotationID, annotationBoolCount);
-        store.setBooleanAnnotationNamespace(ANNOTATION_NAMESPACE, annotationBoolCount);
-        store.setBooleanAnnotationValue(ANN_BOOLEAN_VALUE, annotationBoolCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationBoolCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTime; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTimestampAnnotationID(nextAnnotationID, annotationTimeCount);
-        store.setTimestampAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTimeCount);
-        store.setTimestampAnnotationValue(ANN_TIME_VALUE, annotationTimeCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTimeCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTag; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTagAnnotationID(nextAnnotationID, annotationTagCount);
-        store.setTagAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTagCount);
-        store.setTagAnnotationValue(ANN_TAG_VALUE + (annotationCount+1), annotationTagCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTagCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annTerm; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setTermAnnotationID(nextAnnotationID, annotationTermCount);
-        store.setTermAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTermCount);
-        store.setTermAnnotationValue(ANN_TERM_VALUE + (annotationCount+1), annotationTermCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationTermCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
-      for (int currentAnnotation=0; currentAnnotation<annXml; currentAnnotation++) {
-        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-        store.setXMLAnnotationID(nextAnnotationID, annotationXmlCount);
-        store.setXMLAnnotationNamespace(ANNOTATION_NAMESPACE, annotationXmlCount);
-        store.setXMLAnnotationValue(ANN_XML_VALUE_START + (annotationCount+1) + ANN_XML_VALUE_END, annotationXmlCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
-        annotationXmlCount++;
-        annotationCount++;
-        annotationRefCount++;
-      }
-
+      fillAnnotations(store, currentImageIndex);
+      fillRegions(store, currentImageIndex);
     }
 
     // for indexed color images, create lookup tables
@@ -811,6 +846,10 @@ public class FakeReader extends FormatReader {
     }
   }
 
+  @Override
+  public void reopenFile() throws IOException {
+  }
+
   private void fillPhysicalSizes(MetadataStore store) {
     if (physicalSizeX == null && physicalSizeY == null && physicalSizeZ == null) return;
     for (int s=0; s<getSeriesCount(); s++) {
@@ -830,6 +869,252 @@ public class FakeReader extends FormatReader {
       }
     }
     setSeries(oldSeries);
+  }
+
+  private void fillAcquisitionDate(MetadataStore store, String date, int imageIndex) {
+    if (date == null) return;
+    if(DateTools.getTime(date, DateTools.FILENAME_FORMAT) != -1) {
+      Timestamp stamp = new Timestamp(
+        DateTools.formatDate(date, DateTools.FILENAME_FORMAT));
+      store.setImageAcquisitionDate(stamp, imageIndex);
+    }
+  }
+
+  private void fillAnnotations(MetadataStore store, int imageIndex) {
+
+    int annotationRefCount = 0;
+    String annotationID;
+
+    for (int i=0; i<annBool; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setBooleanAnnotationID(annotationID, annotationBoolCount);
+      store.setBooleanAnnotationNamespace(ANNOTATION_NAMESPACE, annotationBoolCount);
+      store.setBooleanAnnotationValue(ANN_BOOLEAN_VALUE, annotationBoolCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationBoolCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annComment; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setCommentAnnotationID(annotationID, annotationCommentCount);
+      store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationCommentCount);
+      store.setCommentAnnotationValue(ANN_COMMENT_VALUE + (annotationCount+1), annotationCommentCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationCommentCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annDouble; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setDoubleAnnotationID(annotationID, annotationDoubleCount);
+      store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
+      store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationDoubleCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annLong; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setLongAnnotationID(annotationID, annotationLongCount);
+      store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
+      store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationLongCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annMap; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setMapAnnotationID(annotationID, annotationMapCount);
+      store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
+      List<MapPair> mapValue = new ArrayList<MapPair>();
+      for (int keyNum=0; keyNum<10; keyNum++) {
+        mapValue.add(new MapPair("keyS" + imageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1)));
+      }
+      store.setMapAnnotationValue(mapValue, annotationMapCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationMapCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTag; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setTagAnnotationID(annotationID, annotationTagCount);
+      store.setTagAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTagCount);
+      store.setTagAnnotationValue(ANN_TAG_VALUE + (annotationCount+1), annotationTagCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationTagCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTerm; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setTermAnnotationID(annotationID, annotationTermCount);
+      store.setTermAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTermCount);
+      store.setTermAnnotationValue(ANN_TERM_VALUE + (annotationCount+1), annotationTermCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationTermCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+
+    for (int i=0; i<annTime; i++) {
+       annotationID = ANNOTATION_PREFIX + annotationCount;
+       store.setTimestampAnnotationID(annotationID, annotationTimeCount);
+       store.setTimestampAnnotationNamespace(ANNOTATION_NAMESPACE, annotationTimeCount);
+       store.setTimestampAnnotationValue(ANN_TIME_VALUE, annotationTimeCount);
+       store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+       annotationTimeCount++;
+       annotationCount++;
+       annotationRefCount++;
+     }
+
+    for (int i=0; i<annXml; i++) {
+      annotationID = ANNOTATION_PREFIX + annotationCount;
+      store.setXMLAnnotationID(annotationID, annotationXmlCount);
+      store.setXMLAnnotationNamespace(ANNOTATION_NAMESPACE, annotationXmlCount);
+      store.setXMLAnnotationValue(ANN_XML_VALUE_START + (annotationCount+1) + ANN_XML_VALUE_END, annotationXmlCount);
+      store.setImageAnnotationRef(annotationID, imageIndex, annotationRefCount);
+      annotationXmlCount++;
+      annotationCount++;
+      annotationRefCount++;
+    }
+  }
+
+  private Double getX(int i) {
+      return new Double(ROI_SPACING * i % sizeX);
+  }
+
+  private Double getY(int i) {
+      return new Double(ROI_SPACING * ((int) ROI_SPACING * i / sizeX) % sizeY);
+  }
+
+  private String getPoints(int i) {
+      Double x0 = getX(i) + ROI_SPACING / 2;
+      Double y0 = getY(i) + ROI_SPACING / 2;
+      double [] dx = { -0.8, -.3, .4, .5, -.1};
+      double [] dy = { -0.4, .6, .5, -.3, -.7};
+      StringBuffer p = new StringBuffer();
+      for (int j=0; j<5; j++) {
+        p.append(x0 + ROI_SPACING /2 * dx[j]);
+        p.append(",");
+        p.append(y0 + ROI_SPACING /2 * dy[j]);
+        if (j < dx.length - 1) p.append(" ");
+      }
+      return p.toString();
+  }
+
+  private void fillRegions(MetadataStore store, int imageIndex) {
+    int roiRefCount = 0;
+    String roiID;
+    Random random = new Random();
+    for (int i=0; i<ellipses; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setEllipseID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setEllipseX(getX(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setEllipseY(getY(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setEllipseRadiusX(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setEllipseRadiusY(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<labels; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setLabelID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setLabelX(getX(i), roiCount, 0);
+        store.setLabelY(getY(i), roiCount, 0);
+        store.setLabelText("Label " + i, roiCount, 0 );
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<lines; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setLineID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setLineX1(getX(i) + ROI_SPACING / 4, roiCount, 0);
+        store.setLineY1(getY(i) + ROI_SPACING / 4, roiCount, 0);
+        store.setLineX2(getX(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setLineY2(getY(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<masks; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setMaskID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setMaskX((double)ROI_SPACING, roiCount, 0);
+        store.setMaskY((double)ROI_SPACING, roiCount, 0);
+        store.setMaskWidth((double)ROI_SPACING, roiCount, 0);
+        store.setMaskHeight((double)ROI_SPACING, roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        byte[] rawBytes = new byte[ROI_SPACING*ROI_SPACING];
+        random.nextBytes(rawBytes);
+        store.setMaskBinData(rawBytes, roiCount, 0);
+        store.setMaskBinDataBigEndian(true, roiCount, 0);
+        store.setMaskBinDataLength(new NonNegativeLong((long)ROI_SPACING*ROI_SPACING), roiCount, 0);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<points; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPointID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setPointX(getX(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setPointY(getY(i) + ROI_SPACING / 2, roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<polygons; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPolygonID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setPolygonPoints(getPoints(i), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<polylines; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setPolylineID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setPolylinePoints(getPoints(i), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
+
+    for (int i=0; i<rectangles; i++) {
+        roiID = ROI_PREFIX + roiCount;
+        store.setROIID(roiID, roiCount);
+        store.setRectangleID(SHAPE_PREFIX + roiCount, roiCount, 0);
+        store.setRectangleX(getX(i) + ROI_SPACING / 4, roiCount, 0);
+        store.setRectangleY(getY(i) + ROI_SPACING / 4, roiCount, 0);
+        store.setRectangleWidth(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setRectangleHeight(new Double(ROI_SPACING / 2), roiCount, 0);
+        store.setImageROIRef(roiID, imageIndex, roiRefCount);
+        roiCount++;
+        roiRefCount++;
+    }
   }
 
 // -- Helper methods --
@@ -890,12 +1175,16 @@ public class FakeReader extends FormatReader {
     return !listFakeSeries(path).get(0).equals(path);
   }
 
-  private int populateSPW(MetadataStore store, int plates, int rows, int cols,
-    int fields, int acqs)
+  private int populateSPW(MetadataStore store, int screens, int plates, int rows, int cols, int fields, int acqs, boolean withMicrobeam)
   {
     final XMLMockObjects xml = new XMLMockObjects();
-    final OME ome =
-      xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
+    OME ome = null;
+    if (screens==0) {
+      ome = xml.createPopulatedPlate(plates, rows, cols, fields, acqs, withMicrobeam);
+    } else {
+      ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs, withMicrobeam);
+    }
+    if (withMicrobeam) roiCount = roiCount + plates;;
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
@@ -973,7 +1262,7 @@ public class FakeReader extends FormatReader {
   }
 
   private Length parseLength(String value, String defaultUnit) {
-      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([\\D\\S]*)\\s*").matcher(value);
+      Matcher m = Pattern.compile("\\s*([\\d.]+)\\s*([^\\d\\s].*?)?\\s*").matcher(value);
       if (!m.matches()) {
         throw new RuntimeException(String.format(
                 "%s does not match a physical size!", value));
@@ -989,9 +1278,11 @@ public class FakeReader extends FormatReader {
       try {
         l = UnitsLengthEnumHandler.getBaseUnit(UnitsLength.fromString(unit));
       } catch (EnumerationException e) {
-        throw new RuntimeException(String.format(
-                "%s does not match a length unit!", unit));
+        LOGGER.warn("{} does not match a length unit!", unit);
       }
-      return new Length(d, l);
+      if (l != null && d > Constants.EPSILON) {
+        return new Length(d, l);
+      }
+      return null;
   }
 }

@@ -59,34 +59,13 @@ Type "ant -p" for a list of targets.
 
   <target name="test" depends="jar, compile-tests"
     description="run tests" if="doTests">
-    <!-- run JUnit tests -->
-    <if>
-      <equals arg1="${component.junit}" arg2="true"/>
-      <then>
-        <junit haltonfailure="true" fork="true">
-          <classpath>
-            <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
-            <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
-            <pathelement location="${test-classes.dir}"/>
-            <pathelement location="${classes.dir}"/>
-            <pathelement path="${component.runtime-cp}"/>
-          </classpath>
-          <formatter type="brief" usefile="false"/>
-          <batchtest>
-            <fileset dir="${test-classes.dir}">
-              <include name="**/*Test.class"/>
-            </fileset>
-          </batchtest>
-        </junit>
-      </then>
-    </if>
     <!-- run TestNG tests -->
     <if>
       <isset property="testng.xml"/>
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
           <classpath>
-            <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+            <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
             <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
             <pathelement location="${classes.dir}"/>
@@ -179,7 +158,7 @@ your FindBugs installation's lib directory. E.g.:
       <fileset dir="${utils.dir}" includes="**/*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
-      deprecation="true" source="1.6" target="1.6"
+      deprecation="true" source="1.7" target="1.7"
       encoding="UTF-8"
       srcdir="${utils.dir}" includes="**/*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
@@ -199,7 +178,7 @@ your FindBugs installation's lib directory. E.g.:
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,18 @@ import loci.formats.meta.MetadataStore;
  * Becker &amp; Hickl SPC-Image SDT files.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- */
+ *
+ * Please Note: This format holds FLIM data arranged so that each decay is stored contiguously.
+ * Therefore, as in other FLIM format readers e.g. SDTReader.java, on the first call to openBytes
+ * the whole data cube (x, y, t) (NB actually t, not real-time T) is loaded from the file and buffered.
+ * On further calls to openBytes the appropriate 2D (x, y) plane (timebin) is returned from this buffer.
+ * This is in the interest of significantly improved  performance when all the planes are requested one after another.
+ * There will be a performance cost if a single plane is requested but this is highly unlikely for FLIM data.
+ * In order to limit the size of the buffer, beyond a certain size threshold only a subset of planes (a Block) are
+ * retained in the buffer.
+ *
+ **/
+
 public class SDTReader extends FormatReader {
 
   // -- Fields --
@@ -65,11 +76,6 @@ public class SDTReader extends FormatReader {
   protected boolean preLoad = true;
 
   /*
-   * Array to hold re-ordered data for all the timeBins in one channel
-   */
-  protected byte[] chanStore = null;
-
-  /*
    * Currently stored channel
    */
   protected int storedChannel = -1;
@@ -78,6 +84,21 @@ public class SDTReader extends FormatReader {
    * Currently stored series
    */
   protected int storedSeries = -1;
+
+  /*
+   * Array to hold re-ordered data for all the timeBins
+   */
+  protected byte[] dataStore = null;
+
+  /**
+   * Block of time bins currently stored for faster loading.
+   */
+  protected int currentBlock;
+
+  /**
+   * No of timeBins pre-loaded as a block
+  */
+  protected int blockLength ;
 
   // -- Constructor --
 
@@ -99,8 +120,7 @@ public class SDTReader extends FormatReader {
   }
 
   /**
-   * Toggles whether the reader should pre-load
-   * data for increased performance.
+   * Toggles whether the reader should pre-load data for increased performance.
    */
   public void setPreLoad(boolean preLoad) {
     this.preLoad = preLoad;
@@ -150,6 +170,9 @@ public class SDTReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
+    // This is the Becker Hickl block not the pre-loaded data block
+    long blockSize = info.allBlockLengths[getSeries()];
+
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int times = timeBins;
     if (info.mcstaPoints == getSizeT()) {
@@ -157,7 +180,16 @@ public class SDTReader extends FormatReader {
     }
     int planeSize = paddedWidth * sizeY * times * bpp;
 
-    if (preLoad  && !intensity) {
+    // remove width padding if we can be reasonably certain
+    // that the unpadded width is correct
+    if (paddedWidth > sizeX && planeSize * getSizeC() > blockSize &&
+      (planeSize / paddedWidth) * sizeX * getSizeC() <= blockSize)
+    {
+      paddedWidth = sizeX;
+      planeSize = sizeX * sizeY * times * bpp;
+    }
+
+    if (preLoad && !intensity) {
       int channel = no / times;
       int timeBin = no % times;
 
@@ -165,14 +197,21 @@ public class SDTReader extends FormatReader {
 
       int binSize = paddedWidth * sizeY  * bpp;
 
-      if (chanStore == null || storedChannel != channel ||
-        storedSeries != getSeries() )
-      {
-        // The whole plane (all timebins) is  copied into storage
-        // to allow different sub-plane sizes to be used for different timebins
-        chanStore = new byte[planeSize];
-        in.seek(info.allBlockOffsets[getSeries()]);
+      int preBlockSize = binSize * blockLength;
 
+      // pre-load data for performance
+      if (dataStore == null  || storedSeries != getSeries()) {
+        dataStore = new byte[preBlockSize];
+        currentBlock = -1;
+      }
+
+      if (timeBin/blockLength != currentBlock || storedChannel != channel  ) {
+
+        currentBlock = timeBin / blockLength;
+
+        // A subset of whole timebins (a preBlock) is  copied into storage
+        // to allow different sub-plane sizes to be used for different timebin
+        in.seek(info.allBlockOffsets[getSeries()]);
         ZipInputStream codec = null;
         String check = in.readString(2);
         in.seek(in.getFilePointer() - 2);
@@ -185,39 +224,49 @@ public class SDTReader extends FormatReader {
           in.skipBytes(channel * planeSize);
         }
 
+        int endOfBlock = (currentBlock + 1) * blockLength;
+        int storeLength;
+        if (endOfBlock > times) {
+          storeLength = times - (currentBlock * blockLength);
+        } else {
+          storeLength = blockLength;
+        }
+
         for (int row = 0; row < sizeY; row++) {
           readPixels(rowBuf, in, codec, 0);
 
-          int input = 0;
           for (int col = 0; col < paddedWidth; col++) {
             // set output to first pixel of this row in 2D plane
             // corresponding to zeroth timeBin
             int output = (row * paddedWidth + col) * bpp;
+            int input = ((col * times) + (currentBlock * blockLength)) * bpp;
+            // copy subset of decay into buffer.
 
-            for (int t = 0; t < times; t++)  {
+            for (int t = 0; t < storeLength; t++) {
               for (int bb = 0; bb < bpp; bb++) {
-                chanStore[output + bb] = rowBuf[input + bb];
+                dataStore[output + bb] = rowBuf[input + bb];
               }
               output += binSize;
               input += bpp;
             }
           }
         }
+      }
+      storedChannel = channel;
+      storedSeries = getSeries();
+      // dataStore loaded
 
-        storedChannel = channel;
-        storedSeries = getSeries();
-      }  // chanStore loaded
-
-      // copy 2D plane  from chanStore  into buf
-
+      // copy 2D plane  from dataStore  into buf
       int iLineSize = paddedWidth * bpp;
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
-      int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
+      int binInStore = timeBin - (currentBlock * blockLength);
+
+      int input = (binSize * binInStore) + (y * iLineSize) + (x * bpp);
       int output = 0;
 
       for (int row = 0; row < h; row++) {
-        System.arraycopy(chanStore, input, buf, output , oLineSize);
+        System.arraycopy(dataStore, input, buf, output , oLineSize);
         input += iLineSize;
         output += oLineSize;
       }
@@ -247,7 +296,8 @@ public class SDTReader extends FormatReader {
 
       return buf;
     }
-    else {
+    else {   // intensity mode so no pre-loading
+
       int channel = intensity ? no : no / times;
       int timeBin = intensity ? 0 : no % times;
 
@@ -319,10 +369,11 @@ public class SDTReader extends FormatReader {
     if (!fileOnly) {
       // init preLoading
       preLoad = true;
-      chanStore = null;
+      dataStore = null;
       storedChannel = -1;
       storedSeries = -1;
       timeBins = channels = 0;
+      currentBlock = -1;
       info = null;
     }
   }
@@ -371,14 +422,6 @@ public class SDTReader extends FormatReader {
     m.falseColor = false;
     m.metadataComplete = true;
 
-    // disable pre-load mode for very large files
-    // threshold is set to the size of the largest test file currently available
-    if ( m.sizeX * m.sizeY * m.sizeT  >  (512 * 512 * 512))  {
-      preLoad = false;
-    }
-    else  {
-      preLoad = true;
-    }
 
     if (intensity) {
       m.moduloT.parentType = FormatTools.SPECTRA;
@@ -409,6 +452,18 @@ public class SDTReader extends FormatReader {
         }
       }
     }
+
+    int sizeThreshold = 512 * 512 * 512;  // Arbitrarily chosen size limit for buffer
+    blockLength = 2048;   //default No of bins in buffer
+
+    while (blockLength * m.sizeX * m.sizeY > sizeThreshold) {
+      blockLength = blockLength / 2;
+    }
+
+    if (blockLength > timeBins) {
+      blockLength = timeBins;
+    }
+
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

@@ -45,10 +45,4 @@ Presence: |Poor|
 Utility: |Good|
 
 
-**Additional Information**
-
-
-
-Notes:
-
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,6 +63,7 @@ public class MetamorphHandler extends BaseHandler {
   private String channelName;
   private String stageLabel;
   private Double gain;
+  private boolean dualCamera = false;
 
   // -- Constructor --
 
@@ -117,6 +118,8 @@ public class MetamorphHandler extends BaseHandler {
 
   public Vector<Double> getExposures() { return exposures; }
 
+  public boolean hasDualCamera() { return dualCamera; }
+
   // -- DefaultHandler API methods --
 
   @Override
@@ -134,6 +137,8 @@ public class MetamorphHandler extends BaseHandler {
         if (metadata != null) metadata.remove("Comment");
 
         String k = null, v = null;
+        boolean freeform = true;
+        String freeformDescription = "";
 
         if (value.indexOf(delim) != -1) {
           int currentIndex = -delim.length();
@@ -150,12 +155,31 @@ public class MetamorphHandler extends BaseHandler {
             }
             currentIndex = nextIndex;
 
-            int colon = line.indexOf(":");
-            if (colon != -1) {
-              k = line.substring(0, colon).trim();
-              v = line.substring(colon + 1).trim();
-              if (metadata != null) metadata.put(k, v);
-              checkKey(k, v);
+            if (line.startsWith("Exposure: ")) {
+              freeform = false;
+              if (metadata != null) {
+                metadata.put("User Description", freeformDescription.trim());
+              }
+            }
+
+            if (freeform) {
+              freeformDescription += line;
+              freeformDescription += "\n";
+            }
+            else {
+              int colon = line.indexOf(":");
+              if (colon != -1) {
+                k = line.substring(0, colon).trim();
+                v = line.substring(colon + 1).trim();
+                if (metadata != null) metadata.put(k, v);
+                checkKey(k, v);
+              }
+              else {
+                // prevent non-key/value lines from being lost
+                if (metadata != null) {
+                  metadata.put(k, k);
+                }
+              }
             }
           }
         }
@@ -261,6 +285,28 @@ public class MetamorphHandler extends BaseHandler {
     }
     else if (key.equals("_MagNA_")) {
       lensNA = Double.parseDouble(value);
+    }
+    else if (key.startsWith("Dual Camera")) {
+      // Determine if image has been already split by Metamorph.
+      // Metamorph seems to add the wavelength number to the end
+      // of the Description field when splitting. Example:
+      // Dual Camera Time Difference: 7 msec 561
+      int space = value.lastIndexOf(" ");
+      if(space == -1) {
+            // unknown value format, assume dual camera
+            dualCamera = true;
+      } else {
+          try {
+            Double.parseDouble(value.substring(space));
+            // last number is a wavelength and indicates this dual camera
+            // image has been split
+            dualCamera = false;
+          }
+          catch (NumberFormatException e) {
+            // last token is not a number, so image has not been split
+            dualCamera = true; 
+          }
+      }
     }
   }
 

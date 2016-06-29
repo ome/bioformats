@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
+
+  <Instrument ID="Instrument:0">
+    <LightSource ID="LightSource:0:0">
+      <Laser LaserMedium="HeNe" Type="Gas"/>
+    </LightSource>
+    <LightSource ID="LightSource:0:1">
+      <Laser LaserMedium="HeNe" Type="Gas"/>
+    </LightSource>
+    <LightSource ID="LightSource:0:2">
+      <Laser LaserMedium="Ag" Type="Gas"/>
+    </LightSource>
+    <Detector AmplificationGain="1.0" Gain="350.0" ID="Detector:0:0" Type="Other" Zoom="1.0"/>
+    <Objective Correction="Achromat" Immersion="Air" LensNA="0.3" NominalMagnification="10"
+               ID="Objective:0:0"/>
+    <FilterSet ID="FilterSet:1" Manufacturer="Ink Inc." Model="Mk 3" LotNumber="K753">
+      <ExcitationFilterRef ID="Filter:1"/>
+      <ExcitationFilterRef ID="Filter:2"/>
+      <ExcitationFilterRef ID="Filter:3"/>
+      <ExcitationFilterRef ID="Filter:4"/>
+      <DichroicRef ID="Dichroic:1"/>
+      <EmissionFilterRef ID="Filter:5"/>
+      <EmissionFilterRef ID="Filter:6"/>
+    </FilterSet>
+
+    <FilterSet ID="FilterSet:2" Manufacturer="Ink Inc." Model="Mk 3" LotNumber="K753"/>
+    <Filter ID="Filter:1" Manufacturer="Ink Inc." Model="Medium 490" LotNumber="J23"
+            Type="BandPass" FilterWheel="Disk 7">
+      <TransmittanceRange Transmittance="0.80" CutIn="450" CutOut="530"/>
+    </Filter>
+    <Filter ID="Filter:2" Manufacturer="Ink Inc." Model="Medium 520" LotNumber="J34"
+            Type="BandPass" FilterWheel="Disk 7">
+      <TransmittanceRange Transmittance="0.75" CutIn="500" CutOut="570"/>
+    </Filter>
+    <Filter ID="Filter:3" Manufacturer="Ink Inc." Model="Medium 580" LotNumber="J12"
+            Type="BandPass" FilterWheel="Disk 7">
+      <TransmittanceRange Transmittance="0.85" CutIn="550" CutOut="620"/>
+    </Filter>
+    <Filter ID="Filter:4" Manufacturer="Ink Inc." Model="Medium 630" LotNumber="J09"
+            Type="BandPass" FilterWheel="Disk 7">
+      <TransmittanceRange Transmittance="0.90" CutIn="590" CutOut="680"/>
+    </Filter>
+    <Filter ID="Filter:5" Manufacturer="Ink Inc." Model="Output 724" LotNumber="J34"
+            Type="MultiPass">
+      <TransmittanceRange Transmittance="0.75" CutIn="500" CutOut="570"/>
+    </Filter>
+    <Filter ID="Filter:6" Manufacturer="Ink Inc." Model="Medium 762" LotNumber="J12"
+            Type="MultiPass">
+      <TransmittanceRange Transmittance="0.85" CutIn="550" CutOut="620"/>
+    </Filter>
+    <Filter ID="Filter:7" Manufacturer="Ink Inc." Model="Medium 672" LotNumber="J09"
+            Type="ShortPass">
+      <TransmittanceRange Transmittance="0.90" CutIn="590" CutOut="680"/>
+    </Filter>
+    <Filter ID="Filter:Dichroic:2" Model="MirrorBlock Mk II" LotNumber="M538" Type="Dichroic"/>
+    <Dichroic ID="Dichroic:1" Model="HFT 405/488/543/633"/>
+    <Dichroic ID="Dichroic:3" Model="MirrorBlock MK II" LotNumber="M539"/>
+  </Instrument>
+  <Image ID="Image:0" Name="405100percentsetting">
+    <AcquiredDate>2008-06-19T00:39:00</AcquiredDate>
+    <Description>Sample Image</Description>
+    <InstrumentRef ID="Instrument:0"/>
+    <ObjectiveSettings ID="Objective:0:0"/>
+    <Pixels ID="Pixels:1" DimensionOrder="XYCTZ" Type="int16" SizeX="128" SizeY="128" SizeZ="1"
+            SizeC="2" SizeT="1">
+      <Channel ID="Channel:1">
+        <LightPath>
+          <!-- ordered collection -->
+          <ExcitationFilterRef ID="Filter:1"/>
+          <ExcitationFilterRef ID="Filter:Dichroic:2"/>
+          <DichroicRef ID="Dichroic:1"/>
+          <EmissionFilterRef ID="Filter:5"/>
+        </LightPath>
+      </Channel>
+      <Channel ID="Channel:2">
+        <FilterSetRef ID="FilterSet:2"/>
+        <LightPath>
+          <EmissionFilterRef ID="Filter:6"/>
+        </LightPath>
+      </Channel>
+      <MetadataOnly/>
+    </Pixels>
+  </Image>
+</OME>

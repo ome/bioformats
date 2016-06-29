@@ -5,7 +5,7 @@ Generate code to process OME-XML from an OME-XML schema.
 """
 
 #
-#  Copyright (C) 2007 - 2014 University of Dundee. All rights reserved.
+#  Copyright (C) 2007 - 2016 Open Microscopy Environment. All rights reserved.
 #
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -56,11 +56,18 @@ from getopt import gnu_getopt, GetoptError
 from glob import glob
 from xml import sax
 
-def guard(filename):
+def macroname(filename):
     filename = "_".join(filename.split(os.path.sep))
     filename = filename.upper()
     filename = re.sub("[^A-Z0-9]", "_", filename)
     return filename
+
+def guard(filename):
+    return macroname(filename)
+
+def class_prefix(filename):
+    filename, ext = os.path.splitext(filename)
+    return macroname(filename)
 
 def usage(error):
     """
@@ -84,6 +91,7 @@ Options:
   --ome-xml-model-package=pkg                OME-XML model package
   --ome-xml-model-enums-package=pkg          OME-XML model enum package
   --ome-xml-model-enum-handlers-package=pkg  OME-XML model enum handler package
+  --ome-xml-model-quantity-package=pkg       OME-XML model quantity package
   -o, --output-directory=dir                 Generated output directory
   --print-depends                            Output command dependencies
   --print-generated                          Output generated file names
@@ -100,6 +108,7 @@ Available subcommands:
   omexml_model_enums
   omexml_model_enum_handlers
   omexml_model_enum_includeall
+  omexml_model_quantity
   tab_gen
 
 Default XSD namespace: "%s"
@@ -112,6 +121,7 @@ Default Java OME-XML metadata package: "%s"
 
 Default C++ OME-XML package: "%s"
 Default C++ OME-XML enum package: "%s"
+Default C++ OME-XML quantity package: "%s"
 Default C++ metadata package: "%s"
 Default C++ OME-XML metadata package: "%s"
 
@@ -124,7 +134,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
      cmd,
      java.modelNamespace,
      java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
-     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.metadata_package, cpp.omexml_metadata_package,
+     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.omexml_model_quantity_package, cpp.metadata_package, cpp.omexml_metadata_package,
      cmd, java.modelNamespace, java.omexml_model_package,
      cmd, cpp.modelNamespace, cpp.omexml_model_package))
     sys.exit(2)
@@ -198,6 +208,7 @@ def main(model, opts):
             continue
 
         fu.GUARD = guard(fullname)
+        fu.CLASS_PREFIX = class_prefix(fullname)
 
         fullname = os.path.join(opts.outdir, fullname)
 
@@ -288,6 +299,7 @@ def enumTypesMain(model, opts):
                 continue
 
             fu.GUARD = guard(fullname)
+            fu.CLASS_PREFIX = class_prefix(fullname)
             fu.SOURCE_TYPE = opts.filetype;
 
             fullname = os.path.join(opts.outdir, fullname)
@@ -329,6 +341,7 @@ def enumTypesIncludeAll(model, opts):
     fullname = os.path.join("ome", "xml", "model", fullname)
 
     fu.GUARD = guard(fullname)
+    fu.CLASS_PREFIX = class_prefix(fullname)
     fu.SOURCE_TYPE = language.TYPE_HEADER;
     fu.HEADERS = sorted(headers);
 
@@ -402,6 +415,57 @@ def enumHandlersMain(model, opts):
         for file in sorted(used_files):
             print(file)
 
+def quantityTypesMain(model, opts):
+    """
+    Default main() that parses command line options and generates
+    classes for quantity types in an output directory.
+    """
+
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('QUANTITY'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('QUANTITY')))
+    for obj in model.objects.values():
+        for prop in obj.properties.values():
+            if not prop.isUnitsEnumeration:
+                continue
+
+            try:
+                quantityUnit = re.sub("^Units", "", prop.langType)
+                quantityType = quantityUnit + "Quantity"
+                fullname = opts.lang.generatedFilename(quantityType, opts.filetype)
+                fullname = os.path.join("ome", "xml", "model", "primitives", fullname)
+            except ModelProcessingError:
+                continue
+
+            fu.GUARD = guard(fullname)
+            fu.SOURCE_TYPE = opts.filetype;
+
+            fullname = os.path.join(opts.outdir, fullname)
+
+            if opts.print_generated:
+                print(fullname)
+
+            outputDirectory = os.path.dirname(fullname)
+            if not opts.dryrun and not os.path.exists(outputDirectory):
+                os.makedirs(outputDirectory)
+
+            classContent = template.generate(fu=fu, klass=prop, opts=opts, lang=opts.lang, debug=opts.debug,
+                                             enum_value_name=enum_value_name, quantityUnit=quantityUnit,
+                                             quantityType=quantityType).render(encoding='utf-8')
+
+            if not opts.dryrun:
+                f = codecs.open(fullname, "w", encoding='utf-8')
+                f.write(classContent.decode('utf-8'))
+                f.close()
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
 def max_occurs_under_parent(model, parent, name):
     """
     Returns the maximum occurrances of a given object under its current
@@ -413,7 +477,7 @@ def max_occurs_under_parent(model, parent, name):
             return prop.maxOccurs
     return 0
 
-def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0, min_occurs=2):
+def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0, min_occurs=2, concreteName=None):
     """
     Resolves a representation of the hierarchical structure of element names.
     Updates the result list and returns a boolean True if the result list is
@@ -423,20 +487,31 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
     if names is None:
         return is_multi_path
     for name in names.keys():
+        o = model.getObjectByName(name)
         # Set our key and instantiate our index list if we're the first level
         if level == 1:
             key = name
+            if o.isAbstractSubstitution and concreteName is not None:
+                key = concreteName
             results[key] = list()
         # We only want to add the index if the object count at this level
         # is greater than 1.
         max_occurs = max_occurs_under_parent(model, name, child)
         if len(names.keys()) > 1:
             is_multi_path = True
-        is_child_multi_path = resolve_hierarchy(results, model, names[name], func, name, key, level + 1, min_occurs)
+        if o.isConcreteSubstitution:
+            parents = dict()
+            parents[o.parentName] = model.resolve_parents(o.parentName)
+            is_child_multi_path = resolve_hierarchy(results, model, {o.parentName: parents[o.parentName]}, func, name, key, level, min_occurs, name)
+        else:
+            is_child_multi_path = resolve_hierarchy(results, model, names[name], func, name, key, level + 1, min_occurs, concreteName)
         if is_child_multi_path:
             is_multi_path = True
         if child is not None and max_occurs >= min_occurs:
-            results[key].append(func(child, max_occurs, level))
+            if model.getObjectByName(child).isAbstractSubstitution:
+                results[key].append(func(child, max_occurs, level, concreteName))
+            else:
+                results[key].append(func(child, max_occurs, level))
     return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, model, opts):
@@ -471,7 +546,7 @@ def processMetadataTemplate(template, outputFilename, model, opts):
     fu.METADATA_OBJECT_IGNORE = config.METADATA_OBJECT_IGNORE
     fu.METADATA_COUNT_IGNORE = config.METADATA_COUNT_IGNORE
     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
-    fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
+    fu.COMPLEX_OVERRIDE = config.COMPLEX_OVERRIDE
     fu.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
     fu.OBJECT_HEADERS = sorted(object_headers);
@@ -571,11 +646,7 @@ def docGenMain(model, opts):
     """
 
     for theSchemas in [
-    ["OME",           "../specification/InProgress/ome.xsd"],
-    ["SPW",           "../specification/InProgress/SPW.xsd"],
-    ["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
-    ["SA",            "../specification/InProgress/SA.xsd"],
-    ["ROI",           "../specification/InProgress/ROI.xsd"]
+    ["OME",           "../specification/InProgress/ome.xsd"]
     ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
@@ -599,16 +670,7 @@ def tabGenMain(model, opts):
 
     for theSchemas in [
             ["OME",       "../specification/InProgress/ome.xsd",
-                [["OME", "OME:"]]],
-            ["ROI",       "../specification/InProgress/ROI.xsd",
-                [["ROI", "OME:ROI:"]]],
-            ["SPW",       "../specification/InProgress/SPW.xsd",
-                [["Plate", "OME:Plate:"],
-                ["Screen", "OME:Screen:"]]],
-            ["SA",        "../specification/InProgress/SA.xsd",
-                [["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
-            ["BinaryFile","../specification/InProgress/BinaryFile.xsd",
-                [["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]
+                [["OME", "OME:"]]]
         ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
@@ -756,6 +818,7 @@ if __name__ == '__main__':
         enumTypesMain(model, opts)
         if isinstance(opts.lang, language.CXX) and opts.filetype == language.TYPE_HEADER:
             enumTypesIncludeAll(model, opts)
+            quantityTypesMain(model, opts)
         if isinstance(opts.lang, language.Java):
             enumHandlersMain(model, opts)
     elif opts.command == "omexml_metadata_all":
@@ -768,6 +831,8 @@ if __name__ == '__main__':
     elif opts.command == "metadata":
         metadataMain(model, opts)
     elif opts.command == "omexml_model_enums":
+        enumTypesMain(model, opts)
+    elif opts.command == "omexml_model_quantities":
         enumTypesMain(model, opts)
     elif opts.command == "omexml_model_enum_includeall":
         enumTypesIncludeAll(model, opts)

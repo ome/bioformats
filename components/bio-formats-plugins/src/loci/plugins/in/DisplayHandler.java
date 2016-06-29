@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -211,7 +211,7 @@ public class DisplayHandler implements StatusListener {
 
   public void displayROIs(ImagePlus[] imps) {
     if (!options.showROIs()) return;
-    ROIHandler.openROIs(process.getOMEMetadata(), imps, options.isOMERO());
+    ROIHandler.openROIs(process.getOMEMetadata(), imps, options.isOMERO(), options.getROIsMode());
     
   }
    

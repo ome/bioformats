@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,23 +48,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FilePattern is a collection of methods for handling file patterns, a way of
- * succinctly representing a collection of files meant to be part of the same
+ * Represents a collection of files meant to be part of the same
  * data series.
- *
- * Examples:
- * <ul>
- *   <li>C:\data\BillM\sdub&lt;1-12&gt;.pic</li>
- *   <li>C:\data\Kevin\80&lt;01-59&gt;0&lt;2-3&gt;.pic</li>
- *   <li>/data/Josiah/cell-Z&lt;0-39&gt;.C&lt;0-1&gt;.tiff</li>
- * </ul>
- *
+ * <p>
+ * A file pattern can be constructed from a pattern string, where
+ * variable parts are represented by blocks delimited by angle
+ * brackets. For instance, the pattern
+ * <code>img_&lt;R,G,B&gt;.ext</code> expands to
+ * <code>img_R.ext</code>, <code>img_G.ext</code> and
+ * <code>img_B.ext</code>.
+ * <p>
+ * In addition to comma-separated series as the one shown above,
+ * pattern blocks can contain a sequence expression in the
+ * <code>START-STOP:STEP</code> format. For instance, the pattern
+ * <code>&lt;0-36:3&gt;m.tiff</code> expands to <code>0m.tiff,
+ * 3m.tiff, 6m.tiff ... 36m.tiff</code>. If the step increment is one,
+ * it can be omitted: <code>TAABA&lt;1-3&gt;.PIC</code> expands to
+ * <code>TAABA1.PIC, TAABA2.PIC, TAABA3.PIC</code>. The start number
+ * can have leading zeroes to denote zero-padded numbers:
+ * <code>img_&lt;08-10&gt;.ext</code> expands to <code>img_08.ext,
+ * img_09.ext, img_10.ext</code>. Sequence expressions also support
+ * alphabetic ranges: <code>img_&lt;C-E&gt;.ext</code> expands to
+ * <code>img_C.ext, img_D.ext, img_E.ext</code>.
+ * <p>
+ * A multi-block pattern is expanded by substituting the blocks with
+ * the tuples from the cartesian product of all block expansions. For
+ * instance, <code>z&lt;1-2&gt;&lt;R,G,B&gt;.tiff</code> expands to
+ * <code>z1R.tiff, z1G.tiff, z1B.tiff, z2R.tiff, z2G.tiff,
+ * z2B.tiff</code>.
+ * <p>
+ * If a pattern has zero blocks, it will be treated as a regular
+ * expression to be matched against the names of existing files. If
+ * there are no matches, the pattern expands to itself. For instance,
+ * <code>/tmp/z.*.tif</code> expands to <code>/tmp/z1.tif</code> if
+ * that file exists (and it's the only matching file), otherwise it
+ * expands to itself.  If the pattern contains no special regex
+ * syntax, it also expands to itself (a single file is a special case
+ * of file pattern).
+ * <p>
+ * A <code>FilePattern</code> can also be created from a {@link
+ * Location} or from a basename and directory. In these cases, the
+ * pattern string is inferred from the names of other files in the
+ * same directory.
+ * <p>
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilePattern {
 
   // -- Constants --
 
+  /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(FilePattern.class);
 
@@ -96,18 +129,31 @@ public class FilePattern {
 
   // -- Constructors --
 
-  /** Creates a pattern object using the given file as a template. */
-  public FilePattern(Location file) { this(FilePattern.findPattern(file)); }
+  /**
+   * Creates a pattern object using the given file as a template.
+   *
+   * @param file the file as a {@link Location} instance.
+   */
+  public FilePattern(Location file) {
+    this(FilePattern.findPattern(file));
+  }
 
   /**
    * Creates a pattern object using the given
    * filename and directory path as a template.
+   *
+   * @param name file basename.
+   * @param dir directory path.
    */
   public FilePattern(String name, String dir) {
     this(FilePattern.findPattern(name, dir));
   }
 
-  /** Creates a pattern object for files with the given pattern string. */
+  /**
+   * Creates a pattern object for files with the given pattern string.
+   *
+   * @param pattern the pattern string.
+   */
   public FilePattern(String pattern) {
     this.pattern = pattern;
     valid = false;
@@ -169,7 +215,7 @@ public class FilePattern {
     buildFiles("", num, fileList);
     files = fileList.toArray(new String[0]);
 
-    if (files.length == 0 && new Location(pattern).exists()) {
+    if (files.length == 0) {
       files = new String[] {pattern};
     }
 
@@ -178,23 +224,58 @@ public class FilePattern {
 
   // -- FilePattern API methods --
 
-  /** Returns whether or not this pattern is a regular expression. */
+  /**
+   * Returns whether or not this pattern is a regular expression.
+   *
+   * @return true if this pattern is a regex, false otherwise.
+   */
   public boolean isRegex() {
     return isRegex;
   }
 
-  /** Gets the file pattern string. */
-  public String getPattern() { return pattern; }
+  /**
+   * Gets the file pattern string.
+   *
+   * @return the pattern string.
+   */
+  public String getPattern() {
+    return pattern;
+  }
 
-  /** Gets whether the file pattern string is valid. */
-  public boolean isValid() { return valid; }
+  /**
+   * Returns whether or not the file pattern is valid.
+   *
+   * @return true if the pattern is valid, false otherwise.
+   */
+  public boolean isValid() {
+    return valid;
+  }
 
-  /** Gets the file pattern error message, if any. */
-  public String getErrorMessage() { return msg; }
+  /**
+   * Gets the file pattern error message, if any.
+   *
+   * @return the error message generated while parsing the pattern
+   * string, or null if there was no error.
+   */
+  public String getErrorMessage() {
+    return msg;
+  }
 
-  /** Gets a listing of all files matching the given file pattern. */
-  public String[] getFiles() { return files; }
+  /**
+   * Gets a listing of all files matching this file pattern.
+   *
+   * @return an array containing all file names that match this pattern.
+   */
+  public String[] getFiles() {
+    return files;
+  }
 
+  /**
+   * Gets individual elements for each pattern block.
+   *
+   * @return an array containing an array of individual elements for
+   * each pattern block.
+   */
   public String[][] getElements() {
     String[][] elements = new String[blocks.length][];
     for (int i=0; i<elements.length; i++) {
@@ -203,6 +284,12 @@ public class FilePattern {
     return elements;
   }
 
+  /**
+   * Gets the number of elements for each pattern block.
+   *
+   * @return an array containing the number of individual elements for
+   * each pattern block.
+   */
   public int[] getCount() {
     int[] count = new int[blocks.length];
     for (int i=0; i<count.length; i++) {
@@ -211,47 +298,70 @@ public class FilePattern {
     return count;
   }
 
-  /** Gets the specified numerical block. */
+  /**
+   * Gets the specified file pattern block (e.g., <0-9>).
+   *
+   * @param i block index
+   * @return the ith pattern block.
+   */
   public String getBlock(int i) {
     if (i < 0 || i >= startIndex.length) return null;
     return pattern.substring(startIndex[i], endIndex[i]);
   }
 
-  /** Gets each numerical block. */
+  /**
+   * Gets all file pattern blocks.
+   *
+   * @return an array containing all pattern blocks.
+   */
   public String[] getBlocks() {
     String[] s = new String[startIndex.length];
     for (int i=0; i<s.length; i++) s[i] = getBlock(i);
     return s;
   }
 
-  /** Gets the pattern's text string before any numerical ranges. */
+  /**
+   * Gets the pattern's substring that comes before any block sections.
+   * For instance, the prefix of "img_z<0-2>t<1-3>_gs.ext" is "img_z".
+   *
+   * @return the prefix string as described above.
+   */
   public String getPrefix() {
-    int s = pattern.lastIndexOf(File.separator) + 1;
-    int e;
-    if (startIndex.length > 0) e = startIndex[0];
-    else {
-      int dot = pattern.lastIndexOf(".");
-      e = dot < s ? pattern.length() : dot;
-    }
-    return s <= e ? pattern.substring(s, e) : "";
+    return getPrefix(0);
   }
 
-  /** Gets the pattern's text string after all numerical ranges. */
+  /**
+   * Gets the pattern's substring that comes after all block sections.
+   * For instance, the suffix of "img_z<0-2>t<1-3>_gs.ext" is "_gs.ext".
+   *
+   * @return the suffix string as described above.
+   */
   public String getSuffix() {
     return endIndex.length > 0 ?
       pattern.substring(endIndex[endIndex.length - 1]) : pattern;
   }
 
-  /** Gets the pattern's text string before the given numerical block. */
+  /**
+   * Gets the pattern's substring between block i-1 (or the beginning
+   * of the pattern, if i is 0) and block i. For instance, the second
+   * (i = 1) prefix of "img_z<0-2>t<1-3>_gs.ext" is "t".
+   *
+   * @param i block index.
+   * @return the ith prefix as defined above.
+   */
   public String getPrefix(int i) {
     if (i < 0 || i >= startIndex.length) return null;
-    int s = i > 0 ? endIndex[i - 1] :
-      (pattern.lastIndexOf(File.separator) + 1);
+    int s = i > 0 ? endIndex[i - 1] : 0;
     int e = startIndex[i];
-    return s <= e ? pattern.substring(s, e) : null;
+    return s <= e ? pattern.substring(s, e) : "";
   }
 
-  /** Gets the pattern's text string before each numerical block. */
+  /**
+   * Gets all block prefixes. For instance, the prefixes of
+   * "img_z<0-2>t<1-3>_gs.ext" are "img_z" and "t".
+   *
+   * @return an array containing all block prefixes.
+   */
   public String[] getPrefixes() {
     String[] s = new String[startIndex.length];
     for (int i=0; i<s.length; i++) s[i] = getPrefix(i);
@@ -262,7 +372,9 @@ public class FilePattern {
 
   /**
    * Identifies the group pattern from a given file within that group.
+   *
    * @param path The file path to use as a template for the match.
+   * @return the identified pattern.
    */
   public static String findPattern(String path) {
     return findPattern(new Location(path));
@@ -270,7 +382,9 @@ public class FilePattern {
 
   /**
    * Identifies the group pattern from a given file within that group.
-   * @param file The file to use as a template for the match.
+   *
+   * @param file The {@link Location} to use as a template for the match.
+   * @return the identified pattern.
    */
   public static String findPattern(Location file) {
     return findPattern(file.getName(), file.getAbsoluteFile().getParent());
@@ -278,16 +392,20 @@ public class FilePattern {
 
   /**
    * Identifies the group pattern from a given file within that group.
+   *
    * @param file The file to use as a template for the match.
+   * @return the identified pattern.
    */
   public static String findPattern(File file) {
     return findPattern(file.getName(), file.getAbsoluteFile().getParent());
   }
 
   /**
-   * Identifies the group pattern from a given file within that group.
-   * @param name The filename to use as a template for the match.
+   * Identifies the group pattern from a given filename and directory.
+   *
+   * @param name The file basename to use as a template for the match.
    * @param dir The directory in which to search for matching files.
+   * @return the identified pattern.
    */
   public static String findPattern(String name, String dir) {
     if (dir == null) dir = ""; // current directory
@@ -306,22 +424,28 @@ public class FilePattern {
   }
 
   /**
-   * Identifies the group pattern from a given file within that group.
-   * @param name The filename to use as a template for the match.
+   * Identifies the group pattern from a given filename, directory and
+   * list of candidate filenames.
+   *
+   * @param name The file basename to use as a template for the match.
    * @param dir The directory prefix to use for matching files.
    * @param nameList The names through which to search for matching files.
+   * @return the identified pattern.
    */
   public static String findPattern(String name, String dir, String[] nameList) {
     return findPattern(name, dir, nameList, null);
   }
 
   /**
-   * Identifies the group pattern from a given file within that group.
-   * @param name The filename to use as a template for the match.
+   * Identifies the group pattern from a given filename, directory and
+   * list of candidate filenames.
+   *
+   * @param name The file basename to use as a template for the match.
    * @param dir The directory prefix to use for matching files.
    * @param nameList The names through which to search for matching files.
-   * @param excludeAxes The list of axis types which should be excluded from the
-   *  pattern.
+   * @param excludeAxes The list of axis types which should be
+   * excluded from the pattern (see {@link AxisGuesser}).
+   * @return the identified pattern.
    */
   public static String findPattern(String name, String dir, String[] nameList,
     int[] excludeAxes)
@@ -333,7 +457,7 @@ public class FilePattern {
       dir += File.separator;
     }
 
-    // compile list of numerical blocks
+    // locate numerical blocks
     int len = name.length();
     int bound = (len + 1) / 2;
     int[] indexList = new int[bound];
@@ -364,10 +488,13 @@ public class FilePattern {
       q++;
     }
 
-    // analyze each block, building pattern as we go
     StringBuffer sb = new StringBuffer(dir);
 
     for (int i=0; i<q; i++) {
+      // Get the list of matching files. For instance, if name is
+      // "z10c1.tif" and nameList is {"z9c1.tif", "z10c1.tif",
+      // "z9c2.tif", "z10c2.tif", "foo.tif"}, the matching list for
+      // the first block (i = 0) is {"z9c1.tif", "z10c1.tif"}.
       int last = i > 0 ? endList[i - 1] : 0;
       String prefix = name.substring(last, indexList[i]);
       int axisType = AxisGuesser.getAxisType(prefix);
@@ -375,11 +502,9 @@ public class FilePattern {
         sb.append(name.substring(last, endList[i]));
         continue;
       }
-
       sb.append(prefix);
       String pre = name.substring(0, indexList[i]);
       String post = name.substring(endList[i]);
-
       NumberFilter filter = new NumberFilter(pre, post);
       String[] list = matchFiles(nameList, filter);
       if (list == null || list.length == 0) return null;
@@ -388,6 +513,8 @@ public class FilePattern {
         sb.append(name.substring(indexList[i], endList[i]));
         continue;
       }
+
+      // fixed width block iff all matching filenames are the same length
       boolean fix = true;
       for (String s : list) {
         if (s.length() != len) {
@@ -399,7 +526,7 @@ public class FilePattern {
         // tricky; this fixed-width block could represent multiple numberings
         int width = endList[i] - indexList[i];
 
-        // check each character for duplicates
+        // for each character, determine if it varies between filenames
         boolean[] same = new boolean[width];
         for (int j=0; j<width; j++) {
           same[j] = true;
@@ -412,16 +539,17 @@ public class FilePattern {
             }
           }
         }
-
         // break down each sub-block
         int j = 0;
         while (j < width) {
           int jx = indexList[i] + j;
           if (same[j]) {
+            // this character is the same in all filenames; lock it down
             sb.append(name.charAt(jx));
             j++;
           }
           else {
+            // recursively split the block into variable prefix + const suffix
             while (j < width && !same[j]) j++;
             String p = findPattern(name, nameList, jx, indexList[i] + j, "");
             char c = indexList[i] > 0 ? name.charAt(indexList[i] - 1) : '.';
@@ -450,7 +578,6 @@ public class FilePattern {
       }
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
-
     return sb.toString();
   }
 
@@ -459,6 +586,9 @@ public class FilePattern {
    * The pattern generated will be a regular expression.
    *
    * Currently assumes that all file names are in the same directory.
+   *
+   * @param names the list of filenames.
+   * @return the generated pattern.
    */
   public static String findPattern(String[] names) {
     String dir =
@@ -480,6 +610,14 @@ public class FilePattern {
     return pattern.toString();
   }
 
+  /**
+   * Works like {@link #findSeriesPatterns(String, String, String[])},
+   * but dir and nameList are inferred from the given file's absolute
+   * path.
+   *
+   * @param base The file basename to use as a template for the match.
+   * @return an array containing all identified patterns.
+   */
   public static String[] findSeriesPatterns(String base) {
     Location file = new Location(base).getAbsoluteFile();
     Location parent = file.getParentFile();
@@ -487,6 +625,23 @@ public class FilePattern {
     return findSeriesPatterns(base, parent.getAbsolutePath(), list);
   }
 
+  /**
+   * Similar to {@link #findPattern(String, String, String[])}, but
+   * this does not merge series indices into a pattern block. Instead,
+   * it returns a separate pattern for each series index. For
+   * instance, if the file names are:
+   *
+   *   "foo_s1_z1.ext", "foo_s1_z2.ext", "foo_s2_z1.ext", "foo_s2_z2.ext"
+   *
+   * Then {@link #findPattern(String, String, String[]) findPattern}
+   * will find a single "foo_s<1-2>_z<1-2>.ext" pattern, whereas this
+   * method will find "foo_s1_z<1-2>.ext" and "foo_s2_z<1-2>.ext".
+
+   * @param base The file basename to use as a template for the match.
+   * @param dir The directory prefix to use for matching files.
+   * @param nameList The names through which to search for matching files.
+   * @return an array containing all identified patterns.
+   */
   public static String[] findSeriesPatterns(String base, String dir,
     String[] nameList)
   {
@@ -533,10 +688,9 @@ public class FilePattern {
 
   // -- Utility helper methods --
 
-  /** Recursive method for parsing a fixed-width numerical block. */
+  // recursive method for fixed-width numerical blocks
   private static String findPattern(String name,
-    String[] nameList, int ndx, int end, String p)
-  {
+      String[] nameList, int ndx, int end, String p) {
     if (ndx == end) return p;
     for (int i=end-ndx; i>=1; i--) {
       NumberFilter filter = new NumberFilter(
@@ -559,6 +713,10 @@ public class FilePattern {
   /**
    * Gets a string containing start, end and step values
    * for a sorted list of numbers.
+   *
+   * @param numbers a sorted list of numbers
+   * @param fixed whether the numbers to a fixed width block
+   * @return block bounds as a &lt;START-STOP:STEP&gt; expression
    */
   private static String getBounds(BigInteger[] numbers, boolean fixed) {
     if (numbers.length < 2) return null;
@@ -593,7 +751,7 @@ public class FilePattern {
     return bounds.toString();
   }
 
-  /** Filters the given list of filenames according to the specified filter. */
+  // filters the given list of filenames according to the specified filter
   private static String[] matchFiles(String[] inFiles, NumberFilter filter) {
     List<String> list = new ArrayList<String>();
     for (int i=0; i<inFiles.length; i++) {
@@ -604,7 +762,7 @@ public class FilePattern {
 
   // -- Helper methods --
 
-  /** Recursive method for building filenames for the file listing. */
+  // recursive method for building the list of matching filenames
   private void buildFiles(String prefix, int ndx, List<String> fileList) {
     if (blocks.length == 0) {
       // regex pattern
@@ -703,54 +861,13 @@ public class FilePattern {
     return files.toArray(new String[files.size()]);
   }
 
-  // -- Main method --
-
-  /** Method for testing file pattern logic. */
-  public static void main(String[] args) {
-    String pat = null;
-    if (args.length > 0) {
-      // test file pattern detection based on the given file on disk
-      Location file = new Location(args[0]);
-      LOGGER.info("File = {}", file.getAbsoluteFile());
-      pat = findPattern(file);
-    }
-    else {
-      // test file pattern detection from a virtual file list
-      String[] nameList = new String[2 * 4 * 3 * 12 + 1];
-      nameList[0] = "outlier.ext";
-      int count = 1;
-      for (int i=1; i<=2; i++) {
-        for (int j=1; j<=4; j++) {
-          for (int k=0; k<=2; k++) {
-            for (int l=1; l<=12; l++) {
-              String sl = (l < 10 ? "0" : "") + l;
-              nameList[count++] =
-                "hypothetical" + sl + k + j + "c" + i + ".ext";
-            }
-          }
-        }
-      }
-      pat = findPattern(nameList[1], null, nameList);
-    }
-    if (pat == null) LOGGER.info("No pattern found.");
-    else {
-      LOGGER.info("Pattern = {}", pat);
-      FilePattern fp = new FilePattern(pat);
-      if (fp.isValid()) {
-        LOGGER.info("Pattern is valid.");
-        LOGGER.info("Files:");
-        String[] ids = fp.getFiles();
-        for (int i=0; i<ids.length; i++) {
-          LOGGER.info("  #{}: {}", i, ids[i]);
-        }
-      }
-      else LOGGER.info("Pattern is invalid: {}", fp.getErrorMessage());
-    }
-  }
-
   // -- Deprecated methods --
 
-  /* @deprecated */
+  /**
+   * Gets the START element for all blocks.
+   *
+   * @return an array containing all START elements.
+   */
   public BigInteger[] getFirst() {
     BigInteger[] first = new BigInteger[blocks.length];
     for (int i=0; i<first.length; i++) {
@@ -759,7 +876,11 @@ public class FilePattern {
     return first;
   }
 
-  /* @deprecated */
+  /**
+   * Gets the STOP element for all blocks.
+   *
+   * @return an array containing all STOP elements.
+   */
   public BigInteger[] getLast() {
     BigInteger[] last = new BigInteger[blocks.length];
     for (int i=0; i<last.length; i++) {
@@ -768,7 +889,11 @@ public class FilePattern {
     return last;
   }
 
-  /* @deprecated */
+  /**
+   * Gets the STEP element for all blocks.
+   *
+   * @return an array containing all STEP elements.
+   */
   public BigInteger[] getStep() {
     BigInteger[] step = new BigInteger[blocks.length];
     for (int i=0; i<step.length; i++) {
@@ -778,130 +903,3 @@ public class FilePattern {
   }
 
 }
-
-// -- Notes --
-
-// Some patterns observed:
-//
-//   TAABA1.PIC TAABA2.PIC TAABA3.PIC ... TAABA45.PIC
-//
-//   0m.tiff 3m.tiff 6m.tiff ... 36m.tiff
-//
-//   cell-Z0.C0.tiff cell-Z1.C0.tiff cell-Z2.C0.tiff ... cell-Z39.C0.tiff
-//   cell-Z0.C1.tiff cell-Z1.C1.tiff cell-Z2.C1.tiff ... cell-Z39.C1.tiff
-//
-//   CRG401.PIC
-//
-//   TST00101.PIC TST00201.PIC TST00301.PIC
-//   TST00102.PIC TST00202.PIC TST00302.PIC
-//
-//   800102.pic 800202.pic 800302.pic ... 805902.pic
-//   800103.pic 800203.pic 800303.pic ... 805903.pic
-//
-//   nd400102.pic nd400202.pic nd400302.pic ... nd406002.pic
-//   nd400103.pic nd400203.pic nd400303.pic ... nd406003.pic
-//
-//   WTERZ2_Series13_z000_ch00.tif ... WTERZ2_Series13_z018_ch00.tif
-//
-// --------------------------------------------------------------------------
-//
-// The file pattern notation defined here encompasses all patterns above.
-//
-//   TAABA<1-45>.PIC
-//   <0-36:3>m.tiff
-//   cell-Z<0-39>.C<0-1>.tiff
-//   CRG401.PIC
-//   TST00<1-3>0<1-2>.PIC
-//   80<01-59>0<2-3>.pic
-//   nd40<01-60>0<2-3>.pic
-//   WTERZ2_Series13_z0<00-18>_ch00.tif
-//
-// In general: <B-E:S> where B is the start number, E is the end number, and S
-// is the step increment. If zero padding has been used, the start number B
-// will have leading zeroes to indicate that. If the step increment is one, it
-// can be omitted.
-//
-// --------------------------------------------------------------------------
-//
-// If file groups not limited to numbering need to be handled, we can extend
-// the notation as follows:
-//
-// A pattern such as:
-//
-//   ABCR.PIC ABCG.PIC ABCB.PIC
-//
-// Could be represented as:
-//
-//   ABC<R|G|B>.PIC
-//
-// If such cases come up, they will need to be identified heuristically and
-// incorporated into the detection algorithm.
-//
-// --------------------------------------------------------------------------
-//
-// Here is a sketch of the algorithm for determining the pattern from a given
-// file within a particular group:
-//
-//   01 - Detect number blocks within the file name, marking them with stars.
-//        For example:
-//
-//          xyz800303b.pic -> xyz<>b.pic
-//
-//        Where <> represents a numerical block with unknown properties.
-//
-//   02 - Get a file listing for all files matching the given pattern. In the
-//        example above, we'd get:
-//
-//        xyz800102b.pic, xyz800202b.pic, ..., xyz805902b.pic,
-//        xyz800103b.pic, xyz800203b.pic, ..., xyz805903b.pic
-//
-//   03 - There are two possibilities: "fixed width" and "variable width."
-//
-//        Variable width: Not all filenames are the same length in characters.
-//        Assume the block only covers a single number. Extract that number
-//        from each filename, sort them and analyze as described below.
-//
-//        Fixed width: All filenames are the same length in characters. The
-//        block could represent more than one number.
-//
-//        First, for each character, determine if that character varies between
-//        filenames. If not, lock it down, splitting the block as necessary
-//        into fixed-width blocks. When finished, the above example looks like:
-//
-//          xyz80<2>0<1>b.pic
-//
-//        Where <N> represents a numerical block of width N.
-//
-//        For each remaining block, extract the numbers from each matching
-//        filename, sort the lists, and analyze as described below.
-//
-//   04 - In either case, analyze each list of numbers. The first on the list
-//        is B. The last one is E. And S is the second one minus B. But check
-//        the list to make sure no numbers are missing for that step size.
-//
-// NOTE: The fixed width algorithm above is insufficient for patterns like
-// "0101.pic" through "2531.pic," where no fixed constant pads the two
-// numerical counts. An additional step is required, as follows:
-//
-//   05 - For each fixed-width block, recursively divide it into pieces, and
-//        analyze the numerical scheme according to those pieces. For example,
-//        in the problem case given above, we'd have:
-//
-//          <4>.pic
-//
-//        Recursively, we'd analyze:
-//
-//          <4>.pic
-//          <3><R1>.pic
-//          <2><R2>.pic
-//          <1><R3>.pic
-//
-//        The <Rx> blocks represent recursive calls to analyze the remainder of
-//        the width.
-//
-//        The function decides if a given combination of widths is valid by
-//        determining if each individual width is valid. An individual width
-//        is valid if the computed B, S and E properly cover the numerical set.
-//
-//        If no combination of widths is found to be valid, the file numbering
-//        is screwy. Print an error message.

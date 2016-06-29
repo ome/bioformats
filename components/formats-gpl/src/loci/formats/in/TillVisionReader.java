@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -571,7 +571,7 @@ public class TillVisionReader extends FormatReader {
 
         for (int q=0; q<core.get(i).imageCount; q++) {
           if (exposureTimes.get(i) != null) {
-            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.SECOND), i, q);
           }
         }
 

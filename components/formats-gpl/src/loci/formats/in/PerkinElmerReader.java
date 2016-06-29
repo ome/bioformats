@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -658,9 +658,9 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.SECOND), 0, i);
         if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
-          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.S), 0, i);
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.SECOND), 0, i);
         }
 
         if (zct[0] < zPositions.size()) {

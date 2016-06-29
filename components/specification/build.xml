@@ -24,8 +24,7 @@
   <target name="online-validate-ome-xml"
     description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
     <xmlvalidate failonerror="false" warn="true">
-      <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome, samples/develop/**/*.ome"/>
+      <fileset dir="${basedir}" includes="samples/**/*.ome.xml"/>
       <attribute name="http://xml.org/sax/features/validation" value="true"/>
       <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
       <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
@@ -36,8 +35,7 @@
   <target name="offline-validate-ome-xml"
     description="Checks that all files used in the documentation are well formed using local schemas (fast)">
     <schemavalidate failonerror="true" warn="true">
-      <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome"/>
+      <fileset dir="${basedir}" includes="samples/**/*.ome.xml"/>
 
       <!-- Standard -->
       <schema namespace="http://www.w3.org/XML/1998/namespace"
@@ -230,6 +228,18 @@
       <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
         file="${basedir}/released-schema/2013-06/ROI.xsd"/>
 
+
+        <!-- 2015-01 -->
+        <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+          file="${basedir}/released-schema/2015-01/BinaryFile.xsd"/>
+        <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+          file="${basedir}/released-schema/2015-01/ome.xsd"/>
+        <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+          file="${basedir}/released-schema/2015-01/SA.xsd"/>
+        <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+          file="${basedir}/released-schema/2015-01/SPW.xsd"/>
+        <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
+          file="${basedir}/released-schema/2015-01/ROI.xsd"/>
     </schemavalidate>
     <echo message="Sample OME-XML files validated."/>
   </target>

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Reader: JPEG2000Reader (:bsd-reader:`Source Code <JPEG2000Reader.java>`, :doc:`Supported Metadata Fields </metadata/JPEG2000Reader>`)
 
+Writer: JPEG2000Writer (:bsd-writer:`Source Code <JPEG2000Writer.java>`)
 
 Freely Available Software:
 
@@ -47,13 +48,7 @@ Presence: |Good|
 
 Utility: |Poor|
 
-
 **Additional Information**
-
-
-Writer: JPEG2000Writer (:bsd-writer:`Source Code <JPEG2000Writer.java>`)
-
-Notes:
 
 
 Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. 

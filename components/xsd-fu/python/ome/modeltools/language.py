@@ -33,12 +33,15 @@ class Language(object):
 
         self.primitive_types = set()
 
+        self.primitive_base_types = set()
+
         self.base_class = None
 
         self.template_map = {
             'ENUM': 'OMEXMLModelEnum.template',
             'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
             'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'QUANTITY': 'OMEXMLModelQuantity.template',
             'CLASS': 'OMEXMLModelObject.template',
             'METADATA_STORE': 'MetadataStore.template',
             'METADATA_RETRIEVE': 'MetadataRetrieve.template',
@@ -60,16 +63,13 @@ class Language(object):
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
-            'UnitsLength':            'UnitsLength',
-            'UnitsTime':              'UnitsTime',
-            'UnitsPressure':          'UnitsPressure',
-            'UnitsAngle':             'UnitsAngle',
-            'UnitsTemperature':       'UnitsTemperature',
-            'UnitsElectricPotential': 'UnitsElectricPotential',
-            'UnitsPower':             'UnitsPower',
-            'UnitsFrequency':         'UnitsFrequency',
             namespace + 'dateTime':   'Timestamp'
             }
+            
+        # A global type mapping from XSD Schema substitution groups to language abstract classes
+        self.abstract_type_map = dict()
+        # A global type mapping from XSD Schema abstract classes to their equivalent substitution group
+        self.substitutionGroup_map = dict()    
 
         # A global type mapping from XSD Schema elements to language model
         # object classes.  This will cause source code generation to be
@@ -80,8 +80,13 @@ class Language(object):
         # that is used to override places in the model where we do not
         # wish subclassing to take place.
         self.base_type_map = {
-            'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass()
+            'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass(),
+            'base64Binary': self.getDefaultModelBaseClass()
             }
+        
+        # A global set XSD Schema types use as base classes which are primitive  
+        self.primitive_base_types = set([
+            "base64Binary"])
 
         self.model_unit_map = {}
         self.model_unit_default = {}
@@ -93,6 +98,7 @@ class Language(object):
 
         self.omexml_model_package = None
         self.omexml_model_enums_package = None
+        self.omexml_model_quantity_package = None
         self.omexml_model_omexml_model_enum_handlers_package = None
         self.metadata_package = None
         self.omexml_metadata_package = None
@@ -154,6 +160,37 @@ class Language(object):
             return self.primitive_type_map[type]
         except KeyError:
             return None
+            
+    def hasAbstractType(self, type):
+        if (type in self.abstract_type_map):
+            return True
+        return False
+
+    def abstractType(self, type):
+        try:
+            return self.abstract_type_map[type]
+        except KeyError:
+            return None
+            
+    def hasSubstitutionGroup(self, type):
+        if (type in self.substitutionGroup_map):
+            return True
+        return False
+
+    def substitutionGroup(self, type):
+        try:
+            return self.substitutionGroup_map[type]
+        except KeyError:
+            return None
+            
+    def getSubstitutionTypes(self):
+        return self.substitutionGroup_map.keys()
+            
+    def isPrimitiveBase(self, type):
+        if type in self.primitive_base_types:
+            return True
+        else:
+            return False
 
     def hasType(self, type):
         if type in self.type_map:
@@ -205,8 +242,10 @@ class Java(Language):
         self.primitive_type_map[namespace + 'double'] = 'Double'
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
+        self.primitive_type_map['base64Binary'] = 'byte[]'
+        self.primitive_type_map['Map'] = 'List<MapPair>'
 
-        self.model_type_map['MapPairs'] = None
+        self.model_type_map['Map'] = None
         self.model_type_map['M'] = None
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
@@ -244,14 +283,6 @@ class Java(Language):
         self.metadata_package = "ome.xml.meta"
         self.omexml_metadata_package = "ome.xml.meta"
 
-        # use ome implementation
-        # self.units_implementation_is = "ome"
-        # self.units_package = "org.unitsofmeasurement"
-        # self.units_implementation_imports = \
-        #   "import ome.units.quantity.*;\nimport ome.units.*;"
-        # self.model_unit_map['UnitsTime'] = 'Time'
-
-        # use ome-standalone implementation
         self.units_implementation_is = "ome"
         self.units_package = "ome.units"
         self.units_implementation_imports = \
@@ -261,11 +292,11 @@ class Java(Language):
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return self.model_unit_map[valueType]
+    def typeToUnitsType(self, unitType):
+        return self.model_unit_map[unitType]
 
-    def typeToDefault(self, valueType):
-        return self.model_unit_default[valueType]
+    def typeToDefault(self, unitType):
+        return self.model_unit_default[unitType]
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
@@ -317,8 +348,10 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
+        self.primitive_type_map['base64Binary'] = 'std::vector<uint8_t>'
+        self.primitive_type_map['Map'] = 'OrderedMultimap'
 
-        self.model_type_map['MapPairs'] = None
+        self.model_type_map['Map'] = None
         self.model_type_map['M'] = None
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
@@ -334,6 +367,7 @@ class CXX(Language):
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
+        self.omexml_model_quantity_package = "ome::xml::model::primitives"
         self.omexml_model_omexml_model_enum_handlers_package = \
             "ome::xml::model::enums::handlers"
         self.metadata_package = "ome::xml::meta"
@@ -342,8 +376,11 @@ class CXX(Language):
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return "Unit<" + valueType + ">"
+    def typeToUnitsType(self, unitType, valueType=None):
+        if valueType is None:
+            return "%s::Quantity<%s > " % (self.omexml_model_quantity_package, unitType)
+        else:
+            return "%s::Quantity<%s, %s > " % (self.omexml_model_quantity_package, unitType, valueType)
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a C++ method signature dictionary from an index name."""

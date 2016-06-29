@@ -2,7 +2,7 @@
  * #%L
  * Tests for OME Bio-Formats BSD-licensed readers and writers.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,12 +41,14 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
-import ome.xml.model.Map;
 import ome.xml.model.MapPair;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
@@ -79,13 +81,15 @@ public class ImagingEnvironmentMapTest {
     // Add an ImagingEnvironment with an Map
     ImagingEnvironment imagingEnvironment = new ImagingEnvironment();
 
-    Map dataMap = new Map();
-    dataMap.getPairs().add(new MapPair("a","1"));
-    dataMap.getPairs().add(new MapPair("b","2"));
-    dataMap.getPairs().add(new MapPair("c","3"));
-    dataMap.getPairs().add(new MapPair("d","4"));
-    dataMap.getPairs().add(new MapPair("e","5"));
-    imagingEnvironment.setMap(dataMap);
+    List<MapPair> map = new ArrayList<MapPair>();
+    map.add(new MapPair("a", "1"));
+    map.add(new MapPair("d", "2"));
+    map.add(new MapPair("c", "3"));
+    map.add(new MapPair("b", "4"));
+    map.add(new MapPair("e", "5"));
+    map.add(new MapPair("c", "6"));
+    assertEquals(6, map.size());
+    imagingEnvironment.setMap(map);
 
     image.setImagingEnvironment(imagingEnvironment);
 
@@ -122,18 +126,19 @@ public class ImagingEnvironmentMapTest {
     assertNotNull(ome.getImage(0).getImagingEnvironment()); 
 
     ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
-    Map dataMap = imagingEnvironment.getMap();
+    List<MapPair> dataMap = imagingEnvironment.getMap();
 
-    assertEquals(5, dataMap.getPairs().size());
+    assertEquals(6, dataMap.size());
     assertPair(dataMap, 0, "a", "1");
-    assertPair(dataMap, 1, "b", "2");
+    assertPair(dataMap, 1, "d", "2");
     assertPair(dataMap, 2, "c", "3");
-    assertPair(dataMap, 3, "d", "4");
+    assertPair(dataMap, 3, "b", "4");
     assertPair(dataMap, 4, "e", "5");
+    assertPair(dataMap, 5, "c", "6");
   }
 
-  void assertPair(Map dataMap, int idx, String name, String value) {
-    assertEquals(name, dataMap.getPairs().get(idx).getName());
-    assertEquals(value, dataMap.getPairs().get(idx).getValue());
+  void assertPair(List<MapPair> dataMap, int idx, String name, String value) {
+    assertEquals(name, dataMap.get(idx).getName());
+    assertEquals(value, dataMap.get(idx).getValue());
   }
 }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -164,7 +164,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];
       if (c < exposureTimes.size() && exposureTimes.get(c) != null) {
-        store.setPlaneExposureTime(new Time(exposureTimes.get(c), UNITS.S), 0, i);
+        store.setPlaneExposureTime(new Time(exposureTimes.get(c), UNITS.SECOND), 0, i);
       }
 
       if (i < posX.size()) {
@@ -197,7 +197,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
       if (pinholeSize != null) {
-        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), 0, c);
       }
       if (c < channelNames.size()) {
         store.setChannelName(channelNames.get(c), 0, c);
@@ -226,20 +226,20 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       }
       if (c < speed.size()) {
         store.setDetectorSettingsReadOutRate(
-                new Frequency(speed.get(c), UNITS.HZ), 0, c);
+                new Frequency(speed.get(c), UNITS.HERTZ), 0, c);
       }
       store.setDetectorSettingsID(detector, 0, c);
     }
 
     if (temperature.size() > 0) {
       store.setImagingEnvironmentTemperature(new Temperature(
-              temperature.get(0), UNITS.DEGREEC), 0);
+              temperature.get(0), UNITS.CELSIUS), 0);
     }
 
     Double voltage = handler.getVoltage();
     if (voltage != null) {
       store.setDetectorSettingsVoltage(
-              new ElectricPotential(voltage, UNITS.V), 0, 0);
+              new ElectricPotential(voltage, UNITS.VOLT), 0, 0);
     }
 
     Double na = handler.getNumericalAperture();

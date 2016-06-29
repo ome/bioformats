@@ -33,7 +33,7 @@ will also throw a warning if the runtime memory is lower than the recommended
 value.
 
 If errors of type ``java.lang.OutOfMemoryError: PermGen space`` are thrown
-while using Bio-Formats with the Java bundled with MATLAB (Java 6 or 7), you
+while using Bio-Formats with the Java bundled with MATLAB (Java 7), you
 may try to increase the default values of ``-XX:MaxPermSize`` and
 ``-XX:PermSize`` via the :file:`java.opts` file.
 
@@ -175,6 +175,19 @@ To convert the OME metadata into a string, use the ``dumpXML()`` method:
 ::
 
 	omeXML = char(omeMeta.dumpXML());
+
+Changing the logging level
+--------------------------
+
+By default, ``bfopen`` uses ``bfInitLogging`` to initialize the logging system
+at the `WARN` level. To change the root logging level, use the
+:javadoc:`DebugTools <loci/common/DebugTools.html>` methods as described in
+the :doc:`logging` section.
+
+.. literalinclude:: examples/bftest.m
+  :language: matlab
+  :start-after: logging-start
+  :end-before: logging-end
 
 Reading from an image file
 --------------------------

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -71,7 +71,7 @@ public class SlideBook6Reader  extends FormatReader {
 	public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
 	private static final String URL_3I_SLD =
-			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook6.html";
+			"http://www.openmicroscopy.org/site/support/bio-formats/formats/3i-slidebook.html";
 	private static final String NO_3I_MSG = "3i SlideBook SlideBook6Reader library not found. " +
 			"Please see " + URL_3I_SLD + " for details.";
 	private static final String GENERAL_3I_MSG = "3i SlideBook SlideBook6Reader library problem. " +
@@ -79,9 +79,11 @@ public class SlideBook6Reader  extends FormatReader {
 
 	// -- Static initializers --
 
+	private static boolean initialized = false;
 	private static boolean libraryFound = false;
 
-	static {
+	private static boolean isLibraryFound() {
+		if (initialized) return libraryFound;
 		try {
 			// load JNI wrapper of SBReadFile.dll
 			NativeLibraryUtil.Architecture arch = NativeLibraryUtil.getArchitecture();
@@ -102,6 +104,8 @@ public class SlideBook6Reader  extends FormatReader {
 			LOGGER.warn("Insufficient permission to load native library", e);
 			libraryFound = false;
 		}
+		initialized = true;
+		return libraryFound;
 	}
 
 	// -- Constructor --
@@ -134,7 +138,7 @@ public class SlideBook6Reader  extends FormatReader {
 	/* @see loci.formats.IFormatReader#isThisType(String, boolean) */
 	public boolean isThisType(String file, boolean open) {
 		// Check the first few bytes to determine if the file can be read by this reader.
-		return libraryFound && super.isThisType(file, open);
+		return super.isThisType(file, open) && isLibraryFound();
 	}
 
 	/**
@@ -178,7 +182,7 @@ public class SlideBook6Reader  extends FormatReader {
 	// -- Internal FormatReader API methods --
 	public void close(boolean fileOnly) throws IOException {
 		super.close(fileOnly);
-		if (libraryFound) {
+		if (initialized && isLibraryFound()) {
 			closeFile();
 		}
 	}
@@ -274,9 +278,9 @@ public class SlideBook6Reader  extends FormatReader {
 					double stepSize = 0;
 					if (numZPlanes[capture] > 1) {
 						double plane0 = getZPosition(capture, 0, 0);
-						double plane1 = getZPosition(capture, 0, getNumChannels(capture));
+						double plane1 = getZPosition(capture, 0, 1);
 						// distance between plane 0 and 1 is step size, assume constant for all planes
-						stepSize = plane1 - plane0;
+						stepSize = Math.abs(plane1 - plane0);
 					}
 
 					Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
@@ -292,23 +296,23 @@ public class SlideBook6Reader  extends FormatReader {
 							for (int zplane = 0; zplane < numZPlanes[capture]; zplane++) {
 								for (int channel = 0; channel < numChannels[capture]; channel++, imageIndex++) {
 									// set elapsed time
-									store.setPlaneDeltaT(new Time(deltaT, UNITS.MS), capture, imageIndex);
+									store.setPlaneDeltaT(new Time(deltaT, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set exposure time
 									int expTime = getExposureTime(capture, channel);
-									store.setPlaneExposureTime(new Time(expTime, UNITS.MS), capture, imageIndex);
+									store.setPlaneExposureTime(new Time(expTime, UNITS.MILLISECOND), capture, imageIndex);
 
 									// set tile xy position
 									double numberX = getXPosition(capture, position);
-									Length positionX = new Length(numberX, UNITS.MICROM);
+									Length positionX = new Length(numberX, UNITS.MICROMETER);
 									store.setPlanePositionX(positionX, capture, imageIndex);
 									double numberY = getYPosition(capture, position);
-									Length positionY = new Length(numberY, UNITS.MICROM);
+									Length positionY = new Length(numberY, UNITS.MICROMETER);
 									store.setPlanePositionY(positionY, capture, imageIndex);
 
 									// set tile z position
 									double positionZ = getZPosition(capture, position, zplane);
-									Length zPos = new Length(positionZ, UNITS.MICROM);
+									Length zPos = new Length(positionZ, UNITS.MICROMETER);
 									store.setPlanePositionZ(zPos, capture, imageIndex);
 								}
 							}

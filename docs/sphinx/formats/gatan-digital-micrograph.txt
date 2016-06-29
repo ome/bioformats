@@ -1,10 +1,10 @@
 .. index:: Gatan Digital Micrograph
-.. index:: .dm3
+.. index:: .dm3, .dm4
 
 Gatan Digital Micrograph
 ===============================================================================
 
-Extensions: .dm3
+Extensions: .dm3, .dm4
 
 
 Owner: `Gatan <http://www.gatan.com/>`_
@@ -16,7 +16,7 @@ BSD-licensed: |no|
 
 Export: |no|
 
-Officially Supported Versions: 3
+Officially Supported Versions: 3, 4
 
 Reader: GatanReader (:bfreader:`Source Code <GatanReader.java>`, :doc:`Supported Metadata Fields </metadata/GatanReader>`)
 
@@ -49,12 +49,7 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.

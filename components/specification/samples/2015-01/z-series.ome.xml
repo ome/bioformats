@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+     xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+     xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+     xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+     xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+     xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+                         http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
+  <Image ID="Image:0" Name="18x24y5z1t2c8b-text">
+    <OME:AcquisitionDate>2010-03-02T15:08:59</OME:AcquisitionDate>
+    <OME:Pixels DimensionOrder="XYCTZ" ID="Pixels:0:0" Type="uint8" SizeC="1" SizeT="1"
+                SizeX="18" SizeY="24" SizeZ="5">
+      <OME:Channel Color="-2147483648" ID="Channel:0"/>
+      <Bin:BinData BigEndian="false" Length="576"
+                   >/////////////////////////wAA////AP//AAAAAP///wD/AP////8AAP//////AP//AAD/AP//////AP////8A/////wD/AP//////AP////8A/////wD/AP//////AP///wD//////wD/AP//////AP///wD//////wD/AP//////AP//AP///////wD//wAA////AP//AAAAAP///wD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wAAAP////8A//////////////8A/////wAA//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A////////////////////////////////</Bin:BinData>
+      <Bin:BinData BigEndian="false" Length="576"
+                   >AAAAAAAAAAAAAAAAAAAAAAAAAP//AAAA/wAA/////wD///8A/wAAAAD//wAAAAAA/wAAAAD//wAAAAAA/wAAAAD/AAAAAAD//wAAAAAA/wAAAAD/AAAAAP8A/wAAAAAA/wAAAP8AAAAA/wAA/wAAAAAA/wAAAP8AAAD/AAAA/wAAAAAA/wAA/wAAAAD/AAAAAP//AAAA/wAA/////wD/////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wAAAAD/AAAAAAAAAAAAAAD/AAAAAP//AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAD/AAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</Bin:BinData>
+      <Bin:BinData BigEndian="false" Length="576"
+                   >/////////////////////////wAA////AP//AAAAAP8AAAAAAP////8AAP//////AP////8AAP//////AP////8A//////8AAP//////AP////8A////AAD/AP//////AP///wD///////8AAP//////AP///wD///////8AAP//////AP//AP////////8A/wAA////AP//AAAAAP8AAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wAAAP////8A//////////////8A/////wAA//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A////////////////////////////////</Bin:BinData>
+      <Bin:BinData BigEndian="false" Length="576"
+                   >AAAAAAAAAAAAAAAAAAAAAAAAAPz8AAAA/AAA/Pz8/AAAAPz8/AAAAAD8/AAAAAAA/AAAAPz8/AAAAAAA/AAAAAD8AAAA/AD8/AAAAAAA/AAAAAD8AAAA/AD8/AAAAAAA/AAAAPwAAAD8AAD8/AAAAAAA/AAAAPwAAAD8/Pz8/AAAAAAA/AAA/AAAAAAAAAD8APz8AAAA/AAA/Pz8/AAAAAD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/AAAAAD8AAAAAAAAAAAAAAD8AAAAAPz8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAD8AAAAAAD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</Bin:BinData>
+      <Bin:BinData BigEndian="false" Length="576"
+                   >/////////////////////////wAA////AP//AAAAAP8AAAAAAP////8AAP//////AP8A////AP//////AP////8A//8A////AP//////AP////8A//8AAAD/AP//////AP///wD///8A//8AAP//////AP///wD///////8AAP//////AP//AP////////8A/wAA////AP//AAAAAP8AAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wAAAP////8A//////////////8A/////wAA//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A//////////////8A//////8A////////////////////////////////</Bin:BinData>
+    </OME:Pixels>
+  </Image>
+</OME>

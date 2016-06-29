@@ -37,6 +37,7 @@ Using Bio-Formats as a Java library
     java-library
     export
     export2
+    logging
     conversion
     matlab-dev
     python-dev
@@ -45,18 +46,7 @@ Using Bio-Formats as a Java library
 Using Bio-Formats as a native C++ library
 =========================================
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    cpp/overview
-    cpp/conversion
-    cpp/tutorial
-    cpp/bf-env
-    cpp/schema
-    cpp/commands/bf-test
-    cpp/commands/bf-test-info
-    cpp/commands/bf-test-view
+.. note:: See new location for C++ documentation.
 
 Contributing to Bio-Formats
 ===========================
@@ -65,7 +55,6 @@ Contributing to Bio-Formats
     :maxdepth: 1
 
     commit-testing
-    testing-notes
     generating-test-images
     reader-guide
     format-documentation

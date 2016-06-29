@@ -3,7 +3,7 @@
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
  *
- * Copyright (C) 2005 - 2014 Vanderbilt Integrative Cancer Center and Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Vanderbilt Integrative Cancer Center and Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -497,7 +497,7 @@ public class BDReader extends FormatReader {
         long firstPlane = 0;
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.S), i, p);
+          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.SECOND), i, p);
           String file = getFilename(i, p);
           if (file != null) {
             long plane = getTimestamp(file);
@@ -505,7 +505,7 @@ public class BDReader extends FormatReader {
               firstPlane = plane;
             }
             double timestamp = (plane - firstPlane) / 1000.0;
-            store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, p);
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, p);
           }
         }
       }

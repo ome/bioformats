@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -302,10 +302,14 @@ public class APLReader extends FormatReader {
     int calibratedHeight = DataTools.indexOf(columnNames, "Height");
     int calibratedWidth = DataTools.indexOf(columnNames, "Width");
     int path = DataTools.indexOf(columnNames, "Image Path");
+    if (path == -1) {
+      path = DataTools.indexOf(columnNames, "Path");
+    }
     int filename = DataTools.indexOf(columnNames, "File Name");
     int magnification = DataTools.indexOf(columnNames, "Magnification");
     int width = DataTools.indexOf(columnNames, "X-Resolution");
     int height = DataTools.indexOf(columnNames, "Y-Resolution");
+    int imageType = DataTools.indexOf(columnNames, "Image Type");
     int imageName = DataTools.indexOf(columnNames, "Image Name");
     int zLayers = DataTools.indexOf(columnNames, "Z-Layers");
 
@@ -358,7 +362,7 @@ public class APLReader extends FormatReader {
     final List<Integer> seriesIndexes = new ArrayList<Integer>();
 
     for (int i=1; i<rows.size(); i++) {
-      String file = rows.get(i)[filename].trim();
+      String file = parseFilename(rows.get(i), filename, path);
       if (file.equals("")) continue;
       file = topDirectory + File.separator + file;
       if (new Location(file).exists() && checkSuffix(file, "tif")) {
@@ -382,17 +386,28 @@ public class APLReader extends FormatReader {
       String[] row2 = rows.get(firstRow);
       String[] row3 = rows.get(secondRow);
 
-      ms.sizeT = parseDimension(row3[frames]);
-      ms.sizeZ = parseDimension(row3[zLayers]);
-      ms.sizeC = parseDimension(row3[colorChannels]);
+      if (frames > -1) {
+        ms.sizeT = parseDimension(row3[frames]);
+      }
+      if (zLayers > -1) {
+        ms.sizeZ = parseDimension(row3[zLayers]);
+      }
+      if (colorChannels > -1) {
+        ms.sizeC = parseDimension(row3[colorChannels]);
+      }
+      else if (imageType > -1) {
+        if (row3[imageType] != null && row3[imageType].equals("RGB")) {
+          ms.sizeC = 3;
+        }
+      }
       ms.dimensionOrder = "XYCZT";
 
       if (ms.sizeZ == 0) ms.sizeZ = 1;
       if (ms.sizeC == 0) ms.sizeC = 1;
       if (ms.sizeT == 0) ms.sizeT = 1;
 
-      xmlFiles[i] = topDirectory + File.separator + row2[filename];
-      tiffFiles[i] = topDirectory + File.separator + row3[filename];
+      xmlFiles[i] = topDirectory + File.separator + parseFilename(row2, filename, path);
+      tiffFiles[i] = topDirectory + File.separator + parseFilename(row3, filename, path);
 
       parser[i] = new TiffParser(tiffFiles[i]);
       parser[i].setDoCaching(false);
@@ -448,14 +463,8 @@ public class APLReader extends FormatReader {
         double px = realWidth / ms.sizeX;
         double py = realHeight / ms.sizeY;
 
-        if (units.equals("mm")) {
-          px *= 1000;
-          py *= 1000;
-        }
-        // TODO : add cases for other units
-
-        Length physicalSizeX = FormatTools.getPhysicalSizeX(px);
-        Length physicalSizeY = FormatTools.getPhysicalSizeY(py);
+        Length physicalSizeX = FormatTools.getPhysicalSizeX(px, units);
+        Length physicalSizeY = FormatTools.getPhysicalSizeY(py, units);
 
         if (physicalSizeX != null) {
           store.setPixelsPhysicalSizeX(physicalSizeX, i);
@@ -465,6 +474,7 @@ public class APLReader extends FormatReader {
         }
       }
     }
+    setSeries(0);
   }
 
   // -- Helper methods --
@@ -483,4 +493,16 @@ public class APLReader extends FormatReader {
     }
   }
 
+  private String parseFilename(String[] row, int filenameIndex, int pathIndex) {
+    String file = row[filenameIndex].trim();
+    if (file != null && checkSuffix(file, "tif")){
+      return file;
+    }
+    String filePath = row[pathIndex].trim();
+    filePath = filePath.replace('\\', File.separatorChar);
+    filePath = filePath.replaceAll("/", File.separator);
+    String[] dirs = filePath.split(File.separatorChar == '\\' ? "\\\\" : File.separator);
+    file = dirs[dirs.length-1].trim();
+    return file; 
+  }
 }

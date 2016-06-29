@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -209,7 +209,7 @@ public class IPLabReader extends FormatReader {
         store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       if (timeIncrement != null) {
-        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.SECOND), 0);
       }
     }
   }
@@ -398,7 +398,7 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneDeltaT(new Time(new Double(timepoint), UNITS.S), 0, plane);
+              store.setPlaneDeltaT(new Time(new Double(timepoint), UNITS.SECOND), 0, plane);
             }
           }
           if (i == 1) {

@@ -179,12 +179,6 @@ ImageJ
     Notes:     used by plugins for ImageJ and OME plugins for ImageJ
     License:   Public domain
 
-JUnit
-    JAR file:  junit-4.8.2.jar
-    URL:       http://www.junit.org/
-    Notes:     unit testing framework used for a few unit tests
-    License:   Common Public License
-
 Logback
     JAR file:  logback-core-1.1.1.jar, logback-classic-1.1.1.jar
     URL:       http://logback.qos.ch
@@ -210,8 +204,8 @@ Simple Logging Facade for Java API
     License:   BSD
 
 Xalan Serializer
-    JAR file:  serializer-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  serializer-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 
@@ -229,8 +223,8 @@ Apache Velocity
     License:   Apache
 
 Xalan
-    JAR file:  xalan-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  xalan-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 

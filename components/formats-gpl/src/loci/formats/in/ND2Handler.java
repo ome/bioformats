@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -151,7 +151,7 @@ public class ND2Handler extends BaseHandler {
 
         int fontSize = Integer.parseInt(roi.get("fHeight"));
         if (fontSize >= 0) {
-          store.setLabelFontSize(new Length(fontSize, UNITS.PT), r, 0);
+          store.setLabelFontSize(new Length(fontSize, UNITS.POINT), r, 0);
         }
         store.setLabelText(roi.get("eval-text"), r, 0);
         Length l = new Length(new Double(roi.get("line-width")), UNITS.PIXEL);

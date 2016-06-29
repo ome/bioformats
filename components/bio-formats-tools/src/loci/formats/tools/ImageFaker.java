@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -80,7 +80,7 @@ public class ImageFaker {
         } else if (args[i].equals("-fields")) {
           fields = Integer.parseInt(args[++i]);
         } else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
       } else {
         if (targetDirectoryPath == null) {

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -57,6 +57,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -74,7 +76,7 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Constructor --
 
   public OMEXMLWriter() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     compressionTypes =
       new String[] {CompressionType.UNCOMPRESSED.getCompression(),
         CompressionType.ZLIB.getCompression()};
@@ -100,6 +102,9 @@ public class OMEXMLWriter extends FormatWriter {
       xml = service.getOMEXML(retrieve);
       OMEXMLMetadata noBin = service.createOMEXMLMetadata(xml);
       service.removeBinData(noBin);
+
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) noBin.getRoot();
+      root.setCreator(FormatTools.CREATOR);
       xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {
@@ -154,10 +159,16 @@ public class OMEXMLWriter extends FormatWriter {
     int sizeX = retrieve.getPixelsSizeX(series).getValue().intValue();
     int sizeY = retrieve.getPixelsSizeY(series).getValue().intValue();
     int planeSize = sizeX * sizeY * bytes;
-    boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
+    boolean bigEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      bigEndian = retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     String namespace =
-      "xmlns=\"http://www.openmicroscopy.org/Schemas/BinaryFile/" +
+      "xmlns=\"http://www.openmicroscopy.org/Schemas/OME/" +
       service.getLatestVersion() + "\"";
 
     for (int i=0; i<nChannels; i++) {
@@ -216,8 +227,14 @@ public class OMEXMLWriter extends FormatWriter {
     options.channels = 1;
     options.interleaved = false;
     options.signed = FormatTools.isSigned(pixelType);
-    options.littleEndian =
-      !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    boolean littleEndian = false;
+    if (r.getPixelsBigEndian(series) != null) {
+      littleEndian = !r.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (r.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
+    options.littleEndian =littleEndian;
     options.bitsPerSample = bytes * 8;
 
     if (compression.equals("J2K")) {

@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -467,7 +467,7 @@ public class Exporter {
             store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(cal.pixelWidth), 0);
             store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(cal.pixelHeight), 0);
             store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(cal.pixelDepth), 0);
-            store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.S), 0);
+            store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.SECOND), 0);
 
             if (imp.getImageStackSize() !=
                     imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
@@ -656,8 +656,14 @@ public class Exporter {
             int start = doStack ? 0 : imp.getCurrentSlice() - 1;
             int end = doStack ? size : start + 1;
 
-            boolean littleEndian =
-                    !w.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
+            boolean littleEndian = false;
+            if (w.getMetadataRetrieve().getPixelsBigEndian(0) != null)
+            {
+              littleEndian = !w.getMetadataRetrieve().getPixelsBigEndian(0).booleanValue();
+            }
+            else if (w.getMetadataRetrieve().getPixelsBinDataCount(0) == 0) {
+              littleEndian = !w.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
+            }
             byte[] plane = null;
             w.setInterleaved(false);
 

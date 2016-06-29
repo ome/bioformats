@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -121,7 +121,7 @@ public class OMEXMLServiceTest {
    */
   @Test
   public void testIntegerUnitProperty() throws ServiceException {
-    final Length propertyValue = new Length(12.0d, UNITS.PT);
+    final Length propertyValue = new Length(12.0d, UNITS.POINT);
 
     final StringBuffer expectedText = new StringBuffer();
     expectedText.append(" FontSize=");

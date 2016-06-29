@@ -19,20 +19,16 @@ addons:
 
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk6
+  - openjdk7
 
 env:
   - BUILD=maven_findbugs
   - BUILD=maven
-  - BUILD=cppwrap
   - BUILD=sphinx_html
   - BUILD=ant
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: "BUILD=cppwrap"
 
 before_install:
   - if [[ $BUILD == 'sphinx_html' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
@@ -46,17 +42,9 @@ script:
 
 matrix:
   exclude:
-    - jdk: openjdk6
+    - jdk: openjdk7
       env: BUILD=sphinx_html
-    - jdk: oraclejdk7
-      env: BUILD=sphinx_html
-    - jdk: oraclejdk8
-      env: BUILD=cppwrap
-    - jdk: openjdk6
-      env: BUILD=cppwrap
-    - jdk: openjdk6
+    - jdk: openjdk7
       env: BUILD=maven_findbugs
-    - jdk: oraclejdk7
-      env: BUILD=maven
     - jdk: oraclejdk8
       env: BUILD=maven

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -782,7 +782,7 @@ public class VolocityReader extends FormatReader {
         }
 
         if (i < timestamps.size() && coords[2] < timestamps.get(i).length && timestamps.get(i)[coords[2]] != null) {
-          store.setPlaneDeltaT(new Time(timestamps.get(i)[coords[2]], UNITS.S), i, img);
+          store.setPlaneDeltaT(new Time(timestamps.get(i)[coords[2]], UNITS.SECOND), i, img);
         }
       }
     }

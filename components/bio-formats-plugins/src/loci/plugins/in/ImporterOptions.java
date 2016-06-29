@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -66,6 +66,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_SHOW_METADATA   = "showMetadata";
   public static final String KEY_SHOW_OME_XML    = "showOMEXML";
   public static final String KEY_SHOW_ROIS       = "showROIs";
+  public static final String KEY_ROIS_MODE       = "roiMode";
   public static final String KEY_SPECIFY_RANGES  = "specifyRanges";
   public static final String KEY_SPLIT_Z         = "splitFocalPlanes";
   public static final String KEY_SPLIT_T         = "splitTimepoints";
@@ -91,6 +92,10 @@ public class ImporterOptions extends OptionsList {
   public static final String LOCATION_HTTP  = "Internet";
   public static final String LOCATION_OMERO = "OMERO";
 
+  //possible values for roiMode
+  public static final String ROIS_MODE_MANAGER = "ROI manager";
+  public static final String ROIS_MODE_OVERLAY = "Overlay";
+  
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
   public static final String VIEW_STANDARD   = "Standard ImageJ";
@@ -324,6 +329,12 @@ public class ImporterOptions extends OptionsList {
   public boolean showROIs() { return isSet(KEY_SHOW_ROIS); }
   public void setShowROIs(boolean b) { setValue(KEY_SHOW_ROIS, b); }
 
+  // roisMode
+ public String getROIsModeInfo() { return getInfo(KEY_ROIS_MODE); }
+ public String getROIsMode() { return getValue(KEY_ROIS_MODE); }
+ public String[] getROIsModes() { return getPossible(KEY_ROIS_MODE); }
+ public void setROIsMode(String s) { setValue(KEY_ROIS_MODE, s); }
+  
   // specifyRanges
   public String getSpecifyRangesInfo() { return getInfo(KEY_SPECIFY_RANGES); }
   public boolean isSpecifyRanges() { return isSet(KEY_SPECIFY_RANGES); }

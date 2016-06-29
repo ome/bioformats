@@ -12,89 +12,91 @@
 {% def index_string(name) %}int ${index_name_string(name)}{% end %}\
 \
 {% def counter(parent, obj, indexes) %}\
-	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
-	{
-		return -1;
-	}
+  public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
+  {
+    return -1;
+  }
 {% end %}\
 \
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+  public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+  public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
+  public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}()
 {% end %}\
 {% end %}\
-	{
-		return null;
-	}
+  {
+    return null;
+  }
 {% end %}\
 \
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if debug %}\
-	// MARKER [A-GET]
+  // MARKER [A-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
-	// MARKER [B-GET]
+  // MARKER [B-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
-	// MARKER [C-GET]
+  // MARKER [C-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end %}\
 {% end %}\
-	{
-	}
+  {
+  }
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+       (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-	def accessor_string(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level, concreteName=None):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-	def accessor_string_complex(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-		if max_occurs == 1:
-			to_return['accessor'] = "get%s()" % (name)
-			return to_return
-		if name[:2].isupper():
-			to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-			return to_return
-		to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-		return to_return
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
+    """Makes a Java method accessor string from an index name."""
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-	def accessor(name, parent, prop, func=accessor_string):
-		results = dict()
-		fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-		if parent not in results.keys():
-			raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		if len(results.keys()) == 0:
-			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
 %}\
 \
 \
@@ -102,7 +104,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -145,6 +147,8 @@
 
 package ${lang.metadata_package};
 
+import java.util.List;
+
 import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
@@ -169,27 +173,22 @@ import ${lang.units_package}.unit.Unit;
  */
 public class DummyMetadata implements IMetadata
 {
-	// -- MetadataStore API methods --
+  // -- MetadataStore API methods --
 
-	public void createRoot()
-	{
-	}
+  public void createRoot()
+  {
+  }
 
-	public MetadataRoot getRoot()
-	{
-		return null;
-	}
+  public MetadataRoot getRoot()
+  {
+    return null;
+  }
 
-	public void setRoot(MetadataRoot root)
-	{
-	}
+  public void setRoot(MetadataRoot root)
+  {
+  }
 
-	// -- Entity counting (manual definitions) --
-
-	public int getPixelsBinDataCount(int imageIndex)
-	{
-		return -1;
-	}
+  // -- Entity counting (manual definitions) --
 
   public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
     return -1;
@@ -236,36 +235,42 @@ public class DummyMetadata implements IMetadata
     return -1;
   }
 
-	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
-	{
-		return null;
-	}
 
-  public String getShapeType(int roiIndex, int shapeIndex)
+  // -- Entity counting (code generated definitions) --
+
+{% for abstractClass in model.opts.lang.getSubstitutionTypes() %}\
+{% for k, v in indexes[abstractClass].items() %}\
+  public String get${abstractClass}Type(${indexes_string(v)})
   {
     return null;
   }
 
-	// -- Entity counting (code generated definitions) --
+  public int get{% if is_multi_path[abstractClass] %}${k}{% end %}${abstractClass}Count(${indexes_string(v[:-1])})
+  {
+    return -1;
+  }
+
+{% end %}\
+{% end %}\
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
-	{
-	}
+  // Element's text data
+  // ${repr(indexes[o.name])}
+  public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+  {
+  }
 
-	public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
-	{
-		return null;
-	}
+  public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+  {
+    return null;
+  }
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract %}\
-	// ${o.name} entity counting
-{% for k, v in indexes[o.name].items() %}\
+{% if parents[o.topLevelName] is not None and not o.isAbstract %}\
+  // ${o.name} entity counting
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 ${counter(k, o, v)}\
 
@@ -275,87 +280,82 @@ ${counter(k, o, v)}\
 {% end %}\
 {% end %}\
 
-	// -- Entity retrieval (manual definitions) --
+  // -- Entity retrieval (manual definitions) --
 
-	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
-	{
-		return null;
-	}
+  /** Gets the UUID associated with this collection of metadata. */
+  public String getUUID()
+  {
+    return null;
+  }
 
-	/** Gets the UUID associated with this collection of metadata. */
-	public String getUUID()
-	{
-		return null;
-	}
+  /** Gets the Map value associated with this annotation */
+  public List<MapPair> getMapAnnotationValue(int mapAnnotationIndex)
+  {
+    return null;
+  }
 
-	/** Gets the Map value associated with this annotation */
-	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
-	{
-		return null;
-	}
+  /** Gets the Map value associated with this generic light source */
+  public List<MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+  {
+    return null;
+  }
 
-	/** Gets the Map value associated with this generic light source */
-	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
-	{
-		return null;
-	}
+  /** Gets the Map value associated with this imaging environment */
+  public List<MapPair> getImagingEnvironmentMap(int imageIndex)
+  {
+    return null;
+  }
 
-	/** Gets the Map value associated with this imaging environment */
-	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
-	{
-		return null;
-	}
-
-	// -- Entity retrieval (code generated definitions) --
+  // -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	// MARKER [EEE]
+  // MARKER [EEE]
 {% end debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// Indexes: ${repr(indexes[o.name])}
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+  //
+  // ${o.name} property storage
+  //
+  // Indexes: ${repr(indexes[o.name])}
+  // ${repr(parents[o.name])}
+  // Is multi path? ${is_multi_path[o.name]}
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+  // ${prop.minOccurs}:${prop.maxOccurs}
+  // Is multi path? ${is_multi_path[o.name]}
+  // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// MARKER [CCC]
+  // MARKER [CCC]
 {% end debug %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+  // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
-	// MARKER [DDD]
+  // MARKER [DDD]
 {% end debug %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [AAA]
+  // MARKER [AAA]
 {% end debug %}\
-	// ${prop.name} accessor from parent ${k}
+  // ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -370,23 +370,23 @@ ${getter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+  // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+  // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [FFF-AGG]
+  // MARKER [FFF-AGG]
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
-	// MARKER [HHH-AGG]
+  // MARKER [HHH-AGG]
 {% end debug %}\
 ${getter(k, o, prop, v)}\
 
@@ -400,74 +400,64 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% end %}\
 
-	// -- Entity storage (manual definitions) --
+  // -- Entity storage (manual definitions) --
 
-	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
-	{
-	}
+  /** Sets the UUID associated with this collection of metadata. */
+  public void setUUID(String uuid)
+  {
+  }
 
-	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
-	{
-	}
+  /** Sets the Map value associated with this annotation */
+  public void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex)
+  {
+  }
 
-	/** Sets the UUID associated with this collection of metadata. */
-	public void setUUID(String uuid)
-	{
-	}
+  /** Sets the Map value associated with this generic light source */
+  public void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex)
+  {
+  }
 
-	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
-	{
-	}
+  /** Sets the Map value associated with this imaging environment */
+  public void setImagingEnvironmentMap(List<MapPair> map, int imageIndex)
+  {
+  }
 
-	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
-	{
-	}
-
-	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
-	{
-	}
-
-	// -- Entity storage (code generated definitions) --
+  // -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
+  //
+  // ${o.name} property storage
+  //
+  // ${repr(parents[o.name])}
+  // Is multi path? ${is_multi_path[o.name]}
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+  // ${prop.minOccurs}:${prop.maxOccurs}
+  // Is multi path? ${is_multi_path[o.name]}
+  // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+  // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
-	// ${prop.name} accessor from parent ${k}
-${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -481,21 +471,21 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+  // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+  // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [GGG-AGG]
+  // MARKER [GGG-AGG]
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${setter(k, o, prop, v)}\
 
 {% end %}\

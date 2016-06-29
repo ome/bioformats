@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,7 +63,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
@@ -91,8 +90,6 @@ public class ImageInfo {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
-
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
 
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
@@ -191,8 +188,11 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals("-nopix")) pixels = false;
-        else if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(CommandLineTools.VERSION)){
+          printVersion = true;
+          return true;
+        }
+        else if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
@@ -215,15 +215,15 @@ public class ImageInfo {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
         else if (args[i].equals("-trace")) {
-          DebugTools.enableLogging("TRACE");
+          DebugTools.setRootLevel("TRACE");
         }
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
-          DebugTools.enableLogging("OFF");
+          DebugTools.setRootLevel("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -270,7 +270,7 @@ public class ImageInfo {
             cache = true;
             cachedir = args[++i];
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -377,6 +377,12 @@ public class ImageInfo {
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
+      if (!(reader instanceof ImageReader)) {
+        // verify format
+        LOGGER.info("Checking {} format [{}]", reader.getFormat(),
+                    reader.isThisType(f) ? "yes" : "no");
+        f.seek(0);
+      }
       int len = (int) f.length();
       LOGGER.info("Caching {} bytes:", len);
       byte[] b = new byte[len];
@@ -963,12 +969,12 @@ public class ImageInfo {
       }
 
       if (omexmlOnly) {
-        DebugTools.enableLogging("INFO");
+        DebugTools.setRootLevel("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
-        DebugTools.enableLogging("OFF");
+        DebugTools.setRootLevel("OFF");
       }
       if (validate) {
         service.validateOMEXML(xml);
@@ -993,7 +999,6 @@ public class ImageInfo {
   public boolean testRead(String[] args)
     throws FormatException, ServiceException, IOException
   {
-    DebugTools.enableLogging("INFO");
 
     for (final String arg : args) {
       if (HELP_ARGUMENTS.contains(arg)) {
@@ -1007,11 +1012,10 @@ public class ImageInfo {
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
+    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1025,7 +1029,14 @@ public class ImageInfo {
 
     // initialize reader
     long s = System.currentTimeMillis();
-    reader.setId(id);
+    try {
+      reader.setId(id);
+    } catch (FormatException exc) {
+      reader.close();
+      LOGGER.error("Failure during the reader initialization");
+      LOGGER.debug("", exc);
+      return false;
+    }
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
     LOGGER.info("Initialization took {}s", sec);
@@ -1104,16 +1115,7 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
+    DebugTools.enableLogging("INFO");
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

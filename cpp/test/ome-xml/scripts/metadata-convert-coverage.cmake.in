@@ -25,8 +25,8 @@ convert_symbols()
       sed -e "s;^\([gs]et[a-zA-Z0-9][a-zA-Z0-9]*\).*;\1;"
 }
 
-saved_store=$(mktemp bf-store-symbols.XXXXXXXXX)
-saved_convert=$(mktemp bf-convert-symbols.XXXXXXXXX)
+saved_store=$(mktemp ome-xml-store-symbols.XXXXXXXXX)
+saved_convert=$(mktemp ome-xml-convert-symbols.XXXXXXXXX)
 trap "rm -f \"$saved_store\" \"$saved_convert\"" 0 1 2 3 15
 
 store_symbols | sort | uniq | egrep -v '^(setRoot)$' >> "$saved_store"

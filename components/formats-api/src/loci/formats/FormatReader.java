@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,10 +35,12 @@ package loci.formats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Arrays;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -75,7 +77,6 @@ import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
-import ome.xml.model.enums.LineCap;
 import ome.xml.model.enums.Marker;
 import ome.xml.model.enums.Medium;
 import ome.xml.model.enums.MicrobeamManipulationType;
@@ -101,7 +102,6 @@ import ome.xml.model.enums.handlers.IlluminationTypeEnumHandler;
 import ome.xml.model.enums.handlers.ImmersionEnumHandler;
 import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
 import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
-import ome.xml.model.enums.handlers.LineCapEnumHandler;
 import ome.xml.model.enums.handlers.MarkerEnumHandler;
 import ome.xml.model.enums.handlers.MediumEnumHandler;
 import ome.xml.model.enums.handlers.MicrobeamManipulationTypeEnumHandler;
@@ -1041,17 +1041,22 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles() */
   @Override
   public String[] getUsedFiles(boolean noPixels) {
+    String[] seriesUsedFiles;
+    int seriesCount = getSeriesCount();
+    if (seriesCount == 1) {
+      seriesUsedFiles = getSeriesUsedFiles(noPixels);
+      if (null == seriesUsedFiles) {
+        seriesUsedFiles = new String[] {};
+      }
+      return seriesUsedFiles;
+    }
     int oldSeries = getSeries();
-    Vector<String> files = new Vector<String>();
-    for (int i=0; i<getSeriesCount(); i++) {
+    Set<String> files = new LinkedHashSet<String>();
+    for (int i = 0; i < seriesCount; i++) {
       setSeries(i);
-      String[] s = getSeriesUsedFiles(noPixels);
-      if (s != null) {
-        for (String file : s) {
-          if (getSeriesCount() == 1 || !files.contains(file)) {
-            files.add(file);
-          }
-        }
+      seriesUsedFiles = getSeriesUsedFiles(noPixels);
+      if (seriesUsedFiles != null) {
+        files.addAll(Arrays.asList(seriesUsedFiles));
       }
     }
     setSeries(oldSeries);
@@ -1789,22 +1794,6 @@ public abstract class FormatReader extends FormatHandler
     }
     catch (EnumerationException e) {
       throw new FormatException("LaserType creation failed", e);
-    }
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.LineCap} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   */
-  protected LineCap getLineCap(String value) throws FormatException {
-    LineCapEnumHandler handler = new LineCapEnumHandler();
-    try {
-      return (LineCap) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("LineCap creation failed", e);
     }
   }
   /**

@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,6 +35,7 @@ package loci.common;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.LinkageError;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -47,8 +48,12 @@ import java.util.Arrays;
  */
 public final class DebugTools {
 
-  // -- Constructor --
+  final static String[][] TOOL_CLASSES = new String[][] {
+    new String[] {"loci.common.", "LogbackTools"},
+    new String[] {"loci.common.", "Log4jTools"}
+  };
 
+  // -- Constructor --
   private DebugTools() { }
 
   // -- DebugTools methods --
@@ -65,27 +70,18 @@ public final class DebugTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via logback or log4j
-   * without an external configuration file.
+   * Checks whether SLF4J logging has been enabled via logback or log4j.
    *
-   * @param level A string indicating the desired level
-   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
-   * @return true iff logging was successfully enabled
+   * @return {@code true} if logging has been successfully enabled
    */
-  public static synchronized boolean enableLogging(String level) {
-    final String[][] toolClasses = new String[][] {
-      new String[] {"loci.common.", "LogbackTools"},
-      new String[] {"loci.common.", "Log4jTools"}
-    };
-
-    for (String[] toolClass : toolClasses) {
+  public static synchronized boolean isEnabled() {
+    for (String[] toolClass : TOOL_CLASSES) {
       try {
         Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
-        Method m = k.getMethod("enableLogging", String.class);
-        m.invoke(null, level);
-        return true;
+        Method m = k.getMethod("isEnabled");
+        return (Boolean) m.invoke(null);
       }
-      catch (Throwable t) {
+      catch (ReflectiveOperationException|LinkageError t) {
         // no-op. Ignore error and try the next class.
       }
     }
@@ -93,7 +89,72 @@ public final class DebugTools {
   }
 
   /**
+   * Sets the root logger level.
+   *
+   * This method will override the root logger level independently of the way
+   * the logging framework has been enabled.
+   *
+   * @param level A string indicating the desired level
+   */
+  public static synchronized void setRootLevel(String level) {
+    for (String[] toolClass : TOOL_CLASSES) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("setRootLevel", String.class);
+        m.invoke(null, level);
+        return;
+      }
+      catch (ReflectiveOperationException|LinkageError t) {
+        // no-op. Ignore error and try the next class.
+      }
+    }
+    return;
+  }
+
+  /**
+   * Attempts to enable SLF4J logging via logback or log4j.
+   *
+   * This will first check whether the logging has been enabled using the
+   * return value of {@link #isEnabled()}.
+   *
+   * @return {@code true} if logging was successfully enabled by this method
+   */
+  public static synchronized boolean enableLogging() {
+    if (isEnabled()) return false;
+    for (String[] toolClass : TOOL_CLASSES) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("enableLogging");
+        m.invoke(null);
+        return true;
+      }
+      catch (ReflectiveOperationException|LinkageError t) {
+        // no-op. Ignore error and try the next class.
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Attempts to enable SLF4J logging and set the root logger level.
+   *
+   * This method will first try to initialize the logging using
+   * {@link #enableLogging()}. If this method returns {@code true}, the root
+   * logger level is also set via {@link #setRootLevel(String)} using the
+   * input level.
+   *
+   * @param level A string indicating the desired level
+   * @return {@code true} if logging was successfully enabled by this method
+   */
+  public static synchronized boolean enableLogging(String level) {
+    boolean status = enableLogging();
+    if (status) setRootLevel(level);
+    return status;
+  }
+
+  /**
    * Enable SLF4J logging using logback, in the context of ImageJ.
+   *
    * This allows logging events to be echoed to the ImageJ status bar,
    * regardless of how the logging configuration file was set up.
    *

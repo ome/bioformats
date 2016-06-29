@@ -16,54 +16,54 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
       {
 {% if prop.langType == "std::string" %}\
         /// @todo Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
       }
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
+        void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
       {
 {% if prop.langType == "std::string" %}\
         /// @todo: Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
       }
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
+        void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
       {
 {% if prop.langType == "String" %}\
         // TODO: Implement DataTools.sanitize if needed for C++
         // ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
+        store->set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
       }
 {% end source %}\
 {% end %}\
@@ -72,40 +72,42 @@
 {% end %}\
 \
 {% python
-	def is_abstract(name):
-		o = model.getObjectByName(name)
-		if o is not None and \
-		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
+  def is_abstract(name):
+    o = model.getObjectByName(name)
+    if o is not None and \
+        (o.isAbstract):
+      return True
+    return False
 
-	def sorted_properties(o):
-		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+  def sorted_properties(o):
+    return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-	def accessor_string(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		return accessor_string_complex(name, max_occurs, level)['accessor']
+  def accessor_string(name, max_occurs, level, concreteName=None):
+    """Makes a Java method accessor string from an index name."""
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-	def accessor_string_complex(name, max_occurs, level):
-		"""Makes a Java method accessor string from an index name."""
-		to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
-		if max_occurs == 1:
-			to_return['accessor'] = "get%s()" % (name)
-			return to_return
-		if name[:2].isupper():
-			to_return['accessor'] = "get%s(%sIndex)" % (name, name)
-			return to_return
-		to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
-		return to_return
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
+    """Makes a Java method accessor string from an index name."""
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
+    if max_occurs == 1:
+      to_return['accessor'] = "get%s()" % (name)
+      return to_return
+    if name[:2].isupper():
+      to_return['accessor'] = "get%s(%sIndex)" % (name, name)
+      return to_return
+    to_return['accessor'] = "get%s(%s%sIndex)" % (name, name[:1].lower(), name[1:])
+    return to_return
 
-	def accessor(name, parent, prop, func=accessor_string):
-		results = dict()
-		fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
-		if parent not in results.keys():
-			raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		if len(results.keys()) == 0:
-			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
-		return results[parent]
+  def accessor(name, parent, prop, func=accessor_string):
+    results = dict()
+    fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+    if parent not in results.keys():
+      raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    if len(results.keys()) == 0:
+      raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+    return results[parent]
 %}\
 \
 \
@@ -113,7 +115,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2015 Open Microscopy Environment:
+ * Copyright © 2006 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -187,9 +189,9 @@ namespace ome
       {
       private:
         /// The wrapped metadata store.
-	ome::compat::shared_ptr<MetadataStore> store;
+        ome::compat::shared_ptr<MetadataStore> store;
         /// Is filtering enabled?
-	bool filter;
+        bool filter;
 
       public:
         /**
@@ -224,7 +226,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         createRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -238,7 +240,7 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ome::compat::shared_ptr<MetadataRoot>&
-	getRoot();
+        getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ome::compat::shared_ptr<MetadataRoot>&
@@ -250,7 +252,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         setRoot(ome::compat::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -263,7 +265,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
+        void
         setUUID(const std::string& uuid);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -274,29 +276,59 @@ namespace ome
       }
 {% end source %}\
 
-{% if debug %}\
-	// -- Entity storage (manual definitions) --
-
-{% end debug %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-	void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
+        void
+        setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                              index_type                                          mapAnnotationIndex);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::setPixelsBinDataBigEndian(bool bigEndian,
-                                                index_type imageIndex,
-                                                index_type binDataIndex)
+      FilterMetadata::setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                                            index_type                                          mapAnnotationIndex)
       {
-        store->setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+        store->setMapAnnotationValue(value, mapAnnotationIndex);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                                    index_type                                          instrumentIndex,
+                                                    index_type                                          lightSourceIndex)
+      {
+        store->setGenericExcitationSourceMap(value, instrumentIndex, lightSourceIndex);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      FilterMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                               index_type                                          imageIndex)
+      {
+        store->setImagingEnvironmentMap(value, imageIndex);
       }
 {% end source %}\
 
 {% if debug %}\
-	// -- Entity storage (code generated definitions) --
+        // -- Entity storage (manual definitions) --
+
+{% end debug %}\
+{% if debug %}\
+        // -- Entity storage (code generated definitions) --
 
 {% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -304,11 +336,11 @@ namespace ome
 {% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
+        // Element's text data
+        // ${repr(indexes[o.name])}
 {% end debug %}\
         // Documented in base class.
-	void
+        void
         set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -324,42 +356,47 @@ namespace ome
 {% end source %}\
 
 {% end %}\
-{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 
 {% end debug %}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
 \
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 {% if is_abstract(k) %}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
 {% if debug %}\
-	// ${prop.name} accessor from parent ${k}
+        // ${prop.name} accessor from parent ${k}
 {% end debug %}\
 ${setter(k, o, prop, v)}\
 {% end %}\
@@ -374,16 +411,21 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
-{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
-{% for k, v in indexes[o.name].items() %}\
+{% for k, v in indexes[o.topLevelName].items() %}\
 ${setter(k, o, prop, v)}\
 {% end %}\
 {% end %}\

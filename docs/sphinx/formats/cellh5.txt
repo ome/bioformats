@@ -14,12 +14,13 @@ Developer: `CellH5 <http://cellh5.org/>`_
 
 BSD-licensed: |no|
 
-Export: |no|
+Export: |yes|
 
 Officially Supported Versions: 
 
 Reader: CellH5Reader (:bfreader:`Source Code <CellH5Reader.java>`, :doc:`Supported Metadata Fields </metadata/CellH5Reader>`)
 
+Writer: CellH5Writer (:bfwriter:`Source Code <CellH5Writer.java>`)
 
 Freely Available Software:
 
@@ -46,11 +47,5 @@ Presence: |Fair|
 
 Utility: |Very good|
 
-
-**Additional Information**
-
-
-
-Notes:
 
 

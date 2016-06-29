@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -141,7 +141,11 @@ public class TestTools {
   /** Returns true if a byte buffer of the given size will fit in memory. */
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
-    long mem = r.freeMemory() / 2;
+
+    // better indicator than freeMemory() of how much memory is actually available
+    long mem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+
+    mem /= 2;
     int threadCount = 1;
     try {
       threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
@@ -488,6 +492,25 @@ public class TestTools {
     ImageReader ir = new ImageReader();
     ir.getDefaultReaderClasses().removeClass(SlideBook6Reader.class);
     return ir;
+  }
+
+  /**
+   * Determine whether or not a Throwable was caused by an OutOfMemoryError.
+   *
+   * @param t Throwable object to check
+   * @return true if <code>t</code> is or was caused by an OutOfMemoryError, false otherwise
+   */
+  public static boolean isOutOfMemory(Throwable t) {
+    if (t instanceof OutOfMemoryError) {
+      return true;
+    }
+    while (t.getCause() != null) {
+      if (t.getCause() instanceof OutOfMemoryError) {
+        return true;
+      }
+      t = t.getCause();
+    }
+    return false;
   }
 
 }

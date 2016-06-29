@@ -2,7 +2,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002 - 2015 Open Microscopy Environment
+    # Copyright (C) 2002 - 2016 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -2603,7 +2603,7 @@
 				<xsd:element name="RightsHolder" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation> The rights holder for this data. [plane text multi-line string]
-							e.g. "Copyright (C) 2002 - 2015 Open Microscopy Environment"
+							e.g. "Copyright (C) 2002 - 2016 Open Microscopy Environment"
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>

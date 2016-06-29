@@ -23,7 +23,11 @@ Owner: $owner
 
 BSD-licensed: |$bsd|
 
-Export: |$export|
+#if ($writer)
+Export: |yes|
+#else
+Export: |no|
+#end
 
 Officially Supported Versions: $versions
 
@@ -38,6 +42,9 @@ Readers:
 Reader: ${item} (:$readerextlink:`Source Code <${item}.java>`, :doc:`Supported Metadata Fields </metadata/${item}>`)
 #end
 
+#if ($writer)
+Writer: ${writer} (:$writerextlink:`Source Code <${writer}.java>`)
+#end
 
 #if ($software)
 Freely Available Software:
@@ -80,15 +87,9 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-
+#if (($privateSpecification) or ($notes))
 **Additional Information**
-
-
-#if ($writer)
-Writer: ${writer} (:$writerextlink:`Source Code <${writer}.java>`)
 #end
-
-Notes:
 
 #if ($privateSpecification)
 **Please note that while we have specification documents for this

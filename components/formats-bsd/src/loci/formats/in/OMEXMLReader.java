@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -85,7 +85,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() {
-    super("OME-XML", "ome");
+    super("OME-XML", new String[] {"ome", "ome.xml"});
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
     suffixNecessary = false;
   }
@@ -269,7 +269,6 @@ public class OMEXMLReader extends FormatReader {
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
-    addGlobalMeta("Is SPW file", hasSPW);
 
     // TODO
     //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
@@ -296,7 +295,13 @@ public class OMEXMLReader extends FormatReader {
 
       Boolean endian = null;
       if (binData.size() > 0) {
-        endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+        endian = false;
+        if (omexmlMeta.getPixelsBigEndian(i) != null) {
+          endian = omexmlMeta.getPixelsBigEndian(i).booleanValue();
+        }
+        else if (omexmlMeta.getPixelsBinDataCount(i) != 0) {
+          endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0).booleanValue();
+        }
       }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();

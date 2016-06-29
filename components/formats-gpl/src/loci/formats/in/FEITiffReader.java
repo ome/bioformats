@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,6 +50,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -225,9 +226,9 @@ public class FEITiffReader extends BaseTiffReader {
           }
 
           IniTable scanTable = ini.getTable("Scan");
-          // physical sizes are stored in meters
-          sizeX = new Double(scanTable.get("PixelWidth")) * 1000000;
-          sizeY = new Double(scanTable.get("PixelHeight")) * 1000000;
+ 
+          sizeX = new Double(scanTable.get("PixelWidth"));
+          sizeY = new Double(scanTable.get("PixelHeight"));
           timeIncrement = new Double(scanTable.get("FrameTime"));
         }
       }
@@ -319,8 +320,13 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
 
-      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
-      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
+      Unit<Length> unit = UNITS.MICROMETER;
+      if (helios) {
+        unit = UNITS.METER;
+      }
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX, unit);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY, unit);
 
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, 0);
@@ -329,7 +335,7 @@ public class FEITiffReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
       if (timeIncrement != null) {
-        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.SECOND), 0);
       }
     }
   }
@@ -337,15 +343,39 @@ public class FEITiffReader extends BaseTiffReader {
   // -- Helper class --
 
   class FEIHandler extends BaseHandler {
+    private StringBuilder sb;
     private String key, value;
-    private String qName;
     private Deque<String> parentNames = new ArrayDeque<String>();
 
     // -- DefaultHandler API methods --
 
     @Override
     public void characters(char[] data, int start, int len) {
-      String d = new String(data, start, len).trim();
+      sb.append(data, start, len);
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      parentNames.push(qName);
+      sb = new StringBuilder();
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+    {
+      processElement(qName);
+      if (parentNames.size() > 0) {
+        String name = parentNames.peek();
+        if (qName.equals(name)) {
+          parentNames.pop();
+        }
+      }
+    }
+
+    private void processElement(String qName) {
+      String d = sb.toString().trim();
       if (d.isEmpty()) {
         return;
       }
@@ -372,15 +402,15 @@ public class FEITiffReader extends BaseTiffReader {
       if (key != null && value != null) {
         addGlobalMeta(key, value);
 
-        if (key.equals("Stage X") || ("StagePosition".equals(parent) && key.equals("X"))) {
+        if (key.equals("Stage X") || key.equals("StagePosition X")) {
           final Double number = Double.valueOf(value);
           stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Y") || ("StagePosition".equals(parent) && key.equals("Y"))) {
+        else if (key.equals("Stage Y") || key.equals("StagePosition Y")) {
           final Double number = Double.valueOf(value);
           stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Z") || ("StagePosition".equals(parent) && key.equals("Z"))) {
+        else if (key.equals("Stage Z") || key.equals("StagePosition Z")) {
           final Double number = Double.valueOf(value);
           stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
@@ -393,31 +423,12 @@ public class FEITiffReader extends BaseTiffReader {
         else if (key.equals("Magnification")) {
           magnification = new Double(value);
         }
-        // physical sizes stored in meters, but usually too small to be used without converting
+
         else if (key.endsWith("X") && "PixelSize".equals(parent)) {
-          sizeX = new Double(value) * 1000000;
+          sizeX = new Double(value);
         }
         else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
-          sizeY = new Double(value) * 1000000;
-        }
-      }
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      this.qName = qName;
-      parentNames.push(qName);
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName)
-    {
-      if (parentNames.size() > 0) {
-        String name = parentNames.peek();
-        if (qName.equals(name)) {
-          parentNames.pop();
+          sizeY = new Double(value);
         }
       }
     }

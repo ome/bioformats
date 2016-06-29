@@ -7,12 +7,12 @@ Supported Formats
 
     You can sort this table by clicking on any of the headings.
 
-.. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
+.. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|c|c|
 
 .. list-table::
    :class: sortable
    :header-rows: 1
-   :widths: 30, 20, 2, 2, 2, 2, 2, 2, 2
+   :widths: 30, 20, 2, 2, 2, 2, 2, 2, 2, 5, 3
 
    *
      - Format
@@ -24,6 +24,8 @@ Supported Formats
      - .. image:: images/header-utility.png
      - .. image:: images/header-export.png
      - BSD
+     - Multiple Images
+     - Pyramid
 
 #foreach ($format in $formats)
 #set ($pagename = $format.get("pagename"))
@@ -37,8 +39,22 @@ Supported Formats
 #set ($openness = $format.get("opennessRating"))
 #set ($presence = $format.get("presenceRating"))
 #set ($utility = $format.get("utilityRating"))
-#set ($export = $format.get("export"))
+#if ($format.get("writer"))
+  #set ($export = "yes")
+#else
+  #set ($export = "no")
+#end
 #set ($bsd = $format.get("bsd"))
+#if ($format.get("mif"))
+  #set ($mif = "yes")
+#else
+  #set ($mif = "no")
+#end
+#if ($format.get("pyramid"))
+  #set ($pyramid = "yes")
+#else
+  #set ($pyramid = "no")
+#end
    * - :doc:`$pagename`
      - $extensions
      - |$pixels|
@@ -48,6 +64,8 @@ Supported Formats
      - |$utility|
      - |$export|
      - |$bsd|
+     - |$mif|
+     - |$pyramid|
 #end
 
 Bio-Formats currently supports **$count** formats
@@ -106,6 +124,14 @@ Bio-Formats currently supports **$count** formats
     BSD
         This indicates whether format is BSD-licensed.  By default,
         format readers and writers are GPL-licensed.
+
+    Multiple Images
+        This indicates whether the format can store multiple Images (in OME-XML terminology)
+        or series (in Bio-Formats API terminology).
+
+    Pyramid
+        This indicates whether the format can store a single image at multiple resolutions,
+        typically referred to as an image pyramid.
 
 .. toctree::
     :maxdepth: 1

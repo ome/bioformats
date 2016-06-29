@@ -25,7 +25,7 @@ Reader: AliconaReader (:bfreader:`Source Code <AliconaReader.java>`, :doc:`Suppo
 
 We currently have:
 
-* an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) 
+* an AL3D specification document (v1.0, from 2003, in PDF)
 * a few AL3D datasets
 
 We would like to have:
@@ -45,12 +45,7 @@ Presence: |Poor|
 
 Utility: |Good|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 Known deficiencies: 

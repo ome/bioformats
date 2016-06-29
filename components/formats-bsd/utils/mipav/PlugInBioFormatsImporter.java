@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -210,13 +210,13 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           Length dimPhysSizeZ = store.getPixelsPhysicalSizeZ(0);
           Time dimTimeInc = store.getPixelsTimeIncrement(0);
           float physSizeX = dimPhysSizeX == null ?
-            1.0f : dimPhysSizeX.value(UNITS.MICROM).floatValue();
+            1.0f : dimPhysSizeX.value(UNITS.MICROMETER).floatValue();
           float physSizeY = dimPhysSizeY == null ?
-            1.0f : dimPhysSizeY.value(UNITS.MICROM).floatValue();
+            1.0f : dimPhysSizeY.value(UNITS.MICROMETER).floatValue();
           float physSizeZ = dimPhysSizeZ == null ?
-            1.0f : dimPhysSizeZ.value(UNITS.MICROM).floatValue();
+            1.0f : dimPhysSizeZ.value(UNITS.MICROMETER).floatValue();
           float timeInc = dimTimeInc == null ? 1.0f :
-            dimTimeInc.value(UNITS.S).floatValue();
+            dimTimeInc.value(UNITS.SECOND).floatValue();
 
           // compute dimensional extents
           int[] dimExtents = {sizeX, sizeY, sizeZ, sizeT};

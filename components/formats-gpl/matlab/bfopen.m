@@ -50,7 +50,7 @@ function [result] = bfopen(id, varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2007 - 2015 Open Microscopy Environment:
+% Copyright (C) 2007 - 2016 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -107,8 +107,8 @@ if nargin == 0 || exist(id, 'file') == 0
   if isequal(path, 0) || isequal(file, 0), return; end
 end
 
-% initialize logging
-javaMethod('enableLogging', 'loci.common.DebugTools', 'INFO');
+% Initialize logging
+bfInitLogging();
 
 % Get the channel filler
 r = bfGetReader(id, stitchFiles);

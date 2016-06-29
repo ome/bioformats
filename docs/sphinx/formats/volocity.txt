@@ -6,7 +6,7 @@ Volocity
 
 Extensions: .mvd2
 
-Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+Developer: `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 
 
 **Support**
@@ -48,12 +48,7 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-
 **Additional Information**
-
-
-
-Notes:
 
 
 .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.

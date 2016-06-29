@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2015 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -195,13 +195,13 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
                   meta.getPixelsType(series).toString());

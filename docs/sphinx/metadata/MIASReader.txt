@@ -9,79 +9,80 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 64 of them (13%).
-  * Of those, Bio-Formats fully or partially converts 64 (100%).
+Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 65 of them (13%).
+  * Of those, Bio-Formats fully or partially converts 65 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats MIAS format reader:
-  * :schema:`Channel : Color <OME-2015-01/ome_xsd.html#Channel_Color>`
-  * :schema:`Channel : ID <OME-2015-01/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : Name <OME-2015-01/ome_xsd.html#Channel_Name>`
-  * :schema:`Channel : SamplesPerPixel <OME-2015-01/ome_xsd.html#Channel_SamplesPerPixel>`
-  * :schema:`Ellipse : ID <OME-2015-01/ROI_xsd.html#Shape_ID>`
-  * :schema:`Ellipse : RadiusX <OME-2015-01/ROI_xsd.html#Ellipse_RadiusX>`
-  * :schema:`Ellipse : RadiusY <OME-2015-01/ROI_xsd.html#Ellipse_RadiusY>`
-  * :schema:`Ellipse : Text <OME-2015-01/ROI_xsd.html#Shape_Text>`
-  * :schema:`Ellipse : TheT <OME-2015-01/ROI_xsd.html#Shape_TheT>`
-  * :schema:`Ellipse : TheZ <OME-2015-01/ROI_xsd.html#Shape_TheZ>`
-  * :schema:`Ellipse : X <OME-2015-01/ROI_xsd.html#Ellipse_X>`
-  * :schema:`Ellipse : Y <OME-2015-01/ROI_xsd.html#Ellipse_Y>`
-  * :schema:`Experiment : Description <OME-2015-01/ome_xsd.html#Experiment_Description>`
-  * :schema:`Experiment : ID <OME-2015-01/ome_xsd.html#Experiment_ID>`
-  * :schema:`Experiment : Type <OME-2015-01/ome_xsd.html#Experiment_Type>`
-  * :schema:`Image : AcquisitionDate <OME-2015-01/ome_xsd.html#Image_AcquisitionDate>`
-  * :schema:`Image : ExperimentRef <OME-2015-01/ome_xsd.html#ExperimentRef_ID>`
-  * :schema:`Image : ID <OME-2015-01/ome_xsd.html#Image_ID>`
-  * :schema:`Image : InstrumentRef <OME-2015-01/ome_xsd.html#InstrumentRef_ID>`
-  * :schema:`Image : Name <OME-2015-01/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2015-01/ROI_xsd.html#ROIRef_ID>`
-  * :schema:`Instrument : ID <OME-2015-01/ome_xsd.html#Instrument_ID>`
-  * :schema:`Mask : FillColor <OME-2015-01/ROI_xsd.html#Shape_FillColor>`
-  * :schema:`Mask : Height <OME-2015-01/ROI_xsd.html#Mask_Height>`
-  * :schema:`Mask : ID <OME-2015-01/ROI_xsd.html#Shape_ID>`
-  * :schema:`Mask : StrokeColor <OME-2015-01/ROI_xsd.html#Shape_StrokeColor>`
-  * :schema:`Mask : Width <OME-2015-01/ROI_xsd.html#Mask_Width>`
-  * :schema:`Mask : X <OME-2015-01/ROI_xsd.html#Mask_X>`
-  * :schema:`Mask : Y <OME-2015-01/ROI_xsd.html#Mask_Y>`
-  * :schema:`Objective : ID <OME-2015-01/ome_xsd.html#Objective_ID>`
-  * :schema:`Objective : Model <OME-2015-01/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`Objective : NominalMagnification <OME-2015-01/ome_xsd.html#Objective_NominalMagnification>`
-  * :schema:`Pixels : BigEndian <OME-2015-01/ome_xsd.html#Pixels_BigEndian>`
-  * :schema:`Pixels : DimensionOrder <OME-2015-01/ome_xsd.html#Pixels_DimensionOrder>`
-  * :schema:`Pixels : ID <OME-2015-01/ome_xsd.html#Pixels_ID>`
-  * :schema:`Pixels : Interleaved <OME-2015-01/ome_xsd.html#Pixels_Interleaved>`
-  * :schema:`Pixels : PhysicalSizeX <OME-2015-01/ome_xsd.html#Pixels_PhysicalSizeX>`
-  * :schema:`Pixels : PhysicalSizeY <OME-2015-01/ome_xsd.html#Pixels_PhysicalSizeY>`
-  * :schema:`Pixels : SignificantBits <OME-2015-01/ome_xsd.html#Pixels_SignificantBits>`
-  * :schema:`Pixels : SizeC <OME-2015-01/ome_xsd.html#Pixels_SizeC>`
-  * :schema:`Pixels : SizeT <OME-2015-01/ome_xsd.html#Pixels_SizeT>`
-  * :schema:`Pixels : SizeX <OME-2015-01/ome_xsd.html#Pixels_SizeX>`
-  * :schema:`Pixels : SizeY <OME-2015-01/ome_xsd.html#Pixels_SizeY>`
-  * :schema:`Pixels : SizeZ <OME-2015-01/ome_xsd.html#Pixels_SizeZ>`
-  * :schema:`Pixels : Type <OME-2015-01/ome_xsd.html#Pixels_Type>`
-  * :schema:`Plane : ExposureTime <OME-2015-01/ome_xsd.html#Plane_ExposureTime>`
-  * :schema:`Plane : TheC <OME-2015-01/ome_xsd.html#Plane_TheC>`
-  * :schema:`Plane : TheT <OME-2015-01/ome_xsd.html#Plane_TheT>`
-  * :schema:`Plane : TheZ <OME-2015-01/ome_xsd.html#Plane_TheZ>`
-  * :schema:`Plate : ColumnNamingConvention <OME-2015-01/SPW_xsd.html#Plate_ColumnNamingConvention>`
-  * :schema:`Plate : ExternalIdentifier <OME-2015-01/SPW_xsd.html#Plate_ExternalIdentifier>`
-  * :schema:`Plate : ID <OME-2015-01/SPW_xsd.html#Plate_ID>`
-  * :schema:`Plate : Name <OME-2015-01/SPW_xsd.html#Plate_Name>`
-  * :schema:`Plate : RowNamingConvention <OME-2015-01/SPW_xsd.html#Plate_RowNamingConvention>`
-  * :schema:`PlateAcquisition : ID <OME-2015-01/SPW_xsd.html#PlateAcquisition_ID>`
-  * :schema:`PlateAcquisition : MaximumFieldCount <OME-2015-01/SPW_xsd.html#PlateAcquisition_MaximumFieldCount>`
-  * :schema:`PlateAcquisition : WellSampleRef <OME-2015-01/SPW_xsd.html#WellSampleRef_ID>`
-  * :schema:`ROI : ID <OME-2015-01/ROI_xsd.html#ROI_ID>`
-  * :schema:`Well : Column <OME-2015-01/SPW_xsd.html#Well_Column>`
-  * :schema:`Well : ID <OME-2015-01/SPW_xsd.html#Well_ID>`
-  * :schema:`Well : Row <OME-2015-01/SPW_xsd.html#Well_Row>`
-  * :schema:`WellSample : ID <OME-2015-01/SPW_xsd.html#WellSample_ID>`
-  * :schema:`WellSample : ImageRef <OME-2015-01/ome_xsd.html#ImageRef_ID>`
-  * :schema:`WellSample : Index <OME-2015-01/SPW_xsd.html#WellSample_Index>`
+  * :schema:`Channel : Color <OME-2016-06/ome_xsd.html#Channel_Color>`
+  * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : Name <OME-2016-06/ome_xsd.html#Channel_Name>`
+  * :schema:`Channel : SamplesPerPixel <OME-2016-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Ellipse : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Ellipse : RadiusX <OME-2016-06/ome_xsd.html#Ellipse_RadiusX>`
+  * :schema:`Ellipse : RadiusY <OME-2016-06/ome_xsd.html#Ellipse_RadiusY>`
+  * :schema:`Ellipse : Text <OME-2016-06/ome_xsd.html#Shape_Text>`
+  * :schema:`Ellipse : TheT <OME-2016-06/ome_xsd.html#Shape_TheT>`
+  * :schema:`Ellipse : TheZ <OME-2016-06/ome_xsd.html#Shape_TheZ>`
+  * :schema:`Ellipse : X <OME-2016-06/ome_xsd.html#Ellipse_X>`
+  * :schema:`Ellipse : Y <OME-2016-06/ome_xsd.html#Ellipse_Y>`
+  * :schema:`Experiment : Description <OME-2016-06/ome_xsd.html#Experiment_Description>`
+  * :schema:`Experiment : ID <OME-2016-06/ome_xsd.html#Experiment_ID>`
+  * :schema:`Experiment : Type <OME-2016-06/ome_xsd.html#Experiment_Type>`
+  * :schema:`Image : AcquisitionDate <OME-2016-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : ExperimentRef <OME-2016-06/ome_xsd.html#ExperimentRef_ID>`
+  * :schema:`Image : ID <OME-2016-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2016-06/ome_xsd.html#InstrumentRef_ID>`
+  * :schema:`Image : Name <OME-2016-06/ome_xsd.html#Image_Name>`
+  * :schema:`Image : ROIRef <OME-2016-06/ome_xsd.html#ROIRef_ID>`
+  * :schema:`Instrument : ID <OME-2016-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Mask : BinData <OME-2016-06/ome_xsd.html#BinData>`
+  * :schema:`Mask : FillColor <OME-2016-06/ome_xsd.html#Shape_FillColor>`
+  * :schema:`Mask : Height <OME-2016-06/ome_xsd.html#Mask_Height>`
+  * :schema:`Mask : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Mask : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+  * :schema:`Mask : Width <OME-2016-06/ome_xsd.html#Mask_Width>`
+  * :schema:`Mask : X <OME-2016-06/ome_xsd.html#Mask_X>`
+  * :schema:`Mask : Y <OME-2016-06/ome_xsd.html#Mask_Y>`
+  * :schema:`Objective : ID <OME-2016-06/ome_xsd.html#Objective_ID>`
+  * :schema:`Objective : Model <OME-2016-06/ome_xsd.html#ManufacturerSpec_Model>`
+  * :schema:`Objective : NominalMagnification <OME-2016-06/ome_xsd.html#Objective_NominalMagnification>`
+  * :schema:`Pixels : BigEndian <OME-2016-06/ome_xsd.html#Pixels_BigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2016-06/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2016-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2016-06/ome_xsd.html#Pixels_Interleaved>`
+  * :schema:`Pixels : PhysicalSizeX <OME-2016-06/ome_xsd.html#Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY <OME-2016-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SignificantBits <OME-2016-06/ome_xsd.html#Pixels_SignificantBits>`
+  * :schema:`Pixels : SizeC <OME-2016-06/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2016-06/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2016-06/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2016-06/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2016-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : Type <OME-2016-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : ExposureTime <OME-2016-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Plate : ColumnNamingConvention <OME-2016-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+  * :schema:`Plate : ExternalIdentifier <OME-2016-06/ome_xsd.html#Plate_ExternalIdentifier>`
+  * :schema:`Plate : ID <OME-2016-06/ome_xsd.html#Plate_ID>`
+  * :schema:`Plate : Name <OME-2016-06/ome_xsd.html#Plate_Name>`
+  * :schema:`Plate : RowNamingConvention <OME-2016-06/ome_xsd.html#Plate_RowNamingConvention>`
+  * :schema:`PlateAcquisition : ID <OME-2016-06/ome_xsd.html#PlateAcquisition_ID>`
+  * :schema:`PlateAcquisition : MaximumFieldCount <OME-2016-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2016-06/ome_xsd.html#WellSampleRef_ID>`
+  * :schema:`ROI : ID <OME-2016-06/ome_xsd.html#ROI_ID>`
+  * :schema:`Well : Column <OME-2016-06/ome_xsd.html#Well_Column>`
+  * :schema:`Well : ID <OME-2016-06/ome_xsd.html#Well_ID>`
+  * :schema:`Well : Row <OME-2016-06/ome_xsd.html#Well_Row>`
+  * :schema:`WellSample : ID <OME-2016-06/ome_xsd.html#WellSample_ID>`
+  * :schema:`WellSample : ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
+  * :schema:`WellSample : Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
 
-**Total supported: 64**
+**Total supported: 65**
 
 **Total unknown or missing: 411**
