@@ -565,7 +565,6 @@ public class MicromanagerReader extends FormatReader {
     // using key alone will result in conflicts with metadata.txt values
     for (int i=plane; i<plane+nPlanes; i++) {
       addSeriesMeta(String.format("Plane #%0" + digits + "d %s", i, key), value);
-      if (i >= p.positions.length) continue;
       if (key.equals("XPositionUm")) {
         try {
           p.positions[i][0] = new Double(value);
@@ -718,6 +717,13 @@ public class MicromanagerReader extends FormatReader {
         }
         else if (key.equals("Slices")) {
           ms.sizeZ = Integer.parseInt(value);
+        }
+        else if (key.equals("SlicesFirst")) {
+          if (value.equals("false")) {
+            ms.dimensionOrder = "XYCZT";
+          } else {
+            ms.dimensionOrder = "XYZCT";
+          }
         }
         else if (key.equals("PixelSize_um")) {
           p.pixelSize = new Double(value);
@@ -910,7 +916,7 @@ public class MicromanagerReader extends FormatReader {
     if (getSizeZ() == 0) ms.sizeZ = 1;
     if (getSizeT() == 0) ms.sizeT = 1;
 
-    ms.dimensionOrder = "XYZCT";
+    if (ms.dimensionOrder == null) ms.dimensionOrder = "XYZCT";
     ms.interleaved = false;
     ms.rgb = false;
     ms.littleEndian = false;
