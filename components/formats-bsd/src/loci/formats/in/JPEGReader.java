@@ -56,6 +56,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.xml.model.primitives.Timestamp;
 
 import com.drew.metadata.exif.ExifSubIFDDirectory;
@@ -211,23 +212,35 @@ public class JPEGReader extends DelegateReader {
         }
 
         HashMap<String, String> tags = exif.getTags();
+        String unitsTag = tags.get(ExifSubIFDDirectory.TAG_RESOLUTION_UNIT);
+        Unit<Length> units = UNITS.MICROMETER;
+        if (unitsTag != null) {
+            if (Integer.parseInt(unitsTag) == 2) { 
+              units = UNITS.INCH;
+            }
+            else if (Integer.parseInt(unitsTag) == 3) { 
+              units = UNITS.CENTIMETER;
+          }
+        }
         for (String tagName : tags.keySet()) {  
           if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_X_RESOLUTION))) {
             try {
-              Length sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)));
+              double resolutionX = Double.parseDouble(tags.get(tagName));
+              Length sizeX = FormatTools.getPhysicalSizeX((1/resolutionX),units);
               store.setPixelsPhysicalSizeX(sizeX, 0);
             }
             catch(NumberFormatException e) {
-              LOGGER.warn("EXIF Tag - Focal Plane Resolution X not in correct format, expected double, found : " + tags.get(tagName));
+              LOGGER.warn("EXIF Tag - Resolution X not in correct format, expected double, found : " + tags.get(tagName));
             }
           }
           else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_Y_RESOLUTION))) {
             try {
-              Length sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)));
+              double resolutionY = Double.parseDouble(tags.get(tagName));
+              Length sizeY = FormatTools.getPhysicalSizeX((1/resolutionY),units);
               store.setPixelsPhysicalSizeX(sizeY, 0);
             }
             catch(NumberFormatException e) {
-              LOGGER.warn("EXIF Tag - Focal Plane Resolution Y not in correct format, expected double, found : " + tags.get(tagName));
+              LOGGER.warn("EXIF Tag - Resolution Y not in correct format, expected double, found : " + tags.get(tagName));
             }
           }
           else {
