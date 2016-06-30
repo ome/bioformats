@@ -63,6 +63,9 @@ public class ClassList<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClassList.class);
 
+  /* A string array containing a list*/
+  private static final String[] KEYS = {};
+
   // -- Fields --
 
   /** Base class to which all classes are assignable. */
@@ -296,8 +299,16 @@ public class ClassList<T> {
     return options;
   }
 
+  /** Returns whether a given key is a whitelisted option.*/
+  public boolean isWhitelistedKey(String key) {
+    return false;
+  }
+
   /** Add a key/value pair to the list of options.*/
   public void addOption(String key, String value) {
+    if (!isWhitelistedKey(key)) {
+      LOGGER.debug("{} is not a whitelisted key", key);
+    }
     options.put(key, value);
   }
 
