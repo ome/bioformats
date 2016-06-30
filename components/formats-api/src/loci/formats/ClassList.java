@@ -184,7 +184,7 @@ public class ClassList<T> {
         classes.add(c);
         for (Map.Entry<String, String> entry : o.entrySet())
         {
-          options.put(line + "." + entry.getKey(), entry.getValue());
+          addOption(line + "." + entry.getKey(), entry.getValue());
         }
       }
   }
@@ -287,6 +287,11 @@ public class ClassList<T> {
   /** Gets the list of options as a map. */
   public Map<String, String> getOptions() {
     return options;
+  }
+
+  /** Add a key/value pair to the list of options.*/
+  public void addOption(String key, String value) {
+    options.put(key, value);
   }
 
   // -- Helper methods --

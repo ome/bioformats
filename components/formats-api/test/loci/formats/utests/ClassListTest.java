@@ -40,7 +40,10 @@ import java.io.IOException;
 import java.lang.Iterable;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.HashMap;
 
 import loci.formats.ClassList;
 
@@ -220,5 +223,34 @@ public class ClassListTest {
     assertEquals(c.getClasses()[0], output);
     assertEquals(c.getOptions().size(), 1);
     assertEquals(c.getOptions().get("java.util.ArrayList.a"), "b");
+  }
+
+  @Test
+  public void testSetOption() throws IOException  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    assertEquals(Collections.emptySet(), c.getOptions().keySet());
+    c.addOption("a", "b");
+    assertEquals(c.getOptions().keySet(), Collections.singleton("a"));
+    assertEquals(c.getOptions().get("a"), "b");
+  }
+
+  @DataProvider(name = "option string")
+  public Object[][] createOptionStrings() {
+    return new Object[][] {
+      {"a=b", new HashMap<String, String>() {{
+        put("a","b");}}
+      },
+      {"a=b,c=d", new HashMap<String, String>() {{
+        put("a","b");
+        put("c","d");}}
+      },
+    };
+  }
+
+
+  @Test(dataProvider = "option string")
+  public void testParseOptions(String options, HashMap map) throws IOException  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    assertEquals(map, c.parseOptions(options));
   }
 }
