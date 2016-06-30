@@ -123,9 +123,16 @@ public class ClassList<T> {
   public Map<String, String> parseOptions(String s)
    {
       Map<String, String> map = new HashMap<String, String>();
-      StringTokenizer st = new StringTokenizer(s, ",=");
-      while (st.hasMoreTokens()) {
-        map.put(st.nextToken(), st.nextToken());
+      StringTokenizer st1 = new StringTokenizer(s, ",");
+      StringTokenizer st2;
+      while (st1.hasMoreTokens()) {
+        st2 = new StringTokenizer(st1.nextToken(), "=");
+        if (st2.hasMoreTokens()) {
+          String key = st2.nextToken();
+          if (st2.hasMoreTokens()) {
+            map.put(key, st2.nextToken());
+          }
+        }
       }
       return map;
    }

@@ -237,6 +237,14 @@ public class ClassListTest {
   @DataProvider(name = "option string")
   public Object[][] createOptionStrings() {
     return new Object[][] {
+      // Invalid key-value pairs
+      {"a", new HashMap<String, String>()},
+      {"a,b", new HashMap<String, String>()},
+      {"=", new HashMap<String, String>()},
+      {"", new HashMap<String, String>()},
+      {"a=", new HashMap<String, String>()},
+      {"=b", new HashMap<String, String>()},
+      // Valid key-value pairs
       {"a=b", new HashMap<String, String>() {{
         put("a","b");}}
       },
@@ -244,12 +252,22 @@ public class ClassListTest {
         put("a","b");
         put("c","d");}}
       },
+      {"a=b,a=b", new HashMap<String, String>() {{
+        put("a","b");}}
+      },
+      {"a=b,c", new HashMap<String, String>() {{
+        put("a","b");}}
+      },
+      {"a=b,=,c=d", new HashMap<String, String>() {{
+        put("a","b");
+        put("c","d");}}
+      },
     };
   }
 
-
   @Test(dataProvider = "option string")
-  public void testParseOptions(String options, HashMap map) throws IOException  {
+  public void testParseOptions(String options, HashMap map) throws IOException
+  {
     c = new ClassList<Iterable>(null, Iterable.class);
     assertEquals(map, c.parseOptions(options));
   }
