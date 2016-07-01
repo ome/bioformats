@@ -212,7 +212,8 @@ public class JPEGReader extends DelegateReader {
         }
 
         HashMap<String, String> tags = exif.getTags();
-        String unitsTag = tags.get(ExifSubIFDDirectory.TAG_RESOLUTION_UNIT);
+        String unitsTagName = exif.getTagName(ExifSubIFDDirectory.TAG_RESOLUTION_UNIT);
+        String unitsTag = tags.get(unitsTagName);
         Unit<Length> units = UNITS.MICROMETER;
         if (unitsTag != null) {
             if (Integer.parseInt(unitsTag) == 2) { 
@@ -236,8 +237,8 @@ public class JPEGReader extends DelegateReader {
           else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_Y_RESOLUTION))) {
             try {
               double resolutionY = Double.parseDouble(tags.get(tagName));
-              Length sizeY = FormatTools.getPhysicalSizeX((1/resolutionY),units);
-              store.setPixelsPhysicalSizeX(sizeY, 0);
+              Length sizeY = FormatTools.getPhysicalSizeY((1/resolutionY),units);
+              store.setPixelsPhysicalSizeY(sizeY, 0);
             }
             catch(NumberFormatException e) {
               LOGGER.warn("EXIF Tag - Resolution Y not in correct format, expected double, found : " + tags.get(tagName));
