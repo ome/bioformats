@@ -87,7 +87,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
    */
   @Override
   public void setValidate(boolean validateMetadata) {
-    this.validate = validate;
+    this.validate = validateMetadata;
   }
 
 }
