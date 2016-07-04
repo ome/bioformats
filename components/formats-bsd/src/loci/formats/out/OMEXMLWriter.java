@@ -127,6 +127,15 @@ public class OMEXMLWriter extends FormatWriter {
     if (out != null) {
       out.writeBytes(xmlFragments.get(xmlFragments.size() - 1));
     }
+    if (getMetadataOptions().isValidate()) {
+      try {
+        MetadataRetrieve r = getMetadataRetrieve();
+        String omexml = service.getOMEXML(r);
+        service.validateOMEXML(omexml);
+      } catch (ServiceException | NullPointerException e) {
+        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+      }
+    }
     super.close();
     xmlFragments = null;
     service = null;

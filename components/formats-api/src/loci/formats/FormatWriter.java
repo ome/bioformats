@@ -326,16 +326,6 @@ public abstract class FormatWriter extends FormatHandler
     for (int i=0; i<r.getImageCount(); i++) {
       initialized[i] = new boolean[getPlaneCount(i)];
     }
-    
-    if (getMetadataOptions().isValidate()) {
-      try {
-        OMEXMLService service = setupService();
-        String omexml = service.getOMEXML(r);
-        service.validateOMEXML(omexml);
-      } catch (ServiceException | NullPointerException e) {
-        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
-      }
-    }
   }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */
