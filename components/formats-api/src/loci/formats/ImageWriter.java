@@ -72,9 +72,6 @@ public class ImageWriter implements IFormatWriter {
 
   /** Default list of writer classes, for use with noargs constructor. */
   private static ClassList<IFormatWriter> defaultClasses;
-  
-  private ServiceFactory factory;
-  private OMEXMLService service;
 
   // -- Static utility methods --
 
@@ -469,7 +466,7 @@ public class ImageWriter implements IFormatWriter {
     writer.setId(id);
     if (getMetadataOptions().isValidate()) {
       try {
-        setupService();
+        OMEXMLService service = setupService();
         String omexml = service.getOMEXML(writer.getMetadataRetrieve());
         service.validateOMEXML(omexml);
       } catch (ServiceException | NullPointerException e) {
@@ -485,16 +482,16 @@ public class ImageWriter implements IFormatWriter {
   }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private void setupService() {
+  private OMEXMLService setupService() {
+    OMEXMLService service = null;
     try {
-      if (factory == null) factory = new ServiceFactory();
-      if (service == null) {
-        service = factory.getInstance(OMEXMLService.class);
-      }
+      ServiceFactory factory = new ServiceFactory();;
+      service = factory.getInstance(OMEXMLService.class);
     }
     catch (DependencyException e) {
       LOGGER.warn("OMEXMLService not available.", e);
     }
+    return service;
   }
 
 }

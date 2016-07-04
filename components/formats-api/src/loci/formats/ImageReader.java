@@ -72,9 +72,6 @@ public class ImageReader implements IFormatReader {
     LoggerFactory.getLogger(ImageReader.class);
 
   // -- Static fields --
-  
-  private ServiceFactory factory;
-  private OMEXMLService service;
 
   /** Default list of reader classes, for use with noargs constructor. */
   private static ClassList<IFormatReader> defaultClasses;
@@ -845,7 +842,7 @@ public class ImageReader implements IFormatReader {
     currentReader.setId(id);
     if (getMetadataOptions().isValidate()) {
       try {
-        setupService();
+        OMEXMLService service = setupService();
         String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
         service.validateOMEXML(omexml);
       } catch (ServiceException | NullPointerException e) {
@@ -865,16 +862,16 @@ public class ImageReader implements IFormatReader {
   public void close() throws IOException { close(false); }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private void setupService() {
+  private OMEXMLService setupService() {
+    OMEXMLService service = null;
     try {
-      if (factory == null) factory = new ServiceFactory();
-      if (service == null) {
-        service = factory.getInstance(OMEXMLService.class);
-      }
+      ServiceFactory factory = new ServiceFactory();;
+      service = factory.getInstance(OMEXMLService.class);
     }
     catch (DependencyException e) {
       LOGGER.warn("OMEXMLService not available.", e);
     }
+    return service;
   }
 
 }

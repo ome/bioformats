@@ -95,9 +95,6 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether or not we are writing planes sequentially. */
   protected boolean sequential;
 
-  private ServiceFactory factory;
-  private OMEXMLService service;
-
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
    * directly as the semantics of {@link #getMetadataRetrieve()}
@@ -332,7 +329,7 @@ public abstract class FormatWriter extends FormatHandler
     
     if (getMetadataOptions().isValidate()) {
       try {
-        setupService();
+        OMEXMLService service = setupService();
         String omexml = service.getOMEXML(r);
         service.validateOMEXML(omexml);
       } catch (ServiceException | NullPointerException e) {
@@ -342,16 +339,16 @@ public abstract class FormatWriter extends FormatHandler
   }
   
   /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private void setupService() {
+  private OMEXMLService setupService() {
+    OMEXMLService service = null;
     try {
-      if (factory == null) factory = new ServiceFactory();
-      if (service == null) {
-        service = factory.getInstance(OMEXMLService.class);
-      }
+      ServiceFactory factory = new ServiceFactory();;
+      service = factory.getInstance(OMEXMLService.class);
     }
     catch (DependencyException e) {
       LOGGER.warn("OMEXMLService not available.", e);
     }
+    return service;
   }
 
   /* @see IFormatHandler#close() */
