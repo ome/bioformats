@@ -840,15 +840,6 @@ public class ImageReader implements IFormatReader {
     LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
     currentReader.setId(id);
-    if (getMetadataOptions().isValidate()) {
-      try {
-        OMEXMLService service = setupService();
-        String omexml = service.getOMEXML((MetadataRetrieve)currentReader.getMetadataStore());
-        service.validateOMEXML(omexml);
-      } catch (ServiceException | NullPointerException e) {
-        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
-      }
-    }
   }
 
   /* @see IFormatReader#reopenFile() */

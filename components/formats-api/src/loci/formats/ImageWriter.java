@@ -464,15 +464,6 @@ public class ImageWriter implements IFormatWriter {
   public void setId(String id) throws FormatException, IOException {
     IFormatWriter writer = getWriter(id);
     writer.setId(id);
-    if (getMetadataOptions().isValidate()) {
-      try {
-        OMEXMLService service = setupService();
-        String omexml = service.getOMEXML(writer.getMetadataRetrieve());
-        service.validateOMEXML(omexml);
-      } catch (ServiceException | NullPointerException e) {
-        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
-      }
-    }
   }
 
   /* @see IFormatHandler#close() */
