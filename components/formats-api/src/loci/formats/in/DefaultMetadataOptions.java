@@ -39,6 +39,8 @@ package loci.formats.in;
 public class DefaultMetadataOptions implements MetadataOptions {
 
   private MetadataLevel level;
+  
+  private MetadataGroupFilesOptions groupFilesOptions;
 
   /**
    * Construct a new DefaultMetadataOptions.
@@ -70,6 +72,22 @@ public class DefaultMetadataOptions implements MetadataOptions {
   @Override
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.in.MetadataOptions#getMetadataGroupFilesOptions()
+   */
+  @Override
+  public MetadataGroupFilesOptions getMetadataGroupFilesOptions() {
+    return groupFilesOptions;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.MetadataOptions#setMetadataGroupFilesOptions(loci.formats.in.MetadataGroupFilesOptions)
+   */
+  @Override
+  public void setMetadataGroupFilesOptions(MetadataGroupFilesOptions options) {
+    this.groupFilesOptions = options;
   }
 
 }

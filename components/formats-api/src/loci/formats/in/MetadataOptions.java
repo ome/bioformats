@@ -45,5 +45,13 @@ public interface MetadataOptions {
    * @return the MetadataLevel associated with this MetadataOptions
    */
   MetadataLevel getMetadataLevel();
+  
+  /** Set the MetadataGroupFilesOptions associated with this MetadataOptions. */
+  void setMetadataGroupFilesOptions(MetadataGroupFilesOptions options);
+  
+  /**
+   * @return the MetadataGroupFilesOptions associated with this MetadataOptions
+   */
+  MetadataGroupFilesOptions getMetadataGroupFilesOptions();
 
 }
