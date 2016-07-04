@@ -64,7 +64,7 @@ public class ClassList<T> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClassList.class);
 
   /* A string array containing a list*/
-  private static final String[] KEYS = {};
+  private static final String[] KEYS = {"type"};
 
   // -- Fields --
 
@@ -302,7 +302,11 @@ public class ClassList<T> {
   }
 
   /** Returns whether a given key is a whitelisted option.*/
-  public boolean isWhitelistedKey(String key) {
+  public boolean isWhitelistedKey(String s) {
+    String key = s.substring(s.lastIndexOf(".") + 1);
+    for (String k: KEYS) {
+      if (key.equals(k)) return true;
+    }
     return false;
   }
 
