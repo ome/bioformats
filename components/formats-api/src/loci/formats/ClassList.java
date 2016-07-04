@@ -34,10 +34,16 @@ package loci.formats;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import loci.common.Constants;
 
@@ -45,8 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ClassList is a list of classes for use with ImageReader or ImageWriter,
- * parsed from a configuration file such as readers.txt or writers.txt.
+ * ClassList is a list of classes for use with {@link ImageReader} or
+ * {@link ImageWriter}, parsed from a configuration file such as readers.txt
+ * or writers.txt.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -56,6 +63,9 @@ public class ClassList<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClassList.class);
 
+  /* A string array containing a list*/
+  private static final String[] KEYS = {};
+
   // -- Fields --
 
   /** Base class to which all classes are assignable. */
@@ -63,6 +73,9 @@ public class ClassList<T> {
 
   /** List of classes. */
   private List<Class<? extends T>> classes;
+
+  /** List of options. */
+  private Map<String, String> options;
 
   // -- Constructor --
 
@@ -73,6 +86,7 @@ public class ClassList<T> {
   public ClassList(Class<T> base) {
     this.base = base;
     classes = new ArrayList<Class<? extends T>>();
+    options = new HashMap<String, String>();
   }
 
   /**
@@ -90,36 +104,68 @@ public class ClassList<T> {
    * @param file Configuration file containing the list of classes.
    * @param base Base class to which all classes are assignable.
    * @param location Class indicating which package to search for the file.
-   *  If null, 'file' is interpreted as an absolute path name.
+   *        If {@code null}, 'file' is interpreted as an absolute path name.
    * @throws IOException if the file cannot be read.
    */
   public ClassList(String file, Class<T> base, Class<?> location)
     throws IOException
   {
-    this.base = base;
-    classes = new ArrayList<Class<? extends T>>();
+    this(base);
     if (file == null) return;
+    parseFile(file, location);
+  }
 
-    // read classes from file
-    BufferedReader in = null;
-    if (location == null) {
-      in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(file), Constants.ENCODING));
-    }
-    else {
-      in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file), Constants.ENCODING));
-    }
-    while (true) {
-      String line = null;
-      line = in.readLine();
-      if (line == null) break;
+  // -- ClassList API methods --
 
-      // ignore characters following # sign (comments)
+  /**
+   * Parses one or more options from a string.
+   * @param s  A string containing a series of options formatted as
+   *           <i>key1=value1,key2=value2</i>.
+   * @return a map populated with the parsed key/value pairs
+   */
+  public Map<String, String> parseOptions(String s)
+   {
+      Map<String, String> map = new HashMap<String, String>();
+      StringTokenizer st1 = new StringTokenizer(s, ",");
+      StringTokenizer st2;
+      while (st1.hasMoreTokens()) {
+        st2 = new StringTokenizer(st1.nextToken(), "=");
+        if (st2.hasMoreTokens()) {
+          String key = st2.nextToken();
+          if (st2.hasMoreTokens()) {
+            map.put(key, st2.nextToken());
+          }
+        }
+      }
+      return map;
+   }
+
+  /**
+   * Parses a class from a string including options and comments.
+   *
+   * This function assumes the string is formatted as
+   * <i>package.class[key1=value1,key2=value2] # comments</i>. Options will be
+   * parsed and stored in a local map. If the class can be loaded, then each
+   * key/value pair will be stored in the options as package.class.key/value.
+   *
+   * @param line A string containing the class, options and comments
+   */
+  public void parseLine(String line)
+   {
+      // Ignore characters following # sign (comments)
       int ndx = line.indexOf("#");
       if (ndx >= 0) line = line.substring(0, ndx);
       line = line.trim();
-      if (line.equals("")) continue;
+      if (line.equals("")) return;
+
+      Map<String, String> o = new HashMap<String, String>();
+      if (line.endsWith("]")) {
+        ndx = line.indexOf("[");
+        if (ndx >= 0) {
+          o = parseOptions(line.substring(ndx + 1, line.length() - 1));
+          line = line.substring(0, ndx).trim();
+        }
+      }
 
       // load class
       Class<? extends T> c = null;
@@ -144,14 +190,58 @@ public class ClassList<T> {
       }
       if (c == null) {
         LOGGER.error("\"{}\" is not valid.", line);
-        continue;
+      } else {
+        classes.add(c);
+        for (Map.Entry<String, String> entry : o.entrySet())
+        {
+          addOption(line + "." + entry.getKey(), entry.getValue());
+        }
       }
-      classes.add(c);
+  }
+
+   /**
+    * Parses a list of classes from a configuration file.
+    * @param file Configuration file containing the list of classes.
+    * @param location Class indicating which package to search for the file.
+    *        If {@code null}, 'file' is interpreted as an absolute path name.
+    * @throws IOException if the file cannot be read.
+    */
+  public void parseFile(String file, Class<?> location)
+    throws IOException
+  {
+    // locate an input stream
+    InputStream stream = null;
+    if (location == null) {
+      try {
+        stream = new FileInputStream(file);
+      } catch (FileNotFoundException e) {
+        LOGGER.debug(e.getMessage());
+      }
+    } else stream = location.getResourceAsStream(file);
+    if (stream == null) {
+      LOGGER.warn("Could not find " + file);
+      return;
+    }
+
+    // Read classes from file
+    BufferedReader in = null;
+    in = new BufferedReader(new InputStreamReader(stream, Constants.ENCODING));
+    while (true) {
+      String line = null;
+      line = in.readLine();
+      if (line == null) break;
+      parseLine(line);
     }
     in.close();
   }
 
-  // -- ClassList API methods --
+  /**
+   * Adds the given class, which must be assignable
+   * to the base class, to the list.
+   */
+  public void addClass(int index, Class<? extends T> c) {
+    classes.add(index, c);
+  }
 
   /**
    * Adds the given class, which must be assignable
@@ -166,10 +256,60 @@ public class ClassList<T> {
     classes.remove(c);
   }
 
+  /**
+   * Appends a class list which must be assignable to the base class
+   */
+  public void append(ClassList<T> c) {
+    append(Arrays.asList(c.getClasses()));
+  }
+
+  /**
+   * Appends a list of classes which must be assignable to the base class
+   */
+  public void append(List<Class<? extends T>> l) {
+    for (int i = 0; i < l.size(); i++) {
+      addClass(l.get(i));
+    }
+  }
+
+  /**
+   * Prepends a class list which must be assignable to the base class
+   */
+  public void prepend(ClassList<T> c) {
+    prepend(Arrays.asList(c.getClasses()));
+  }
+
+  /**
+   * Prepends a list of classes which must be assignable to the base class
+   */
+  public void prepend(List<Class<? extends T>> l) {
+    for (int i = l.size() -1; i >= 0; i--) {
+      addClass(0, l.get(i));
+    }
+  }
+
   /** Gets the list of classes as an array. */
   @SuppressWarnings("unchecked")
   public Class<? extends T>[] getClasses() {
     return classes.toArray(new Class[0]);
+  }
+
+  /** Gets the list of options as a map. */
+  public Map<String, String> getOptions() {
+    return options;
+  }
+
+  /** Returns whether a given key is a whitelisted option.*/
+  public boolean isWhitelistedKey(String key) {
+    return false;
+  }
+
+  /** Add a key/value pair to the list of options.*/
+  public void addOption(String key, String value) {
+    if (!isWhitelistedKey(key)) {
+      LOGGER.debug("{} is not a whitelisted key", key);
+    }
+    options.put(key, value);
   }
 
   // -- Helper methods --
