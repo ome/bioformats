@@ -170,7 +170,7 @@ public final class MetadataTools {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
-              if (omeMeta.getTiffDataCount(i) == 0) {
+              if (omeMeta.getTiffDataCount(i) == 0 && omeMeta.getPixelsBinDataCount(i) == 0) {
                 service.addMetadataOnly(omeMeta, i, i == 0);
               }
             }
