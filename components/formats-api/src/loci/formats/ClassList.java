@@ -189,7 +189,9 @@ public class ClassList<T> {
         LOGGER.debug("", exc);
       }
       if (c == null) {
-        LOGGER.error("\"{}\" is not valid.", line);
+        if (o == null || !o.get("type").equals("external")) {
+          LOGGER.error("\"{}\" is not valid.", line);
+        }
       } else {
         classes.add(c);
         for (Map.Entry<String, String> entry : o.entrySet())
