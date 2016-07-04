@@ -48,7 +48,6 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
-import loci.formats.in.SlideBook6Reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -332,7 +331,7 @@ public class TestTools {
       }
     });
 
-    ImageReader typeTester = TestTools.getTestImageReader();
+    ImageReader typeTester = new ImageReader();
 
     for (int i=0; i<subsList.size(); i++) {
       Location file = new Location(subsList.get(i));
@@ -482,17 +481,6 @@ public class TestTools {
     return false;
   }
 
-  /**
-   * Return an ImageReader that is appropriate for testing.
-   * All constructed reader wrappers should use this ImageReader,
-   * as it removes any readers that aren't to be tested.
-   */
-  public static ImageReader getTestImageReader() {
-    // Remove external SlideBook6Reader class for testing purposes
-    ImageReader ir = new ImageReader();
-    ir.getDefaultReaderClasses().removeClass(SlideBook6Reader.class);
-    return ir;
-  }
 
   /**
    * Determine whether or not a Throwable was caused by an OutOfMemoryError.
