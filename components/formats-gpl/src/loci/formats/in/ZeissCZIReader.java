@@ -169,7 +169,7 @@ public class ZeissCZIReader extends FormatReader {
   /** Constructs a new Zeiss .czi reader. */
   public ZeissCZIReader() {
     super("Zeiss CZI", "czi");
-    domains = new String[] {FormatTools.LM_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = true;
     suffixNecessary = false;
   }
@@ -674,7 +674,7 @@ public class ZeissCZIReader extends FormatReader {
     // finish populating the core metadata
 
     int seriesCount = positions * acquisitions * angles;
-    boolean isPyramid = true;
+    boolean isPyramid = maxResolution > 0;
     if (!isPyramid) {
       seriesCount *= mosaics;
     }
