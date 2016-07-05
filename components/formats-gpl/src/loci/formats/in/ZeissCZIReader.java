@@ -675,6 +675,7 @@ public class ZeissCZIReader extends FormatReader {
 
     int seriesCount = positions * acquisitions * angles;
     boolean isPyramid = maxResolution > 0;
+    int originalMosaicCount = mosaics;
     if (!isPyramid) {
       seriesCount *= mosaics;
     }
@@ -762,30 +763,32 @@ public class ZeissCZIReader extends FormatReader {
 
     if (isPyramid) {
       for (int s=0; s<core.size();) {
-        // calculate total stitched size
-        int minRow = Integer.MAX_VALUE;
-        int maxRow = Integer.MIN_VALUE;
-        int minCol = Integer.MAX_VALUE;
-        int maxCol = Integer.MIN_VALUE;
-        for (SubBlock plane : planes) {
-          if (plane.coreIndex != s) {
-            continue;
+        if (originalMosaicCount > 1) {
+          // calculate total stitched size if the image was not fused
+          int minRow = Integer.MAX_VALUE;
+          int maxRow = Integer.MIN_VALUE;
+          int minCol = Integer.MAX_VALUE;
+          int maxCol = Integer.MIN_VALUE;
+          for (SubBlock plane : planes) {
+            if (plane.coreIndex != s) {
+              continue;
+            }
+            if (plane.row < minRow) {
+              minRow = plane.row;
+            }
+            if (plane.row > maxRow) {
+              maxRow = plane.row;
+            }
+            if (plane.col < minCol) {
+              minCol = plane.col;
+            }
+            if (plane.col > maxCol) {
+              maxCol = plane.col;
+            }
           }
-          if (plane.row < minRow) {
-            minRow = plane.row;
-          }
-          if (plane.row > maxRow) {
-            maxRow = plane.row;
-          }
-          if (plane.col < minCol) {
-            minCol = plane.col;
-          }
-          if (plane.col > maxCol) {
-            maxCol = plane.col;
-          }
+          core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
+          core.get(s).sizeY = (core.get(s).sizeY + maxRow) - minRow;
         }
-        core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
-        core.get(s).sizeY = (core.get(s).sizeY + maxRow) - minRow;
         for (int r=0; r<core.get(s).resolutionCount; r++) {
           core.get(s + r).sizeX = core.get(s).sizeX / (int) Math.pow(2, r);
           core.get(s + r).sizeY = core.get(s).sizeY / (int) Math.pow(2, r);
