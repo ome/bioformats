@@ -1441,12 +1441,15 @@ public final class FormatTools {
 
 
   /**
-   * Formats the input value for the position into a length of the given unit.
+   * Formats the input value for the stage position into a length of the given
+   * unit.
    *
-   * @param value  the value of the position
-   * @param unit   the unit of the position
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position
    *
-   * @return       the position formatted as a {@link Length}
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} if {@code value} is {@code null} or infinite
+   *               or {@code unit} is {@code null}.
    */
   public static Length getStagePosition(Double value, Unit<Length> unit) {
     if (value == null || value.isInfinite()) {
@@ -1466,10 +1469,14 @@ public final class FormatTools {
    * Formats the input value for the stage position into a length of the given
    * unit.
    *
-   * @param value  the value of the position
-   * @param unit   the unit of the position
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position. If the string cannot be
+   *               converted into a base length unit, the stage position length
+   *               will be constructure using the default reference frame unit.
    *
-   * @return       the physical size formatted as a {@link Length}
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} under the same conditions as
+   *               {@link #getStagePosition(Double, String)}.
    */
   public static Length getStagePosition(Double value, String unit) {
       Unit<Length> baseunit = null;
