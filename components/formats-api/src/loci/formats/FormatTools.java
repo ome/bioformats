@@ -1477,7 +1477,9 @@ public final class FormatTools {
         baseunit = UnitsLengthEnumHandler.getBaseUnit(
           UnitsLength.fromString(unit));
       } catch (EnumerationException e) {
+        LOGGER.warn("Invalid base unit: using default reference frame unit");
         LOGGER.debug(e.getMessage());
+        baseunit = UNITS.REFERENCEFRAME;
       }
       return getStagePosition(value, baseunit);
   }

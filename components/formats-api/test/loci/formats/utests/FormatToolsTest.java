@@ -185,9 +185,10 @@ public class FormatToolsTest {
       {-Constants.EPSILON, "mm", new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
       {Double.POSITIVE_INFINITY, "mm", null},
       // Invalid length string units
-      {1.0, null, null},
-      {1.0, "foo", null},
-      {1.0, "s", null},
+      {1.0, null, new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "foo", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "s", new Length(1.0, UNITS.REFERENCEFRAME)},
     };
   }
 
@@ -209,7 +210,6 @@ public class FormatToolsTest {
   @Test(dataProvider = "stagePositionStringUnit")
   public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
     assertEquals(length, FormatTools.getStagePosition(value, unit));
-    assertEquals(null, FormatTools.getStagePosition(value, ""));
   }
 
 
