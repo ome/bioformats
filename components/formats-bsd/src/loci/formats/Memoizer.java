@@ -821,17 +821,17 @@ public class Memoizer extends ReaderWrapper {
   public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
-      LOGGER.trace("skip load");
+      LOGGER.debug("skip load");
       return null;
     }
 
     if (!memoFile.exists()) {
-      LOGGER.trace("Memo file doesn't exist: {}", memoFile);
+      LOGGER.debug("Memo file doesn't exist: {}", memoFile);
       return null;
     }
 
     if(!memoFile.canRead()) {
-      LOGGER.trace("Can't read memo file: {}", memoFile);
+      LOGGER.debug("Can't read memo file: {}", memoFile);
       return null;
     }
 
@@ -900,15 +900,18 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("Kryo Exception: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (ArrayIndexOutOfBoundsException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("ArrayIndexOutOfBoundsException: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (Throwable t) {
       // Logging at error since this is unexpected.
       LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      LOGGER.debug("Other Exception: " + t.getMessage());
       deleteQuietly(memoFile);
       return null;
     } finally {
