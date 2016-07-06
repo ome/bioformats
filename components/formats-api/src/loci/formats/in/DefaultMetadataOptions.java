@@ -73,7 +73,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.in.MetadataOptions#isValidate()
    */

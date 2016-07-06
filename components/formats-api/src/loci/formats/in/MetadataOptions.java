@@ -51,5 +51,5 @@ public interface MetadataOptions {
 
   /** Returns true if files should be validated when read.*/
   boolean isValidate();
-  
+
 }

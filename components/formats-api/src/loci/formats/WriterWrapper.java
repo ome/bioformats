@@ -172,7 +172,7 @@ public abstract class WriterWrapper implements IFormatWriter {
   public void setMetadataOptions(MetadataOptions options) {
     writer.setMetadataOptions(options);
   }
-  
+
   // -- IFormatWriter API methods --
 
   @Override

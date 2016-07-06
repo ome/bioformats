@@ -1429,7 +1429,7 @@ public abstract class FormatReader extends FormatHandler
       if (store instanceof OMEXMLMetadata) {
         ((OMEXMLMetadata) store).resolveReferences();
         setupService();
-        
+
         if (getMetadataOptions().isValidate()) {
           try {
             String omexml = service.getOMEXML((MetadataRetrieve)store);
@@ -1438,7 +1438,7 @@ public abstract class FormatReader extends FormatHandler
             LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
           }
         }
-        
+
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
 

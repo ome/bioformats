@@ -65,7 +65,7 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Name of current file. */
   protected String currentId;
-  
+
   /** Metadata parsing options. */
   protected MetadataOptions metadataOptions = new DefaultMetadataOptions();
 
@@ -81,7 +81,7 @@ public abstract class FormatHandler implements IFormatHandler {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
-  
+
   // -- IMetadataConfigurable API methods --
 
   /* (non-Javadoc)

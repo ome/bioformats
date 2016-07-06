@@ -110,7 +110,7 @@ public final class ImageConverter {
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = true;
-  
+
   private IFormatReader reader;
   private MinMaxCalculator minMax;
 
