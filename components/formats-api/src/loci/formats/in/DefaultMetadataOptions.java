@@ -47,7 +47,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
    */
   public DefaultMetadataOptions() {
     this.level = MetadataLevel.ALL;
-    this.validate = true;
+    this.validate = false;
   }
 
   /**
