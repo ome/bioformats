@@ -714,7 +714,7 @@ def validateMetadataConverter():
     converterDiff = storeSet.symmetric_difference(set(convertSet))
     for match in retrieveDiff:
         if match in retrieveSet:
-            print(MetadataValidation: "%s is present in MetadataRetrieve but missing from MetadataStore" % match)
+            print("MetadataValidation: %s is present in MetadataRetrieve but missing from MetadataStore" % match)
         else:
             print("MetadataValidation: %s is present in MetadataStore but missing from MetadataRetrieve" % match)
     for match in converterDiff:
