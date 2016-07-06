@@ -45,6 +45,11 @@
 
 using ome::xml::model::enums::UnitsPressure;
 
+#ifdef _MSC_VER
+#pragma push_macro("PASCAL")
+#undef PASCAL
+#endif
+
 namespace
 {
 
@@ -194,3 +199,7 @@ namespace ome
     }
   }
 }
+
+#ifdef _MSC_VER
+#pragma pop_macro("PASCAL")
+#endif
