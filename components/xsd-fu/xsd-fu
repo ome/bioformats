@@ -637,7 +637,8 @@ def metadataMain(model, opts):
                 os.path.join(relpath, "DummyMetadata"),
                 model, opts)
 
-    validateMetadataConverter()
+    if not opts.dryrun:
+        validateMetadataConverter()
 
 def docGenMain(model, opts):
     """
