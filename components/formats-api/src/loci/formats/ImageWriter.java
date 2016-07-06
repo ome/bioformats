@@ -41,15 +41,10 @@ import java.util.List;
 import java.util.Set;
 
 import loci.common.Region;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -470,19 +465,6 @@ public class ImageWriter implements IFormatWriter {
   @Override
   public void close() throws IOException {
     getWriter().close();
-  }
-  
-  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private OMEXMLService setupService() {
-    OMEXMLService service = null;
-    try {
-      ServiceFactory factory = new ServiceFactory();;
-      service = factory.getInstance(OMEXMLService.class);
-    }
-    catch (DependencyException e) {
-      LOGGER.warn("OMEXMLService not available.", e);
-    }
-    return service;
   }
 
 }

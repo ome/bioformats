@@ -41,17 +41,9 @@ import ome.xml.model.primitives.PositiveInteger;
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
 import loci.common.Region;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.codec.CodecOptions;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.meta.MetadataStore;
-import loci.formats.services.OMEXMLService;
 
 /**
  * Abstract superclass of all biological file format writers.
@@ -326,19 +318,6 @@ public abstract class FormatWriter extends FormatHandler
     for (int i=0; i<r.getImageCount(); i++) {
       initialized[i] = new boolean[getPlaneCount(i)];
     }
-  }
-  
-  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private OMEXMLService setupService() {
-    OMEXMLService service = null;
-    try {
-      ServiceFactory factory = new ServiceFactory();;
-      service = factory.getInstance(OMEXMLService.class);
-    }
-    catch (DependencyException e) {
-      LOGGER.warn("OMEXMLService not available.", e);
-    }
-    return service;
   }
 
   /* @see IFormatHandler#close() */

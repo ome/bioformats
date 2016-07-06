@@ -43,16 +43,9 @@ import java.util.Set;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
-import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -851,18 +844,5 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler#close() */
   @Override
   public void close() throws IOException { close(false); }
-  
-  /** Initialize the OMEXMLService needed by {@link #setId(String)} */
-  private OMEXMLService setupService() {
-    OMEXMLService service = null;
-    try {
-      ServiceFactory factory = new ServiceFactory();;
-      service = factory.getInstance(OMEXMLService.class);
-    }
-    catch (DependencyException e) {
-      LOGGER.warn("OMEXMLService not available.", e);
-    }
-    return service;
-  }
 
 }
