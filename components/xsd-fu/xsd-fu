@@ -637,6 +637,8 @@ def metadataMain(model, opts):
                 os.path.join(relpath, "DummyMetadata"),
                 model, opts)
 
+    validateMetadataConverter()
+
 def docGenMain(model, opts):
     """
     Documentation main() that does not parse the command line and spits
@@ -694,6 +696,43 @@ def parentlist(model, name, pre):
                         print("%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name)
                         parentlist(model, prop.type, pre + prop.name + ":")
 
+def validateMetadataConverter():
+    relpath = os.path.join(*opts.lang.omexml_metadata_package.split(opts.lang.package_separator))
+    root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    storeFilename = os.path.join(relpath, "MetadataStore")
+    retrieveFilename = os.path.join(relpath, "MetadataRetrieve")
+    convertFilename = os.path.join(os.path.join(root, opts.lang.getConverterDir()), opts.lang.getConverterName())
+    storeFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(storeFilename, opts.filetype)))
+    retrieveFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(retrieveFilename, opts.filetype)))
+    convertFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(convertFilename, opts.filetype)))
+    regexp = re.compile(r'(?<=[gs]et)[a-zA-Z0-9]*(?=\()')
+    grepper = grep(regexp, lambda line: regexp.search(line) is not None and "Root" not in line and "Datasets" not in line and "Count" not in line)
+    storeSet = set(grepper(storeFile))
+    retrieveSet = set(grepper(retrieveFile))
+    convertSet = set(grepper(convertFile))
+    retrieveDiff = storeSet.symmetric_difference(set(retrieveSet))
+    converterDiff = storeSet.symmetric_difference(set(convertSet))
+    for match in retrieveDiff:
+        if match in retrieveSet:
+            print(MetadataValidation: "%s is present in MetadataRetrieve but missing from MetadataStore" % match)
+        else:
+            print("MetadataValidation: %s is present in MetadataStore but missing from MetadataRetrieve" % match)
+    for match in converterDiff:
+        if match in convertSet:
+            print("MetadataValidation: %s is present in MetadataConverter but missing from MetadataStore" % match)
+        else:
+            print("MetadataValidation: %s is present in MetadataStore but missing from MetadataConverter" % match)
+
+def grep(regexp, *matches):
+    def _do_grep_wrapper(*matches):
+        def _do_grep(lines):
+            for line in lines:
+                for match in matches:
+                    if match(line):
+                        yield re.findall(regexp, line)[0]
+                        break
+        return _do_grep
+    return _do_grep_wrapper(*matches)
 
 class options:
     def __init__(self, args):
