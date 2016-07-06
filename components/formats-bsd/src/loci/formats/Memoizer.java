@@ -821,17 +821,17 @@ public class Memoizer extends ReaderWrapper {
   public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
-      LOGGER.debug("skip load");
+      LOGGER.trace("skip load");
       return null;
     }
 
     if (!memoFile.exists()) {
-      LOGGER.debug("Memo file doesn't exist: {}", memoFile);
+      LOGGER.trace("Memo file doesn't exist: {}", memoFile);
       return null;
     }
 
     if(!memoFile.canRead()) {
-      LOGGER.debug("Can't read memo file: {}", memoFile);
+      LOGGER.trace("Can't read memo file: {}", memoFile);
       return null;
     }
 
