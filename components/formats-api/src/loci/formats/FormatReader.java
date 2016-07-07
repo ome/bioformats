@@ -46,13 +46,16 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -186,9 +189,6 @@ public abstract class FormatReader extends FormatHandler
    * semantics of {@link #getMetadataStore()} prevent "null" access.
    */
   protected MetadataStore metadataStore = new DummyMetadata();
-
-  /** Metadata parsing options. */
-  protected MetadataOptions metadataOptions = new DefaultMetadataOptions();
 
   private ServiceFactory factory;
   private OMEXMLService service;
@@ -582,36 +582,6 @@ public abstract class FormatReader extends FormatHandler
   /** Return a properly configured loci.formats.meta.FilterMetadata. */
   protected MetadataStore makeFilterMetadata() {
     return new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-  }
-
-  // -- IMetadataConfigurable API methods --
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
-   */
-  @Override
-  public Set<MetadataLevel> getSupportedMetadataLevels() {
-    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
-    supportedLevels.add(MetadataLevel.ALL);
-    supportedLevels.add(MetadataLevel.NO_OVERLAYS);
-    supportedLevels.add(MetadataLevel.MINIMUM);
-    return supportedLevels;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
-   */
-  @Override
-  public MetadataOptions getMetadataOptions() {
-    return metadataOptions;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
-   */
-  @Override
-  public void setMetadataOptions(MetadataOptions options) {
-    this.metadataOptions = options;
   }
 
   // -- IFormatReader API methods --
@@ -1459,6 +1429,15 @@ public abstract class FormatReader extends FormatHandler
       if (store instanceof OMEXMLMetadata) {
         ((OMEXMLMetadata) store).resolveReferences();
         setupService();
+
+        if (getMetadataOptions().isValidate()) {
+          try {
+            String omexml = service.getOMEXML((MetadataRetrieve)store);
+            service.validateOMEXML(omexml);
+          } catch (ServiceException | NullPointerException e) {
+            LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+          }
+        }
 
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
