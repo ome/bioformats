@@ -484,6 +484,30 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
+  public int getOptimalTileWidth() {
+    for (SubBlock plane : planes) {
+      if (plane.coreIndex == getCoreIndex()) {
+        int res = (int) Math.pow(2, plane.resolutionIndex);
+        return plane.x / res;
+      }
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
+  public int getOptimalTileHeight() {
+    for (SubBlock plane : planes) {
+      if (plane.coreIndex == getCoreIndex()) {
+        int res = (int) Math.pow(2, plane.resolutionIndex);
+        return plane.y / res;
+      }
+    }
+    return super.getOptimalTileHeight();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
