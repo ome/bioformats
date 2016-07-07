@@ -284,7 +284,7 @@ class Java(Language):
         self.source_suffix = ".java"
         self.header_suffix = None
         self.converter_name = "MetadataConverter"
-        self.converter_dir = "formats-api/src/loci/formats/meta"
+        self.converter_dir = "components/formats-api/src/loci/formats/meta"
 
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"

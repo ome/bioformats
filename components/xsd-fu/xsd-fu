@@ -699,7 +699,7 @@ def parentlist(model, name, pre):
 
 def validateMetadataConverter():
     relpath = os.path.join(*opts.lang.omexml_metadata_package.split(opts.lang.package_separator))
-    root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
     storeFilename = os.path.join(relpath, "MetadataStore")
     retrieveFilename = os.path.join(relpath, "MetadataRetrieve")
     convertFilename = os.path.join(os.path.join(root, opts.lang.getConverterDir()), opts.lang.getConverterName())
