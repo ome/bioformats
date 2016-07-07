@@ -99,12 +99,7 @@ public class FormatToolsTest {
       {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
       {.1, "microns", new Length(.1, UNITS.MICROMETER)},
       {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
-    };
-  }
-
-  @DataProvider(name = "physicalSizeInvalidStringUnit")
-  public Object[][] createValueInvalidStringLengths() {
-    return new Object[][] {
+      // Invalid length units
       {1.0, null, new Length(1.0, UNITS.MICROMETER)},
       {1.0, "foo", new Length(1.0, UNITS.MICROMETER)},
       {1.0, "s", new Length(1.0, UNITS.MICROMETER)},
@@ -139,17 +134,55 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
   }
 
-  @Test(dataProvider = "physicalSizeInvalidStringUnit")
-  public void testGetPhysicalSizeInvalidStringUnit(Double value, String unit, Length length) {
-    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
-  }
-
   @Test(dataProvider = "physicalSizeUnit")
   public void testGetPhysicalSizeUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+
+  @DataProvider(name = "stagePositionStringUnit")
+  public Object[][] createStagePositionStringUnit() {
+    return new Object[][] {
+      {null, "mm", null},
+      {0.0, "mm", new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, "mm", new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, "mm", new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, "mm", null},
+      // Invalid length string units
+      {1.0, null, new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "foo", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "s", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
+
+  @DataProvider(name = "stagePositionUnit")
+  public Object[][] createStagePositionUnit() {
+    return new Object[][] {
+      {null, UNITS.MILLIMETER, null},
+      {0.0, UNITS.MILLIMETER, new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, UNITS.MILLIMETER, new Length(1.0, UNITS.MILLIMETER)},
+      {.1, UNITS.MILLIMETER, new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, UNITS.MILLIMETER, new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, UNITS.MILLIMETER, new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {-Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {1.0, null, null},
+    };
+  }
+
+  @Test(dataProvider = "stagePositionStringUnit")
+  public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getStagePosition(value, unit));
+  }
+
+
+  @Test(dataProvider = "stagePositionUnit")
+  public void testGetStagePositionUnit(Double value, Unit<Length> unit, Length length) {
+    assertEquals(length, FormatTools.getStagePosition(value, unit));
   }
 }

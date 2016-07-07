@@ -54,6 +54,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
@@ -1437,7 +1438,59 @@ public final class FormatTools {
     }
     return new Time(value, UNITS.SECOND);
   }
-  
+
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} if {@code value} is {@code null} or infinite
+   *               or {@code unit} is {@code null}.
+   */
+  public static Length getStagePosition(Double value, Unit<Length> unit) {
+    if (value == null || value.isInfinite()) {
+      LOGGER.debug("Expected float value for stage position; got {}", value);
+      return null;
+    }
+
+    if (unit == null) {
+      LOGGER.debug("Expected valid unit for stage position; got {}", unit);
+      return null;
+    }
+
+    return new Length(value, unit);
+  }
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position. If the string cannot be
+   *               converted into a base length unit, the stage position length
+   *               will be constructure using the default reference frame unit.
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} under the same conditions as
+   *               {@link #getStagePosition(Double, String)}.
+   */
+  public static Length getStagePosition(Double value, String unit) {
+      Unit<Length> baseunit = null;
+      try {
+        baseunit = UnitsLengthEnumHandler.getBaseUnit(
+          UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        LOGGER.warn("Invalid base unit: using default reference frame unit");
+        LOGGER.debug(e.getMessage());
+        baseunit = UNITS.REFERENCEFRAME;
+      }
+      return getStagePosition(value, baseunit);
+  }
+
   public static Length getPhysicalSize(Double value, String unit) {
     if (value != null && value != 0 && value < Double.POSITIVE_INFINITY) {
       if (unit != null) {
@@ -1554,7 +1607,7 @@ public final class FormatTools {
 
   /**
    * Formats the input value for the physical size in Z into a length in
-   * microns
+   * microns.
    *
    * @param value  the value of the physical size in Z in microns
    *
@@ -1586,7 +1639,6 @@ public final class FormatTools {
    * @param unit   the unit of the physical size in Z
    *
    * @return       the physical size formatted as a {@link Length}
-
    */
   public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
       return getPhysicalSize(value, unit.getSymbol());
