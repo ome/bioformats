@@ -951,6 +951,8 @@ public class ZeissCZIReader extends FormatReader {
       name = imageName;
     }
 
+    store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
     int indexLength = String.valueOf(getSeriesCount()).length();
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), i);
