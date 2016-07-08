@@ -720,9 +720,9 @@ def validateMetadataConverter():
             print("MetadataValidation: %s is present in MetadataStore but missing from MetadataRetrieve" % match)
     for match in converterDiff:
         if match in convertSet:
-            print("MetadataValidation: %s is present in MetadataConverter but missing from MetadataStore" % match)
+            print("MetadataValidation: %s is present in %s but missing from MetadataStore" % (match, opts.lang.getConverterName()))
         else:
-            print("MetadataValidation: %s is present in MetadataStore but missing from MetadataConverter" % match)
+            print("MetadataValidation: %s is present in MetadataStore but missing from %s" % (match, opts.lang.getConverterName()))
 
 def grep(regexp, *matches):
     def _do_grep_wrapper(*matches):
