@@ -103,10 +103,9 @@ Other general improvements include:
 * bioformats_package.jar now includes bio-formats-tools as a dependency so
   ImageConverter, ImageFaker and ImageInfo classes are included in the bundle
 * initial work on
-  `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_ now allows
-  optional/external Readers to be annotated into the Readers class and
-  additional per-Reader options to be specified at the :file:`readers.txt`
-  level or even parsed externally
+  `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_ now allows the
+  :file:`readers.txt` configuration file to be annotated using key/value pairs
+  to mark optional Readers and specify additional per-Reader options
 * the JACE C++ implementation has been decoupled as it does not function with
   Java 1.7 (see `legacy repo <https://github.com/ome/bio-formats-jace>`_)
 * ImageJ fixes
