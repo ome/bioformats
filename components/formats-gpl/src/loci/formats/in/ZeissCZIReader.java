@@ -140,6 +140,10 @@ public class ZeissCZIReader extends FormatReader {
 
   private String zoom;
   private String gain;
+  
+  private String masterFile;
+  private String userSelectedFile;
+  private Boolean wrongMasterFile = false;
 
   private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<String> binnings = new ArrayList<String>();
@@ -467,6 +471,11 @@ public class ZeissCZIReader extends FormatReader {
       phaseLabels = null;
       indexIntoPlanes.clear();
       parser = null;
+      
+      wrongMasterFile = false;
+      masterFile = null;
+      userSelectedFile = null;
+      
     }
   }
 
@@ -481,7 +490,8 @@ public class ZeissCZIReader extends FormatReader {
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
-    if (base.endsWith(")") && isGroupFiles()) {
+
+    if (base.endsWith(")") && isGroupFiles() && !wrongMasterFile) {
       LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
       int end = base.lastIndexOf(" (");
@@ -492,6 +502,8 @@ public class ZeissCZIReader extends FormatReader {
         base = base.substring(0, end) + ".czi";
         if (new Location(base).exists()) {
           LOGGER.info("Initializing master file {}", base);
+          masterFile = base;
+          userSelectedFile = id;
           initFile(base);
           return;
         }
@@ -635,8 +647,15 @@ public class ZeissCZIReader extends FormatReader {
     ms0.sizeT *= phases;
 
     // finish populating the core metadata
-
     int seriesCount = positions * acquisitions * mosaics * angles;
+    //Checkpoint for identifying wrong masterfiles.
+    //Current assumption: Datasets with master files will have seriesCount>1,
+    //This strategy is not the safest way, will need to be reviewed in future.
+    if (seriesCount == 1 && masterFile != null && !wrongMasterFile){
+        wrongMasterFile = true;
+        initFile(userSelectedFile);
+        return;
+    }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
