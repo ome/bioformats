@@ -94,6 +94,9 @@ Java format support improvements include:
        - fixed timestamp indexing when multiple separate channels are present
    - SVS
        - fixed FormatNumberException
+   - Micro-Manager
+       - fixed handling of large datasets saved as image stacks and split
+         over multiple files
 
 Other general improvements include:
 
@@ -120,9 +123,6 @@ Other general improvements include:
    - upgrade check no longer run when passing -version
    - common methods refactoring
    - showinf improvements to preload format
-* Micro-Manager fixes:
-   - improved handling of large datasets saved as image stacks and split over
-     multiple files
 * Added more Java examples to the developer documentation
 * Added many automated tests and improved FakeReader testing framework
 
