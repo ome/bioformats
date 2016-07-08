@@ -1,7 +1,7 @@
-.. index:: Becker & Hickl FIFO
+.. index:: Becker & Hickl SPC FIFO
 .. index:: .spc
 
-Becker & Hickl FIFO
+Becker & Hickl SPC FIFO
 ===============================================================================
 
 Extensions: .spc

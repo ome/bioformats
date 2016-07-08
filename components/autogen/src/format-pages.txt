@@ -284,7 +284,8 @@ utilityRating = Good
 reader = BDReader
 mif = true
 
-[Becker & Hickl FIFO]
+[Becker & Hickl SPC FIFO]
+pagename = becker-hickl-fifo
 extensions = .spc
 owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
 bsd = no
