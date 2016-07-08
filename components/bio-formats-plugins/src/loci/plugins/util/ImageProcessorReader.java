@@ -286,8 +286,8 @@ public class ImageProcessorReader extends ReaderWrapper {
     // regardless of the value of isIndexed.
     //if (!isIndexed()) return null;
 
-    byte[][] byteTable = get8BitLookupTable();
-    if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable());
+    byte[][] byteTable = get8BitLookupTable(getPlane());
+    if (byteTable == null) byteTable = convertTo8Bit(get16BitLookupTable(getPlane()));
     if (byteTable == null || byteTable.length == 0) return null;
 
     // extract red, green and blue elements

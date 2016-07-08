@@ -150,8 +150,6 @@ public class ZeissCZIReader extends FormatReader {
   private Length[] positionsY;
   private Length[] positionsZ;
 
-  private int previousChannel = 0;
-
   private Boolean prestitched = null;
   private String objectiveSettingsID;
   private boolean hasDetectorSettings = false;
@@ -206,11 +204,13 @@ public class ZeissCZIReader extends FormatReader {
     return files;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    int previousChannel = getZCTCoords(no)[1];
+
     if ((getPixelType() != FormatTools.INT8 &&
-      getPixelType() != FormatTools.UINT8) || previousChannel == -1 ||
+      getPixelType() != FormatTools.UINT8) ||
       previousChannel >= channels.size())
     {
       return null;
@@ -243,11 +243,13 @@ public class ZeissCZIReader extends FormatReader {
     else return null;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    int previousChannel = getZCTCoords(no)[1];
+
     if ((getPixelType() != FormatTools.INT16 &&
-      getPixelType() != FormatTools.UINT16) || previousChannel == -1 ||
+      getPixelType() != FormatTools.UINT16) ||
       previousChannel >= channels.size())
     {
       return null;
@@ -293,7 +295,7 @@ public class ZeissCZIReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    previousChannel = getZCTCoords(no)[1];
+    int currentChannel = getZCTCoords(no)[1];
 
     int currentSeries = getSeries();
 
@@ -317,7 +319,7 @@ public class ZeissCZIReader extends FormatReader {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
       for (SubBlock plane : planes) {
         if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
-          (plane.planeIndex == previousChannel && validScanDim))
+          (plane.planeIndex == currentChannel && validScanDim))
         {
           if (plane.row < minTileY) {
             minTileY = plane.row;
@@ -329,7 +331,7 @@ public class ZeissCZIReader extends FormatReader {
       }
       for (SubBlock plane : planes) {
         if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
-          (plane.planeIndex == previousChannel && validScanDim))
+          (plane.planeIndex == currentChannel && validScanDim))
         {
           if ((prestitched != null && prestitched) || validScanDim) {
             int realX = plane.x;
@@ -455,7 +457,6 @@ public class ZeissCZIReader extends FormatReader {
       detectorRefs.clear();
       timestamps.clear();
 
-      previousChannel = 0;
       prestitched = null;
       objectiveSettingsID = null;
       imageName = null;

@@ -848,14 +848,14 @@ public final class ImageConverter {
   private void applyLUT(IFormatWriter writer)
     throws FormatException, IOException
   {
-    byte[][] lut = reader.get8BitLookupTable();
+    byte[][] lut = reader.get8BitLookupTable(reader.getPlane());
     if (lut != null) {
       IndexColorModel model = new IndexColorModel(8, lut[0].length,
         lut[0], lut[1], lut[2]);
       writer.setColorModel(model);
     }
     else {
-      short[][] lut16 = reader.get16BitLookupTable();
+      short[][] lut16 = reader.get16BitLookupTable(reader.getPlane());
       if (lut16 != null) {
         Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
           lut16, reader.isLittleEndian());

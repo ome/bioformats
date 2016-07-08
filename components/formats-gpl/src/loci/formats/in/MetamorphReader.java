@@ -257,6 +257,8 @@ public class MetamorphReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
+    setPlane(plane);
+
     if (stks == null) {
       return super.openBytes(no, buf, x, y, w, h);
     }

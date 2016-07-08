@@ -190,7 +190,6 @@ public class ZeissLSMReader extends FormatReader {
   private int totalROIs = 0;
 
   private int prevPlane = -1;
-  private int prevChannel = 0;
   private byte[] prevBuf = null;
   private Region prevRegion = null;
 
@@ -264,7 +263,6 @@ public class ZeissLSMReader extends FormatReader {
       binning = null;
       totalROIs = 0;
       prevPlane = -1;
-      prevChannel = 0;
       prevBuf = null;
       prevRegion = null;
       xCoordinates = null;
@@ -325,14 +323,20 @@ public class ZeissLSMReader extends FormatReader {
     return new String[] {currentId, getLSMFileFromSeries(getSeries())};
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()]  == null ||
       getPixelType() != FormatTools.UINT8)
     {
       return null;
+    }
+
+    int prevChannel = getZCTCoords(no)[1];
+    IFDList ifds = ifdsList.get(getSeries());
+    if (splitPlanes && getSizeC() > 1 && ifds.size() == getSizeZ() * getSizeT()) {
+      prevChannel = no % getSizeC();
     }
 
     byte[][] b = new byte[3][];
@@ -343,15 +347,22 @@ public class ZeissLSMReader extends FormatReader {
     return b;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()] == null ||
       getPixelType() != FormatTools.UINT16 || channelColor == null)
     {
       return null;
     }
+
+    int prevChannel = getZCTCoords(no)[1];
+    IFDList ifds = ifdsList.get(getSeries());
+    if (splitPlanes && getSizeC() > 1 && ifds.size() == getSizeZ() * getSizeT()) {
+      prevChannel = no % getSizeC();
+    }
+
     short[][] s = new short[3][65536];
     Color color = channelColor[prevChannel];
     for (int j=0; j<s[0].length; j++) {
@@ -409,11 +420,9 @@ public class ZeissLSMReader extends FormatReader {
       }
       ImageTools.splitChannels(
         prevBuf, buf, c, getSizeC(), bpp, false, false, w * h * bpp);
-      prevChannel = c;
     }
     else {
       tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
-      prevChannel = getZCTCoords(no)[1];
     }
     if (getSeriesCount() > 1) in.close();
     return buf;

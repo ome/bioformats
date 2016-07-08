@@ -70,7 +70,6 @@ public class ImarisHDFReader extends FormatReader {
   private List<String> emWave, exWave, channelMin, channelMax;
   private List<String> gain, pinhole, channelName, microscopyMode;
   private List<double[]> colors;
-  private int lastChannel = 0;
 
   // -- Constructor --
 
@@ -103,13 +102,14 @@ public class ImarisHDFReader extends FormatReader {
     return stream.readString(blockLen).indexOf(HDF_MAGIC_STRING) >= 0;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= colors.size()) {
+    int lastChannel = getZCTCoords(no)[1];
+    if (lastChannel >= colors.size()) {
       return null;
     }
 
@@ -125,13 +125,14 @@ public class ImarisHDFReader extends FormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReaderget16BitLookupTable() */
+  /* @see loci.formats.IFormatReaderget16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= colors.size()) {
+    int lastChannel = getZCTCoords(no)[1];
+    if (lastChannel >= colors.size()) {
       return null;
     }
 
@@ -155,8 +156,6 @@ public class ImarisHDFReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    lastChannel = getZCTCoords(no)[1];
 
     // pixel data is stored in XYZ blocks
 
@@ -230,7 +229,6 @@ public class ImarisHDFReader extends FormatReader {
       emWave = exWave = channelMin = channelMax = null;
       gain = pinhole = channelName = microscopyMode = null;
       colors = null;
-      lastChannel = 0;
     }
   }
 

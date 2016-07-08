@@ -65,7 +65,7 @@ public class Read_Image implements PlugIn {
         ImageProcessor ip = r.openProcessors(i)[0];
         stack.addSlice("" + (i + 1), ip);
         int channel = r.getZCTCoords(i)[1];
-        lookupTable[channel] = r.get8BitLookupTable();
+        lookupTable[channel] = r.get8BitLookupTable(r.getPlane());
       }
       IJ.showStatus("Constructing image");
       ImagePlus imp = new ImagePlus(name, stack);

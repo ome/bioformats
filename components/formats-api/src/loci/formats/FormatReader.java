@@ -139,6 +139,9 @@ public abstract class FormatReader extends FormatHandler
   /** The number of the current series (non flat). */
   protected int series = 0;
 
+  /** The number of the current plane. */
+  protected int plane = 0;
+
   /** Core metadata values. */
   protected List<CoreMetadata> core;
 
@@ -234,6 +237,7 @@ public abstract class FormatReader extends FormatHandler
 
     coreIndex = 0;
     series = 0;
+    plane = 0;
     close();
     currentId = id;
     metadata = new Hashtable<String, Object>();
@@ -745,16 +749,28 @@ public abstract class FormatReader extends FormatHandler
     return core.get(getCoreIndex()).falseColor;
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return null;
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return null;
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return null;
+    return get8BitLookupTable(getPlane());
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    return null;
+    return get16BitLookupTable(getPlane());
   }
 
   /* @see IFormatReader#getModuloZ() */
@@ -874,6 +890,8 @@ public abstract class FormatReader extends FormatHandler
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    setPlane(no);
+
     int ch = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     byte[] newBuffer;
@@ -908,6 +926,7 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
+    setPlane(no);
     return FormatTools.openThumbBytes(this, no);
   }
 
@@ -940,12 +959,29 @@ public abstract class FormatReader extends FormatHandler
     coreIndex = seriesToCoreIndex(no);
     series = no;
     resolution = 0;
+    plane = 0;
   }
 
   /* @see IFormatReader#getSeries() */
   @Override
   public int getSeries() {
     return series;
+  }
+
+  /* @see IFormatReader#setPlane(int) */
+  @Override
+  public void setPlane(int no) {
+    if (plane < 0 || plane >= getImageCount()) {
+      throw new IllegalArgumentException("Invalid plane: " + plane);
+    }
+
+    plane = no;
+  }
+
+  /* @see IFormatReader#getPlane() */
+  @Override
+  public int getPlane() {
+    return plane;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -1335,6 +1371,7 @@ public abstract class FormatReader extends FormatHandler
     }
     coreIndex = seriesToCoreIndex(getSeries()) + no;
     resolution = no;
+    plane = 0;
   }
 
   /* @see IFormatReader#getResolution() */
@@ -1370,6 +1407,7 @@ public abstract class FormatReader extends FormatHandler
     series = coreIndexToSeries(no);
     coreIndex = no;
     resolution = no - seriesToCoreIndex(series);
+    plane = 0;
   }
 
   // -- IFormatHandler API methods --

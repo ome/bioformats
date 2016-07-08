@@ -347,6 +347,18 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    return getReader().get8BitLookupTable(no);
+  }
+
+  /* @see IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    return getReader().get16BitLookupTable(no);
+  }
+
+  /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return getReader().get8BitLookupTable();
   }
@@ -483,6 +495,18 @@ public class ImageReader implements IFormatReader {
   @Override
   public int getSeries() {
     return getReader().getSeries();
+  }
+
+  /* @see IFormatReader#setPlane(int) */
+  @Override
+  public void setPlane(int no) {
+    getReader().setPlane(no);
+  }
+
+  /* @see IFormatReader#getPlane() */
+  @Override
+  public int getPlane() {
+    return getReader().getPlane();
   }
 
   /* @see IFormatReader#getUsedFiles() */

@@ -710,7 +710,7 @@ public class CellSensReader extends FormatReader {
         ms.sizeC = ms.rgb ? samples : 1;
         ms.littleEndian = ifd.isLittleEndian();
         ms.indexed = p == PhotoInterp.RGB_PALETTE &&
-          (get8BitLookupTable() != null || get16BitLookupTable() != null);
+          (get8BitLookupTable(0) != null || get16BitLookupTable(0) != null);
         ms.imageCount = 1;
         ms.pixelType = ifd.getPixelType();
         ms.interleaved = false;

@@ -175,21 +175,33 @@ public class PerkinElmerReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    if (isTiff && tiff != null) {
-      return tiff.get8BitLookupTable();
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    String file = getFile(no);
+    int index = getFileIndex(no);
+
+    if (isTiff) {
+      tiff.setId(file);
+      tiff.setPlane(index);
+      return tiff.get8BitLookupTable(0);
     }
+
     return null;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
-    if (isTiff && tiff != null) {
-      return tiff.get16BitLookupTable();
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    String file = getFile(no);
+    int index = getFileIndex(no);
+
+    if (isTiff) {
+      tiff.setId(file);
+      tiff.setPlane(index);
+      return tiff.get16BitLookupTable(0);
     }
+
     return null;
   }
 

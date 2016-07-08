@@ -148,7 +148,6 @@ public class FV1000Reader extends FormatReader {
   private transient POIService poi;
 
   private short[][][] lut;
-  private int lastChannel = 0;
   private double pixelSizeZ = 1, pixelSizeT = 1;
 
   private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
@@ -253,10 +252,16 @@ public class FV1000Reader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
+
+    int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
+    int image = no % (getImageCount() / nFiles);
+    int[] coords = getZCTCoords(image);
+    int lastChannel = coords[1];
+
     return lut == null || !isIndexed() ? null : lut[lastChannel];
   }
 
@@ -272,9 +277,7 @@ public class FV1000Reader extends FormatReader {
     int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
     int image = no % (getImageCount() / nFiles);
     int file = no / (getImageCount() / nFiles);
-
     int[] coords = getZCTCoords(image);
-    lastChannel = coords[1];
 
     RandomAccessInputStream plane = getPlane(getSeries(), no);
 
@@ -345,7 +348,6 @@ public class FV1000Reader extends FormatReader {
       previewNames = null;
       if (poi != null) poi.close();
       poi = null;
-      lastChannel = 0;
       wavelengths = null;
       illuminations = null;
       oibMapping = null;

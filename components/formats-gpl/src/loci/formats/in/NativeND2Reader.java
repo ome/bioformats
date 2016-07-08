@@ -108,7 +108,6 @@ public class NativeND2Reader extends FormatReader {
 
   private Map<String, Integer> channelColors;
   private boolean split = false;
-  private int lastChannel = 0;
   private int[] colors;
   private Boolean useZ = null;
 
@@ -147,11 +146,13 @@ public class NativeND2Reader extends FormatReader {
     return magic1 == ND2_MAGIC_BYTES_1 || magic2 == ND2_MAGIC_BYTES_2;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
+    int lastChannel = split ? no % getSizeC() : 0;
+
     if (FormatTools.getBytesPerPixel(getPixelType()) != 1 ||
-      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+      !isIndexed() || lastChannel >= colors.length)
     {
       return null;
     }
@@ -175,11 +176,13 @@ public class NativeND2Reader extends FormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable(int no) {
+    int lastChannel = split ? no % getSizeC() : 0;
+
     if (FormatTools.getBytesPerPixel(getPixelType()) != 2 ||
-      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+      !isIndexed() || lastChannel >= colors.length)
     {
       return null;
     }
@@ -213,7 +216,7 @@ public class NativeND2Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    lastChannel = split ? no % getSizeC() : 0;
+    int currentChannel = split ? no % getSizeC() : 0;
     int planeIndex = split ? no / getSizeC() : no;
     in.seek(offsets[getSeries()][planeIndex]);
 
@@ -263,20 +266,20 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (split) {
-          pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
+          pix = ImageTools.splitChannels(pix, currentChannel, getEffectiveSizeC(),
             bpp, false, true);
         }
         System.arraycopy(pix, 0, buf, 0, pix.length);
       }
       else {
-        copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
+        copyPixels(x, y, w, h, bpp, currentChannel, scanlinePad, t, buf, split);
       }
       t = null;
     }
     else if (split && (getSizeC() <= 4 || scanlinePad == 0) && nXFields == 1) {
       byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
       in.read(pix);
-      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
+      copyPixels(x, y, w, h, bpp, currentChannel, scanlinePad, pix, buf, split);
       pix = null;
     }
     else if (split) {
@@ -293,7 +296,7 @@ public class NativeND2Reader extends FormatReader {
         in.skipBytes(pixel * (getSizeX() - w - x) + scanlinePad * bpp);
       }
 
-      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
+      pix = ImageTools.splitChannels(pix, currentChannel, getEffectiveSizeC(),
         bpp, false, true);
       System.arraycopy(pix, 0, buf, 0, pix.length);
     }
@@ -2096,11 +2099,11 @@ public class NativeND2Reader extends FormatReader {
   }
 
   private void copyPixels(int x, int y, int w, int h, int bpp, int scanlinePad,
-    byte[] pix, byte[] buf, boolean split)
+    int channel, byte[] pix, byte[] buf, boolean split)
     throws IOException
   {
     if (split) {
-      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
+      pix = ImageTools.splitChannels(pix, channel, getEffectiveSizeC(), bpp,
         false, true);
     }
     RandomAccessInputStream s = new RandomAccessInputStream(pix);

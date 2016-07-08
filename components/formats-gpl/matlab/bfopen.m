@@ -151,9 +151,9 @@ for s = 1:numSeries
 
         % retrieve color map data
         if bpp == 1
-            colorMaps{s, i} = r.get8BitLookupTable()';
+            colorMaps{s, i} = r.get8BitLookupTable(0)';
         else
-            colorMaps{s, i} = r.get16BitLookupTable()';
+            colorMaps{s, i} = r.get16BitLookupTable(0)';
         end
 
         warning_state = warning ('off');

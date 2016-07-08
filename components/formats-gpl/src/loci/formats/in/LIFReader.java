@@ -119,7 +119,6 @@ public class LIFReader extends FormatReader {
   private List<Long> offsets;
 
   private int[][] realChannel;
-  private int lastChannel = 0;
 
   private List<String> lutNames = new ArrayList<String>();
   private List<Double> physicalSizeXs = new ArrayList<Double>();
@@ -178,13 +177,16 @@ public class LIFReader extends FormatReader {
     return stream.read() == LIF_MAGIC_BYTE;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= 9) {
+    final int[] pos = getZCTCoords(no);
+    final int lastChannel = realChannel[getTileIndex(series)][pos[1]];
+
+    if (!isRGB() || lastChannel >= 9) {
       return null;
     }
 
@@ -228,13 +230,16 @@ public class LIFReader extends FormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() {
+  public short[][] get16BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
 
-    if (lastChannel < 0 || lastChannel >= 9) {
+    final int[] pos = getZCTCoords(no);
+    final int lastChannel = realChannel[getTileIndex(series)][pos[1]];
+
+    if (!isRGB() || lastChannel >= 9) {
       return null;
     }
 
@@ -286,11 +291,6 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    if (!isRGB()) {
-      int[] pos = getZCTCoords(no);
-      lastChannel = realChannel[getTileIndex(series)][pos[1]];
-    }
 
     int index = getTileIndex(series);
     if (index >= offsets.size()) {
@@ -354,7 +354,6 @@ public class LIFReader extends FormatReader {
     if (!fileOnly) {
       offsets = null;
       realChannel = null;
-      lastChannel = 0;
       lutNames.clear();
       physicalSizeXs.clear();
       physicalSizeYs.clear();

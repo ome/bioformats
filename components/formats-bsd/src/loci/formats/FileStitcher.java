@@ -93,6 +93,9 @@ public class FileStitcher extends ReaderWrapper {
   /** The number of the current series (non flat). */
   private int series;
 
+  /** The number of the current plane. */
+  private int plane;
+
   private boolean noStitch;
   private boolean group = true;
 
@@ -368,6 +371,22 @@ public class FileStitcher extends ReaderWrapper {
     return noStitch ? reader.isFalseColor() : core.get(getCoreIndex()).falseColor;
   }
 
+  /* @see IFormatReader#get8BitLookupTable(int) */
+  @Override
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.get8BitLookupTable(no) :
+      getReader(getCoreIndex(), 0).get8BitLookupTable(getAdjustedIndex(no));
+  }
+
+  /* @see IFormatReader#get16BitLookupTable(int) */
+  @Override
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.get16BitLookupTable(no) :
+      getReader(getCoreIndex(), 0).get16BitLookupTable(getAdjustedIndex(no));
+  }
+
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
@@ -478,6 +497,8 @@ public class FileStitcher extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
+    setPlane(no);
+
     int[] pos = computeIndices(no);
     IFormatReader r = getReader(getCoreIndex(), pos[0]);
     int ino = pos[1];
@@ -502,6 +523,8 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
+
+    setPlane(no);
 
     IFormatReader r = getReader(no);
     int ino = getAdjustedIndex(no);
@@ -551,6 +574,7 @@ public class FileStitcher extends ReaderWrapper {
       core.clear();
       coreIndex = 0;
       series = 0;
+      plane = 0;
       store = null;
     }
   }
@@ -571,6 +595,7 @@ public class FileStitcher extends ReaderWrapper {
     else {
       coreIndex = no;
       series = no;
+      plane = no;
     }
   }
 
@@ -579,6 +604,24 @@ public class FileStitcher extends ReaderWrapper {
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getSeries() > 0 ? reader.getSeries() : series;
+  }
+
+  /* @see IFormatReader#setPlane(int) */
+  @Override
+  public void setPlane(int no) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) reader.setPlane(no);
+    else {
+      plane = no;
+    }
+  }
+
+  /* @see IFormatReader#getPlane() */
+  @Override
+  public int getPlane() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return reader.getPlane() > 0 ? reader.getPlane() : plane;
   }
 
   /* @see IFormatReader#seriesToCoreIndex(int) */

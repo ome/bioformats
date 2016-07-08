@@ -91,8 +91,6 @@ public class MinimalTiffReader extends FormatReader {
 
   protected boolean use64Bit = false;
 
-  protected int lastPlane = 0;
-
   protected boolean noSubresolutions = false;
 
   /** Number of JPEG 2000 resolution levels. */
@@ -140,18 +138,18 @@ public class MinimalTiffReader extends FormatReader {
     return new TiffParser(stream).isValidHeader();
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
-    IFD lastIFD = ifds.get(lastPlane);
+    if (ifds == null || no >= ifds.size()) return null;
+    IFD lastIFD = ifds.get(no);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 8) {
       int[] colorMap = tiffParser.getColorMap(lastIFD);
       if (colorMap == null) {
         // it's possible that the LUT is only present in the first IFD
-        if (lastPlane != 0) {
+        if (no != 0) {
           lastIFD = ifds.get(0);
           colorMap = tiffParser.getColorMap(lastIFD);
           if (colorMap == null) return null;
@@ -177,18 +175,18 @@ public class MinimalTiffReader extends FormatReader {
     return null;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get16BitLookupTable(int) */
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (ifds == null || lastPlane < 0 || lastPlane >= ifds.size()) return null;
-    IFD lastIFD = ifds.get(lastPlane);
+    if (ifds == null || no >= ifds.size()) return null;
+    IFD lastIFD = ifds.get(no);
     int[] bits = lastIFD.getBitsPerSample();
     if (bits[0] <= 16 && bits[0] > 8) {
       int[] colorMap = tiffParser.getColorMap(lastIFD);
       if (colorMap == null || colorMap.length < 65536 * 3) {
         // it's possible that the LUT is only present in the first IFD
-        if (lastPlane != 0) {
+        if (no != 0) {
           lastIFD = ifds.get(0);
           colorMap = tiffParser.getColorMap(lastIFD);
           if (colorMap == null || colorMap.length < 65536 * 3) return null;
@@ -281,7 +279,6 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     IFD firstIFD = ifds.get(0);
-    lastPlane = no;
     IFD ifd = ifds.get(no);
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
@@ -375,7 +372,6 @@ public class MinimalTiffReader extends FormatReader {
       ifds = null;
       thumbnailIFDs = null;
       subResolutionIFDs = null;
-      lastPlane = 0;
       tiffParser = null;
       resolutionLevels = null;
       j2kCodecOptions = null;
@@ -557,7 +553,7 @@ public class MinimalTiffReader extends FormatReader {
     ms0.pixelType = firstIFD.getPixelType();
     ms0.metadataComplete = true;
     ms0.indexed = photo == PhotoInterp.RGB_PALETTE &&
-      (get8BitLookupTable() != null || get16BitLookupTable() != null);
+      (get8BitLookupTable(0) != null || get16BitLookupTable(0) != null);
     if (isIndexed()) {
       ms0.sizeC = 1;
       ms0.rgb = false;

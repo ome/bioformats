@@ -146,7 +146,6 @@ public class BioRadReader extends FormatReader {
   private String[] picFiles;
 
   private byte[][][] lut;
-  private int lastChannel = 0;
   private boolean brokenNotes = false;
 
   private List<Note> noteStrings;
@@ -212,11 +211,11 @@ public class BioRadReader extends FormatReader {
     return FormatTools.CAN_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  /* @see loci.formats.IFormatReader#get8BitLookupTable(int) */
   @Override
-  public byte[][] get8BitLookupTable() {
+  public byte[][] get8BitLookupTable(int no) {
     FormatTools.assertId(currentId, true, 1);
-    return lut == null ? null : lut[lastChannel];
+    return lut == null ? null : lut[getZCTCoords(no)[1]];
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -242,7 +241,6 @@ public class BioRadReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    lastChannel = getZCTCoords(no)[1];
 
     if (picFiles != null) {
       int file = no % picFiles.length;
@@ -268,7 +266,6 @@ public class BioRadReader extends FormatReader {
       used = null;
       picFiles = null;
       lut = null;
-      lastChannel = 0;
       noteStrings = null;
       offset = gain = null;
       brokenNotes = false;

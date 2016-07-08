@@ -194,9 +194,6 @@ public class FakeReader extends FormatReader {
   /** For indexed color, mapping from indices to values and vice versa. */
   private int[][] indexToValue = null, valueToIndex = null;
 
-  /** Channel of last opened image plane. */
-  private int ac = 0;
-
   /** Properties companion file which can be associated with this fake file */
   private String iniFile;
 
@@ -286,13 +283,17 @@ public class FakeReader extends FormatReader {
   // -- IFormatReader API methods --
 
   @Override
-  public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    return ac < 0 || lut8 == null ? null : lut8[ac];
+  public byte[][] get8BitLookupTable(int no) throws FormatException, IOException {
+    openBytes(no);
+    final int ac = getZCTCoords(no)[1];
+    return lut8 == null ? null : lut8[ac];
   }
 
   @Override
-  public short[][] get16BitLookupTable() throws FormatException, IOException {
-    return ac < 0 || lut16 == null ? null : lut16[ac];
+  public short[][] get16BitLookupTable(int no) throws FormatException, IOException {
+    openBytes(no);
+    final int ac = getZCTCoords(no)[1];
+    return lut16 == null ? null : lut16[ac];
   }
 
   @Override
@@ -313,7 +314,6 @@ public class FakeReader extends FormatReader {
 
     final int[] zct = getZCTCoords(no);
     final int zIndex = zct[0], cIndex = zct[1], tIndex = zct[2];
-    ac = cIndex;
 
     // integer types start gradient at the smallest value
     long min = signed ? (long) -Math.pow(2, 8 * bpp - 1) : 0;
@@ -356,8 +356,8 @@ public class FakeReader extends FormatReader {
 
           // if indexed color with non-null LUT, convert value to index
           if (indexed) {
-            if (lut8 != null) pixel = valueToIndex[ac][(int) (pixel % 256)];
-            if (lut16 != null) pixel = valueToIndex[ac][(int) (pixel % 65536)];
+            if (lut8 != null) pixel = valueToIndex[cIndex][(int) (pixel % 256)];
+            if (lut16 != null) pixel = valueToIndex[cIndex][(int) (pixel % 65536)];
           }
 
           // scale pixel value by the scale factor
