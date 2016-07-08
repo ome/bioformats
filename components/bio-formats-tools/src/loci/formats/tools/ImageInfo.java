@@ -119,7 +119,7 @@ public class ImageInfo {
   private boolean ascii = false;
   private boolean usedFiles = true;
   private boolean omexmlOnly = false;
-  private boolean validate = true;
+  private boolean validate = false;
   private boolean flat = true;
   private String omexmlVersion = null;
   private int start = 0;
@@ -169,7 +169,7 @@ public class ImageInfo {
     preload = false;
     usedFiles = true;
     omexmlOnly = false;
-    validate = true;
+    validate = false;
     flat = true;
     omexmlVersion = null;
     xmlSpaces = 3;
@@ -213,6 +213,7 @@ public class ImageInfo {
           autoscale = true;
         }
         else if (args[i].equals("-novalid")) validate = false;
+        else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
           DebugTools.setRootLevel("DEBUG");
@@ -976,9 +977,6 @@ public class ImageInfo {
       if (omexmlOnly) {
         DebugTools.setRootLevel("OFF");
       }
-      if (validate) {
-        service.validateOMEXML(xml);
-      }
     }
     else {
       LOGGER.info("The metadata could not be converted to OME-XML.");
@@ -1030,6 +1028,9 @@ public class ImageInfo {
     // initialize reader
     long s = System.currentTimeMillis();
     try {
+      MetadataOptions options= new DefaultMetadataOptions();
+      options.setValidate(validate);
+      reader.setMetadataOptions(options);
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();
@@ -1058,7 +1059,7 @@ public class ImageInfo {
       printOriginalMetadata();
     }
 
-    // output and validate OME-XML
+    // output OME-XML
     if (omexml) printOMEXML();
 
     if (!pixels) {

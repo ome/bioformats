@@ -59,6 +59,13 @@
 #include <ome/xml/model/primitives/Quantity.h>
 {% end units enum %}\
 
+{% if klass.langType == "UnitsPressure" %}\
+#ifdef _MSC_VER
+#pragma push_macro("PASCAL")
+#undef PASCAL
+#endif
+
+{% end %}\
 // All values in the ${klass.langType} enumeration.
 #define ${fu.CLASS_PREFIX}_VALUES {% for value in klass.possibleValues %}{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}(${klass.enumProperties[value].enum}){% end %}{% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}(${enum_value_name(value, False).upper()}){% end %}{% end %}
 
@@ -642,6 +649,12 @@ namespace ome
 }
 {% if fu.SOURCE_TYPE == "header" %}\
 
+{% if klass.langType == "UnitsPressure" %}\
+#ifdef _MSC_VER
+#pragma pop_macro("PASCAL")
+#endif
+
+{% end %}\
 #endif // ${fu.GUARD}
 
 /*

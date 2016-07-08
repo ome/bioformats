@@ -900,15 +900,18 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("Kryo Exception: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (ArrayIndexOutOfBoundsException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("ArrayIndexOutOfBoundsException: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (Throwable t) {
       // Logging at error since this is unexpected.
       LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      LOGGER.debug("Other Exception: " + t.getMessage());
       deleteQuietly(memoFile);
       return null;
     } finally {

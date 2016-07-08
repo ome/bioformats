@@ -113,6 +113,9 @@ public class OMETiffWriter extends TiffWriter {
               files.add(f);
 
               String xml = getOMEXML(f);
+              if (getMetadataOptions().isValidate()) {
+                service.validateOMEXML(xml);
+              }
 
               // write OME-XML to the first IFD's comment
               saveComment(f, xml);
