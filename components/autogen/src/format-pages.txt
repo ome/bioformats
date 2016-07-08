@@ -1914,6 +1914,22 @@ utilityRating = Good
 reader = PrairieReader
 mif = true
 
+[Princeton Instruments SPE]
+extensions = .spe
+developer = `Princeton Instruments <http://www.princetoninstruments.com>`_
+bsd = no
+versions = 3.0
+weHave = * `An official specification document <ftp://ftp.princetoninstruments.com/public/Manuals/Princeton%20Instruments/SPE%203.0%20File%20Format%20Specification.pdf>`_ \n
+* two SPE files
+weWant = * more SPE files
+pixelsRating = Good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+reader = SPEReader
+mif = true
+
 [Quesant]
 extensions = .afm
 owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
