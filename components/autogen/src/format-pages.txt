@@ -284,6 +284,21 @@ utilityRating = Good
 reader = BDReader
 mif = true
 
+[Becker & Hickl FIFO]
+extensions = .spc
+owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
+bsd = no
+weHave = * an `SPC specification document <http://www.becker-hickl.com/handbookphp.htm>`_ \n
+* an SPC dataset
+weWant = * more SPC sample files
+pixelsRating = Poor
+metadataRating = Fair
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = SPCReader
+mif = true
+
 [Becker & Hickl SPCImage]
 extensions = .sdt
 owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
