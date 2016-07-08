@@ -61,7 +61,7 @@ public class TiffComment {
       System.out.println();
 
       System.out.println("This tool requires an ImageDescription tag to be " +
-        "in place in the TIFF file. ");
+        "present in the TIFF file. ");
       System.out.println();
       System.out.println("If using the '-set' option, the new TIFF comment " +
         "must be specified and may take any of the following forms:");
