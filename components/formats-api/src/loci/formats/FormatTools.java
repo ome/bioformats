@@ -1452,7 +1452,7 @@ public final class FormatTools {
    *               or {@code unit} is {@code null}.
    */
   public static Length getStagePosition(Double value, Unit<Length> unit) {
-    if (value == null || value.isInfinite()) {
+    if (value == null || value.isNaN() || value.isInfinite()) {
       LOGGER.debug("Expected float value for stage position; got {}", value);
       return null;
     }
