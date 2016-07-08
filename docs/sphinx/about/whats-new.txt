@@ -120,7 +120,7 @@ Other general improvements include:
    - upgrade check no longer run when passing -version
    - common methods refactoring
    - showinf improvements to preload format
-* Micromanager fixes:
+* Micro-Manager fixes:
    - improved handling of large datasets saved as image stacks and split over
      multiple files
 * Added more Java examples to the developer documentation
