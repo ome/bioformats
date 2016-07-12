@@ -43,17 +43,21 @@ same folder.
 
   *
     - `NetCDF <http://www.unidata.ucar.edu/software/netcdf-java/>`_
-    - :downloads:`netcdf4-4.6.5.jar <artifacts/netcdf4-4.6.5.jar>`,
-      :downloads:`cdm-4.6.5.jar <artifacts/cdm-4.6.5.jar>`
-      and :downloads:`httpservices-4.6.5.jar <artifacts/httpservices-4.6.5.jar>`
+    - :file:`netcdf4-4.6.5.jar`, :file:`cdm-4.6.5.jar` and
+      :file:`httpservices-4.6.5.jar`
     - LGPL
     - Java library; for HDF5-based formats (Imaris 5.5, MINC MRI)
 
   *
     - `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_
-    - **QTJava.zip**
+    - :file:`QTJava.zip`
     - Commercial
     - For additional QuickTime codecs
+
+.. Add these back at a later date:
+..    - :downloads:`netcdf4-4.6.5.jar <artifacts/netcdf4-4.6.5.jar>`,
+..      :downloads:`cdm-4.6.5.jar <artifacts/cdm-4.6.5.jar>`
+..      and :downloads:`httpservices-4.6.5.jar <artifacts/httpservices-4.6.5.jar>`
 
 See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can
