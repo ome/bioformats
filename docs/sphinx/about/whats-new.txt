@@ -1,13 +1,14 @@
 Version history
 ===============
 
-5.2.0-m4 (2016 June 24)
+5.2.0-m5 (2016 July 7)
 -----------------------
 
 Top-level Bio-Formats API changes:
 
 * Java 1.7 is now the minimum supported version
 * the native-lib-loader dependency has been bumped to version 2.1.4
+* the xalan dependency has been bumped to version 2.7.2
 * all the ome.jxr classes have been deprecated to make clear that there is no
   JPEG-XR support implemented in Bio-Formats as yet
 * the DataTools API has been extended to add a number of utility functions to:
@@ -18,13 +19,18 @@ Top-level Bio-Formats API changes:
   (log4j/logback) initialized via a binding-specific configurations file and
   to prevent `DebugTools.enableLogging(String)` from overriding initialized
   logger levels (see :doc:`/developers/logging` for more information)
+* helper methods have been added to FormatTools allowing a stage position to
+  be formatted from an input Double and an input unit
+* the Formats API has also been updated to add a new validate property to
+  MetadataOptions and support for MetadataOptions has been moved to
+  FormatHandler level to allow it to be used by both Readers and Writers
 
 The Data Model version 2016-06 has been released to introduce
 `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
 and to simplify both the graphical aspects of the model and code generation.
-Full details will be available in the
-:model_doc:`OME Model and Formats Documentation <>` shortly. OME-XML changes
-include:
+Full details are available in the
+:model_doc:`OME Model and Formats Documentation <schemas/june-2016.html>`.
+OME-XML changes include:
 
 * `Map` is now a complexType rather than an element and `MapPairs` has been
   dropped
@@ -88,6 +94,9 @@ Java format support improvements include:
        - fixed timestamp indexing when multiple separate channels are present
    - SVS
        - fixed FormatNumberException
+   - Micro-Manager
+       - fixed handling of large datasets saved as image stacks and split
+         over multiple files
 
 Other general improvements include:
 
@@ -96,6 +105,10 @@ Other general improvements include:
 * fixes for the detection of csv pattern blocks by `FilePatternBlock`
 * bioformats_package.jar now includes bio-formats-tools as a dependency so
   ImageConverter, ImageFaker and ImageInfo classes are included in the bundle
+* initial work on
+  `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_ now allows the
+  :file:`readers.txt` configuration file to be annotated using key/value pairs
+  to mark optional Readers and specify additional per-Reader options
 * the JACE C++ implementation has been decoupled as it does not function with
   Java 1.7 (see `legacy repo <https://github.com/ome/bio-formats-jace>`_)
 * ImageJ fixes
