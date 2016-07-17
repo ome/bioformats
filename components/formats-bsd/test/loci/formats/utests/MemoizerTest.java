@@ -279,8 +279,10 @@ public class MemoizerTest {
       // Check existing non-writeable memo directory returns null
       if (File.separator.equals("/")) {
         // File.setWritable() does not work properly on Windows
-        directory.setWritable(false);
-        assertEquals(memoizer.getMemoFile(id), null);
+        boolean success = directory.setWritable(false);
+        if (success) {
+          assertEquals(memoizer.getMemoFile(id), null);
+        }
       }
 
       // Check existing writeable memo diretory returns a memo file
@@ -301,8 +303,10 @@ public class MemoizerTest {
       // Check non-writeable file directory returns null for in-place caching
       if (File.separator.equals("/")) {
         // File.setWritable() does not work properly on Windows
-        idDir.setWritable(false);
-        assertEquals(memoizer.getMemoFile(id), null);
+        boolean success = idDir.setWritable(false);
+        if (success) {
+          assertEquals(memoizer.getMemoFile(id), null);
+        }
       }
 
       // Check writeable file directory returns memo file beside file
@@ -319,8 +323,10 @@ public class MemoizerTest {
       // Check non-writeable file directory returns null for in-place caching
       if (File.separator.equals("/")) {
         // File.setWritable() does not work properly on Windows
-        idDir.setWritable(false);
-        assertEquals(memoizer.getMemoFile(id), null);
+        boolean success = idDir.setWritable(false);
+        if (success) {
+          assertEquals(memoizer.getMemoFile(id), null);
+        }
       }
       // Check writeable file directory returns memo file beside file
       idDir.setWritable(true);
