@@ -708,6 +708,15 @@ public class MicromanagerReader extends FormatReader {
     p.voltage = new Vector<Double>();
 
     RandomAccessInputStream s = new RandomAccessInputStream(jsonData);
+
+    if (s.length() > Integer.MAX_VALUE) {
+      LOGGER.warn(jsonData + " exceeds 2GB; metadata parsing is likely to fail");
+    }
+    else if (s.length() > 100 * 1024 * 1024) {
+      LOGGER.warn(jsonData + " is larger than 100MB and may require additional memory to parse. " +
+        "A minimum of 1024MB is suggested.");
+    }
+
     byte[] b = new byte[(int) s.length()];
     s.readFully(b);
     s.close();
