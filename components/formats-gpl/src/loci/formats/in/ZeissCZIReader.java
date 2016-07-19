@@ -1007,6 +1007,12 @@ public class ZeissCZIReader extends FormatReader {
         store.setImageName("thumbnail image", i);
       }
 
+      // remaining acquisition settings (esp. channels) do not apply to
+      // label and macro images
+      if (extraIndex >= 0) {
+        continue;
+      }
+
       if (description != null && description.length() > 0) {
         store.setImageDescription(description, i);
       }
