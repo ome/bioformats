@@ -619,13 +619,24 @@ public class ZeissCZIReader extends FormatReader {
             (planes.get(i).y % entries[1].storedSize) == 0)
           {
             int scale = planes.get(i).x / entries[0].storedSize;
-            planes.get(i).coreIndex = 0;
-            while (scale > 1) {
-              scale /= 2;
-              planes.get(i).coreIndex++;
+            // resolutions must be a power of 2 smaller than the full resolution
+            // some files will contain power-of-3 resolutions, which need to be ignored
+            if ((scale % 2) == 0) {
+              planes.get(i).coreIndex = 0;
+              while (scale > 1) {
+                scale /= 2;
+                planes.get(i).coreIndex++;
+              }
+              if (planes.get(i).coreIndex > maxResolution) {
+                maxResolution = planes.get(i).coreIndex;
+              }
             }
-            if (planes.get(i).coreIndex > maxResolution) {
-              maxResolution = planes.get(i).coreIndex;
+            else {
+              LOGGER.trace(
+               "removing block #{}; calculated size = {}, recorded size = {}, scale = {}",
+                 i, planeSize, size, scale);
+              planes.remove(i);
+              i--;
             }
           }
           else {
