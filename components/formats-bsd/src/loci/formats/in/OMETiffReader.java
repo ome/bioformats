@@ -349,7 +349,7 @@ public class OMETiffReader extends FormatReader {
     }
     IFD ifd = ifdList.get(i);
     RandomAccessInputStream s =
-      new RandomAccessInputStream(info[series][no].id);
+      new RandomAccessInputStream(info[series][no].id, 16);
     TiffParser p = new TiffParser(s);
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
@@ -854,7 +854,7 @@ public class OMETiffReader extends FormatReader {
       CoreMetadata m = core.get(s);
       info[s] = planes;
       try {
-        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id);
+        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
         String firstFile = info[s][0].id;
         if (!info[s][0].reader.isThisType(testFile)) {
           LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
@@ -872,7 +872,7 @@ public class OMETiffReader extends FormatReader {
 
             continue;
           }
-          testFile = new RandomAccessInputStream(info[s][plane].id);
+          testFile = new RandomAccessInputStream(info[s][plane].id, 16);
           if (!info[s][plane].reader.isThisType(testFile)) {
             LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
             info[s][plane].id = info[s][0].id;
