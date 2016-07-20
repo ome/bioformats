@@ -163,6 +163,8 @@ public class ZeissCZIReader extends FormatReader {
   private transient DocumentBuilder parser;
 
   private ArrayList<Attachment> extraImages = new ArrayList<Attachment>();
+  private int[] tileWidth;
+  private int[] tileHeight;
 
   // -- Constructor --
 
@@ -481,17 +483,16 @@ public class ZeissCZIReader extends FormatReader {
       parser = null;
       extraImages.clear();
       maxResolution = 0;
+      tileWidth = null;
+      tileHeight = null;
     }
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
-    for (SubBlock plane : planes) {
-      if (plane.coreIndex == getCoreIndex()) {
-        int res = (int) Math.pow(2, plane.resolutionIndex);
-        return plane.x / res;
-      }
+    if (getCoreIndex() < tileWidth.length) {
+      return tileWidth[getCoreIndex()];
     }
     return super.getOptimalTileWidth();
   }
@@ -499,11 +500,8 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
-    for (SubBlock plane : planes) {
-      if (plane.coreIndex == getCoreIndex()) {
-        int res = (int) Math.pow(2, plane.resolutionIndex);
-        return plane.y / res;
-      }
+    if (getCoreIndex() < tileHeight.length) {
+      return tileHeight[getCoreIndex()];
     }
     return super.getOptimalTileHeight();
   }
@@ -796,6 +794,8 @@ public class ZeissCZIReader extends FormatReader {
     assignPlaneIndices();
 
     if (maxResolution > 0) {
+      tileWidth = new int[core.size()];
+      tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
         if (originalMosaicCount > 1) {
           // calculate total stitched size if the image was not fused
@@ -824,7 +824,14 @@ public class ZeissCZIReader extends FormatReader {
             if (plane.col > maxCol) {
               maxCol = plane.col;
             }
+            if (plane.x > tileWidth[s]) {
+              tileWidth[s] = plane.x;
+            }
+            if (plane.y > tileHeight[s]) {
+              tileHeight[s] = plane.y;
+            }
           }
+
           // don't overwrite the dimensions if stitching already occurred
           if (core.get(s).sizeX == x && core.get(s).sizeY == y) {
             core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
@@ -832,8 +839,11 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
         for (int r=0; r<core.get(s).resolutionCount; r++) {
-          core.get(s + r).sizeX = core.get(s).sizeX / (int) Math.pow(2, r);
-          core.get(s + r).sizeY = core.get(s).sizeY / (int) Math.pow(2, r);
+          int div = (int) Math.pow(2, r);
+          core.get(s + r).sizeX = core.get(s).sizeX / div;
+          core.get(s + r).sizeY = core.get(s).sizeY / div;
+          tileWidth[s + r] = tileWidth[s] / div;
+          tileHeight[s + r] = tileHeight[s] / div;
         }
         s += core.get(s).resolutionCount;
       }
