@@ -1029,8 +1029,9 @@ public final class FormatTools {
     MetadataStore store = r.getMetadataStore();
     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
       (MetadataRetrieve) store : new DummyMetadata();
-
-    String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
+    
+    String sPlaces = "%0" + String.valueOf(r.getSeriesCount()).length() + "d";
+    String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
     String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
@@ -1041,10 +1042,12 @@ public final class FormatTools {
 
     r.setSeries(series);
     int[] coordinates = r.getZCTCoords(image);
-
-    filename = filename.replaceAll(Z_NUM, String.valueOf(coordinates[0]));
-    filename = filename.replaceAll(T_NUM, String.valueOf(coordinates[2]));
-    filename = filename.replaceAll(CHANNEL_NUM, String.valueOf(coordinates[1]));
+    String zPlaces = "%0" + String.valueOf(r.getSizeZ()).length() + "d";
+    String tPlaces = "%0" + String.valueOf(r.getSizeT()).length() + "d";
+    String cPlaces = "%0" + String.valueOf(r.getSizeC()).length() + "d";
+    filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
+    filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));
+    filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, coordinates[1]));
 
     String channelName = retrieve.getChannelName(series, coordinates[1]);
     if (channelName == null) channelName = String.valueOf(coordinates[1]);
