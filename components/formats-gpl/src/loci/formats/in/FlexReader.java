@@ -1307,10 +1307,16 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
+              firstIFD.getStripOffsets().length == 1)
+            {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
+              if (firstIFD.getStripOffsets().length == 1) {
+                // used to ensure that image offsets are read, not calculated
+                compressed = true;
+              }
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored
