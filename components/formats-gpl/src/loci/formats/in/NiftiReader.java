@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.GZipHandle;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -228,6 +229,11 @@ public class NiftiReader extends FormatReader {
     else if (id.endsWith(".nii")) {
       pixelsFilename = id;
       pixelFile = in;
+    } else if (id.endsWith(".nii.gz")) {
+      pixelsFilename = id;
+      pixelFile = new RandomAccessInputStream(new GZipHandle(id));
+    } else {
+    	throw new FormatException("File does not have one of the required NIfTI extensions (.hdr, .nii, .nii.gz)");
     }
 
     in.order(little);
