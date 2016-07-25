@@ -54,6 +54,29 @@ import org.slf4j.LoggerFactory;
  * ClassList is a list of classes for use with {@link ImageReader} or
  * {@link ImageWriter}, parsed from a configuration file such as readers.txt
  * or writers.txt.
+ * <p>
+ * When constructing a {@link ClassList} object, each line of the
+ * configuration file is parsed using the following rules:
+ * <ul>
+ * <li>all text following a hash symbol <i>#</i> is interpreted as comments
+ * and ignored</li>
+ * <li>a key-value pair options can be specified for a given class by using the
+ * square brackets <i>[]</i> and an equal separator <i>=</i></li>
+ * <li>multiple options can be passed for each class and need to be separated
+ * using a comma<i>,</i></li>
+ * </ul>
+ * <p>
+ * For instance, constructing a {@link ClassList} object using the absolute
+ * path to a configuration file containing the following lines:
+ * <pre>
+ * # List of classes
+ * package1.class1
+ * package2.class2 # a simple class
+ * package3.class3[key1=value1,key2=value2] # a class with options
+ * </pre>
+ * will attempt to create a list of three classes . Additionally, if the
+ * last class is added, two key/value pairs will be stored in the options map:
+ * <i>package3.class3.key1=value</i> and <i>package3.class3.key2=value2</i>.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
