@@ -189,7 +189,7 @@ public class ClassList<T> {
         LOGGER.debug("", exc);
       }
       if (c == null) {
-        if (o == null || !o.get("type").equals("external")) {
+        if (!o.containsKey("type") || !o.get("type").equals("external")) {
           LOGGER.error("\"{}\" is not valid.", line);
         }
       } else {
