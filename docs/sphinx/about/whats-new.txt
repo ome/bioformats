@@ -6,8 +6,8 @@ Version history
 
 Java format support improvements include:
 
-* added support for Becker & Hickl .spc FIFO files
-* added support for Princeton Instruments .spe files
+* added support for :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
+* added support for :doc:`Princeton Instruments .spe </formats/princeton-instruments-spe>` data
 * bug fixes for many formats including:
    - Tiff
        - fixed integer overflow to read resolutions correctly
@@ -53,7 +53,7 @@ Java format support improvements include:
        - fixed handling of large datasets saved as image stacks and split
          over multiple files
 
-†Denotes a breaking change to the reader (typically modification of core
+†Denotes a major breaking change to the reader (typically modification of core
 metadata).
 
 Top-level Bio-Formats API changes:
@@ -125,9 +125,11 @@ OME-XML changes include:
      implementation
 
 The Bio-Formats C++ native implementation has been decoupled from
-the Java codebase and will be released as OME-Files C++ from now on, with the
-exception of OME-XML which is still within Bio-Formats at present (there is a
-plan to decouple both the Java and the C++ versions of OME-XML in future).
+the Java codebase and will be released as
+`OME-Files C++ <http://downloads.openmicroscopy.org/ome-files-cpp/>`_ from now
+on, with the exception of OME-XML which is still within Bio-Formats at present
+(there is a plan to decouple both the Java and the C++ versions of OME-XML in
+future).
 
 5.1.10 (2016 May 9)
 -------------------
