@@ -4,51 +4,6 @@ Version history
 5.2.0-m5 (2016 July 7)
 -----------------------
 
-Top-level Bio-Formats API changes:
-
-* Java 1.7 is now the minimum supported version
-* the native-lib-loader dependency has been bumped to version 2.1.4
-* the xalan dependency has been bumped to version 2.7.2
-* all the ome.jxr classes have been deprecated to make clear that there is no
-  JPEG-XR support implemented in Bio-Formats as yet
-* the DataTools API has been extended to add a number of utility functions to:
-   - account for decimal separators in different locales
-   - parse a String into Double, Float, Integer etc
-   - handle NumberFormatException thrown when parsing Unit tests
-* the Logging API has been updated to respect logging frameworks
-  (log4j/logback) initialized via a binding-specific configurations file and
-  to prevent `DebugTools.enableLogging(String)` from overriding initialized
-  logger levels (see :doc:`/developers/logging` for more information)
-* helper methods have been added to FormatTools allowing a stage position to
-  be formatted from an input Double and an input unit
-* the Formats API has also been updated to add a new validate property to
-  MetadataOptions and support for MetadataOptions has been moved to
-  FormatHandler level to allow it to be used by both Readers and Writers
-
-The Data Model version 2016-06 has been released to introduce
-`Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
-and to simplify both the graphical aspects of the model and code generation.
-Full details are available in the
-:model_doc:`OME Model and Formats Documentation <schemas/june-2016.html>`.
-OME-XML changes include:
-
-* `Map` is now a complexType rather than an element and `MapPairs` has been
-  dropped
-* extended enum metadata has been introduced to better support units
-* `Shape` and `LightSource` are now complexTypes rather than elements
-* BinData has been added to code generation to handle raw binary data
-* various code generation improvements to:
-   - simplify and standardize the generation process
-   - remove a number of hard-coded exceptional cases allowing for easier
-     maintenance and growth
-   - allow for genuine abstract model types and enable C++ model
-     implementation
-
-The Bio-Formats C++ native implementation has been decoupled from
-the Java codebase and will be released as OME-Files C++ from now on, with the
-exception of OME-XML which is still within Bio-Formats at present (there is a
-plan to decouple both the Java and the C++ versions of OME-XML in future).
-
 Java format support improvements include:
 
 * added support for Becker & Hickl .spc FIFO files
@@ -58,7 +13,7 @@ Java format support improvements include:
        - fixed integer overflow to read resolutions correctly
        - fixed handling of tiled images with tile width less than 64
    - PNG writing
-   - Zeiss ZVI
+   - Zeiss ZVI†
        - reworked image ordering calculation to allow for tiles
    - Leica LIF
        - fixed incorrect plane offsets for large multi-tile files
@@ -66,14 +21,14 @@ Java format support improvements include:
        - fixes for format type checking
    - OME-XML
        - fixed metadata store
-   - CellSens VSI
+   - CellSens VSI†
        - fixes for correctly reading dimensions
    - ICS writing
        - fixed dimension population for split files
    - FlowSight
        - fixes to infer channel count from channel names (thanks to Lee
          Kamentsky)
-   - Hamamatsu VMS
+   - Hamamatsu VMS†
        - fixed dimensions of full-resolution images
    - PicoQuant
        - updated reader to always buffer data
@@ -97,6 +52,30 @@ Java format support improvements include:
    - Micro-Manager
        - fixed handling of large datasets saved as image stacks and split
          over multiple files
+
+†Denotes a breaking change to the reader (typically modification of core
+metadata).
+
+Top-level Bio-Formats API changes:
+
+* Java 1.7 is now the minimum supported version
+* the native-lib-loader dependency has been bumped to version 2.1.4
+* the xalan dependency has been bumped to version 2.7.2
+* all the ome.jxr classes have been deprecated to make clear that there is no
+  JPEG-XR support implemented in Bio-Formats as yet
+* the DataTools API has been extended to add a number of utility functions to:
+   - account for decimal separators in different locales
+   - parse a String into Double, Float, Integer etc
+   - handle NumberFormatException thrown when parsing Unit tests
+* the Logging API has been updated to respect logging frameworks
+  (log4j/logback) initialized via a binding-specific configurations file and
+  to prevent `DebugTools.enableLogging(String)` from overriding initialized
+  logger levels (see :doc:`/developers/logging` for more information)
+* helper methods have been added to FormatTools allowing a stage position to
+  be formatted from an input Double and an input unit
+* the Formats API has also been updated to add a new validate property to
+  MetadataOptions and support for MetadataOptions has been moved to
+  FormatHandler level to allow it to be used by both Readers and Writers
 
 Other general improvements include:
 
@@ -125,6 +104,30 @@ Other general improvements include:
    - showinf improvements to preload format
 * Added more Java examples to the developer documentation
 * Added many automated tests and improved FakeReader testing framework
+
+The Data Model version 2016-06 has been released to introduce
+`Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
+and to simplify both the graphical aspects of the model and code generation.
+Full details are available in the
+:model_doc:`OME Model and Formats Documentation <schemas/june-2016.html>`.
+OME-XML changes include:
+
+* `Map` is now a complexType rather than an element and `MapPairs` has been
+  dropped
+* extended enum metadata has been introduced to better support units
+* `Shape` and `LightSource` are now complexTypes rather than elements
+* BinData has been added to code generation to handle raw binary data
+* various code generation improvements to:
+   - simplify and standardize the generation process
+   - remove a number of hard-coded exceptional cases allowing for easier
+     maintenance and growth
+   - allow for genuine abstract model types and enable C++ model
+     implementation
+
+The Bio-Formats C++ native implementation has been decoupled from
+the Java codebase and will be released as OME-Files C++ from now on, with the
+exception of OME-XML which is still within Bio-Formats at present (there is a
+plan to decouple both the Java and the C++ versions of OME-XML in future).
 
 5.1.10 (2016 May 9)
 -------------------
