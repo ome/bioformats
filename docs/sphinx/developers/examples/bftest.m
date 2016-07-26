@@ -122,7 +122,7 @@ delete('metadata.ome.tiff');
 
 % logging-start
 % Set the logging level to DEBUG
-loci.common.DebugTools.enableLogging('DEBUG');
+loci.common.DebugTools.setRootLevel('DEBUG');
 % logging-end
 
 % memoizer-start
