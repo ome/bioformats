@@ -35,7 +35,7 @@ Java format support improvements include:
    - Zeiss LSM
        - fixed Plane population errors
    - Nifti
-       - fixed planeSize to prevent crashes when loading large files (thanks 
+       - fixed planeSize to prevent crashes when loading large files (thanks
          to Christian Niedworok)
    - LiFlim
        - fixed ExposureTime check and units usage
@@ -54,7 +54,8 @@ Java format support improvements include:
          over multiple files
 
 †Denotes a major breaking change to the reader (typically modification of core
-metadata).
+metadata). Code changes or re-import may be necessary in ImageJ/FIJI and
+OMERO.
 
 Top-level Bio-Formats API changes:
 
@@ -68,7 +69,7 @@ Top-level Bio-Formats API changes:
    - parse a String into Double, Float, Integer etc
    - handle NumberFormatException thrown when parsing Unit tests
 * the Logging API has been updated to respect logging frameworks
-  (log4j/logback) initialized via a binding-specific configurations file and
+  (log4j/logback) initialized via a binding-specific configuration file and
   to prevent `DebugTools.enableLogging(String)` from overriding initialized
   logger levels (see :doc:`/developers/logging` for more information)
 * helper methods have been added to FormatTools allowing a stage position to
