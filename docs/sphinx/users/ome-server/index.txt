@@ -94,17 +94,15 @@ To reset things back to how they were:
    name='import_formats';
 
 Lastly, please note that Li-Cor L2D files cannot be imported into an OME
-server (see `this Trac
-ticket <http://dev.loci.wisc.edu/trac/software/ticket/266>`_ for
-details). Since the OME perl server has been discontinued, we have no
+server. Since the OME perl server has been discontinued, we have no
 plans to fix this limitation.
 
 Upgrading
 ---------
 
-You can upgrade your OME server installation to take advantage of a
-:downloads:`new Bio-Formats release <>` by overwriting the old 
-**loci\_tools.jar** with the new one.
+OME server is not supported by Bio-Formats versions 5.0.0 and above. To take
+advantage of more recent improvements to Bio-Formats, you must switch to
+:omerodoc:`OMERO server <>`.
 
 Source Code
 -----------
