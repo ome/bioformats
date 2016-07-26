@@ -290,7 +290,7 @@ extensions = .spc
 owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
 bsd = no
 weHave = * an `SPC specification document <http://www.becker-hickl.com/handbookphp.htm>`_ \n
-* an SPC dataset
+* `public sample images <http://downloads.openmicroscopy.org/images/SPC-FIFO/>`__
 weWant = * more SPC sample files
 pixelsRating = Poor
 metadataRating = Fair
@@ -299,6 +299,8 @@ presenceRating = Poor
 utilityRating = Fair
 reader = SPCReader
 mif = true
+notes = * Only files containing frame, line and pixel clock information \n
+  are currently supported
 
 [Becker & Hickl SPCImage]
 extensions = .sdt
