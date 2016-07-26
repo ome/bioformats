@@ -59,9 +59,12 @@ public class TiffComment {
       System.out.println(
         "tiffcomment [-set comment] [-edit] file1 [file2 ...]");
       System.out.println();
+
+      System.out.println("This tool requires an ImageDescription tag to be " +
+        "present in the TIFF file. ");
+      System.out.println();
       System.out.println("If using the '-set' option, the new TIFF comment " +
-        "must be specified.");
-      System.out.println("The commment may take any of the following forms:");
+        "must be specified and may take any of the following forms:");
       System.out.println();
       System.out.println("  * the text of the comment, e.g. 'new comment!'");
       System.out.println("  * the name of the file containing the text of " +
