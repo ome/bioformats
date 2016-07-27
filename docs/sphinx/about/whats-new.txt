@@ -4,7 +4,11 @@ Version history
 5.2.0-m5 (2016 July 7)
 -----------------------
 
-Java format support improvements include:
+Java format support improvements are listed below.
+
+†Denotes a major breaking change to the reader (typically modification of core
+metadata). Code changes or re-import may be necessary in ImageJ/FIJI and
+OMERO.
 
 * added support for :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
 * added support for :doc:`Princeton Instruments .spe </formats/princeton-instruments-spe>` data
@@ -52,10 +56,6 @@ Java format support improvements include:
    - Micro-Manager
        - fixed handling of large datasets saved as image stacks and split
          over multiple files
-
-†Denotes a major breaking change to the reader (typically modification of core
-metadata). Code changes or re-import may be necessary in ImageJ/FIJI and
-OMERO.
 
 Top-level Bio-Formats API changes:
 
