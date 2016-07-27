@@ -604,6 +604,7 @@ public class ZeissCZIReader extends FormatReader {
     if (isRGB()) {
       bpp *= (getSizeC() / originalC);
     }
+    int fullResBlockCount = planes.size();
     for (int i=0; i<planes.size(); i++) {
       long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
       if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
@@ -644,6 +645,7 @@ public class ZeissCZIReader extends FormatReader {
             planes.remove(i);
             i--;
           }
+          fullResBlockCount--;
         }
         else {
           scanDim = (int) (size / planeSize);
@@ -723,8 +725,10 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("prestitched = {}", prestitched);
     LOGGER.trace("scanDim = {}", scanDim);
 
+    int calculatedSeries = fullResBlockCount / getImageCount();
     if (((mosaics == seriesCount) || (positions == seriesCount)) &&
-      seriesCount == (planes.size() / getImageCount()) &&
+      ((seriesCount == calculatedSeries) ||
+      (maxResolution > 0 && seriesCount * mosaics == calculatedSeries)) &&
       prestitched != null && prestitched)
     {
       boolean equalTiles = true;
@@ -743,9 +747,17 @@ public class ZeissCZIReader extends FormatReader {
         angles = 1;
       }
       else {
-        prestitched = false;
-        ms0.sizeX = planes.get(planes.size() - 1).x;
-        ms0.sizeY = planes.get(planes.size() - 1).y;
+        int newX = planes.get(planes.size() - 1).x;
+        int newY = planes.get(planes.size() - 1).y;
+        if (ms0.sizeX < newX || ms0.sizeY < newY) {
+          prestitched = true;
+          mosaics = 1;
+        }
+        else {
+          prestitched = false;
+        }
+        ms0.sizeX = newX;
+        ms0.sizeY = newY;
       }
     }
 
@@ -1344,7 +1356,7 @@ public class ZeissCZIReader extends FormatReader {
     LOGGER.trace("assignPlaneIndices:");
     // assign plane and series indices to each SubBlock
 
-    if (getSeriesCount() == mosaics) {
+    if (core.size() == mosaics && maxResolution == 0) {
       LOGGER.trace("  reset position, acquisition, and angle count");
       positions = 1;
       acquisitions = 1;
@@ -3116,6 +3128,7 @@ public class ZeissCZIReader extends FormatReader {
     @Override
     public String toString() {
       return "coreIndex=" + coreIndex + ", planeIndex=" + planeIndex +
+        ", resolutionIndex=" + resolutionIndex +
         ", x=" + x + ", y=" + y + ", row=" + row + ", col=" + col + ", metadata=" + metadata +
         ", attachmentSize=" + attachmentSize + ", directoryEntry=" + directoryEntry;
     }
