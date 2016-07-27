@@ -1494,12 +1494,13 @@ notes = .. seealso:: \n
   `NEF Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_
 
 [NIfTI]
-extensions = .img, .hdr
+extensions = .img, .hdr, .nii
 developer = `National Institutes of Health <http://www.nih.gov/>`_
 bsd = no
 samples = `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_
 weHave = * `NIfTI specification documents <http://afni.nimh.nih.gov/pub/dist/doc/nifti/nifti_revised.html>`_ \n
-* several NIfTI datasets
+* several NIfTI datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/NIfTI/>`__
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good

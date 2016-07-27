@@ -974,7 +974,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/nifti`
-     - .img, .hdr
+     - .img, .hdr, .nii
      - |Very good|
      - |Good|
      - |Very good|
