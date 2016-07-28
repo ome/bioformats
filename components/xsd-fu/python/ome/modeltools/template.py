@@ -1,4 +1,8 @@
-# Copyright (C) 2009 - 2016 Open Microscopy Environment. All rights reserved.
+# Copyright (C) 2009 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
