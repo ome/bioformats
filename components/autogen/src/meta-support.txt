@@ -3511,45 +3511,6 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
-[SlideBook6Reader]
-Channel.ID = Yes
-Channel.Name = Yes
-Channel.SamplesPerPixel = Yes
-Image.AcquisitionDate = Yes
-Image.Description = Yes
-Image.ID = Yes
-Image.InstrumentRef = Yes
-Image.Name = Yes
-Instrument.ID = Yes
-Objective.Correction = Yes
-Objective.ID = Yes
-Objective.Immersion = Yes
-Objective.Model = Yes
-Objective.NominalMagnification = Yes
-ObjectiveSettings.ID = Yes
-Pixels.BigEndian = Yes
-Pixels.DimensionOrder = Yes
-Pixels.ID = Yes
-Pixels.Interleaved = Yes
-Pixels.PhysicalSizeX = Yes
-Pixels.PhysicalSizeY = Yes
-Pixels.PhysicalSizeZ = Yes
-Pixels.SignificantBits = Yes
-Pixels.SizeC = Yes
-Pixels.SizeT = Yes
-Pixels.SizeX = Yes
-Pixels.SizeY = Yes
-Pixels.SizeZ = Yes
-Pixels.Type = Yes
-Plane.DeltaT = Yes
-Plane.ExposureTime = Yes
-Plane.PositionX = Yes
-Plane.PositionY = Yes
-Plane.PositionZ = Yes
-Plane.TheC = Yes
-Plane.TheT = Yes
-Plane.TheZ = Yes
-
 [SlidebookReader]
 Channel.ID = Yes
 Channel.NDFilter = Yes
