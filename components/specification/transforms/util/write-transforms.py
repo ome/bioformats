@@ -153,10 +153,11 @@ print """<?xml version = "1.0" encoding = "UTF-8"?>
   #%L
   OME Data Model transforms
   %%
-  Copyright (C) 2005 - 2016 Open Microscopy Environment:
-    - Board of Regents of the University of Wisconsin-Madison
-    - Glencoe Software, Inc.
+  Copyright (C) 2012 - 2016 Open Microscopy Environment:
+    - Massachusetts Institute of Technology
+    - National Institutes of Health
     - University of Dundee
+    - Board of Regents of the University of Wisconsin-Madison
   %%
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:

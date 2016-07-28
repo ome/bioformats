@@ -1,9 +1,9 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
   #%L
-  BSD implementations of Bio-Formats readers and writers
+  OME Data Model transforms
   %%
-  Copyright (C) 2005 - 2016 Open Microscopy Environment:
+  Copyright (C) 2003 - 2016 Open Microscopy Environment:
     - Massachusetts Institue of Technology,
     - National Institutes of Health,
     - University of Dundee
