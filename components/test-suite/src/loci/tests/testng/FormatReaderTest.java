@@ -1832,6 +1832,11 @@ public class FormatReaderTest {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
     if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
     String format = config.getReader();
     boolean success = true;
     try {
