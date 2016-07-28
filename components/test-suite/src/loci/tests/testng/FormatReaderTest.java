@@ -594,6 +594,11 @@ public class FormatReaderTest {
   public void testSaneOMEXML() {
     String testName = "testSaneOMEXML";
     if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
     String msg = null;
     try {
 
