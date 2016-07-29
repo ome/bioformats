@@ -111,6 +111,7 @@ loci.formats.in.BDReader              # exp, tif
 loci.formats.in.UnisokuReader         # dat, hdr
 loci.formats.in.PDSReader             # hdr, img
 loci.formats.in.FujiReader            # inf, img
+loci.formats.in.HarmonyReader         # xml, tif, tiff
 loci.formats.in.OperettaReader        # xml, tif, tiff
 loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 loci.formats.in.CellVoyagerReader     # xml, tif
