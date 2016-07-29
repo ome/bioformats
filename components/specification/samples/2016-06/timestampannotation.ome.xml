@@ -203,7 +203,7 @@
       </Rectangle>
       <Label ID="Shape:3" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
                  Text="Hello World Text Value!(from shape 3)" X="1" Y="1"/>
-      <Polygon ID="Shape:4" StrokeWidth="2" StrokeColor="15"> Points="1,1 10,20, 20,20 20,10"></Polygon>
+      <Polygon ID="Shape:4" StrokeWidth="2" StrokeColor="15" Points="1,1 10,20, 20,20 20,10"></Polygon>
       <Polyline ID="Shape:5" StrokeWidth="2" StrokeColor="16" Points="15,15 15,25, 25,25 25,15" MarkerStart="Arrow"
                  MarkerEnd="Arrow"/>
       <Polyline ID="Shape:6" StrokeWidth="2" StrokeColor="161" Points="1.1,1.1 10.1,20.1, 20.1,20.1 20.1,10.1" 
