@@ -204,7 +204,10 @@ public class ImageInfo {
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
         else if (args[i].equals("-cache")) cache = true;
-        else if (args[i].equals("-omexml")) omexml = true;
+        else if (args[i].equals("-omexml")) {
+          omexml = true; 
+          validate = true;
+        }
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
