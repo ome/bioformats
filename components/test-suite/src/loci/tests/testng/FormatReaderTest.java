@@ -594,13 +594,13 @@ public class FormatReaderTest {
   public void testSaneOMEXML() {
     String testName = "testSaneOMEXML";
     if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
     String msg = null;
     try {
-      String format = config.getReader();
-      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
-        result(testName, true);
-        return;
-      }
 
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       boolean success = omexmlService.isOMEXMLMetadata(retrieve);
@@ -1396,12 +1396,6 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      String format = config.getReader();
-      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
-        result(testName, true);
-        return;
-      }
-
       MetadataStore store = reader.getMetadataStore();
       success = omexmlService.isOMEXMLMetadata(store);
       if (!success) msg = TestTools.shortClassName(store);
@@ -1843,28 +1837,28 @@ public class FormatReaderTest {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
     if (!initFile()) result(testName, false, "initFile");
-    String format = config.getReader();
-    if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
       result(testName, true);
+      return;
     }
-    else {
-      boolean success = true;
-      try {
-        MetadataStore store = reader.getMetadataStore();
-        MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-        String xml = omexmlService.getOMEXML(retrieve);
-        // prevent issues due to thread-unsafeness of
-        // javax.xml.validation.Validator as used during XML validation
-        synchronized (configTree) {
-          success = xml != null && omexmlService.validateOMEXML(xml);
-        }
+    String format = config.getReader();
+    boolean success = true;
+    try {
+      MetadataStore store = reader.getMetadataStore();
+      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+      String xml = omexmlService.getOMEXML(retrieve);
+      // prevent issues due to thread-unsafeness of
+      // javax.xml.validation.Validator as used during XML validation
+      synchronized (configTree) {
+        success = xml != null && omexmlService.validateOMEXML(xml);
       }
-      catch (Throwable t) {
-        LOGGER.info("", t);
-        success = false;
-      }
-      result(testName, success);
     }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success);
     try {
       close();
     }
