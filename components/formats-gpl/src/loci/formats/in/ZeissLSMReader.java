@@ -2302,7 +2302,8 @@ public class ZeissLSMReader extends FormatReader {
 
     public void addToHashtable() {
       String prefix = this.getClass().getSimpleName();
-      Integer[] keys = blockData.keySet().toArray(new Integer[0]);
+      Integer[] keys = blockData.keySet().toArray(
+          new Integer[blockData.size()]);
       for (Integer key : keys) {
         if (METADATA_KEYS.get(key) != null) {
           addSeriesMetaList(prefix + " " + METADATA_KEYS.get(key),
