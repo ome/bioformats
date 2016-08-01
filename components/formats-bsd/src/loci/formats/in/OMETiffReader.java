@@ -248,7 +248,12 @@ public class OMETiffReader extends FormatReader {
       }
 
       for (int i=0; i<meta.getImageCount(); i++) {
-        meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
+        meta.setPixelsBigEndian(Boolean.TRUE, i);
+        if (meta.getPixelsBinDataCount(i) > 0) {
+          for (int j=0; j<meta.getPixelsBinDataCount(i); j++) {
+            meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, j);
+          }
+        }
         MetadataTools.verifyMinimumPopulated(meta, i);
       }
       return meta.getImageCount() > 0;
@@ -1059,7 +1064,22 @@ public class OMETiffReader extends FormatReader {
    * @deprecated Use the general FormatReader::getMetadataStore() method.
    */
   public MetadataStore getMetadataStoreForConversion() {
+<<<<<<< HEAD
     return getMetadataStore();
+=======
+    MetadataStore store = getMetadataStore();
+    int realSeries = getSeries();
+    for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
+      if (meta.getPixelsBinDataCount(i) > 0) {
+        for (int j=0; j<meta.getPixelsBinDataCount(i); j++) {
+          store.setPixelsBinDataBigEndian(new Boolean(!isLittleEndian()), i, j);
+        }
+      }
+    }
+    setSeries(realSeries);
+    return store;
+>>>>>>> openmicroscopy/develop
   }
 
   // -- Helper methods --
