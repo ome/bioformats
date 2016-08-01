@@ -45,8 +45,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.units.quantity.Length;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
