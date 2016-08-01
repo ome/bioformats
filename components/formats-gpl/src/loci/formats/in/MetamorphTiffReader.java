@@ -151,7 +151,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     int fileIndex = FormatTools.positionToRaster(lengths, position);
-    RandomAccessInputStream s = null;
+    final RandomAccessInputStream s;
     if (fileIndex < files.length) {
       s = new RandomAccessInputStream(files[fileIndex]);
     }
@@ -272,7 +272,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       final Length x = handler.getStagePositionX();
       final Length y = handler.getStagePositionY();
 
-      if (xPositions.size() == 0) {
+      if (xPositions.isEmpty()) {
         xPositions.add(x);
         yPositions.add(y);
       }
