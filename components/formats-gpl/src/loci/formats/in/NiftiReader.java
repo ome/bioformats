@@ -226,14 +226,11 @@ public class NiftiReader extends FormatReader {
       pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
       pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
-    else if (id.endsWith(".nii")) {
+    else if (checkSuffix(id, "nii")) {
       pixelsFilename = id;
       pixelFile = in;
-    } else if (id.endsWith(".nii.gz")) {
-      pixelsFilename = id;
-      pixelFile = new RandomAccessInputStream(new GZipHandle(id));
     } else {
-    	throw new FormatException("File does not have one of the required NIfTI extensions (.hdr, .nii, .nii.gz)");
+      throw new FormatException("File does not have one of the required NIfTI extensions (.hdr, .nii, .nii.gz)");
     }
 
     in.order(little);
