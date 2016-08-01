@@ -61,7 +61,6 @@ import loci.formats.services.OMEXMLServiceImpl;
 import ome.xml.meta.OMEXMLMetadataRoot;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OMEXMLWriter is the file format writer for OME-XML files.
