@@ -34,7 +34,8 @@ package loci.formats.out;
 
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -87,7 +88,7 @@ public class AVIWriter extends FormatWriter {
   private int xDim, yDim, zDim, tDim, xPad;
   private int microSecPerFrame;
 
-  private Vector<Long> savedbLength;
+  private List<Long> savedbLength;
   private long idx1Pos;
   private long endPos;
   private long saveidx1Length;
@@ -239,7 +240,7 @@ public class AVIWriter extends FormatWriter {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
-    savedbLength = new Vector<Long>();
+    savedbLength = new ArrayList<Long>();
 
     if (out.length() > 0) {
       RandomAccessInputStream in = new RandomAccessInputStream(currentId);
