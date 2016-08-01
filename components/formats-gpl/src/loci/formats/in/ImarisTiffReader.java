@@ -26,8 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,9 +128,9 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String description = null, creationDate = null;
-      Vector<Double> emWave = new Vector<Double>();
-      Vector<Double> exWave = new Vector<Double>();
-      Vector<String> channelNames = new Vector<String>();
+      final List<Double> emWave = new ArrayList<Double>();
+      final List<Double> exWave = new ArrayList<Double>();
+      final List<String> channelNames = new ArrayList<String>();
 
       if (comment != null && comment.startsWith("[")) {
         // parse key/value pairs
