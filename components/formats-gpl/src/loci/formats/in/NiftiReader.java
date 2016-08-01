@@ -82,13 +82,13 @@ public class NiftiReader extends FormatReader {
 
   /** Constructs a new NIfTI reader. */
   public NiftiReader() {
-    super("NIfTI", new String[] {"nii", "img", "hdr"});
+    super("NIfTI", new String[] {"nii", "img", "hdr", "nii.gz"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN,
       FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
-    datasetDescription = "A single .nii file or one .img file and a " +
-      "similarly-named .hdr file";
+    datasetDescription = "A single .nii file or a single .nii.gz file or one" +
+      " .img file and a similarly-named .hdr file";
   }
 
   // -- IFormatReader API methods --

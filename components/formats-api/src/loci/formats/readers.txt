@@ -100,7 +100,7 @@ loci.formats.in.SPEReader             # spe
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
-loci.formats.in.NiftiReader           # hdr, img, nii
+loci.formats.in.NiftiReader           # hdr, img, nii, nii.gz
 loci.formats.in.AnalyzeReader         # hdr, img
 loci.formats.in.APLReader             # apl, mtb, tnb
 loci.formats.in.NRRDReader            # nrrd, nhdr, pic

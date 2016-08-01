@@ -288,8 +288,8 @@ to open/import a dataset in a particular format.
      - .mng
      - Single file
    * - NIfTI
-     - .nii, .img, .hdr
-     - A single .nii file or one .img file and a similarly-named .hdr file
+     - .nii, .img, .hdr, .nii.gz
+     - A single .nii file or a single .nii.gz file or one .img file and a similarly-named .hdr file
    * - NOAA-HRD Gridded Data Format
      - (no extension)
      - Single file
