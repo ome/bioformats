@@ -29,8 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
 import java.util.List;
 
 import loci.common.DataTools;
@@ -44,8 +42,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
