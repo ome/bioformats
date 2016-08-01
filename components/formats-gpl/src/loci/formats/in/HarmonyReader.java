@@ -68,6 +68,7 @@ public class HarmonyReader extends FormatReader {
 
   private Plane[][] planes;
   private MinimalTiffReader reader;
+  private ArrayList<String> metadataFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -146,15 +147,34 @@ public class HarmonyReader extends FormatReader {
     return xml.indexOf(MAGIC) > 0;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+
+    ArrayList<String> files = new ArrayList<String>();
+    files.addAll(metadataFiles);
+    if (!noPixels) {
+      for (Plane[] well : planes) {
+        for (Plane p : well) {
+          files.add(p.filename);
+        }
+      }
+    }
+    return files.toArray(new String[files.size()]);
+  }
+
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
     ArrayList<String> files = new ArrayList<String>();
-    files.add(currentId);
-    for (Plane p : planes[getSeries()]) {
-      files.add(p.filename);
+    files.addAll(metadataFiles);
+    if (!noPixels) {
+      for (Plane p : planes[getSeries()]) {
+        files.add(p.filename);
+      }
     }
 
     return files.toArray(new String[files.size()]);
@@ -170,6 +190,7 @@ public class HarmonyReader extends FormatReader {
       }
       reader = null;
       planes = null;
+      metadataFiles.clear();
     }
   }
 
@@ -217,6 +238,25 @@ public class HarmonyReader extends FormatReader {
     }
     else {
       super.initFile(id);
+    }
+
+    // assemble list of other metadata/analysis results files
+
+    Location parent = new Location(currentId).getAbsoluteFile().getParentFile().getParentFile();
+    String[] list = parent.list();
+    for (String f : list) {
+      Location path = new Location(parent, f);
+      if (path.isDirectory()) {
+        String[] results = path.list();
+        for (String r : results) {
+          if (!f.equals("Images") || !checkSuffix(r, "tiff")) {
+            metadataFiles.add(new Location(path, r).getAbsolutePath());
+          }
+        }
+      }
+      else {
+        metadataFiles.add(path.getAbsolutePath());
+      }
     }
 
     // parse plate layout and image dimensions from the XML file
