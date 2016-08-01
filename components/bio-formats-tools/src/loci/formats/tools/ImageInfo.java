@@ -941,9 +941,6 @@ public class ImageInfo {
     if (baseReader instanceof ImageReader) {
       baseReader = ((ImageReader) baseReader).getReader();
     }
-    if (baseReader instanceof OMETiffReader) {
-      ms = ((OMETiffReader) baseReader).getMetadataStoreForDisplay();
-    }
 
     OMEXMLService service;
     try {
