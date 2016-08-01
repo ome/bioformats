@@ -1584,7 +1584,7 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher(TestTools.getTestImageReader());
+      IFormatReader check = new FileStitcher();
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1625,7 +1625,7 @@ public class FormatReaderTest {
       else {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? TestTools.getTestImageReader() :*/ new FileStitcher(TestTools.getTestImageReader());
+          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -1877,7 +1877,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
+        new BufferedImageReader(new FileStitcher());
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -2031,7 +2031,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
+        new BufferedImageReader(new FileStitcher());
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -2408,7 +2408,7 @@ public class FormatReaderTest {
       String tmpdir = System.getProperty("java.io.tmpdir");
       memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
       memoDir.mkdir();
-      Memoizer memo = new Memoizer(TestTools.getTestImageReader(), 0, memoDir);
+      Memoizer memo = new Memoizer(0, memoDir);
       memo.setId(reader.getCurrentFile());
       memo.close();
       memoFile = memo.getMemoFile(reader.getCurrentFile());
@@ -2515,7 +2515,8 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    ImageReader ir = TestTools.getTestImageReader();
+    // Remove external SlideBook6Reader class for testing purposes
+    ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);

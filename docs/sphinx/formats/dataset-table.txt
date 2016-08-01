@@ -398,12 +398,12 @@ to open/import a dataset in a particular format.
    * - SM Camera
      - (no extension)
      - Single file
+   * - SPC FIFO Data
+     - .spc, .set
+     - One .spc file and similarly named .set file
    * - SPCImage Data
      - .sdt
      - Single file
-   * - SPCImage Data
-     - .spc, .set
-     - One .spc file and similarly named .set file
    * - SPIDER
      - .spi
      - Single file
@@ -415,9 +415,6 @@ to open/import a dataset in a particular format.
      - Single file
    * - Simulated data
      - .fake
-     - Single file
-   * - SlideBook 6 SLD (native)
-     - .sld
      - Single file
    * - Slidebook TIFF
      - .tif, .tiff

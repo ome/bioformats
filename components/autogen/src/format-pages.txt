@@ -12,17 +12,17 @@ metadataRating = Fair
 opennessRating = Fair
 presenceRating = Very good
 utilityRating = Fair
-reader = SlidebookReader, SlideBook6Reader
+reader = SlidebookReader
 mif = true
 notes = We strongly encourage users to export their .sld files to OME-TIFF \n
 using the SlideBook software.  Bio-Formats is not likely to support the full \n
 range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
-Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
+Free software from 3i can export the files to OME-TIFF post-acquisition, see \n
 https://www.slidebook.com/reader.php.\n
 \n
-SlideBook6Reader requires a native binary file to work, see\n
+3i also develops a native SlideBook reader which works with Bio-Formats. See \n
 http://www.openmicroscopy.org/info/slidebook for details.\n
 \n
 .. seealso:: \n
