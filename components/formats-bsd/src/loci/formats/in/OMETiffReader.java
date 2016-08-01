@@ -1064,22 +1064,7 @@ public class OMETiffReader extends FormatReader {
    * @deprecated Use the general FormatReader::getMetadataStore() method.
    */
   public MetadataStore getMetadataStoreForConversion() {
-<<<<<<< HEAD
     return getMetadataStore();
-=======
-    MetadataStore store = getMetadataStore();
-    int realSeries = getSeries();
-    for (int i=0; i<getSeriesCount(); i++) {
-      setSeries(i);
-      if (meta.getPixelsBinDataCount(i) > 0) {
-        for (int j=0; j<meta.getPixelsBinDataCount(i); j++) {
-          store.setPixelsBinDataBigEndian(new Boolean(!isLittleEndian()), i, j);
-        }
-      }
-    }
-    setSeries(realSeries);
-    return store;
->>>>>>> openmicroscopy/develop
   }
 
   // -- Helper methods --
