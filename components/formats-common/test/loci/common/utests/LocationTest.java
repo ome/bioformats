@@ -139,8 +139,8 @@ public class LocationTest {
     for (int i=0; i<files.length; i++) {
       skipIfOffline(i);
       String msg = files[i].getName();
-      assertEquals(msg, files[i].canRead(), mode[i].indexOf("r") != -1);
-      assertEquals(msg, files[i].canWrite(), mode[i].indexOf("w") != -1);
+      assertEquals(msg, files[i].canRead(), mode[i].contains("r"));
+      assertEquals(msg, files[i].canWrite(), mode[i].contains("w"));
     }
   }
 
@@ -233,7 +233,7 @@ public class LocationTest {
   public void testToURL() throws IOException {
     for (Location file : files) {
       String path = file.getAbsolutePath();
-      if (path.indexOf("://") == -1) {
+      if (!path.contains("://")) {
         if (IS_WINDOWS) {
           path = "file:/" + path;
         }
