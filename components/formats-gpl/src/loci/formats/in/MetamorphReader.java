@@ -64,6 +64,8 @@ import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
+import org.apache.commons.lang.ArrayUtils;
+
 /**
  * Reader is the file format reader for Metamorph STK files.
  *
@@ -232,7 +234,7 @@ public class MetamorphReader extends BaseTiffReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (!noPixels && stks == null) return new String[] {currentId};
-    else if (stks == null) return new String[0];
+    else if (stks == null) return ArrayUtils.EMPTY_STRING_ARRAY;
 
     final List<String> v = new ArrayList<String>();
     if (ndFilename != null) v.add(ndFilename);

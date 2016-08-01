@@ -54,6 +54,8 @@ import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
+import org.apache.commons.lang.ArrayUtils;
+
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
@@ -111,7 +113,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return noPixels ? new String[0] : files;
+    return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : files;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
