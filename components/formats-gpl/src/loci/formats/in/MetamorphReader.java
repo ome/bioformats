@@ -34,8 +34,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -112,8 +112,8 @@ public class MetamorphReader extends BaseTiffReader {
   private String binning;
   private double zoom, stepSize;
   private Double exposureTime;
-  private Vector<String> waveNames;
-  private Vector<String> stageNames;
+  private List<String> waveNames;
+  private List<String> stageNames;
   private long[] internalStamps;
   private double[] zDistances;
   private Length[] stageX, stageY;
@@ -237,7 +237,7 @@ public class MetamorphReader extends BaseTiffReader {
     if (!noPixels && stks == null) return new String[] {currentId};
     else if (stks == null) return new String[0];
 
-    Vector<String> v = new Vector<String>();
+    final List<String> v = new ArrayList<String>();
     if (ndFilename != null) v.add(ndFilename);
     if (!noPixels) {
       for (String stk : stks[getSeries()]) {
@@ -437,9 +437,9 @@ public class MetamorphReader extends BaseTiffReader {
       int zc = getSizeZ(), cc = getSizeC(), tc = getSizeT();
       int nstages = 0;
       String z = null, c = null, t = null;
-      Vector<Boolean> hasZ = new Vector<Boolean>();
-      waveNames = new Vector<String>();
-      stageNames = new Vector<String>();
+      final List<Boolean> hasZ = new ArrayList<Boolean>();
+      waveNames = new ArrayList<String>();
+      stageNames = new ArrayList<String>();
       boolean useWaveNames = true;
 
       ndFilename = ndfile.getAbsolutePath();
@@ -722,7 +722,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
-    Vector<String> timestamps = null;
+    List<String> timestamps = null;
     MetamorphHandler handler = null;
 
     MetadataStore store = makeFilterMetadata();
@@ -782,8 +782,8 @@ public class MetamorphReader extends BaseTiffReader {
         stepSize = zDistances[0];
       }
       else {
-        Vector<Double> zPositions = new Vector<Double>();
-        Vector<Double> uniqueZ = new Vector<Double>();
+        List<Double> zPositions = new ArrayList<Double>();
+        final List<Double> uniqueZ = new ArrayList<Double>();
     	  
         for (IFD ifd : ifds) {
           MetamorphHandler zPlaneHandler = new MetamorphHandler();
@@ -900,7 +900,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       final Length positionX = handler.getStagePositionX();
       final Length positionY = handler.getStagePositionY();
-      Vector<Double> exposureTimes = handler.getExposures();
+      final List<Double> exposureTimes = handler.getExposures();
       if (exposureTimes.size() == 0) {
         for (int p=0; p<getImageCount(); p++) {
           exposureTimes.add(exposureTime);
@@ -921,7 +921,7 @@ public class MetamorphReader extends BaseTiffReader {
             catch (IOException e) { }
           }
 
-          Vector<Double> channelExpTime = channelHandler.getExposures();
+          final List<Double> channelExpTime = channelHandler.getExposures();
           exposureTimes.add(channelExpTime.get(0));
         }
       }
@@ -979,7 +979,7 @@ public class MetamorphReader extends BaseTiffReader {
             if (comment != null && comment.startsWith("<MetaData>")) {
               String[] lines = comment.split("\n");
 
-              timestamps = new Vector<String>();
+              timestamps = new ArrayList<String>();
 
               for (String line : lines) {
                 line = line.trim();
@@ -1136,7 +1136,7 @@ public class MetamorphReader extends BaseTiffReader {
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
         (TiffRational[]) entry : new TiffRational[] {(TiffRational) entry};
       wave = new double[uic3.length];
-      Vector<Double> uniqueWavelengths = new Vector<Double>();
+      final List<Double> uniqueWavelengths = new ArrayList<Double>();
       for (int i=0; i<uic3.length; i++) {
         wave[i] = uic3[i].doubleValue();
         addSeriesMeta("Wavelength [" + intFormatMax(i, mmPlanes) + "]",
@@ -1947,7 +1947,7 @@ public class MetamorphReader extends BaseTiffReader {
         addGlobalMeta("Channel #" + index + " " + key, value);
 
         if (key.equals("_IllumSetting_")) {
-          if (waveNames == null) waveNames = new Vector<String>();
+          if (waveNames == null) waveNames = new ArrayList<String>();
           waveNames.add(value);
         }
         break;
