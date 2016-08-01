@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
@@ -106,7 +107,7 @@ public class OpenlabReader extends FormatReader {
   private String fmt = "";
   private int[][] planeOffsets;
 
-  private Vector<byte[][]> luts;
+  private List<byte[][]> luts;
   private int lastPlane = 0;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
@@ -248,7 +249,7 @@ public class OpenlabReader extends FormatReader {
             if (getSeries() < planeOffsets.length) {
               index = planeOffsets[getSeries()][lastPlane];
             }
-            luts.setElementAt(pict.get8BitLookupTable(), index);
+            luts.set(index, pict.get8BitLookupTable());
           }
 
           r.openBytes(0, buf, x, y, w, h);
@@ -341,7 +342,7 @@ public class OpenlabReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    luts = new Vector<byte[][]>();
+    luts = new ArrayList<byte[][]>();
 
     LOGGER.info("Verifying Openlab LIFF format");
 
@@ -377,7 +378,7 @@ public class OpenlabReader extends FormatReader {
 
     int imagesFound = 0;
 
-    Vector<PlaneInfo> representativePlanes = new Vector<PlaneInfo>();
+    final List<PlaneInfo> representativePlanes = new ArrayList<PlaneInfo>();
 
     while (in.getFilePointer() + 8 < in.length()) {
       long fp = in.getFilePointer();
@@ -489,8 +490,8 @@ public class OpenlabReader extends FormatReader {
 
     int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
-    Vector<Integer> tmpOffsets = new Vector<Integer>();
-    Vector<String> names = new Vector<String>();
+    final List<Integer> tmpOffsets = new ArrayList<Integer>();
+    final List<String> names = new ArrayList<String>();
 
     core.clear();
     for (int i=0; i<nSeries; i++) {
@@ -742,10 +743,10 @@ public class OpenlabReader extends FormatReader {
   }
 
   private void parseImageNames(int s) {
-    Vector<String> uniqueF = new Vector<String>();
-    Vector<String> uniqueC = new Vector<String>();
-    Vector<String> uniqueZ = new Vector<String>();
-    Vector<String> uniqueT = new Vector<String>();
+    final List<String> uniqueF = new ArrayList<String>();
+    final List<String> uniqueC = new ArrayList<String>();
+    final List<String> uniqueZ = new ArrayList<String>();
+    final List<String> uniqueT = new ArrayList<String>();
     String[] axes = new String[] {"Z", "C", "T"};
 
     CoreMetadata m = core.get(s);
@@ -801,7 +802,7 @@ public class OpenlabReader extends FormatReader {
       }
       else {
         for (String axis : axes) {
-          Vector<String> unique = null;
+          List<String> unique = null;
           if (axis.equals("Z")) unique = uniqueZ;
           else if (axis.equals("C")) unique = uniqueC;
           else if (axis.equals("T")) unique = uniqueT;
