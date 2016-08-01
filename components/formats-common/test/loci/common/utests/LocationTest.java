@@ -44,7 +44,7 @@ import java.util.List;
 import loci.common.Location;
 
 import org.testng.SkipException;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -68,7 +68,7 @@ public class LocationTest {
 
   // -- Setup methods --
 
-  @BeforeMethod
+  @BeforeClass
   public void setup() throws IOException {
     File tmpDirectory = new File(System.getProperty("java.io.tmpdir"),
       System.currentTimeMillis() + "-location-test");
@@ -116,7 +116,7 @@ public class LocationTest {
     };
   }
 
-  @BeforeMethod
+  @BeforeClass
   public void checkIfOnline() throws IOException {
     try {
       new Socket("www.openmicroscopy.org", 80).close();
