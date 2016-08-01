@@ -40,7 +40,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -368,7 +368,7 @@ public class OMETiffReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     int series = getSeries();
     if (noPixels) return null;
-    Vector<String> usedFiles = new Vector<String>();
+    final List<String> usedFiles = new ArrayList<String>();
     if (metadataFile != null) {
       usedFiles.add(metadataFile);
     }
@@ -979,7 +979,7 @@ public class OMETiffReader extends FormatReader {
     // remove null CoreMetadata entries
 
     ArrayList<CoreMetadata> series = new ArrayList<CoreMetadata>();
-    Vector<OMETiffPlane[]> planeInfo = new Vector<OMETiffPlane[]>();
+    final List<OMETiffPlane[]> planeInfo = new ArrayList<OMETiffPlane[]>();
     for (int i=0; i<core.size(); i++) {
       if (core.get(i) != null) {
         series.add(core.get(i));

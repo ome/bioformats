@@ -33,7 +33,8 @@
 package loci.formats.out;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.services.DependencyException;
@@ -69,7 +70,7 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- Fields --
 
-  private Vector<String> xmlFragments;
+  private List<String> xmlFragments;
   private String currentFragment;
   private OMEXMLService service;
 
@@ -114,7 +115,7 @@ public class OMEXMLWriter extends FormatWriter {
       throw new FormatException(se);
     }
 
-    xmlFragments = new Vector<String>();
+    xmlFragments = new ArrayList<String>();
     currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     XMLTools.parseXML(xml, new OMEHandler());
 
