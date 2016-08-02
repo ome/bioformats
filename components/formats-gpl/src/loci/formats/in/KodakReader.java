@@ -241,12 +241,13 @@ public class KodakReader extends FormatReader {
         if (hexMatcher.matches()) {
           // CCD temperature stored as a hexadecimal string such as "0xEB".
           temp = new Double(Integer.parseInt(hexMatcher.group(1), 16));
+          LOGGER.debug("CCD temperature detected as {}; assumed to be invalid", temp);
         }
         else {
           temp = new Double(value.substring(0, value.indexOf(" ")));
-        }
-        store.setImagingEnvironmentTemperature(
+          store.setImagingEnvironmentTemperature(
                 new Temperature(temp, UNITS.CELSIUS), 0);
+        }
       }
     }
   }
