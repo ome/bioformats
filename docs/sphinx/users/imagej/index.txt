@@ -1,7 +1,7 @@
 ImageJ overview
 ===============
 
-`ImageJ <http://rsb.info.nih.gov/ij/>`_ is an image processing and
+`ImageJ <https://imagej.nih.gov/ij/index.html>`_ is an image processing and
 analysis application written in Java, widely used in the life sciences
 fields, with an extensible plugin infrastructure. You can use
 Bio-Formats as a plugin for ImageJ to read and write images in the
@@ -38,7 +38,7 @@ explicitly choosing
 menu.
 
 For a more detailed description of each plugin, see the `Bio-Formats
-page <http://fiji.sc/Bio-Formats>`_ of the Fiji wiki.
+page <http://imagej.net/Bio-Formats>`_ of the ImageJ wiki.
 
 Upgrading
 ---------
@@ -46,11 +46,7 @@ Upgrading
 To upgrade, just overwrite the old **bioformats_package.jar** with the
 :downloads:`latest one <>`.
 
-You may want to download the latest version of ImageJ first, to take
-advantage of new features and bug-fixes.
-
-As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
-directly from ImageJ. Select
+You can also upgrade the Bio-Formats plugin directly from ImageJ. Select
 :menuselection:`Plugins --> Bio-Formats --> Update Bio-Formats Plugins`
 from the ImageJ menu, then select which release you would like to use. You
 will then need to restart ImageJ to complete the upgrade process.

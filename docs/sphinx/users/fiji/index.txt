@@ -4,15 +4,14 @@ Fiji overview
 `Fiji <http://fiji.sc/>`_ is an image processing package. It
 can be described as a distribution of :doc:`ImageJ </users/imagej/index>`
 together with Java, Java 3D and a lot of plugins organized into a
-`coherent menu
-structure <http://fiji.sc/Plugins_Menu>`_.
-Fiji compares to ImageJ as Ubuntu compares to Linux.
+coherent menu structure. Fiji compares to ImageJ as Ubuntu compares to Linux.
 
 Fiji works with Bio-Formats out of the box, because it comes bundled
 with the :doc:`Bio-Formats ImageJ plugins </users/imagej/index>`.
 
-For further details on Bio-Formats in Fiji, see the
-`Bio-Formats Fiji wiki page <http://fiji.sc/Bio-Formats>`_.
+The Fiji documentation has been combined with the ImageJ wiki; for further
+details on Bio-Formats in Fiji, see the
+`Bio-Formats ImageJ page <http://imagej.net/Bio-Formats>`_.
 
 Upgrading
 ---------
@@ -30,7 +29,7 @@ Fiji currently shipping with the 5.1.x release versions of Bio-Formats.
 However, if you have encountered a bug which has been fixed by the Bio-Formats
 team but not yet released, you can use the Bio-Formats update site to
 access the daily build as described in the
-`Fiji documentation <http://fiji.sc/Bio-Formats#Daily_builds>`_.
+`documentation <http://imagej.net/Bio-Formats#Daily_builds>`_.
 
 .. warning:: These builds are **not yet released** and should be considered
     **beta** in quality. In particular, you should **avoid exporting data
