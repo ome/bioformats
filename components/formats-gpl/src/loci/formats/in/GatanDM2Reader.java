@@ -168,7 +168,7 @@ public class GatanDM2Reader extends FormatReader {
       }
       if (strlen < 0 || strlen + in.getFilePointer() >= in.length()) break;
       String label = in.readString(strlen);
-      StringBuffer value = new StringBuffer();
+      final StringBuilder value = new StringBuilder();
 
       int block = in.readInt();
       if (block == 5) {

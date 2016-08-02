@@ -2352,7 +2352,7 @@ public class DeltavisionReader extends FormatReader {
      */
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       sb.append("photosensorReading: ");
       sb.append(photosensorReading);
       sb.append("\ntimeStampSeconds: ");

@@ -163,7 +163,7 @@ public class UnisokuReader extends FormatReader {
       lines[i] = lines[i].trim();
       if (lines[i].startsWith(":")) {
         String key = lines[i++];
-        StringBuffer data = new StringBuffer();
+        final StringBuilder data = new StringBuilder();
         while (i < lines.length && !lines[i].trim().startsWith(":")) {
           data.append(" ");
           data.append(lines[i++].trim());

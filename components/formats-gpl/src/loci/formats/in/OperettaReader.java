@@ -401,7 +401,7 @@ public class OperettaReader extends FormatReader {
     private int plateRows, plateCols;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
 
-    private StringBuffer currentValue = new StringBuffer();
+    private final StringBuilder currentValue = new StringBuilder();
 
     // -- OperettaHandler API methods --
 

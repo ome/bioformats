@@ -169,7 +169,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
 
       if (isInstance) parseFile((DirectoryEntry) o);
       else if (isDocument) {
-        StringBuffer path = new StringBuffer();
+        final StringBuilder path = new StringBuilder();
         for (String p : filePath) {
           path.append(p);
           path.append(File.separator);

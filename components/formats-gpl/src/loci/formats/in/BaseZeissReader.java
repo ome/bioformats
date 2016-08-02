@@ -432,7 +432,7 @@ public abstract class BaseZeissReader extends FormatReader {
     int roiIndex = 0;
     int shapeIndex = 0;
     String shapeID;
-    StringBuffer points;
+    StringBuilder points;
 
     for (Layer layer : layers) {
       for (Shape shape : layer.shapes) {
@@ -585,7 +585,7 @@ public abstract class BaseZeissReader extends FormatReader {
           case SPLINE_CLOSED:
           case MEAS_SPLINE_CLOSED:
             // Currently splines not representable in model, so use polyline.
-            points = new StringBuffer();
+            points = new StringBuilder();
             for (int p=0; p < shape.points.length; p+=2) {
               points.append(shape.points[p+0]);
               points.append(",");
@@ -633,7 +633,7 @@ public abstract class BaseZeissReader extends FormatReader {
             break;
           case RECTANGLE:
           case MEAS_RECTANGLE:
-            points = new StringBuffer();
+            points = new StringBuilder();
             for (int p=0; p < 8; p+=2) {
               points.append(shape.points[p+0]);
               points.append(",");

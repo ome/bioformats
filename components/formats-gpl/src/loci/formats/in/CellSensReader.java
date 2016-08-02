@@ -2306,7 +2306,7 @@ public class CellSensReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer b = new StringBuffer("{");
+      final StringBuilder b = new StringBuilder("{");
       for (int p : coordinate) {
         b.append(p);
         b.append(", ");
