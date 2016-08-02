@@ -184,7 +184,7 @@ public class ND2Handler extends BaseHandler {
         segments = segments.replaceAll("\\[\\]", "");
         String[] points = segments.split("\\)");
 
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i=0; i<points.length; i++) {
           points[i] = points[i].substring(points[i].indexOf(":") + 1);
           sb.append(points[i]);
@@ -605,7 +605,7 @@ public class ND2Handler extends BaseHandler {
         metadata.put(qName, value);
       }
       else {
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         if (prefix != null) {
           sb.append(prefix);
           sb.append(" ");
@@ -682,7 +682,7 @@ public class ND2Handler extends BaseHandler {
             break;
           }
         }
-        StringBuffer s = new StringBuffer();
+        final StringBuilder s = new StringBuilder();
         for (int i=0; i<magIndex; i++) {
           s.append(tokens[i]);
         }

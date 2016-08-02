@@ -1782,7 +1782,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          StringBuffer p = new StringBuffer();
+          StringBuilder p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1811,7 +1811,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1851,7 +1851,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -2189,7 +2189,7 @@ public class ZeissLSMReader extends FormatReader {
         return in.readDouble();
       case TYPE_ASCII:
         String s = in.readByteToString(dataSize).trim();
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));
           else break;

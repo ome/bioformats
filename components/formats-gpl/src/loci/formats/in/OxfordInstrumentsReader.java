@@ -190,7 +190,7 @@ public class OxfordInstrumentsReader extends FormatReader {
   // -- Helper methods --
 
   private String readDate() throws IOException {
-    StringBuffer dateTime = new StringBuffer();
+    final StringBuilder dateTime = new StringBuilder();
     dateTime.append(String.valueOf(in.readInt())); // year
     dateTime.append("-");
     int month = in.readInt();

@@ -1067,7 +1067,7 @@ public class CellVoyagerReader extends FormatReader
 		@Override
 		public String toString()
 		{
-			final StringBuffer str = new StringBuffer();
+			final StringBuilder str = new StringBuilder();
 			str.append( "Channel " + channelNumber + ": \n" );
 			str.append( " - name: " + name + "\n" );
 			str.append( " - isEnabled: " + isEnabled + "\n" );

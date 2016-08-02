@@ -131,7 +131,7 @@ public class MINCReader extends FormatReader {
 
         for (String key : keys) {
           if (attributes.get(key) instanceof Object[]) {
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             Object[] o = (Object[]) attributes.get(key);
             for (Object q : o) {
               sb.append(q.toString());
