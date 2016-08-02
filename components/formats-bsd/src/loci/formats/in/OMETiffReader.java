@@ -1033,7 +1033,7 @@ public class OMETiffReader extends FormatReader {
   /**
    * Get a MetadataStore suitable for display.
    *
-   * @note Historically, this method removed certain elements
+   * Note: Historically, this method removed certain elements
    * for display purposes and was not be suitable for use with
    * FormatWriter due to not containing required BinData
    * BigEndian attributes pthis requirement has long been
@@ -1042,7 +1042,7 @@ public class OMETiffReader extends FormatReader {
    * valid metadata which is suitable for both display and use
    * with FormatWriter, and so should be used instead.
    *
-   * @returns the metadata store.
+   * @return the metadata store.
    * @deprecated Use the general FormatReader::getMetadataStore() method.
    */
   public MetadataStore getMetadataStoreForDisplay() {
@@ -1052,7 +1052,7 @@ public class OMETiffReader extends FormatReader {
   /**
    * Get a MetadataStore suitable for writing.
    *
-   * @note Historically, this method created metadata suitable
+   * Note: Historically, this method created metadata suitable
    * for use with FormatWriter, but would possibly not generate
    * valid OME-XML if both BinData and TiffData elements were
    * present.  This is no longer the case; the general
@@ -1060,7 +1060,7 @@ public class OMETiffReader extends FormatReader {
    * valid metadata which is suitable for use with FormatWriter,
    * and so should be used instead.
    *
-   * @returns the metadata store.
+   * @return the metadata store.
    * @deprecated Use the general FormatReader::getMetadataStore() method.
    */
   public MetadataStore getMetadataStoreForConversion() {
