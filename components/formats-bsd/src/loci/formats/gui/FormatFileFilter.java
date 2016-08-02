@@ -72,7 +72,7 @@ public class FormatFileFilter extends FileFilter
   public FormatFileFilter(IFormatReader reader, boolean allowOpen) {
     this.reader = reader;
     this.allowOpen = allowOpen;
-    StringBuffer sb = new StringBuffer(reader.getFormat());
+    final StringBuilder sb = new StringBuilder(reader.getFormat());
     String[] exts = reader.getSuffixes();
     boolean first = true;
     for (int i=0; i<exts.length; i++) {

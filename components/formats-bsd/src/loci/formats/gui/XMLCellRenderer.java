@@ -121,7 +121,7 @@ public class XMLCellRenderer extends DefaultTreeCellRenderer {
       this.node = node;
     }
     public String toString(boolean html) {
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       if (node instanceof Element) {
         if (html) sb.append("<html>");
         sb.append(html ? "&lt;" : "<");

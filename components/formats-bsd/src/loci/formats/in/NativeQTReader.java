@@ -623,7 +623,7 @@ public class NativeQTReader extends FormatReader {
 
   /** Debugging method; prints information on an atom. */
   private void print(int depth, long size, String type) {
-    StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     for (int i=0; i<depth; i++) sb.append(" ");
     sb.append(type + " : [" + size + "]");
     LOGGER.debug(sb.toString());

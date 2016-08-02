@@ -256,7 +256,7 @@ public class ICSWriter extends FormatWriter {
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
 
-      StringBuffer units = new StringBuffer();
+      final StringBuilder units = new StringBuilder();
       for (int i=0; i<outputOrder.length(); i++) {
         char dim = outputOrder.charAt(i);
         Number value = 1.0;
@@ -337,7 +337,7 @@ public class ICSWriter extends FormatWriter {
     int[] pos =
       FormatTools.getZCTCoords(outputOrder, z, c, t, z * c * t, lastPlane);
 
-    StringBuffer dimOrder = new StringBuffer();
+    final StringBuilder dimOrder = new StringBuilder();
     int[] sizes = new int[6];
     int nextSize = 0;
     sizes[nextSize++] = 8 * bytesPerPixel;

@@ -148,7 +148,7 @@ public class XMLWindow extends JFrame {
     else {
       BufferedReader in = new BufferedReader(
         new InputStreamReader(System.in, Constants.ENCODING));
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       while (true) {
         String line = in.readLine();
         if (line == null) break;

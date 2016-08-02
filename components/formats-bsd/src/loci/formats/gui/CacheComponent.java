@@ -187,7 +187,7 @@ public class CacheComponent extends JPanel
     row += 2;
 
     JPanel bottom = new JPanel();
-    StringBuffer rows = new StringBuffer();
+    final StringBuilder rows = new StringBuilder();
     rows.append("pref:grow");
     for (int i=0; i<axisLabels.length; i++) rows.append(",3dlu,pref:grow");
     layout = new FormLayout(

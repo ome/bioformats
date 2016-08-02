@@ -185,7 +185,7 @@ public class OMEXMLWriter extends FormatWriter {
         interleaved);
       byte[] encodedPix = compress(b);
 
-      StringBuffer plane = new StringBuffer("\n<BinData ");
+      final StringBuilder plane = new StringBuilder("\n<BinData ");
       plane.append(namespace);
       plane.append(" Length=\"");
       plane.append(planeSize);
@@ -270,7 +270,7 @@ public class OMEXMLWriter extends FormatWriter {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      StringBuffer toAppend = new StringBuffer("\n<");
+      final StringBuilder toAppend = new StringBuilder("\n<");
       toAppend.append(XMLTools.escapeXML(qName));
       for (int i=0; i<attributes.getLength(); i++) {
         toAppend.append(" ");
