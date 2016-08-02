@@ -680,7 +680,7 @@ public class MicromanagerReader extends FormatReader {
           value = token.substring(token.indexOf(":") + 1);
         }
         else if (!closed) {
-          StringBuffer valueBuffer = new StringBuffer();
+          final StringBuilder valueBuffer = new StringBuilder();
           while (!closed) {
             token = st.nextToken();
             closed = token.indexOf("]") != -1;
@@ -945,7 +945,7 @@ public class MicromanagerReader extends FormatReader {
     }
 
     String[] blocks = baseTiff.split("_");
-    StringBuffer filename = new StringBuffer();
+    StringBuilder filename = new StringBuilder();
 
     for (int t=0; t<getSizeT(); t++) {
       for (int c=0; c<getSizeC(); c++) {
@@ -991,7 +991,7 @@ public class MicromanagerReader extends FormatReader {
           {
             // rewind and try using the full channel name
 
-            filename = new StringBuffer(prechannel);
+            filename = new StringBuilder(prechannel);
             String channel = p.channels[c];
             filename.append(channel);
             filename.append("_");

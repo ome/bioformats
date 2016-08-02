@@ -188,7 +188,7 @@ public class UpgradeChecker {
     // build the registry query
 
     System.setProperty("bioformats.caller", caller);
-    StringBuffer query = new StringBuffer(REGISTRY);
+    final StringBuilder query = new StringBuilder(REGISTRY);
     for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
       if (i == 0) {
         query.append("?");
@@ -228,7 +228,7 @@ public class UpgradeChecker {
 
       // retrieve the string from the registry
       InputStream in = conn.getInputStream();
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       while (true) {
         int data = in.read();
         if (data == -1) {

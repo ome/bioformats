@@ -1002,7 +1002,7 @@ public class FakeReader extends FormatReader {
       Double y0 = getY(i) + ROI_SPACING / 2;
       double [] dx = { -0.8, -.3, .4, .5, -.1};
       double [] dy = { -0.4, .6, .5, -.3, -.7};
-      StringBuffer p = new StringBuffer();
+      final StringBuilder p = new StringBuilder();
       for (int j=0; j<5; j++) {
         p.append(x0 + ROI_SPACING /2 * dx[j]);
         p.append(",");

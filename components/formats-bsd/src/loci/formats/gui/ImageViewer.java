@@ -736,7 +736,7 @@ public class ImageViewer extends JFrame implements ActionListener,
 
   // -- Helper methods --
 
-  protected StringBuffer sb = new StringBuffer();
+  protected final StringBuilder sb = new StringBuilder();
 
   /** Updates cursor probe label. */
   protected void updateLabel(int x, int y) {

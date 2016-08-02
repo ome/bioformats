@@ -334,12 +334,12 @@ public class OMEXMLReader extends FormatReader {
   // -- Helper class --
 
   class OMEXMLHandler extends BaseHandler {
-    private StringBuffer xmlBuffer;
+    private final StringBuilder xmlBuffer;
     private String currentQName;
     private Locator locator;
 
     public OMEXMLHandler() {
-      xmlBuffer = new StringBuffer();
+      xmlBuffer = new StringBuilder();
     }
 
     @Override
