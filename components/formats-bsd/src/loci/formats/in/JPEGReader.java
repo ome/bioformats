@@ -216,11 +216,17 @@ public class JPEGReader extends DelegateReader {
         String unitsTag = tags.get(unitsTagName);
         Unit<Length> units = UNITS.MICROMETER;
         if (unitsTag != null) {
-            if (Integer.parseInt(unitsTag) == 2) { 
-              units = UNITS.INCH;
-            }
-            else if (Integer.parseInt(unitsTag) == 3) { 
-              units = UNITS.CENTIMETER;
+          if (unitsTag.toLowerCase().contains("inch")) { 
+            units = UNITS.INCH;
+          }
+          else if (unitsTag.toLowerCase().contains("centimeter")) { 
+            units = UNITS.CENTIMETER;
+          }
+          else if (Integer.parseInt(unitsTag) == 2) { 
+            units = UNITS.INCH;
+          }
+          else if (Integer.parseInt(unitsTag) == 3) { 
+            units = UNITS.CENTIMETER;
           }
         }
         for (String tagName : tags.keySet()) {  
