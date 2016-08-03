@@ -22,24 +22,6 @@ checks for updates every time it is launched, so you will always be
 notified when new versions of Bio-Formats (or any other bundled plugin)
 are available.
 
-Using Bio-Formats daily builds
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Fiji currently shipping with the 5.1.x release versions of Bio-Formats.
-However, if you have encountered a bug which has been fixed by the Bio-Formats
-team but not yet released, you can use the Bio-Formats update site to
-access the daily build as described in the
-`documentation <http://imagej.net/Bio-Formats#Daily_builds>`_.
-
-.. warning:: These builds are **not yet released** and should be considered
-    **beta** in quality. In particular, you should **avoid exporting data
-    using the Bio-Formats Exporter** in case you write incompatible files
-    which cannot be read by released versions of Bio-Formats or other
-    OME-compliant tools.
-    
-    We recommend waiting for a fully tested release version of Bio-Formats if
-    possible.
-
 Manual upgrade
 ^^^^^^^^^^^^^^
 
