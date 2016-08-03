@@ -42,6 +42,7 @@ import loci.common.services.ServiceException;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 
@@ -50,7 +51,7 @@ import com.drew.metadata.Tag;
  */
 public class EXIFServiceImpl extends AbstractService implements EXIFService {
 
-  private ExifSubIFDDirectory directory;
+  private Iterable<Directory> directories;
 
   // -- Constructor --
 
@@ -68,7 +69,7 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
     try {
       File jpegFile = new File(file);
       Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
-      directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+      directories = metadata.getDirectories();
     }
     catch (Throwable e) {
       throw new ServiceException("Could not read EXIF data", e);
@@ -78,9 +79,11 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
   @Override
   public HashMap<String, String> getTags() {
     HashMap<String, String> tagMap = new HashMap<String, String>();
-    if (directory != null) {
-      for (Tag tag : directory.getTags()) {
-        tagMap.put(tag.getTagName(), tag.getDescription());
+    if (directories != null) {
+      for (Directory directory : directories) {
+        for (Tag tag : directory.getTags()) {
+          tagMap.put(tag.getTagName(), tag.getDescription());
+        }
       }
     }
     return tagMap;
@@ -88,22 +91,35 @@ public class EXIFServiceImpl extends AbstractService implements EXIFService {
 
   @Override
   public Date getCreationDate() {
-    if (directory != null) {
-      return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+    if (directories != null) {
+      for (Directory directory : directories) {
+        Date date = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+        if (date != null) {
+          return date;
+        }
+      }
     }
     return null;
   }
 
   @Override
   public void close() throws IOException {
-    directory = null;
+    for (Directory directory : directories) {
+      directory = null;
+    }
+    directories = null;
   }
 
   public String getTagName(int tagType)
   {
     String tagName = null;
-    if (directory != null) {
-      tagName = directory.getTagName(tagType);
+    if (directories != null) {
+      for (Directory directory : directories) {
+        tagName = directory.getTagName(tagType);
+        if (tagName != null && !tagName.contains("Unknown tag")) {
+          return tagName;
+        }
+      }
     }
     return tagName;
   }
