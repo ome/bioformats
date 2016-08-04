@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   FilterTypes
  *
  * Description:             Defines the interface for Filter types
- *
  *
  *
  * COPYRIGHT:
@@ -86,7 +85,6 @@ package jj2000.j2k.wavelet;
  *
  * <P>The identifier values are the same as those used in the codestream
  * syntax, for the filters that are defined in the standard.
- *
  */
 public interface FilterTypes {
 

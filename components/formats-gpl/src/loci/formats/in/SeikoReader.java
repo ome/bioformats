@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,13 +36,10 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * SeikoReader is the file format reader for Seiko .xqd/.xqf files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SeikoReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SeikoReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SeikoReader extends FormatReader {
 
@@ -65,6 +62,7 @@ public class SeikoReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -78,6 +76,7 @@ public class SeikoReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -119,8 +118,8 @@ public class SeikoReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(ySize);
+      Length sizeX = FormatTools.getPhysicalSizeX(xSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(ySize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

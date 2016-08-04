@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,16 +36,15 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A simple writer for INI configuration files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/IniWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -65,22 +64,39 @@ public class IniWriter {
   }
 
   /** Saves the given IniList to the given file. */
-  public void saveINI(IniList ini, String path, boolean append)
+  public void saveINI(IniList ini, String path, boolean append, boolean sorted)
     throws IOException
   {
     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
       new FileOutputStream(path, append), Constants.ENCODING));
 
     for (IniTable table : ini) {
+
       String header = table.get(IniTable.HEADER_KEY);
       out.write("[" + header + "]\n");
-      for (String key : table.keySet()) {
+      Set<String> keys;
+      if (sorted) {
+        Map<String, String> treeMap = new TreeMap<String, String>(table);
+        keys = treeMap.keySet();
+      }
+      else {
+        keys = table.keySet();
+      }
+
+      for (String key : keys) {
         out.write(key + " = " + table.get(key) + "\n");
       }
       out.write("\n");
     }
 
     out.close();
+  }
+
+  /** Saves the given IniList to the given file. */
+  public void saveINI(IniList ini, String path, boolean append)
+    throws IOException
+  {
+    saveINI(ini, path, append, false);
   }
 
 }

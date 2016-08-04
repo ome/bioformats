@@ -2,7 +2,7 @@
 
 rem bf.bat: the batch file that actually launches a command line tool
 
-setlocal
+setlocal enabledelayedexpansion
 set BF_DIR=%~dp0
 if "%BF_DIR:~-1%" == "\" set BF_DIR=%BF_DIR:~0,-1%
 
@@ -20,12 +20,22 @@ if "%BF_MAX_MEM%" == "" (
   rem Set a reasonable default max heap size.
   set BF_MAX_MEM=512m
 )
-set BF_FLAGS=-Xmx%BF_MAX_MEM%
+set BF_FLAGS=%BF_FLAGS% -Xmx%BF_MAX_MEM%
 
 rem Skip the update check if the NO_UPDATE_CHECK flag is set.
 if not "%NO_UPDATE_CHECK%" == "" (
   set BF_FLAGS=%BF_FLAGS% -Dbioformats_can_do_upgrade_check=false
 )
+
+rem Run profiling if the BF_PROFILE flag is set.
+if not "%BF_PROFILE%" == "" (
+  if "%BF_PROFILE_DEPTH%" == "" (
+    rem Set default profiling depth
+    set BF_PROFILE_DEPTH=30
+  )
+  set BF_FLAGS=%BF_FLAGS% -agentlib:hprof=cpu=samples,depth=!BF_PROFILE_DEPTH!,file=%BF_PROG%.hprof
+)
+
 
 rem Use any available proxy settings.
 set BF_FLAGS=%BF_FLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT%
@@ -38,18 +48,18 @@ if not "%BF_DEVEL%" == "" (
 )
 
 rem Developer environment variable unset; add JAR libraries to classpath.
-if exist "%BF_JAR_DIR%\formats-gpl.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
-) else if exist "%BF_JAR_DIR%\bioformats_package.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
+if exist "%BF_JAR_DIR%\bioformats_package.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bioformats_package.jar"
 ) else if exist "%BF_JAR_DIR%\loci_tools.jar" (
-  set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_tools.jar"
+) else if exist "%BF_JAR_DIR%\formats-gpl.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\formats-gpl.jar";"%BF_JAR_DIR%\bio-formats-tools.jar"
 ) else (
   rem Libraries not found; issue an error.
   echo Required JAR libraries not found. Please download:
   echo   bioformats_package.jar
   echo from:
-  echo   http://downloads.openmicroscopy.org/latest/bio-formats5.0
+  echo   http://downloads.openmicroscopy.org/latest/bio-formats5.1
   echo and place in the same directory as the command line tools.
   goto end
 )

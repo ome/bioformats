@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,10 +42,6 @@ import loci.formats.services.LuraWaveServiceImpl;
 
 /**
  * Custom widgets for configuring Bio-Formats Flex support.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/config/FlexWidgets.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/config/FlexWidgets.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -89,22 +85,27 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
 
   // -- DocumentListener API methods --
 
+  @Override
   public void changedUpdate(DocumentEvent e) {
     documentUpdate();
   }
+  @Override
   public void removeUpdate(DocumentEvent e) {
     documentUpdate();
   }
+  @Override
   public void insertUpdate(DocumentEvent e) {
     documentUpdate();
   }
 
   // -- IFormatWidgets API methods --
 
+  @Override
   public String[] getLabels() {
     return labels;
   }
 
+  @Override
   public Component[] getWidgets() {
     return widgets;
   }

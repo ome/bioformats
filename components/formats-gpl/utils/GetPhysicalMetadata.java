@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,15 +33,13 @@ import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * Uses Bio-Formats to extract some basic standardized
  * (format-independent) metadata.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/GetPhysicalMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/GetPhysicalMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class GetPhysicalMetadata {
 
@@ -66,16 +64,19 @@ public class GetPhysicalMetadata {
 
   /** Outputs global timing details. */
   public static void printPhysicalDimensions(IMetadata meta, int series) {
-    PositiveFloat physicalSizeX = meta.getPixelsPhysicalSizeX(series);
-    PositiveFloat physicalSizeY = meta.getPixelsPhysicalSizeY(series);
-    PositiveFloat physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
-    Double timeIncrement = meta.getPixelsTimeIncrement(series);
+    Length physicalSizeX = meta.getPixelsPhysicalSizeX(series);
+    Length physicalSizeY = meta.getPixelsPhysicalSizeY(series);
+    Length physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
+    Time timeIncrement = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Physical dimensions:");
-    System.out.println("\tX spacing = " + physicalSizeX + " microns");
-    System.out.println("\tY spacing = " + physicalSizeY + " microns");
-    System.out.println("\tZ spacing = " + physicalSizeZ + " microns");
-    System.out.println("\tTime increment = " + timeIncrement + " seconds");
+    System.out.println("\tX spacing = " +
+      physicalSizeX.value() + " " + physicalSizeX.unit().getSymbol());
+    System.out.println("\tY spacing = " +
+      physicalSizeY.value() + " " + physicalSizeY.unit().getSymbol());
+    System.out.println("\tZ spacing = " +
+      physicalSizeZ.value() + " " + physicalSizeZ.unit().getSymbol());
+    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.S).doubleValue() + " seconds");
   }
 
   public static void main(String[] args) throws Exception {

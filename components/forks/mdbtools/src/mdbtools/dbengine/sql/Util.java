@@ -2,7 +2,7 @@
  * #%L
  * Fork of MDB Tools (Java port).
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,7 @@ public class Util
    * also quotes strings and expands out arrays
    * @param sql
    * @param o
-   * @return
+   * @return string
    */
   public static String toString(Select sql,Object o)
   {

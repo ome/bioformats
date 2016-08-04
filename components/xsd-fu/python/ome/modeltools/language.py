@@ -2,10 +2,10 @@ import copy
 import os
 
 from ome.modeltools.exceptions import ModelProcessingError
-from ome.modeltools import config
 
 TYPE_SOURCE = "source"
 TYPE_HEADER = "header"
+
 
 class Language(object):
     """
@@ -35,6 +35,21 @@ class Language(object):
 
         self.base_class = None
 
+        self.template_map = {
+            'ENUM': 'OMEXMLModelEnum.template',
+            'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
+            'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'CLASS': 'OMEXMLModelObject.template',
+            'METADATA_STORE': 'MetadataStore.template',
+            'METADATA_RETRIEVE': 'MetadataRetrieve.template',
+            'METADATA_AGGREGATE': 'AggregateMetadata.template',
+            'OMEXML_METADATA': 'OMEXMLMetadataImpl.template',
+            'DUMMY_METADATA': 'DummyMetadata.template',
+            'FILTER_METADATA': 'FilterMetadata.template',
+            'OMERO_METADATA': 'OmeroMetadata.template',
+            'OMERO_MODEL': 'OmeroModel.template'
+            }
+
         # A global type mapping from XSD Schema types to language
         # primitive base classes.
         self.primitive_type_map = {
@@ -43,11 +58,25 @@ class Language(object):
             'PositiveLong': 'PositiveLong',
             'NonNegativeLong': 'NonNegativeLong',
             'PositiveFloat': 'PositiveFloat',
+            'NonNegativeFloat': 'NonNegativeFloat',
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
-            namespace + 'dateTime': 'Timestamp'
+            'UnitsLength':            'UnitsLength',
+            'UnitsTime':              'UnitsTime',
+            'UnitsPressure':          'UnitsPressure',
+            'UnitsAngle':             'UnitsAngle',
+            'UnitsTemperature':       'UnitsTemperature',
+            'UnitsElectricPotential': 'UnitsElectricPotential',
+            'UnitsPower':             'UnitsPower',
+            'UnitsFrequency':         'UnitsFrequency',
+            namespace + 'dateTime':   'Timestamp'
             }
+
+        # A global type mapping from XSD Schema elements to language model
+        # object classes.  This will cause source code generation to be
+        # skipped for this type since it's implemented natively.
+        self.model_type_map = {}
 
         # A global type mapping from XSD Schema types to base classes
         # that is used to override places in the model where we do not
@@ -56,10 +85,19 @@ class Language(object):
             'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass()
             }
 
+        self.model_unit_map = {}
+        self.model_unit_default = {}
+
         self.name = None
         self.template_dir = None
         self.source_suffix = None
         self.header_suffix = None
+
+        self.omexml_model_package = None
+        self.omexml_model_enums_package = None
+        self.omexml_model_omexml_model_enum_handlers_package = None
+        self.metadata_package = None
+        self.omexml_metadata_package = None
 
     def _initTypeMap(self):
         self.type_map['Leader'] = 'Experimenter'
@@ -69,11 +107,15 @@ class Language(object):
     def getDefaultModelBaseClass(self):
         return None
 
+    def getTemplate(self, name):
+        return self.template_map[name]
+
     def getTemplateDirectory(self):
         return self.template_dir
 
     def templatepath(self, template):
-        return os.path.join(self._templatepath, self.getTemplateDirectory(), template)
+        return os.path.join(self._templatepath, self.getTemplateDirectory(),
+                            self.getTemplate(template))
 
     def generatedFilename(self, name, type):
         gen_name = None
@@ -83,7 +125,8 @@ class Language(object):
             gen_name = name + self.header_suffix
         else:
             raise ModelProcessingError(
-                "Invalid language/filetype combination: %s/%s" % (self.name, type))
+                "Invalid language/filetype combination: %s/%s"
+                % (self.name, type))
         return gen_name
 
     def hasBaseType(self, type):
@@ -103,7 +146,8 @@ class Language(object):
         return False
 
     def hasPrimitiveType(self, type):
-        if type in self.primitive_type_map.values() or type in self.primitive_types:
+        if (type in self.primitive_type_map.values() or
+                type in self.primitive_types):
             return True
         return False
 
@@ -124,6 +168,28 @@ class Language(object):
         except KeyError:
             return None
 
+    def index_signature(self, name, max_occurs, level, dummy=False):
+        sig = {
+            'type': name,
+            }
+
+        if name[:2].isupper():
+            sig['argname'] = "%sIndex" % name
+        else:
+            sig['argname'] = "%s%sIndex" % (name[:1].lower(), name[1:])
+
+        return sig
+
+    def index_string(self, signature, dummy=False):
+        if dummy is False:
+            return "%s %s" % (signature['argtype'], signature['argname'])
+        else:
+            return "%s /* %s */" % (signature['argtype'], signature['argname'])
+
+    def index_argname(self, signature, dummy=False):
+        return signature['argname']
+
+
 class Java(Language):
     def __init__(self, namespace, templatepath):
         super(Java, self).__init__(namespace, templatepath)
@@ -142,6 +208,28 @@ class Java(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
 
+        self.model_type_map['MapPairs'] = None
+        self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
+
+        self.model_unit_map['UnitsLength'] = 'Length'
+        self.model_unit_map['UnitsPressure'] = 'Pressure'
+        self.model_unit_map['UnitsAngle'] = 'Angle'
+        self.model_unit_map['UnitsTemperature'] = 'Temperature'
+        self.model_unit_map['UnitsElectricPotential'] = 'ElectricPotential'
+        self.model_unit_map['UnitsPower'] = 'Power'
+        self.model_unit_map['UnitsFrequency'] = 'Frequency'
+
+        self.model_unit_default['UnitsLength'] = 'UNITS.METRE'
+        self.model_unit_default['UnitsTime'] = 'UNITS.SECOND'
+        self.model_unit_default['UnitsPressure'] = 'UNITS.PASCAL'
+        self.model_unit_default['UnitsAngle'] = 'UNITS.RADIAN'
+        self.model_unit_default['UnitsTemperature'] = 'UNITS.KELVIN'
+        self.model_unit_default['UnitsElectricPotential'] = 'UNITS.VOLT'
+        self.model_unit_default['UnitsPower'] = 'UNITS.WATT'
+        self.model_unit_default['UnitsFrequency'] = 'UNITS.HERTZ'
+
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
         self.type_map['MIMEtype'] = 'String'
@@ -151,8 +239,43 @@ class Java(Language):
         self.source_suffix = ".java"
         self.header_suffix = None
 
+        self.omexml_model_package = "ome.xml.model"
+        self.omexml_model_enums_package = "ome.xml.model.enums"
+        self.omexml_model_omexml_model_enum_handlers_package = \
+            "ome.xml.model.enums.handlers"
+        self.metadata_package = "ome.xml.meta"
+        self.omexml_metadata_package = "ome.xml.meta"
+
+        # use ome implementation
+        # self.units_implementation_is = "ome"
+        # self.units_package = "org.unitsofmeasurement"
+        # self.units_implementation_imports = \
+        #   "import ome.units.quantity.*;\nimport ome.units.*;"
+        # self.model_unit_map['UnitsTime'] = 'Time'
+
+        # use ome-standalone implementation
+        self.units_implementation_is = "ome"
+        self.units_package = "ome.units"
+        self.units_implementation_imports = \
+            "import ome.units.quantity.*;\nimport ome.units.*;"
+        self.model_unit_map['UnitsTime'] = 'Time'
+
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return self.model_unit_map[valueType]
+
+    def typeToDefault(self, valueType):
+        return self.model_unit_default[valueType]
+
+    def index_signature(self, name, max_occurs, level, dummy=False):
+        """Makes a Java method signature dictionary from an index name."""
+
+        sig = super(Java, self).index_signature(name, max_occurs, level, dummy)
+        sig['argtype'] = 'int'
+
+        return sig
 
 
 class CXX(Language):
@@ -161,27 +284,31 @@ class CXX(Language):
 
         self.package_separator = '::'
 
-        self.fundamental_types = set(["bool",
-                                      "char", "signed char", "unsigned char",
-                                      "short", "signed short", "unsigned short",
-                                      "int", "signed int", "unsigned int",
-                                      "long", "signed long", "unsigned long",
-                                      "long long", "signed long long", "unsigned long long",
-                                      "float", "double", "long double",
-                                      "int8_t", "uint8_t",
-                                      "int16_t", "uint16_t",
-                                      "int32_t", "uint32_t",
-                                      "int64_t", "uint64_t"])
+        self.template_map['OMEXML_METADATA'] = 'OMEXMLMetadata.template'
 
-        self.primitive_types = self.primitive_types.union(set(["Color",
-                                                               "NonNegativeFloat",
-                                                               "NonNegativeInteger",
-                                                               "NonNegativeLong",
-                                                               "PercentFraction",
-                                                               "PositiveFloat",
-                                                               "PositiveInteger",
-                                                               "PositiveLong",
-                                                               "Timestamp"]))
+        self.fundamental_types = set([
+            "bool",
+            "char", "signed char", "unsigned char",
+            "short", "signed short", "unsigned short",
+            "int", "signed int", "unsigned int",
+            "long", "signed long", "unsigned long",
+            "long long", "signed long long", "unsigned long long",
+            "float", "double", "long double",
+            "int8_t", "uint8_t",
+            "int16_t", "uint16_t",
+            "int32_t", "uint32_t",
+            "int64_t", "uint64_t"])
+
+        self.primitive_types = self.primitive_types.union(set([
+            "Color",
+            "NonNegativeFloat",
+            "NonNegativeInteger",
+            "NonNegativeLong",
+            "PercentFraction",
+            "PositiveFloat",
+            "PositiveInteger",
+            "PositiveLong",
+            "Timestamp"]))
 
         self.primitive_type_map[namespace + 'boolean'] = 'bool'
         self.primitive_type_map[namespace + 'string'] = 'std::string'
@@ -193,6 +320,11 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
 
+        self.model_type_map['MapPairs'] = None
+        self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
+
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
         self.type_map['MIMEtype'] = 'std::string'
@@ -202,8 +334,26 @@ class CXX(Language):
         self.source_suffix = ".cpp"
         self.header_suffix = ".h"
 
+        self.omexml_model_package = "ome::xml::model"
+        self.omexml_model_enums_package = "ome::xml::model::enums"
+        self.omexml_model_omexml_model_enum_handlers_package = \
+            "ome::xml::model::enums::handlers"
+        self.metadata_package = "ome::xml::meta"
+        self.omexml_metadata_package = "ome::xml::meta"
+
     def getDefaultModelBaseClass(self):
-        return "OMEModelObject"
+        return "detail::OMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return "Unit<" + valueType + ">"
+
+    def index_signature(self, name, max_occurs, level, dummy=False):
+        """Makes a C++ method signature dictionary from an index name."""
+
+        sig = super(CXX, self).index_signature(name, max_occurs, level, dummy)
+        sig['argtype'] = 'index_type'
+
+        return sig
 
 
 def create(language, namespace, templatepath):

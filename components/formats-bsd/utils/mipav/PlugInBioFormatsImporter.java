@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,11 +30,16 @@
  * #L%
  */
 
-import gov.nih.mipav.model.file.*;
+import gov.nih.mipav.model.file.FileInfoBase;
+import gov.nih.mipav.model.file.FileInfoImageXML;
+import gov.nih.mipav.model.file.FileUtility;
 import gov.nih.mipav.model.structures.ModelImage;
 import gov.nih.mipav.model.structures.ModelStorageBase;
 import gov.nih.mipav.plugins.PlugInFile;
-import gov.nih.mipav.view.*;
+import gov.nih.mipav.view.MipavUtil;
+import gov.nih.mipav.view.Preferences;
+import gov.nih.mipav.view.ViewJFrameImage;
+import gov.nih.mipav.view.ViewUserInterface;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -46,17 +51,19 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.*;
+import loci.formats.ChannelSeparator;
+import loci.formats.DimensionSwapper;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 /**
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -198,17 +205,18 @@ public class PlugInBioFormatsImporter implements PlugInFile {
           }
 
           // harvest physical resolution
-          Float dimPhysSizeX = store.getDimensionsPhysicalSizeX(0, 0);
-          Float dimPhysSizeY = store.getDimensionsPhysicalSizeY(0, 0);
-          Float dimPhysSizeZ = store.getDimensionsPhysicalSizeZ(0, 0);
-          Float dimTimeInc = store.getDimensionsTimeIncrement(0, 0);
+          Length dimPhysSizeX = store.getPixelsPhysicalSizeX(0);
+          Length dimPhysSizeY = store.getPixelsPhysicalSizeY(0);
+          Length dimPhysSizeZ = store.getPixelsPhysicalSizeZ(0);
+          Time dimTimeInc = store.getPixelsTimeIncrement(0);
           float physSizeX = dimPhysSizeX == null ?
-            1.0f : dimPhysSizeX.floatValue();
+            1.0f : dimPhysSizeX.value(UNITS.MICROM).floatValue();
           float physSizeY = dimPhysSizeY == null ?
-            1.0f : dimPhysSizeY.floatValue();
+            1.0f : dimPhysSizeY.value(UNITS.MICROM).floatValue();
           float physSizeZ = dimPhysSizeZ == null ?
-            1.0f : dimPhysSizeZ.floatValue();
-          float timeInc = dimTimeInc == null ? 1.0f : dimTimeInc.floatValue();
+            1.0f : dimPhysSizeZ.value(UNITS.MICROM).floatValue();
+          float timeInc = dimTimeInc == null ? 1.0f :
+            dimTimeInc.value(UNITS.S).floatValue();
 
           // compute dimensional extents
           int[] dimExtents = {sizeX, sizeY, sizeZ, sizeT};

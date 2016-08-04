@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.8</version>
+    <version>5.1.4</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -132,22 +132,7 @@
     <dependency>
       <groupId>com.esotericsoftware.kryo</groupId>
       <artifactId>kryo</artifactId>
-      <version>2.21</version>
-      <classifier>shaded</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>com.esotericsoftware.reflectasm</groupId>
-          <artifactId>reflectasm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.esotericsoftware.minlog</groupId>
-          <artifactId>minlog</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.objenesis</groupId>
-          <artifactId>objenesis</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>${kryo.version}</version>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
@@ -155,7 +140,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -171,6 +156,11 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.systems.cisd</groupId>
+      <artifactId>jhdf5</artifactId>
+      <version>14.12.0</version>
     </dependency>
   </dependencies>
 
@@ -396,10 +386,33 @@
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
   </repositories>
+
+  <profiles>
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </repository>
+      </repositories>
+    </profile>
+
+    <profile>
+      <id>merge-build</id>
+
+      <repositories>
+        <repository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 
 </project>

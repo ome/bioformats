@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,15 +26,14 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -49,7 +48,6 @@ import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
@@ -57,13 +55,11 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/CellWorxReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/CellWorxReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CellWorxReader extends FormatReader {
 
@@ -89,6 +85,8 @@ public class CellWorxReader extends FormatReader {
   private HashMap<Integer, Timestamp> timestamps =
     new HashMap<Integer, Timestamp>();
 
+  private String[] directoryList;
+
   // -- Constructor --
 
   /** Constructs a new CellWorx reader. */
@@ -103,6 +101,7 @@ public class CellWorxReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
       return super.isThisType(name, open);
@@ -127,9 +126,10 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (plateLogFile != null && new Location(plateLogFile).exists()) {
       files.add(plateLogFile);
@@ -162,6 +162,7 @@ public class CellWorxReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -181,7 +182,7 @@ public class CellWorxReader extends FormatReader {
         lastReader.close();
       }
       try {
-        lastReader = getReader(file);
+        lastReader = getReader(file, false);
       }
       catch (IOException e) {
         // this almost always means that the file does not exist
@@ -204,6 +205,7 @@ public class CellWorxReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -221,12 +223,14 @@ public class CellWorxReader extends FormatReader {
       doChannels = false;
       service = null;
       timestamps.clear();
+      directoryList = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // first, make sure that we have the .htd file
 
@@ -238,8 +242,8 @@ public class CellWorxReader extends FormatReader {
 
       if (!new Location(id).exists()) {
         Location parent = new Location(id).getAbsoluteFile().getParentFile();
-        String[] list = parent.list(true);
-        for (String f : list) {
+        directoryList = parent.list(true);
+        for (String f : directoryList) {
           if (checkSuffix(f, "htd")) {
             id = new Location(parent, f).getAbsolutePath();
             LOGGER.info("Found .htd file {}", f);
@@ -385,7 +389,7 @@ public class CellWorxReader extends FormatReader {
       }
       file = getFile(seriesIndex, planeIndex);
     }
-    IFormatReader pnl = getReader(file);
+    IFormatReader pnl = getReader(file, true);
 
     core.clear();
     for (int i=0; i<seriesCount; i++) {
@@ -607,8 +611,10 @@ public class CellWorxReader extends FormatReader {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
-              store.setWellSamplePositionX(posX, 0, well, field);
-              store.setWellSamplePositionY(posY, 0, well, field);
+              Length px = new Length(posX, UNITS.REFERENCEFRAME);
+              Length py = new Length(posY, UNITS.REFERENCEFRAME);
+              store.setWellSamplePositionX(px, 0, well, field);
+              store.setWellSamplePositionY(py, 0, well, field);
 
               addGlobalMetaList("X position for position", axes[0]);
               addGlobalMetaList("Y position for position", axes[1]);
@@ -623,8 +629,8 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
 
-          PositiveFloat x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
-          PositiveFloat y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
+          Length x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+          Length y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
 
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
@@ -675,13 +681,11 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              Integer emission = new Integer(em);
-              Integer excitation = new Integer(ex);
+              Double emission = new Double(em);
+              Double excitation = new Double(ex);
 
-              PositiveInteger exWave =
-                FormatTools.getExcitationWavelength(excitation);
-              PositiveInteger emWave =
-                FormatTools.getEmissionWavelength(emission);
+              Length exWave = FormatTools.getExcitationWavelength(excitation);
+              Length emWave = FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
                 if (exWave != null) {
@@ -702,7 +706,7 @@ public class CellWorxReader extends FormatReader {
     setSeries(oldSeries);
   }
 
-  private IFormatReader getReader(String file)
+  private IFormatReader getReader(String file, boolean omexml)
     throws FormatException, IOException
   {
     IFormatReader pnl = new DeltavisionReader();
@@ -710,14 +714,16 @@ public class CellWorxReader extends FormatReader {
       pnl = new MetamorphReader();
     }
 
-    IMetadata metadata;
-    try{
-      metadata = service.createOMEXMLMetadata();
+    if (omexml) {
+      IMetadata metadata;
+      try {
+        metadata = service.createOMEXMLMetadata();
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      pnl.setMetadataStore(metadata);
     }
-    catch (ServiceException exc) {
-      throw new FormatException("Could not create OME-XML store.", exc);
-    }
-    pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
   }
@@ -764,9 +770,11 @@ public class CellWorxReader extends FormatReader {
       nextFile = 0;
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
-      String[] list = parent.list(true);
-      Arrays.sort(list);
-      for (String f : list) {
+      if (directoryList == null) {
+        directoryList = parent.list(true);
+        Arrays.sort(directoryList);
+      }
+      for (String f : directoryList) {
         if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
           String path = new Location(parent, f).getAbsolutePath();
           if (path.startsWith(base) && path.indexOf("_thumb_") < 0) {

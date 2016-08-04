@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.8</version>
+    <version>5.1.4</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -16,7 +16,7 @@
 
   <name>OME-XML Java library</name>
   <description>A library for working with OME-XML metadata structures.</description>
-  <url>http://ome-xml.org/wiki/OmeXmlJava</url>
+  <url>http://www.openmicroscopy.org/site/support/ome-model/ome-xml/java-library.html</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
@@ -32,6 +32,7 @@
       <artifactId>formats-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -47,7 +48,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -57,6 +58,7 @@
       <version>${logback.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
@@ -89,59 +91,9 @@
               <executable>python</executable>
               <arguments>
                 <argument>${xsdfu.script}</argument>
-                <argument>java_classes</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
-                <argument>${project.rootdir}/${xsdfu.ome}</argument>
-                <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-                <argument>${project.rootdir}/${xsdfu.roi}</argument>
-                <argument>${project.rootdir}/${xsdfu.sa}</argument>
-                <argument>${project.rootdir}/${xsdfu.spw}</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <!-- Generate the OME model enumeration classes -->
-          <execution>
-            <id>xsd-fu-enum-types</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>python</executable>
-              <arguments>
-                <argument>${xsdfu.script}</argument>
-                <argument>enum_types</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model.enums</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
-                <argument>${project.rootdir}/${xsdfu.ome}</argument>
-                <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-                <argument>${project.rootdir}/${xsdfu.roi}</argument>
-                <argument>${project.rootdir}/${xsdfu.sa}</argument>
-                <argument>${project.rootdir}/${xsdfu.spw}</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <!-- Generate the handlers for the OME model enumeration classes -->
-          <execution>
-            <id>xsd-fu-enum-handlers</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>python</executable>
-              <arguments>
-                <argument>${xsdfu.script}</argument>
-                <argument>enum_handlers</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model.enums.handlers</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
+                <argument>omexml_model_all</argument>
+                <argument>--output-directory=${xsdfu.modelpath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -162,35 +114,9 @@
               <executable>python</executable>
               <arguments>
                 <argument>${xsdfu.script}</argument>
-                <argument>metadata</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.meta</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.metadatapath}/</argument>
-                <argument>${project.rootdir}/${xsdfu.ome}</argument>
-                <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-                <argument>${project.rootdir}/${xsdfu.roi}</argument>
-                <argument>${project.rootdir}/${xsdfu.sa}</argument>
-                <argument>${project.rootdir}/${xsdfu.spw}</argument>
-              </arguments>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>xsd-fu-omexml-metadata</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>python</executable>
-              <arguments>
-                <argument>${xsdfu.script}</argument>
-                <argument>omexml_metadata</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.meta</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.metadatapath}/</argument>
+                <argument>omexml_metadata_all</argument>
+                <argument>--output-directory=${xsdfu.metadatapath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -234,7 +160,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>test/ome/xml/utests/testng.xml</suiteXmlFile>
+            <suiteXmlFile>test/ome/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
@@ -342,13 +268,40 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>ome.experimental</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+    </repository>
+    <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
   </repositories>
+
+  <profiles>
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </repository>
+      </repositories>
+    </profile>
+
+    <profile>
+      <id>merge-build</id>
+
+      <repositories>
+        <repository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 
 </project>

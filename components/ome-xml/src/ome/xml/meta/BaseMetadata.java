@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,10 +44,6 @@ package ome.xml.meta;
  * of metadata fields. It exists mainly to store
  * <code>MetadataStore</code> and <code>MetadataRetrieve</code> object
  * types within the same container.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/BaseMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/BaseMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */

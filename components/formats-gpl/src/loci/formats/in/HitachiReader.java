@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,15 +46,16 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * HitachiReader is the file format reader for S-4800 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HitachiReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/HitachiReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -84,11 +85,13 @@ public class HitachiReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) {
       return false;
@@ -116,6 +119,7 @@ public class HitachiReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = MAGIC.length();
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -125,6 +129,7 @@ public class HitachiReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -135,6 +140,7 @@ public class HitachiReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -146,11 +152,13 @@ public class HitachiReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -161,9 +169,17 @@ public class HitachiReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    helperReader.reopenFile();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "txt")) {
       String base = id;
@@ -243,12 +259,17 @@ public class HitachiReader extends FormatReader {
     Double pixelSize = new Double(image.get("PixelSize"));
 
     String workingDistance = image.get("WorkingDistance");
-    Double stagePosX = new Double(image.get("StagePositionX"));
-    Double stagePosY = new Double(image.get("StagePositionY"));
-    Double stagePosZ = new Double(image.get("StagePositionZ"));
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+    final Double stagePosXn = Double.valueOf(image.get("StagePositionX"));
+    final Double stagePosYn = Double.valueOf(image.get("StagePositionY"));
+    final Double stagePosZn = Double.valueOf(image.get("StagePositionZ"));
+
+    final Length stagePosXl = new Length(stagePosXn, UNITS.REFERENCEFRAME);
+    final Length stagePosYl = new Length(stagePosYn, UNITS.REFERENCEFRAME);
+    final Length stagePosZl = new Length(stagePosZn, UNITS.REFERENCEFRAME);
+
+    Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+    Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
@@ -256,15 +277,9 @@ public class HitachiReader extends FormatReader {
       store.setPixelsPhysicalSizeY(sizeY, 0);
     }
 
-    if (stagePosX != null) {
-      store.setPlanePositionX(stagePosX, 0, 0);
-    }
-    if (stagePosY != null) {
-      store.setPlanePositionY(stagePosY, 0, 0);
-    }
-    if (stagePosZ != null) {
-      store.setPlanePositionZ(stagePosZ, 0, 0);
-    }
+    store.setPlanePositionX(stagePosXl, 0, 0);
+    store.setPlanePositionY(stagePosYl, 0, 0);
+    store.setPlanePositionZ(stagePosZl, 0, 0);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
@@ -286,7 +301,7 @@ public class HitachiReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
       store.setObjectiveSettingsID(objective, 0);
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
     }
   }
 }

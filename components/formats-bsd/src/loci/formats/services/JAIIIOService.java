@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,10 +44,6 @@ import loci.formats.codec.JPEG2000CodecOptions;
 
 /**
  * Interface defining methods for reading data using JAI Image I/O.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JAIIIOService.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JAIIIOService.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface JAIIIOService extends Service {
 
@@ -56,7 +52,6 @@ public interface JAIIIOService extends Service {
    * @param out Target output stream.
    * @param img Source buffered image.
    * @param options Options for the JPEG 2000 codec.
-   * @returns An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -69,7 +64,7 @@ public interface JAIIIOService extends Service {
    * Reads an image using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
    * @param options Options for the JPEG 2000 codec.
-   * @returns An AWT buffered image.
+   * @return An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -81,7 +76,7 @@ public interface JAIIIOService extends Service {
   /**
    * Reads an image using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
-   * @returns An AWT buffered image.
+   * @return An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -95,7 +90,7 @@ public interface JAIIIOService extends Service {
    * Reads an image into a raster using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
    * @param options Options for the JPEG 2000 codec.
-   * @returns An AWT image raster.
+   * @return An AWT image raster.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -107,7 +102,7 @@ public interface JAIIIOService extends Service {
   /**
    * Reads an image into a raster using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
-   * @returns An AWT image raster.
+   * @return An AWT image raster.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or

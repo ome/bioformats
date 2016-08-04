@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -176,8 +176,6 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method checks whether the given RandomAccessIO is a valid JP2 file
      * and if so finds the first codestream in the file. Currently, the
      * information in the codestream is not used
-     *
-     * @param in The RandomAccessIO from which to read the file format
      *
      * @exception java.io.IOException If an I/O error ocurred.
      *
@@ -379,12 +377,7 @@ public class FileFormatReader implements FileFormatBoxes{
     /**
      * This method reads the JP2Header box
      *
-     * @param pos The position in the file
-     *
      * @param length The length of the JP2Header box
-     *
-     * @param long length The length of the JP2Header box if greater than
-     * 1<<32
      *
      * @return false if the JP2Header box was not found or invalid else true
      *
@@ -442,11 +435,9 @@ public class FileFormatReader implements FileFormatBoxes{
      * This method skips the Contiguous codestream box and adds position
      * of contiguous codestream to a vector
      *
-     * @param pos The position in the file
-     *
      * @param length The length of the JP2Header box
      *
-     * @param long length The length of the JP2Header box if greater than 1<<32
+     * @param longLength The length of the JP2Header box if greater than 1<<32
      *
      * @return false if the Contiguous codestream box was not found or invalid
      * else true

@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,29 +37,86 @@
  */
 
 /**
- * @file memory.h Memory type substitution.  This header substitutes
- * Boost types for the same types in the std namespace when not using
- * a conforming C++11 compiler.  This permits all code to use the
- * C++11 standard types irrespective of the compiler being used.
+ * @file ome/compat/memory.h Memory type substitution.
+ *
+ * This header substitutes Boost types for the same types in the std
+ * namespace when not using a conforming C++11 compiler.  This permits
+ * all code to use the C++11 standard types irrespective of the
+ * compiler being used.
  */
 
 #ifndef OME_COMPAT_MEMORY_H
 # define OME_COMPAT_MEMORY_H
 
-# include <ome/compat/config.h>
+# include <ome/common/config.h>
 
 # ifdef OME_HAVE_MEMORY
 #  include <memory>
 # elif OME_HAVE_BOOST_SHARED_PTR
 #  include <boost/enable_shared_from_this.hpp>
+#  include <boost/make_shared.hpp>
 #  include <boost/shared_ptr.hpp>
-namespace std {
+# ifdef OME_HAVE_BOOST_OWNER_LESS
+#  include <boost/smart_ptr/owner_less.hpp>
+# else
+#  include <functional>
+// From Boost 1.56 <boost/smart_ptr/owner_less.hpp> for older boost
+// versions; owner_before replaced with direct operator< usage which
+// older shared_ptr/weak_ptr implementations do not provide.  shared
+// and weak are not directly comparable, so convert to weak for these
+// comparisons.
+namespace boost
+{
+  template<typename T> class shared_ptr;
+  template<typename T> class weak_ptr;
+
+  namespace detail
+  {
+    template<typename T, typename U>
+    struct generic_owner_less : public std::binary_function<T, T, bool>
+    {
+      bool operator()(const T &lhs, const T &rhs) const
+      {
+        return lhs < rhs;
+      }
+      bool operator()(const T &lhs, const U &rhs) const
+      {
+        return weak_ptr<typename T::element_type>(lhs) < weak_ptr<typename T::element_type>(rhs);
+      }
+      bool operator()(const U &lhs, const T &rhs) const
+      {
+        return weak_ptr<typename T::element_type>(lhs) < weak_ptr<typename T::element_type>(rhs);
+      }
+    };
+  } // namespace detail
+
+  template<typename T> struct owner_less;
+
+  template<typename T>
+  struct owner_less<shared_ptr<T> >:
+    public detail::generic_owner_less<shared_ptr<T>, weak_ptr<T> >
+  {};
+
+  template<typename T>
+  struct owner_less<weak_ptr<T> >:
+    public detail::generic_owner_less<weak_ptr<T>, shared_ptr<T> >
+  {};
+
+} // namespace boost
+# endif
+namespace ome
+{
+  namespace compat
+  {
     using boost::shared_ptr;
     using boost::weak_ptr;
     using boost::static_pointer_cast;
     using boost::const_pointer_cast;
     using boost::dynamic_pointer_cast;
     using boost::enable_shared_from_this;
+    using boost::make_shared;
+    using boost::owner_less;
+  }
 }
 # else
 #  error A shared_ptr implementation is not available

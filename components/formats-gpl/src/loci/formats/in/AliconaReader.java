@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,14 +35,15 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import ome.xml.model.primitives.PositiveFloat;
+
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AliconaReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AliconaReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class AliconaReader extends FormatReader {
 
@@ -69,6 +70,7 @@ public class AliconaReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 16;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -78,6 +80,7 @@ public class AliconaReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -126,6 +129,7 @@ public class AliconaReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -136,6 +140,7 @@ public class AliconaReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -234,7 +239,8 @@ public class AliconaReader extends FormatReader {
       // According to the spec, the voltage and magnification values are those
       // used when the dataset was acquired, i.e. detector settings.
       if (voltage != null) {
-        store.setDetectorSettingsVoltage(new Double(voltage), 0, 0);
+        store.setDetectorSettingsVoltage(
+                new ElectricPotential(new Double(voltage), UNITS.V), 0, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -253,7 +259,7 @@ public class AliconaReader extends FormatReader {
       }
 
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
       }
 
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
@@ -270,8 +276,8 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, 0);

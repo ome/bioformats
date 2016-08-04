@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,6 +34,7 @@ package loci.formats.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -57,6 +58,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.ImageTools;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
@@ -77,13 +79,11 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * ImageInfo is a utility class for reading a file
  * and reporting information about it.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/ImageInfo.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/ImageInfo.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImageInfo {
 
@@ -93,6 +93,9 @@ public class ImageInfo {
   private static final String NEWLINE = System.getProperty("line.separator");
 
   private static final String NO_UPGRADE_CHECK = "-no-upgrade";
+
+  private static final ImmutableSet<String> HELP_ARGUMENTS =
+      ImmutableSet.of("-h", "-help", "--help");
 
   // -- Fields --
 
@@ -110,6 +113,7 @@ public class ImageInfo {
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
+  private boolean cache = false;
   private boolean originalMetadata = true;
   private boolean normalize = false;
   private boolean fastBlit = false;
@@ -129,6 +133,7 @@ public class ImageInfo {
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
   private String format = null;
+  private String cachedir = null;
   private int xmlSpaces = 3;
 
   private IFormatReader reader;
@@ -159,6 +164,7 @@ public class ImageInfo {
     separate = false;
     expand = false;
     omexml = false;
+    cache = false;
     originalMetadata = true;
     normalize = false;
     fastBlit = false;
@@ -181,6 +187,7 @@ public class ImageInfo {
     swapOrder = null;
     shuffleOrder = null;
     map = null;
+    cachedir = null;
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
@@ -196,11 +203,15 @@ public class ImageInfo {
         else if (args[i].equals("-nogroup")) group = false;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
+        else if (args[i].equals("-cache")) cache = true;
         else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
-        else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-autoscale")) {
+          fastBlit = true;
+          autoscale = true;
+        }
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
@@ -255,6 +266,10 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
+        else if (args[i].equals("-cache-dir")) {
+            cache = true;
+            cachedir = args[++i];
+        }
         else if (!args[i].equals(NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
@@ -281,6 +296,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
+      "    [-cache] [-cache-dir dir]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -296,8 +312,8 @@ public class ImageInfo {
       "   -separate: split RGB image into separate channels",
       "     -expand: expand indexed color to RGB",
       "     -omexml: populate OME-XML metadata",
-      "  -normalize: normalize floating point images*",
-      "       -fast: paint RGB images as quickly as possible*",
+      "  -normalize: normalize floating point images (*)",
+      "       -fast: paint RGB images as quickly as possible (*)",
       "      -debug: turn on debugging output",
       "      -range: specify range of planes to read (inclusive)",
       "     -series: specify which image series to read",
@@ -311,13 +327,16 @@ public class ImageInfo {
       "              reduces the time required to read the images, but",
       "              requires more memory",
       "       -crop: crop images before displaying; argument is 'x,y,w,h'",
-      "  -autoscale: used in combination with '-fast' to automatically adjust",
-      "              brightness and contrast",
+      "  -autoscale: automatically adjust brightness and contrast (*)",
       "    -novalid: do not perform validation of OME-XML",
       "-omexml-only: only output the generated OME-XML",
       "     -no-sas: do not output OME-XML StructuredAnnotation elements",
       " -no-upgrade: do not perform the upgrade check",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
+      "      -cache: cache the initialized reader",
+      "  -cache-dir: use the specified directory to store the cached",
+      "              initialized reader. If unspecified, the cached reader",
+      "              will be stored under the same folder as the image file",
       "",
       "* = may result in loss of precision",
       ""
@@ -425,6 +444,13 @@ public class ImageInfo {
     if (expand) reader = new ChannelFiller(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+    if (cache) {
+      if (cachedir != null) {
+        reader  = new Memoizer(reader, 0, new File(cachedir));
+      } else {
+        reader = new Memoizer(reader, 0);
+      }
+    }
     minMaxCalc = null;
     if (minmax || autoscale) reader = minMaxCalc = new MinMaxCalculator(reader);
     dimSwapper = null;
@@ -473,7 +499,7 @@ public class ImageInfo {
     // read basic metadata
     LOGGER.info("");
     LOGGER.info("Reading core metadata");
-    LOGGER.info("{} = {}", stitch ? "File pattern" : "Filename",
+    LOGGER.info("{} = {}", stitch ? "File pattern" : "filename",
       stitch ? id : reader.getCurrentFile());
     if (map != null) LOGGER.info("Mapped filename = {}", map);
     if (usedFiles) {
@@ -804,8 +830,8 @@ public class ImageInfo {
           }
         }
         else if (normalize) {
-          min = new Double(0);
-          max = new Double(1);
+          min = Double.valueOf(0);
+          max = Double.valueOf(1);
         }
 
         if (normalize) {
@@ -968,6 +994,16 @@ public class ImageInfo {
     throws FormatException, ServiceException, IOException
   {
     DebugTools.enableLogging("INFO");
+
+    for (final String arg : args) {
+      if (HELP_ARGUMENTS.contains(arg)) {
+        if (reader == null) {
+          reader = new ImageReader();
+        }
+        printUsage();
+        return false;
+      }
+    }
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
@@ -1021,6 +1057,13 @@ public class ImageInfo {
     return true;
   }
 
+  /**
+   * Log the size of the given dimension, using log4j.
+   * @param dim the name of the dimension to log
+   * @param size the total size of the dimension
+   * @param effectiveSize the effective size of the dimension (e.g. 1 for RGB channels)
+   * @param modulo the {@link loci.formats.Modulo} object associated with this dimension
+   */
   private void printDimension(String dim, int size, int effectiveSize,
     Modulo modulo)
   {

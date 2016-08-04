@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,10 +33,6 @@ import java.lang.reflect.Method;
 
 /**
  * A list entry for the configuration window's Formats tab.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/config/FormatEntry.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/config/FormatEntry.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -95,22 +91,26 @@ public class FormatEntry implements Comparable<Object> {
 
   // -- Comparable API methods --
 
+  @Override
   public int compareTo(Object o) {
     return toString().compareTo(o.toString());
   }
 
   // -- Object API methods --
 
+  @Override
   public int hashCode() {
     return toString().hashCode();
   }
 
+  @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (!(o instanceof FormatEntry)) return false;
     return compareTo(o) == 0;
   }
 
+  @Override
   public String toString() {
     return "<html>" + formatName;
   }

@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,8 +26,7 @@
  * unit.XMLMockFactory
  *
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2014 University of Dundee. All rights reserved.
- *
+ *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
  * 	This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -46,15 +45,13 @@
  */
 package ome.specification;
 
-//Java imports
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//Third-party libraries
-
-//Application-internal dependencies
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
@@ -67,6 +64,7 @@ import ome.xml.model.Dataset;
 import ome.xml.model.Detector;
 import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
+import ome.xml.model.DoubleAnnotation;
 import ome.xml.model.Ellipse;
 import ome.xml.model.Experiment;
 import ome.xml.model.Experimenter;
@@ -84,6 +82,8 @@ import ome.xml.model.LightSource;
 import ome.xml.model.LightSourceSettings;
 import ome.xml.model.Line;
 import ome.xml.model.LongAnnotation;
+import ome.xml.model.Map;
+import ome.xml.model.MapAnnotation;
 import ome.xml.model.Mask;
 import ome.xml.model.MicrobeamManipulation;
 import ome.xml.model.Microscope;
@@ -123,6 +123,7 @@ import ome.xml.model.enums.ExperimentType;
 import ome.xml.model.enums.FilamentType;
 import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.Medium;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserType;
@@ -134,7 +135,14 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Power;
+import ome.units.quantity.Pressure;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
 
 /**
  * Creates XML objects for the 2010-06 schema.
@@ -206,6 +214,9 @@ public class XMLMockObjects
 
   /** The default medium for the objective. */
   public static final Medium MEDIUM = Medium.AIR;
+  
+  /** The default type of a laser. */
+  public static final LaserMedium LASER_MEDIUM = LaserMedium.ALEXANDRITE;
 
   /** The default number of pixels along the X-axis. */
   public static final Integer SIZE_X = 24;
@@ -287,10 +298,10 @@ public class XMLMockObjects
   public static final String TIME = "2006-05-04T18:13:51.0Z";
 
   /** The default cut-in. */
-  public static final int CUT_IN = 200;
+  public static final Double CUT_IN = 200.0;
 
   /** The default cut-out. */
-  public static final int CUT_OUT = 300;
+  public static final Double CUT_OUT = 300.0;
 
   /** Root of the file. */
   protected OME ome;
@@ -322,6 +333,10 @@ public class XMLMockObjects
     detector.setLotNumber(COMPONENT_LOT_NUMBER);
     detector.setAmplificationGain(0.0);
     detector.setGain(1.0);
+    detector.setOffset(2.0);
+    detector.setVoltage(new ElectricPotential(100, UNITS.V));
+    detector.setType(DETECTOR_TYPE);
+    detector.setZoom(3.0);
     return detector;
   }
 
@@ -395,7 +410,7 @@ public class XMLMockObjects
     objective.setIris(true);
     objective.setLensNA(0.5);
     objective.setNominalMagnification(1.5);
-    objective.setWorkingDistance(1.0);
+    objective.setWorkingDistance(new Length(1.0, UNITS.MICROM));
     return objective;
   }
 
@@ -404,10 +419,10 @@ public class XMLMockObjects
    *
    * @param index The index of the objective in the file.
    * @param cutIn The cut in value.
-     * @param cutOut The cut out value.
+   * @param cutOut The cut out value.
    * @return See above.
    */
-  public Filter createFilter(int index, int cutIn, int cutOut)
+  public Filter createFilter(int index, double cutIn, double cutOut)
   {
     Filter filter = new Filter();
     filter.setID("Filter:"+index);
@@ -418,10 +433,11 @@ public class XMLMockObjects
     filter.setType(FILTER_TYPE);
 
     TransmittanceRange transmittance = new TransmittanceRange();
-    transmittance.setCutIn(new PositiveInteger(cutIn));
-    transmittance.setCutOut(new PositiveInteger(cutOut));
-    transmittance.setCutInTolerance(new NonNegativeInteger(1));
-    transmittance.setCutOutTolerance(new NonNegativeInteger(1));
+    transmittance.setCutIn(new Length(cutIn, UNITS.NM));
+    transmittance.setCutOut(new Length(cutOut, UNITS.NM));
+    transmittance.setCutInTolerance(new Length(1.0, UNITS.NM));
+    transmittance.setCutOutTolerance(new Length(1.0, UNITS.NM));
+    transmittance.setTransmittance(new PercentFraction(0.5f));
     filter.setTransmittanceRange(transmittance);
     return filter;
   }
@@ -442,8 +458,14 @@ public class XMLMockObjects
       laser.setManufacturer(COMPONENT_MANUFACTURER);
       laser.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       laser.setLotNumber(COMPONENT_LOT_NUMBER);
-      laser.setPower(LIGHTSOURCE_POWER);
+      laser.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       laser.setType(LASER_TYPE);
+      laser.setFrequencyMultiplication(new PositiveInteger(30));
+      laser.setLaserMedium(LASER_MEDIUM);
+      laser.setPockelCell(false);
+      laser.setRepetitionRate(new Frequency(30.0, UNITS.AHZ));
+      laser.setTuneable(false);
+      laser.setWavelength(new Length(200.0, UNITS.NM));
       return laser;
     } else if (Arc.class.getName().equals(type)) {
       Arc arc = new Arc();
@@ -452,7 +474,7 @@ public class XMLMockObjects
       arc.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       arc.setLotNumber(COMPONENT_LOT_NUMBER);
       arc.setModel(COMPONENT_MODEL);
-      arc.setPower(LIGHTSOURCE_POWER);
+      arc.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       arc.setType(ARC_TYPE);
       return arc;
     } else if (Filament.class.getName().equals(type)) {
@@ -462,7 +484,7 @@ public class XMLMockObjects
       filament.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       filament.setLotNumber(COMPONENT_LOT_NUMBER);
       filament.setModel(COMPONENT_MODEL);
-      filament.setPower(LIGHTSOURCE_POWER);
+      filament.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       filament.setType(FILAMENT_TYPE);
       return filament;
     } else if (LightEmittingDiode.class.getName().equals(type)) {
@@ -472,7 +494,7 @@ public class XMLMockObjects
       light.setSerialNumber(COMPONENT_SERIAL_NUMBER);
       light.setLotNumber(COMPONENT_LOT_NUMBER);
       light.setModel(COMPONENT_MODEL);
-      light.setPower(LIGHTSOURCE_POWER);
+      light.setPower(new Power(LIGHTSOURCE_POWER, UNITS.MW));
       return light;
     }
     return null;
@@ -524,26 +546,25 @@ public class XMLMockObjects
   public ImagingEnvironment createImageEnvironment()
   {
     ImagingEnvironment env = new ImagingEnvironment();
-    env.setAirPressure(1.0);
+    env.setAirPressure(new Pressure(1.0, UNITS.MBAR));
     env.setCO2Percent(new PercentFraction(1.0f));
     env.setHumidity(new PercentFraction(1.0f));
-    env.setTemperature(1.0);
+    env.setTemperature(new Temperature(1.0, UNITS.DEGREEC));
     return env;
   }
 
   /**
    * Creates a imaging environment.
    *
-   * @param index The index of the environment in the file.
    * @return See above.
    */
   public StageLabel createStageLabel()
   {
     StageLabel label = new StageLabel();
     label.setName("StageLabel");
-    label.setX(1.0);
-    label.setY(1.0);
-    label.setZ(1.0);
+    label.setX(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setY(new Length(1.0, UNITS.REFERENCEFRAME));
+    label.setZ(new Length(1.0, UNITS.REFERENCEFRAME));
     return label;
   }
 
@@ -559,7 +580,7 @@ public class XMLMockObjects
     LightSourceSettings settings = new LightSourceSettings();
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
-    settings.setWavelength(new PositiveInteger(200));
+    settings.setWavelength(new Length(200.2, UNITS.NM));
     settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
@@ -650,8 +671,10 @@ public class XMLMockObjects
     settings.setBinning(BINNING);
     settings.setGain(1.0);
     settings.setOffset(1.0);
-    settings.setReadOutRate(1.0);
-    settings.setVoltage(1.0);
+    settings.setReadOutRate(new Frequency(1.0, UNITS.HZ));
+    settings.setVoltage(new ElectricPotential(1.0, UNITS.V));
+    settings.setIntegration(new PositiveInteger(20));
+    settings.setZoom(3.0);
     return settings;
   }
 
@@ -899,8 +922,8 @@ public class XMLMockObjects
     plate.setColumns(new PositiveInteger(columns));
     plate.setRowNamingConvention(ROW_NAMING_CONVENTION);
     plate.setColumnNamingConvention(COLUMN_NAMING_CONVENTION);
-    plate.setWellOriginX(0.0);
-    plate.setWellOriginY(1.0);
+    plate.setWellOriginX(new Length(0.0, UNITS.MICROM));
+    plate.setWellOriginY(new Length(1.0, UNITS.MICROM));
     plate.setStatus("Plate status");
     PlateAcquisition pa = null;
     List<PlateAcquisition> pas = new ArrayList<PlateAcquisition>();
@@ -938,8 +961,8 @@ public class XMLMockObjects
         if (pas.size() == 0) {
           for (int field = 0; field < fields; field++) {
             sample = new WellSample();
-            sample.setPositionX(0.0);
-            sample.setPositionY(1.0);
+            sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+            sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
             sample.setTimepoint(new Timestamp(TIME));
             sample.setID(String.format("WellSample:%d_%d_%d_%d",
                 index, row, column, field));
@@ -960,8 +983,8 @@ public class XMLMockObjects
             for (int field = 0; field < fields; field++) {
               v = kk+index*numberOfPlates;
               sample = new WellSample();
-              sample.setPositionX(0.0);
-              sample.setPositionY(1.0);
+              sample.setPositionX(new Length(0.0, UNITS.REFERENCEFRAME));
+              sample.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
               sample.setTimepoint(new Timestamp(TIME));
               sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
                   index, row, column, field, v));
@@ -996,11 +1019,11 @@ public class XMLMockObjects
   public Plane createPlane(int z, int c, int t)
   {
     Plane plane = new Plane();
-    plane.setDeltaT(0.1);
-    plane.setExposureTime(10.0);
-    plane.setPositionX(1.0);
-    plane.setPositionY(1.0);
-    plane.setPositionZ(1.0);
+    plane.setDeltaT(new Time(0.1, UNITS.S));
+    plane.setExposureTime(new Time(10.0, UNITS.S));
+    plane.setPositionX(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionY(new Length(1.0, UNITS.REFERENCEFRAME));
+    plane.setPositionZ(new Length(1.0, UNITS.REFERENCEFRAME));
     plane.setTheZ(new NonNegativeInteger(z));
     plane.setTheC(new NonNegativeInteger(c));
     plane.setTheT(new NonNegativeInteger(z));
@@ -1036,6 +1059,9 @@ public class XMLMockObjects
     pixels.setSizeZ(new PositiveInteger(SIZE_Z));
     pixels.setSizeC(new PositiveInteger(SIZE_C));
     pixels.setSizeT(new PositiveInteger(SIZE_T));
+    pixels.setPhysicalSizeX(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeY(new Length(1, UNITS.MICROM));
+    pixels.setPhysicalSizeZ(new Length(1, UNITS.MICROM));
     pixels.setDimensionOrder(DIMENSION_ORDER);
     pixels.setType(PIXEL_TYPE);
     BinData data;
@@ -1062,8 +1088,6 @@ public class XMLMockObjects
         channel.setLightSourceSettings(createLightSourceSettings(j));
         channel.setLightPath(createLightPath());
         channel.setDetectorSettings(ds);
-        //link the channel to the OTF
-        //if (otf != null) otf.linkChannel(channel);
         j++;
       }
       pixels.addChannel(channel);
@@ -1089,10 +1113,12 @@ public class XMLMockObjects
     channel.setColor(new ome.xml.model.primitives.Color(rgba));
     channel.setName("Name");
     channel.setIlluminationType(IlluminationType.OBLIQUE);
-    channel.setPinholeSize(0.5);
+    channel.setPinholeSize(new Length(0.5, UNITS.MICROM));
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-    channel.setEmissionWavelength(new PositiveInteger(300));
-    channel.setExcitationWavelength(new PositiveInteger(400));
+	PositiveFloat emWave = new PositiveFloat(300.3);
+    channel.setEmissionWavelength(new Length(emWave.getValue(), UNITS.NM));
+    PositiveFloat exWave = new PositiveFloat(400.3);
+    channel.setExcitationWavelength(new Length(exWave.getValue(), UNITS.NM));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);
@@ -1278,41 +1304,6 @@ public class XMLMockObjects
       if (annotation != null) {
         ((Well) object).linkAnnotation(annotation);
       }
-    } else if (object instanceof WellSample) {
-      if (CommentAnnotation.class.getName().equals(type)) {
-        CommentAnnotation c = new CommentAnnotation();
-        c.setID("WellSampleCommentAnnotation:" + index);
-        c.setValue("WellSample:"+index+" CommentAnnotation.");
-        annotation = c;
-      } else if (BooleanAnnotation.class.getName().equals(type)) {
-        BooleanAnnotation b = new BooleanAnnotation();
-        b.setID("WellSampleBooleanAnnotation:" + index);
-        b.setValue(true);
-        annotation = b;
-      } else if (LongAnnotation.class.getName().equals(type)) {
-        LongAnnotation l = new LongAnnotation();
-        l.setID("WellSampleLongAnnotation:" + index);
-        l.setValue(1L);
-        annotation = l;
-      } else if (TagAnnotation.class.getName().equals(type)) {
-        TagAnnotation tag = new TagAnnotation();
-        tag.setID("WellSampleTagAnnotation:" + index);
-        tag.setValue("WellSample:"+index+" TagAnnotation.");
-        annotation = tag;
-      } else if (TermAnnotation.class.getName().equals(type)) {
-        TermAnnotation term = new TermAnnotation();
-        term.setID("WellSampleTermAnnotation:" + index);
-        term.setValue("WellSample:"+index+" TermAnnotation.");
-        annotation = term;
-      } else if (FileAnnotation.class.getName().equals(type)) {
-        FileAnnotation f = new FileAnnotation();
-        f.setID("WellSampleFileAnnotation:" + index);
-        f.setBinaryFile(createBinaryFile());
-        annotation = f;
-      }
-      if (annotation != null) {
-        ((WellSample) object).linkAnnotation(annotation);
-      }
     }
     return annotation;
   }
@@ -1339,7 +1330,7 @@ public class XMLMockObjects
    */
   public OME createImage(boolean metadata)
   {
-    ome.addImage(createImage(0, true));
+    ome.addImage(createImage(0, metadata));
     return ome;
   }
 
@@ -1389,13 +1380,69 @@ public class XMLMockObjects
     ome.addExperiment(exp);
     MicrobeamManipulation mm = createMicrobeamManipulation(0);
     exp.addMicrobeamManipulation(mm);
-    Pixels pixels = image.getPixels();
+    image.linkExperiment(exp);
+    image.linkInstrument(instrument);
+    image.linkMicrobeamManipulation(mm);
+    ome.addImage(image);
+    return ome;
+  }
+
+  /**
+   * Creates an image with acquisition data.
+   *
+   * @return See above.
+   */
+  public OME createImageWithAnnotatedAcquisitionData()
+  {
+    populateInstrument();
+    //annotate
+    instrument.setLinkedAnnotation(0, new TagAnnotation());
+    List<Detector> detectors = instrument.copyDetectorList();
+    Iterator<Detector> i = detectors.iterator();
+    int index = 0;
+    while (i.hasNext()) {
+        i.next().setLinkedAnnotation(index, new BooleanAnnotation());
+        index++;
+    }
+    List<Dichroic> dichroics = instrument.copyDichroicList();
+    index = 0;
+    Iterator<Dichroic> j = dichroics.iterator();
+    while (j.hasNext()) {
+        j.next().setLinkedAnnotation(index, new LongAnnotation());
+        index++;
+    }
+    List<Filter> filters = instrument.copyFilterList();
+    index = 0;
+    Iterator<Filter> k = filters.iterator();
+    while (k.hasNext()) {
+        k.next().setLinkedAnnotation(index, new TermAnnotation());
+        index++;
+    }
+    List<LightSource> lights = instrument.copyLightSourceList();
+    index = 0;
+    Iterator<LightSource> l = lights.iterator();
+    while (l.hasNext()) {
+        l.next().setLinkedAnnotation(index, new DoubleAnnotation());
+        index++;
+    }
+    List<Objective> objectives = instrument.copyObjectiveList();
+    index = 0;
+    Iterator<Objective> m = objectives.iterator();
+    while (m.hasNext()) {
+        m.next().setLinkedAnnotation(index,new MapAnnotation());
+        index++;
+    }
+    Image image = createImage(0, true);
+    ObjectiveSettings settings = createObjectiveSettings(0);
+    image.setObjectiveSettings(settings);
+
+    Experiment exp = createExperiment(0);
+    ome.addExperiment(exp);
     image.linkExperiment(exp);
     image.linkInstrument(instrument);
     ome.addImage(image);
     return ome;
   }
-
   /**
    * Creates an image with a given experiment. The Image is not added to ome.
    *

@@ -2,7 +2,7 @@
  * #%L
  * Fork of MDB Tools (Java port).
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,7 @@ import java.sql.SQLException;
 
 /**
  * SelectEngine is able to execute a select query
- * @todo replace all runtime exceptions with sql exceptions
+ * TODO replace all runtime exceptions with sql exceptions
  */
 public class SelectEngine
 {
@@ -247,7 +247,7 @@ public class SelectEngine
 
   /**
    * An aggregate query is true if any function is an aggregate function
-   * @return
+   * @return booolean
    */
   private boolean isAggregate()
   {
@@ -263,7 +263,7 @@ public class SelectEngine
 
   /**
    * execute an aggregate query
-   * @return
+   * @return data
    */
   private Data aggregateQuery(Data data)
     throws SQLException
@@ -464,9 +464,6 @@ public class SelectEngine
 
   /**
    * merge the data from several datasets to a single dataset
-   * @param s
-   * @param tables
-   * @param index
    */
   private void mergeData(MemoryData memData,
                          Object[] _row,int columnIndex,
@@ -502,7 +499,7 @@ public class SelectEngine
    * non aggregate so simply return the column's wanted
    * running any function requested
    *
-   * @return
+   * @return Data
    */
   private Data nonAggregateQuery(Data data)
     throws SQLException
@@ -523,9 +520,9 @@ public class SelectEngine
 
   /**
    * resolve a column down to it's final value
-   * @param value the value from the data set
+   * @param data the value from the data set
    * @param column the object from the sql query
-   * @return
+   * @return Object
    */
   private Object resolveColumn(Data data,Object column)
     throws SQLException
@@ -548,9 +545,9 @@ public class SelectEngine
 
   /**
    * sort the data
-   * @todo allow for sorting non-memory data
+   * todo: allow for sorting non-memory data
    * @param data
-   * @return
+   * @return Data
    */
   private Data orderBy(Data data)
   {
@@ -585,7 +582,7 @@ public class SelectEngine
    * Check the where constraint against a single row
    * @param data
    * @param where
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRow(Data data,Object where)
     throws SQLException
@@ -602,7 +599,7 @@ public class SelectEngine
    * Check an equation portion of the where contraints against a single row
    * @param data
    * @param eq
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRowEquation(Data data,Equation eq)
     throws SQLException
@@ -629,7 +626,7 @@ public class SelectEngine
    * left and right of conditon is either another condition or an equation
    * @param data
    * @param condition
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRowConditon(Data data,Condition condition)
     throws SQLException

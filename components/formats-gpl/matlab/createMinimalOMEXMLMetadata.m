@@ -18,7 +18,7 @@ function metadata = createMinimalOMEXMLMetadata(I, varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -46,21 +46,27 @@ ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders())
 ip.parse(varargin{:});
 
 % Create metadata
-toInt = @(x) ome.xml.model.primitives.PositiveInteger(java.lang.Integer(x));
-OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+toInt = @(x) javaObject('ome.xml.model.primitives.PositiveInteger', ...
+                        javaObject('java.lang.Integer', x));
+OMEXMLService = javaObject('loci.formats.services.OMEXMLServiceImpl');
 metadata = OMEXMLService.createOMEXMLMetadata();
 metadata.createRoot();
 metadata.setImageID('Image:0', 0);
 metadata.setPixelsID('Pixels:0', 0);
-metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
+if is_octave()
+    java_true = java_get('java.lang.Boolean', 'TRUE');
+else
+    java_true = java.lang.Boolean.TRUE;
+end
+metadata.setPixelsBinDataBigEndian(java_true, 0, 0);
 
 % Set dimension order
-dimensionOrderEnumHandler = ome.xml.model.enums.handlers.DimensionOrderEnumHandler();
+dimensionOrderEnumHandler = javaObject('ome.xml.model.enums.handlers.DimensionOrderEnumHandler');
 dimensionOrder = dimensionOrderEnumHandler.getEnumeration(ip.Results.dimensionOrder);
 metadata.setPixelsDimensionOrder(dimensionOrder, 0);
 
 % Set pixels type
-pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
+pixelTypeEnumHandler = javaObject('ome.xml.model.enums.handlers.PixelTypeEnumHandler');
 if strcmp(class(I), 'single')
     pixelsType = pixelTypeEnumHandler.getEnumeration('float');
 else
@@ -90,8 +96,7 @@ end
 
 function dimensionOrders = getDimensionOrders()
 % List all values of DimensionOrder
-
-dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
+dimensionOrderValues = javaMethod('values', 'ome.xml.model.enums.DimensionOrder');
 dimensionOrders = cell(numel(dimensionOrderValues), 1);
 for i = 1 :numel(dimensionOrderValues),
     dimensionOrders{i} = char(dimensionOrderValues(i).toString());

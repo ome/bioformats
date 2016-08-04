@@ -1,0 +1,83 @@
+        std::vector<common::xml::dom::Element> Value_nodeList = getChildrenByTagName(element, "Value");
+        if (Value_nodeList.size() > 1)
+          {
+            format fmt("Value node list size %1% != 1");
+            fmt % Value_nodeList.size();
+            throw ModelException(fmt.str());
+          }
+        else if (Value_nodeList.size() != 0)
+          {
+            common::xml::dom::Element elem(Value_nodeList.at(0));
+            common::xml::dom::NodeList nodes(elem.getChildNodes());
+
+            std::string text;
+
+            for (common::xml::dom::NodeList::iterator i = nodes.begin();
+                 i != nodes.end();
+                 ++i)
+              {
+                try
+                  {
+                    common::xml::dom::Element e(*i);
+
+                    std::string textvalue;
+                    ome::common::xml::dom::writeNode(*i, textvalue);
+
+                    // Trim leading and trailing whitespace
+                    std::string::size_type start(textvalue.find_first_of('<'));
+                    std::string::size_type end(textvalue.find_last_of('>'));
+                    if (end != std::string::npos)
+                      ++end;
+                    if (end >= textvalue.size())
+                      end = std::string::npos;
+                    if (start != std::string::npos)
+                      textvalue = textvalue.substr(start, end - start);
+                    else
+                      textvalue.clear();
+
+                    // If the user did not specify a namespace, it
+                    // will inherit the default (OME) namespace, which
+                    // will almost certainly lead to insertion of the
+                    // incorrect namespace and consequent validation
+                    // errors.  If no namespace was specified or it's
+                    // using the OME namespace (typical document
+                    // default), set it to nothing.
+                    if (e->getNamespaceURI() == 0 ||
+                        element->lookupNamespaceURI(0) != 0)
+                      {
+                        if (element->lookupNamespaceURI(0) != 0)
+                          {
+                            common::xml::String currentNS(element->lookupNamespaceURI(0));
+                            if ((*i)->isDefaultNamespace(currentNS))
+                              {
+                                std::string stripNS(static_cast<std::string>(currentNS));
+                                std::string::size_type stripStart(textvalue.find(stripNS));
+                                if (stripStart != std::string::npos &&
+                                    stripStart != 0)
+                                  {
+                                    std::string replacement;
+
+                                    // Start of original text.
+                                    replacement = textvalue.substr(0, stripStart);
+
+                                    // Add remainder of original text.
+                                    std::string::size_type stripEnd(stripStart + stripNS.size());
+                                    if (stripEnd != std::string::npos)
+                                      replacement += textvalue.substr(stripEnd);
+                                    textvalue = replacement;
+                                  }
+                              }
+                          }
+                      }
+
+                    text += textvalue;
+
+                  }
+                catch (const std::exception&)
+                  {
+                    // Not an Element.
+                  }
+              }
+
+            setValue(text);
+          }

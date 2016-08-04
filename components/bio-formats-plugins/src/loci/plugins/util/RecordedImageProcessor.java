@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,10 +55,6 @@ import java.util.List;
  * Image processor extension that records commands executed upon it.
  * Allows "recordable virtual stacks" that repeat operations performed on
  * one image plane on other image planes when they are loaded from disk.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/util/RecordedImageProcessor.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/util/RecordedImageProcessor.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -120,56 +116,67 @@ public class RecordedImageProcessor extends ImageProcessor {
 
   // -- ImageProcessor API methods --
 
+  @Override
   public void abs() {
     record("abs");
     proc.abs();
   }
 
+  @Override
   public void add(double value) {
     record("add", new Double(value), double.class);
     proc.add(value);
   }
 
+  @Override
   public void add(int value) {
     record("add", new Integer(value), int.class);
     proc.add(value);
   }
 
+  @Override
   public void and(int value) {
     record("and", new Integer(value), int.class);
     proc.and(value);
   }
 
+  @Override
   public void applyTable(int[] lut) {
     record("applyTable", lut, int[].class);
     proc.applyTable(lut);
   }
 
+  @Override
   public void autoThreshold() {
     record("autoThreshold");
     proc.autoThreshold();
   }
 
+  @Override
   public ImageProcessor convertToByte(boolean doScaling) {
     record("convertToByte", new Boolean(doScaling), boolean.class);
     return proc.convertToByte(doScaling);
   }
 
+  @Override
   public ImageProcessor convertToFloat() {
     record("convertToFloat");
     return proc.convertToFloat();
   }
 
+  @Override
   public ImageProcessor convertToRGB() {
     record("convertToRGB");
     return proc.convertToRGB();
   }
 
+  @Override
   public ImageProcessor convertToShort(boolean doScaling) {
     record("convertToShort", new Boolean(doScaling), boolean.class);
     return proc.convertToShort(doScaling);
   }
 
+  @Override
   public void convolve(float[] kernel, int kernelWidth, int kernelHeight) {
     record("convolve", new Object[] {kernel, new Integer(kernelWidth),
       new Integer(kernelHeight)}, new Class[] {float[].class,
@@ -177,11 +184,13 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.convolve(kernel, kernelWidth, kernelHeight);
   }
 
+  @Override
   public void convolve3x3(int[] kernel) {
     record("convolve3x3", kernel, int[].class);
     proc.convolve3x3(kernel);
   }
 
+  @Override
   public void copyBits(ImageProcessor ip, int xloc, int yloc, int mode) {
     record("copyBits", new Object[] {ip, new Integer(xloc), new Integer(yloc),
       new Integer(mode)}, new Class[] {ImageProcessor.class, int.class,
@@ -189,6 +198,7 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.copyBits(ip, xloc, yloc, mode);
   }
 
+  @Override
   public Image createImage() {
     if (otherChannels == null) return proc.createImage();
     // merge channels - adapted from CompositeImage
@@ -304,28 +314,33 @@ public class RecordedImageProcessor extends ImageProcessor {
     return Toolkit.getDefaultToolkit().createImage(src);
   }
 
+  @Override
   public ImageProcessor createProcessor(int width, int height) {
     record("createProcessor", new Object[] {new Integer(width),
       new Integer(height)}, new Class[] {int.class, int.class});
     return proc.createProcessor(width, height);
   }
 
+  @Override
   public ImageProcessor crop() {
     record("crop");
     return proc.crop();
   }
 
+  @Override
   public void dilate() {
     record("dilate");
     proc.dilate();
   }
 
+  @Override
   public void drawDot(int xcenter, int ycenter) {
     record("drawDot", new Object[] {new Integer(xcenter),
       new Integer(ycenter)}, new Class[] {int.class, int.class});
     proc.drawDot(xcenter, ycenter);
   }
 
+  @Override
   public void drawLine(int x1, int y1, int x2, int y2) {
     record("drawLine", new Object[] {new Integer(x1), new Integer(y1),
       new Integer(x2), new Integer(y2)}, new Class[] {int.class, int.class,
@@ -333,6 +348,7 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.drawLine(x1, y1, x2, y2);
   }
 
+  @Override
   public void drawOval(int x, int y, int width, int height) {
     record("drawOval", new Object[] {new Integer(x), new Integer(y),
       new Integer(width), new Integer(height)}, new Class[] {int.class,
@@ -340,17 +356,20 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.drawOval(x, y, width, height);
   }
 
+  @Override
   public void drawPixel(int x, int y) {
     record("drawPixel", new Object[] {new Integer(x), new Integer(y)},
       new Class[] {int.class, int.class});
     proc.drawPixel(x, y);
   }
 
+  @Override
   public void drawPolygon(Polygon p) {
     record("drawPolygon", p, Polygon.class);
     proc.drawPolygon(p);
   }
 
+  @Override
   public void drawRect(int x, int y, int width, int height) {
     record("drawRect", new Object[] {new Integer(x), new Integer(y),
       new Integer(width), new Integer(height)}, new Class[] {int.class,
@@ -358,42 +377,50 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.drawRect(x, y, width, height);
   }
 
+  @Override
   public void drawString(String s) {
     record("drawString", s, String.class);
     proc.drawString(s);
   }
 
+  @Override
   public void drawString(String s, int x, int y) {
     record("drawString", new Object[] {s, new Integer(x), new Integer(y)},
       new Class[] {String.class, int.class, int.class});
     proc.drawString(s, x, y);
   }
 
+  @Override
   public ImageProcessor duplicate() {
     record("duplicate");
     return proc.duplicate();
   }
 
+  @Override
   public void erode() {
     record("erode");
     proc.erode();
   }
 
+  @Override
   public void exp() {
     record("exp");
     proc.exp();
   }
 
+  @Override
   public void fill() {
     record("fill");
     proc.fill();
   }
 
+  @Override
   public void fill(ImageProcessor mask) {
     record("fill", mask, ImageProcessor.class);
     proc.fill(mask);
   }
 
+  @Override
   public void fillOval(int x, int y, int width, int height) {
     record("fillOval", new Object[] {new Integer(x), new Integer(y),
       new Integer(width), new Integer(height)}, new Class[] {int.class,
@@ -401,82 +428,98 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.fillOval(x, y, width, height);
   }
 
+  @Override
   public void fillPolygon(Polygon p) {
     record("fillPolygon", p, Polygon.class);
     proc.fillPolygon(p);
   }
 
+  @Override
   public void filter(int type) {
     record("filter", new Integer(type), int.class);
     proc.filter(type);
   }
 
+  @Override
   public void findEdges() {
     record("findEdges");
     proc.findEdges();
   }
 
+  @Override
   public void flipHorizontal() {
     record("flipHorizontal");
     proc.flipHorizontal();
   }
 
+  @Override
   public void flipVertical() {
     record("flipVertical");
     proc.flipVertical();
   }
 
+  @Override
   public void gamma(double value) {
     record("gamma", new Double(value), double.class);
     proc.gamma(value);
   }
 
+  @Override
   public int get(int index) {
     record("get", new Integer(index), int.class);
     return proc.get(index);
   }
 
+  @Override
   public int get(int x, int y) {
     record("get", new Object[] {new Integer(x), new Integer(y)},
       new Class[] {int.class, int.class});
     return proc.get(x, y);
   }
 
+  @Override
   public int getAutoThreshold() {
     record("getAutoThreshold");
     return proc.getAutoThreshold();
   }
 
+  @Override
   public double getBackgroundValue() {
     record("getBackgroundValue");
     return proc.getBackgroundValue();
   }
 
+  @Override
   public int getAutoThreshold(int[] histogram) {
     record("getAutoThreshold", histogram, int[].class);
     return proc.getAutoThreshold(histogram);
   }
 
+  @Override
   public int getBestIndex(Color c) {
     record("getBestIndex", c, Color.class);
     return proc.getBestIndex(c);
   }
 
+  @Override
   public BufferedImage getBufferedImage() {
     record("getBufferedImage");
     return proc.getBufferedImage();
   }
 
+  @Override
   public float[] getCalibrationTable() {
     record("getCalibrationTable");
     return proc.getCalibrationTable();
   }
 
+  @Override
   public ColorModel getColorModel() {
     record("getColorModel");
     return proc.getColorModel();
   }
 
+  @Override
   public void getColumn(int x, int y, int[] data, int length) {
     record("getColumn", new Object[] {new Integer(x), new Integer(y), data,
       new Integer(length)}, new Class[] {int.class, int.class, int[].class,
@@ -484,78 +527,93 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.getColumn(x, y, data, length);
   }
 
+  @Override
   public ColorModel getCurrentColorModel() {
     record("getCurrentColorModel");
     return proc.getCurrentColorModel();
   }
 
+  @Override
   public IndexColorModel getDefaultColorModel() {
     record("getDefaultColorModel");
     return proc.getDefaultColorModel();
   }
 
+  @Override
   public float getf(int index) {
     record("getf", new Integer(index), int.class);
     return proc.getf(index);
   }
 
+  @Override
   public float getf(int x, int y) {
     record("getf", new Object[] {new Integer(x), new Integer(y)},
       new Class[] {int.class, int.class});
     return proc.getf(x, y);
   }
 
+  @Override
   public float[][] getFloatArray() {
     record("getFloatArray");
     return proc.getFloatArray();
   }
 
+  @Override
   public FontMetrics getFontMetrics() {
     record("getFontMetrics");
     return proc.getFontMetrics();
   }
 
+  @Override
   public int getHeight() {
     record("getHeight");
     return proc.getHeight();
   }
 
+  @Override
   public int[] getHistogram() {
     record("getHistogram");
     return proc.getHistogram();
   }
 
+  @Override
   public double getHistogramMax() {
     record("getHistogramMax");
     return proc.getHistogramMax();
   }
 
+  @Override
   public double getHistogramMin() {
     record("getHistogramMin");
     return proc.getHistogramMin();
   }
 
+  @Override
   public int getHistogramSize() {
     record("getHistogramSize");
     return proc.getHistogramSize();
   }
 
+  @Override
   public int[][] getIntArray() {
     record("getIntArray");
     return proc.getIntArray();
   }
 
+  @Override
   public boolean getInterpolate() {
     record("getInterpolate");
     return proc.getInterpolate();
   }
 
+  @Override
   public double getInterpolatedPixel(double x, double y) {
     record("getInterpolatedPixel", new Object[] {new Double(x), new Double(y)},
       new Class[] {double.class, double.class});
     return proc.getInterpolatedPixel(x, y);
   }
 
+  @Override
   public double[] getLine(double x1, double y1, double x2, double y2) {
     record("getLine", new Object[] {new Double(x1), new Double(y1),
       new Double(x2), new Double(y2)}, new Class[] {double.class, double.class,
@@ -563,90 +621,107 @@ public class RecordedImageProcessor extends ImageProcessor {
     return proc.getLine(x1, y1, x2, y2);
   }
 
+  @Override
   public int getLutUpdateMode() {
     record("getLutUpdateMode");
     return proc.getLutUpdateMode();
   }
 
+  @Override
   public ImageProcessor getMask() {
     record("getMask");
     return proc.getMask();
   }
 
+  @Override
   public byte[] getMaskArray() {
     record("getMaskArray");
     return proc.getMaskArray();
   }
 
+  @Override
   public double getMax() {
     record("getMax");
     return proc.getMax();
   }
 
+  @Override
   public double getMaxThreshold() {
     record("getMaxThreshold");
     return proc.getMaxThreshold();
   }
 
+  @Override
   public double getMin() {
     record("getMin");
     return proc.getMin();
   }
 
+  @Override
   public double getMinThreshold() {
     record("getMinThreshold");
     return proc.getMinThreshold();
   }
 
+  @Override
   public int getNChannels() {
     record("getNChannels");
     return proc.getNChannels();
   }
 
+  @Override
   public int getPixel(int x, int y) {
     record("getPixel", new Object[] {new Integer(x), new Integer(y)},
       new Class[] {int.class, int.class});
     return proc.getPixel(x, y);
   }
 
+  @Override
   public int[] getPixel(int x, int y, int[] iArray) {
     record("getPixel", new Object[] {new Integer(x), new Integer(y), iArray},
       new Class[] {int.class, int.class, int[].class});
     return proc.getPixel(x, y, iArray);
   }
 
+  @Override
   public int getPixelInterpolated(double x, double y) {
     record("getPixelInterpolated", new Object[] {new Double(x), new Double(y)},
       new Class[] {double.class, double.class});
     return proc.getPixelInterpolated(x, y);
   }
 
+  @Override
   public int getPixelCount() {
     record("getPixelCount");
     return proc.getPixelCount();
   }
 
+  @Override
   public Object getPixels() {
     record("getPixels");
     return proc.getPixels();
   }
 
+  @Override
   public Object getPixelsCopy() {
     record("getPixelsCopy");
     return proc.getPixelsCopy();
   }
 
+  @Override
   public float getPixelValue(int x, int y) {
     record("getPixelValue", new Object[] {new Integer(x), new Integer(y)},
       new Class[] {int.class, int.class});
     return proc.getPixelValue(x, y);
   }
 
+  @Override
   public Rectangle getRoi() {
     record("getRoi");
     return proc.getRoi();
   }
 
+  @Override
   public void getRow(int x, int y, int[] data, int length) {
     record("getRow", new Object[] {new Integer(x), new Integer(y), data,
       new Integer(length)}, new Class[] {int.class, int.class, int[].class,
@@ -654,52 +729,62 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.getRow(x, y, data, length);
   }
 
+  @Override
   public Object getSnapshotPixels() {
     record("getSnapshotPixels");
     return proc.getSnapshotPixels();
   }
 
+  @Override
   public int getStringWidth(String s) {
     record("getStringWidth", s, String.class);
     return proc.getStringWidth(s);
   }
 
+  @Override
   public int getWidth() {
     record("getWidth");
     return proc.getWidth();
   }
 
+  @Override
   public void insert(ImageProcessor ip, int xloc, int yloc) {
     record("insert", new Object[] {ip, new Integer(xloc), new Integer(yloc)},
       new Class[] {ImageProcessor.class, int.class, int.class});
     proc.insert(ip, xloc, yloc);
   }
 
+  @Override
   public void invert() {
     record("invert");
     proc.invert();
   }
 
+  @Override
   public void invertLut() {
     record("invertLut");
     proc.invertLut();
   }
 
+  @Override
   public boolean isColorLut() {
     record("isColorLut");
     return proc.isColorLut();
   }
 
+  @Override
   public boolean isInvertedLut() {
     record("isInvertedLut");
     return proc.isInvertedLut();
   }
 
+  @Override
   public boolean isPseudoColorLut() {
     record("isPseudoColorLut");
     return proc.isPseudoColorLut();
   }
 
+  @Override
   public void lineTo(int x2, int y2) {
     record("lineTo", new Object[] {new Integer(x2), new Integer(y2)},
       new Class[] {int.class, int.class});

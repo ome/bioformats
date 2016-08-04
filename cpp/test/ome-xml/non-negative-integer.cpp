@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,6 +35,8 @@
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+
+#include <boost/range/size.hpp>
 
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 
@@ -126,7 +128,14 @@ namespace
       {   43,   43,          0, MODULO,           true,  false, false},
       {  901,  900,          1, MODULO_ASSIGN,    true,  false, false},
       {  901,  900,          2, MODULO_ASSIGN,    false, false, false},
-      {   43,   43,          0, MODULO_ASSIGN,    true,  false, false}
+      {   43,   43,          0, MODULO_ASSIGN,    true,  false, false},
+
+      {  33,     0,         34, INCREMENT,        true,  false, false},
+      {  33,     0,         33, INCREMENT,        false, false, false},
+      {   0,     0,          1, INCREMENT,        true,  false, false},
+      {  33,     0,         32, DECREMENT,        true,  false, false},
+      {  33,     0,         33, DECREMENT,        false, false, false},
+      {   0,     0,          0, DECREMENT,        false, true,  false}
     };
 
 }
@@ -134,12 +143,12 @@ namespace
 template<>
 const std::vector<NumericTest<NonNegativeInteger>::test_str>
 NumericTest<NonNegativeInteger>::strings(init_strings,
-                                         init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                         init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<NonNegativeInteger>::test_op>
 NumericTest<NonNegativeInteger>::ops(init_ops,
-                                     init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                     init_ops + boost::size(init_ops));
 
 template<>
 const NonNegativeInteger::value_type NumericTest<NonNegativeInteger>::error(0);

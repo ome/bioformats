@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -203,7 +203,7 @@ public class J2KReadState {
      *                  from the input stream.
      *  @param reader The <code>J2KImageReader</code> which holds this state.
      *                It is necessary for processing abortion.
-     *  @throw IllegalArgumentException If the provided <code>iis</code>,
+     *  @throws IllegalArgumentException If the provided <code>iis</code>,
      *          <code>param</code> or <code>metadata</code> is <code>null</code>.
      */
     public J2KReadState(ImageInputStream iis,
@@ -226,7 +226,7 @@ public class J2KReadState {
      *  @param param The reading parameters.
      *  @param reader The <code>J2KImageReader</code> which holds this state.
      *                It is necessary for processing abortion.
-     *  @throw IllegalArgumentException If the provided <code>iis</code>,
+     *  @throws IllegalArgumentException If the provided <code>iis</code>,
      *          or <code>param</code> is <code>null</code>.
      */
     public J2KReadState(ImageInputStream iis,

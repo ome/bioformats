@@ -11,7 +11,7 @@
   <target name="copy-source">
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${basedir}" includes="transforms/,released-schema/,src/"
-        excludes="transforms/internal, transforms/internal/*"/>
+        excludes="transforms/internal, transforms/internal/*, *.xpr, omeOxygenDocConfig.xml"/>
     </copy>
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="src/**"/>
@@ -25,7 +25,7 @@
     description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
     <xmlvalidate failonerror="false" warn="true">
       <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome, samples/inprogress/**/*.ome"/>
+        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome, samples/develop/**/*.ome"/>
       <attribute name="http://xml.org/sax/features/validation" value="true"/>
       <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
       <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
@@ -37,13 +37,13 @@
     description="Checks that all files used in the documentation are well formed using local schemas (fast)">
     <schemavalidate failonerror="true" warn="true">
       <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome"/>
+        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome"/>
 
       <!-- Standard -->
       <schema namespace="http://www.w3.org/XML/1998/namespace"
-        file="${basedir}/released-schema/additions/jar/xml.xsd"/>
+        file="${basedir}/released-schema/external/xml.xsd"/>
       <schema namespace="http://www.w3.org/2001/XMLSchema"
-        file="${basedir}/released-schema/additions/jar/XMLSchema.xsd"/>
+        file="${basedir}/released-schema/external/XMLSchema.xsd"/>
 
       <!-- 2003-FC -->
       <!-- No namespace is defined for AnalysisChain in this release -->

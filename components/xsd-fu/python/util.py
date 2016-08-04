@@ -11,11 +11,11 @@
 # individuals. For the exact contribution history, see the revision
 # history and logs, available at http://babel.edgewall.org/log/.
 
-###
-### Retrieved from Babel Subversion:
-### http://babel.edgewall.org/export/545/trunk/babel/util.py (r545)
-### Mon 19 Apr 2010 12:09:18 BST -- Chris Allan <callan@blackcat.ca>
-###
+#
+# Retrieved from Babel Subversion:
+# http://babel.edgewall.org/export/545/trunk/babel/util.py (r545)
+# Mon 19 Apr 2010 12:09:18 BST -- Chris Allan <callan@blackcat.ca>
+#
 
 """Various utility classes and functions."""
 
@@ -31,7 +31,7 @@ try:
     frozenset = frozenset
     set = set
 except NameError:
-    from sets import ImmutableSet as frozenset, Set as set
+    from sets import Set as set
 try:
     from operator import itemgetter
 except ImportError:
@@ -69,6 +69,8 @@ def distinct(iterable):
 # Regexp to match python magic encoding line
 PYTHON_MAGIC_COMMENT_re = re.compile(
     r'[ \t\f]* \# .* coding[=:][ \t]*([-\w.]+)', re.VERBOSE)
+
+
 def parse_encoding(fp):
     """Deduce the encoding of a source file from magic comment.
 
@@ -115,6 +117,7 @@ def parse_encoding(fp):
             return None
     finally:
         fp.seek(pos)
+
 
 def pathmatch(pattern, filename):
     """Extended pathname pattern matching.
@@ -242,7 +245,7 @@ class odict(dict):
         self._keys.remove(key)
         return dict.popitem(key)
 
-    def setdefault(self, key, failobj = None):
+    def setdefault(self, key, failobj=None):
         dict.setdefault(self, key, failobj)
         if key not in self._keys:
             self._keys.append(key)
@@ -320,9 +323,9 @@ except ImportError:
     :type: `tzinfo`
     """
 
-STDOFFSET = timedelta(seconds = -time.timezone)
+STDOFFSET = timedelta(seconds=-time.timezone)
 if time.daylight:
-    DSTOFFSET = timedelta(seconds = -time.altzone)
+    DSTOFFSET = timedelta(seconds=-time.altzone)
 else:
     DSTOFFSET = STDOFFSET
 

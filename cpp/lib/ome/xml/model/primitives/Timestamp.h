@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -131,83 +131,89 @@ namespace ome
         operator>> (std::basic_istream<charT,traits>& is,
                     Timestamp& timestamp)
         {
-          Timestamp::value_type value;
-
-          // Save locale.
-          std::locale savedlocale = is.getloc();
-
-          try
+          std::istream::sentry s(is);
+          if (s)
             {
-              boost::posix_time::time_input_facet *input_facet =
-                new boost::posix_time::time_input_facet();
-              input_facet->set_iso_extended_format();
-              std::locale iso8601_loc(std::locale::classic(), input_facet);
+              Timestamp::value_type value;
 
-              is.imbue(iso8601_loc);
-              is >> value;
+              // Save locale.
+              std::locale savedlocale = is.getloc();
 
-              if (is)
+              try
                 {
-                  // Check for zone offset
-                  char tztype = is.peek();
-                  if(tztype != std::char_traits<char>::eof())
-                    {
-                      if (tztype == 'Z')
-                        {
-                          is.ignore(); // Drop above from istream
-                          // If Z, we're already using UTC, so don't apply numeric offsets
-                        }
-                      else if (tztype == '-' || tztype == '+')
-                        {
-                          is.ignore(); // Drop above from istream
-                          if (is.rdbuf()->in_avail() >= 4) // Need 4 numeric chars
-                            {
-                              // Check that the next 4 characters are only numeric
-                              char inchars[4];
-                              is.read(&inchars[0], 4);
-                              for (int i=0; i < 4; ++i)
-                                if (inchars[i] < '0' || inchars[i] > '9')
-                                  is.setstate(std::ios::failbit);
+                  boost::posix_time::time_input_facet *input_facet =
+                    new boost::posix_time::time_input_facet();
+                  input_facet->set_iso_extended_format();
+                  std::locale iso8601_loc(std::locale::classic(), input_facet);
 
-                              if (is)
-                                {
-                                  // Get offset value
-                                  int offset;
-                                  std::istringstream valueis(inchars);
-                                  valueis >> offset;
-                                  if (valueis)
-                                    {
-                                      if (tztype == '+')
-                                        offset = -offset;
-                                      // Offset in                       hours,      minutes,    seconds
-                                      boost::posix_time::time_duration d(offset/100, offset%100, 0);
-                                      // Apply offset
-                                      value += d;
-                                    }
-                                  else
-                                    is.setstate(std::ios::failbit);
-                                }
-                            }
-                          else
+                  is.imbue(iso8601_loc);
+                  is >> value;
+
+                  if (is)
+                    {
+                      // Check for zone offset
+                      std::char_traits<char>::int_type tztype = is.peek();
+                      if(tztype != std::char_traits<char>::eof())
+                        {
+                          if (tztype == 'Z')
                             {
-                              is.setstate(std::ios::failbit);
+                              is.ignore(); // Drop above from istream
+                              // If Z, we're already using UTC, so don't apply numeric offsets
+                            }
+                          else if (tztype == '-' || tztype == '+')
+                            {
+                              is.ignore(); // Drop above from istream
+                              if (is.rdbuf()->in_avail() >= 4) // Need 4 numeric chars
+                                {
+                                  // Check that the next 4 characters are only numeric
+                                  std::string inchars(4, ' ');
+                                  is.read(&inchars[0], 4);
+                                  for (std::string::const_iterator i = inchars.begin();
+                                       i != inchars.end();
+                                       ++i)
+                                    if (*i < '0' || *i > '9')
+                                      is.setstate(std::ios::failbit);
+
+                                  if (is)
+                                    {
+                                      // Get offset value
+                                      int offset;
+                                      std::istringstream valueis(inchars);
+                                      valueis >> offset;
+                                      if (valueis)
+                                        {
+                                          if (tztype == '+')
+                                            offset = -offset;
+                                          // Offset in                       hours,      minutes,    seconds
+                                          boost::posix_time::time_duration d(offset/100, offset%100, 0);
+                                          // Apply offset
+                                          value += d;
+                                        }
+                                      else
+                                        is.setstate(std::ios::failbit);
+                                    }
+                                }
+                              else
+                                {
+                                  is.setstate(std::ios::failbit);
+                                }
                             }
                         }
                     }
+
+                  if (is)
+                    timestamp = Timestamp(value);
+                  else
+                    throw std::runtime_error("Failed to parse timestamp");
+                }
+              catch (const std::exception& e)
+                {
+                  is.imbue(savedlocale);
+                  throw;
                 }
 
-              if (is)
-                timestamp = Timestamp(value);
-              else
-                throw std::runtime_error("Failed to parse timestamp");
-            }
-          catch (const std::exception& e)
-            {
               is.imbue(savedlocale);
-              throw;
             }
-
-          is.imbue(savedlocale);
           return is;
         }
 

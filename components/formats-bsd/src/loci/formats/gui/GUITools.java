@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,10 +50,6 @@ import loci.formats.WriterWrapper;
 
 /**
  * A utility class for working with graphical user interfaces.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/GUITools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/GUITools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -173,6 +169,7 @@ public final class GUITools {
     // NB: construct JFileChooser in the AWT worker thread, to avoid deadlocks
     final JFileChooser[] jfc = new JFileChooser[1];
     Runnable r = new Runnable() {
+      @Override
       public void run() {
         JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         FileFilter[] ff = sortFilters(filters);

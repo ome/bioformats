@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,15 +32,14 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * Uses Bio-Formats to extract timestamp information
  * in a format-independent manner from a dataset.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/PrintTimestamps.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/PrintTimestamps.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PrintTimestamps {
 
@@ -66,8 +65,11 @@ public class PrintTimestamps {
   /** Outputs global timing details. */
   public static void printGlobalTiming(IMetadata meta, int series) {
     String imageName = meta.getImageName(series);
-    String creationDate = meta.getImageAcquisitionDate(series).getValue();
-    Double timeInc = meta.getPixelsTimeIncrement(series);
+    String creationDate = null;
+    if (meta.getImageAcquisitionDate(series) != null) {
+      creationDate = meta.getImageAcquisitionDate(series).getValue();
+    }
+    Time timeInc = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Global timing information:");
     System.out.println("\tImage name = " + imageName);
@@ -76,7 +78,7 @@ public class PrintTimestamps {
       System.out.println("\tCreation time (in ms since epoch) = " +
         DateTools.getTime(creationDate, DateTools.ISO8601_FORMAT));
     }
-    System.out.println("\tTime increment (in seconds) = " + timeInc);
+    System.out.println("\tTime increment (in seconds) = " + timeInc.value(UNITS.S).doubleValue());
   }
 
   /** Outputs timing details per timepoint. */
@@ -86,14 +88,14 @@ public class PrintTimestamps {
       "Timing information per timepoint (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneDeltaT(series, i);
+      Time deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, i).getValue().intValue();
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       if (z == 0 && c == 0) {
-        System.out.println("\tTimepoint #" + t + " = " + deltaT + " s");
+        System.out.println("\tTimepoint #" + t + " = " + deltaT.value(UNITS.S).doubleValue() + " s");
       }
     }
   }
@@ -112,14 +114,14 @@ public class PrintTimestamps {
       "Timing information per plane (from beginning of experiment):");
     int planeCount = meta.getPlaneCount(series);
     for (int i = 0; i < planeCount; i++) {
-      Double deltaT = meta.getPlaneDeltaT(series, i);
+      Time deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
       int z = meta.getPlaneTheZ(series, i).getValue().intValue();
       int c = meta.getPlaneTheC(series, i).getValue().intValue();
       int t = meta.getPlaneTheT(series, i).getValue().intValue();
       System.out.println("\tZ " + z + ", C " + c + ", T " + t + " = " +
-        deltaT + " s");
+        deltaT.value(UNITS.S).doubleValue() + " s");
     }
   }
 

@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,6 @@
  *                          RandomAccessIO, using buffering.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -73,8 +72,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 package jj2000.j2k.util;
@@ -351,7 +348,7 @@ public class ISRandomAccessIO implements RandomAccessIO {
      *
      * @param off The index in 'b' where to place the first byte read.
      *
-     * @param len The number of bytes to read.
+     * @param n The number of bytes to read.
      *
      * @exception EOFException If the end-of file was reached before
      * getting all the necessary data.

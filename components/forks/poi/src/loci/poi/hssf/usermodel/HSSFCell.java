@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -281,7 +281,7 @@ public class HSSFCell
     
     /**
      * Returns the Workbook that this Cell is bound to
-     * @return
+     * @return the workbook the cell is bound to
      */
     protected Workbook getBoundWorkbook() {
     	return book;

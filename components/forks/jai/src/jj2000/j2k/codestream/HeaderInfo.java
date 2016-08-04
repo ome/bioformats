@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             Holds information found in main and tile-part
  *                          headers 
- *
  *
  *
  * COPYRIGHT:
@@ -115,8 +114,6 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
         private int maxCompHeight = -1;
         /** 
          * Width of the specified tile-component
-         *
-         * @param t Tile index
          *
          * @param c Component index
          * */
@@ -777,7 +774,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      *
      * @param t index of the tile
      *
-     * @param tp Number of tile-parts
+     * @param ntp Number of tile-parts
      * */
     public String toStringTileHeader(int t, int ntp) {
         int nc = siz.csiz;
@@ -826,7 +823,7 @@ public class HeaderInfo implements Markers,ProgressionType,FilterTypes,
      *
      * @param t index of the tile
      *
-     * @param tp Number of tile-parts
+     * @param ntp Number of tile-parts
      * */
     public String toStringThNoSOT(int t, int ntp) {
         int nc = siz.csiz;

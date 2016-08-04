@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,10 +59,6 @@ import loci.formats.meta.MetadataStore;
  *
  * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
  * Additional video codecs will be added as time permits.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NativeQTReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NativeQTReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -122,6 +118,7 @@ public class NativeQTReader extends FormatReader {
 
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean separatedFork;
+  private String forkFile;
 
   private boolean flip;
 
@@ -137,6 +134,7 @@ public class NativeQTReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 64;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -153,9 +151,21 @@ public class NativeQTReader extends FormatReader {
       s.indexOf("mdat") >= 0 || s.indexOf("ftypqt") >= 0;
   }
 
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      return forkFile == null ? null : new String[] {forkFile};
+    }
+    return forkFile == null ? new String[] {currentId} :
+      new String[] {currentId, forkFile};
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -205,7 +215,9 @@ public class NativeQTReader extends FormatReader {
       System.arraycopy(temp, 0, t, 0, t.length);
     }
 
-    prevPixels = t;
+    if (t.length > 0) {
+      prevPixels = t;
+    }
     prevPlane = no;
 
     // determine whether we need to strip out any padding bytes
@@ -229,6 +241,9 @@ public class NativeQTReader extends FormatReader {
         System.arraycopy(prevPixels, row * (bytes * getSizeX() + pad), t,
           row * getSizeX() * bytes, getSizeX() * bytes);
       }
+    }
+    if (t.length == 0) {
+      t = prevPixels;
     }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -260,6 +275,7 @@ public class NativeQTReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -272,12 +288,14 @@ public class NativeQTReader extends FormatReader {
       scale = 0;
       chunkSizes = null;
       interlaced = separatedFork = flip = false;
+      forkFile = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -317,7 +335,10 @@ public class NativeQTReader extends FormatReader {
       // (or <filename>/rsrc on a Mac)
 
       String base = null;
-      if (id.indexOf(".") != -1) {
+      // it's not enough to just check the first index of "."
+      // on Windows in particular, the directory name could contain "." while
+      // the file name has no extension
+      if (id.indexOf(".", id.lastIndexOf(File.separator) + 1) != -1) {
         base = id.substring(0, id.lastIndexOf("."));
       }
       else base = id;
@@ -328,6 +349,7 @@ public class NativeQTReader extends FormatReader {
         LOGGER.debug("\t Found: {}", f);
         if (in != null) in.close();
         in = new RandomAccessInputStream(f.getAbsolutePath());
+        forkFile = f.getAbsolutePath();
 
         stripHeader();
         parse(0, 0, in.length());
@@ -342,6 +364,7 @@ public class NativeQTReader extends FormatReader {
           LOGGER.debug("\t Found: {}", f);
           if (in != null) in.close();
           in = new RandomAccessInputStream(f.getAbsolutePath());
+          forkFile = f.getAbsolutePath();
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
           m.imageCount = offsets.size();
@@ -353,6 +376,7 @@ public class NativeQTReader extends FormatReader {
             LOGGER.debug("\t Found: {}", f);
             if (in != null) in.close();
             in = new RandomAccessInputStream(f.getAbsolutePath());
+            forkFile = f.getAbsolutePath();
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
             m.imageCount = offsets.size();

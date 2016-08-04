@@ -1,0 +1,745 @@
+/*
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package ${lang.omexml_model_package};
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_enums_package}.handlers.*;
+import ${lang.omexml_model_package}.primitives.*;
+
+{% choose %}\
+{% when klass.isAbstractProprietary or klass.isAbstract %}\
+public abstract class ${klass.name} extends ${klass.parentName}
+{% end %}\
+{% when not klass.isAbstractProprietary and not klass.isAbstract %}\
+public class ${klass.name} extends ${klass.parentName}
+{% end %}\
+{% end %}\
+{
+	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- modelBaseType: ${klass.modelBaseType} -- langBaseType: ${klass.langBaseType}
+
+	// -- Constants --
+
+	public static final String NAMESPACE = "${klass.namespace}";
+
+	/** Logger for this class. */
+	private static final Logger LOGGER =
+		LoggerFactory.getLogger(${klass.name}.class);
+
+	// -- Instance variables --
+{% for prop in klass.instanceVariables %}\
+{% if not prop[4] %}\
+
+{% if prop[3] is not None %}\
+	// ${prop[3]}
+{% end %}\
+{% if prop[0] is not None %}\
+{% if prop[2] is not None %}\
+	private ${prop[0]} ${prop[1]} = new ${prop[2]}();
+{% end %}\
+{% if prop[2] is None %}\
+	private ${prop[0]} ${prop[1]};
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+	// -- Constructors --
+
+	/** Default constructor. */
+	public ${klass.name}()
+	{
+{% if klass.parentName is not None and klass.parentName != 'AbstractOMEModelObject' %}\
+		super();
+{% end %}\
+	}
+
+	/**
+	 * Constructs ${klass.name} recursively from an XML DOM tree.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public ${klass.name}(Element element, OMEModel model)
+	    throws EnumerationException
+	{
+		update(element, model);
+	}
+
+	/** Copy constructor. */
+	public ${klass.name}(${klass.name} orig)
+	{
+{% if klass.parentName is not None and klass.parentName != 'AbstractOMEModelObject' %}\
+		super(orig);
+{% end %}\
+{% for prop in klass.instanceVariables %}\
+{% choose %}\
+{% when prop[0] is not None and prop[4] %}\
+{% if debug %}\
+		// Unit property ${prop[1]}, copied with it's value property
+{% end debug %}\
+{% end %}\
+{% when prop[0] is not None %}\
+		${prop[1]} = orig.${prop[1]};
+{% end %}\
+{% when prop[0] is None %}\
+{% if debug %}\
+		// *** WARNING *** Unhandled or skipped property ${prop[1]}
+{% end debug %}\
+{% end %}\
+{% otherwise %}\
+{% if debug %}\
+		// *** WARNING *** Unhandled or skipped non-unit property ${prop[1]}
+{% end debug %}\
+{% end %}\
+{% end %}\
+{% end %}\
+	}
+
+	// -- Custom content from ${klass.name} specific template --
+
+${customContent}\
+
+	// -- OMEModelObject API methods --
+
+	/**
+	 * Updates ${klass.name} recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * properties are removed, only added or updated.
+	 * @param element Root of the XML DOM tree to construct a model object
+	 * graph from.
+	 * @param model Handler for the OME model which keeps track of instances
+	 * and references seen during object population.
+	 * @throws EnumerationException If there is an error instantiating an
+	 * enumeration during model object creation.
+	 */
+	public void update(Element element, OMEModel model)
+	    throws EnumerationException
+	{
+		super.update(element, model);
+{% if klass.langBaseType != 'Object' %}\
+		// Element's text data
+		String value_textContent = element.getTextContent();
+		if (value_textContent.trim().length() > 0) {
+			value = ${klass.langBaseType}.valueOf(value_textContent);
+		}
+{% end %}\
+{% if not klass.isAbstractProprietary %}\
+		String tagName = element.getTagName();
+		if (!"${klass.name}".equals(tagName))
+		{
+			LOGGER.debug("Expecting node name of ${klass.name} got {}", tagName);
+		}
+{% end %}\
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when prop.name in customUpdatePropertyContent %}\
+{% if debug %}\
+		// -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
+${customUpdatePropertyContent[prop.name]}
+{% if debug %}\
+		// -- END custom content from ${prop.name} property template --
+{% end debug %}\
+{% end %}\
+{% when prop.isReference %}\
+		// Element reference ${prop.name}
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
+		{
+			${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+			${prop.instanceVariableName}_reference.setID(${prop.name}_element.getAttribute("ID"));
+			model.addReference(this, ${prop.instanceVariableName}_reference);
+		}
+{% end %}\
+{% when prop.isBackReference %}\
+{% if debug %}\
+		// *** IGNORING *** Skipped back reference ${prop.name}
+{% end debug %}\
+{% end %}\
+{% when prop.isAttribute and prop.name == "ID" %}\
+		if (!element.hasAttribute("ID") && getID() == null)
+		{
+			// TODO: Should be its own exception
+			throw new RuntimeException(String.format(
+					"${klass.name} missing required ID property."));
+		}
+		if (element.hasAttribute("ID"))
+		{
+			// ID property
+			set${prop.methodName}(${prop.langType}.valueOf(
+						element.getAttribute("${prop.name}")));
+			// Adding this model object to the model handler
+			model.addModelObject(getID(), this);
+		}
+{% end %}\
+{% when prop.isAttribute %}\
+{% choose %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+			// MARKER [JJJ]
+			// Attribute property which is Units enumeration ${prop.name}
+{% end debug %}\
+{% end %}\
+{% when prop.isEnumeration and not prop.isUnitsEnumeration%}\
+{% if debug %}\
+			// MARKER [KKK]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+			// Attribute property which is an enumeration ${prop.name}
+			set${prop.methodName}(${prop.langType}.fromString(
+					element.getAttribute("${prop.name}")));
+		}
+{% end %}\
+{% when prop.hasUnitsCompanion %}\
+{% if debug %}\
+			// MARKER [UUU]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+			// Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+			String unitSymbol = element.getAttribute("${prop.unitsCompanion.name}");
+			if ((unitSymbol == null) || (unitSymbol.isEmpty()))
+			{
+				// Use default value specified in the xsd model
+				unitSymbol = get${prop.unitsCompanion.name}XsdDefault();
+			}
+			${prop.unitsCompanion.langType} modelUnit = 
+				${prop.unitsCompanion.langType}.fromString(unitSymbol);
+			${prop.langType} baseValue = ${prop.langType}.valueOf(
+					element.getAttribute("${prop.name}"));
+			if (baseValue != null) 
+			{
+				set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
+			}
+		}
+{% end %}\
+{% when not prop.isEnumeration %}\
+{% if debug %}\
+			// MARKER [LLL]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+			// Attribute property ${prop.name}
+			set${prop.methodName}(${prop.langType}.valueOf(
+					element.getAttribute("${prop.name}")));
+		}
+{% end %}\
+{% otherwise %}\
+{% if debug %}\
+		// MARKER [MMM]
+		// *** WARNING *** Unhandled or skipped attribute ${prop.name}
+{% end debug %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		if (${prop.name}_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"${prop.name} node list size %d != 1",
+					${prop.name}_nodeList.size()));
+		}
+		else if (${prop.name}_nodeList.size() != 0)
+		{
+{% if prop.isComplex() and not klass.isAbstractProprietary %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements)
+			set${prop.methodName}(new ${prop.langType}(
+					(Element) ${prop.name}_nodeList.get(0), model));
+{% end %}\
+{% if not prop.isComplex() %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements)
+			set${prop.methodName}(
+					${prop.langType}.valueOf(${prop.name}_nodeList.get(0).getTextContent()));
+{% end %}\
+		}
+{% end %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstractProprietary %}\
+{% if prop.isAbstractProprietary %}\
+		// Element property ${prop.name} which is complex (has
+		// sub-elements) and occurs more than once. The element's model
+		// object type is also abstract so we need to have a handler for
+		// each "subclass".
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
+		{
+{% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
+{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
+			List<Element> ${inner_prop.name}_nodeList =
+					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
+			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
+			{
+				${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
+				o.update(${inner_prop.name}_element, model);
+				add${prop.methodName}(o);
+			}
+{% end %}\
+{% end %}\
+		}
+{% end %}\
+{% if not prop.isAbstractProprietary %}\
+		// Element property ${prop.name} which is complex (has
+		// sub-elements) and occurs more than once
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName(element, "${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
+		{
+			add${prop.methodName}(
+					new ${prop.langType}(${prop.name}_element, model));
+		}
+{% end %}\
+{% end %}\
+{% when prop.maxOccurs > 1 %}\
+		// Element property ${prop.name} which is not complex (has no
+		// sub-elements) which occurs more than once
+		List<Element> ${prop.name}_nodeList =
+				getChildrenByTagName("${prop.name}");
+		for (Element ${prop.name}_element : ${prop.name}_nodeList)
+		{
+			add${prop.methodName}(new ${prop.langType}(
+					${prop.name}_element.getTextContent(), model));
+		}
+{% end %}\
+{% otherwise %}\
+{% if debug %}\
+		// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
+{% end %}\
+{% end %}\
+{% end %}\
+	}
+
+	// -- ${klass.name} API methods --
+
+	public boolean link(Reference reference, OMEModelObject o)
+	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
+{% for prop in klass.properties.values() %}\
+{% if prop.isReference %}\
+		if (reference instanceof ${prop.name})
+		{
+			${prop.langType} o_casted = (${prop.langType}) o;
+{% if not fu.link_overridden(prop.name, klass.name) %}\
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
+			o_casted.link${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o_casted.link${klass.name}${prop.methodName}(this);
+{% end %}\
+{% end %}\
+{% if prop.maxOccurs > 1 %}\
+			${prop.instanceVariableName}.add(o_casted);
+{% end %}\
+{% if prop.maxOccurs == 1 %}\
+			${prop.instanceVariableName} = o_casted;
+{% end %}\
+			return true;
+		}
+{% end %}\
+{% end %}\
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
+	}
+
+{% if klass.langBaseType != 'Object' %}\
+	// Element's text data getter
+	public ${klass.langBaseType} getValue()
+	{
+		return this.value;
+	}
+
+	// Element's text data setter
+	public void setValue(${klass.langBaseType} value)
+	{
+		this.value = value;
+	}
+{% end %}\
+\
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}
+	// Reference which occurs more than once
+	public int sizeOfLinked${prop.methodName}List()
+	{
+		return ${prop.instanceVariableName}.size();
+	}
+
+	public List<${prop.langType}> copyLinked${prop.methodName}List()
+	{
+		return new ArrayList<${prop.langType}>(${prop.instanceVariableName});
+	}
+
+	public ${prop.langType} getLinked${prop.methodName}(int index)
+	{
+		return ${prop.instanceVariableName}.get(index);
+	}
+
+	public ${prop.langType} setLinked${prop.methodName}(int index, ${prop.langType} o)
+	{
+		return ${prop.instanceVariableName}.set(index, o);
+	}
+
+	public boolean link${prop.methodName}(${prop.langType} o)
+	{
+{% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
+
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
+			o.link${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o.link${klass.name}${prop.methodName}(this);
+{% end %}\
+{% end %}\
+		return ${prop.instanceVariableName}.add(o);
+	}
+
+	public boolean unlink${prop.methodName}(${prop.langType} o)
+	{
+{% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
+
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
+			o.unlink${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o.unlink${klass.name}${prop.methodName}(this);
+{% end %}\
+{% end %}\
+		return ${prop.instanceVariableName}.remove(o);
+	}
+{% end %}\
+{% when prop.isReference %}
+	// Reference
+	public ${prop.langType} getLinked${prop.methodName}()
+	{
+		return ${prop.instanceVariableName};
+	}
+
+	public void link${prop.methodName}(${prop.langType} o)
+	{
+		${prop.instanceVariableName} = o;
+	}
+
+	public void unlink${prop.methodName}(${prop.langType} o)
+	{
+		if (${prop.instanceVariableName} == o)
+		{
+			${prop.instanceVariableName} = null;
+		}
+	}
+{% end %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
+	{
+		return ${prop.instanceVariableName};
+	}
+
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
+	{
+		this.${prop.instanceVariableName} = ${prop.argumentName};
+	}
+{% end %}\
+{% when prop.isUnitsEnumeration %}
+{% if debug %}\
+			// MARKER [RRR]
+			// Attribute property which is Units enumeration ${prop.name}
+{% end debug %}\
+	// Property ${prop.name} is a unit companion
+	public static String get${prop.methodName}XsdDefault()
+	{
+		return "${prop.defaultXsdValue}";
+	}
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
+	{
+		return ${prop.instanceVariableName};
+	}
+
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
+	{
+		this.${prop.instanceVariableName} = ${prop.argumentName};
+	}
+{% end %}\
+{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
+	// Property which occurs more than once
+	public int sizeOf${prop.methodName}List()
+	{
+		return ${prop.instanceVariableName}.size();
+	}
+
+	public List<${prop.langType}> copy${prop.methodName}List()
+	{
+		return new ArrayList<${prop.langType}>(${prop.instanceVariableName});
+	}
+
+	public ${prop.langType} get${prop.methodName}(int index)
+	{
+		return ${prop.instanceVariableName}.get(index);
+	}
+
+	public ${prop.langType} set${prop.methodName}(int index, ${prop.langType} ${prop.argumentName})
+	{
+{% if klass.type != 'OME' %}\
+        ${prop.argumentName}.set${klass.type}(this);
+{% end %}\
+		return ${prop.instanceVariableName}.set(index, ${prop.argumentName});
+	}
+
+	public void add${prop.methodName}(${prop.langType} ${prop.argumentName})
+	{
+{% if klass.type != 'OME' %}\
+        ${prop.argumentName}.set${klass.type}(this);
+{% end %}\
+		${prop.instanceVariableName}.add(${prop.argumentName});
+	}
+
+	public void remove${prop.methodName}(${prop.langType} ${prop.argumentName})
+	{
+		${prop.instanceVariableName}.remove(${prop.argumentName});
+	}
+{% end %}\
+{% otherwise %}
+{% if debug %}\
+	// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+{% if not klass.isAbstractProprietary %}\
+	public Element asXMLElement(Document document)
+	{
+		return asXMLElement(document, null);
+	}
+
+{% end if NOT AbstractProprietary %}\
+	protected Element asXMLElement(Document document, Element ${klass.name}_element)
+	{
+		// Creating XML block for ${klass.name}
+
+{% if klass.isAbstractProprietary %}\
+		// Class is abstract so we may need to create its "container" element
+		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
+		{
+			Element abstractElement =
+					document.createElementNS(NAMESPACE, "${klass.name}");
+			abstractElement.appendChild(${klass.name}_element);
+			${klass.name}_element = abstractElement;
+		}
+{% end if AbstractProprietary %}\
+		if (${klass.name}_element == null)
+		{
+			${klass.name}_element =
+					document.createElementNS(NAMESPACE, "${klass.name}");
+		}
+
+{% if klass.langBaseType != 'Object' %}\
+		// Element's text data
+		if (this.value != null) {
+			${klass.name}_element.setTextContent(this.value.toString());
+		}
+
+{% end if NOT Object %}\
+{% if klass.isAnnotation %}\
+		// Ensure any base annotations add their Elements first
+		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
+{% end if isAnnotation %}\
+
+{% for prop in klass.properties.values() %}\
+{% if not prop.isUnitsEnumeration %}\
+{% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ANNOTATION_OVERRIDE) %}\
+		if (${prop.instanceVariableName} != null)
+		{
+{% choose %}\
+{% when prop.name in customAsXMLElementPropertyContent %}\
+{% if debug %}\
+			// -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
+${customAsXMLElementPropertyContent[prop.name]}
+{% if debug %}\
+			// -- END custom content from ${prop.name} property template --
+{% end debug %}\
+{% end when %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+			// Reference property ${prop.name} which occurs more than once
+			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
+			{
+				${prop.name} o = new ${prop.name}();
+				o.setID(${prop.instanceVariableName}_value.getID());
+				${klass.name}_element.appendChild(o.asXMLElement(document));
+			}
+{% end when %}\
+{% when prop.isReference %}\
+			// Reference property ${prop.name}
+			${prop.name} o = new ${prop.name}();
+			o.setID(${prop.instanceVariableName}.getID());
+			${klass.name}_element.appendChild(o.asXMLElement(document));
+{% end when %}\
+{% when prop.isBackReference %}\
+			// *** IGNORING *** Skipped back reference ${prop.name}
+{% end when %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [QQQ]
+{% end debug %}\
+			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
+			if (${prop.instanceVariableName}.value() != null)
+			{
+{% if prop.type.endswith('Int') %}
+				${klass.name}_element.setAttribute("${prop.name}", Long.toString(${prop.instanceVariableName}.value().longValue()));
+{% end if prop.type %}
+{% if not prop.type.endswith('Int') %}
+				${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
+{% end if not prop.type %}
+			}
+			if (${prop.instanceVariableName}.unit() != null)
+			{
+				try
+				{
+					${prop.unitsCompanion.langType} enumUnits = ${prop.unitsCompanion.langType}.fromString(${prop.instanceVariableName}.unit().getSymbol());
+					${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", enumUnits.toString());
+				} catch (EnumerationException e)
+				{
+					LOGGER.debug("Unable to create xml for ${klass.name}:${prop.unitsCompanion.name}: {}", e.toString());
+				}
+			}
+{% end when %}\
+{% when prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [III]
+{% end debug %}\
+			// Attribute property ${prop.name}
+			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.toString());
+{% end when %}\
+{% when prop.maxOccurs == 1 and prop.isComplex() %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements)
+			${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
+{% end when %}\
+{% when prop.maxOccurs == 1 %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements)
+			Element ${prop.instanceVariableName}_element =
+					document.createElementNS(NAMESPACE, "${prop.name}");
+			${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}.toString());
+			${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
+{% end when %}\
+{% when prop.maxOccurs > 1 and prop.isComplex() %}\
+			// Element property ${prop.name} which is complex (has
+			// sub-elements) and occurs more than once
+			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
+			{
+				${klass.name}_element.appendChild(${prop.instanceVariableName}_value.asXMLElement(document));
+			}
+{% end when %}\
+{% when prop.maxOccurs > 1 %}\
+			// Element property ${prop.name} which is not complex (has no
+			// sub-elements) which occurs more than once
+			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
+			{
+				Element ${prop.instanceVariableName}_element =
+						document.createElementNS(NAMESPACE, "${prop.name}");
+				${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}_value.toString());
+				${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
+			}
+{% end when %}\
+{% otherwise %}\
+{% if debug %}\
+			// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
+{% end otherwise %}\
+{% end choose %}\
+		}
+{% end if %}\
+{% end if %}\
+{% end for %}\
+
+{% choose %}\
+{% when klass.isAnnotation %}\
+		return ${klass.name}_element;
+{% end when isAnnotation %}\
+{% otherwise %}\
+		return super.asXMLElement(document, ${klass.name}_element);
+{% end otherwise %}\
+{% end choose %}\
+	}
+}

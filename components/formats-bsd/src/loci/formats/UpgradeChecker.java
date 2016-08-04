@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,10 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Class that allows checking for new versions of Bio-Formats, as well as
  * updating to the latest stable, daily, or trunk version.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/UpgradeChecker.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/UpgradeChecker.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class UpgradeChecker {
 
@@ -67,7 +63,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.0.8";
+  public static final String STABLE_VERSION = "5.1.4";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
@@ -76,13 +72,13 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for Bio-Formats' trunk build.
    */
   public static final String TRUNK_BUILD =
-    CI_SERVER + "/job/BIOFORMATS-5.0-latest/lastSuccessfulBuild/artifact/artifacts/";
+    CI_SERVER + "/job/BIOFORMATS-5.1-latest/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' daily build.
    */
   public static final String DAILY_BUILD =
-    CI_SERVER + "/job/BIOFORMATS-5.0-daily/lastSuccessfulBuild/artifact/artifacts/";
+    CI_SERVER + "/job/BIOFORMATS-5.1-daily/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for the stable releases.
@@ -179,7 +175,8 @@ public class UpgradeChecker {
    * Contact the OME registry and return true if a new version is available.
    *
    * @param registryID how the application identifies itself to OMERO.registry
-   *                  @see #REGISTRY_IMAGEJ, @see #REGISTRY_LIBRARY
+   *                  @see #REGISTRY_IMAGEJ
+   *                  @see #REGISTRY_LIBRARY
    * @param caller  name of the calling application, e.g. "MATLAB"
    */
   public boolean newVersionAvailable(String registryID, String caller) {
@@ -228,35 +225,27 @@ public class UpgradeChecker {
       conn.addRequestProperty("User-Agent", registryID);
       conn.connect();
 
-      // retrieve latest version number from the registry
-
+      // retrieve the string from the registry
       InputStream in = conn.getInputStream();
-      StringBuffer latestVersion = new StringBuffer();
+      StringBuffer sb = new StringBuffer();
       while (true) {
         int data = in.read();
         if (data == -1) {
           break;
         }
-        latestVersion.append((char) data);
+        sb.append((char) data);
       }
       in.close();
 
-      // check to see if the version reported by the registry is greater than
-      // the current version - version numbers are in "x.x.x" format
+      // check if the string is not empty (upgrade available)
 
-      String[] version = latestVersion.toString().split("\\.");
-      String[] thisVersion = FormatTools.VERSION.split("\\.");
-      for (int i=0; i<thisVersion.length; i++) {
-        try {
-          int subVersion = Integer.parseInt(thisVersion[i]);
-          int registrySubVersion = Integer.parseInt(version[i]);
-          if (registrySubVersion != subVersion) {
-            return registrySubVersion > subVersion;
-          }
-        }
-        catch (NumberFormatException e) {
-          return false;
-        }
+      String result = sb.toString();
+      if (sb.length() == 0) {
+        LOGGER.debug("No update needed");
+        return false;
+      } else {
+        LOGGER.debug("UPGRADE AVAILABLE:" + result);
+        return true;
       }
     }
     catch (IOException e) {
@@ -273,7 +262,7 @@ public class UpgradeChecker {
    * @param downloadDir the directory into which to save the JAR files
    * @return true if installation was successfull
    *
-   * @see install(String, String)
+   * @see #install(String, String)
    */
   public boolean installIndividualJars(String urlDir, String downloadDir) {
     boolean overallSuccess = true;

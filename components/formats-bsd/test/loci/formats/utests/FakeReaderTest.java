@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -223,6 +223,20 @@ public class FakeReaderTest {
     while (i >= 0) {
         assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
     }
+  }
+
+  @Test
+  public void testExtraMetadata() throws Exception {
+    RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
+    try {
+      StringBuilder sb = new StringBuilder();
+      sb.append("\n[GlobalMetadata]\nfoo=bar\n");
+      raf.writeUTF(sb.toString());
+    } finally {
+      raf.close();
+    }
+    reader.setId(fakeIni.getAbsolutePath());
+    assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
   }
 
   //

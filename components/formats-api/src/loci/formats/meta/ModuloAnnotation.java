@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,6 +49,11 @@ public class ModuloAnnotation extends XMLAnnotation {
 
   private Modulo modulo;
 
+  /**
+   * Set the value of this annotation using the given Modulo object
+   * @param meta the associated OMEXMLMetadata
+   * @param m the Modulo object from which to retrieve dimension information
+   */
   public void setModulo(OMEXMLMetadata meta, Modulo m) {
     modulo = m;
     setNamespace(MODULO_NS);
@@ -57,6 +62,11 @@ public class ModuloAnnotation extends XMLAnnotation {
     setValue(XMLTools.dumpXML(null, doc, r, false));
   }
 
+  /**
+   * Construct a DOM element for this annotation using
+   * the given Document as the root.
+   * @param document the root document node
+   */
   protected Element makeModuloElement(Document document) {
     Element mtop = document.createElement("Modulo");
     mtop.setAttribute("namespace", "http://www.openmicroscopy.org/Schemas/Additions/2011-09");
@@ -70,7 +80,7 @@ public class ModuloAnnotation extends XMLAnnotation {
       type = type.toLowerCase();
     }
     // Handle CZI files for the moment.
-    // TODO: see http://trac.openmicroscopy.org.uk/ome/ticket/11720
+    // TODO: see https://trac.openmicroscopy.org/ome/ticket/11720
     if (type.equals("rotation")) {
       type = "angle";
     }

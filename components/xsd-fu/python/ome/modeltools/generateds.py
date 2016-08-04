@@ -1,9 +1,19 @@
-import logging
-import generateDS.generateDS
-from generateDS.generateDS import *
-from xml import sax
+from __future__ import absolute_import
 
+import sys
+import keyword
+import logging
+
+# The generateDS package and our generateds module
+# collide on case-insensitive file systems.
+import generateDS.generateDS
+from ome.modeltools.exceptions import ModelProcessingError
+from xml import sax
 from ome.modeltools.model import OMEModel
+
+XschemaHandler = generateDS.generateDS.XschemaHandler
+set_type_constants = generateDS.generateDS.set_type_constants
+
 
 def parse(opts):
     """
@@ -31,6 +41,7 @@ def parse(opts):
             "No model objects found, have you set the correct namespace?")
     root.annotate()
     return OMEModel.process(ch, opts)
+
 
 def reset():
     """

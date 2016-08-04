@@ -11,8 +11,9 @@ Type "ant -p" for a list of targets.
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
   <import file="${root.dir}/ant/version.xml"/>
+  <import file="${root.dir}/ant/xsd-fu.xml"/>
 
-  <taskdef name="testng" classpath="${testng.jar}"
+  <taskdef name="testng" classpath="${lib.dir}/testng-${testng.version}.jar"
     classname="org.testng.TestNGAntTask"/>
   <if>
     <isset property="findbugs.home"/>
@@ -62,7 +63,7 @@ Type "ant -p" for a list of targets.
     <if>
       <equals arg1="${component.junit}" arg2="true"/>
       <then>
-        <junit haltonfailure="true">
+        <junit haltonfailure="true" fork="true">
           <classpath>
             <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
             <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
@@ -175,24 +176,26 @@ your FindBugs installation's lib directory. E.g.:
   <target name="utils" depends="jar"
     description="compile extra utilities">
     <delete>
-      <fileset dir="${utils.dir}" includes="*.class"/>
+      <fileset dir="${utils.dir}" includes="**/*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="true" source="1.6" target="1.6"
       encoding="UTF-8"
-      srcdir="${utils.dir}" includes="*.java"
+      srcdir="${utils.dir}" includes="**/*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
 
-  <target name="docs" depends="compile"
+  <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
-      nodeprecated="false" windowtitle="Bio-Formats API">
+      access="private"
+      nodeprecated="false" windowtitle="Bio-Formats API"
+      additionalparam="${javadoc.doclint}">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
@@ -255,6 +258,9 @@ your FindBugs installation's lib directory. E.g.:
       -->
       <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
     </copy>
+    <copy todir="${dest.dir}/META-INF" preservelastmodified="true">
+      <fileset dir="${src.dir}/.." includes="(non) ${component.resources-bin}"/>
+    </copy>
     <!-- copy source files and text resources with filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}"
@@ -263,9 +269,12 @@ your FindBugs installation's lib directory. E.g.:
 
     <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
     <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+    <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
     <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
+    <replace dir="${dest.dir}" token="$${vcs.date}_unix" value="${vcs.date_unix}"/>
     <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
+    <replace dir="${dest.dir}" token="$${xsdfu.schemaver}" value="${xsdfu.schemaver}"/>
 
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">
@@ -294,6 +303,7 @@ your FindBugs installation's lib directory. E.g.:
 
   <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
   <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+  <replace dir="${dest.dir}" token="$${vcs.shortrevision}" value="${vcs.shortrevision}"/>
   <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
   <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
   <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>

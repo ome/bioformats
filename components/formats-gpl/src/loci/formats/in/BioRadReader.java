@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,9 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -50,12 +51,10 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.Length;
+
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BioRadReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BioRadReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -142,7 +141,7 @@ public class BioRadReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector<String> used;
+  private List<String> used;
 
   private String[] picFiles;
 
@@ -150,9 +149,9 @@ public class BioRadReader extends FormatReader {
   private int lastChannel = 0;
   private boolean brokenNotes = false;
 
-  private Vector<Note> noteStrings;
+  private List<Note> noteStrings;
 
-  private Vector<Double> offset, gain;
+  private List<Double> offset, gain;
 
   // -- Constructor --
 
@@ -167,17 +166,20 @@ public class BioRadReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, PIC_SUFFIX)) return true;
     String fname = new File(name.toLowerCase()).getName();
@@ -185,6 +187,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 56;
     if (!FormatTools.validStream(stream, blockLen, LITTLE_ENDIAN)) {
@@ -196,6 +199,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
@@ -209,16 +213,18 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut == null ? null : lut[lastChannel];
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector<String> files = new Vector<String>();
+      final List<String> files = new ArrayList<String>();
       for (String f : used) {
         if (!checkSuffix(f, PIC_SUFFIX)) files.add(f);
       }
@@ -230,6 +236,7 @@ public class BioRadReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -254,6 +261,7 @@ public class BioRadReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -270,6 +278,7 @@ public class BioRadReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
@@ -290,15 +299,15 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    offset = new Vector<Double>();
-    gain = new Vector<Double>();
+    offset = new ArrayList<Double>();
+    gain = new ArrayList<Double>();
 
-    used = new Vector<String>();
-    used.add(currentId);
+    used = new ArrayList<String>();
+    used.add(new Location(currentId).getAbsolutePath());
 
     LOGGER.info("Reading image dimensions");
 
-    noteStrings = new Vector<Note>();
+    noteStrings = new ArrayList<Note>();
 
     // read header
     CoreMetadata m = core.get(0);
@@ -396,7 +405,7 @@ public class BioRadReader extends FormatReader {
 
     // look for companion metadata files
 
-    Vector<String> pics = new Vector<String>();
+    final List<String> pics = new ArrayList<String>();
 
     if (isGroupFiles()) {
       Location parent =
@@ -436,7 +445,7 @@ public class BioRadReader extends FormatReader {
 
     boolean multipleFiles = parseNotes(store);
 
-    if (multipleFiles && isGroupFiles() && pics.size() == 0) {
+    if (multipleFiles && isGroupFiles() && pics.isEmpty()) {
       // do file grouping
       used.remove(currentId);
       long length = new Location(currentId).length();
@@ -446,7 +455,9 @@ public class BioRadReader extends FormatReader {
         Location f = new Location(file);
         if (f.length() == length) {
           pics.add(file);
-          used.add(file);
+          if (!used.contains(f.getAbsolutePath())) {
+            used.add(f.getAbsolutePath());
+          }
         }
       }
       if (pics.size() == 1) m.sizeC = 1;
@@ -581,7 +592,7 @@ public class BioRadReader extends FormatReader {
       n.p = n.p.substring(0, ndx).trim();
 
       String value = n.p.replaceAll("=", "");
-      Vector<String> v = new Vector<String>();
+      final List<String> v = new ArrayList<String>();
       StringTokenizer t = new StringTokenizer(value, " ");
       while (t.hasMoreTokens()) {
         String token = t.nextToken().trim();
@@ -663,7 +674,7 @@ public class BioRadReader extends FormatReader {
 
                     if (key.endsWith("OFFSET")) {
                       if (nextDetector < offset.size()) {
-                        offset.setElementAt(new Double(value), nextDetector);
+                        offset.set(nextDetector, Double.parseDouble(value));
                       }
                       else {
                         while (nextDetector > offset.size()) {
@@ -674,7 +685,7 @@ public class BioRadReader extends FormatReader {
                     }
                     else if (key.endsWith("GAIN")) {
                       if (nextDetector < gain.size()) {
-                        gain.setElementAt(new Double(value), nextDetector);
+                        gain.set(nextDetector, Double.parseDouble(value));
                       }
                       else {
                         while (nextDetector > gain.size()) {
@@ -696,14 +707,14 @@ public class BioRadReader extends FormatReader {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
                       if (key.equals("AXIS_2")) {
-                        PositiveFloat size =
+                        Length size =
                           FormatTools.getPhysicalSizeX(pixelSize);
                         if (size != null) {
                           store.setPixelsPhysicalSizeX(size, 0);
                         }
                       }
                       else if (key.equals("AXIS_3")) {
-                        PositiveFloat size =
+                        Length size =
                           FormatTools.getPhysicalSizeY(pixelSize);
 
                         if (size != null) {
@@ -719,7 +730,7 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              PositiveFloat size = FormatTools.getPhysicalSizeX(pixelSize);
+              Length size = FormatTools.getPhysicalSizeX(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeX(size, 0);
               }
@@ -727,7 +738,7 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              PositiveFloat size = FormatTools.getPhysicalSizeY(pixelSize);
+              Length size = FormatTools.getPhysicalSizeY(pixelSize);
               if (size != null) {
                 store.setPixelsPhysicalSizeY(size, 0);
               }
@@ -751,7 +762,7 @@ public class BioRadReader extends FormatReader {
                   store.setObjectiveNominalMagnification(mag, 0, 0);
 
                   Double sizeZ = new Double(values[14]);
-                  PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+                  Length size = FormatTools.getPhysicalSizeZ(sizeZ);
                   if (size != null) {
                     store.setPixelsPhysicalSizeZ(size, 0);
                   }
@@ -771,8 +782,8 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
-                  PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
+                  Length sizeX = FormatTools.getPhysicalSizeX(width);
+                  Length sizeY = FormatTools.getPhysicalSizeY(height);
                   if (sizeX != null) {
                     store.setPixelsPhysicalSizeX(sizeX, 0);
                   }
@@ -959,7 +970,7 @@ public class BioRadReader extends FormatReader {
 
       if (n.p.indexOf("AXIS") != -1) {
         n.p = n.p.replaceAll("=", "");
-        Vector<String> v = new Vector<String>();
+        final List<String> v = new ArrayList<String>();
         StringTokenizer tokens = new StringTokenizer(n.p, " ");
         while (tokens.hasMoreTokens()) {
           String token = tokens.nextToken().trim();
@@ -1080,6 +1091,7 @@ public class BioRadReader extends FormatReader {
 
   /** SAX handler for parsing XML. */
   class BioRadHandler extends BaseHandler {
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -1114,6 +1126,7 @@ public class BioRadReader extends FormatReader {
     public int y;
     public String p;
 
+    @Override
     public String toString() {
       StringBuffer sb = new StringBuffer(100);
       sb.append("level=");

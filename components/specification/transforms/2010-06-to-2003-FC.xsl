@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009-2014 Open Microscopy Environment
+# Copyright (C) 2009-2011 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -179,13 +179,12 @@
 				<xsl:attribute name="ID">xslt.fix:Image:XSLT:<xsl:value-of select="."/></xsl:attribute>
 			</xsl:for-each>
 			<xsl:attribute name="DefaultPixels">
-				<xsl:variable name="firstPixels">xslt.fix:Pixels:XSLT:<xsl:for-each select="* [name(.) = 'Pixels'][1]">
+				<xsl:variable name="firstPixels">xslt.fix:Pixels:XSLT:<xsl:for-each select="* [local-name(.) = 'Pixels'][1]">
 						<xsl:value-of select="@ID"/>
 					</xsl:for-each>
 				</xsl:variable>
 				<xsl:value-of select="$firstPixels"/>
 			</xsl:attribute>
-
 			<xsl:choose>
 				<xsl:when test="local-name(*[1])='AcquiredDate'">
 					<xsl:apply-templates select="* [name(.) = 'AcquiredDate']"/>
@@ -224,7 +223,7 @@
 					</xsl:element>
 				</xsl:element>
 			</xsl:for-each>
-			<xsl:apply-templates select="* [name(.) = 'Pixels']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 
 		</xsl:element>
 	</xsl:template>
@@ -264,6 +263,7 @@
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -293,6 +293,12 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="OME:MetadataOnly">
+		<xsl:comment>MetadataOnly Files cannot be suported in version 2008-02 schema.</xsl:comment>
+		<xsl:comment>Begin Dummy BinData</xsl:comment>
+		<xsl:element name="BIN:BinData" namespace="{$newBINNS}"/>
+		<xsl:comment>End Dummy BinData</xsl:comment>
+	</xsl:template>
 
 	<xsl:template match="ROI:*"/>
 	<xsl:template match="SA:*"/>

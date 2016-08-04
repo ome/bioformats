@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,10 +34,6 @@ import javax.swing.JTextArea;
 /**
  * Writer implementation that writes to a JTextArea document.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/config/TextAreaWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/config/TextAreaWriter.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class TextAreaWriter extends Writer {
@@ -57,12 +53,15 @@ public class TextAreaWriter extends Writer {
   // -- Writer API methods --
 
   /** Closing a TextAreaWriter does nothing. */
+  @Override
   public void close() { }
 
   /** Flushing a TextAreaWriter does nothing .*/
+  @Override
   public void flush() { }
 
   /** Writes the given characters to the associated text area component. */
+  @Override
   public void write(char[] cbuf, int off, int len) {
     textArea.append(new String(cbuf, off, len));
     textArea.setCaretPosition(textArea.getDocument().getLength());

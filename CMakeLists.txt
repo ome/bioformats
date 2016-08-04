@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,9 +34,38 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
+
+# Default policy is from 2.8.12
+cmake_policy(VERSION 2.8.12)
+# Set MacOSX @rpath usage globally.
+if (POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW)
+endif(POLICY CMP0020)
+if (POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif(POLICY CMP0042)
+# Use new variable expansion policy.
+if (POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW)
+endif(POLICY CMP0053)
+if (POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif(POLICY CMP0054)
+
+# For MSVC
+enable_language(CXX)
+# For feature tests with CMake 2.8.x
+enable_language(C)
+
+list(APPEND CMAKE_MODULE_PATH
+     "${CMAKE_CURRENT_LIST_DIR}/cpp/cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/cpp/cmake/BioFormatsCommon.cmake")
 
 project(bioformats)
+message(STATUS "Configuring Bio-Formats main build")
+
 include(cpp/cmake/Version.cmake)
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
@@ -44,23 +73,116 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 enable_language(CXX)
+  set(BUILD_SHARED_LIBS_DEFAULT ON)
+if(MSVC)
+  set(BUILD_SHARED_LIBS_DEFAULT OFF)
+endif()
+set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_DEFAULT} CACHE BOOL "Use shared libraries")
 
 include(GNUInstallDirs)
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
+include(CompilerChecks)
+include(PlatformChecks)
+include(BoostChecks)
+include(RegexChecks)
+include(ThreadChecks)
+include(XercesChecks)
+include(ImageLibraries)
+include(QtGLChecks)
+include(XsdFu)
+include(GTest)
+include(Doxygen)
+include(HeaderTest)
 
-include(cpp/cmake/CompilerChecks.cmake)
-include(cpp/cmake/BoostChecks.cmake)
-include(cpp/cmake/RegexChecks.cmake)
-include(cpp/cmake/XercesChecks.cmake)
-include(cpp/cmake/XsdFu.cmake)
-include(cpp/cmake/GTest.cmake)
-include(cpp/cmake/Doxygen.cmake)
+if(MSVC)
+  # Debug library suffix.
+  set(CMAKE_DEBUG_POSTFIX "d")
+  # Require dynamic linking and disable autolinking.
+  add_definitions(-DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+  # To prevent a lot of spam warnings about standard POSIX functions
+  # and unsafe use of the standard library.
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+endif()
+
+
+if(NOT DEFINED OME_BIOFORMATS_INSTALL_DATADIR)
+  set(OME_BIOFORMATS_INSTALL_DATADIR "${CMAKE_INSTALL_DATADIR}/ome/bioformats"
+      CACHE PATH "Bio-Formats-specific datadir")
+endif()
+
+# Use standard path if using a prefix.
+if(CMAKE_INSTALL_PREFIX)
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}/ome/bioformats"
+        CACHE PATH "Bio-Formats-specific libexecdir")
+  endif()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable"
+        CACHE PATH "Icon directory")
+  endif()
+else()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_LIBEXECDIR)
+    set(OME_BIOFORMATS_INSTALL_LIBEXECDIR "${CMAKE_INSTALL_LIBEXECDIR}"
+        CACHE PATH "Bio-Formats-specific libexecdir")
+  endif()
+  if (NOT DEFINED OME_BIOFORMATS_INSTALL_ICONDIR)
+    set(OME_BIOFORMATS_INSTALL_ICONDIR "${CMAKE_INSTALL_DATADIR}/icons"
+        CACHE PATH "Icon directory")
+  endif()
+endif()
+
+if (NOT DEFINED OME_BIOFORMATS_INSTALL_SCHEMADIR)
+  set(OME_BIOFORMATS_INSTALL_SCHEMADIR "${CMAKE_INSTALL_DATADIR}/xml/ome"
+      CACHE PATH "Bio-Formats schema directory")
+endif()
+if (NOT DEFINED OME_BIOFORMATS_INSTALL_TRANSFORMDIR)
+  set(OME_BIOFORMATS_INSTALL_TRANSFORMDIR "${CMAKE_INSTALL_DATADIR}/xsl/ome"
+      CACHE PATH "Bio-Formats transform directory")
+endif()
+
+foreach(dir
+    DATADIR
+    LIBEXECDIR
+    ICONDIR
+    SCHEMADIR
+    TRANSFORMDIR
+    )
+  mark_as_advanced(OME_BIOFORMATS_INSTALL_${dir})
+  if(NOT IS_ABSOLUTE ${OME_BIOFORMATS_INSTALL_${dir}})
+    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${CMAKE_INSTALL_PREFIX}/${OME_BIOFORMATS_INSTALL_${dir}}")
+  else()
+    set(OME_BIOFORMATS_INSTALL_FULL_${dir} "${OME_BIOFORMATS_INSTALL_${dir}}")
+  endif()
+endforeach()
 
 add_subdirectory(docs/doxygen)
+add_subdirectory(docs/sphinx)
 add_subdirectory(cpp)
 
 set(LIBRARY_PREFIX OME)
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/cpp/bin")
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config)
+               ${PROJECT_BINARY_DIR}/config @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellWrapper.cmake.in
+               ${PROJECT_BINARY_DIR}/cpp/bin/bf-test @ONLY)
+file(COPY ${PROJECT_BINARY_DIR}/cpp/cmake/bf-test
+     DESTINATION ${PROJECT_BINARY_DIR}
+     FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+     GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+if(WIN32)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdConfig.cmake.in
+                 ${PROJECT_BINARY_DIR}/config.bat @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateInternalCmdWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/bf-test.bat @ONLY)
+  configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateCmdWrapper.cmake.in
+                 ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat @ONLY)
+  install(PROGRAMS ${PROJECT_BINARY_DIR}/cpp/bin/bf-test.bat
+          DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+  endif()
+return()
+
+message("NOTE: The Bio-Formats ${OME_VERSION_SHORT} C++ library is new in version 5.1")
+message("NOTE: API stability will not be guaranteed until version 5.2")

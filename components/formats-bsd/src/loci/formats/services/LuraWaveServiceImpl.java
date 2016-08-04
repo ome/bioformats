@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,9 +43,6 @@ import loci.common.services.ServiceException;
 import com.luratech.lwf.lwfDecoder;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/LuraWaveServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/LuraWaveServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author callan
  */
@@ -73,8 +70,8 @@ public class LuraWaveServiceImpl extends AbstractService
   public static final String STUB_FIELD = "IS_STUB";
 
   /** LuraWave decoder delegate. */
-  private lwfDecoder delegate;
-  
+  private transient Object delegate;
+
   /** License code. */
   private String license;
 
@@ -95,6 +92,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#setLicenseCode(java.lang.String)
    */
+  @Override
   public void setLicenseCode(String license) {
     this.license = license;
   }
@@ -102,6 +100,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getLicenseCode()
    */
+  @Override
   public String getLicenseCode() {
     return license;
   }
@@ -109,6 +108,7 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#initialize(java.io.InputStream)
    */
+  @Override
   public void initialize(InputStream stream)
     throws IOException, DependencyException, ServiceException {
     initLicense();
@@ -123,25 +123,28 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getWidth()
    */
+  @Override
   public int getWidth() {
-    return delegate.getWidth();
+    return ((lwfDecoder) delegate).getWidth();
   }
 
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#getHeight()
    */
+  @Override
   public int getHeight() {
-    return delegate.getHeight();
+    return ((lwfDecoder) delegate).getHeight();
   }
 
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#decodeToMemoryGray8(byte[], int, int, int)
    */
+  @Override
   public void decodeToMemoryGray8(byte[] image, int limit,
                                   int quality, int scale)
     throws ServiceException {
     try {
-      delegate.decodeToMemoryGray8(image, limit, quality, scale);
+      ((lwfDecoder) delegate).decodeToMemoryGray8(image, limit, quality, scale);
     }
     catch (SecurityException e) {
       throw new ServiceException(e);
@@ -151,12 +154,13 @@ public class LuraWaveServiceImpl extends AbstractService
   /* (non-Javadoc)
    * @see loci.formats.services.LuraWaveService#decodeToMemoryGray16(short[], int, int, int, int, int, int, int, int, int, int)
    */
+  @Override
   public void decodeToMemoryGray16(
       short[] image, int imageoffset, int limit, int quality, int scale,
       int pdx, int pdy, int clip_x, int clip_y, int clip_w, int clip_h)
     throws ServiceException {
     try {
-      delegate.decodeToMemoryGray16(image, imageoffset, limit, quality, scale,
+      ((lwfDecoder) delegate).decodeToMemoryGray16(image, imageoffset, limit, quality, scale,
                                     pdx, pdy, clip_x, clip_y, clip_w, clip_h);
     }
     catch (SecurityException e) {

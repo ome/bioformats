@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,10 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Data structure for working with TIFF Image File Directories (IFDs).
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/IFD.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/IFD.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
@@ -268,8 +264,20 @@ public class IFD extends HashMap<Integer, Object> {
       }
       else {
         try {
-          value = Array.get(value, 0);
-          if (checkClass.isInstance(value)) return value;
+          if (checkClass.equals(String.class)) {
+            StringBuilder sb = new StringBuilder();
+            int l = Array.getLength(value);
+            for (int i = 0; i < l; i++) {
+              sb.append(Array.get(value, i));
+              if (i < l - 1)
+                sb.append(" ");
+            }
+            return sb.toString();
+          } else {
+            value = Array.get(value, 0);
+            if (checkClass.isInstance(value))
+              return value;
+          }
         }
         catch (IllegalArgumentException exc) { }
         catch (ArrayIndexOutOfBoundsException exc) {
@@ -394,6 +402,14 @@ public class IFD extends HashMap<Integer, Object> {
       int[] integers = (int[]) value;
       results = new long[integers.length];
       for (int i=0; i<integers.length; i++) results[i] = integers[i];
+    }
+    else if (value instanceof OnDemandLongArray) {
+      try {
+        results = ((OnDemandLongArray) value).toArray();
+      }
+      catch (IOException e) {
+        throw new FormatException(e);
+      }
     }
     else if (value != null) {
       throw new FormatException(getIFDTagName(tag) +
@@ -845,8 +861,9 @@ public class IFD extends HashMap<Integer, Object> {
   public long[] getRowsPerStrip() throws FormatException {
     long[] rowsPerStrip = getIFDLongArray(ROWS_PER_STRIP);
     if (rowsPerStrip == null) {
-      // create a fake RowsPerStrip entry if one is not present
-      return new long[] {getImageLength()};
+      // create a fake RowsPerStrip entry if one is not present 
+      long tileLength = getIFDLongValue(TILE_LENGTH, 0);
+      return new long[] {tileLength == 0 ? getImageLength() : tileLength};
     }
 
     // rowsPerStrip should never be more than the total number of rows

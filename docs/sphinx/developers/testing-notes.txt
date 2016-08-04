@@ -24,7 +24,7 @@ A '\*' indicates that we could generate more public data in this format.
 -  Leica LIF (\*)
 -  TIFF (\*)
 -  Khoros
-   (`http://netghost.narod.ru/gff/sample/images/viff/index.htm <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_)
+   (http://netghost.narod.ru/gff/sample/images/viff/index.htm)
 -  MNG
    (`Download <http://sourceforge.net/projects/libmng/files/libmng-testsuites/Release-20030305/MNGsuite-20030305.zip/download?use_mirror=freefr&download=>`_)
    (\*)

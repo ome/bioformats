@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,10 +29,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -54,19 +55,18 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
  * Fluoview FV 1000 OIF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/FV1000Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/FV1000Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -107,7 +107,7 @@ public class FV1000Reader extends FormatReader {
   private IniParser parser = new IniParser();
 
   /** Names of every TIFF file to open. */
-  private Vector<String> tiffs;
+  private List<String> tiffs;
 
   /** Name of thumbnail file. */
   private String thumbId;
@@ -116,42 +116,44 @@ public class FV1000Reader extends FormatReader {
   private BMPReader thumbReader;
 
   /** Used file list. */
-  private Vector<String> usedFiles;
+  private List<String> usedFiles;
 
   /** Flag indicating this is an OIB dataset. */
   private boolean isOIB;
 
   /** File mappings for OIB file. */
-  private Hashtable<String, String> oibMapping;
+  private Map<String, String> oibMapping;
 
   private String[] code, size;
   private Double[] pixelSize;
   private int imageDepth;
-  private Vector<String> previewNames;
+  private List<String> previewNames;
 
   private String pixelSizeX, pixelSizeY;
   private int validBits;
-  private Vector<String> illuminations;
-  private Vector<Integer> wavelengths;
+  private List<String> illuminations;
+  private List<Double> wavelengths;
   private String pinholeSize;
   private String magnification, lensNA, objectiveName, workingDistance;
   private String creationDate;
 
-  private Vector<ChannelData> channels;
-  private Vector<String> lutNames = new Vector<String>();
-  private Hashtable<Integer, String> filenames =
-    new Hashtable<Integer, String>();
-  private Hashtable<Integer, String> roiFilenames =
-    new Hashtable<Integer, String>();
-  private Vector<PlaneData> planes;
+  private List<ChannelData> channels;
+  private List<String> lutNames = new ArrayList<String>();
+  private Map<Integer, String> filenames =
+    new HashMap<Integer, String>();
+  private Map<Integer, String> roiFilenames =
+    new HashMap<Integer, String>();
+  private List<PlaneData> planes;
 
-  private POIService poi;
+  private transient POIService poi;
 
   private short[][][] lut;
   private int lastChannel = 0;
   private double pixelSizeZ = 1, pixelSizeT = 1;
 
   private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
+
+  private ArrayList<IFDList> ifds = new ArrayList<IFDList>();
 
   // -- Constructor --
 
@@ -167,6 +169,7 @@ public class FV1000Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
@@ -187,6 +190,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     RandomAccessInputStream plane = getPlane(getSeries(), 0);
@@ -207,11 +211,13 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return checkSuffix(id, OIB_SUFFIX);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, FV1000_SUFFIXES)) return true;
 
@@ -229,6 +235,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1024;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -238,6 +245,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     if (checkSuffix(id, OIB_SUFFIX)) {
       return FormatTools.CANNOT_GROUP;
@@ -246,6 +254,7 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     return lut == null || !isIndexed() ? null : lut[lastChannel];
@@ -254,6 +263,7 @@ public class FV1000Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -261,6 +271,7 @@ public class FV1000Reader extends FormatReader {
 
     int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
     int image = no % (getImageCount() / nFiles);
+    int file = no / (getImageCount() / nFiles);
 
     int[] coords = getZCTCoords(image);
     lastChannel = coords[1];
@@ -269,10 +280,11 @@ public class FV1000Reader extends FormatReader {
 
     if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
-    IFDList ifds = tp.getIFDs();
-    if (image >= ifds.size()) return buf;
+    int index = getSeries() == 0 ? file : tiffs.size() + file;
+    IFDList ifdList = ifds.get(index);
+    if (image >= ifdList.size()) return buf;
 
-    IFD ifd = ifds.get(image);
+    IFD ifd = ifdList.get(image);
     if (getSizeY() != ifd.getImageLength()) {
       tp.getSamples(ifd, buf, x,
         getIndex(coords[0], 0, coords[2]), w, 1);
@@ -286,19 +298,22 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (isOIB) {
       return noPixels ? null : new String[] {currentId};
     }
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (usedFiles != null) {
       for (String file : usedFiles) {
         String f = file.toLowerCase();
         if (!f.endsWith(".tif") && !f.endsWith(".tiff") && !f.endsWith(".bmp"))
         {
-          files.add(file);
+          if (!files.contains(file)) {
+            files.add(file);
+          }
         }
       }
     }
@@ -315,14 +330,15 @@ public class FV1000Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (thumbReader != null) thumbReader.close(fileOnly);
 
     if (!fileOnly) {
       tiffs = usedFiles = null;
-      filenames = new Hashtable<Integer, String>();
-      roiFilenames = new Hashtable<Integer, String>();
+      filenames.clear();
+      roiFilenames.clear();
       thumbReader = null;
       thumbId = null;
       isOIB = false;
@@ -347,12 +363,14 @@ public class FV1000Reader extends FormatReader {
       if (lutNames != null) {
         lutNames.clear();
       }
+      ifds.clear();
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -361,15 +379,7 @@ public class FV1000Reader extends FormatReader {
     isOIB = checkSuffix(id, OIB_SUFFIX);
 
     if (isOIB) {
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        poi = factory.getInstance(POIService.class);
-      }
-      catch (DependencyException de) {
-        throw new FormatException("POI library not found", de);
-      }
-
-      poi.initialize(Location.getMappedId(id));
+      initPOIService();
     }
 
     // mappedOIF is used to distinguish between datasets that are being read
@@ -380,10 +390,10 @@ public class FV1000Reader extends FormatReader {
     // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
-    wavelengths = new Vector<Integer>();
-    illuminations = new Vector<String>();
-    channels = new Vector<ChannelData>();
-    planes = new Vector<PlaneData>();
+    wavelengths = new ArrayList<Double>();
+    illuminations = new ArrayList<String>();
+    channels = new ArrayList<ChannelData>();
+    planes = new ArrayList<PlaneData>();
 
     String oifName = null;
 
@@ -400,7 +410,10 @@ public class FV1000Reader extends FormatReader {
     }
 
     String oifPath = new Location(oifName).getAbsoluteFile().getAbsolutePath();
-    String path = (isOIB || !oifPath.endsWith(oifName) || mappedOIF) ? "" :
+    if (mappedOIF) {
+      oifPath = oifName.substring(0, oifName.lastIndexOf(File.separator) + 1);
+    }
+    String path = isOIB ? "" :
       oifPath.substring(0, oifPath.lastIndexOf(File.separator) + 1);
 
     try {
@@ -417,7 +430,7 @@ public class FV1000Reader extends FormatReader {
     size = new String[NUM_DIMENSIONS];
     pixelSize = new Double[NUM_DIMENSIONS];
 
-    previewNames = new Vector<String>();
+    previewNames = new ArrayList<String>();
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -431,17 +444,11 @@ public class FV1000Reader extends FormatReader {
       if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
-        }
         filenames.put(new Integer(key.substring(11)), value);
       }
       else if (key.startsWith("RoiFileName") && key.indexOf("Thumb") == -1 &&
         !isPreviewName(value))
       {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1).trim();
-        }
         try {
           roiFilenames.put(new Integer(key.substring(11)), value);
         }
@@ -451,26 +458,29 @@ public class FV1000Reader extends FormatReader {
       else if (key.equals("PtyFileNameE")) ptyEnd = value;
       else if (key.equals("PtyFileNameT2")) ptyPattern = value;
       else if (key.indexOf("Thumb") != -1) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
-        }
         if (thumbId == null) thumbId = value.trim();
       }
       else if (key.startsWith("LutFileName")) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
-        }
         lutNames.add(path + value);
       }
       else if (isPreviewName(value)) {
-        if (mappedOIF) {
-          value = value.substring(value.lastIndexOf(File.separator) + 1);
+        try {
+          RandomAccessInputStream s = getFile(path + value.trim());
+          if (s != null) {
+            s.close();
+            previewNames.add(path + value.trim());
+          }
         }
-        previewNames.add(path + value.trim());
+        catch (FormatException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
+        catch (IOException e) {
+          LOGGER.debug("Preview file not found", e);
+        }
       }
     }
 
-    if (filenames.size() == 0) addPtyFiles();
+    if (filenames.isEmpty()) addPtyFiles();
 
     for (int i=0; i<NUM_DIMENSIONS; i++) {
       IniTable commonParams = f.getTable("Axis " + i + " Parameters Common");
@@ -497,7 +507,7 @@ public class FV1000Reader extends FormatReader {
     while (laser != null) {
       laserEnabled = laser.get("Laser Enable").equals("1");
       if (laserEnabled) {
-        wavelengths.add(new Integer(laser.get("LaserWavelength")));
+        wavelengths.add(new Double(laser.get("LaserWavelength")));
       }
 
       creationDate = laser.get("ImageCaputreDate");
@@ -523,9 +533,11 @@ public class FV1000Reader extends FormatReader {
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
         channel.emissionFilter = guiChannel.get("EmissionDM Name");
-        channel.emWave = new Integer(guiChannel.get("EmissionWavelength"));
+        String emWave = guiChannel.get("EmissionWavelength");
+        if (emWave != null) channel.emWave = new Double(emWave);
         channel.excitationFilter = guiChannel.get("ExcitationDM Name");
-        channel.exWave = new Integer(guiChannel.get("ExcitationWavelength"));
+        String exWave = guiChannel.get("ExcitationWavelength");
+        if (emWave != null) channel.exWave = new Double(exWave);
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
@@ -560,7 +572,7 @@ public class FV1000Reader extends FormatReader {
     // populate core metadata for preview series
 
     if (previewNames.size() > 0) {
-      Vector<String> v = new Vector<String>();
+      final List<String> v = new ArrayList<String>();
       for (int i=0; i<previewNames.size(); i++) {
         String ss = previewNames.get(i);
         ss = replaceExtension(ss, "pty", "tif");
@@ -597,7 +609,7 @@ public class FV1000Reader extends FormatReader {
     }
     CoreMetadata ms0 = core.get(0);
     ms0.imageCount = filenames.size();
-    tiffs = new Vector<String>(getImageCount());
+    tiffs = new ArrayList<String>(getImageCount());
 
     thumbReader = new BMPReader();
     if (thumbId != null) {
@@ -613,12 +625,12 @@ public class FV1000Reader extends FormatReader {
 
     ms0.dimensionOrder = "XY";
 
-    Hashtable<String, String> values = new Hashtable<String, String>();
-    Vector<String> baseKeys = new Vector<String>();
+    final Map<String, String> values = new HashMap<String, String>();
+    final List<String> baseKeys = new ArrayList<String>();
 
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
-      String file = filenames.get(new Integer(i));
-      while (file == null) file = filenames.get(new Integer(++i));
+      String file = filenames.get(i);
+      while (file == null) file = filenames.get(++i);
       file = sanitizeFile(file, path);
 
       if (file.indexOf(File.separator) != -1) {
@@ -630,25 +642,33 @@ public class FV1000Reader extends FormatReader {
       if (!isOIB && !ptyFile.exists()) {
         LOGGER.warn("Could not find .pty file ({}); guessing at the " +
           "corresponding TIFF file.", file);
-        String tiff = replaceExtension(file, ".pty", ".tif");
+        String tiff = replaceExtension(file, "pty", "tif");
         Location tiffFile = new Location(tiff);
         if (tiffFile.exists()) {
-          tiffs.add(ii, tiff);
+          tiffs.add(ii, tiffFile.getAbsolutePath());
           continue;
         }
         else {
           if (!tiffFile.getParentFile().exists()) {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
-            Location newFile = new Location(basePath, realOIFName + ".files");
-            if (newFile.exists()) {
-              String realDirectory = newFile.getName();
+
+            if (mappedOIF) {
+              tiffPath = basePath + File.separator + realOIFName + ".files";
+              ptyFile = new Location(tiffPath, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+            }
+            else {
+              Location newFile = new Location(basePath, realOIFName + ".files");
               ptyFile = new Location(newFile, ptyFile.getName());
               file = ptyFile.getAbsolutePath();
               tiffPath = newFile.getAbsolutePath();
             }
           }
         }
+      }
+      else if (!isOIB) {
+        file = ptyFile.getAbsolutePath();
       }
 
       IniList pty = getIniFile(file);
@@ -659,12 +679,11 @@ public class FV1000Reader extends FormatReader {
         while (file.indexOf("GST") != -1) {
           file = removeGST(file);
         }
-        if (!mappedOIF) {
-          if (isOIB) {
-            file = tiffPath + File.separator + file;
-          }
-          else file = new Location(tiffPath, file).getAbsolutePath();
+        if (isOIB) {
+          file = tiffPath + File.separator + file;
         }
+        else file = new Location(tiffPath, file).getAbsolutePath();
+        file = replaceExtension(file, "pty", "tif");
         tiffs.add(ii, file);
       }
 
@@ -682,7 +701,8 @@ public class FV1000Reader extends FormatReader {
           if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
             ms0.dimensionOrder += "Z";
           }
-          plane.positionZ = Double.parseDouble(axis.get("AbsPositionValue"));
+          final Double number = Double.valueOf(axis.get("AbsPositionValue"));
+          plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf("T") == -1) {
@@ -697,14 +717,16 @@ public class FV1000Reader extends FormatReader {
           try {
             String xPos = axis.get("AbsPositionValueX");
             if (xPos != null) {
-              plane.positionX = Double.parseDouble(xPos);
+              final Double number = Double.valueOf(xPos);
+              plane.positionX = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
           try {
             String yPos = axis.get("AbsPositionValueY");
             if (yPos != null) {
-              plane.positionY = Double.parseDouble(yPos);
+              final Double number = Double.valueOf(yPos);
+              plane.positionY = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
           catch (NumberFormatException e) { }
@@ -762,13 +784,13 @@ public class FV1000Reader extends FormatReader {
       ms0.imageCount = tiffs.size();
     }
 
-    usedFiles = new Vector<String>();
+    usedFiles = new ArrayList<String>();
 
     if (tiffPath != null) {
       usedFiles.add(isOIB ? id : oifName);
       if (!isOIB) {
         Location dir = new Location(tiffPath);
-        if (!dir.exists()) {
+        if (!mappedOIF && !dir.exists()) {
           throw new FormatException(
             "Required directory " + tiffPath + " was not found.");
         }
@@ -920,6 +942,24 @@ public class FV1000Reader extends FormatReader {
       ms.metadataComplete = true;
       ms.indexed = lut != null;
       ms.falseColor = true;
+
+      int nFiles = i == 0 ? tiffs.size() : previewNames.size();
+      for (int file=0; file<nFiles; file++) {
+        RandomAccessInputStream plane =
+          getFile(i == 0 ? tiffs.get(file) : previewNames.get(file));
+        if (plane == null) {
+          ifds.add(null);
+          continue;
+        }
+        try {
+          TiffParser tp = new TiffParser(plane);
+          IFDList ifd = tp.getIFDs();
+          ifds.add(ifd);
+        }
+        finally {
+          plane.close();
+        }
+      }
     }
 
     // populate MetadataStore
@@ -959,14 +999,14 @@ public class FV1000Reader extends FormatReader {
 
       if (pixelSizeX != null) {
         Double sizeX = new Double(pixelSizeX);
-        PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+        Length size = FormatTools.getPhysicalSizeX(sizeX);
         if (size != null) {
           store.setPixelsPhysicalSizeX(size, i);
         }
       }
       if (pixelSizeY != null) {
         Double sizeY = new Double(pixelSizeY);
-        PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+        Length size = FormatTools.getPhysicalSizeY(sizeY);
         if (size != null) {
           store.setPixelsPhysicalSizeY(size, i);
         }
@@ -982,14 +1022,14 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 1d;
       }
 
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(pixelSizeT, i);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.S), i);
 
       for (int p=0; p<core.get(i).imageCount; p++) {
-        store.setPlaneDeltaT(pixelSizeT * p, i, p);
+        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.S), i, p);
       }
 
       // populate LogicalChannel data
@@ -1013,7 +1053,11 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
-      store.setDetectorVoltage(channel.voltage, 0, channelIndex);
+      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.V);
+      if (theVoltage != null) {
+        store.setDetectorVoltage(
+              theVoltage, 0, channelIndex);
+      }
       store.setDetectorType(getDetectorType("PMT"), 0, channelIndex);
 
       // populate LogicalChannel data
@@ -1023,11 +1067,9 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
-      PositiveInteger emission =
-        FormatTools.getEmissionWavelength(channel.emWave);
-      PositiveInteger excitation =
-        FormatTools.getExcitationWavelength(channel.exWave);
-      PositiveInteger wavelength = FormatTools.getWavelength(channel.exWave);
+      Length wavelength = FormatTools.getWavelength(channel.exWave);
+      Length emission = FormatTools.getEmissionWavelength(channel.emWave);
+      Length excitation = FormatTools.getExcitationWavelength(channel.exWave);
 
       if (emission != null) {
         store.setChannelEmissionWavelength(emission, 0, channelIndex);
@@ -1052,11 +1094,11 @@ public class FV1000Reader extends FormatReader {
             emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
-            Integer cutIn = new Integer(emValues[0]);
-            Integer cutOut = new Integer(emValues[1]);
+            Double cutIn = new Double(emValues[0]);
+            Double cutOut = new Double(emValues[1]);
 
-            PositiveInteger in = FormatTools.getCutIn(cutIn);
-            PositiveInteger out = FormatTools.getCutOut(cutOut);
+            Length in = FormatTools.getCutIn(cutIn);
+            Length out = FormatTools.getCutOut(cutOut);
 
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, 0, channelIndex);
@@ -1090,7 +1132,7 @@ public class FV1000Reader extends FormatReader {
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
-        PositiveInteger wave =
+          Length wave =
           FormatTools.getWavelength(wavelengths.get(channelIndex));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, channelIndex);
@@ -1110,7 +1152,7 @@ public class FV1000Reader extends FormatReader {
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
     }
     store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -1126,7 +1168,7 @@ public class FV1000Reader extends FormatReader {
       // populate ROI data - there is one ROI file per plane
       for (int i=0; i<roiFilenames.size(); i++) {
         if (i >= getImageCount()) break;
-        String filename = roiFilenames.get(new Integer(i));
+        String filename = roiFilenames.get(i);
         filename = sanitizeFile(filename, path);
         nextROI = parseROIFile(filename, store, nextROI, i);
       }
@@ -1135,7 +1177,9 @@ public class FV1000Reader extends FormatReader {
     // Populate metadata for the planes
     for (int i=0; i<planes.size(); i++) {
       PlaneData plane = planes.get(i);
-      store.setPlaneDeltaT(plane.deltaT, 0, i);
+      if (plane.deltaT != null) {
+        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
+      }
       store.setPlanePositionX(plane.positionX, 0, i);
       store.setPlanePositionY(plane.positionY, 0, i);
       store.setPlanePositionZ(plane.positionZ, 0, i);
@@ -1185,7 +1229,7 @@ public class FV1000Reader extends FormatReader {
         fontName = fontAttributes[0];
         fontSize = Integer.parseInt(fontAttributes[1]);
 
-        NonNegativeInteger font = FormatTools.getFontSize(fontSize);
+        Length font = FormatTools.getFontSize(fontSize);
 
         lineWidth = Integer.parseInt(table.get("LINEWIDTH"));
         name = table.get("NAME");
@@ -1201,8 +1245,8 @@ public class FV1000Reader extends FormatReader {
         if (width + x <= getSizeX() && height + y <= getSizeY()) {
           shape++;
 
-          Integer zIndex = new Integer(coordinates[0]);
-          Integer tIndex = new Integer(coordinates[2]);
+          final Integer zIndex = coordinates[0];
+          final Integer tIndex = coordinates[2];
 
           if (shape == 0) {
             nextROI++;
@@ -1228,7 +1272,8 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setPointFontSize(font, nextROI, shape);
             }
-            store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length((double) lineWidth, UNITS.PIXEL);
+            store.setPointStrokeWidth(l, nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
             store.setPointY(new Double(yc[0]), nextROI, shape);
@@ -1246,8 +1291,8 @@ public class FV1000Reader extends FormatReader {
                 store.setRectangleID(shapeID, nextROI, shape);
                 store.setRectangleX(realX, nextROI, shape);
                 store.setRectangleY(realY, nextROI, shape);
-                store.setRectangleWidth(new Double(width), nextROI, shape);
-                store.setRectangleHeight(new Double(height), nextROI, shape);
+                store.setRectangleWidth((double) width, nextROI, shape);
+                store.setRectangleHeight((double) height, nextROI, shape);
 
                 store.setRectangleTheZ(
                   new NonNegativeInteger(zIndex), nextROI, shape);
@@ -1256,8 +1301,8 @@ public class FV1000Reader extends FormatReader {
                 if (font != null) {
                   store.setRectangleFontSize(font, nextROI, shape);
                 }
-                store.setRectangleStrokeWidth(
-                  new Double(lineWidth), nextROI, shape);
+                Length l = new Length((double) lineWidth, UNITS.PIXEL);
+                store.setRectangleStrokeWidth(l, nextROI, shape);
 
                 double centerX = realX + (width / 2);
                 double centerY = realY + (height / 2);
@@ -1271,17 +1316,18 @@ public class FV1000Reader extends FormatReader {
           }
           else if (shapeType == LINE) {
             store.setLineID(shapeID, nextROI, shape);
-            store.setLineX1(new Double(x), nextROI, shape);
-            store.setLineY1(new Double(y), nextROI, shape);
-            store.setLineX2(new Double(x + width), nextROI, shape);
-            store.setLineY2(new Double(y + height), nextROI, shape);
+            store.setLineX1((double) x, nextROI, shape);
+            store.setLineY1((double) y, nextROI, shape);
+            store.setLineX2((double) (x + width), nextROI, shape);
+            store.setLineY2((double) (y + height), nextROI, shape);
 
             store.setLineTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setLineTheT(new NonNegativeInteger(tIndex), nextROI, shape);
             if (font != null) {
               store.setLineFontSize(font, nextROI, shape);
             }
-            store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length((double) lineWidth, UNITS.PIXEL);
+            store.setLineStrokeWidth(l, nextROI, shape);
 
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
@@ -1304,7 +1350,8 @@ public class FV1000Reader extends FormatReader {
             if (font != null) {
               store.setEllipseFontSize(font, nextROI, shape);
             }
-            store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
+            Length l = new Length((double) lineWidth, UNITS.PIXEL);
+            store.setEllipseStrokeWidth(l, nextROI, shape);
             store.setEllipseTransform(
               getRotationTransform(angle), nextROI, shape);
           }
@@ -1330,8 +1377,8 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolylineFontSize(font, nextROI, shape);
               }
-              store.setPolylineStrokeWidth(
-                new Double(lineWidth), nextROI, shape);
+              Length l = new Length((double) lineWidth, UNITS.PIXEL);
+              store.setPolylineStrokeWidth(l, nextROI, shape);
             }
             else {
               store.setPolygonID(shapeID, nextROI, shape);
@@ -1345,7 +1392,8 @@ public class FV1000Reader extends FormatReader {
               if (font != null) {
                 store.setPolygonFontSize(font, nextROI, shape);
               }
-              store.setPolygonStrokeWidth(new Double(lineWidth), nextROI, shape);
+              Length l = new Length((double) lineWidth, UNITS.PIXEL);
+              store.setPolygonStrokeWidth(l, nextROI, shape);
             }
           }
           else {
@@ -1360,13 +1408,19 @@ public class FV1000Reader extends FormatReader {
   }
 
   private void addPtyFiles() throws FormatException {
-    if (ptyStart != null && ptyEnd != null && ptyPattern != null) {
+    if (ptyStart != null && ptyEnd != null) {
       // FV1000 version 2 gives the first .pty file, the last .pty and
       // the file name pattern.  Version 1 lists each .pty file individually.
 
       // pattern is typically 's_C%03dT%03d.pty'
 
       // build list of block indexes
+
+      if (ptyPattern == null) {
+        String dir =
+          ptyStart.substring(0, ptyStart.indexOf(File.separator) + 1);
+        ptyPattern = dir + "s_C%03dT%03d.pty";
+      }
 
       String[] prefixes = ptyPattern.split("%03d");
 
@@ -1396,7 +1450,7 @@ public class FV1000Reader extends FormatReader {
             pty.append(num);
           }
         }
-        filenames.put(new Integer(file), pty.toString());
+        filenames.put(file, pty.toString());
       }
     }
   }
@@ -1461,7 +1515,7 @@ public class FV1000Reader extends FormatReader {
   private String mapOIBFiles() throws FormatException, IOException {
     String oifName = null;
     String infoFile = null;
-    Vector<String> list = poi.getDocumentList();
+    final List<String> list = poi.getDocumentList();
     for (String name : list) {
       if (name.endsWith("OibInfo.txt")) {
         infoFile = name;
@@ -1473,7 +1527,7 @@ public class FV1000Reader extends FormatReader {
     }
     RandomAccessInputStream ras = poi.getDocumentStream(infoFile);
 
-    oibMapping = new Hashtable<String, String>();
+    oibMapping = new HashMap<String, String>();
 
     // set up file name mappings
 
@@ -1532,6 +1586,9 @@ public class FV1000Reader extends FormatReader {
   private String sanitizeFile(String file, String path) {
     String f = sanitizeValue(file);
     if (path.equals("")) return f;
+    if (path.endsWith(File.separator)) {
+      return path + f;
+    }
     return path + File.separator + f;
   }
 
@@ -1546,10 +1603,26 @@ public class FV1000Reader extends FormatReader {
     return s;
   }
 
+  private void initPOIService() throws FormatException, IOException {
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(getCurrentFile()));
+  }
+
   private RandomAccessInputStream getFile(String name)
     throws FormatException, IOException
   {
     if (isOIB) {
+      if (poi == null) {
+        initPOIService();
+      }
+
       name = name.replace('\\', File.separatorChar);
       name = name.replace('/', File.separatorChar);
       String realName = oibMapping.get(name);
@@ -1558,7 +1631,7 @@ public class FV1000Reader extends FormatReader {
       }
       return poi.getDocumentStream(realName);
     }
-    else return new RandomAccessInputStream(name);
+    return new RandomAccessInputStream(name, 16);
   }
 
   private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {
@@ -1596,7 +1669,7 @@ public class FV1000Reader extends FormatReader {
   private static int[] scanFormat(String pattern, String string)
     throws FormatException
   {
-    Vector<Integer> percentOffsets = new Vector<Integer>();
+    final List<Integer> percentOffsets = new ArrayList<Integer>();
     int offset = -1;
     for (;;) {
       offset = pattern.indexOf('%', offset + 1);
@@ -1606,7 +1679,7 @@ public class FV1000Reader extends FormatReader {
       if (pattern.charAt(offset + 1) != '0') {
         continue;
       }
-      percentOffsets.add(new Integer(offset));
+      percentOffsets.add(offset);
     }
 
     int[] result = new int[percentOffsets.size()];
@@ -1690,17 +1763,17 @@ public class FV1000Reader extends FormatReader {
     public String name;
     public String emissionFilter;
     public String excitationFilter;
-    public Integer emWave;
-    public Integer exWave;
+    public Double emWave;
+    public Double exWave;
     public String dyeName;
     public String barrierFilter;
   }
 
   class PlaneData {
     public Double deltaT;
-    public Double positionX;
-    public Double positionY;
-    public Double positionZ;
+    public Length positionX;
+    public Length positionY;
+    public Length positionZ;
   }
 
 }

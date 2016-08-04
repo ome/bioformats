@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!-- Warning: this comment is an OME-XML metadata block, which contains crucial
+	dimensional parameters and other important metadata. Please edit cautiously
+	(if at all), and back up the original data before doing so. For more
+	information, see the OME-TIFF web site: http://ome-xml.org/wiki/OmeTiff. -->
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+	http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
+	<Image ID="Image:0" Name="FLIM">
+		<AcquisitionDate>2013-07-11T15:56:06</AcquisitionDate>
+		<Pixels DimensionOrder="XYZCT" ID="Pixels:0" SizeC="2" SizeT="16" SizeX="180" SizeY="200"
+			SizeZ="1" Type="int8">
+			<Channel ID="Channel:0:0" SamplesPerPixel="1">
+				<LightPath/>
+			</Channel>
+			<Channel ID="Channel:0:1" SamplesPerPixel="1">
+				<LightPath/>
+			</Channel>
+			<TiffData FirstC="0" FirstT="0" FirstZ="0" IFD="0" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="0" FirstZ="0" IFD="1" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="0" IFD="2" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="1" FirstZ="0" IFD="3" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="0" IFD="4" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="2" FirstZ="0" IFD="5" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="0" IFD="6" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="3" FirstZ="0" IFD="7" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="0" IFD="8" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="4" FirstZ="0" IFD="9" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="0" IFD="10" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="5" FirstZ="0" IFD="11" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="0" IFD="12" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="6" FirstZ="0" IFD="13" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="0" IFD="14" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="7" FirstZ="0" IFD="15" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="0" IFD="16" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="8" FirstZ="0" IFD="17" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="0" IFD="18" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="9" FirstZ="0" IFD="19" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="10" FirstZ="0" IFD="20" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="10" FirstZ="0" IFD="21" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="11" FirstZ="0" IFD="22" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="11" FirstZ="0" IFD="23" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="12" FirstZ="0" IFD="24" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="12" FirstZ="0" IFD="25" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="13" FirstZ="0" IFD="26" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="13" FirstZ="0" IFD="27" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="14" FirstZ="0" IFD="28" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="14" FirstZ="0" IFD="29" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="15" FirstZ="0" IFD="30" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+			<TiffData FirstC="1" FirstT="15" FirstZ="0" IFD="31" PlaneCount="1">
+				<UUID FileName="FLIM-modulo-sample.ome.tiff"
+					>urn:uuid:4f72e69d-3291-48d3-bf6d-7ddc4249c278</UUID>
+			</TiffData>
+		</Pixels>
+		<AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+			ID="Annotation:Modulo:0"/>
+	</Image>
+	<StructuredAnnotations xmlns="http://www.openmicroscopy.org/Schemas/SA/2015-01">
+		<XMLAnnotation ID="Annotation:Modulo:0"
+			Namespace="openmicroscopy.org/omero/dimension/modulo">
+			<Description>For a description of how 6D, 7D, and 8D data is stored using the Modulo
+				extension see
+				http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html </Description>
+			<Value>
+				<Modulo namespace="http://www.openmicroscopy.org/Schemas/Additions/2011-09">
+					<ModuloAlongT Type="lifetime" TypeDescription="TCSPC" Start="1" Step="1" End="8"
+						Unit="ps"/>
+				</Modulo>
+			</Value>
+		</XMLAnnotation>
+	</StructuredAnnotations>
+</OME>

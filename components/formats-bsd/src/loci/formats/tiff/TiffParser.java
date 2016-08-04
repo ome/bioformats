@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,17 +33,18 @@
 package loci.formats.tiff;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 
 import org.slf4j.Logger;
@@ -51,10 +52,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Parses TIFF data from an input source.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/TiffParser.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/TiffParser.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
@@ -71,7 +68,7 @@ public class TiffParser {
   // -- Fields --
 
   /** Input source from which to parse TIFF data. */
-  protected RandomAccessInputStream in;
+  protected transient RandomAccessInputStream in;
 
   /** Cached tile buffer to avoid re-allocations when reading tiles. */
   private byte[] cachedTileBuffer;
@@ -298,7 +295,7 @@ public class TiffParser {
     int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
       TiffConstants.BYTES_PER_ENTRY;
 
-    Vector<Long> offsets = new Vector<Long>();
+    final List<Long> offsets = new ArrayList<Long>();
     long offset = getFirstOffset();
     while (offset > 0 && offset < in.length()) {
       in.seek(offset);
@@ -456,7 +453,9 @@ public class TiffParser {
     }
 
     for (TiffIFDEntry entry : entries) {
-      if (entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) {
+      if ((entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) &&
+        entry.getTag() != IFD.COLOR_MAP)
+      {
         ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
       }
     }
@@ -554,8 +553,10 @@ public class TiffParser {
         longs = new long[1];
         longs[0] = in.readLong();
       }
-      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
-        entry.getTag() == IFD.TILE_OFFSETS))
+      else if (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS ||
+        entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
+        entry.getTag() == IFD.TILE_BYTE_COUNTS)
       {
         OnDemandLongArray offsets = new OnDemandLongArray(in);
         offsets.setSize(count);
@@ -630,6 +631,24 @@ public class TiffParser {
     return firstIFD.getComment();
   }
 
+  /**
+   * Retrieve the color map associated with the given IFD.
+   */
+  public int[] getColorMap(IFD ifd) throws IOException {
+    Object map = ifd.get(IFD.COLOR_MAP);
+    if (map == null) {
+      return null;
+    }
+    int[] colorMap = null;
+    if (map instanceof TiffIFDEntry) {
+      colorMap = (int[]) getIFDValue((TiffIFDEntry) map);
+    }
+    else if (map instanceof int[]) {
+      colorMap = (int[]) map;
+    }
+    return colorMap;
+  }
+
   // -- TiffParser methods - image reading --
 
   public byte[] getTile(IFD ifd, byte[] buf, int row, int col)
@@ -651,6 +670,19 @@ public class TiffParser {
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+
     long[] stripByteCounts = ifd.getStripByteCounts();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
 
@@ -664,12 +696,20 @@ public class TiffParser {
     {
       stripByteCounts[countIndex] *= pixel;
     }
+    else if (stripByteCounts[countIndex] < 0 && countIndex > 0) {
+      LOGGER.debug("byte count #{} was {}; correcting to {}", countIndex,
+        stripByteCounts[countIndex], stripByteCounts[countIndex - 1]);
+      stripByteCounts[countIndex] = stripByteCounts[countIndex - 1];
+    }
 
     long stripOffset = 0;
     long nStrips = 0;
 
     if (ifd.getOnDemandStripOffsets() != null) {
       OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
+      if (stripOffsets.getStream() == null) {
+        stripOffsets.setStream(in);
+      }
       stripOffset = stripOffsets.get(offsetIndex);
       nStrips = stripOffsets.size();
     }
@@ -808,64 +848,91 @@ public class TiffParser {
     codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
+    long[] stripOffsets = null;
+
+    if (ifd.getOnDemandStripOffsets() != null) {
+      OnDemandLongArray offsets = ifd.getOnDemandStripOffsets();
+      if (offsets.getStream() == null) {
+        offsets.setStream(in);
+      }
+      stripOffsets = offsets.toArray();
+    }
+    else {
+      stripOffsets = ifd.getStripOffsets();
+    }
+
+    if (ifd.get(IFD.STRIP_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.STRIP_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+    if (ifd.get(IFD.TILE_BYTE_COUNTS) instanceof OnDemandLongArray) {
+      OnDemandLongArray counts = (OnDemandLongArray) ifd.get(IFD.TILE_BYTE_COUNTS);
+      if (counts != null && counts.getStream() == null) {
+        counts.setStream(in);
+      }
+    }
+
+    long[] stripByteCounts = ifd.getStripByteCounts();
+
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
-    if ((x % tileWidth) == 0 && (y % tileLength) == 0 && samplesPerPixel == 1 &&
-      (ifd.getBitsPerSample()[0] % 8) == 0 &&
+    if (effectiveChannels == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
-      numTileRows * numTileCols == 1)
+      numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
+      in.length() >= stripOffsets[0] + stripByteCounts[0])
     {
-      long[] stripOffsets = ifd.getStripOffsets();
-      long[] stripByteCounts = ifd.getStripByteCounts();
+      long column = x / tileWidth;
+      int firstTile = (int) ((y / tileLength) * numTileCols + column);
+      int lastTile =
+        (int) (((y + height) / tileLength) * numTileCols + column);
+      lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
+      if (planarConfig == 2) {
+        lastTile = stripOffsets.length - 1;
+      }
 
-      if (stripOffsets != null && stripByteCounts != null) {
-        long column = x / tileWidth;
-        int firstTile = (int) ((y / tileLength) * numTileCols + column);
-        int lastTile =
-          (int) (((y + height) / tileLength) * numTileCols + column);
-        lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
+      int offset = 0;
+      for (int tile=firstTile; tile<=lastTile; tile++) {
+        long byteCount =
+          equalStrips ? stripByteCounts[0] : stripByteCounts[tile];
+        if (byteCount == numSamples && pixel > 1) {
+          byteCount *= pixel;
+        }
 
-        int offset = 0;
-        for (int tile=firstTile; tile<=lastTile; tile++) {
-          long byteCount =
-            equalStrips ? stripByteCounts[0] : stripByteCounts[tile];
-          if (byteCount == numSamples && pixel > 1) {
-            byteCount *= pixel;
-          }
+        if (stripOffsets[tile] < in.length()) {
+          in.seek(stripOffsets[tile]);
+        }
+        else {
+          continue;
+        }
 
-          if (stripOffsets[tile] < in.length()) {
-            in.seek(stripOffsets[tile]);
-          }
-          else {
-            continue;
-          }
-
-          if (width == tileWidth && height == imageLength) {
-            // we want to entire tile, so just read the whole thing directly
-            int len = (int) Math.min(buf.length - offset, byteCount);
-            in.read(buf, offset, len);
-            offset += len;
-          }
-          else {
-            // we only want a piece of the tile, so read each row separately
-            // this is especially necessary for large single-tile images
-            int bpp = ifd.getBitsPerSample()[0] / 8;
-            for (int row=0; row<height; row++) {
-              in.skipBytes(x * bpp);
-              int len = (int) Math.min(buf.length - offset, width * bpp);
-              if (len > 0) {
-                in.read(buf, offset, len);
-                offset += len;
-                int skip = (int) (bpp * (tileWidth - x - width));
-                if (skip + in.getFilePointer() < in.length()) {
-                  in.skipBytes(skip);
-                }
+        if (width == tileWidth && height == imageLength) {
+          // we want to entire tile, so just read the whole thing directly
+          int len = (int) Math.min(buf.length - offset, byteCount);
+          in.read(buf, offset, len);
+          offset += len;
+        }
+        else {
+          // we only want a piece of the tile, so read each row separately
+          // this is especially necessary for large single-tile images
+          int bpp = ifd.getBitsPerSample()[0] / 8;
+          in.skipBytes((int) (y * bpp * tileWidth));
+          for (int row=0; row<height; row++) {
+            in.skipBytes(x * bpp);
+            int len = (int) Math.min(buf.length - offset, width * bpp);
+            if (len > 0) {
+              in.read(buf, offset, len);
+              offset += len;
+              int skip = (int) (bpp * (tileWidth - x - width));
+              if (skip + in.getFilePointer() < in.length()) {
+                in.skipBytes(skip);
               }
-              else {
-                break;
-              }
+            }
+            else {
+              break;
             }
           }
         }
@@ -1018,8 +1085,6 @@ public class TiffParser {
 
     boolean littleEndian = ifd.isLittleEndian();
 
-    BitBuffer bb = new BitBuffer(bytes);
-
     // Hyper optimisation that takes any 8-bit or 16-bit data, where there is
     // only one channel, the source byte buffer's size is less than or equal to
     // that of the destination buffer and for which no special unpacking is
@@ -1066,84 +1131,102 @@ public class TiffParser {
     int block = subX * subY;
     int nTiles = (int) (imageWidth / subX);
 
-    // unpack pixels
-    for (int sample=0; sample<sampleCount; sample++) {
-      int ndx = startIndex + sample;
-      if (ndx >= nSamples) break;
 
-      for (int channel=0; channel<nChannels; channel++) {
-        int index = numBytes * (sample * nChannels + channel);
-        int outputIndex = (channel * nSamples + ndx) * numBytes;
+    RandomAccessInputStream bb = null;
+    try {
+      bb = new RandomAccessInputStream(new ByteArrayHandle(bytes));
+      // unpack pixels
+      for (int sample=0; sample<sampleCount; sample++) {
+        int ndx = startIndex + sample;
+        if (ndx >= nSamples) break;
 
-        // unpack non-YCbCr samples
-        if (photoInterp != PhotoInterp.Y_CB_CR) {
-          long value = 0;
+        for (int channel=0; channel<nChannels; channel++) {
+          int index = numBytes * (sample * nChannels + channel);
+          int outputIndex = (channel * nSamples + ndx) * numBytes;
 
-          if (noDiv8) {
-            // bits per sample is not a multiple of 8
+          // unpack non-YCbCr samples
+          if (photoInterp != PhotoInterp.Y_CB_CR) {
+            long value = 0;
 
-            if ((channel == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
-              (photoInterp != PhotoInterp.CFA_ARRAY &&
-              photoInterp != PhotoInterp.RGB_PALETTE))
+            if (noDiv8) {
+              // bits per sample is not a multiple of 8
+
+              if ((channel == 0 && photoInterp == PhotoInterp.RGB_PALETTE) ||
+                (photoInterp != PhotoInterp.CFA_ARRAY &&
+                photoInterp != PhotoInterp.RGB_PALETTE))
+              {
+                try {
+                  value = bb.readBits(bps0) & 0xffff;
+                }
+                catch (ArrayIndexOutOfBoundsException e) {
+                  // leave the value at 0 if there aren't enough bytes
+                  // to cover the total number of samples
+                }
+                if ((ndx % imageWidth) == imageWidth - 1) {
+                  bb.skipBits(skipBits);
+                }
+              }
+            }
+            else {
+              value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
+            }
+
+            if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
+              photoInterp == PhotoInterp.CMYK)
             {
-              try {
-                value = bb.getBits(bps0) & 0xffff;
-              }
-              catch (ArrayIndexOutOfBoundsException e) {
-                // leave the value at 0 if there aren't enough bytes
-                // to cover the total number of samples
-              }
-              if ((ndx % imageWidth) == imageWidth - 1) {
-                bb.skipBits(skipBits);
-              }
+              value = maxValue - value;
+            }
+
+            if (outputIndex + numBytes <= samples.length) {
+              DataTools.unpackBytes(value, samples, outputIndex, numBytes,
+                littleEndian);
             }
           }
           else {
-            value = DataTools.bytesToLong(bytes, index, numBytes, littleEndian);
-          }
+            // unpack YCbCr samples; these need special handling, as each of
+            // the RGB components depends upon two or more of the YCbCr components
+            if (channel == nChannels - 1) {
+              int lumaIndex = sample + (2 * (sample / block));
+              int chromaIndex = (sample / block) * (block + 2) + block;
 
-          if (photoInterp == PhotoInterp.WHITE_IS_ZERO ||
-            photoInterp == PhotoInterp.CMYK)
-          {
-            value = maxValue - value;
-          }
+              if (chromaIndex + 1 >= bytes.length) break;
 
-          if (outputIndex + numBytes <= samples.length) {
-            DataTools.unpackBytes(value, samples, outputIndex, numBytes,
-              littleEndian);
-          }
-        }
-        else {
-          // unpack YCbCr samples; these need special handling, as each of
-          // the RGB components depends upon two or more of the YCbCr components
-          if (channel == nChannels - 1) {
-            int lumaIndex = sample + (2 * (sample / block));
-            int chromaIndex = (sample / block) * (block + 2) + block;
+              int tile = ndx / block;
+              int pixel = ndx % block;
+              long r = subY * (tile / nTiles) + (pixel / subX);
+              long c = subX * (tile % nTiles) + (pixel % subX);
 
-            if (chromaIndex + 1 >= bytes.length) break;
+              int idx = (int) (r * imageWidth + c);
 
-            int tile = ndx / block;
-            int pixel = ndx % block;
-            long r = subY * (tile / nTiles) + (pixel / subX);
-            long c = subX * (tile % nTiles) + (pixel % subX);
+              if (idx < nSamples) {
+                int y = (bytes[lumaIndex] & 0xff) - reference[0];
+                int cb = (bytes[chromaIndex] & 0xff) - reference[2];
+                int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
 
-            int idx = (int) (r * imageWidth + c);
+                int red = (int) (cr * (2 - 2 * lumaRed) + y);
+                int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
+                int green = (int)
+                  ((y - lumaBlue * blue - lumaRed * red) / lumaGreen);
 
-            if (idx < nSamples) {
-              int y = (bytes[lumaIndex] & 0xff) - reference[0];
-              int cb = (bytes[chromaIndex] & 0xff) - reference[2];
-              int cr = (bytes[chromaIndex + 1] & 0xff) - reference[4];
-
-              int red = (int) (cr * (2 - 2 * lumaRed) + y);
-              int blue = (int) (cb * (2 - 2 * lumaBlue) + y);
-              int green = (int)
-                ((y - lumaBlue * blue - lumaRed * red) / lumaGreen);
-
-              samples[idx] = (byte) (red & 0xff);
-              samples[nSamples + idx] = (byte) (green & 0xff);
-              samples[2*nSamples + idx] = (byte) (blue & 0xff);
+                samples[idx] = (byte) (red & 0xff);
+                samples[nSamples + idx] = (byte) (green & 0xff);
+                samples[2*nSamples + idx] = (byte) (blue & 0xff);
+              }
             }
           }
+        }
+      }
+    }
+    catch (IOException e) {
+      throw new FormatException(e);
+    }
+    finally {
+      if (bb != null) {
+        try {
+          bb.close();
+        }
+        catch (IOException e) {
+          throw new FormatException(e);
         }
       }
     }

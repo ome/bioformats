@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -40,7 +41,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
 import loci.formats.meta.MetadataStore;
@@ -53,10 +53,6 @@ import loci.formats.tiff.TiffRational;
 
 /**
  * DNGReader is the file format reader for Canon DNG (TIFF) files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/DNGReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/DNGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -97,6 +93,7 @@ public class DNGReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -116,6 +113,7 @@ public class DNGReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -134,6 +132,10 @@ public class DNGReader extends BaseTiffReader {
       // don't call super.openBytes here
       // the pixel type of the image as stored in the TIFF is UINT8,
       // but we need to expand it out to UINT16 (based upon the white balance)
+
+      if (tiffParser == null) {
+        initTiffParser();
+      }
 
       byte[] b = new byte[buf.length / 2];
       tiffParser.getSamples(ifds.get(0), b, x, y, w, h);
@@ -182,14 +184,15 @@ public class DNGReader extends BaseTiffReader {
 
       lastPlane = new byte[FormatTools.getPlaneSize(this)];
 
-      BitBuffer bb = new BitBuffer(src.toByteArray());
+      RandomAccessInputStream bb =
+        new RandomAccessInputStream(new ByteArrayHandle(src.toByteArray()));
       src.close();
       short[] pix = new short[getSizeX() * getSizeY() * 3];
 
       for (int row=0; row<getSizeY(); row++) {
         int realRow = row;
         for (int col=0; col<getSizeX(); col++) {
-          short val = (short) (bb.getBits(dataSize) & 0xffff);
+          short val = (short) (bb.readBits(dataSize) & 0xffff);
           int mapIndex = (realRow % 2) * 2 + (col % 2);
 
           int redOffset = realRow * getSizeX() + col;
@@ -207,6 +210,7 @@ public class DNGReader extends BaseTiffReader {
           }
         }
       }
+      bb.close();
 
       ImageTools.interpolate(pix, buf, colorMap, getSizeX(), getSizeY(),
         isLittleEndian());
@@ -226,6 +230,7 @@ public class DNGReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -240,6 +245,7 @@ public class DNGReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -335,6 +341,7 @@ public class DNGReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

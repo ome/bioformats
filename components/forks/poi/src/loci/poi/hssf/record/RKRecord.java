@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,7 +51,6 @@ import loci.poi.hssf.util.RKUtil;
  *               are in the file just "cause"..,far better to waste processor
  *               cycles on this then leave on of those "valuable" records out).<P>
  * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<P>
- *
  *
  *
  * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>

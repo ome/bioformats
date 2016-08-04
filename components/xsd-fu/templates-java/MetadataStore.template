@@ -1,4 +1,4 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
 {% def index_string(name) %}\
 {% choose %}\
@@ -10,13 +10,44 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
+{% if debug %}\
+	// MARKER [A-GET]
+{% end debug %}\
+	/**
+         * Set the ${prop.name} property of ${o.name}.
+         *
+         * @param ${prop.argumentName} ${prop.name} to set.
+{% for param in indexes %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
+         */
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)});\
+{% if debug %}\
+	// MARKER [B-GET]
+{% end debug %}\
+	/**
+         * Set the ${prop.name} property of ${o.name}.
+         *
+         * @param ${prop.argumentName} ${prop.name} to set.
+{% for param in indexes %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         */
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName});\
+{% if debug %}\
+	// MARKER [C-GET]
+{% end debug %}\
+	/**
+         * Set the ${prop.name} property of ${o.name}.
+         *
+         * @param ${prop.argumentName} ${prop.name} to set.
+         */
+	void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -38,7 +69,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -79,11 +110,23 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.metadata_package};
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
+import java.util.Map;
 
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
@@ -103,7 +146,7 @@ import ome.xml.model.primitives.*;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link ome.xml.meta.OMEXMLMetadata} for an example
+ * <p>See {@link ${lang.omexml_metadata_package}.OMEXMLMetadata} for an example
  * implementation.
  *
  * <p><b>Important note:</b> It is strongly recommended that applications
@@ -116,55 +159,128 @@ import ome.xml.model.primitives.*;
  * <code>imageIndex</code>, an inner loop should iterate across
  * <code>pixelsIndex</code>, and an innermost loop should handle
  * <code>planeIndex</code>. For an illustration of the ideal traversal order,
- * see {@link ome.xml.meta.MetadataConverter#convertMetadata}.</p>
+ * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public interface MetadataStore extends BaseMetadata
 {
+        /**
+         * Create root node.  The action taken here is specific to the
+         * concrete metadata implementation.
+         */
 	void createRoot();
 
+        /**
+         * Get the root node of the metadata.  Note that the root node
+         * type will be specific to the concrete metadata
+         * implementation.
+         *
+         * @return the root node.
+         */
 	MetadataRoot getRoot();
 
+        /**
+         * Set the root node of the metadata.  Note that the root node
+         * type will be specific to the concrete metadata
+         * implementation.  An exception will be thrown if the root
+         * node is of an incompatible type.
+         *
+         * @param root the root node.
+         */
 	void setRoot(MetadataRoot root);
-
-	@Deprecated
-	void setRoot(Object root);
 
 	// -- Entity storage (manual definitions) --
 
+        /**
+         * Set the BigEndian property of Pixels.
+         *
+         * @param bigEndian true if big endian, or false if little endian.
+         * @param imageIndex the Image index.
+         * @param binDataIndex BinData index (unused).
+         */
 	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
 
+        /**
+         * Set the BinData property of Mask.
+         *
+         * @param binData the BinData to set.
+         * @param ROIIndex the ROI index.
+         * @param shapeIndex the Shape index.
+         */
 	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
+
+        /**
+         * Set the values of a MapAnnotation.
+         *
+         * @param value the MapAnnotation values to set.
+         * @param mapAnnotationIndex the MapAnnotation index.
+         */
+	void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex);
+
+        /**
+         * Set the MapAnnotation values of a GenericExcitationSource.
+         *
+         * @param map the MapAnnotation values to set.
+         * @param instrumentIndex the Instrument index.
+         */
+	void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex);
+
+        /**
+         * Set the MapAnnotation values of an ImagingEnvironment.
+         *
+         * @param map the MapAnnotation values to set.
+         * @param imageIndex the Image index.
+         */
+	void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex);
 
 	// -- Entity storage (code generated definitions) --
 
-	/** Sets the UUID associated with this collection of metadata. */
+	/**
+         * Set the UUID associated with this collection of metadata.
+         *
+         * @param uuid the UUID to set.
+         */
 	void setUUID(String uuid);
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
+{% if debug %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])});
+{% end debug %}\
+	/**
+         * Set the text value of ${o.name}.
+         *
+         * @param value text value.
+{% for param in indexes[o.name].items()[0][1] %}\
+         * @param ${param['argname']} the ${param['type']} index.
+{% end for %}\
+         */
+	void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if debug %}\
+	// MARKER [EEE]
 	//
 	// ${o.name} property storage
 	//
 	// ${repr(parents[o.name])}
 	// Is multi path? ${is_multi_path[o.name]}
+{% end debug %}\
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -174,11 +290,22 @@ public interface MetadataStore extends BaseMetadata
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
+	// MARKER [CCC]
+{% end debug %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if debug %}\
+	// MARKER [DDD]
+{% end debug %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}
 
@@ -193,13 +320,28 @@ ${setter(k, o, prop, v)}
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF]
+{% end debug %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
+{% if debug %}\
+	// MARKER [BBB]
+{% end debug %}\
 ${setter(k, o, prop, v)}
 
 {% end %}\

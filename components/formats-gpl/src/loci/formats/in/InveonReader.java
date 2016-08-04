@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,13 +41,10 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * InveonReader is the file format reader for Inveon files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/InveonReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/InveonReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class InveonReader extends FormatReader {
 
@@ -74,6 +71,7 @@ public class InveonReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "hdr")) {
       return super.isThisType(name, open);
@@ -88,6 +86,7 @@ public class InveonReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 128;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -95,6 +94,7 @@ public class InveonReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) return new String[] {currentId};
@@ -104,12 +104,13 @@ public class InveonReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int planeSize = FormatTools.getPlaneSize(this);
+    long planeSize = (long) FormatTools.getPlaneSize(this);
     int index = getCoreIndex();
 
     RandomAccessInputStream dat = new RandomAccessInputStream(datFile);
@@ -126,6 +127,7 @@ public class InveonReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -137,6 +139,7 @@ public class InveonReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "hdr")) {
       id += ".hdr";
@@ -257,7 +260,7 @@ public class InveonReader extends FormatReader {
         }
         else if (key.equals("file_name")) {
           // remove path from stored file name, if present
-          value = value.replaceAll("/", File.separator);
+          value = value.replace('/', File.separatorChar);
           value = value.replace('\\', File.separatorChar);
           value = value.substring(value.lastIndexOf(File.separator) + 1);
 
@@ -382,9 +385,9 @@ public class InveonReader extends FormatReader {
 
         store.setImageDescription(description, i);
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+        Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);

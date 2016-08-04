@@ -31,11 +31,87 @@
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
-<ome-transforms current="2013-06">
-	<source schema="2013-06">
+<ome-transforms current="2015-01">
+	<source schema="2015-01">
 		<upgrades/>
 		<downgrades>
-			<target schema="2003-FC" quality="poor" info="This is the format used by the Origional OME Server (c.2005)">
+			<target schema="2003-FC" quality="poor" info="This is the format used by the Original OME Server (c.2005)">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2003-FC.xsl"/>
+			</target>
+			<target schema="2007-06" quality="poor">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2003-FC.xsl"/>
+				<transform file="2003-FC-to-2007-06.xsl"/>
+			</target>
+			<target schema="2008-02" quality="fair">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+			</target>
+			<target schema="2008-09" quality="fair">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
+			</target>
+			<target schema="2009-09" quality="fair">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
+				<transform file="2008-09-to-2009-09.xsl"/>
+			</target>
+			<target schema="2010-04" quality="fair">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
+				<transform file="2008-09-to-2009-09.xsl"/>
+				<transform file="2009-09-to-2010-04.xsl"/>
+			</target>
+			<target schema="2010-06" quality="good">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2010-06.xsl"/>
+			</target>
+			<target schema="2011-06" quality="good">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2011-06.xsl"/>
+			</target>
+			<target schema="2012-06" quality="good">
+				<transform file="2015-01-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2012-06.xsl"/>
+			</target>
+			<target schema="2013-06" quality="good">
+				<transform file="2015-01-to-2013-06.xsl"/>
+			</target>
+		</downgrades>
+	</source>
+	<source schema="2013-06">
+		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
+		</upgrades>
+		<downgrades>
+			<target schema="2003-FC" quality="poor" info="This is the format used by the Original OME Server (c.2005)">
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2010-06.xsl"/>
@@ -94,12 +170,16 @@
 	</source>
 	<source schema="2012-06">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2012-06-to-2013-06.xsl"/>
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2003-FC" quality="poor" info="This is the format used by the Origional OME Server (c.2005)">
+			<target schema="2003-FC" quality="poor" info="This is the format used by the Original OME Server (c.2005)">
 				<transform file="2012-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2003-FC.xsl"/>
@@ -147,6 +227,11 @@
 	</source>
 	<source schema="2011-06">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
@@ -156,7 +241,7 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2003-FC" quality="poor" info="This is the format used by the Origional OME Server (c.2005)">
+			<target schema="2003-FC" quality="poor" info="This is the format used by the Original OME Server (c.2005)">
 				<transform file="2011-06-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2003-FC.xsl"/>
 			</target>
@@ -194,6 +279,12 @@
 	</source>
 	<source schema="2010-06">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2010-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2012-06.xsl"/>
@@ -208,7 +299,7 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2003-FC" quality="poor" info="This is the format used by the Origional OME Server (c.2005)">
+			<target schema="2003-FC" quality="poor" info="This is the format used by the Original OME Server (c.2005)">
 				<transform file="2010-06-to-2003-FC.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
@@ -237,6 +328,13 @@
 	</source>
 	<source schema="2010-04">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2010-04-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2011-06.xsl"/>
@@ -265,14 +363,12 @@
 			</target>
 			<target schema="2008-09" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2008-09.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
 			</target>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2010-04-to-2010-06.xsl"/>
@@ -287,6 +383,14 @@
 	</source>
 	<source schema="2009-09">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2009-09-to-2010-04.xsl"/>
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
@@ -314,18 +418,16 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2008-09" quality="poor">
+			<target schema="2008-09" quality="fair">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2008-09.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
+				<transform file="2008-02-to-2008-09.xsl"/>
 			</target>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -342,6 +444,15 @@
 	</source>
 	<source schema="2008-09">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2008-09-to-2009-09.xsl"/>
+				<transform file="2009-09-to-2010-04.xsl"/>
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -377,13 +488,11 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2008-02" quality="poor">
+			<target schema="2008-02" quality="fair">
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
-				<transform file="2010-06-to-2003-FC.xsl"/>
-				<transform file="2003-FC-to-2007-06.xsl"/>
-				<transform file="2007-06-to-2008-02.xsl"/>
+				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
 				<transform file="2008-09-to-2009-09.xsl"/>
@@ -402,6 +511,16 @@
 	</source>
 	<source schema="2008-02">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2008-02-to-2008-09.xsl"/>
+				<transform file="2008-09-to-2009-09.xsl"/>
+				<transform file="2009-09-to-2010-04.xsl"/>
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2008-02-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
@@ -465,6 +584,16 @@
 	</source>
 	<source schema="2007-06">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2007-06-to-2008-09.xsl"/>
+				<transform file="2008-09-to-2009-09.xsl"/>
+				<transform file="2009-09-to-2010-04.xsl"/>
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2007-06-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
@@ -523,6 +652,16 @@
 	</source>
 	<source schema="2003-FC">
 		<upgrades>
+			<target schema="2015-01" quality="excellent">
+				<transform file="2003-FC-to-2008-09.xsl"/>
+				<transform file="2008-09-to-2009-09.xsl"/>
+				<transform file="2009-09-to-2010-04.xsl"/>
+				<transform file="2010-04-to-2010-06.xsl"/>
+				<transform file="2010-06-to-2011-06.xsl"/>
+				<transform file="2011-06-to-2012-06.xsl"/>
+				<transform file="2012-06-to-2013-06.xsl"/>
+				<transform file="2013-06-to-2015-01.xsl"/>
+			</target>
 			<target schema="2013-06" quality="excellent">
 				<transform file="2003-FC-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>

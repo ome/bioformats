@@ -2,7 +2,7 @@
  * #%L
  * Java bindings and pre-built binaries for libjpeg-turbo.
  * %%
- * Copyright (C) 2013 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee

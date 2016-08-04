@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,10 +51,6 @@ import loci.formats.meta.MetadataStore;
  * ImageIOReader is the superclass for file format readers
  * that use the javax.imageio package.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImageIOReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImageIOReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOReader extends BIFormatReader {
@@ -85,6 +81,7 @@ public abstract class ImageIOReader extends BIFormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -93,12 +90,14 @@ public abstract class ImageIOReader extends BIFormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -113,6 +112,7 @@ public abstract class ImageIOReader extends BIFormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     CoreMetadata m = core.get(0);

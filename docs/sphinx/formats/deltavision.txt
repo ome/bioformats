@@ -7,7 +7,7 @@ DeltaVision
 Extensions: .dv, .r3d
 
 
-Owner: `Applied Precision <http://www.api.com/>`_
+Owner: `GE Healthcare (formerly Applied Precision) <http://www.gelifesciences.com/webapp/wcs/stores/servlet/catalog/en/GELifeSciences-UK/brands/deltavision/>`_
 
 **Support**
 
@@ -24,9 +24,6 @@ Freely Available Software:
 
 - `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 
-Sample Datasets:
-
-- `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
 
 We currently have:
 
@@ -65,7 +62,4 @@ format, we are not able to distribute them to third parties.**
 
   * `Bitplane Imaris <http://www.bitplane.com/>`_ 
   * `SVI Huygens <http://svi.nl/>`_ 
-  * `Image-Pro Plus <http://www.mediacy.com/>`_ 
-
-.. seealso:: 
-  `DeltaVision system description <http://api.com/deltavision.asp>`_
+  * `Image-Pro Plus <http://www.mediacy.com/>`_

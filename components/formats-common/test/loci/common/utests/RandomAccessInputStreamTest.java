@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,9 +35,12 @@ package loci.common.utests;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.IOException;
+import java.util.Random;
 
+import loci.common.ByteArrayHandle;
 import loci.common.IRandomAccess;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.utests.providers.IRandomAccessProvider;
 import loci.common.utests.providers.IRandomAccessProviderFactory;
 
@@ -47,10 +50,6 @@ import org.testng.annotations.Test;
 
 /**
  * Tests for reading bytes from a loci.common.RandomAccessInputStream.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/RandomAccessInputStreamTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/RandomAccessInputStreamTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see loci.common.RandomAccessInputStream
  */
@@ -133,6 +132,47 @@ public class RandomAccessInputStreamTest {
         stream.seek(fp - step);
       }
       assertEquals(PAGE[(int) stream.getFilePointer()], stream.readByte());
+    }
+  }
+
+  @Test
+  public void testBitRead() throws IOException {
+    int count = 50000;
+    int[] nums = new int[count];
+    int[] len = new int[count];
+    ByteArrayHandle handle = new ByteArrayHandle();
+    RandomAccessOutputStream out = new RandomAccessOutputStream(handle);
+    Random r = new Random();
+
+    for (int i=0; i<count; i++) {
+      if (i % 32 == 31) {
+        nums[i] = r.nextInt();
+      }
+      else {
+        nums[i] = r.nextInt(1 << (i % 32));
+      }
+
+      len[i] = Integer.toBinaryString(nums[i]).length();
+      out.writeBits(nums[i], len[i]);
+    }
+    out.close();
+
+    RandomAccessInputStream in = new RandomAccessInputStream(handle);
+    in.seek(0);
+    try {
+      for (int i=0; i<count; i++) {
+        int c = r.nextInt(100);
+        if (c >= 50) {
+          int v = in.readBits(len[i]);
+          assertEquals(v, nums[i]);
+        }
+        else {
+          in.skipBits(len[i]);
+        }
+      }
+    }
+    finally {
+      in.close();
     }
   }
 

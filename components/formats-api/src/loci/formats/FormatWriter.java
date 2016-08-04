@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,10 +47,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * Abstract superclass of all biological file format writers.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/FormatWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FormatWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
@@ -114,11 +110,13 @@ public abstract class FormatWriter extends FormatHandler
   // -- IFormatWriter API methods --
 
   /* @see IFormatWriter#changeOutputFile(String) */
+  @Override
   public void changeOutputFile(String id) throws FormatException, IOException {
     setId(id);
   }
 
   /* @see IFormatWriter#saveBytes(int, byte[]) */
+  @Override
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
     int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
@@ -127,6 +125,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#saveBytes(int, byte[], Region) */
+  @Override
   public void saveBytes(int no, byte[] buf, Region tile)
     throws FormatException, IOException
   {
@@ -134,6 +133,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#savePlane(int, Object) */
+  @Override
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
@@ -143,6 +143,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#savePlane(int, Object, int, int, int, int) */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -154,6 +155,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#savePlane(int, Object, Region) */
+  @Override
   public void savePlane(int no, Object plane, Region tile)
     throws FormatException, IOException
   {
@@ -161,6 +163,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#setSeries(int) */
+  @Override
   public void setSeries(int series) throws FormatException {
     if (series < 0) throw new FormatException("Series must be > 0.");
     if (series >= metadataRetrieve.getImageCount()) {
@@ -172,29 +175,35 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#getSeries() */
+  @Override
   public int getSeries() {
     return series;
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
+  @Override
   public void setInterleaved(boolean interleaved) {
     this.interleaved = interleaved;
   }
 
   /* @see IFormatWriter#isInterleaved() */
+  @Override
   public boolean isInterleaved() {
     return interleaved;
   }
 
   /* @see IFormatWriter#setValidBitsPerPixel(int) */
+  @Override
   public void setValidBitsPerPixel(int bits) {
     validBits = bits;
   }
 
   /* @see IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return false; }
 
   /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
+  @Override
   public void setMetadataRetrieve(MetadataRetrieve retrieve) {
     FormatTools.assertId(currentId, false, 1);
     if (retrieve == null) {
@@ -204,26 +213,33 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#getMetadataRetrieve() */
+  @Override
   public MetadataRetrieve getMetadataRetrieve() {
     return metadataRetrieve;
   }
 
   /* @see IFormatWriter#setColorModel(ColorModel) */
+  @Override
   public void setColorModel(ColorModel model) { cm = model; }
 
   /* @see IFormatWriter#getColorModel() */
+  @Override
   public ColorModel getColorModel() { return cm; }
 
   /* @see IFormatWriter#setFramesPerSecond(int) */
+  @Override
   public void setFramesPerSecond(int rate) { fps = rate; }
 
   /* @see IFormatWriter#getFramesPerSecond() */
+  @Override
   public int getFramesPerSecond() { return fps; }
 
   /* @see IFormatWriter#getCompressionTypes() */
+  @Override
   public String[] getCompressionTypes() { return compressionTypes; }
 
   /* @see IFormatWriter#setCompression(compress) */
+  @Override
   public void setCompression(String compress) throws FormatException {
     // check that this is a valid type
     for (int i=0; i<compressionTypes.length; i++) {
@@ -236,21 +252,25 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  @Override
   public void setCodecOptions(CodecOptions options) {
     this.options = options;
   }
 
   /* @see IFormatWriter#getCompression() */
+  @Override
   public String getCompression() {
     return compression;
   }
 
   /* @see IFormatWriter#getPixelTypes() */
+  @Override
   public int[] getPixelTypes() {
     return getPixelTypes(getCompression());
   }
 
   /* @see IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
@@ -258,6 +278,7 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#isSupportedType(int) */
+  @Override
   public boolean isSupportedType(int type) {
     int[] types = getPixelTypes();
     for (int i=0; i<types.length; i++) {
@@ -267,13 +288,23 @@ public abstract class FormatWriter extends FormatHandler
   }
 
   /* @see IFormatWriter#setWriteSequentially(boolean) */
+  @Override
   public void setWriteSequentially(boolean sequential) {
     this.sequential = sequential;
   }
 
   // -- IFormatHandler API methods --
 
-  /* @see IFormatHandler#setId(String) */
+  /**
+   * Initializes a writer from the input file name.
+   *
+   * Initializes a {@link RandomAccessOutputStream} for the output
+   * file and initializes the metadata for all the series using
+   * {@link #setSeries(int)}.
+   *
+   *  @param id a {@link String} specifying the path to the file
+   */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     currentId = id;
@@ -284,15 +315,13 @@ public abstract class FormatWriter extends FormatHandler
 
     MetadataRetrieve r = getMetadataRetrieve();
     initialized = new boolean[r.getImageCount()][];
-    int oldSeries = series;
     for (int i=0; i<r.getImageCount(); i++) {
-      setSeries(i);
-      initialized[i] = new boolean[getPlaneCount()];
+      initialized[i] = new boolean[getPlaneCount(i)];
     }
-    setSeries(oldSeries);
   }
 
   /* @see IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     if (out != null) out.close();
     out = null;
@@ -398,6 +427,11 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Retrieve the number of samples per pixel for the current series. */
   protected int getSamplesPerPixel() {
+    return getSamplesPerPixel(series);
+  }
+  
+  /** Retrieve the number of samples per pixel for given series. */
+  protected int getSamplesPerPixel(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
     PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
     if (samples == null) {
@@ -405,9 +439,14 @@ public abstract class FormatWriter extends FormatHandler
     }
     return samples == null ? 1 : samples.getValue();
   }
-
+  
   /** Retrieve the total number of planes in the current series. */
   protected int getPlaneCount() {
+    return getPlaneCount(series);
+  }
+  
+  /** Retrieve the total number of planes in given series. */
+  protected int getPlaneCount(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
     int z = r.getPixelsSizeZ(series).getValue().intValue();
     int t = r.getPixelsSizeT(series).getValue().intValue();

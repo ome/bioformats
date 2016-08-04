@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,13 +48,13 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * SimplePCITiffReader is the file format reader for TIFF files produced by
  * SimplePCI software.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SimplePCITiffReader extends BaseTiffReader {
 
@@ -88,6 +88,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -98,6 +99,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -115,6 +117,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (delegate != null) delegate.close(fileOnly);
@@ -134,6 +137,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -156,11 +160,14 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     IniList ini = parser.parseINI(new BufferedReader(new StringReader(data)));
 
-    String objective = ini.getTable(" MICROSCOPE ").get("Objective");
-    int space = objective.indexOf(" ");
-    if (space != -1) {
-      magnification = new Double(objective.substring(0, space - 1));
-      immersion = objective.substring(space + 1);
+    IniTable microscopeTable = ini.getTable(" MICROSCOPE ");
+    if (microscopeTable != null) {
+      String objective = microscopeTable.get("Objective");
+      int space = objective.indexOf(" ");
+      if (space != -1) {
+        magnification = new Double(objective.substring(0, space - 1));
+        immersion = objective.substring(space + 1);
+      }
     }
 
     CoreMetadata m = core.get(0);
@@ -169,16 +176,28 @@ public class SimplePCITiffReader extends BaseTiffReader {
     binning = cameraTable.get("Binning") + "x" + cameraTable.get("Binning");
     cameraType = cameraTable.get("Camera Type");
     cameraName = cameraTable.get("Camera Name");
-    m.bitsPerPixel = Integer.parseInt(cameraTable.get("Display Depth"));
+    String displayDepth = cameraTable.get("Display Depth");
+    if (displayDepth != null) {
+      m.bitsPerPixel = Integer.parseInt(displayDepth);
+    } else {
+      String bitDepth = cameraTable.get("Bit Depth");
+      if (bitDepth != null && bitDepth.length() > "-bit".length()) {
+        bitDepth = bitDepth.substring(0, bitDepth.length() - "-bit".length());
+        m.bitsPerPixel = Integer.parseInt(bitDepth);
+      } else {
+        throw new FormatException("Could not find bits per pixels");
+      }
+    }
 
     IniTable captureTable = ini.getTable(" CAPTURE ");
-    int index = 1;
-    for (int i=0; i<getSizeC(); i++) {
-      if (captureTable.get("c_Filter" + index) != null) {
-        exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
+    if (captureTable != null) {
+      int index = 1;
+      for (int i=0; i<getSizeC(); i++) {
+        if (captureTable.get("c_Filter" + index) != null) {
+          exposureTimes.add(new Double(captureTable.get("c_Expos" + index)));
+        }
+        index++;
       }
-      else i--;
-      index++;
     }
 
     IniTable calibrationTable = ini.getTable(" CALIBRATION ");
@@ -199,6 +218,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
@@ -214,8 +234,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaling);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaling);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaling);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaling);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -243,7 +263,9 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneExposureTime(exposureTimes.get(zct[1]) / 1000000, 0, i);
+        if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
+        }
       }
     }
   }

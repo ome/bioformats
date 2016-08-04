@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -35,7 +35,6 @@
 # #L%
 
 # Doxygen documentation
-include(FindDoxygen)
 find_package(Doxygen)
 set(DOXYGEN_DEFAULT OFF)
 if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)

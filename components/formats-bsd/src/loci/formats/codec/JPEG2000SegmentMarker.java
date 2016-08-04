@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,10 +40,6 @@ import loci.common.enumeration.CodedEnum;
 
 /**
  * An enumeration of JPEG 2000 segment markers.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000SegmentMarker.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEG2000SegmentMarker.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public enum JPEG2000SegmentMarker implements CodedEnum {
 
@@ -112,6 +108,7 @@ public enum JPEG2000SegmentMarker implements CodedEnum {
    * Implemented as specified by the {@link CodedEnum} I/F.
    * @see CodedEnum#getCode()
    */
+  @Override
   public int getCode() {
     return code;
   }

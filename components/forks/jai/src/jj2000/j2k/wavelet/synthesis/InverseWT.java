@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,6 @@
  *                          of inverse wavelet transforms.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -73,8 +72,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 package jj2000.j2k.wavelet.synthesis;
@@ -134,8 +131,7 @@ public abstract class InverseWT extends InvWTAdapter
      * @param src The source of data for the inverse wavelet
      * transform.
      *
-     * @param pl The parameter list containing parameters applicable to the
-     * inverse wavelet transform (other parameters can also be present).
+     * @param decSpec The decoder specifications
      * */
     public static InverseWT createInstance(CBlkWTDataSrcDec src,
                                            DecoderSpecs decSpec) {

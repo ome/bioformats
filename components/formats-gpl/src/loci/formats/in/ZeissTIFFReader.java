@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -24,7 +24,7 @@
  */
 
 /*
- * https://trac.openmicroscopy.org.uk/ome/ticket/4151
+ * https://trac.openmicroscopy.org/ome/ticket/4151
  *
  * AxioVision TIFF format documentation:
  *
@@ -101,7 +101,6 @@
  *
  *    Metadata within the scaled down preview tiff: No (other than basic dimensions and image planes)
  *    Metadata within the separate TIFF z plane images: No (other than basic dimensions and image planes)
- *
  */
 
 package loci.formats.in;
@@ -109,7 +108,6 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -126,10 +124,6 @@ import loci.formats.tiff.IFDList;
 /**
  * ZeissTIFFReader is the file format reader for Zeiss AxioVision TIFF
  * files and their companion XML file.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ZeissTIFFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ZeissTIFFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com and Roger Leigh r.leigh at dundee.ac.uk
  */
@@ -161,6 +155,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -173,9 +168,11 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
-    if (!checkSuffix(name, TIFF_SUFFIXES))
+    if (!checkSuffix(name, TIFF_SUFFIXES)) {
       return false;
+    }
 
     try {
       CaseInsensitiveLocation.invalidateCache();
@@ -190,6 +187,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
@@ -197,6 +195,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
@@ -212,21 +211,46 @@ public class ZeissTIFFReader extends BaseZeissReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
-    
-    if (noPixels == false && tiffInfo.origname != null)
-      files.add(tiffInfo.origname);
-    files.add(tiffInfo.xmlname);
-    if (noPixels == false) {
-      for (String tiff : imageFiles)
-        files.add(tiff);
+    ArrayList<String> files = new ArrayList<String>();
+
+    try {
+      if (new CaseInsensitiveLocation(tiffInfo.xmlname).exists()) {
+        files.add(tiffInfo.xmlname);
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Error checking existence of " + tiffInfo.xmlname, e);
+    }
+    try {
+      if (!noPixels && tiffInfo.origname != null &&
+        new CaseInsensitiveLocation(tiffInfo.origname).exists())
+      {
+        files.add(tiffInfo.origname);
+      }
+    }
+    catch (IOException e) {
+      LOGGER.debug("Error checking existence of " + tiffInfo.origname, e);
+    }
+    if (!noPixels) {
+      for (String tiff : imageFiles) {
+        try {
+          if (new CaseInsensitiveLocation(tiff).exists()) {
+            files.add(tiff);
+          }
+        }
+        catch (IOException e) {
+          LOGGER.debug("Error checking existence of " + tiff, e);
+        }
+      }
     }
     return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiffReader != null) tiffReader.close(fileOnly);
@@ -351,21 +375,26 @@ public class ZeissTIFFReader extends BaseZeissReader {
       info.basedir = b.getAbsolutePath();
       l = b;
     }
-    String basename = l.getParent() + "/" + info.prefix + ".tif";
-    l = new CaseInsensitiveLocation (basename);
-    if (l.exists())
-      info.origname = l.getAbsolutePath();
+    l = new CaseInsensitiveLocation (l.getParent(), info.prefix + ".tif");
+    info.origname = l.getAbsolutePath();
 
     return info;
   }
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     CaseInsensitiveLocation.invalidateCache();
     TIFFInfo info = evalFile(id);
-    super.initFile(info.origname);
+    if (new CaseInsensitiveLocation(info.origname).getAbsoluteFile().exists()) {
+      super.initFile(info.origname);
+    }
+    else {
+      super.initFile(id);
+    }
     this.tiffInfo = info;
     super.initFileMain(info.origname);
   }
 
+  @Override
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
 
@@ -373,6 +402,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     planes = new ArrayList<Plane>();
   }
 
+  @Override
   protected void fillMetadataPass1(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass1(store);
     int nplanes = tiffInfo.handler.planes.size();
@@ -469,12 +499,14 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
   }
 
+  @Override
   protected void fillMetadataPass2(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass2(store);
 
     core.get(0).interleaved = false;
   }
 
+  @Override
   protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass5(store);
 
@@ -484,6 +516,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     }
   }
 
+  @Override
   protected void countImages()
   {
     core.get(0).imageCount = planes.size();
@@ -573,6 +606,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     {
     }
 
+    @Override
     public String
     toString()
     {

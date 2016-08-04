@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -340,10 +340,9 @@ public class FormulaParser {
             }
         }
     }
-    
+
     /**
      * Adds a pointer to the last token to the latest function argument list.
-     * @param obj
      */
     private void addArgumentPointer() {
 		if (this.functionTokens.size() > 0) {

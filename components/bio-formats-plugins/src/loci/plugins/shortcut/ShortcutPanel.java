@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,10 +56,6 @@ import loci.plugins.util.WindowTools;
  *
  * Files dragged and dropped onto the window will be opened using the
  * Bio-Formats Importer plugin.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/shortcut/ShortcutPanel.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/shortcut/ShortcutPanel.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -187,6 +183,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     // NB: If we don't run in a separate thread, there are GUI update
     //     problems with the ImageJ status bar and log window.
     new Thread() {
+      @Override
       public void run() {
         try {
           IJ.runPlugIn(className, arg);
@@ -201,6 +198,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   // -- ActionListener API methods --
 
   /** Handles button presses. */
+  @Override
   public void actionPerformed(ActionEvent e) {
     JButton b = (JButton) e.getSource();
     String name = b.getText();
@@ -215,6 +213,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
+  @Override
   public void run(String arg) {
     JFrame frame = new JFrame("Bio-Formats Plugins Shortcut Window");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

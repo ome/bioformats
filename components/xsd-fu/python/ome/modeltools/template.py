@@ -2,12 +2,15 @@ from ome.modeltools import config
 
 try:
     import mx.DateTime as DateTime
+
     def now():
         return DateTime.ISO.str(DateTime.now())
 except ImportError:
     from datetime import datetime
+
     def now():
         return datetime.now()
+
 
 class TemplateInfo(object):
     """
@@ -19,15 +22,21 @@ class TemplateInfo(object):
         self.date = now()
         self.DO_NOT_PROCESS = config.DO_NOT_PROCESS
         self.BACK_REFERENCE_OVERRIDE = config.BACK_REFERENCE_OVERRIDE
-        self.BACK_REFERENCE_LINK_OVERRIDE = config.BACK_REFERENCE_LINK_OVERRIDE
-        self.BACK_REFERENCE_NAME_OVERRIDE = config.BACK_REFERENCE_NAME_OVERRIDE
+        self.BACK_REFERENCE_LINK_OVERRIDE = \
+            config.BACK_REFERENCE_LINK_OVERRIDE
+        self.BACK_REFERENCE_NAME_OVERRIDE = \
+            config.BACK_REFERENCE_NAME_OVERRIDE
+        self.ABSTRACT_PROPRIETARY_OVERRIDE = \
+            config.ABSTRACT_PROPRIETARY_OVERRIDE
+        self.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
         self.REF_REGEX = config.REF_REGEX
         self.OMERO_NAMED_OPTIONAL = config.OMERO_NAMED_OPTIONAL
 
     def link_overridden(self, property_name, class_name):
         """Whether or not a back reference link should be overridden."""
         try:
-            return class_name in self.BACK_REFERENCE_LINK_OVERRIDE[property_name]
+            return class_name in \
+                self.BACK_REFERENCE_LINK_OVERRIDE[property_name]
         except KeyError:
             return False
 

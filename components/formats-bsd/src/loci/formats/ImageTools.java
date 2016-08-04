@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,10 +40,6 @@ import loci.common.DataTools;
  *
  * To work with images in {@link java.awt.image.BufferedImage} form,
  * use the {@link loci.formats.gui.AWTImageTools} class.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ImageTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ImageTools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -115,7 +111,7 @@ public final class ImageTools {
 
     byte[] b = null;
 
-    if (min == null) min = new Double(0);
+    if (min == null) min = Double.valueOf(0);
     double newRange = 255d;
 
     // adapted from ImageJ's TypeConverter methods
@@ -482,10 +478,10 @@ public final class ImageTools {
       if (s >= max) s = 255;
       else if (s <= min) s = 0;
       else {
-        int diff = max - min;
+        float diff = max - min;
         float dist = (s - min) / diff;
 
-        s = (int) dist * 256;
+        s = (int)(dist * 255);
       }
 
       out[i / bpp] = (byte) s;

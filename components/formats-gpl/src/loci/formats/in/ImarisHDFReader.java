@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -45,13 +46,10 @@ import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImarisHDFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImarisHDFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImarisHDFReader extends FormatReader {
 
@@ -69,9 +67,9 @@ public class ImarisHDFReader extends FormatReader {
   private NetCDFService netcdf;
 
   // channel parameters
-  private Vector<String> emWave, exWave, channelMin, channelMax;
-  private Vector<String> gain, pinhole, channelName, microscopyMode;
-  private Vector<double[]> colors;
+  private List<String> emWave, exWave, channelMin, channelMax;
+  private List<String> gain, pinhole, channelName, microscopyMode;
+  private List<double[]> colors;
   private int lastChannel = 0;
 
   // -- Constructor --
@@ -86,16 +84,19 @@ public class ImarisHDFReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     return core.get(core.size() - 1).sizeX;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     return core.get(core.size() - 1).sizeY;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -103,6 +104,7 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
@@ -124,6 +126,7 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReaderget16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
@@ -147,6 +150,7 @@ public class ImarisHDFReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -212,6 +216,7 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -232,6 +237,7 @@ public class ImarisHDFReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -246,15 +252,15 @@ public class ImarisHDFReader extends FormatReader {
 
     pixelSizeX = pixelSizeY = pixelSizeZ = 1;
 
-    emWave = new Vector<String>();
-    exWave = new Vector<String>();
-    channelMin = new Vector<String>();
-    channelMax = new Vector<String>();
-    gain = new Vector<String>();
-    pinhole = new Vector<String>();
-    channelName = new Vector<String>();
-    microscopyMode = new Vector<String>();
-    colors = new Vector<double[]>();
+    emWave = new ArrayList<String>();
+    exWave = new ArrayList<String>();
+    channelMin = new ArrayList<String>();
+    channelMax = new ArrayList<String>();
+    gain = new ArrayList<String>();
+    pinhole = new ArrayList<String>();
+    channelName = new ArrayList<String>();
+    microscopyMode = new ArrayList<String>();
+    colors = new ArrayList<double[]>();
 
     seriesCount = 0;
 
@@ -284,14 +290,14 @@ public class ImarisHDFReader extends FormatReader {
         ms.sizeT = getSizeT();
         ms.thumbnail = true;
 
-	if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
-	  ms.sizeT == ms0.sizeT)
-	{
-	  // do not assume that all series will have the same dimensions
-	  // if the Z, C or T size is different, then it cannot
-	  // be a subresolution
+        if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
+          ms.sizeT == ms0.sizeT)
+        {
+          // do not assume that all series will have the same dimensions
+          // if the Z, C or T size is different, then it cannot
+          // be a subresolution
           ms0.resolutionCount++;
-	}
+        }
       }
     }
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
@@ -346,9 +352,9 @@ public class ImarisHDFReader extends FormatReader {
       if (py == 1) py = (maxY - minY) / getSizeY();
       if (pz == 1) pz = (maxZ - minZ) / getSizeZ();
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(px);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(py);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pz);
+      Length sizeX = FormatTools.getPhysicalSizeX(px);
+      Length sizeY = FormatTools.getPhysicalSizeY(py);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pz);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, s);
@@ -472,7 +478,7 @@ public class ImarisHDFReader extends FormatReader {
   }
 
   private void parseAttributes() {
-    Vector<String> attributes = netcdf.getAttributeList();
+    final List<String> attributes = netcdf.getAttributeList();
     CoreMetadata ms0 = core.get(0);
 
     for (String attr : attributes) {
@@ -545,7 +551,8 @@ public class ImarisHDFReader extends FormatReader {
         int underscore = attr.indexOf("_") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
-        if (cIndex == getSizeC()) ms0.sizeC++;
+
+        while (cIndex >= getSizeC()) ms0.sizeC++;
 
         if (name.equals("Gain")) gain.add(value);
         else if (name.equals("LSMEmissionWavelength")) emWave.add(value);

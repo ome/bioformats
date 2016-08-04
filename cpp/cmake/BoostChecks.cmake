@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,22 +34,72 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include(FindBoost)
-find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams program_options regex)
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS OFF)
+
+# Log is header only for some Boost versions, so check is optional.
+#if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
+#  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is probably header-only for this Boost version; reset for FindBoost" FORCE)
+#endif()
+#find_package(Boost COMPONENTS log)
+#if (NOT Boost_LOG_LIBRARY_RELEASE)
+#  message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (header-only, no library available)")
+#  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably header-only for this Boost version" FORCE)
+#endif()
+
+# Log is missing for some Boost versions, so check is optional.
+if (Boost_LOG_LIBRARY_RELEASE STREQUAL "")
+  set(Boost_LOG_LIBRARY_RELEASE "Boost_LOG_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging is missing for this Boost version; reset for FindBoost" FORCE)
+endif()
+if (Boost_LOG_SETUP_LIBRARY_RELEASE STREQUAL "")
+  set(Boost_LOG_SETUP_LIBRARY_RELEASE "Boost_LOG_SETUP_LIBRARY_RELEASE-NOTFOUND" CACHE FILEPATH "Logging setup is missing for this Boost version; reset for FindBoost" FORCE)
+endif()
+find_package(Boost COMPONENTS log log_setup)
+if (NOT Boost_LOG_LIBRARY_RELEASE)
+  message(WARNING "Boost.Log not found.  This might be an error, but is more likely to be harmless (no library available)")
+  set(Boost_LOG_LIBRARY_RELEASE "" CACHE FILEPATH "Logging is probably missing for this Boost version" FORCE)
+endif()
+if (NOT Boost_LOG_LIBRARY_RELEASE)
+  message(WARNING "Boost.Log (setup) not found.  This might be an error, but is more likely to be harmless (no library available)")
+  set(Boost_LOG_SETUP_LIBRARY_RELEASE "" CACHE FILEPATH "Logging (setup) is probably missing for this Boost version" FORCE)
+endif()
+
+find_package(Boost 1.46 REQUIRED
+             COMPONENTS date_time filesystem system iostreams
+                        program_options regex thread)
 
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 
+set(CMAKE_REQUIRED_DEFINITIONS_SAVE ${CMAKE_REQUIRED_DEFINITIONS})
+set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} -DBOOST_ALL_DYN_LINK -DBOOST_ALL_NO_LIB)
+set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
+
+check_include_file_cxx(boost/array.hpp OME_HAVE_BOOST_ARRAY)
 check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
+check_include_file_cxx(boost/log/core.hpp OME_HAVE_BOOST_LOG)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
+check_include_file_cxx(boost/smart_ptr/owner_less.hpp OME_HAVE_BOOST_OWNER_LESS)
 check_include_file_cxx(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)
-check_include_file_cxx(boost/type_traits.hpp HAVE_BOOST_TYPE_TRAITS_HPP)
+check_include_file_cxx(boost/type_traits.hpp OME_HAVE_BOOST_TYPE_TRAITS_HPP)
+check_include_file_cxx(boost/geometry/index/rtree.hpp OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
+
+if(NOT OME_HAVE_BOOST_GEOMETRY_INDEX_RTREE_HPP)
+  message(WARNING "Spatial indexes not available with this version of Boost.Geometry; tile coverage lookups will have reduced performance (linear scan replacing quadratic R*Tree)")
+endif()
+
+check_cxx_source_compiles("
+#include <boost/cstdint.hpp>
+int main() { uint16_t test(134); }
+" OME_HAVE_BOOST_CSTDINT)
 
 # Boost library checks could be dropped?
 # boost::program_options::variables_map in -lboost_program_options
 # + BOOST_PROGRAM_OPTIONS_DESCRIPTION_OLD (drop?)
-SET(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE})
 
 check_cxx_source_compiles(
 "#include <boost/program_options.hpp>
@@ -70,15 +120,15 @@ int main() {
 }"
 BOOST_PROGRAM_OPTIONS_DESCRIPTION_CURRENT_LINK)
 
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
 set(BOOST_PROGRAM_OPTIONS_DESCRIPTION_OLD 0)
 if (BOOST_PROGRAM_OPTIONS AND NOT BOOST_PROGRAM_OPTIONS_DESCRIPTION_CURRENT)
   set(BOOST_PROGRAM_OPTIONS_DESCRIPTION_OLD 1)
 endif(BOOST_PROGRAM_OPTIONS AND NOT BOOST_PROGRAM_OPTIONS_DESCRIPTION_CURRENT)
 
-SET(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_IOSTREAMS_LIBRARY_RELEASE})
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_IOSTREAMS_LIBRARY_RELEASE})
 # <regex> tests; boost/regex.hpp fallback ==> HAVE_REGEX
 # boost::iostreams in -lboost_iostreams
 check_cxx_source_compiles(
@@ -92,17 +142,29 @@ BOOST_IOSTREAMS_LINK)
 # boost::iostreams::file_descriptor_source in -lboost_iostreams
 # + BOOST_IOSTREAMS_CLOSE_HANDLE_OLD
 
-check_cxx_source_compiles(
+if(MSVC)
+  check_cxx_source_compiles(
+"#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <windows.h>
+
+int main() {
+  HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+  boost::iostreams::file_descriptor_sink dummy(out, boost::iostreams::close_handle);
+}"
+  BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
+else()
+  check_cxx_source_compiles(
 "#include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <unistd.h>
 
 int main() {
-boost::iostreams::file_descriptor_sink dummy(STDOUT_FILENO, boost::iostreams::close_handle);
+  boost::iostreams::file_descriptor_sink dummy(STDOUT_FILENO, boost::iostreams::close_handle);
 }"
-BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
-
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+  BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT_LINK)
+endif()
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
 set(BOOST_IOSTREAMS_CLOSE_HANDLE_OLD 0)
 if (BOOST_IOSTREAMS AND NOT BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT)
@@ -110,8 +172,8 @@ if (BOOST_IOSTREAMS AND NOT BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT)
 endif(BOOST_IOSTREAMS AND NOT BOOST_IOSTREAMS_CLOSE_HANDLE_CURRENT)
 
 
-SET(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
 # boost::filesystem in -lboost_filesystem
 check_cxx_source_compiles(
 "#include <boost/filesystem.hpp>
@@ -120,4 +182,96 @@ int main() {
   boost::filesystem::is_directory(\"/\");
 }"
 BOOST_FILESYSTEM_LINK)
-SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
+# boost::filesystem in -lboost_filesystem
+check_cxx_source_compiles(
+"#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
+int main() {
+  boost::filesystem::path absolutefile = boost::filesystem::absolute(boost::filesystem::path(\"/tmp/../foobar\"));
+}"
+OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
+# boost::filesystem in -lboost_filesystem
+check_cxx_source_compiles(
+"#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
+int main() {
+  boost::filesystem::path canonicalfile = boost::filesystem::canonical(boost::filesystem::path(\"/tmp/../foobar\"));
+}"
+OME_HAVE_BOOST_FILESYSTEM_CANONICAL)
+
+# boost::variant/boost::mpl list size limits
+check_cxx_source_compiles("
+#include <boost/mpl/insert_range.hpp>
+#include <boost/mpl/joint_view.hpp>
+#include <boost/mpl/transform_view.hpp>
+#include <boost/mpl/vector.hpp>
+
+#include <boost/variant/apply_visitor.hpp>
+#include <boost/variant/get.hpp>
+#include <boost/variant/variant.hpp>
+
+struct s1 {};
+struct s2 {};
+struct s3 {};
+struct s4 {};
+struct s5 {};
+struct s6 {};
+struct s7 {};
+struct s8 {};
+struct s9 {};
+struct s10 {};
+struct s11 {};
+struct s12 {};
+struct s13 {};
+struct s14 {};
+struct s15 {};
+struct s16 {};
+struct s17 {};
+struct s18 {};
+struct s19 {};
+struct s21 {};
+struct s20 {};
+struct s22 {};
+struct s23 {};
+struct s24 {};
+struct s25 {};
+struct s26 {};
+
+typedef boost::mpl::vector<s1, s2, s3, s4, s5, s6, s7, s8, s9> v1;
+typedef boost::mpl::vector<s10, s11, s12, s13, s14, s15, s16, s17, s18> v2;
+typedef boost::mpl::vector<s19, s20, s21, s22, s23, s24, s25, s26> v3;
+
+typedef boost::mpl::joint_view<v1, v2>::type v4;
+typedef boost::mpl::joint_view<v3, v4>::type v5;
+
+typedef boost::mpl::vector<> empty_types;
+
+typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, v4>::type type_list;
+
+typedef boost::make_variant_over<type_list>::type vt;
+
+void
+set (const vt& value)
+{
+  vt v = value;
+}
+
+int main() {
+  set(s5());
+  set(s25());
+}"
+OME_VARIANT_LIMIT)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
+set(CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS_SAVE})

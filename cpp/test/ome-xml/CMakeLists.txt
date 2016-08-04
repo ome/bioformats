@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,16 +34,28 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS}
+                    ${XercesC_INCLUDE_DIRS})
 
 if(BUILD_TESTS)
   add_executable(color color.cpp)
   target_link_libraries(color ome-xml)
-  target_link_libraries(color ${TEST_LIBS})
+  target_link_libraries(color ome-test)
 
   add_executable(enum enum.cpp)
   target_link_libraries(enum ome-xml)
-  target_link_libraries(enum ${TEST_LIBS})
+  target_link_libraries(enum ome-test)
+
+  if(UNIX)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/metadata-convert-coverage.cmake.in
+                   ${CMAKE_CURRENT_BINARY_DIR}/scripts/metadata-convert-coverage)
+    file(COPY ${CMAKE_CURRENT_BINARY_DIR}/scripts/metadata-convert-coverage
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+         GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    add_test(ome-xml/metadata-convert-coverage ${CMAKE_CURRENT_BINARY_DIR}/metadata-convert-coverage)
+  endif()
 
   add_executable(constrained-numeric
                  non-negative-float.cpp
@@ -54,18 +66,26 @@ if(BUILD_TESTS)
                  positive-integer.cpp
                  positive-long.cpp)
   target_link_libraries(constrained-numeric ome-xml)
-  target_link_libraries(constrained-numeric ${TEST_LIBS})
+  target_link_libraries(constrained-numeric ome-test)
 
   add_executable(timestamp timestamp.cpp)
   target_link_libraries(timestamp ome-xml)
-  target_link_libraries(timestamp ${TEST_LIBS})
+  target_link_libraries(timestamp ome-test)
 
-  add_test(ome-xml/color color)
-  add_test(ome-xml/enum enum)
-  add_test(ome-xml/constrained-numeric constrained-numeric)
-  add_test(ome-xml/timestamp timestamp)
+  add_executable(model model.cpp)
+  target_link_libraries(model ome-xml)
+  target_link_libraries(model ome-test)
 
-  headers_test(ome-xml ome/xml)
-  target_link_libraries(ome-xml-headers ome-xml)
-  add_test(ome-xml/headers ome-xml-headers)
+  bf_add_test(ome-xml/color color)
+  bf_add_test(ome-xml/enum enum)
+  bf_add_test(ome-xml/constrained-numeric constrained-numeric)
+  bf_add_test(ome-xml/timestamp timestamp)
+  bf_add_test(ome-xml/model model)
+
+
+  if(extended-tests)
+    header_test_from_file(ome-xml ome-xml ome/xml)
+    target_link_libraries(ome-xml-headers ome-xml)
+    bf_add_test(ome-xml/headers ome-xml-headers)
+  endif(extended-tests)
 endif(BUILD_TESTS)

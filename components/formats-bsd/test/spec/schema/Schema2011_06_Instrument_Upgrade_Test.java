@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@ import javax.xml.transform.stream.StreamSource;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -62,9 +61,12 @@ import ome.xml.model.Pixels;
 import ome.xml.model.Point;
 import ome.xml.model.TransmittanceRange;
 
+import ome.units.UNITS;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 
 /**
  * import the schema resolver so I can use it to locate
@@ -72,6 +74,7 @@ import org.testng.annotations.Test;
  */
 import ome.specification.SchemaResolver;
 
+import ome.units.quantity.ElectricPotential;
 /**
  * import the reference strings for the associated sample file
  */
@@ -168,7 +171,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, lightsource0.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource0Model, lightsource0.getModel());
         Assert.assertEquals(ref.Instrument0LightSource0SerialNumber, lightsource0.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower());
+        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MW).doubleValue());
         Assert.assertEquals(Laser.class.getName(), lightsource0.getClass().getName());
         laser0 = (Laser) lightsource0;
         Assert.assertEquals(ref.Instrument0LightSource0LaserType, laser0.getType());
@@ -189,7 +192,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, lightsource1.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource1Model, lightsource1.getModel());
         Assert.assertEquals(ref.Instrument0LightSource1SerialNumber, lightsource1.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower());
+        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MW).doubleValue());
         Assert.assertEquals(Arc.class.getName(), lightsource1.getClass().getName());
         arc1 = (Arc) lightsource1;
         Assert.assertEquals(ref.Instrument0LightSource1ArcType, arc1.getType());
@@ -459,7 +462,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Image0DetectorSettings0Gain, detectorSettings.getGain());
         Assert.assertEquals(ref.Image0DetectorSettings0Offset, detectorSettings.getOffset());
         Assert.assertEquals(ref.Image0DetectorSettings0ReadOutRate, detectorSettings.getReadOutRate());
-        Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage());
+        Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage().value());
     }
 
     @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})

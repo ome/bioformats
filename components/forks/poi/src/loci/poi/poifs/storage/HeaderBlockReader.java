@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -84,7 +84,7 @@ public class HeaderBlockReader
      * create a new HeaderBlockReader from an InputStream
      *
      * @param stream the source InputStream
-     * @param size the size of a big block
+     * @param blockSize the size of a big block
      *
      * @exception IOException on errors or bad data
      */

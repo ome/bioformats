@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -45,10 +46,6 @@ import ome.xml.model.primitives.PositiveFloat;
  * Reader for IMOD binary files.
  *
  * See http://bio3d.colorado.edu/imod/doc/binspec.html
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/IMODReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/IMODReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class IMODReader extends FormatReader {
 
@@ -72,6 +69,7 @@ public class IMODReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -81,6 +79,7 @@ public class IMODReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -117,6 +116,7 @@ public class IMODReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -127,6 +127,7 @@ public class IMODReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -294,7 +295,7 @@ public class IMODReader extends FormatReader {
 
         if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
           boolean wild = (contourFlags & 0x10) == 0x10;
-
+          Length l;
           if (wild) {
             int r = colors[obj][0] & 0xff;
             int g = colors[obj][1] & 0xff;
@@ -306,8 +307,8 @@ public class IMODReader extends FormatReader {
               store.setPointID(shapeID, obj, nextShape);
               store.setPointStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPointStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPointStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPointStrokeDashArray("5", obj, nextShape);
               }
@@ -341,13 +342,13 @@ public class IMODReader extends FormatReader {
                 sb.append(" ");
               }
             }
-
+            
             if (closed) {
               store.setPolygonID(shapeID, obj, nextShape);
               store.setPolygonStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPolygonStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPolygonStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolygonStrokeDashArray("5", obj, nextShape);
               }
@@ -362,8 +363,8 @@ public class IMODReader extends FormatReader {
               store.setPolylineID(shapeID, obj, nextShape);
               store.setPolylineStrokeColor(
                 new Color(r, g, b, 0xff), obj, nextShape);
-              store.setPolylineStrokeWidth(
-                new Double(lineWidth2D), obj, nextShape);
+              l = new Length(new Double(lineWidth2D), UNITS.PIXEL);
+              store.setPolylineStrokeWidth(l, obj, nextShape);
               if (lineStyle == 1) {
                 store.setPolylineStrokeDashArray("5", obj, nextShape);
               }
@@ -437,18 +438,20 @@ public class IMODReader extends FormatReader {
         store.setROIID(roiIDs.get(i), i);
         store.setImageROIRef(roiIDs.get(i), 0, i);
       }
+    }
 
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalX > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalX)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalX), UNITS.MICROM), 0);
       }
       if (physicalY > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalY)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalY), UNITS.MICROM), 0);
       }
       if (physicalZ > 0) {
         store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalZ)), 0);
+          FormatTools.createLength(adjustForUnits(pixSizeUnits, physicalZ), UNITS.MICROM), 0);
       }
     }
   }

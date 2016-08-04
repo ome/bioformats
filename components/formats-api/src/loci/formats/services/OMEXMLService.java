@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,9 +45,6 @@ import ome.xml.model.OMEModelObject;
 
 /**
  * 
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/OMEXMLService.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/OMEXMLService.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface OMEXMLService extends Service {
 
@@ -276,6 +273,14 @@ public interface OMEXMLService extends Service {
    * given OME-XML metadata object.
    */
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image);
+
+  /**
+   * Insert a MetadataOnly element under the Image specified by 'index' in the
+   * given OME-XML metadata object.  If the 'resolve' flag is set, references
+   * in the OME-XML metadata object will be resolved before the new element is
+   * inserted.
+   */
+  public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image, boolean resolve);
 
   /**
    * Determine whether or not two OMEXMLMetadata objects are equal.

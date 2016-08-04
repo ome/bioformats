@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -62,10 +62,10 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Power;
+import ome.units.UNITS;
+
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/ObjectBasedOMEModelMock.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/ObjectBasedOMEModelMock.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ObjectBasedOMEModelMock implements OMEModelMock {
 
@@ -83,6 +83,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ome.setStructuredAnnotations(annotations);
   }
 
+  @Override
   public OMEXMLMetadataRoot getRoot() {
     return ome;
   }
@@ -90,56 +91,49 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
   private Image makeImage() {
     // Create <Image/>
     Image image = new Image();
-    image.setID(InOut201004Test.IMAGE_ID);
+    image.setID(InOutCurrentTest.IMAGE_ID);
     ListAnnotation listAnnotation = new ListAnnotation();
-    listAnnotation.setID(InOut201004Test.IMAGE_LIST_ANNOTATION_ID);
-    listAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    listAnnotation.setID(InOutCurrentTest.IMAGE_LIST_ANNOTATION_ID);
+    listAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     annotations.addListAnnotation(listAnnotation);
     BooleanAnnotation annotation = new BooleanAnnotation();
-    annotation.setID(InOut201004Test.IMAGE_ANNOTATION_ID);
-    annotation.setValue(InOut201004Test.IMAGE_ANNOTATION_VALUE);
-    annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    annotation.setID(InOutCurrentTest.IMAGE_ANNOTATION_ID);
+    annotation.setValue(InOutCurrentTest.IMAGE_ANNOTATION_VALUE);
+    annotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     listAnnotation.linkAnnotation(annotation);
     image.linkAnnotation(listAnnotation);
     annotations.addBooleanAnnotation(annotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();
-    pixels.setID(InOut201004Test.PIXELS_ID);
-    pixels.setSizeX(new PositiveInteger(InOut201004Test.SIZE_X));
-    pixels.setSizeY(new PositiveInteger(InOut201004Test.SIZE_Y));
-    pixels.setSizeZ(new PositiveInteger(InOut201004Test.SIZE_Z));
-    pixels.setSizeC(new PositiveInteger(InOut201004Test.SIZE_C));
-    pixels.setSizeT(new PositiveInteger(InOut201004Test.SIZE_T));
-    pixels.setDimensionOrder(InOut201004Test.DIMENSION_ORDER);
-    pixels.setType(InOut201004Test.PIXEL_TYPE);
+    pixels.setID(InOutCurrentTest.PIXELS_ID);
+    pixels.setSizeX(new PositiveInteger(InOutCurrentTest.SIZE_X));
+    pixels.setSizeY(new PositiveInteger(InOutCurrentTest.SIZE_Y));
+    pixels.setSizeZ(new PositiveInteger(InOutCurrentTest.SIZE_Z));
+    pixels.setSizeC(new PositiveInteger(InOutCurrentTest.SIZE_C));
+    pixels.setSizeT(new PositiveInteger(InOutCurrentTest.SIZE_T));
+    pixels.setDimensionOrder(InOutCurrentTest.DIMENSION_ORDER);
+    pixels.setType(InOutCurrentTest.PIXEL_TYPE);
     // Create <TiffData/>
     TiffData tiffData = new TiffData();
     // Create <UUID/>
     UUID uuid = new UUID();
-    uuid.setValue(InOut201004Test.TIFF_DATA_UUID);
+    uuid.setValue(InOutCurrentTest.TIFF_DATA_UUID);
     tiffData.setUUID(uuid);
     pixels.addTiffData(tiffData);
     // Create <Channel/> under <Pixels/>
-    for (int i = 0; i < InOut201004Test.SIZE_C; i++) {
+    for (int i = 0; i < InOutCurrentTest.SIZE_C; i++) {
       Channel channel = new Channel();
       channel.setID("Channel:" + i);
       if (i == 0) {
         XMLAnnotation channelAnnotation = new XMLAnnotation();
-        channelAnnotation.setID(InOut201004Test.CHANNEL_ANNOTATION_ID);
-        channelAnnotation.setValue(InOut201004Test.CHANNEL_ANNOTATION_VALUE);
-        channelAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+        channelAnnotation.setID(InOutCurrentTest.CHANNEL_ANNOTATION_ID);
+        channelAnnotation.setValue(InOutCurrentTest.CHANNEL_ANNOTATION_VALUE);
+        channelAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
         channel.linkAnnotation(channelAnnotation);
         annotations.addXMLAnnotation(channelAnnotation);
       }
       pixels.addChannel(channel);
     }
-    // create Annotation for Pixels
-    DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
-    pixelsAnnotation.setID(InOut201004Test.PIXELS_ANNOTATION_ID);
-    pixelsAnnotation.setValue(InOut201004Test.PIXELS_ANNOTATION_VALUE);
-    pixelsAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
-    pixels.linkAnnotation(pixelsAnnotation);
-    annotations.addDoubleAnnotation(pixelsAnnotation);
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
     return image;
@@ -148,24 +142,37 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
   private Instrument makeInstrument() {
     // Create <Instrument/>
     Instrument instrument = new Instrument();
-    instrument.setID(InOut201004Test.INSTRUMENT_ID);
+    instrument.setID(InOutCurrentTest.INSTRUMENT_ID);
     // Create <Detector/> under <Instrument/>
     Detector detector = new Detector();
-    detector.setID(InOut201004Test.DETECTOR_ID);
-    detector.setModel(InOut201004Test.DETECTOR_MODEL);
+    detector.setID(InOutCurrentTest.DETECTOR_ID);
+    detector.setModel(InOutCurrentTest.DETECTOR_MODEL);
+    CommentAnnotation detectorAnnotation = new CommentAnnotation();
+    detectorAnnotation.setID(InOutCurrentTest.DETECTOR_ANNOTATION_ID);
+    detectorAnnotation.setValue(InOutCurrentTest.DETECTOR_ANNOTATION_VALUE);
+    detectorAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    detector.linkAnnotation(detectorAnnotation);
+    annotations.addCommentAnnotation(detectorAnnotation);
     instrument.addDetector(detector);
+
     // Create <Laser/> under <Instrument/>
     Laser laser = new Laser();
-    laser.setID(InOut201004Test.LIGHTSOURCE_LASER_ID);
-    laser.setModel(InOut201004Test.LIGHTSOURCE_LASER_MODEL);
-    laser.setType(InOut201004Test.LASER_TYPE);
-    laser.setPower(InOut201004Test.LIGHTSOURCE_LASER_POWER);
+    laser.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ID);
+    laser.setModel(InOutCurrentTest.LIGHTSOURCE_LASER_MODEL);
+    laser.setType(InOutCurrentTest.LASER_TYPE);
+    laser.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_LASER_POWER, UNITS.MW));
+    CommentAnnotation laserAnnotation = new CommentAnnotation();
+    laserAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID);
+    laserAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE);
+    laserAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    laser.linkAnnotation(laserAnnotation);
+    annotations.addCommentAnnotation(laserAnnotation);
     // with a <Pump/>
     Laser laserPump = new Laser();
-    laserPump.setID(InOut201004Test.LIGHTSOURCE_PUMP_ID);
-    laserPump.setModel(InOut201004Test.LIGHTSOURCE_PUMP_MODEL);
-    laserPump.setType(InOut201004Test.LASER_TYPE);
-    laserPump.setPower(InOut201004Test.LIGHTSOURCE_PUMP_POWER);
+    laserPump.setID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID);
+    laserPump.setModel(InOutCurrentTest.LIGHTSOURCE_PUMP_MODEL);
+    laserPump.setType(InOutCurrentTest.LASER_TYPE);
+    laserPump.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER, UNITS.MW));
     
     laser.linkPump(laserPump);
     
@@ -174,48 +181,84 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     
     // Create <Arc/> under <Instrument/>
     Arc arc = new Arc();
-    arc.setID(InOut201004Test.LIGHTSOURCE_ARC_ID);
-    arc.setModel(InOut201004Test.LIGHTSOURCE_ARC_MODEL);
-    arc.setType(InOut201004Test.ARC_TYPE);
-    arc.setPower(InOut201004Test.LIGHTSOURCE_ARC_POWER);
+    arc.setID(InOutCurrentTest.LIGHTSOURCE_ARC_ID);
+    arc.setModel(InOutCurrentTest.LIGHTSOURCE_ARC_MODEL);
+    arc.setType(InOutCurrentTest.ARC_TYPE);
+    arc.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_ARC_POWER, UNITS.MW));
+    CommentAnnotation arcAnnotation = new CommentAnnotation();
+    arcAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID);
+    arcAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE);
+    arcAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    arc.linkAnnotation(arcAnnotation);
+    annotations.addCommentAnnotation(arcAnnotation);
     instrument.addLightSource(arc);
     
     // Create <Filament/> under <Instrument/>
     Filament filament = new Filament();
-    filament.setID(InOut201004Test.LIGHTSOURCE_FILAMENT_ID);
-    filament.setModel(InOut201004Test.LIGHTSOURCE_FILAMENT_MODEL);
-    filament.setType(InOut201004Test.FILAMENT_TYPE);
-    filament.setPower(InOut201004Test.LIGHTSOURCE_FILAMENT_POWER);
+    filament.setID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ID);
+    filament.setModel(InOutCurrentTest.LIGHTSOURCE_FILAMENT_MODEL);
+    filament.setType(InOutCurrentTest.FILAMENT_TYPE);
+    filament.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER, UNITS.MW));
+    CommentAnnotation filamentAnnotation = new CommentAnnotation();
+    filamentAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID);
+    filamentAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE);
+    filamentAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    filament.linkAnnotation(filamentAnnotation);
+    annotations.addCommentAnnotation(filamentAnnotation);
     instrument.addLightSource(filament);
 
     // Create <LightEmittingDiode/> under <Instrument/>
     LightEmittingDiode led = new LightEmittingDiode();
-    led.setID(InOut201004Test.LIGHTSOURCE_LED_ID);
-    led.setModel(InOut201004Test.LIGHTSOURCE_LED_MODEL);
-    led.setPower(InOut201004Test.LIGHTSOURCE_LED_POWER);
+    led.setID(InOutCurrentTest.LIGHTSOURCE_LED_ID);
+    led.setModel(InOutCurrentTest.LIGHTSOURCE_LED_MODEL);
+    led.setPower(new Power(InOutCurrentTest.LIGHTSOURCE_LED_POWER, UNITS.MW));
+    CommentAnnotation ledAnnotation = new CommentAnnotation();
+    ledAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID);
+    ledAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_VALUE);
+    ledAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    led.linkAnnotation(ledAnnotation);
+    annotations.addCommentAnnotation(ledAnnotation);
     instrument.addLightSource(led);
 
     // Create <Dichroic/> under <Instrument/>
     Dichroic dichroic = new Dichroic();
-    dichroic.setID(InOut201004Test.DICHROIC_ID);
-    dichroic.setSerialNumber(InOut201004Test.DICHROIC_SN);
+    dichroic.setID(InOutCurrentTest.DICHROIC_ID);
+    dichroic.setSerialNumber(InOutCurrentTest.DICHROIC_SN);
+    CommentAnnotation dichroicAnnotation = new CommentAnnotation();
+    dichroicAnnotation.setID(InOutCurrentTest.DICHROIC_ANNOTATION_ID);
+    dichroicAnnotation.setValue(InOutCurrentTest.DICHROIC_ANNOTATION_VALUE);
+    dichroicAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    dichroic.linkAnnotation(dichroicAnnotation);
+    annotations.addCommentAnnotation(dichroicAnnotation);
     // Create <FilterSet/> under <Dichroic/>
     FilterSet filterSet = new FilterSet();
-    filterSet.setID(InOut201004Test.FILTERSET_ID);
-    filterSet.setLotNumber(InOut201004Test.FILTERSET_LOT);
+    filterSet.setID(InOutCurrentTest.FILTERSET_ID);
+    filterSet.setLotNumber(InOutCurrentTest.FILTERSET_LOT);
     filterSet.linkDichroic(dichroic);
 
     Filter emFilter = new Filter();
     Filter exFilter = new Filter();
     // Create <Objective/> under <Instrument/>
     Objective objective = new Objective();
-    objective.setID(InOut201004Test.OBJECTIVE_ID);
-    objective.setModel(InOut201004Test.OBJECTIVE_MODEL);
+    objective.setID(InOutCurrentTest.OBJECTIVE_ID);
+    objective.setModel(InOutCurrentTest.OBJECTIVE_MODEL);
+    CommentAnnotation objectiveAnnotation = new CommentAnnotation();
+    objectiveAnnotation.setID(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID);
+    objectiveAnnotation.setValue(InOutCurrentTest.OBJECTIVE_ANNOTATION_VALUE);
+    objectiveAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    objective.linkAnnotation(objectiveAnnotation);
+    annotations.addCommentAnnotation(objectiveAnnotation);
 
-    emFilter.setID(InOut201004Test.EM_FILTER_ID);
-    emFilter.setType(InOut201004Test.EM_FILTER_TYPE);
-    exFilter.setID(InOut201004Test.EX_FILTER_ID);
-    exFilter.setType(InOut201004Test.EX_FILTER_TYPE);
+    emFilter.setID(InOutCurrentTest.EM_FILTER_ID);
+    emFilter.setType(InOutCurrentTest.EM_FILTER_TYPE);
+    exFilter.setID(InOutCurrentTest.EX_FILTER_ID);
+    exFilter.setType(InOutCurrentTest.EX_FILTER_TYPE);
+    CommentAnnotation emFilterAnnotation = new CommentAnnotation();
+    emFilterAnnotation.setID(InOutCurrentTest.EM_FILTER_ANNOTATION_ID);
+    emFilterAnnotation.setValue(InOutCurrentTest.EM_FILTER_ANNOTATION_VALUE);
+    emFilterAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    emFilter.linkAnnotation(emFilterAnnotation);
+    annotations.addCommentAnnotation(emFilterAnnotation);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
@@ -227,6 +270,13 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     instrument.addFilterSet(filterSet);
     instrument.addDichroic(dichroic);
 
+    CommentAnnotation instrumentAnnotation = new CommentAnnotation();
+    instrumentAnnotation.setID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID);
+    instrumentAnnotation.setValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE);
+    instrumentAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    instrument.linkAnnotation(instrumentAnnotation);
+    annotations.addCommentAnnotation(instrumentAnnotation);
+
     // link Instrument to the first Image
     Image image = ome.getImage(0);
     image.linkInstrument(instrument);
@@ -236,22 +286,22 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
   private Plate makePlate() {
     Plate plate = new Plate();
-    plate.setID(InOut201004Test.PLATE_ID);
-    plate.setRows(InOut201004Test.WELL_ROWS);
-    plate.setColumns(InOut201004Test.WELL_COLS);
-    plate.setRowNamingConvention(InOut201004Test.WELL_ROW);
-    plate.setColumnNamingConvention(InOut201004Test.WELL_COL);
+    plate.setID(InOutCurrentTest.PLATE_ID);
+    plate.setRows(InOutCurrentTest.WELL_ROWS);
+    plate.setColumns(InOutCurrentTest.WELL_COLS);
+    plate.setRowNamingConvention(InOutCurrentTest.WELL_ROW);
+    plate.setColumnNamingConvention(InOutCurrentTest.WELL_COL);
 
     TimestampAnnotation plateAnnotation = new TimestampAnnotation();
-    plateAnnotation.setID(InOut201004Test.PLATE_ANNOTATION_ID);
-    plateAnnotation.setValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE));
-    plateAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    plateAnnotation.setID(InOutCurrentTest.PLATE_ANNOTATION_ID);
+    plateAnnotation.setValue(new Timestamp(InOutCurrentTest.PLATE_ANNOTATION_VALUE));
+    plateAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     plate.linkAnnotation(plateAnnotation);
     annotations.addTimestampAnnotation(plateAnnotation);
 
     int wellSampleIndex = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
+    for (int row=0; row<InOutCurrentTest.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOutCurrentTest.WELL_COLS.getValue(); col++) {
         Well well = new Well();
         well.setID(String.format("Well:%d_%d", row, col));
         well.setRow(new NonNegativeInteger(row));
@@ -259,9 +309,9 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
         if (row == 0 && col == 0) {
           LongAnnotation annotation = new LongAnnotation();
-          annotation.setID(InOut201004Test.WELL_ANNOTATION_ID);
-          annotation.setValue(InOut201004Test.WELL_ANNOTATION_VALUE);
-          annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+          annotation.setID(InOutCurrentTest.WELL_ANNOTATION_ID);
+          annotation.setValue(InOutCurrentTest.WELL_ANNOTATION_VALUE);
+          annotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
           well.linkAnnotation(annotation);
           annotations.addLongAnnotation(annotation);
         }
@@ -281,22 +331,22 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
   private ROI makeROI() {
     ROI roi = new ROI();
-    roi.setID(InOut201004Test.ROI_ID);
+    roi.setID(InOutCurrentTest.ROI_ID);
 
     CommentAnnotation roiAnnotation = new CommentAnnotation();
-    roiAnnotation.setID(InOut201004Test.ROI_ANNOTATION_ID);
-    roiAnnotation.setValue(InOut201004Test.ROI_ANNOTATION_VALUE);
-    roiAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    roiAnnotation.setID(InOutCurrentTest.ROI_ANNOTATION_ID);
+    roiAnnotation.setValue(InOutCurrentTest.ROI_ANNOTATION_VALUE);
+    roiAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     roi.linkAnnotation(roiAnnotation);
     annotations.addCommentAnnotation(roiAnnotation);
 
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();
-    rect.setID(InOut201004Test.SHAPE_ID);
-    rect.setX(InOut201004Test.RECTANGLE_X);
-    rect.setY(InOut201004Test.RECTANGLE_Y);
-    rect.setWidth(InOut201004Test.RECTANGLE_WIDTH);
-    rect.setHeight(InOut201004Test.RECTANGLE_HEIGHT);
+    rect.setID(InOutCurrentTest.SHAPE_ID);
+    rect.setX(InOutCurrentTest.RECTANGLE_X);
+    rect.setY(InOutCurrentTest.RECTANGLE_Y);
+    rect.setWidth(InOutCurrentTest.RECTANGLE_WIDTH);
+    rect.setHeight(InOutCurrentTest.RECTANGLE_HEIGHT);
 
     shapeUnion.addShape(rect);
     roi.setUnion(shapeUnion);

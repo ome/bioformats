@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,13 +43,12 @@ import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
  * and 2 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/ICSWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/ICSWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ICSWriter extends FormatWriter {
 
@@ -91,6 +90,7 @@ public class ICSWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -125,7 +125,7 @@ public class ICSWriter extends FormatWriter {
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
+    long planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
     if (!initialized[series][realIndex]) {
       initialized[series][realIndex] = true;
@@ -163,9 +163,11 @@ public class ICSWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
@@ -174,7 +176,8 @@ public class ICSWriter extends FormatWriter {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -240,25 +243,28 @@ public class ICSWriter extends FormatWriter {
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
-            value = meta.getPixelsPhysicalSizeX(0).getValue();
+            value = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
           if (meta.getPixelsPhysicalSizeY(0) != null) {
-            value = meta.getPixelsPhysicalSizeY(0).getValue();
+            value = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
           if (meta.getPixelsPhysicalSizeZ(0) != null) {
-            value = meta.getPixelsPhysicalSizeZ(0).getValue();
+            value = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
           }
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
-          value = meta.getPixelsTimeIncrement(0);
-          units.append("seconds\t");
+          Time valueTime = meta.getPixelsTimeIncrement(0);
+          if (valueTime != null) {
+            value = valueTime.value(UNITS.S);
+            units.append("seconds\t");
+          }
         }
         out.writeBytes(value + "\t");
       }
@@ -280,6 +286,7 @@ public class ICSWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     if (lastPlane != getPlaneCount() - 1 && out != null) {
       overwriteDimensions(getMetadataRetrieve());

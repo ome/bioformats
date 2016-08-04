@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,8 +31,9 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -48,19 +49,17 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
 
 /**
  * ScanrReader is the file format reader for Olympus ScanR datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ScanrReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ScanrReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -75,15 +74,15 @@ public class ScanrReader extends FormatReader {
 
   // -- Fields --
 
-  private Vector<String> metadataFiles = new Vector<String>();
+  private final List<String> metadataFiles = new ArrayList<String>();
   private int wellRows, wellColumns;
   private int fieldRows, fieldColumns;
   private int wellCount = 0;
-  private Vector<String> channelNames = new Vector<String>();
-  private Hashtable<String, Integer> wellLabels =
-    new Hashtable<String, Integer>();
-  private Hashtable<Integer, Integer> wellNumbers =
-    new Hashtable<Integer, Integer>();
+  private final List<String> channelNames = new ArrayList<String>();
+  private Map<String, Integer> wellLabels =
+    new HashMap<String, Integer>();
+  private Map<Integer, Integer> wellNumbers =
+    new HashMap<Integer, Integer>();
   private String plateName;
   private Double pixelSize;
 
@@ -94,10 +93,13 @@ public class ScanrReader extends FormatReader {
   private MinimalTiffReader reader;
 
   private boolean foundPositions = false;
-  private double[] fieldPositionX;
-  private double[] fieldPositionY;
-  private Vector<Double> exposures = new Vector<Double>();
+  private Length[] fieldPositionX;
+  private Length[] fieldPositionY;
+  private final List<Double> exposures = new ArrayList<Double>();
   private Double deltaT = null;
+
+  private Map<Integer, String[]> seriesFiles =
+    new HashMap<Integer, String[]>();
 
   // -- Constructor --
 
@@ -114,6 +116,7 @@ public class ScanrReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     Location file = new Location(id).getAbsoluteFile();
     String name = file.getName();
@@ -130,11 +133,13 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     String localName = new Location(name).getName();
     if (localName.equals(XML_FILE) || localName.equals(EXPERIMENT_FILE) ||
@@ -157,6 +162,7 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser p = new TiffParser(stream);
     IFD ifd = p.getFirstIFD();
@@ -169,10 +175,15 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    Vector<String> files = new Vector<String>();
+    if (seriesFiles.containsKey(getSeries())) {
+      return seriesFiles.get(getSeries());
+    }
+
+    final List<String> files = new ArrayList<String>();
     for (String file : metadataFiles) {
       if (file != null) files.add(file);
     }
@@ -188,10 +199,13 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    return files.toArray(new String[files.size()]);
+    String[] fileList = files.toArray(new String[files.size()]);
+    seriesFiles.put(getSeries(), fileList);
+    return fileList;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -216,12 +230,14 @@ public class ScanrReader extends FormatReader {
       exposures.clear();
       deltaT = null;
       foundPositions = false;
+      seriesFiles.clear();
     }
   }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -259,12 +275,14 @@ public class ScanrReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight;
@@ -273,6 +291,7 @@ public class ScanrReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     if (metadataFiles.size() > 0) {
@@ -307,9 +326,9 @@ public class ScanrReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
 
       r.close();
@@ -324,7 +343,7 @@ public class ScanrReader extends FormatReader {
 
     for (String file : list) {
       Location f = new Location(dir, file);
-      if (!f.isDirectory() && checkSuffix(file, METADATA_SUFFIXES)) {
+      if (checkSuffix(file, METADATA_SUFFIXES) && !f.isDirectory()) {
         metadataFiles.add(f.getAbsolutePath());
       }
     }
@@ -343,8 +362,8 @@ public class ScanrReader extends FormatReader {
 
     XMLTools.parseXML(xml, new ScanrHandler());
 
-    Vector<String> uniqueRows = new Vector<String>();
-    Vector<String> uniqueColumns = new Vector<String>();
+    final List<String> uniqueRows = new ArrayList<String>();
+    final List<String> uniqueColumns = new ArrayList<String>();
 
     if (wellRows == 0 || wellColumns == 0) {
       for (String well : wellLabels.keySet()) {
@@ -397,6 +416,7 @@ public class ScanrReader extends FormatReader {
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
 
     Arrays.sort(list, new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         int lastSeparator1 = s1.lastIndexOf(File.separator) + 1;
         int lastSeparator2 = s2.lastIndexOf(File.separator) + 1;
@@ -436,12 +456,13 @@ public class ScanrReader extends FormatReader {
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     Arrays.sort(keys, new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         char row1 = s1.charAt(0);
         char row2 = s2.charAt(0);
 
-        Integer col1 = new Integer(s1.substring(1));
-        Integer col2 = new Integer(s2.substring(1));
+        final Integer col1 = new Integer(s1.substring(1));
+        final Integer col2 = new Integer(s2.substring(1));
 
         if (row1 < row2) {
           return -1;
@@ -636,8 +657,8 @@ public class ScanrReader extends FormatReader {
           store.setChannelName(channelNames.get(c), i, c);
         }
 
-        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
-        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+        Length x = FormatTools.getPhysicalSizeX(pixelSize);
+        Length y = FormatTools.getPhysicalSizeY(pixelSize);
         if (x != null) {
           store.setPixelsPhysicalSizeX(x, i);
         }
@@ -648,8 +669,11 @@ public class ScanrReader extends FormatReader {
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;
           int well = i / nFields;
-          store.setWellSamplePositionX(fieldPositionX[field], 0, well, field);
-          store.setWellSamplePositionY(fieldPositionY[field], 0, well, field);
+          final Length posX = fieldPositionX[field];
+          final Length posY = fieldPositionY[field];
+          
+          store.setWellSamplePositionX(posX, 0, well, field);
+          store.setWellSamplePositionY(posY, 0, well, field);
           for (int c=0; c<getSizeC(); c++) {
             int image = getIndex(0, c, 0);
             store.setPlaneTheZ(new NonNegativeInteger(0), i, image);
@@ -661,11 +685,12 @@ public class ScanrReader extends FormatReader {
             // exposure time is stored in milliseconds
             // convert to seconds before populating MetadataStore
             Double time = exposures.get(c);
-            time /= 1000;
-
-            store.setPlaneExposureTime(time, i, image);
+            if (time != null) {
+              time /= 1000;
+              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+            }
             if (deltaT != null) {
-              store.setPlaneDeltaT(deltaT, i, image);
+              store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
             }
           }
         }
@@ -697,11 +722,13 @@ public class ScanrReader extends FormatReader {
 
     // -- DefaultHandler API methods --
 
+    @Override
     public void characters(char[] ch, int start, int length) {
       String v = new String(ch, start, length);
       currentValue.append(v);
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -712,6 +739,7 @@ public class ScanrReader extends FormatReader {
       }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       String v = currentValue.toString().trim();
       if (v.length() > 0) {
@@ -729,8 +757,8 @@ public class ScanrReader extends FormatReader {
           fieldPositionX == null)
         {
           int nPositions = Integer.parseInt(v);
-          fieldPositionX = new double[nPositions];
-          fieldPositionY = new double[nPositions];
+          fieldPositionX = new Length[nPositions];
+          fieldPositionY = new Length[nPositions];
         }
         else if ("Rows".equals(key) && foundPlateLayout) {
           wellRows = Integer.parseInt(v);
@@ -788,7 +816,7 @@ public class ScanrReader extends FormatReader {
           else if (key.equals("well selection table + cDNA")) {
             if (Character.isDigit(v.charAt(0))) {
               wellIndex = v;
-              wellNumbers.put(new Integer(wellCount), new Integer(v));
+              wellNumbers.put(wellCount, new Integer(v));
               wellCount++;
             }
             else {
@@ -801,12 +829,16 @@ public class ScanrReader extends FormatReader {
           else if (foundPositions) {
             if (nextXPos == nextYPos) {
               if (nextXPos < fieldPositionX.length) {
-                fieldPositionX[nextXPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionX[nextXPos++] = length;
               }
             }
             else {
               if (nextYPos < fieldPositionY.length) {
-                fieldPositionY[nextYPos++] = Double.parseDouble(v);
+                final Double number = Double.valueOf(v);
+                final Length length = new Length(number, UNITS.REFERENCEFRAME);
+                fieldPositionY[nextYPos++] = length;
               }
             }
           }

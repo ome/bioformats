@@ -14,7 +14,7 @@ function [] = bfCheckJavaMemory(varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2014 Open Microscopy Environment:
+% Copyright (C) 2014 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -33,7 +33,7 @@ function [] = bfCheckJavaMemory(varargin)
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-runtime = java.lang.Runtime.getRuntime();
+runtime = javaMethod('getRuntime', 'java.lang.Runtime');
 maxMemory = runtime.maxMemory() / (1024 * 1024);
 
 ip = inputParser;

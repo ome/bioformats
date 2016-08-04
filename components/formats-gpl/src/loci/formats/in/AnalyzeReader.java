@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,12 +38,12 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * AnalyzeReader is the file format reader for Analyze 7.5 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AnalyzeReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AnalyzeReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -59,7 +59,7 @@ public class AnalyzeReader extends FormatReader {
   private int pixelOffset;
 
   /** File containing the pixel data. */
-  private RandomAccessInputStream pixelFile;
+  private transient RandomAccessInputStream pixelFile;
 
   private String pixelsFilename;
 
@@ -76,6 +76,7 @@ public class AnalyzeReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false;
     if (!open) return false;
@@ -104,6 +105,7 @@ public class AnalyzeReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -116,6 +118,7 @@ public class AnalyzeReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -123,6 +126,7 @@ public class AnalyzeReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -136,6 +140,7 @@ public class AnalyzeReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? new String[] {currentId} :
@@ -143,11 +148,13 @@ public class AnalyzeReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (pixelFile != null) pixelFile.close();
@@ -158,9 +165,19 @@ public class AnalyzeReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    if (pixelFile == null) {
+      pixelFile = new RandomAccessInputStream(pixelsFilename);
+    }
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // the dataset has two files - we want the one ending in '.hdr'
     if (id.endsWith(".img")) {
@@ -332,9 +349,9 @@ public class AnalyzeReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelWidth * 0.001);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelHeight * 0.001);
-      PositiveFloat sizeZ =
+      Length sizeX = FormatTools.getPhysicalSizeX(voxelWidth * 0.001);
+      Length sizeY = FormatTools.getPhysicalSizeY(voxelHeight * 0.001);
+      Length sizeZ =
         FormatTools.getPhysicalSizeZ(sliceThickness * 0.001);
 
       if (sizeX != null) {
@@ -346,8 +363,7 @@ public class AnalyzeReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-
-      store.setPixelsTimeIncrement(new Double(deltaT * 1000), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT * 1000), UNITS.S), 0);
     }
   }
 

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -42,11 +42,16 @@ if(BUILD_DOXYGEN)
                      COMMAND ${CMAKE_COMMAND} -E remove_directory bioformats
                      COMMAND ${CMAKE_COMMAND} -E make_directory bioformats
                      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox
-                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
+                     DEPENDS gensrc ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
 
   add_custom_target(doc-check
                     COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake
                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log)
 
-  add_custom_target(doc DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+  add_custom_target(doc-api ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+  # For backward compatibility
+  add_custom_target(doc DEPENDS doc-api)
+
+  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bioformats/"
+          DESTINATION "${CMAKE_INSTALL_FULL_DOCDIR}/cpp-api")
 endif(BUILD_DOXYGEN)

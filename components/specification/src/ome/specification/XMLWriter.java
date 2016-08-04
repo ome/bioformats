@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,8 +26,7 @@
  * integration.XMLWriter
  *
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2014 University of Dundee. All rights reserved.
- *
+ *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
  * 	This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -144,15 +143,15 @@ public class XMLWriter
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06";
+		"http://www.openmicroscopy.org/Schemas/OME/2015-01";
 
 	/** The XML namespace. */
 	private static final String BIN_NS =
-		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06";
+		"http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -160,7 +159,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =

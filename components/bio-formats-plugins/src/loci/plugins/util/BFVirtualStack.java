@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,6 +39,7 @@ import loci.formats.ChannelMerger;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.cache.Cache;
 import loci.formats.cache.CacheException;
 import loci.formats.cache.CacheStrategy;
@@ -47,10 +48,6 @@ import loci.plugins.util.RecordedImageProcessor.MethodEntry;
 
 /**
  * Subclass of VirtualStack that uses Bio-Formats to read planes on demand.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/util/BFVirtualStack.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/util/BFVirtualStack.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -112,7 +109,13 @@ public class BFVirtualStack extends VirtualStack {
     this.series = r.getSeries();
 
     // set up cache
-    int[] subC = r.getChannelDimLengths();
+    int[] subC;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+    } else {
+      subC = new int[] {r.getSizeC()};
+    }
     if (merge) subC = new int[] {new ChannelMerger(r).getEffectiveSizeC()};
     len = new int[subC.length + 2];
     System.arraycopy(subC, 0, len, 0, subC.length);
@@ -151,6 +154,7 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- VirtualStack API methods --
 
+  @Override
   public synchronized ImageProcessor getProcessor(int n) {
     reader.setSeries(series);
 
@@ -259,16 +263,19 @@ public class BFVirtualStack extends VirtualStack {
     return null;
   }
 
+  @Override
   public int getWidth() {
     reader.setSeries(series);
     return reader.getSizeX();
   }
 
+  @Override
   public int getHeight() {
     reader.setSeries(series);
     return reader.getSizeY();
   }
 
+  @Override
   public int getSize() {
     if (reader.getCurrentFile() == null) return 0;
     reader.setSeries(series);

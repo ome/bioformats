@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,18 +27,21 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -52,34 +55,32 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 /**
  * LIFReader is the file format reader for Leica LIF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/LIFReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/LIFReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -90,55 +91,59 @@ public class LIFReader extends FormatReader {
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
-  private static final HashMap<String, Integer> CHANNEL_PRIORITIES =
+  /** The encoding used in this file.*/
+  private static final String ENCODING = "ISO-8859-1";
+
+  private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
-  private static HashMap<String, Integer> createChannelPriorities() {
-    HashMap<String, Integer> h = new HashMap<String, Integer>();
+  private static ImmutableMap<String, Integer> createChannelPriorities() {
+    final Builder<String, Integer> h = ImmutableMap.builder();
 
-    h.put("red", new Integer(0));
-    h.put("green", new Integer(1));
-    h.put("blue", new Integer(2));
-    h.put("cyan", new Integer(3));
-    h.put("magenta", new Integer(4));
-    h.put("yellow", new Integer(5));
-    h.put("black", new Integer(6));
-    h.put("gray", new Integer(7));
-    h.put("", new Integer(8));
+    h.put("red", 0);
+    h.put("green", 1);
+    h.put("blue", 2);
+    h.put("cyan", 3);
+    h.put("magenta", 4);
+    h.put("yellow", 5);
+    h.put("black", 6);
+    h.put("gray", 7);
+    h.put("", 8);
 
-    return h;
+    return h.build();
   }
 
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
-  private Vector<Long> offsets;
+  private List<Long> offsets;
 
   private int[][] realChannel;
   private int lastChannel = 0;
 
-  private Vector<String> lutNames = new Vector<String>();
-  private Vector<Double> physicalSizeXs = new Vector<Double>();
-  private Vector<Double> physicalSizeYs = new Vector<Double>();
-  private Vector<Double> fieldPosX = new Vector<Double>();
-  private Vector<Double> fieldPosY = new Vector<Double>();
+  private List<String> lutNames = new ArrayList<String>();
+  private List<Double> physicalSizeXs = new ArrayList<Double>();
+  private List<Double> physicalSizeYs = new ArrayList<Double>();
+  private List<Length> fieldPosX = new ArrayList<Length>();
+  private List<Length> fieldPosY = new ArrayList<Length>();
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
   private Double[][] expTimes, gains, detectorOffsets;
   private String[][] channelNames;
-  private Vector[] detectorModels;
-  private Integer[][] exWaves;
-  private Vector[] activeDetector;
+  private List[] detectorModels;
+  private Double[][] exWaves;
+  private List[] activeDetector;
   private HashMap[] detectorIndexes;
 
   private String[] immersions, corrections, objectiveModels;
   private Double[] magnification;
-  private Double[] posX, posY, posZ;
+  private Length[] posX, posY, posZ;
   private Double[] refractiveIndex;
-  private Vector[] cutIns, cutOuts, filterModels;
+  private List[] cutIns, cutOuts, filterModels;
   private double[][] timestamps;
-  private Vector[] laserWavelength, laserIntensity;
+  private List[] laserWavelength, laserIntensity, laserActive, laserFrap;
+
   private ROI[][] imageROIs;
   private boolean alternateCenter = false;
   private String[] imageNames;
@@ -159,12 +164,14 @@ public class LIFReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
@@ -172,6 +179,7 @@ public class LIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
@@ -221,6 +229,7 @@ public class LIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
@@ -272,6 +281,7 @@ public class LIFReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -337,6 +347,7 @@ public class LIFReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -362,7 +373,7 @@ public class LIFReader extends FormatReader {
       refractiveIndex = null;
       cutIns = cutOuts = filterModels = null;
       timestamps = null;
-      laserWavelength = laserIntensity = null;
+      laserWavelength = laserIntensity = laserActive = laserFrap = null;
       imageROIs = null;
       alternateCenter = false;
       imageNames = null;
@@ -378,10 +389,12 @@ public class LIFReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    offsets = new Vector<Long>();
+    in.setEncoding(ENCODING);
+    offsets = new ArrayList<Long>();
 
     in.order(true);
 
@@ -445,7 +458,7 @@ public class LIFReader extends FormatReader {
       int descrLength = in.readInt() * 2;
 
       if (blockLength > 0) {
-        offsets.add(new Long(in.getFilePointer() + descrLength));
+        offsets.add(in.getFilePointer() + descrLength);
       }
 
       in.seek(in.getFilePointer() + descrLength + blockLength);
@@ -485,11 +498,10 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    IMetadata omexml = null;
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      omexml = service.createOMEXMLMetadata();
+      service.createOMEXMLMetadata();
     }
     catch (DependencyException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
@@ -498,12 +510,11 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
     MetadataStore store = makeFilterMetadata();
-    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
 
-    xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>" + xml +
+    xml = "<?xml version=\"1.0\" encoding=\""+ENCODING+"\"?><LEICA>" + xml +
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
@@ -600,21 +611,24 @@ public class LIFReader extends FormatReader {
               (String) filterModels[index].get(filter), i, filter);
           }
           store.setTransmittanceRangeCutIn(
-            (PositiveInteger) cutIns[index].get(filter), i, filter);
+            (Length) cutIns[index].get(filter), i, filter);
           store.setTransmittanceRangeCutOut(
-            (PositiveInteger) cutOuts[index].get(filter), i, filter);
+            (Length) cutOuts[index].get(filter), i, filter);
         }
       }
 
-      Vector lasers = laserWavelength[index];
-      Vector laserIntensities = laserIntensity[index];
+      final List<Double> lasers = laserWavelength[index];
+      final List<Double> laserIntensities = laserIntensity[index];
+
+      final List<Boolean> active = laserActive[index];
+      final List<Boolean> frap = laserFrap[index];
       int nextChannel = 0;
 
       if (lasers != null) {
         int laserIndex = 0;
         while (laserIndex < lasers.size()) {
-          if ((Integer) lasers.get(laserIndex) == 0) {
-            lasers.removeElementAt(laserIndex);
+          if ((Double) lasers.get(laserIndex) == 0) {
+            lasers.remove(laserIndex);
           }
           else {
             laserIndex++;
@@ -626,28 +640,55 @@ public class LIFReader extends FormatReader {
           store.setLaserID(id, i, laser);
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
-          Integer wavelength = (Integer) lasers.get(laser);
-          PositiveInteger wave = FormatTools.getWavelength(wavelength);
+          Double wavelength = (Double) lasers.get(laser);
+          Length wave = FormatTools.getWavelength(wavelength);
           if (wave != null) {
             store.setLaserWavelength(wave, i, laser);
           }
         }
 
-        Vector<Integer> validIntensities = new Vector<Integer>();
+        Set<Integer> ignoredChannels = new HashSet<Integer>();
+        final List<Integer> validIntensities = new ArrayList<Integer>();
+        int size = lasers.size();
+        int channel = 0;
+        Set<Integer> channels = new HashSet<Integer>();
+
         for (int laser=0; laser<laserIntensities.size(); laser++) {
           double intensity = (Double) laserIntensities.get(laser);
+          channel = laser/size;
           if (intensity < 100) {
             validIntensities.add(laser);
+            channels.add(channel);
+          }
+          ignoredChannels.add(channel);
+        }
+        //remove channels w/o valid intensities
+        ignoredChannels.removeAll(channels);
+        //remove entries if channel has 2 wavelengths
+        //e.g. 30% 458 70% 633
+        int s = validIntensities.size();
+
+        int jj;
+        Set<Integer> toRemove = new HashSet<Integer>();
+
+        int as = active.size();
+        for (int j = 0; j < s; j++) {
+          if (j < as && !(Boolean) active.get(j)) {
+            toRemove.add(validIntensities.get(j));
+          }
+          jj = j+1;
+          if (jj < s) {
+            int v = validIntensities.get(j)/size;
+            int vv = validIntensities.get(jj)/size;
+            if (vv == v) {//do not consider that channel.
+              toRemove.add(validIntensities.get(j));
+              toRemove.add(validIntensities.get(jj));
+              ignoredChannels.add(j);
+            }
           }
         }
-
-        if (validIntensities.size() == getEffectiveSizeC() + 1) {
-          validIntensities.remove(1);
-        }
-
-        int start = validIntensities.size() - getEffectiveSizeC();
-        if (start < 0) {
-          start = 0;
+        if (toRemove.size() > 0) {
+          validIntensities.removeAll(toRemove);
         }
 
         boolean noNames = true;
@@ -659,15 +700,26 @@ public class LIFReader extends FormatReader {
             }
           }
         }
+        if (!noNames && frap != null) { //only use name for frap.
+          for (int k = 0; k < frap.size(); k++) {
+            if (!frap.get(k)) {
+              noNames = true;
+              break;
+            }
+          }
+        }
 
         int nextFilter = 0;
         //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
-        for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
+        for (int k=0; k<validIntensities.size(); k++, nextChannel++) {
           int laserArrayIndex = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(laserArrayIndex);
           int laser = laserArrayIndex % lasers.size();
-          Integer wavelength = (Integer) lasers.get(laser);
+          Double wavelength = (Double) lasers.get(laser);
           if (wavelength != 0) {
+            while (ignoredChannels.contains(nextChannel)) {
+              nextChannel++;
+            }
             while (channelNames != null && nextChannel < getEffectiveSizeC() &&
               channelNames[index] != null &&
               ((channelNames[index][nextChannel] == null ||
@@ -681,8 +733,7 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
 
-              PositiveInteger ex =
-                FormatTools.getExcitationWavelength(wavelength);
+              Length ex = FormatTools.getExcitationWavelength(wavelength);
               if (ex != null) {
                 store.setChannelExcitationWavelength(ex, i, nextChannel);
               }
@@ -692,13 +743,13 @@ public class LIFReader extends FormatReader {
                 {
                   continue;
                 }
-                Integer cutIn =
-                  ((PositiveInteger) cutIns[index].get(nextFilter)).getValue();
+                Double cutIn =
+                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
-                    cutIn = ((PositiveInteger)
-                      cutIns[index].get(nextFilter)).getValue();
+                    cutIn = ((Length)
+                      cutIns[index].get(nextFilter)).value(UNITS.NM).doubleValue();
                   }
                   else {
                     break;
@@ -728,11 +779,11 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[index].trim(), i);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
@@ -743,9 +794,11 @@ public class LIFReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(tSteps[index], i);
+      if (tSteps[index] != null) {
+        store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.S), i);
+      }
 
-      Vector detectors = detectorModels[index];
+      final List<String> detectors = detectorModels[index];
       if (detectors != null) {
         nextChannel = 0;
         int start = detectors.size() - getEffectiveSizeC();
@@ -777,7 +830,7 @@ public class LIFReader extends FormatReader {
         }
       }
 
-      Vector activeDetectors = activeDetector[index];
+      final List<Boolean> activeDetectors = activeDetector[index];
       int firstDetector = activeDetectors == null ? 0 :
         activeDetectors.size() - getEffectiveSizeC();
       int nextDetector = firstDetector;
@@ -828,10 +881,12 @@ public class LIFReader extends FormatReader {
         if (channelNames[index] != null) {
           store.setChannelName(channelNames[index][c], i, c);
         }
-        store.setChannelPinholeSize(pinholes[index], i, c);
+        if (pinholes[index] != null) {
+          store.setChannelPinholeSize(new Length(pinholes[index], UNITS.MICROM), i, c);
+        }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            PositiveInteger ex =
+            Length ex =
               FormatTools.getExcitationWavelength(exWaves[index][c]);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
@@ -876,8 +931,8 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        Double xPos = posX[index];
-        Double yPos = posY[index];
+        Length xPos = posX[index];
+        Length yPos = posY[index];
         if (i < fieldPosX.size() && fieldPosX.get(i) != null) {
           xPos = fieldPosX.get(i);
         }
@@ -899,12 +954,15 @@ public class LIFReader extends FormatReader {
           else if (timestamp == acquiredDate[index] && image > 0) {
             timestamp = timestamps[index][0];
           }
-          store.setPlaneDeltaT(timestamp, i, image);
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, image);
         }
 
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
-          store.setPlaneExposureTime(expTimes[index][c], i, image);
+          if (expTimes[index][c] != null)
+          {
+            store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.S), i, image);
+          }
         }
       }
 
@@ -921,20 +979,20 @@ public class LIFReader extends FormatReader {
   private Element getMetadataRoot(String xml)
     throws FormatException, IOException
   {
+    ByteArrayInputStream s = null;
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s =
-        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
-      Element root = parser.parse(s).getDocumentElement();
-      s.close();
-      return root;
+      s = new ByteArrayInputStream(xml.getBytes(ENCODING));
+      return parser.parse(s).getDocumentElement();
     }
     catch (ParserConfigurationException e) {
       throw new FormatException(e);
     }
     catch (SAXException e) {
       throw new FormatException(e);
+    } finally {
+        if (s != null) s.close();
     }
   }
 
@@ -950,69 +1008,108 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    NodeList imageNodes = getNodes(realRoot, "Image");
+    NodeList images = getNodes(realRoot, "Image");
+    List<Element> imageNodes = new ArrayList<Element>();
+    Long[] oldOffsets = null;
+    if (images.getLength() > offsets.size()) {
+      oldOffsets = offsets.toArray(new Long[offsets.size()]);
+      offsets.clear();
+    }
 
-    tileCount = new int[imageNodes.getLength()];
+    int nextOffset = 0;
+    for (int i=0; i<images.getLength(); i++) {
+      Element image = (Element) images.item(i);
+      Element grandparent = (Element) image.getParentNode();
+      if (grandparent == null) {
+        continue;
+      }
+      grandparent = (Element) grandparent.getParentNode();
+      if (grandparent == null) {
+        continue;
+      }
+      if (!"ProcessingHistory".equals(grandparent.getNodeName())) {
+        // image is being referenced from an event list
+        imageNodes.add(image);
+        if (oldOffsets != null && nextOffset < oldOffsets.length) {
+          offsets.add(oldOffsets[nextOffset]);
+        }
+      }
+      grandparent = (Element) grandparent.getParentNode();
+      if (grandparent == null) {
+        continue;
+      }
+      grandparent = (Element) grandparent.getParentNode();
+      if (grandparent != null) {
+        if (!"Image".equals(grandparent.getNodeName())) {
+          nextOffset++;
+        }
+      }
+    }
+
+    tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
-    core = new ArrayList<CoreMetadata>(imageNodes.getLength());
-    acquiredDate = new double[imageNodes.getLength()];
-    descriptions = new String[imageNodes.getLength()];
-    laserWavelength = new Vector[imageNodes.getLength()];
-    laserIntensity = new Vector[imageNodes.getLength()];
-    timestamps = new double[imageNodes.getLength()][];
-    activeDetector = new Vector[imageNodes.getLength()];
-    serialNumber = new String[imageNodes.getLength()];
-    lensNA = new Double[imageNodes.getLength()];
-    magnification = new Double[imageNodes.getLength()];
-    immersions = new String[imageNodes.getLength()];
-    corrections = new String[imageNodes.getLength()];
-    objectiveModels = new String[imageNodes.getLength()];
-    posX = new Double[imageNodes.getLength()];
-    posY = new Double[imageNodes.getLength()];
-    posZ = new Double[imageNodes.getLength()];
-    refractiveIndex = new Double[imageNodes.getLength()];
-    cutIns = new Vector[imageNodes.getLength()];
-    cutOuts = new Vector[imageNodes.getLength()];
-    filterModels = new Vector[imageNodes.getLength()];
-    microscopeModels = new String[imageNodes.getLength()];
-    detectorModels = new Vector[imageNodes.getLength()];
-    detectorIndexes = new HashMap[imageNodes.getLength()];
-    zSteps = new Double[imageNodes.getLength()];
-    tSteps = new Double[imageNodes.getLength()];
-    pinholes = new Double[imageNodes.getLength()];
-    zooms = new Double[imageNodes.getLength()];
+    core = new ArrayList<CoreMetadata>(imageNodes.size());
+    acquiredDate = new double[imageNodes.size()];
+    descriptions = new String[imageNodes.size()];
+    laserWavelength = new List[imageNodes.size()];
+    laserIntensity = new List[imageNodes.size()];
+    laserActive = new List[imageNodes.size()];
+    laserFrap = new List[imageNodes.size()];
+    timestamps = new double[imageNodes.size()][];
+    activeDetector = new List[imageNodes.size()];
+    serialNumber = new String[imageNodes.size()];
+    lensNA = new Double[imageNodes.size()];
+    magnification = new Double[imageNodes.size()];
+    immersions = new String[imageNodes.size()];
+    corrections = new String[imageNodes.size()];
+    objectiveModels = new String[imageNodes.size()];
+    posX = new Length[imageNodes.size()];
+    posY = new Length[imageNodes.size()];
+    posZ = new Length[imageNodes.size()];
+    refractiveIndex = new Double[imageNodes.size()];
+    cutIns = new List[imageNodes.size()];
+    cutOuts = new List[imageNodes.size()];
+    filterModels = new List[imageNodes.size()];
+    microscopeModels = new String[imageNodes.size()];
+    detectorModels = new List[imageNodes.size()];
+    detectorIndexes = new HashMap[imageNodes.size()];
+    zSteps = new Double[imageNodes.size()];
+    tSteps = new Double[imageNodes.size()];
+    pinholes = new Double[imageNodes.size()];
+    zooms = new Double[imageNodes.size()];
 
-    expTimes = new Double[imageNodes.getLength()][];
-    gains = new Double[imageNodes.getLength()][];
-    detectorOffsets = new Double[imageNodes.getLength()][];
-    channelNames = new String[imageNodes.getLength()][];
-    exWaves = new Integer[imageNodes.getLength()][];
-    imageROIs = new ROI[imageNodes.getLength()][];
-    imageNames = new String[imageNodes.getLength()];
+    expTimes = new Double[imageNodes.size()][];
+    gains = new Double[imageNodes.size()][];
+    detectorOffsets = new Double[imageNodes.size()][];
+    channelNames = new String[imageNodes.size()][];
+    exWaves = new Double[imageNodes.size()][];
+    imageROIs = new ROI[imageNodes.size()][];
+    imageNames = new String[imageNodes.size()];
 
     core.clear();
-    for (int i=0; i<imageNodes.getLength(); i++) {
-      Element image = (Element) imageNodes.item(i);
+    for (int i=0; i<imageNodes.size(); i++) {
+      Element image = imageNodes.get(i);
 
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
 
-      setSeries(i);
+      int index = core.size() - 1;
+      setSeries(index);
 
-      translateImageNames(image, i);
-      translateImageNodes(image, i);
-      translateAttachmentNodes(image, i);
-      translateScannerSettings(image, i);
-      translateFilterSettings(image, i);
-      translateTimestamps(image, i);
-      translateLaserLines(image, i);
-      translateROIs(image, i);
-      translateSingleROIs(image, i);
-      translateDetectors(image, i);
+      translateImageNames(image, index);
+      translateImageNodes(image, index);
+      translateAttachmentNodes(image, index);
+      translateScannerSettings(image, index);
+      translateFilterSettings(image, index);
+      translateTimestamps(image, index);
+      translateLaserLines(image, index);
+      translateROIs(image, index);
+      translateSingleROIs(image, index);
+      translateDetectors(image, index);
 
-      Stack<String> nameStack = new Stack<String>();
+      final Deque<String> nameStack = new ArrayDeque<String>();
       populateOriginalMetadata(image, nameStack);
-      addUserCommentMeta(image);
+      addUserCommentMeta(image, i);
     }
     setSeries(0);
 
@@ -1029,7 +1126,7 @@ public class LIFReader extends FormatReader {
     core = newCore;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
     String name = root.getNodeName();
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
@@ -1042,7 +1139,9 @@ public class LIFReader extends FormatReader {
         suffix = root.getAttribute("Description");
       }
       StringBuffer key = new StringBuffer();
-      for (String k : nameStack) {
+      final Iterator<String> nameStackIterator = nameStack.descendingIterator();
+      while (nameStackIterator.hasNext()) {
+        final String k = nameStackIterator.next();
         key.append(k);
         key.append("|");
       }
@@ -1081,7 +1180,7 @@ public class LIFReader extends FormatReader {
   }
 
   private void translateImageNames(Element imageNode, int image) {
-    Vector<String> names = new Vector<String>();
+    final List<String> names = new ArrayList<String>();
     Element parent = imageNode;
     while (true) {
       parent = (Element) parent.getParentNode();
@@ -1105,7 +1204,8 @@ public class LIFReader extends FormatReader {
     NodeList definitions = getNodes(imageNode, "ATLConfocalSettingDefinition");
     if (definitions == null) return;
 
-    Vector<String> channels = new Vector<String>();
+    final List<String> channels = new ArrayList<String>();
+    laserActive[image] = new ArrayList<Boolean>();
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
@@ -1113,24 +1213,25 @@ public class LIFReader extends FormatReader {
       boolean isMaster = parentName.endsWith("Master");
       NodeList detectors = getNodes(definitionNode, "Detector");
       if (detectors == null) return;
-
+      int count = 0;
       for (int d=0; d<detectors.getLength(); d++) {
         Element detector = (Element) detectors.item(d);
-        NodeList multibands = getNodes(definitionNode, "MultiBand");
+        NodeList multibands = null;
+        if (!isMaster) {
+          multibands = getNodes(definitionNode, "MultiBand");
+        }
 
         String v = detector.getAttribute("Gain");
         Double gain =
-          v == null || v.trim().length() == 0 ? null : new Double(v);
+          v == null || v.trim().isEmpty() ? null : new Double(v.trim());
         v = detector.getAttribute("Offset");
         Double offset =
-          v == null || v.trim().length() == 0 ? null : new Double(v);
+          v == null || v.trim().isEmpty() ? null : new Double(v.trim());
 
         boolean active = "1".equals(detector.getAttribute("IsActive"));
-
+        String c = detector.getAttribute("Channel");
+        int channel = (c == null || c.trim().length() == 0) ? 0 : Integer.parseInt(c);
         if (active) {
-          String c = detector.getAttribute("Channel");
-          int channel = c == null ? 0 : Integer.parseInt(c);
-
           if (detectorIndexes[image] != null && detectorModels[image] != null) {
             detectorModels[image].add(detectorIndexes[image].get(channel));
           }
@@ -1157,20 +1258,20 @@ public class LIFReader extends FormatReader {
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
             if ((int) cutIn > 0) {
               if (cutIns[image] == null) {
-                cutIns[image] = new Vector<PositiveInteger>();
+                cutIns[image] = new ArrayList<PositiveFloat>();
               }
-              PositiveInteger in =
-                FormatTools.getCutIn((int) Math.round(cutIn));
+              Length in =
+                FormatTools.getCutIn((double) Math.round(cutIn));
               if (in != null) {
                 cutIns[image].add(in);
               }
             }
             if ((int) cutOut > 0) {
               if (cutOuts[image] == null) {
-                cutOuts[image] = new Vector<PositiveInteger>();
+                cutOuts[image] = new ArrayList<PositiveFloat>();
               }
-              PositiveInteger out =
-                FormatTools.getCutOut((int) Math.round(cutOut));
+              Length out =
+                FormatTools.getCutOut((double) Math.round(cutOut));
               if (out != null) {
                 cutOuts[image].add(out);
               }
@@ -1180,6 +1281,7 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
+          
           if (!isMaster) {
             if (channel < nextChannel) {
               nextChannel = 0;
@@ -1196,11 +1298,16 @@ public class LIFReader extends FormatReader {
 
             nextChannel++;
           }
+        } else {
+          count++;
         }
-
         if (active && activeDetector[image] != null) {
           activeDetector[image].add(active);
         }
+      }
+      //Store values to check if actually it is active.
+      if (!isMaster) {
+        laserActive[image].add(count < detectors.getLength());
       }
     }
 
@@ -1209,7 +1316,7 @@ public class LIFReader extends FormatReader {
         int index = i + channels.size() - getEffectiveSizeC();
         if (index >= 0 && index < channels.size()) {
           if (channelNames[image][i] == null ||
-            channelNames[image][i].trim().length() == 0)
+            channelNames[image][i].trim().isEmpty())
           {
             channelNames[image][i] = channels.get(index);
           }
@@ -1231,12 +1338,12 @@ public class LIFReader extends FormatReader {
       ROI roi = new ROI();
 
       String type = roiNode.getAttribute("type");
-      if (type != null) {
-        roi.type = Integer.parseInt(type);
+      if (type != null && !type.trim().isEmpty()) {
+        roi.type = Integer.parseInt(type.trim());
       }
       String color = roiNode.getAttribute("color");
-      if (color != null) {
-        roi.color = Long.parseLong(color);
+      if (color != null && !color.trim().isEmpty()) {
+        roi.color = Long.parseLong(color.trim());
       }
       roi.name = roiNode.getAttribute("name");
       roi.fontName = roiNode.getAttribute("fontName");
@@ -1247,12 +1354,13 @@ public class LIFReader extends FormatReader {
       roi.scaleY = parseDouble(roiNode.getAttribute("transScalingY"));
       roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
       String linewidth = roiNode.getAttribute("linewidth");
-      if (linewidth != null) {
-        try {
-          roi.linewidth = Integer.parseInt(linewidth);
+      try {
+        if (linewidth != null && !linewidth.trim().isEmpty()) {
+          roi.linewidth = Integer.parseInt(linewidth.trim());
         }
-        catch (NumberFormatException e) { }
       }
+      catch (NumberFormatException e) { }
+
       roi.text = roiNode.getAttribute("text");
 
       NodeList vertices = getNodes(roiNode, "Vertex");
@@ -1265,11 +1373,11 @@ public class LIFReader extends FormatReader {
         String xx = vertex.getAttribute("x");
         String yy = vertex.getAttribute("y");
 
-        if (xx != null) {
-          roi.x.add(parseDouble(xx));
+        if (xx != null && !xx.trim().isEmpty()) {
+          roi.x.add(parseDouble(xx.trim()));
         }
-        if (yy != null) {
-          roi.y.add(parseDouble(yy));
+        if (yy != null && !yy.trim().isEmpty()) {
+          roi.y.add(parseDouble(yy.trim()));
         }
       }
       imageROIs[image][r] = roi;
@@ -1299,12 +1407,12 @@ public class LIFReader extends FormatReader {
       ROI roi = new ROI();
 
       String type = roiNode.getAttribute("RoiType");
-      if (type != null) {
-        roi.type = Integer.parseInt(type);
+      if (type != null && !type.trim().isEmpty()) {
+        roi.type = Integer.parseInt(type.trim());
       }
       String color = roiNode.getAttribute("Color");
-      if (color != null) {
-        roi.color = Long.parseLong(color);
+      if (color != null && !color.trim().isEmpty()) {
+        roi.color = Long.parseLong(color.trim());
       }
       Element parent = (Element) roiNode.getParentNode();
       parent = (Element) parent.getParentNode();
@@ -1320,11 +1428,11 @@ public class LIFReader extends FormatReader {
         String xx = vertex.getAttribute("X");
         String yy = vertex.getAttribute("Y");
 
-        if (xx != null) {
-          roi.x.add(parseDouble(xx) / sizeX);
+        if (xx != null && !xx.trim().isEmpty()) {
+          roi.x.add(parseDouble(xx.trim()) / sizeX);
         }
-        if (yy != null) {
-          roi.y.add(parseDouble(yy) / sizeY);
+        if (yy != null && !yy.trim().isEmpty()) {
+          roi.y.add(parseDouble(yy.trim()) / sizeY);
         }
       }
 
@@ -1349,10 +1457,11 @@ public class LIFReader extends FormatReader {
     throws FormatException
   {
     NodeList aotfLists = getNodes(imageNode, "AotfList");
-    if (aotfLists == null) return;
+    if (aotfLists == null || aotfLists.getLength() == 0) return;
 
-    laserWavelength[image] = new Vector<Integer>();
-    laserIntensity[image] = new Vector<Double>();
+    laserWavelength[image] = new ArrayList<Double>();
+    laserIntensity[image] = new ArrayList<Double>();
+    laserFrap[image] = new ArrayList<Boolean>();
 
     int baseIntensityIndex = 0;
 
@@ -1360,37 +1469,57 @@ public class LIFReader extends FormatReader {
       Element aotf = (Element) aotfLists.item(channel);
       NodeList laserLines = getNodes(aotf, "LaserLineSetting");
       if (laserLines == null) return;
-
+      String gpName = aotf.getParentNode().getParentNode().getNodeName();
+      //might need parent for attachment
+      boolean isMaster = gpName.endsWith("Sequential_Master") ||
+              gpName.endsWith("Attachment");
+      laserFrap[image].add(gpName.endsWith("FRAP_Master"));
       for (int laser=0; laser<laserLines.getLength(); laser++) {
         Element laserLine = (Element) laserLines.item(laser);
-
+        
+        if (isMaster) {
+          continue;
+        }
         String lineIndex = laserLine.getAttribute("LineIndex");
         String qual = laserLine.getAttribute("Qualifier");
-        int index = lineIndex == null ? 0 : Integer.parseInt(lineIndex);
-        int qualifier = qual == null ? 0: Integer.parseInt(qual);
+        int index =
+          lineIndex == null || lineIndex.trim().isEmpty() ? 0 :
+          Integer.parseInt(lineIndex.trim());
+        int qualifier =
+          qual == null || qual.trim().isEmpty() ? 0:
+          Integer.parseInt(qual.trim());
 
         index += (2 - (qualifier / 10));
-        if (index < 0) index = 0;
+        if (index < 0) {
+            continue;
+            //index = 0;
+        }
 
-        Integer wavelength = new Integer(laserLine.getAttribute("LaserLine"));
+        String v = laserLine.getAttribute("LaserLine");
+        Double wavelength = 0d;
+        if (v != null && !v.trim().isEmpty()) {
+            wavelength = new Double(v.trim());
+        }
         if (index < laserWavelength[image].size()) {
-          laserWavelength[image].setElementAt(wavelength, index);
+          laserWavelength[image].set(index, wavelength);
         }
         else {
           for (int i=laserWavelength[image].size(); i<index; i++) {
-            laserWavelength[image].add(new Integer(0));
+            laserWavelength[image].add(Double.valueOf(0));
           }
           laserWavelength[image].add(wavelength);
         }
 
         String intensity = laserLine.getAttribute("IntensityDev");
-        double realIntensity = intensity == null ? 0d : new Double(intensity);
+        double realIntensity =
+          intensity == null || intensity.trim().isEmpty() ? 0d :
+          new Double(intensity.trim());
         realIntensity = 100d - realIntensity;
 
         int realIndex = baseIntensityIndex + index;
 
         if (realIndex < laserIntensity[image].size()) {
-          laserIntensity[image].setElementAt(realIntensity, realIndex);
+          laserIntensity[image].set(realIndex, realIntensity);
         }
         else {
           while (realIndex < laserIntensity[image].size()) {
@@ -1418,8 +1547,12 @@ public class LIFReader extends FormatReader {
           Element timestamp = (Element) timestampNodes.item(stamp);
           String stampHigh = timestamp.getAttribute("HighInteger");
           String stampLow = timestamp.getAttribute("LowInteger");
-          long high = stampHigh == null ? 0 : Long.parseLong(stampHigh);
-          long low = stampLow == null ? 0 : Long.parseLong(stampLow);
+          long high =
+            stampHigh == null || stampHigh.trim().isEmpty() ? 0 :
+                Long.parseLong(stampHigh.trim());
+          long low =
+            stampLow == null || stampHigh.trim().isEmpty() ? 0 :
+                Long.parseLong(stampLow.trim());
 
           long ms = DateTools.getMillisFromTicks(high, low);
 
@@ -1447,10 +1580,10 @@ public class LIFReader extends FormatReader {
     NodeList filterSettings = getNodes(imageNode, "FilterSettingRecord");
     if (filterSettings == null) return;
 
-    activeDetector[image] = new Vector<Boolean>();
-    cutIns[image] = new Vector<PositiveInteger>();
-    cutOuts[image] = new Vector<PositiveInteger>();
-    filterModels[image] = new Vector<String>();
+    activeDetector[image] = new ArrayList<Boolean>();
+    cutIns[image] = new ArrayList<PositiveFloat>();
+    cutOuts[image] = new ArrayList<PositiveFloat>();
+    filterModels[image] = new ArrayList<String>();
     detectorIndexes[image] = new HashMap<Integer, String>();
 
     int nextChannel = 0;
@@ -1465,10 +1598,14 @@ public class LIFReader extends FormatReader {
       String data = filterSetting.getAttribute("Data");
 
       if (attribute.equals("NumericalAperture")) {
-        lensNA[image] = new Double(variant);
+        if (variant != null && !variant.trim().isEmpty()) {
+          lensNA[image] = new Double(variant.trim());
+        }
       }
       else if (attribute.equals("OrderNumber")) {
-        serialNumber[image] = variant;
+        if (variant != null && !variant.trim().isEmpty()) {
+          serialNumber[image] = variant.trim();
+        }
       }
       else if (objectClass.equals("CDetectionUnit")) {
         if (attribute.equals("State")) {
@@ -1476,7 +1613,7 @@ public class LIFReader extends FormatReader {
           if (channel < 0) continue;
 
           detectorIndexes[image].put(new Integer(data), object);
-          activeDetector[image].add(variant.equals("Active"));
+          activeDetector[image].add("Active".equals(variant.trim()));
         }
       }
       else if (attribute.equals("Objective")) {
@@ -1491,8 +1628,13 @@ public class LIFReader extends FormatReader {
 
             String na = token.substring(x + 1);
 
-            magnification[image] = new Double(token.substring(0, x));
-            lensNA[image] = new Double(na);
+            if (na != null && !na.trim().isEmpty()) {
+              lensNA[image] = new Double(na.trim());
+            }
+            na = token.substring(0, x);
+            if (na != null && !na.trim().isEmpty()) {
+              magnification[image] = new Double(na.trim());
+            }
           }
           else {
             model.append(token);
@@ -1503,7 +1645,7 @@ public class LIFReader extends FormatReader {
         String immersion = "Other";
         if (tokens.hasMoreTokens()) {
           immersion = tokens.nextToken();
-          if (immersion == null || immersion.trim().equals("")) {
+          if (immersion == null || immersion.trim().isEmpty()) {
             immersion = "Other";
           }
         }
@@ -1512,7 +1654,7 @@ public class LIFReader extends FormatReader {
         String correction = "Other";
         if (tokens.hasMoreTokens()) {
           correction = tokens.nextToken();
-          if (correction == null || correction.trim().equals("")) {
+          if (correction == null || correction.trim().isEmpty()) {
             correction = "Other";
           }
         }
@@ -1521,28 +1663,39 @@ public class LIFReader extends FormatReader {
         objectiveModels[image] = model.toString().trim();
       }
       else if (attribute.equals("RefractionIndex")) {
-        refractiveIndex[image] = new Double(variant);
+        if (variant != null && !variant.trim().isEmpty()) {
+          refractiveIndex[image] = new Double(variant.trim());
+        }
       }
       else if (attribute.equals("XPos")) {
-        posX[image] = new Double(variant);
+        if (variant != null && !variant.trim().isEmpty()) {
+          final Double number = Double.valueOf(variant.trim());
+          posX[image] = new Length(number, UNITS.REFERENCEFRAME);
+        }
       }
       else if (attribute.equals("YPos")) {
-        posY[image] = new Double(variant);
+        if (variant != null && !variant.trim().isEmpty()) {
+          final Double number = Double.valueOf(variant.trim());
+          posY[image] = new Length(number, UNITS.REFERENCEFRAME);
+        }
       }
       else if (attribute.equals("ZPos")) {
-        posZ[image] = new Double(variant);
+        if (variant != null && !variant.trim().isEmpty()) {
+          final Double number = Double.valueOf(variant.trim());
+          posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
+        }
       }
       else if (objectClass.equals("CSpectrophotometerUnit")) {
-        Integer v = null;
+        Double v = null;
         try {
-          v = new Integer((int) Double.parseDouble(variant));
+          v = Double.parseDouble(variant);
         }
         catch (NumberFormatException e) { }
         String description = filterSetting.getAttribute("Description");
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
           if (v != null && v > 0) {
-            PositiveInteger in = FormatTools.getCutIn(v);
+            Length in = FormatTools.getCutIn(v);
             if (in != null) {
               cutIns[image].add(in);
             }
@@ -1550,7 +1703,7 @@ public class LIFReader extends FormatReader {
         }
         else if (description.endsWith("(right)")) {
           if (v != null && v > 0) {
-            PositiveInteger out = FormatTools.getCutOut(v);
+            Length out = FormatTools.getCutOut(v);
             if (out != null) {
               cutOuts[image].add(out);
             }
@@ -1575,8 +1728,8 @@ public class LIFReader extends FormatReader {
     gains[image] = new Double[getEffectiveSizeC()];
     detectorOffsets[image] = new Double[getEffectiveSizeC()];
     channelNames[image] = new String[getEffectiveSizeC()];
-    exWaves[image] = new Integer[getEffectiveSizeC()];
-    detectorModels[image] = new Vector<String>();
+    exWaves[image] = new Double[getEffectiveSizeC()];
+    detectorModels[image] = new ArrayList<String>();
 
     for (int i=0; i<scannerSettings.getLength(); i++) {
       Element scannerSetting = (Element) scannerSettings.item(i);
@@ -1589,25 +1742,33 @@ public class LIFReader extends FormatReader {
         microscopeModels[image] = value;
       }
       else if (id.equals("dblPinhole")) {
-        pinholes[image] = Double.parseDouble(value) * 1000000;
+        if (value != null && !value.trim().isEmpty()) {
+          pinholes[image] = Double.parseDouble(value.trim()) * 1000000;
+        }
       }
       else if (id.equals("dblZoom")) {
-        zooms[image] = new Double(value);
+        if (value != null && !value.trim().isEmpty()) {
+          zooms[image] = new Double(value.trim());
+        }
       }
       else if (id.equals("dblStepSize")) {
-        zSteps[image] = Double.parseDouble(value) * 1000000;
+        if (value != null && !value.trim().isEmpty()) {
+          zSteps[image] = Double.parseDouble(value.trim()) * 1000000;
+        }
       }
       else if (id.equals("nDelayTime_s")) {
-        tSteps[image] = new Double(value);
+        if (value != null && !value.trim().isEmpty()) {
+          tSteps[image] = new Double(value.trim());
+        }
       }
       else if (id.equals("CameraName")) {
         detectorModels[image].add(value);
       }
       else if (id.equals("eDirectional")) {
-        addSeriesMeta("Reverse X orientation", value.equals("1"));
+        addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
       }
       else if (id.equals("eDirectionalY")) {
-        addSeriesMeta("Reverse Y orientation", value.equals("1"));
+        addSeriesMeta("Reverse Y orientation", "1".equals(value.trim()));
       }
       else if (id.indexOf("WFC") == 1) {
         int c = 0;
@@ -1620,21 +1781,29 @@ public class LIFReader extends FormatReader {
         }
 
         if (id.endsWith("ExposureTime")) {
-          expTimes[image][c] = new Double(value);
+          if (value != null && !value.trim().isEmpty()) {
+            expTimes[image][c] = new Double(value.trim());
+          }
         }
         else if (id.endsWith("Gain")) {
-          gains[image][c] = new Double(value);
+          if (value != null && !value.trim().isEmpty()) {
+            gains[image][c] = new Double(value.trim());
+          }
         }
         else if (id.endsWith("WaveLength")) {
-          Integer exWave = new Integer(value);
-          if (exWave > 0) {
-            exWaves[image][c] = exWave;
+          if (value != null && !value.trim().isEmpty()) {
+            Double exWave = new Double(value.trim());
+            if (exWave > 0) {
+              exWaves[image][c] = exWave;
+            }
           }
         }
         // NB: "UesrDefName" is not a typo.
-        else if (id.endsWith("UesrDefName") && !value.equals("None")) {
+        else if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) &&
+          !value.equals("None"))
+        {
           if (channelNames[image][c] == null ||
-            channelNames[image][c].trim().length() == 0)
+            channelNames[image][c].trim().isEmpty())
           {
             channelNames[image][c] = value;
           }
@@ -1666,7 +1835,8 @@ public class LIFReader extends FormatReader {
 
           if (posX != null) {
             try {
-              fieldPosX.add(new Double(posX));
+              final Double number = Double.valueOf(posX);
+              fieldPosX.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -1675,7 +1845,8 @@ public class LIFReader extends FormatReader {
           }
           if (posY != null) {
             try {
-              fieldPosY.add(new Double(posY));
+              final Double number = Double.valueOf(posY);
+              fieldPosY.add(new Length(number, UNITS.REFERENCEFRAME));
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
@@ -1687,7 +1858,7 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private void addUserCommentMeta(Element imageNode)
+  private void addUserCommentMeta(Element imageNode, int image)
     throws FormatException
   {
     NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
@@ -1695,6 +1866,9 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<attachmentNodes.getLength(); i++) {
       Node attachment = attachmentNodes.item(i);
       addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
+      if (i == 0 && descriptions[image] == null) {
+        descriptions[image] = attachment.getTextContent();
+      }
     }
   }
 
@@ -1722,7 +1896,9 @@ public class LIFReader extends FormatReader {
 
       lutNames.add(channel.getAttribute("LUTName"));
       String bytesInc = channel.getAttribute("BytesInc");
-      long bytes = bytesInc == null ? 0 : Long.parseLong(bytesInc);
+      long bytes =
+        bytesInc == null || bytesInc.trim().isEmpty() ? 0 :
+            Long.parseLong(bytesInc.trim());
       if (bytes > 0) {
         bytesPerAxis.put(bytes, "C");
       }
@@ -1733,10 +1909,19 @@ public class LIFReader extends FormatReader {
     for (int dim=0; dim<dimensions.getLength(); dim++) {
       Element dimension = (Element) dimensions.item(dim);
 
-      int id = Integer.parseInt(dimension.getAttribute("DimID"));
-      int len = Integer.parseInt(dimension.getAttribute("NumberOfElements"));
-      long nBytes = Long.parseLong(dimension.getAttribute("BytesInc"));
-      Double physicalLen = new Double(dimension.getAttribute("Length"));
+      String v = dimension.getAttribute("DimID");
+      int id = v == null || v.trim().isEmpty() ? 0 : Integer.parseInt(v.trim());
+      v = dimension.getAttribute("NumberOfElements");
+      int len = v == null || v.trim().isEmpty() ? 0 : Integer.parseInt(v.trim());
+      v = dimension.getAttribute("BytesInc");
+      long nBytes = v == null || v.trim().isEmpty() ? 0 : Long.parseLong(v.trim());
+      v = dimension.getAttribute("Length");
+      Double physicalLen;
+      if (StringUtils.isBlank(v)) {
+        physicalLen = 0d;
+      } else {
+        physicalLen = new Double(v.trim());
+      }
       String unit = dimension.getAttribute("Unit");
 
       physicalLen /= len;
@@ -1826,6 +2011,9 @@ public class LIFReader extends FormatReader {
     if (ms.sizeC == 0) ms.sizeC = 1;
     if (ms.sizeZ == 0) ms.sizeZ = 1;
     if (ms.sizeT == 0) ms.sizeT = 1;
+
+    if (ms.sizeX == 0) ms.sizeX = 1;
+    if (ms.sizeY == 0) ms.sizeY = 1;
 
     ms.interleaved = ms.rgb;
     ms.indexed = !ms.rgb;
@@ -1917,8 +2105,8 @@ public class LIFReader extends FormatReader {
     // -- Fields --
     public int type;
 
-    public Vector<Double> x = new Vector<Double>();
-    public Vector<Double> y = new Vector<Double>();
+    public List<Double> x = new ArrayList<Double>();
+    public List<Double> y = new ArrayList<Double>();
 
     // center point of the ROI
     public double transX, transY;
@@ -1962,14 +2150,15 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          NonNegativeInteger fontSize = FormatTools.getFontSize(size);
+          Length fontSize = FormatTools.getFontSize(size);
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, roi, 0);
           }
         }
         catch (NumberFormatException e) { }
       }
-      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
+      Length l = new Length((double) linewidth, UNITS.PIXEL);
+      store.setLabelStrokeWidth(l, roi, 0);
 
       if (!normalized) normalize();
 
@@ -2049,13 +2238,13 @@ public class LIFReader extends FormatReader {
       for (int i=0; i<x.size(); i++) {
         double coordinate = x.get(i).doubleValue() * 1000000;
         coordinate *= 1;
-        x.setElementAt(coordinate, i);
+        x.set(i, coordinate);
       }
 
       for (int i=0; i<y.size(); i++) {
         double coordinate = y.get(i).doubleValue() * 1000000;
         coordinate *= 1;
-        y.setElementAt(coordinate, i);
+        y.set(i, coordinate);
       }
 
       normalized = true;

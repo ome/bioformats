@@ -9,23 +9,41 @@ Ant build file for release version numbering.
   <import file="${root.dir}/ant/gitversion.xml" optional="true"/>
 
   <target name="release-version">
+    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
     <!-- check for Git versioning information -->
     <property name="git.path" value="${root.dir}/.git"/>
     <available file="${git.path}" property="git.present"/>
     <if>
       <isset property="git.present"/>
       <then>
-        <exec executable="git" outputproperty="git.info"
-          failifexecutionfails="false">
-          <arg value="show"/>
-          <arg value="-s"/>
-          <arg value="--abbrev-commit"/>
+        <exec executable="git" outputproperty="vcs.shortrevision"
+          failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
           <arg value="HEAD"/>
+          <arg value="--pretty=%h"/>
         </exec>
-        <propertyregex property="vcs.revision" input="${git.info}"
-          regexp="commit ([a-f0-9]+)" select="\1"/>
-        <propertyregex property="vcs.date"
-          input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
+        <exec executable="git" outputproperty="vcs.revision"
+          failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="HEAD"/>
+          <arg value="--pretty=%H"/>
+        </exec>
+        <exec executable="git" outputproperty="vcs.date"
+              failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="${vcs.revision}"/>
+          <arg value="--pretty=%ai"/>
+        </exec>
+        <exec executable="git" outputproperty="vcs.date_unix"
+              failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="${vcs.revision}"/>
+          <arg value="--pretty=%at"/>
+        </exec>
 
         <!-- Check git describe twice: first to see if this is an exact
              match and once to get the full string for parsing major,
@@ -50,7 +68,6 @@ Ant build file for release version numbering.
         <if>
           <isset property="git.describe"/>
           <then>
-            <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
             <propertyregex property="tag.major" input="${git.describe}" regexp="${release.version.regex}" select="\1"/>
             <propertyregex property="tag.minor" input="${git.describe}" regexp="${release.version.regex}" select="\2"/>
             <propertyregex property="tag.patch" input="${git.describe}" regexp="${release.version.regex}" select="\3"/>
@@ -86,9 +103,16 @@ Ant build file for release version numbering.
       </then>
     </if>
 
+    <!-- set version components -->
+    <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
+    <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
+    <propertyregex property="release.patch" input="${release.version}" regexp="${release.version.regex}" select="\3"/>
+    <propertyregex property="release.extra" input="${release.version}" regexp="${release.version.regex}" select="\4"/>
+
     <!-- set release version by default if nothing is set -->
     <property name="release.version" value="UNKNOWN"/>
     <property name="release.shortversion" value="UNKNOWN"/>
+    <property name="vcs.shortrevision" value="UNKNOWN"/>
     <property name="vcs.revision" value="UNKNOWN"/>
     <property name="vcs.date" value="UNKNOWN"/>
   </target>

@@ -1,0 +1,4 @@
+	public Map(java.util.List<ome.xml.model.MapPair> pairs)
+	{
+		super(pairs);
+	}

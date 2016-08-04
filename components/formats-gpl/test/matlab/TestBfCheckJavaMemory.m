@@ -2,10 +2,11 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2014 Open Microscopy Environment:
+% Copyright (C) 2014 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,10 +49,6 @@ import loci.formats.tiff.TiffParser;
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
  * Some regular PostScript files are also supported.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/EPSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/EPSReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class EPSReader extends FormatReader {
@@ -67,6 +63,7 @@ public class EPSReader extends FormatReader {
 
   private boolean isTiff;
   private IFDList ifds;
+  private int[] map;
 
   // -- Constructor --
 
@@ -79,6 +76,7 @@ public class EPSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -93,6 +91,7 @@ public class EPSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -109,6 +108,7 @@ public class EPSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -118,7 +118,6 @@ public class EPSReader extends FormatReader {
       long[] offsets = ifds.get(0).getStripOffsets();
       in.seek(offsets[0]);
 
-      int[] map = ifds.get(0).getIFDIntArray(IFD.COLOR_MAP);
       if (map == null) {
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -157,7 +156,7 @@ public class EPSReader extends FormatReader {
 
     in.seek(0);
     for (int line=0; line<=start; line++) {
-      in.readLine();
+      readLine();
     }
 
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -188,18 +187,21 @@ public class EPSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       start = 0;
       binary = isTiff = false;
       ifds = null;
+      map = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -207,7 +209,7 @@ public class EPSReader extends FormatReader {
 
     LOGGER.info("Verifying EPS format");
 
-    String line = in.readLine();
+    String line = readLine();
     if (!line.trim().startsWith("%!PS")) {
       // read the TIFF preview
 
@@ -227,6 +229,7 @@ public class EPSReader extends FormatReader {
       ifds = tp.getIFDs();
 
       IFD firstIFD = ifds.get(0);
+      map = tp.getColorMap(firstIFD);
 
       m.sizeX = (int) firstIFD.getImageWidth();
       m.sizeY = (int) firstIFD.getImageLength();
@@ -257,7 +260,7 @@ public class EPSReader extends FormatReader {
     String image = "image";
     int lineNum = 1;
 
-    line = in.readLine().trim();
+    line = readLine().trim();
 
     while (line != null && !line.equals("%%EOF")) {
       if (line.endsWith(image)) {
@@ -265,16 +268,22 @@ public class EPSReader extends FormatReader {
           if (line.indexOf("colorimage") != -1) m.sizeC = 3;
           String[] t = line.split(" ");
           try {
-            m.sizeX = Integer.parseInt(t[0]);
-            m.sizeY = Integer.parseInt(t[1]);
+            int newX = Integer.parseInt(t[0]);
+            int newY = Integer.parseInt(t[1]);
+            if (t.length > 2 && Integer.parseInt(t[2]) >= 8) {
+              m.sizeX = newX;
+              m.sizeY = newY;
+              start = lineNum;
+            }
           }
           catch (NumberFormatException exc) {
             LOGGER.debug("Could not parse image dimensions", exc);
-            m.sizeC = Integer.parseInt(t[3]);
+            if (t.length > 3) {
+              m.sizeC = Integer.parseInt(t[3]);
+            }
           }
         }
 
-        start = lineNum;
         break;
       }
       else if (line.startsWith("%%")) {
@@ -323,7 +332,7 @@ public class EPSReader extends FormatReader {
         }
       }
       lineNum++;
-      line = in.readLine().trim();
+      line = readLine().trim();
     }
 
     LOGGER.info("Populating metadata");
@@ -344,6 +353,11 @@ public class EPSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);
+  }
+
+  private String readLine() throws IOException {
+    String s = in.findString("\r", "\n");
+    return s.length() == 0 ? null : s;
   }
 
 }

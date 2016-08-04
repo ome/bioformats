@@ -1,0 +1,123 @@
+Building C++ bindings in Windows
+================================
+
+Compile-time dependencies -- Windows
+------------------------------------
+
+Windows users will need to visit the appropriate web sites and download and
+install the relevant binaries for all the dependencies.
+
+To configure the tools, you will need to edit or create several environment
+variables on your system. Access them by clicking the "Environment Variables"
+button from Control Panel, System, Advanced tab. Use semicolons to separate
+multiple directories in the PATH variable.
+
+
+Compile-time dependencies -- Windows -- Maven
+---------------------------------------------
+
+Download `Maven <http://maven.apache.org/>`_.
+
+Unpack the Maven archive into your Program Files, then add the folder's bin
+subdirectory to your PATH environment variable; e.g.:
+
+``C:\Program Files\apache-maven-3.0.4\bin``
+
+Once set, new Command Prompts will recognize "mvn" as a valid command.
+
+
+Compile-time dependencies -- Windows -- CMake
+---------------------------------------------
+
+Download and run the `CMake installer <http://cmake.org/>`_.
+
+During installation, select the "Add CMake to the system PATH for all
+users" option to ensure that Bio-Formats build system can find your CMake
+executable.
+
+Once installed, new Command Prompts will recognize "cmake" and "cmake-gui" as
+valid commands.
+
+
+Compile-time dependencies -- Windows -- Boost
+---------------------------------------------
+
+Download `Boost <http://www.boost.org/users/download/>`_. 
+
+You can either build and install from source using the instructions in the
+Boost documentation, or follow the link under 'Other downloads' to the
+prebuilt binaries for several Visual Studio versions.
+
+Compile-time dependencies -- Windows -- Java Development Kit
+------------------------------------------------------------
+
+Download and install the `JDK <http://www.oracle.com/technetwork/java/javase/downloads/>`_.
+
+After the installation is complete, create a new environment variable called
+JAVA_HOME pointing to your Java installation; e.g.:
+
+``C:\Program Files\Java\jdk1.6.0_25``
+
+Setting JAVA_HOME is the easiest way to ensure that Maven can locate Java.
+
+You will also need to append your JDK's client or server VM folder to the PATH;
+e.g.:
+
+``%JAVA_HOME%\jre\bin\client``
+
+This step ensures that a directory containing jvm.dll is present in the PATH.
+If you do not perform this step, you will receive a runtime error when
+attempting to initialize a |JVM| from native code.
+
+Optionally, you can add the bin subdirectory to the PATH; e.g.:
+
+``%JAVA_HOME%\bin``
+
+Once set, new Command Prompts will recognize (e.g.) "javac" as a valid command.
+
+
+Compile-time dependencies -- Windows -- Visual C++
+--------------------------------------------------
+
+In addition to the other prerequisites, you will also need a working copy of
+Visual C++. We have tested compilation with Visual C++ 2005 Professional and
+Visual C++ 2008 Express; other versions may or may not work.
+
+You can download `Visual C++ Express for free <http://www.microsoft.com/express/>`_.
+
+You must launch the environment at least once before you will be able to
+compile the Bio-Formats C++ bindings.
+
+
+How to build - Windows
+----------------------
+
+Run Command Prompt and change to your Bio-Formats working copy. Then run:
+
+::
+
+    # generate the Bio-Formats C++ bindings
+    cd components\formats-bsd
+    mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
+    
+    # build the Bio-Formats C++ bindings
+    cd target\cppwrap
+    mkdir build
+    cd build
+    cmake-gui ..
+
+The CMake GUI will open. Click the Configure button, and a dialog will appear.
+Select your installed version of Visual Studio, and click Finish.
+
+When configuring, you can use the J2L_WIN_BUILD_DEBUG flag to indicate if this
+will be a Debug or Release build. If the flag is checked it will build as Debug, unchecked will build as Release.
+
+Once configuration is complete, click Configure again, repeating as necessary
+until the Generate button becomes available. Then click Generate. Once
+generation is complete, close the CMake window.
+
+Back at the Command Prompt, type:
+
+``start jace.sln``
+
+The solution will then open in Visual Studio. Select Release or Debug as appropriate from the drop-down menu.  Press F7 to compile (or select Build Solution from the Build menu).

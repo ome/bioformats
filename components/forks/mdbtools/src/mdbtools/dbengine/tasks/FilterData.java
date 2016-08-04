@@ -2,7 +2,7 @@
  * #%L
  * Fork of MDB Tools (Java port).
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,7 +73,7 @@ public class FilterData implements Task
    * Check the where constraint against a single row
    * @param data
    * @param where
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRow(Data data,Object where)
     throws SQLException
@@ -90,7 +90,7 @@ public class FilterData implements Task
    * Check an equation portion of the where contraints against a single row
    * @param data
    * @param eq
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRowEquation(Data data,Equation eq)
     throws SQLException
@@ -113,11 +113,11 @@ public class FilterData implements Task
   }
 
   /**
-   * Check a condtion portion of the where constraint against a single row
+   * Check a condition portion of the where constraint against a single row
    * left and right of conditon is either another condition or an equation
    * @param data
    * @param condition
-   * @return
+   * @return boolean
    */
   private boolean whereCheckRowConditon(Data data,Condition condition)
     throws SQLException

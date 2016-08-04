@@ -14,32 +14,79 @@ model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
 :model_doc:`OME-TIFF <ome-tiff>` file format.
 
 We believe the standardization of microscopy metadata to a common
-structure is of vital importance to the community. A brief `article on the
-benefits of
-standardization <http://www.thinkstandards.net/benefits.html>`_ from
-`thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
-excellent summary. See also LOCI's article on `open source software in
-science <http://loci.wisc.edu/software/oss>`_.
+structure is of vital importance to the community. You may find LOCI's article
+on `open source software in
+science <http://loci.wisc.edu/software/oss>`_ of interest.
+
+Help
+----
+
+There is a :doc:`guide for reporting bugs here <bug-reporting>`.
+
+For help relating to opening images in ImageJ or FIJI or when using the
+command line tools, refer to the :doc:`users documentation </users/index>`.
+You can also find tips on common issues with specific formats on the
+pages linked from the :doc:`supported formats table </supported-formats>`.
+
+Please `contact us 
+<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
+you have any questions or problems with Bio-Formats not addressed by referring
+to the documentation.
+
+Other places where questions are commonly asked and/or bugs are reported
+include:
+
+-  `OME Trac <https://trac.openmicroscopy.org/ome>`_
+-  `ome-devel mailing
+   list <http://lists.openmicroscopy.org.uk/pipermail/ome-devel>`_
+   (searchable using google with 'site:lists.openmicroscopy.org.uk')
+-  `ome-users mailing
+   list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
+   (searchable using google with 'site:lists.openmicroscopy.org.uk')
+-  ImageJ mailing list (for ImageJ/Fiji issues)
+   `forum archive <http://imagej.1557.n6.nabble.com/>`_ and
+   `mailing list <http://imagej.nih.gov/ij/list.html>`_
+-  `ImageJ developer mailing
+   list <http://imagej.net/mailman/listinfo/imagej-devel>`_
+-  `Fiji Bugzilla (for ImageJ/Fiji
+   issues) <http://fiji.sc/cgi-bin/bugzilla/index.cgi>`_
+-  `Fiji developer google
+   group <https://groups.google.com/forum/#!forum/fiji-devel>`_
+-  `Confocal microscopy mailing
+   list <http://lists.umn.edu/cgi-bin/wa?A0=confocalmicroscopy>`_
+
+
+Bio-Formats versions
+--------------------
+
+Bio-Formats is now decoupled from OMERO with its own release schedule rather
+than being updated whenever a new version of :omerodoc:`OMERO <>` is released.
+We expect this to result in more frequent releases to get fixes out to the
+community faster.
+
+The version number is three numbers separated by dots e.g. 4.0.0. See the
+:doc:`version history <whats-new>` for a list of major changes in each
+release.
 
 Why Java?
 ---------
 
-From a practical perspective, Bio-Formats is written in Java because it is 
-cross-platform and widely used, with a vast array of libraries for handling 
-common programming tasks. Java is one of the easiest languages from which to 
-deploy cross-platform software. In contrast to C++, which has a large number 
-of complex platform issues to consider, and Python, which leans heavily on C 
-and C++ for many of its components (e.g., NumPy and SciPy), Java code is 
-compiled one time into platform-independent byte code, which can be deployed 
-as is to all supported platforms. And despite this enormous flexibility, Java 
-manages to provide time performance nearly equal to C++, often better in the 
-case of I/O operations (see further discussion on the 
+From a practical perspective, Bio-Formats is written in Java because it is
+cross-platform and widely used, with a vast array of libraries for handling
+common programming tasks. Java is one of the easiest languages from which to
+deploy cross-platform software. In contrast to C++, which has a large number
+of complex platform issues to consider, and Python, which leans heavily on C
+and C++ for many of its components (e.g., NumPy and SciPy), Java code is
+compiled one time into platform-independent byte code, which can be deployed
+as is to all supported platforms. And despite this enormous flexibility, Java
+manages to provide time performance nearly equal to C++, often better in the
+case of I/O operations (see further discussion on the
 `comparative speed of Java on the LOCI site <http://loci.wisc.edu/faq/isnt-java-too-slow>`_).
 
-There are also historical reasons associated with the fact that the project 
-grew out of work on the 
-`VisAD Java component library <http://visad.ssec.wisc.edu>`_. You can read 
-more about the origins of Bio-Formats on the 
+There are also historical reasons associated with the fact that the project
+grew out of work on the
+`VisAD Java component library <http://visad.ssec.wisc.edu>`_. You can read
+more about the origins of Bio-Formats on the
 `LOCI Bio-Formats homepage <http://loci.wisc.edu/software/bio-formats>`_.
 
 Bio-Formats metadata processing
@@ -92,42 +139,9 @@ metadata, original metadata, and OME metadata.
    greatly appreciate any and all input from users concerning missing or
    improperly converted metadata fields.
 
-
-Help
-----
-
-For help, see the
-`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
-`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
-and `OME-XML and OME-TIFF 
-<http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
-sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ 
-for answers to some common questions. Please `contact us 
-<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats. There is a :doc:`guide 
-for reporting bugs here <bug-reporting>`.
-
-For advanced users and developers, further information is available on the 
-:doc:`troubleshooting page <troubleshooting>`.
-
 .. toctree::
     :maxdepth: 1
     :hidden:
 
     bug-reporting
-    troubleshooting
-
-
-Bio-Formats versions
---------------------
-
-Bio-Formats is updated whenever a new version of :omerodoc:`OMERO <>` is
-released. The version number is three numbers separated by dots; e.g.,
-4.0.0. See the :doc:`version history <whats-new>` for a list of major
-changes in each release.
-
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
     whats-new

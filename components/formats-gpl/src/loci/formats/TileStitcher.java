@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,20 +28,19 @@ package loci.formats;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Region;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Length;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/TileStitcher.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/TileStitcher.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TileStitcher extends ReaderWrapper {
 
@@ -76,16 +75,19 @@ public class TileStitcher extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     return reader.getSizeX() * tileX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     return reader.getSizeY() * tileY;
   }
 
   /* @see IFormatReader#getSeriesCount() */
+  @Override
   public int getSeriesCount() {
     if (tileX == 1 && tileY == 1) {
       return reader.getSeriesCount();
@@ -94,11 +96,13 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -106,6 +110,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -116,6 +121,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -178,6 +184,7 @@ public class TileStitcher extends ReaderWrapper {
   }
 
   /* @see IFormatReader#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
@@ -236,11 +243,11 @@ public class TileStitcher extends ReaderWrapper {
 
     ArrayList<TileCoordinate> tiles = new ArrayList<TileCoordinate>();
 
-    ArrayList<Double> uniqueX = new ArrayList<Double>();
-    ArrayList<Double> uniqueY = new ArrayList<Double>();
+    final List<Length> uniqueX = new ArrayList<Length>();
+    final List<Length> uniqueY = new ArrayList<Length>();
 
     boolean equalZs = true;
-    Double firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
+    final Length firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
@@ -256,7 +263,7 @@ public class TileStitcher extends ReaderWrapper {
         uniqueY.add(coord.y);
       }
 
-      Double zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
+      final Length zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
 
       if (firstZ == null) {
         if (zPos != null) {
@@ -279,9 +286,9 @@ public class TileStitcher extends ReaderWrapper {
 
     tileMap = new Integer[tileY][tileX];
 
-    Double[] xCoordinates = uniqueX.toArray(new Double[tileX]);
+    final Length[] xCoordinates = uniqueX.toArray(new Length[tileX]);
     Arrays.sort(xCoordinates);
-    Double[] yCoordinates = uniqueY.toArray(new Double[tileY]);
+    final Length[] yCoordinates = uniqueY.toArray(new Length[tileY]);
     Arrays.sort(yCoordinates);
 
     for (int row=0; row<tileMap.length; row++) {
@@ -302,6 +309,7 @@ public class TileStitcher extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return byte[].class;
   }
@@ -309,9 +317,10 @@ public class TileStitcher extends ReaderWrapper {
   // -- Helper classes --
 
   class TileCoordinate {
-    public Double x;
-    public Double y;
+    public Length x;
+    public Length y;
 
+    @Override
     public boolean equals(Object o) {
       if (!(o instanceof TileCoordinate)) {
         return false;

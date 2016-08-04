@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,13 +36,13 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.IFD;
+
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * PCORAWReader is the file format reader for PCORAW files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PCORAWReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PCORAWReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PCORAWReader extends FormatReader {
 
@@ -67,6 +67,7 @@ public class PCORAWReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "rec") && open) {
       String base = new Location(name).getAbsoluteFile().getAbsolutePath();
@@ -81,11 +82,13 @@ public class PCORAWReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return reader.isThisType(stream);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     if (noPixels) {
       return paramFile == null ? null : new String[] {paramFile};
@@ -97,6 +100,7 @@ public class PCORAWReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -106,6 +110,7 @@ public class PCORAWReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     reader.close(fileOnly);
@@ -118,6 +123,7 @@ public class PCORAWReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, "rec")) {
       paramFile = new Location(id).getAbsolutePath();
@@ -140,6 +146,33 @@ public class PCORAWReader extends FormatReader {
 
     core = reader.getCoreMetadataList();
     metadata = reader.getGlobalMetadata();
+
+    in = new RandomAccessInputStream(id);
+    try {
+      if (in.length() >= Math.pow(2, 32)) {
+        // even though BigTIFF is likely being used, the offsets
+        // are still recorded as though only 32 bits are available
+
+        long add = 0;
+        long prevOffset = 0;
+        for (IFD ifd : reader.ifds) {
+          long[] offsets = ifd.getStripOffsets();
+          for (int i=0; i<offsets.length; i++) {
+            offsets[i] += add;
+
+            if (offsets[i] < prevOffset) {
+              add += 0x100000000L;
+              offsets[i] += 0x100000000L;
+            }
+            prevOffset = offsets[i];
+          }
+          ifd.put(IFD.STRIP_OFFSETS, offsets);
+        }
+      }
+    }
+    finally {
+      in.close();
+    }
 
     if (paramFile == null) {
       String base = imageFile.substring(0, imageFile.lastIndexOf("."));
@@ -176,7 +209,11 @@ public class PCORAWReader extends FormatReader {
           // set the exposure time
 
           String exp = value.substring(0, value.indexOf(" "));
-          Double exposure = new Double(exp) / 1000;
+          Double parsedExp = new Double(exp);
+          Time exposure = null;
+          if (parsedExp != null) {
+            exposure = new Time(parsedExp / 1000, UNITS.S);
+          }
 
           for (int plane=0; plane<getImageCount(); plane++) {
             store.setPlaneExposureTime(exposure, 0, plane);

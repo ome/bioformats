@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             Generic interface for post-compression
  *                          rate allocator.
- *
  *
  *
  * COPYRIGHT:
@@ -178,11 +177,11 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
      *
      * @param src The source of entropy coded data.
      *
-     * @param ln The number of layers to create
-     *
-     * @param pt The Progression type, as defined in 'ProgressionType'.
+     * @param nl The number of layers to create
      *
      * @param bw The packet bit stream writer.
+     *
+     * @param wp The parameters list
      *
      * @see ProgressionType
      * */
@@ -210,8 +209,6 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
      * simulated but before calling the runAndWrite() one. The header must be
      * rewritten after a call to this method since the number of layers may
      * change.
-     *
-     * @param oldSyntax Whether or not the old syntax is used.
      *
      * @see #runAndWrite
      * */
@@ -259,12 +256,14 @@ public abstract class PostCompRateAllocator extends ImgDataAdapter {
      *
      * @param src The source of entropy coded data.
      *
-     * @param pl The parameter lis (or options).
-     *
+
      * @param rate The target bitrate for the rate allocation
      *
      * @param bw The bit stream writer object, where the bit stream data will
      * be written.
+     *
+     * @param wp The parameter list (or options).
+     *
      * */
     public static PostCompRateAllocator createInstance(CodedCBlkDataSrcEnc src,
                                                        float rate,

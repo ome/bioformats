@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -143,7 +143,7 @@ public class RawImageReader extends ImageReader {
     }
 
     /** Overrides the method defined in the superclass.
-     *  @throw ClassCastException If the provided <code>input</code> is not
+     *  @throws ClassCastException If the provided <code>input</code> is not
      *          an instance of <code>RawImageInputImage</code>
      */
     public void setInput(Object input,

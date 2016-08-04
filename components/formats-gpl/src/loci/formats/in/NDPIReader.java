@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,6 +33,7 @@ import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
@@ -44,19 +45,17 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NDPIReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NDPIReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NDPIReader extends BaseTiffReader {
 
   // -- Constants --
 
   private static final int MAX_SIZE = 2048;
+  private static final int SOURCE_LENS = 65421;
   private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
@@ -70,6 +69,10 @@ public class NDPIReader extends BaseTiffReader {
   private int pyramidHeight = 1;
 
   private JPEGTurboService service = new JPEGTurboServiceImpl();
+
+  private Double magnification;
+  private String serialNumber;
+  private String instrumentModel;
 
   // -- Constructor --
 
@@ -126,6 +129,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /** @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
@@ -133,6 +137,7 @@ public class NDPIReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -168,6 +173,11 @@ public class NDPIReader extends BaseTiffReader {
       try {
         service.close();
         long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+        if (!use64Bit) {
+          for (int i=0; i<markers.length; i++) {
+            markers[i] = markers[i] & 0xffffffffL;
+          }
+        }
         if (markers != null) {
           service.setRestartMarkers(markers);
         }
@@ -185,6 +195,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
@@ -233,6 +244,7 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     if (!fileOnly) {
       service.close();
@@ -240,6 +252,9 @@ public class NDPIReader extends BaseTiffReader {
       initializedPlane = -1;
       sizeZ = 1;
       pyramidHeight = 1;
+      magnification = null;
+      serialNumber = null;
+      instrumentModel = null;
       if (tiffParser != null) {
         tiffParser.getStream().close();
       }
@@ -248,12 +263,14 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
@@ -262,6 +279,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     RandomAccessInputStream s = new RandomAccessInputStream(id);
     use64Bit = s.length() >= Math.pow(2, 32);
@@ -272,6 +290,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -280,7 +299,8 @@ public class NDPIReader extends BaseTiffReader {
     // fix the offsets for > 4 GB files
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
     for (int i=0; i<ifds.size(); i++) {
-      long[] stripOffsets = ifds.get(i).getStripOffsets();
+      IFD ifd = ifds.get(i);
+      long[] stripOffsets = ifd.getStripOffsets();
 
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
@@ -288,47 +308,65 @@ public class NDPIReader extends BaseTiffReader {
         long prevByteCount =
           i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
 
-        long newOffset = stripOffsets[j] + 0x100000000L;
-        if (newOffset < stream.length() && ((j > 0 &&
-          (stripOffsets[j] < stripOffsets[j - 1])) ||
-          (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
-        {
-          stripOffsets[j] = newOffset;
-          neededAdjustment = true;
+        while (stripOffsets[j] < prevOffset || stripOffsets[j] < prevOffset + prevByteCount) {
+          long newOffset = stripOffsets[j] + 0x100000000L;
+          if (newOffset < stream.length() && ((j > 0 &&
+            (stripOffsets[j] < stripOffsets[j - 1])) ||
+            (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
+          {
+            stripOffsets[j] = newOffset;
+            neededAdjustment = true;
+          }
         }
       }
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+        ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
       }
 
       neededAdjustment = false;
 
-      long[] stripByteCounts = ifds.get(i).getStripByteCounts();
+      long[] stripByteCounts = ifd.getStripByteCounts();
       for (int j=0; j<stripByteCounts.length; j++) {
         long newByteCount = stripByteCounts[j] + 0x100000000L;
         if (stripByteCounts[j] < 0 || neededAdjustment ||
-          newByteCount + ifds.get(i).getStripOffsets()[0] < in.length())
+          newByteCount + stripOffsets[j] < in.length())
         {
-          stripByteCounts[j] = newByteCount;
-          neededAdjustment = true;
+          if (newByteCount < ifd.getImageWidth() * ifd.getImageLength()) {
+            stripByteCounts[j] = newByteCount;
+            neededAdjustment = true;
+          }
         }
       }
 
       if (neededAdjustment) {
-        ifds.get(i).putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
+        ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
       }
     }
     stream.close();
 
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
+
       if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
         ifd.getImageLength() == ifds.get(0).getImageLength())
       {
         sizeZ++;
-      }
-      else if (sizeZ == 1 && i < ifds.size() - 1) {
-        pyramidHeight++;
+      } else if (sizeZ == 1)
+      {
+        boolean isPyramid;
+        Object source_lens_value = ifd.getIFDValue(SOURCE_LENS);
+        if (source_lens_value != null)
+        {
+          float source_lens = (Float) source_lens_value;
+          // A value of -1 correspond to the macro image and a value of -2
+          // correspond to the map image
+          isPyramid = (source_lens != -1 && source_lens != -2);
+        } else {
+          // Assume the last IFD is the macro image
+          isPyramid = i < ifds.size() - 1;
+        }
+
+        if (isPyramid) pyramidHeight++;
       }
     }
 
@@ -346,18 +384,13 @@ public class NDPIReader extends BaseTiffReader {
 
       if (markerTag != null) {
         if (markerTag.getValueOffset() > in.length()) {
-          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
-          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
-            markerOffset < in.length() / 2))
-          {
-            markerOffset += 0x100000000L;
-          }
-          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
-            markerTag.getValueCount(), markerOffset);
-          prevMarkerOffset = markerOffset;
+          // can't rely upon the MARKER_TAG to be detected correctly
+          ifds.get(i).remove(MARKER_TAG);
         }
-        Object value = tiffParser.getIFDValue(markerTag);
-        ifds.get(i).putIFDValue(MARKER_TAG, value);
+        else {
+          Object value = tiffParser.getIFDValue(markerTag);
+          ifds.get(i).putIFDValue(MARKER_TAG, value);
+        }
       }
 
       tiffParser.fillInIFD(ifds.get(i));
@@ -404,21 +437,64 @@ public class NDPIReader extends BaseTiffReader {
       ms.dimensionOrder = "XYCZT";
       ms.thumbnail = s != 0;
     }
+
+    String metadataTag = ifds.get(0).getIFDStringValue(METADATA_TAG);
+    if (metadataTag != null) {
+      String[] entries = metadataTag.split("\n");
+      for (String entry : entries) {
+        int eq = entry.indexOf("=");
+        if (eq < 0) {
+          continue;
+        }
+        String key = entry.substring(0, eq).trim();
+        String value = entry.substring(eq + 1).trim();
+
+        addGlobalMeta(key, value);
+
+        if (key.equals("Objective.Lens.Magnificant")) { // not a typo
+          magnification = new Double(value);
+        }
+        else if (key.equals("NDP.S/N")) {
+          serialNumber = value;
+        }
+        else if (key.equals("Product")) {
+          instrumentModel = value;
+        }
+      }
+    }
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
 
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+
+    store.setInstrumentID(instrumentID, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+
+    if (instrumentModel != null) {
+      store.setMicroscopeModel(instrumentModel, 0);
+    }
+
+    if (magnification != null) {
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
+
+      store.setImageInstrumentRef(instrumentID, i);
+      store.setObjectiveSettingsID(objectiveID, i);
 
       if (i > 0) {
         int ifdIndex = getIFDIndex(i, 0);
         String creationDate = ifds.get(ifdIndex).getIFDTextValue(IFD.DATE_TIME);
-        creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
+        creationDate = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
         if (creationDate != null) {
           store.setImageAcquisitionDate(new Timestamp(creationDate), i);
         }
@@ -426,8 +502,8 @@ public class NDPIReader extends BaseTiffReader {
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xResolution);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yResolution);
+        Length sizeX = FormatTools.getPhysicalSizeX(xResolution);
+        Length sizeY = FormatTools.getPhysicalSizeY(yResolution);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
@@ -435,6 +511,9 @@ public class NDPIReader extends BaseTiffReader {
         if (sizeY != null) {
           store.setPixelsPhysicalSizeY(sizeY, i);
         }
+      }
+      else {
+        store.setImageDescription(serialNumber, i);
       }
     }
   }

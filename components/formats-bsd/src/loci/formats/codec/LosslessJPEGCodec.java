@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,6 +35,7 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -42,10 +43,6 @@ import loci.formats.UnsupportedCompressionException;
 
 /**
  * Decompresses lossless JPEG images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/LosslessJPEGCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/LosslessJPEGCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -101,6 +98,7 @@ public class LosslessJPEGCodec extends BaseCodec {
   // -- Codec API methods --
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -115,6 +113,7 @@ public class LosslessJPEGCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -165,12 +164,20 @@ public class LosslessJPEGCodec extends BaseCodec {
 
         ByteVector b = new ByteVector();
         for (int i=0; i<toDecode.length; i++) {
-          b.add(toDecode[i]);
-          if (toDecode[i] == (byte) 0xff && toDecode[i + 1] == 0) i++;
+          byte val = toDecode[i];
+          if (val == (byte) 0xff) {
+        	if (toDecode[i + 1] == 0)
+        		b.add(val);
+    		i++;
+          } else {
+            b.add(val);
+          }
         }
         toDecode = b.toByteArray();
 
-        BitBuffer bb = new BitBuffer(toDecode);
+        RandomAccessInputStream bb = new RandomAccessInputStream(
+          new ByteArrayHandle(toDecode));
+
         HuffmanCodec huffman = new HuffmanCodec();
         HuffmanCodecOptions huffmanOptions = new HuffmanCodecOptions();
         huffmanOptions.bitsPerSample = bitsPerSample;
@@ -248,6 +255,7 @@ public class LosslessJPEGCodec extends BaseCodec {
           }
           nextSample += bytesPerSample;
         }
+        bb.close();
       }
       else {
         length -= 2; // stored length includes length param
@@ -284,24 +292,28 @@ public class LosslessJPEGCodec extends BaseCodec {
           if (huffmanTables == null) {
             huffmanTables = new short[4][];
           }
-          int s = in.read();
-          byte tableClass = (byte) ((s & 0xf0) >> 4);
-          byte destination = (byte) (s & 0xf);
-          int[] nCodes = new int[16];
-          Vector table = new Vector();
-          for (int i=0; i<nCodes.length; i++) {
-            nCodes[i] = in.read();
-            table.add(new Short((short) nCodes[i]));
-          }
-
-          for (int i=0; i<nCodes.length; i++) {
-            for (int j=0; j<nCodes[i]; j++) {
-              table.add(new Short((short) (in.read() & 0xff)));
-            }
-          }
-          huffmanTables[destination] = new short[table.size()];
-          for (int i=0; i<huffmanTables[destination].length; i++) {
-            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+          int bytesRead = 0;
+          while (bytesRead < length) {
+	          int s = in.read();
+	          byte tableClass = (byte) ((s & 0xf0) >> 4);
+	          byte destination = (byte) (s & 0xf);
+	          int[] nCodes = new int[16];
+	          Vector table = new Vector();
+	          for (int i=0; i<nCodes.length; i++) {
+	            nCodes[i] = in.read();
+	            table.add(new Short((short) nCodes[i]));
+	          }
+	
+	          for (int i=0; i<nCodes.length; i++) {
+	            for (int j=0; j<nCodes[i]; j++) {
+	              table.add(new Short((short) (in.read() & 0xff)));
+	            }
+	          }
+	          huffmanTables[destination] = new short[table.size()];
+	          for (int i=0; i<huffmanTables[destination].length; i++) {
+	            huffmanTables[destination][i] = ((Short) table.get(i)).shortValue();
+	          }
+	          bytesRead += table.size() + 1;
           }
         }
         in.seek(fp + length);

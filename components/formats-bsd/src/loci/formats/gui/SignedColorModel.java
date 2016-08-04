@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,10 +44,6 @@ import java.io.IOException;
 
 /**
  * ColorModel that handles 8, 16 and 32 bits per channel signed data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/SignedColorModel.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/SignedColorModel.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SignedColorModel extends ColorModel {
 
@@ -85,11 +81,13 @@ public class SignedColorModel extends ColorModel {
   // -- ColorModel API methods --
 
   /* @see java.awt.image.ColorModel#getDataElements(int, Object) */
+  @Override
   public synchronized Object getDataElements(int rgb, Object pixel) {
     return helper.getDataElements(rgb, pixel);
   }
 
   /* @see java.awt.image.ColorModel#isCompatibleRaster(Raster) */
+  @Override
   public boolean isCompatibleRaster(Raster raster) {
     if (pixelBits == 16) {
       return raster.getTransferType() == DataBuffer.TYPE_SHORT;
@@ -98,6 +96,7 @@ public class SignedColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#createCompatibleWritableRaster(int, int) */
+  @Override
   public WritableRaster createCompatibleWritableRaster(int w, int h) {
     if (pixelBits == 16) {
       int[] bandOffsets = new int[nChannels];
@@ -112,29 +111,34 @@ public class SignedColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(int) */
+  @Override
   public int getAlpha(int pixel) {
     if (nChannels < 4) return 255;
     return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
+  @Override
   public int getBlue(int pixel) {
     if (nChannels == 1) return getRed(pixel);
     return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
+  @Override
   public int getGreen(int pixel) {
     if (nChannels == 1) return getRed(pixel);
     return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
+  @Override
   public int getRed(int pixel) {
     return rescale(pixel, max);
   }
 
   /* @see java.awt.image.ColorModel#getAlpha(Object) */
+  @Override
   public int getAlpha(Object data) {
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
@@ -155,6 +159,7 @@ public class SignedColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getRed(Object) */
+  @Override
   public int getRed(Object data) {
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
@@ -175,6 +180,7 @@ public class SignedColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getGreen(Object) */
+  @Override
   public int getGreen(Object data) {
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;
@@ -195,6 +201,7 @@ public class SignedColorModel extends ColorModel {
   }
 
   /* @see java.awt.image.ColorModel#getBlue(Object) */
+  @Override
   public int getBlue(Object data) {
     if (data instanceof byte[]) {
       byte[] b = (byte[]) data;

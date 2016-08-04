@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,6 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -320,6 +323,7 @@ public class PrairieMetadata {
           for (int i=0; i<tokens.length; i++) {
             subSubTable.put("" + i, new ValueItem(tokens[i], null));
           }
+          subTable.put(index, subSubTable);
         }
       }
     }
@@ -377,16 +381,16 @@ public class PrairieMetadata {
         if (index == null) continue; // invalid <SubindexedValues> element
         final ValueTable subSubTable = new ValueTable();
         subTable.put(index, subSubTable);
-        // iterate over <SubindexValue> children
+        // iterate over <SubindexedValue> children
         final NodeList subNodes =
-          sivElement.getElementsByTagName("SubindexValue");
+          sivElement.getElementsByTagName("SubindexedValue");
         for (int s = 0; s < subNodes.getLength(); s++) {
-          final Element subElement = el(subNodes, i);
+          final Element subElement = el(subNodes, s);
           final String subindex = attr(subElement, "subindex");
           if (subindex == null) continue; // invalid <SubindexedValue> element
           final String sValue = attr(subElement, "value");
           final String sDescription = attr(subElement, "description");
-          subSubTable.put(index, new ValueItem(sValue, sDescription));
+          subSubTable.put(subindex, new ValueItem(sValue, sDescription));
         }
       }
     }
@@ -394,7 +398,7 @@ public class PrairieMetadata {
 
   /**
    * Parses details of the activated channels into the {@link #activeChannels}
-   * data structure.
+   * data structure from the "channel" entry of the configuration.
    */
   private void parseChannels() {
     final Value channels = config.get("channel");
@@ -564,6 +568,9 @@ public class PrairieMetadata {
     /** {@code cycle} of this {@code <Sequence>}. */
     private Integer cycle;
 
+    /** {@code SpectralMode} of this {@code <Sequence>}. */
+    private boolean spectralMode;
+
     /**
      * Creates a new sequence by parsing the given {@code <Sequence>} element.
      */
@@ -583,6 +590,7 @@ public class PrairieMetadata {
       if (cycle == null) {
         throw new IllegalArgumentException("Sequence missing cycle attribute");
       }
+      spectralMode = b(attr(sequenceElement, "SpectralMode"));
 
       // iterate over all Frame elements
       final NodeList frameNodes = sequenceElement.getElementsByTagName("Frame");
@@ -616,6 +624,10 @@ public class PrairieMetadata {
     /** Gets the {@code cycle} associated with this {@code Sequence}. */
     public int getCycle() {
       return cycle;
+    }
+
+    public boolean isSpectralMode() {
+      return spectralMode;
     }
 
     /**
@@ -811,21 +823,38 @@ public class PrairieMetadata {
       return i(value(getValue("linesPerFrame")));
     }
 
+    /**
+     * Convert a position number to a length in the microscope reference frame.
+     * @param position a position number, may be {@code null}
+     * @param isInvert if the number's sign should be flipped
+     * @return a length corresponding to the number, may be {@code null}
+     */
+    private Length toLength(Double position, boolean isInvert) {
+        if (position == null) {
+            return null;
+        }
+        if (isInvert) {
+            position = -position;
+        }
+        return new Length(position, UNITS.REFERENCEFRAME);
+    }
+
     /** Gets the X stage position associated with this {@code Frame}. */
-    public Double getPositionX() {
+    public Length getPositionX() {
       final Double posX = d(value(getValue("positionCurrent"), "XAxis"));
-      return posX == null ? null : isInvertX() ? -posX : posX;
+      return toLength(posX, isInvertX());
     }
 
     /** Gets the Y stage position associated with this {@code Frame}. */
-    public Double getPositionY() {
+    public Length getPositionY() {
       final Double posY = d(value(getValue("positionCurrent"), "YAxis"));
-      return posY == null ? null : isInvertY() ? -posY : posY;
+      return toLength(posY, isInvertY());
     }
 
     /** Gets the Z stage position associated with this {@code Frame}. */
-    public Double getPositionZ() {
-      return d(value(getValue("positionCurrent"), "ZAxis"));
+    public Length getPositionZ() {
+      final Double posZ = d(value(getValue("positionCurrent"), "ZAxis"));
+      return toLength(posZ, false);
     }
 
     /** Gets the optical zoom associated with this {@code Frame}. */
@@ -902,6 +931,12 @@ public class PrairieMetadata {
     /** {@code filename} attribute of this {@code <File>}. */
     private String filename;
 
+    /** {@code wavelengthMin} attribute of this {@code <File>}. */
+    private Double waveMin;
+
+    /** {@code wavelengthMax} attribute of this {@code <File>}. */
+    private Double waveMax;
+
     /** Creates a new file by parsing the given {@code <File>} element. */
     public PFile(final Frame frame, final Element fileElement) {
       this.frame = frame;
@@ -923,9 +958,13 @@ public class PrairieMetadata {
       if (channel == null) {
         throw new IllegalArgumentException("File missing channel attribute");
       }
+      activeChannels.add(channel);
 
       channelName = attr(fileElement, "channelName");
       filename = attr(fileElement, "filename");
+
+      waveMin = d(attr(fileElement, "wavelengthMin"));
+      waveMax = d(attr(fileElement, "wavelengthMax"));
     }
 
     /** Gets the {@code channel} associated with this {@code File}. */
@@ -941,6 +980,16 @@ public class PrairieMetadata {
     /** Gets the {@code filename} associated with this {@code File}. */
     public String getFilename() {
       return filename;
+    }
+
+    /** Gets the {@code wavelengthMin} associated with this {@code File}. */
+    public Double getWavelengthMin() {
+      return waveMin;
+    }
+
+    /** Gets the {@code wavelengthMax} associated with this {@code File}. */
+    public Double getWavelengthMax() {
+      return waveMax;
     }
 
   }

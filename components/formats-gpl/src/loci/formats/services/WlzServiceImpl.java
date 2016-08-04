@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,7 @@
 *               Western General Hospital,
 *               Edinburgh, EH4 2XU, UK.
 * \par
-* Copyright (C), [2013 - 2014],
+* Copyright (C), [2013],
 * The University Court of the University of Edinburgh,
 * Old College, Edinburgh, UK.
 * 
@@ -113,8 +113,8 @@ public class WlzServiceImpl extends AbstractService
   * Fields
   */
 
-  private int	state = WLZ_SERVICE_UNKNOWN;
-  private int	pixelType = FormatTools.UINT8;
+  private int   state = WLZ_SERVICE_UNKNOWN;
+  private int   pixelType = FormatTools.UINT8;
   private int   objType = WlzObjectType.WLZ_NULL;
   /* objGType is the Woolz value type, but may be WLZ_GREY_ERROR to indicate
    * an object with no values, just a domain. */
@@ -132,6 +132,7 @@ public class WlzServiceImpl extends AbstractService
     checkClassDependency(WlzObject.class);
   }
 
+  @Override
   protected void checkClassDependency(Class<? extends Object> klass) {
     String v[] = new String[1];
     WlzObject.WlzGetVersion(v);
@@ -141,14 +142,17 @@ public class WlzServiceImpl extends AbstractService
   * Service methods
   */
 
+  @Override
   public String getNoWlzMsg() {
     return(new String(NO_WLZ_MSG));
   }
 
+  @Override
   public String getWlzOrgLabelName() {
     return(new String(WLZ_ORG_LABEL));
   }
 
+  @Override
   public void open(String file, String rw)
     throws FormatException, IOException {
     try {
@@ -170,8 +174,9 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
-  public int	getSizeX() {
-    int 	sz;
+  @Override
+  public int    getSizeX() {
+    int         sz;
     if(bBox == null) {
       sz = 0;
     }
@@ -181,7 +186,8 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public int	getSizeY() {
+  @Override
+  public int    getSizeY() {
     int         sz;
     if(bBox == null) {
       sz = 0;
@@ -192,7 +198,8 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public int	getSizeZ() {
+  @Override
+  public int    getSizeZ() {
     int         sz;
     if(bBox == null) {
       sz = 0;
@@ -203,8 +210,9 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public int	getSizeC() {
-    int		sz;
+  @Override
+  public int    getSizeC() {
+    int         sz;
     if(objGType == WlzGreyType.WLZ_GREY_RGBA) {
       sz = 4;
     }
@@ -214,12 +222,14 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public int	getSizeT() {
+  @Override
+  public int    getSizeT() {
     return(1);
   }
 
+  @Override
   public boolean isRGB() {
-    boolean 	rgb;
+    boolean     rgb;
     if(objGType == WlzGreyType.WLZ_GREY_RGBA) {
       rgb = true;
     }
@@ -229,7 +239,8 @@ public class WlzServiceImpl extends AbstractService
     return(rgb);
   }
 
-  public double	getVoxSzX() {
+  @Override
+  public double getVoxSzX() {
     double sz;
 
     if(voxSz == null) {
@@ -241,7 +252,8 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public double	getVoxSzY() {
+  @Override
+  public double getVoxSzY() {
     double sz;
 
     if(voxSz == null) {
@@ -253,7 +265,8 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public double	getVoxSzZ() {
+  @Override
+  public double getVoxSzZ() {
     double sz;
 
     if(voxSz == null) {
@@ -265,7 +278,8 @@ public class WlzServiceImpl extends AbstractService
     return(sz);
   }
 
-  public double	getOrgX() {
+  @Override
+  public double getOrgX() {
     int og;
 
     if(bBox == null) {
@@ -277,7 +291,8 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
-  public double	getOrgY() {
+  @Override
+  public double getOrgY() {
     int og;
 
     if(bBox == null) {
@@ -289,7 +304,8 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
-  public double	getOrgZ() {
+  @Override
+  public double getOrgZ() {
     int og;
 
     if(bBox == null) {
@@ -301,41 +317,44 @@ public class WlzServiceImpl extends AbstractService
     return(og);
   }
 
+  @Override
   public int[] getSupPixelTypes() {
     return new int[] {FormatTools.UINT8,
-    		      FormatTools.INT16,
+                      FormatTools.INT16,
                       FormatTools.INT32,
-		      FormatTools.FLOAT,
+                      FormatTools.FLOAT,
                       FormatTools.DOUBLE};
   }
 
-  public int	getPixelType() {
-    int		pixType;
+  @Override
+  public int    getPixelType() {
+    int         pixType;
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_SHORT:
-	pixelType = FormatTools.INT16;
-	break;
+        pixelType = FormatTools.INT16;
+        break;
       case WlzGreyType.WLZ_GREY_INT:
-	pixelType = FormatTools.INT32;
-	break;
+        pixelType = FormatTools.INT32;
+        break;
       case WlzGreyType.WLZ_GREY_FLOAT:
-	pixelType = FormatTools.FLOAT;
-	break;
+        pixelType = FormatTools.FLOAT;
+        break;
       case WlzGreyType.WLZ_GREY_DOUBLE:
-	pixelType = FormatTools.DOUBLE;
-	break;
+        pixelType = FormatTools.DOUBLE;
+        break;
       default:
-	pixelType = FormatTools.UINT8;
-	break;
+        pixelType = FormatTools.UINT8;
+        break;
     }
     return(pixelType);
   }
 
+  @Override
   public void setupWrite(int orgX, int orgY, int orgZ,
-			 int pixSzX, int pixSzY, int pixSzZ,
-  			 int pixSzC, int pixSzT, 
-			 double voxSzX, double voxSzY, double voxSzZ,
-			 int gType)
+                         int pixSzX, int pixSzY, int pixSzZ,
+                         int pixSzC, int pixSzT, 
+                         double voxSzX, double voxSzY, double voxSzZ,
+                         int gType)
     throws FormatException {
 
     bBox = new WlzIBox3();
@@ -391,19 +410,20 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public void close()
     throws IOException {
     if(wlzObj != null) {
       if(state == WLZ_SERVICE_WRITE) {
         try {
-	  if(objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
-	    WlzObject.WlzSetVoxelSize(wlzObj, voxSz.vtX, voxSz.vtY, voxSz.vtZ);
-	  }
-	  WlzObject.WlzWriteObj(wlzFP, wlzObj);
-	}
-	catch(WlzException e) {
-	  throw new IOException("Failed to write to Woolz object (" + e + ")");
-	}
+          if(objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
+            WlzObject.WlzSetVoxelSize(wlzObj, voxSz.vtX, voxSz.vtY, voxSz.vtZ);
+          }
+          WlzObject.WlzWriteObj(wlzFP, wlzObj);
+        }
+        catch(WlzException e) {
+          throw new IOException("Failed to write to Woolz object (" + e + ")");
+        }
       }
       // Object is freed by garbage collection.
       wlzObj = null;
@@ -414,6 +434,7 @@ public class WlzServiceImpl extends AbstractService
     }
   }
 
+  @Override
   public byte[] readBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException {
     if((wlzObj == null) || (state != WLZ_SERVICE_READ)) {
@@ -421,39 +442,40 @@ public class WlzServiceImpl extends AbstractService
     }
     else {
       try {
-	switch(objType)
-	{
-	  case WlzObjectType.WLZ_2D_DOMAINOBJ:
-	    buf = readBytes2DDomObj(buf, x, y, w, h);
-	    break;
-	  case WlzObjectType.WLZ_3D_DOMAINOBJ:
-	    buf = readBytes3DDomObj(buf, x, y, no, w, h);
-	    break;
-	  default:
-	    throw new FormatException("Unsupported Woolz object type");
-	}
+        switch(objType)
+        {
+          case WlzObjectType.WLZ_2D_DOMAINOBJ:
+            buf = readBytes2DDomObj(buf, x, y, w, h);
+            break;
+          case WlzObjectType.WLZ_3D_DOMAINOBJ:
+            buf = readBytes3DDomObj(buf, x, y, no, w, h);
+            break;
+          default:
+            throw new FormatException("Unsupported Woolz object type " + objType);
+        }
       }
       catch (WlzException e) {
-	throw new FormatException(
-	    "Failed to copy bytes from Woolz object (" + e + ")");
+        throw new FormatException(
+            "Failed to copy bytes from Woolz object (" + e + ")");
       }
     }
     return(buf);
   }
 
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     if(state == WLZ_SERVICE_WRITE) {
       WlzIVertex3 og = new WlzIVertex3(x + bBox.xMin, y + bBox.yMin,
-				       no + bBox.zMin);
+                                       no + bBox.zMin);
       WlzIVertex2 sz = new WlzIVertex2(w, h);
       try {
-	wlzObj = WlzObject.WlzBuildObj3B(wlzObj, og, sz, objGType,
-					 buf.length, buf);
+        wlzObj = WlzObject.WlzBuildObj3B(wlzObj, og, sz, objGType,
+                                         buf.length, buf);
       }
       catch (WlzException e) {
-	throw new FormatException("Failed save bytes to Woolz object", e);
+        throw new FormatException("Failed save bytes to Woolz object", e);
       }
     }
   }
@@ -480,41 +502,61 @@ public class WlzServiceImpl extends AbstractService
     }
     catch (WlzException e) {
       throw new IOException("Failed to read Woolz object (" +
-                            e + ")");
+                            e + ")", e);
     }
     try {
+      if (objType == WlzObjectType.WLZ_COMPOUND_ARR_1 ||
+        objType == WlzObjectType.WLZ_COMPOUND_ARR_2)
+      {
+        int count = objType == WlzObjectType.WLZ_COMPOUND_ARR_1 ? 1 : 2;
+        WlzObject[][] dest = new WlzObject[1][count];
+        WlzObject.WlzExplode(new int[] {count}, dest, wlzObj);
+        wlzObj = dest[0][0];
+
+        bBox = WlzObject.WlzBoundingBox3I(wlzObj);
+        objType = WlzObject.WlzGetObjectType(wlzObj);
+        if (objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
+          voxSz = WlzObject.WlzGetVoxelSize(wlzObj);
+        }
+      }
+
       if(WlzObject.WlzObjectValuesIsNull(wlzObj) != 0) {
-	/* Here we use WLZ_GREY_ERROR to indicate that the object has no
-	 * values not an error. */
-	objGType = WlzGreyType.WLZ_GREY_ERROR;
+        /* Here we use WLZ_GREY_ERROR to indicate that the object has no
+         * values not an error. */
+        objGType = WlzGreyType.WLZ_GREY_ERROR;
       }
       else {
-	objGType = WlzObject.WlzGreyTypeFromObj(wlzObj);
+        // throw an exception here instead of segfaulting during readBytes*
+        if (WlzObject.WlzGetObjectValuesType(wlzObj) > WlzObjectType.WLZ_GREY_TAB_TILED) {
+          throw new FormatException("Value table data not supported");
+        }
+
+        objGType = WlzObject.WlzGreyTypeFromObj(wlzObj);
       }
     }
     catch (WlzException e) {
       throw new FormatException(
-	  "Unable to determine Woolz object value type (" +
-	  e + ")");
+          "Unable to determine Woolz object value type (" +
+          e + ")", e);
     }
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_UBYTE:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_SHORT:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_INT:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_FLOAT:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_DOUBLE:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_RGBA:
-	break;
+        break;
       case WlzGreyType.WLZ_GREY_ERROR:
-	break;
+        break;
       default:
-	throw new FormatException(
-	    "Inappropriate Woolz object value type (type = " + objGType + ")");
+        throw new FormatException(
+            "Inappropriate Woolz object value type (type = " + objGType + ")");
     }
   }
 
@@ -537,89 +579,89 @@ public class WlzServiceImpl extends AbstractService
     dstSz[0] = null;
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_UBYTE:
-	{
-	  byte dstDat[][][] = new byte[1][][];
-	  WlzObject.WlzToUArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      buf[idYW + idX] = dstDat[0][idY][idX];
-	    }
-	  }
-	}
-	break;
+        {
+          byte dstDat[][][] = new byte[1][][];
+          WlzObject.WlzToUArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              buf[idYW + idX] = dstDat[0][idY][idX];
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_SHORT:
-	{
-	  short m = 0xff;
-	  short dstDat[][][] = new short[1][][];
-	  WlzObject.WlzToSArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      short p = dstDat[0][idY][idX];
-	      buf[2 * (idYW + idX)]     = (byte )((p >>> 8) & m);
-	      buf[2 * (idYW + idX) + 1] = (byte )(p & m);
-	    }
-	  }
-	}
-	break;
+        {
+          short m = 0xff;
+          short dstDat[][][] = new short[1][][];
+          WlzObject.WlzToSArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              short p = dstDat[0][idY][idX];
+              buf[2 * (idYW + idX)]     = (byte )((p >>> 8) & m);
+              buf[2 * (idYW + idX) + 1] = (byte )(p & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_INT:
-	{
-	  int m = 0xff;
-	  int dstDat[][][] = new int[1][][];
-	  WlzObject.WlzToIArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      int p = dstDat[0][idY][idX];
-	      buf[idYW + (4 * idX)]     = (byte )((p >> 24) & m);
-	      buf[idYW + (4 * idX) + 1] = (byte )((p >> 16) & m);
-	      buf[idYW + (4 * idX) + 2] = (byte )((p >> 8) & m);
-	      buf[idYW + (4 * idX) + 3] = (byte )(p & m);
-	    }
-	  }
-	}
-	break;
+        {
+          int m = 0xff;
+          int dstDat[][][] = new int[1][][];
+          WlzObject.WlzToIArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              int p = dstDat[0][idY][idX];
+              buf[idYW + (4 * idX)]     = (byte )((p >> 24) & m);
+              buf[idYW + (4 * idX) + 1] = (byte )((p >> 16) & m);
+              buf[idYW + (4 * idX) + 2] = (byte )((p >> 8) & m);
+              buf[idYW + (4 * idX) + 3] = (byte )(p & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_RGBA:
-	{
-	  int m = 0xff;
-	  int cOff = h * w;
-	  int dstDat[][][] = new int[1][][];
-	  WlzObject.WlzToRArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      int idYWX = idYW + idX;
-	      int p = dstDat[0][idY][idX];
-	      buf[idYWX]              = (byte )((p >>  0) & m);
-	      buf[idYWX + cOff]       = (byte )((p >>  8) & m);
-	      buf[idYWX + (2 * cOff)] = (byte )((p >> 16) & m);
-	      buf[idYWX + (3 * cOff)] = (byte )((p >> 24) & m);
-	    }
-	  }
-	}
-	break;
+        {
+          int m = 0xff;
+          int cOff = h * w;
+          int dstDat[][][] = new int[1][][];
+          WlzObject.WlzToRArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              int idYWX = idYW + idX;
+              int p = dstDat[0][idY][idX];
+              buf[idYWX]              = (byte )((p >>  0) & m);
+              buf[idYWX + cOff]       = (byte )((p >>  8) & m);
+              buf[idYWX + (2 * cOff)] = (byte )((p >> 16) & m);
+              buf[idYWX + (3 * cOff)] = (byte )((p >> 24) & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_ERROR: /* Indicates no values. */
         {
-	  int	w8 = (w + 7) / 8;
-	  byte dstDat[][][] = new byte[1][][];
-	  WlzObject.WlzToBArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    int idYW8 = idY * w8;
-	    for(int idX = 0; idX < w; ++idX) {
-	      byte p = dstDat[0][idY][idX / 8];
-	      byte b = (byte )(p & (0x01 << (idX % 8)));
-	      if(b == 0){
-	        buf[idYW + idX] = (byte )0x00;
-	      }
-	      else {
-	        buf[idYW + idX] = (byte )0xff;
-	      }
-	    }
-	  }
-	}
-	break;
+          int   w8 = (w + 7) / 8;
+          byte dstDat[][][] = new byte[1][][];
+          WlzObject.WlzToBArray2D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            int idYW8 = idY * w8;
+            for(int idX = 0; idX < w; ++idX) {
+              byte p = dstDat[0][idY][idX / 8];
+              byte b = (byte )(p & (0x01 << (idX % 8)));
+              if(b == 0){
+                buf[idYW + idX] = (byte )0x00;
+              }
+              else {
+                buf[idYW + idX] = (byte )0xff;
+              }
+            }
+          }
+        }
+        break;
       default:
         throw new WlzException("Unsupported pixel type");
     }
@@ -630,95 +672,95 @@ public class WlzServiceImpl extends AbstractService
                                       int w, int h)
     throws WlzException {
     WlzIVertex3 og = new WlzIVertex3(x + bBox.xMin, y + bBox.yMin,
-				     z + bBox.zMin);
+                                     z + bBox.zMin);
     WlzIVertex3 sz = new WlzIVertex3(w, h, 1);
     WlzIVertex3 dstSz[] = new WlzIVertex3[1];
     dstSz[0] = null;
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_UBYTE:
-	{
-	  byte dstDat[][][][] = new byte[1][][][];
-	  WlzObject.WlzToUArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      buf[idYW + idX] = dstDat[0][0][idY][idX];
-	    }
-	  }
-	}
-	break;
+        {
+          byte dstDat[][][][] = new byte[1][][][];
+          WlzObject.WlzToUArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              buf[idYW + idX] = dstDat[0][0][idY][idX];
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_SHORT:
-	{
-	  short m = 0xff;
-	  short dstDat[][][][] = new short[1][][][];
-	  WlzObject.WlzToSArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      short p = dstDat[0][0][idY][idX];
-	      buf[2 * (idYW + idX)]     = (byte )((p >>> 8) & m);
-	      buf[2 * (idYW + idX) + 1] = (byte )(p & m);
-	    }
-	  }
-	}
-	break;
+        {
+          short m = 0xff;
+          short dstDat[][][][] = new short[1][][][];
+          WlzObject.WlzToSArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              short p = dstDat[0][0][idY][idX];
+              buf[2 * (idYW + idX)]     = (byte )((p >>> 8) & m);
+              buf[2 * (idYW + idX) + 1] = (byte )(p & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_INT:
-	{
-	  int m = 0xff;
-	  int dstDat[][][][] = new int[1][][][];
-	  WlzObject.WlzToIArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      int p = dstDat[0][0][idY][idX];
-	      buf[idYW + (4 * idX)]     = (byte )((p >> 24) & m);
-	      buf[idYW + (4 * idX) + 1] = (byte )((p >> 16) & m);
-	      buf[idYW + (4 * idX) + 2] = (byte )((p >> 8) & m);
-	      buf[idYW + (4 * idX) + 3] = (byte )(p & m);
-	    }
-	  }
-	}
-	break;
+        {
+          int m = 0xff;
+          int dstDat[][][][] = new int[1][][][];
+          WlzObject.WlzToIArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              int p = dstDat[0][0][idY][idX];
+              buf[idYW + (4 * idX)]     = (byte )((p >> 24) & m);
+              buf[idYW + (4 * idX) + 1] = (byte )((p >> 16) & m);
+              buf[idYW + (4 * idX) + 2] = (byte )((p >> 8) & m);
+              buf[idYW + (4 * idX) + 3] = (byte )(p & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_RGBA:
-	{
-	  int m = 0xff;
-	  int cOff = h * w;
-	  int dstDat[][][][] = new int[1][][][];
-	  WlzObject.WlzToRArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    for(int idX = 0; idX < w; ++idX) {
-	      int idYWX = idYW + idX;
-	      int p = dstDat[0][0][idY][idX];
-	      buf[idYWX]              = (byte )((p >>  0) & m);
-	      buf[idYWX + cOff]       = (byte )((p >>  8) & m);
-	      buf[idYWX + (2 * cOff)] = (byte )((p >> 16) & m);
-	      buf[idYWX + (3 * cOff)] = (byte )((p >> 24) & m);
-	    }
-	  }
-	}
-	break;
+        {
+          int m = 0xff;
+          int cOff = h * w;
+          int dstDat[][][][] = new int[1][][][];
+          WlzObject.WlzToRArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            for(int idX = 0; idX < w; ++idX) {
+              int idYWX = idYW + idX;
+              int p = dstDat[0][0][idY][idX];
+              buf[idYWX]              = (byte )((p >>  0) & m);
+              buf[idYWX + cOff]       = (byte )((p >>  8) & m);
+              buf[idYWX + (2 * cOff)] = (byte )((p >> 16) & m);
+              buf[idYWX + (3 * cOff)] = (byte )((p >> 24) & m);
+            }
+          }
+        }
+        break;
       case WlzGreyType.WLZ_GREY_ERROR: /* Indicates no values. */
         {
-	  int	w8 = (w + 7) / 8;
-	  byte dstDat[][][][] = new byte[1][][][];
-	  WlzObject.WlzToBArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
-	  for(int idY = 0; idY < h; ++idY) {
-	    int idYW = idY * w;
-	    int idYW8 = idY * w8;
-	    for(int idX = 0; idX < w; ++idX) {
-	      byte p = dstDat[0][0][idY][idX / 8];
-	      byte b = (byte )(p & (0x01 << (idX % 8)));
-	      if(b == 0){
-	        buf[idYW + idX] = (byte )0x00;
-	      }
-	      else {
-	        buf[idYW + idX] = (byte )0xff;
-	      }
-	    }
-	  }
-	}
-	break;
+          int   w8 = (w + 7) / 8;
+          byte dstDat[][][][] = new byte[1][][][];
+          WlzObject.WlzToBArray3D(dstSz, dstDat, wlzObj, og, sz, 0);
+          for(int idY = 0; idY < h; ++idY) {
+            int idYW = idY * w;
+            int idYW8 = idY * w8;
+            for(int idX = 0; idX < w; ++idX) {
+              byte p = dstDat[0][0][idY][idX / 8];
+              byte b = (byte )(p & (0x01 << (idX % 8)));
+              if(b == 0){
+                buf[idYW + idX] = (byte )0x00;
+              }
+              else {
+                buf[idYW + idX] = (byte )0xff;
+              }
+            }
+          }
+        }
+        break;
       default:
         throw new WlzException("Unsupported pixel type");
     }

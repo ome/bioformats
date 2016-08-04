@@ -1,0 +1,554 @@
+/*
+ * #%L
+ * OME-XML C++ library for working with OME-XML metadata structures.
+ * %%
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
+
+/*─────────────────────────────────────────────────────────────────────────────
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ *
+ *─────────────────────────────────────────────────────────────────────────────
+ */
+
+{% if fu.SOURCE_TYPE == "header" %}\
+#ifndef ${fu.GUARD}
+#define ${fu.GUARD}
+
+#include <ostream>
+#include <map>
+#include <string>
+
+#include <ome/common/log.h>
+
+#include <ome/xml/model/enums/EnumerationException.h>
+
+{% end %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+#include <algorithm>
+#include <cctype>
+#include <utility>
+
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/format.hpp>
+
+#include <ome/xml/model/enums/${klass.langType}.h>
+
+using boost::trim;
+using boost::format;
+
+namespace
+{
+
+  typedef std::pair<std::string,${klass.langTypeNS}::enum_value> smap;
+  typedef std::pair<${klass.langTypeNS}::enum_value,std::string> vmap;
+
+}
+
+{% end %}\
+namespace ome
+{
+  namespace xml
+  {
+    namespace model
+    {
+      namespace enums
+      {
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        /**
+         * ${klass.langType} enumeration.
+         */
+        class ${klass.langType}
+        {
+        public:
+          /// Enumeration values.
+          enum enum_value
+            {
+{% for value in klass.possibleValues %}\
+              /// ${value}
+{% if value == klass.possibleValues[-1] %}\
+              ${enum_value_name(value, False).upper()}
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              ${enum_value_name(value, False).upper()},
+{% end %}\
+{% end %}\
+            };
+
+          /**
+           * Construct a ${klass.langType} enumeration by an enumeration value.
+           *
+           * @param value the value of the enumeration.
+           */
+          ${klass.langType} (enum_value value);
+
+          /**
+           * Construct a ${klass.langType} enumeration by an enumeration name.
+           *
+           * Exact matching of the name will require the name to match
+           * one of the valid enumeration names.  Inexact matching will
+           * strip leading and trailing whitespace and perform a
+           * case-insensitive match.  Exact matching is recommended for
+           * use in program code which does not process user input;
+           * inexact matching is recommended when processing
+           * potentially malformed user input.
+           *
+           * @param name the name of the enumeration.
+           * @param strict true to require an exact name, false to allow an inexact match.
+           */
+          ${klass.langType} (const std::string& name, bool strict = true);
+
+          /**
+           * Copy constructor.
+           *
+           * @param original the instance to copy.
+           */
+          ${klass.langType} (const ${klass.langType}& original);
+
+          /**
+           * Assignment operator.
+           *
+           */
+          inline ${klass.langType}&
+          operator=  (const ${klass.langType}& rhs)
+          {
+            this->value = rhs.value;
+            this->name = rhs.name;
+            return *this;
+          }
+
+          /**
+           * Cast the enumeration to its value.
+           *
+           * @returns the enumeration value.
+           */
+          inline
+          operator enum_value () const
+          {
+            return this->value;
+          }
+
+          /**
+           * Cast the enumeration to its name.
+           *
+           * @returns the enumeration value.
+           */
+          inline
+          operator const std::string& () const
+          {
+            return *this->name;
+          }
+
+          /// String map type.
+          typedef std::map<std::string, ${klass.langType}::enum_value> string_map_type;
+          /// Value map type.
+          typedef std::map<${klass.langType}::enum_value, std::string> value_map_type;
+
+          /**
+           * Get a map of valid string names and enum values.
+           *
+           * @returns a map of string names to enum values.
+           */
+          static const string_map_type&
+          strings();
+
+          /**
+           * Get a map of valid enum values and string names.
+           *
+           * @returns a map of enum values to string names.
+           */
+          static const value_map_type&
+          values();
+
+        private:
+          /**
+           * Get a map of valid lowercased string names and enum values.
+           *
+           * @returns a map of lowercased string names to enum values.
+           */
+          static const string_map_type&
+          lowercase_strings();
+
+          /// Enumeration value.
+          enum_value         value;
+          /// Enumeration name.
+          const std::string *name;
+        };
+{% end header%}\
+{% if fu.SOURCE_TYPE == "source" %}\
+        ${klass.langType}::${klass.langType} (enum_value value):
+          value(value)
+        {
+          const value_map_type& value_map(values());
+          value_map_type::const_iterator i = value_map.find(value);
+          if (i == value_map.end())
+            {
+              format fmt("‘%1%’ not a supported value of %2%");
+              fmt % value % "${klass.langType}";
+              throw EnumerationException(fmt.str());
+            }
+          this->name = &i->second;
+        }
+
+        ${klass.langType}::${klass.langType} (const std::string& name, bool strict)
+        {
+          const string_map_type& string_map(strings());
+          const string_map_type& lowercase_string_map(lowercase_strings());
+          string_map_type::const_iterator i = string_map.find(name);
+          string_map_type::const_iterator li = lowercase_string_map.end();
+          if (strict == false && i == string_map.end())
+            {
+              // Trim leading and trailing whitespace and lowercase.
+              // NOTE: This lowercasing operation only works with 7-bit ASCII, not UTF-8.
+              // NOTE: To make this work properly with Unicode, look at ICU.
+              std::string lname(name);
+              trim(lname);
+              std::transform(lname.begin(), lname.end(), lname.begin(), std::ptr_fun(::tolower));
+              li = lowercase_string_map.find(lname);
+{% if 'Other' in klass.possibleValues %}\
+              if (li == lowercase_string_map.end())
+                {
+                  ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
+                  format fmt("Unsupported %1% value of ‘%2%’ will be stored as “Other”");
+                  fmt % "${klass.langType}" % name;
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                  i = string_map.find("Other");
+                }
+              else
+                {
+                  ome::common::Logger logger = ome::common::createLogger("${klass.langType}");
+                  format fmt("Unsupported %1% value of ‘%2%’ will be stored as “%3%”");
+                  fmt % "${klass.langType}" % name % ${klass.langType}(li->second);
+                  BOOST_LOG_SEV(logger, ome::logging::trivial::warning) << fmt;
+                }
+{% end %}\
+            }
+          if (i != string_map.end())
+	    {
+	      this->value = i->second;
+	    }
+	  else if (li != lowercase_string_map.end())
+	    {
+	      this->value = li->second;
+	    }
+	  else
+            {
+              format fmt("‘%1%’ not a supported value of %2%");
+              fmt % name % "${klass.langType}";
+              throw EnumerationException(fmt.str());
+            }
+
+          const value_map_type& value_map(values());
+          value_map_type::const_iterator i2 = value_map.find(value);
+          if (i2 == value_map.end())
+            {
+              format fmt("‘%1%’ not a supported value of %2%");
+              fmt % value % "${klass.langType}";
+              throw EnumerationException(fmt.str());
+            }
+          this->name = &i2->second;
+        }
+
+        ${klass.langType}::${klass.langType} (const ${klass.langType}& original):
+          value(original.value),
+          name(original.name)
+        {
+        }
+
+        const ${klass.langType}::string_map_type&
+        ${klass.langType}::strings()
+        {
+	  const smap init_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
+          static const string_map_type string_map(init_string_values,
+                                                  init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
+
+          return string_map;
+        }
+
+        const ${klass.langType}::value_map_type&
+        ${klass.langType}::values()
+        {
+	  vmap init_value_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}")
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              vmap(${klass.langTypeNS}::${enum_value_name(value, False).upper()}, "${value}"),
+{% end %}\
+{% end %}\
+	    };
+
+          static const value_map_type value_map(init_value_values,
+                                                init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
+
+          return value_map;
+        }
+
+        const ${klass.langType}::string_map_type&
+        ${klass.langType}::lowercase_strings()
+        {
+	  smap init_lcase_string_values[] =
+	    {
+{% for value in klass.possibleValues %}\
+{% if value == klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()})
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+              smap("${value.lower()}", ${klass.langTypeNS}::${enum_value_name(value, False).upper()}),
+{% end %}\
+{% end %}\
+	    };
+
+          static const string_map_type lcase_string_map(init_lcase_string_values,
+                                                        init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));
+
+          return lcase_string_map;
+        }
+{% end source%}\
+{% if fu.SOURCE_TYPE == "header" %}\
+
+        /**
+         * Compare two ${klass.langType} objects for equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are the same, otherwise false.
+         */
+        inline bool
+        operator== (const ${klass.langType}& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return static_cast<${klass.langType}::enum_value>(lhs) == static_cast<${klass.langType}::enum_value>(rhs);
+        }
+
+        /**
+         * Compare ${klass.langType} object and enum value for equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} enum value.
+         * @returns true if the enum values are the same, otherwise false.
+         */
+        inline bool
+        operator== (const ${klass.langType}& lhs,
+                    const ${klass.langType}::enum_value& rhs)
+        {
+          return static_cast<${klass.langType}::enum_value>(lhs) == rhs;
+        }
+
+        /**
+         * Compare enum value and ${klass.langType} for equality.
+         *
+         * @param lhs a ${klass.langType} enum value.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are the same, otherwise false.
+         */
+        inline bool
+        operator== (const ${klass.langType}::enum_value& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return lhs == static_cast<${klass.langType}::enum_value>(rhs);
+        }
+
+        /**
+         * Compare ${klass.langType} object and enum string value for equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} enum string value.
+         * @returns true if the enum values are the same, otherwise false.
+         */
+        inline bool
+        operator== (const ${klass.langType}& lhs,
+                    const std::string& rhs)
+        {
+          return static_cast<const std::string&>(lhs) == rhs;
+        }
+
+        /**
+         * Compare enum string value and ${klass.langType} object for equality.
+         *
+         * @param lhs a ${klass.langType} enum string value.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are the same, otherwise false.
+         */
+        inline bool
+        operator== (const std::string& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return lhs == static_cast<const std::string&>(rhs);
+        }
+
+        /**
+         * Compare two ${klass.langType} objects for non-equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are not the same, otherwise false.
+         */
+        inline bool
+        operator!= (const ${klass.langType}& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return static_cast<${klass.langType}::enum_value>(lhs) != static_cast<${klass.langType}::enum_value>(rhs);
+        }
+
+        /**
+         * Compare ${klass.langType} object and enum value for non-equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} enum value.
+         * @returns true if the enum values are not the same, otherwise false.
+         */
+        inline bool
+        operator!= (const ${klass.langType}& lhs,
+                    const ${klass.langType}::enum_value& rhs)
+        {
+          return static_cast<${klass.langType}::enum_value>(lhs) != rhs;
+        }
+
+        /**
+         * Compare enum value and ${klass.langType} object for non-equality.
+         *
+         * @param lhs a ${klass.langType} enum value.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are not the same, otherwise false.
+         */
+        inline bool
+        operator!= (const ${klass.langType}::enum_value& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return lhs != static_cast<${klass.langType}::enum_value>(rhs);
+        }
+
+        /**
+         * Compare ${klass.langType} object and enum string value for non-equality.
+         *
+         * @param lhs a ${klass.langType} object.
+         * @param rhs a ${klass.langType} enum string value.
+         * @returns true if the enum values are not the same, otherwise false.
+         */
+        inline bool
+        operator!= (const ${klass.langType}& lhs,
+                    const std::string& rhs)
+        {
+          return static_cast<const std::string&>(lhs) != rhs;
+        }
+
+        /**
+         * Compare enum string value and ${klass.langType} object for non-equality.
+         *
+         * @param lhs a ${klass.langType} enum string value.
+         * @param rhs a ${klass.langType} object.
+         * @returns true if the enum values are not the same, otherwise false.
+         */
+        inline bool
+        operator!= (const std::string& lhs,
+                    const ${klass.langType}& rhs)
+        {
+          return lhs != static_cast<const std::string&>(rhs);
+        }
+
+        /**
+         * Output ${klass.langType} to output stream.
+         *
+         * @param os the output stream.
+         * @param enumeration the ${klass.langType} to output.
+         * @returns the output stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_ostream<charT,traits>&
+        operator<< (std::basic_ostream<charT,traits>& os,
+                    const ${klass.langType}& enumeration)
+        {
+          return os << static_cast<const std::string&>(enumeration);
+        }
+
+        /**
+         * Set ${klass.langType} from input stream.
+         *
+         * @param is the input stream.
+         * @param enumeration the ${klass.langType} to input.
+         * @returns the input stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    ${klass.langType}& enumeration)
+        {
+          std::string value;
+          is >> value;
+          if (is)
+            {
+              try
+                {
+                  enumeration = ${klass.langType}(value, false);
+                }
+              catch (const EnumerationException&)
+                {
+                  is.setstate(std::ios::failbit);
+                }
+            }
+
+          return is;
+        }
+{% end header%}\
+
+      }
+    }
+  }
+}
+{% if fu.SOURCE_TYPE == "header" %}\
+
+#endif // ${fu.GUARD}
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
+{% end %}\

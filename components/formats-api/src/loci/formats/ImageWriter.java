@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,10 +50,6 @@ import org.slf4j.LoggerFactory;
  * ImageWriter is the master file format writer for all supported formats.
  * It uses one instance of each writer subclass (specified in writers.txt,
  * or other class list source) to identify file formats and write data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ImageWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ImageWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -191,17 +187,20 @@ public class ImageWriter implements IFormatWriter {
   // -- IFormatWriter API methods --
 
   /* @see IFormatWriter#changeOutputFile(String) */
+  @Override
   public void changeOutputFile(String id) throws FormatException, IOException {
     getWriter().changeOutputFile(id);
   }
 
   /* @see IFormatWriter#saveBytes(int, byte[]) */
+  @Override
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
     getWriter().saveBytes(no, buf);
   }
 
   /* @see IFormatWriter#saveBytes(int, byte[], int, int, int, int) */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -209,6 +208,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#saveBytes(int, byte[], Region) */
+  @Override
   public void saveBytes(int no, byte[] buf, Region tile)
     throws FormatException, IOException
   {
@@ -216,6 +216,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#savePlane(int, Object) */
+  @Override
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
@@ -223,6 +224,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#savePlane(int, Object, int, int, int, int) */
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -230,6 +232,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#savePlane(int, Object, Region) */
+  @Override
   public void savePlane(int no, Object plane, Region tile)
     throws FormatException, IOException
   {
@@ -237,27 +240,32 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#setSeries(int) */
+  @Override
   public void setSeries(int series) throws FormatException {
     getWriter().setSeries(series);
   }
 
   /* @see IFormatWriter#getSeries() */
+  @Override
   public int getSeries() {
     return getWriter().getSeries();
   }
 
   /* @see IFormatWriter#setInterleaved(boolean) */
+  @Override
   public void setInterleaved(boolean interleaved) {
     for (int i=0; i<writers.length; i++) writers[i].setInterleaved(interleaved);
   }
 
   /* @see IFormatWriter#isInterleaved() */
+  @Override
   public boolean isInterleaved() {
     // NB: all writers should have the same interleaved status
     return writers[0].isInterleaved();
   }
 
   /* @see IFormatWriter#setValidBitsPerPixel(int) */
+  @Override
   public void setValidBitsPerPixel(int bits) {
     for (IFormatWriter writer : writers) {
       writer.setValidBitsPerPixel(bits);
@@ -265,43 +273,51 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() {
     return getWriter().canDoStacks();
   }
 
   /* @see IFormatWriter#setMetadataRetrieve(MetadataRetrieve) */
+  @Override
   public void setMetadataRetrieve(MetadataRetrieve r) {
     for (int i=0; i<writers.length; i++) writers[i].setMetadataRetrieve(r);
   }
 
   /* @see IFormatReader#getMetadataStore() */
+  @Override
   public MetadataRetrieve getMetadataRetrieve() {
     return getWriter().getMetadataRetrieve();
   }
 
   /* @see IFormatWriter#setColorModel(ColorModel) */
+  @Override
   public void setColorModel(ColorModel cm) {
     for (int i=0; i<writers.length; i++) writers[i].setColorModel(cm);
   }
 
   /* @see IFormatWriter#getColorModel() */
+  @Override
   public ColorModel getColorModel() {
     // NB: all writers should have the same color model
     return writers[0].getColorModel();
   }
 
   /* @see IFormatWriter#setFramesPerSecond(int) */
+  @Override
   public void setFramesPerSecond(int rate) {
     for (int i=0; i<writers.length; i++) writers[i].setFramesPerSecond(rate);
   }
 
   /* @see IFormatWriter#getFramesPerSecond() */
+  @Override
   public int getFramesPerSecond() {
     // NB: all writers should have the same frames per second
     return writers[0].getFramesPerSecond();
   }
 
   /* @see IFormatWriter#getCompressionTypes() */
+  @Override
   public String[] getCompressionTypes() {
     if (compressionTypes == null) {
       HashSet<String> set = new HashSet<String>();
@@ -319,21 +335,25 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#getPixelTypes() */
+  @Override
   public int[] getPixelTypes() {
     return getWriter().getPixelTypes();
   }
 
   /* @see IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     return getWriter().getPixelTypes(codec);
   }
 
   /* @see IFormatWriter#isSupportedType(int) */
+  @Override
   public boolean isSupportedType(int type) {
     return getWriter().isSupportedType(type);
   }
 
   /* @see IFormatWriter#setCompression(String) */
+  @Override
   public void setCompression(String compress) throws FormatException {
     boolean ok = false;
     for (int i=0; i<writers.length; i++) {
@@ -351,11 +371,13 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#getCompression() */
+  @Override
   public String getCompression() {
     return getWriter().getCompression();
   }
 
   /* @see IFormatWriter#setWriteSequentially(boolean) */
+  @Override
   public void setWriteSequentially(boolean sequential) {
     for (IFormatWriter writer : writers) {
       writer.setWriteSequentially(sequential);
@@ -363,6 +385,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  @Override
   public void setCodecOptions(CodecOptions options) {
     getWriter().setCodecOptions(options);
   }
@@ -370,6 +393,7 @@ public class ImageWriter implements IFormatWriter {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */
+  @Override
   public boolean isThisType(String name) {
     for (int i=0; i<writers.length; i++) {
       if (writers[i].isThisType(name)) return true;
@@ -378,9 +402,11 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatHandler#getFormat() */
+  @Override
   public String getFormat() { return getWriter().getFormat(); }
 
   /* @see IFormatHandler#getSuffixes() */
+  @Override
   public String[] getSuffixes() {
     if (suffixes == null) {
       HashSet<String> suffixSet = new HashSet<String>();
@@ -396,16 +422,19 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return getWriter().getNativeDataType();
   }
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     getWriter(id).setId(id);
   }
 
   /* @see IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     getWriter().close();
   }

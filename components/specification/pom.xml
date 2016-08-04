@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.8</version>
+    <version>5.1.4</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -81,6 +81,7 @@
                 <directory>${basedir}/transforms</directory>
                 <includes>
                   <include>**/*.xsl</include>
+                  <include>**/*.xml</include>
                 </includes>
               </resource>
             </resources>

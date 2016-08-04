@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+ xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+ xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+ xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+ xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
+    http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd"
+    UUID="urn:uuid:AD044801-3FF8-4C79-B81B-724304BEC8AA" Creator="Creator1">
+	<Rights>
+		<RightsHolder>RightsHolder0</RightsHolder>
+		<RightsHeld>RightsHeld0</RightsHeld>
+	</Rights>
+	<Project Name="Name1" ID="Project:1">
+		<Description>Description0</Description>
+		<ExperimenterRef ID="Experimenter:1"/>
+		<ExperimenterGroupRef ID="ExperimenterGroup:1"/>
+		<DatasetRef ID="Dataset:1"/>
+		<SA:AnnotationRef ID="Annotation:1"/>
+	</Project>
+	<Dataset Name="Name3" ID="Dataset:1">
+		<Description>Description1</Description>
+		<ExperimenterRef ID="Experimenter:1"/>
+		<ExperimenterGroupRef ID="ExperimenterGroup:1"/>
+		<ImageRef ID="Image:1"/>
+		<SA:AnnotationRef ID="Annotation:2"/>
+	</Dataset>
+	<Experiment Type="FP" ID="Experiment:1">
+		<Description>Description2</Description>
+		<ExperimenterRef ID="Experimenter:1"/>
+	</Experiment>
+	<SPW:Plate ID="Plate:1" Name="Name5" Status="Status1" ExternalIdentifier="ExternalIdentifier1" ColumnNamingConvention="letter"
+		 RowNamingConvention="letter" WellOriginX="0" WellOriginY="0" Rows="50" Columns="50" FieldIndex="50">
+		<SPW:Description>Description0</SPW:Description>
+		<SPW:Well ID="Well:1" Column="50" Row="50" ExternalDescription="ExternalDescription1" ExternalIdentifier="ExternalIdentifier3"
+			 Type="Type5" Color="-1">
+			<SPW:WellSample ID="WellSample:1" PositionX="0" PositionY="0" Timepoint="2006-05-04T18:13:51.0" Index="50">
+				<ImageRef ID="Image:1"/>
+			</SPW:WellSample>
+			<SPW:ReagentRef ID="Reagent:1"/>
+			<SA:AnnotationRef ID="Annotation:3"/>
+		</SPW:Well>
+		<SA:AnnotationRef ID="Annotation:4"/>
+		<SPW:PlateAcquisition ID="PlateAcquisition:1" Name="Name7" EndTime="2006-05-04T18:13:51.0" StartTime="2006-05-04T18:13:51.0"
+			 MaximumFieldCount="50">
+			<SPW:Description>Description1</SPW:Description>
+			<SPW:WellSampleRef ID="WellSample:1"/>
+			<SA:AnnotationRef ID="Annotation:5"/>
+		</SPW:PlateAcquisition>
+	</SPW:Plate>
+	<SPW:Screen ID="Screen:1" Name="Name9" ProtocolIdentifier="ProtocolIdentifier1" ProtocolDescription="ProtocolDescription1"
+		 ReagentSetDescription="ReagentSetDescription1" ReagentSetIdentifier="ReagentSetIdentifier1" Type="Type7">
+		<SPW:Description>Description2</SPW:Description>
+		<SPW:Reagent ID="Reagent:1" Name="Name11" ReagentIdentifier="ReagentIdentifier1">
+			<SPW:Description>Description3</SPW:Description>
+		</SPW:Reagent>
+		<SPW:PlateRef ID="Plate:1"/>
+		<SA:AnnotationRef ID="Annotation:7"/>
+	</SPW:Screen>
+	<Experimenter ID="Experimenter:1" FirstName="FirstName1" MiddleName="MiddleName1" LastName="LastName1"
+		 Email="Email1" Institution="Institution1" UserName="UserName1">
+		<SA:AnnotationRef ID="Annotation:8"/>
+	</Experimenter>
+	<ExperimenterGroup Name="Name13" ID="ExperimenterGroup:1">
+		<Description>Description4</Description>
+		<ExperimenterRef ID="Experimenter:1"/>
+		<Leader ID="Experimenter:1"/>
+		<SA:AnnotationRef ID="Annotation:9"/>
+	</ExperimenterGroup>
+	<Instrument ID="Instrument:1">
+		<Microscope Type="Upright" Manufacturer="Manufacturer1" Model="Model1" SerialNumber="SerialNumber1" LotNumber="LotNumber1"/>
+		<LightSource ID="LightSource:1" Power="0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3"
+			 LotNumber="LotNumber3">
+			<Laser Type="Excimer" LaserMedium="Cu" Wavelength="50" FrequencyMultiplication="50" Tuneable="false" Pulse="CW"
+				 PockelCell="false" RepetitionRate="0">
+				<Pump ID="LightSource:1"/>
+			</Laser>
+		</LightSource>
+		<LightSource ID="LightSource:2" Power="0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3"
+			LotNumber="LotNumber3">
+			<Filament Type="Incandescent"/>
+		</LightSource>
+		<LightSource ID="LightSource:3" Power="0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3"
+			LotNumber="LotNumber3">
+			<Arc Type="Hg"/>
+		</LightSource>
+		<LightSource ID="LightSource:4" Power="0" Manufacturer="Manufacturer3" Model="Model3" SerialNumber="SerialNumber3"
+			LotNumber="LotNumber3">
+			<LightEmittingDiode>
+			</LightEmittingDiode>
+		</LightSource>
+		<Detector Gain="0" Voltage="0" Offset="0" Zoom="0" AmplificationGain="0" ID="Detector:1" Type="CCD"
+			 Manufacturer="Manufacturer5" Model="Model5" SerialNumber="SerialNumber5" LotNumber="LotNumber5"/>
+		
+		<Objective ID="Objective:1" Correction="UV" Immersion="Oil" LensNA="0" NominalMagnification="0" CalibratedMagnification="0"
+			 WorkingDistance="0" Iris="false" Manufacturer="Manufacturer7" Model="Model7" SerialNumber="SerialNumber7"
+			 LotNumber="LotNumber7"/>
+		
+		<FilterSet ID="FilterSet:1" Manufacturer="Manufacturer9" Model="Model9" SerialNumber="SerialNumber9"
+			 LotNumber="LotNumber9">
+			<ExcitationFilterRef ID="Filter:1"/>
+			<DichroicRef ID="Dichroic:1"/>
+			<EmissionFilterRef ID="Filter:1"/>
+		</FilterSet>
+		<Filter Type="Dichroic" FilterWheel="FilterWheel1" ID="Filter:1" Manufacturer="Manufacturer11"
+			 Model="Model11" SerialNumber="SerialNumber11" LotNumber="LotNumber11">
+			<TransmittanceRange CutIn="50" CutOut="50" CutInTolerance="50" CutOutTolerance="50" Transmittance="0.5"/>
+		</Filter>
+		<Dichroic ID="Dichroic:1" Manufacturer="Manufacturer13" Model="Model13" SerialNumber="SerialNumber13"
+			 LotNumber="LotNumber13"/>
+		
+
+	</Instrument>
+	<Image ID="Image:1" Name="Name15">
+		<AcquisitionDate>2006-05-04T18:13:51.0</AcquisitionDate>
+		<ExperimenterRef ID="Experimenter:1"/>
+		<Description>Description5</Description>
+		<ExperimentRef ID="Experiment:1"/>
+		<ExperimenterGroupRef ID="ExperimenterGroup:1"/>
+		<InstrumentRef ID="Instrument:1"/>
+		<ObjectiveSettings ID="Objective:1" CorrectionCollar="0" Medium="Air" RefractiveIndex="0"/>
+		<ImagingEnvironment Temperature="0" AirPressure="0" Humidity="0.5" CO2Percent="0.5"/>
+		<StageLabel Name="Name17" X="0" Y="0" Z="0"/>
+		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+			<Channel ID="Channel:1" Name="Name19" SamplesPerPixel="50" IlluminationType="Transmitted" PinholeSize="0"
+				 AcquisitionMode="WideField" ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
+				 Fluor="Fluor1" NDFilter="0" PockelCellSetting="0" Color="-1">
+				<LightSourceSettings ID="LightSource:1" Attenuation="0.5" Wavelength="50"/>
+				<DetectorSettings ID="Detector:1" Offset="0" Gain="0" Voltage="0" Zoom="0" ReadOutRate="0" Binning="1x1"
+					 Integration="50"/>
+				<FilterSetRef ID="FilterSet:1"/>
+				<LightPath>
+					<ExcitationFilterRef ID="Filter:1"/>
+					<DichroicRef ID="Dichroic:1"/>
+					<EmissionFilterRef ID="Filter:1"/>
+				</LightPath>
+			</Channel>
+			<BIN:BinData BigEndian="false" Length="32"
+				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BIN:BinData>
+			<Plane TheZ="50" TheT="50" TheC="50" DeltaT="0" ExposureTime="0" PositionX="0" PositionY="0" PositionZ="0">
+				<HashSHA1>3031323334353637383930313233343536373839</HashSHA1>
+			</Plane>
+		</Pixels>
+		<ROI:ROIRef ID="ROI:1"/>
+		<SA:AnnotationRef ID="Annotation:23"/>
+	</Image>
+	<SA:StructuredAnnotations>
+		<SA:TagAnnotation ID="Annotation:1" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description0</SA:Description>
+			<SA:Value>MissingXMLAnnotation</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:2" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description1</SA:Description>
+			<SA:Value>MissingFileAnnotation</SA:Value>
+		</SA:TagAnnotation>
+		<SA:ListAnnotation ID="Annotation:3" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description2</SA:Description>
+		</SA:ListAnnotation>
+		<SA:LongAnnotation ID="Annotation:4" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description3</SA:Description>
+			<SA:Value>-1073741773</SA:Value>
+		</SA:LongAnnotation>
+		<SA:DoubleAnnotation ID="Annotation:5" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description4</SA:Description>
+			<SA:Value>0</SA:Value>
+		</SA:DoubleAnnotation>
+		<SA:CommentAnnotation ID="Annotation:6" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description5</SA:Description>
+			<SA:Value>Value0</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:BooleanAnnotation ID="Annotation:7" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description6</SA:Description>
+			<SA:Value>false</SA:Value>
+		</SA:BooleanAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:8" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description7</SA:Description>
+			<SA:Value>2006-05-04T18:13:51.0</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TagAnnotation ID="Annotation:9" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description8</SA:Description>
+			<SA:Value>Value1</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TermAnnotation ID="Annotation:10" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description9</SA:Description>
+			<SA:Value>Value2</SA:Value>
+		</SA:TermAnnotation>
+		<SA:TermAnnotation ID="Annotation:11" Namespace="org.ome-xml.sample:dummy" Annotator="Experimenter:1">
+			<SA:Description>Description10</SA:Description>
+			<SA:Value>WasMapAnnotation</SA:Value>
+		</SA:TermAnnotation>
+		<SA:TagAnnotation ID="Annotation:12" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:13</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:13" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:14</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:14" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:15</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:15" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:16</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:16" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:17</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:17" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:18</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:18" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:19</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:19" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:20</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:20" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:21</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:21" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:22</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:22" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:23</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:23" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:24</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:35" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:36</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:36" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:37</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:37" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:38</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:38" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:39</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:39" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:40</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:40" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:41</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:41" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:42</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:42" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:43</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:43" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:44</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:44" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:45</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:45" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:46</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:46" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:47</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:47" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:48</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:48" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:49</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:49" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:50</SA:Value>
+		</SA:TagAnnotation>
+		<SA:TagAnnotation ID="Annotation:50" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:51</SA:Value>
+		</SA:TagAnnotation>
+	</SA:StructuredAnnotations>
+	<ROI:ROI ID="ROI:1" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				 LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				 ID="Shape:1" TheZ="50" TheT="50" TheC="50">
+				<ROI:Line X1="0" Y1="0" X2="0" Y2="0" MarkerStart="Arrow" MarkerEnd="Arrow"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:36"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	<ROI:ROI ID="ROI:2" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:2" TheZ="50" TheT="50" TheC="50">
+				<ROI:Rectangle X="0" Y="0" Width="0" Height="0"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:38"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:3" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:3" TheZ="50" TheT="50" TheC="50">
+				<ROI:Ellipse X="0" Y="0" RadiusX="0" RadiusY="0"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:40"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:4" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:4" TheZ="50" TheT="50" TheC="50">
+				<ROI:Ellipse X="0" Y="0" RadiusX="0" RadiusY="0"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:42"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:5" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:5" TheZ="50" TheT="50" TheC="50">
+				<ROI:Point X="0" Y="0"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:44"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:6" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:6" TheZ="50" TheT="50" TheC="50">
+				<ROI:Polyline Points="Points1" MarkerStart="Arrow" MarkerEnd="Arrow"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:46"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:7" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:7" TheZ="50" TheT="50" TheC="50">
+				<ROI:Polygon Points="Points3"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:48"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+	
+	<ROI:ROI ID="ROI:8" Name="Name21" Namespace="org.ome-xml.sample:dummy">
+		<ROI:Union>
+			<ROI:Shape FillColor="0" FillRule="EvenOdd" StrokeColor="0" StrokeWidth="0" StrokeDashArray="StrokeDashArray1"
+				LineCap="Butt" Text="Text1" FontFamily="serif" FontSize="50" FontStyle="Bold" Visible="false" Locked="false"
+				ID="Shape:8" TheZ="50" TheT="50" TheC="50">
+				<ROI:Label X="0" Y="0"/>
+				<ROI:Transform A00="0" A10="0" A01="0" A11="0" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+		<SA:AnnotationRef ID="Annotation:50"/>
+		<ROI:Description>Description0</ROI:Description>
+	</ROI:ROI>
+</OME>

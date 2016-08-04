@@ -2,83 +2,77 @@
 Developer Documentation
 ***********************
 
-Using Bio-Formats
-=================
+The following sections describe various things that are useful to know when
+working with Bio-Formats. It is recommended that you obtain the
+Bio-Formats source by following the directions in the
+:ref:`source-code` section. Referring to the :javadoc:`Javadocs <>` as you
+read over these pages should help, as the notes will make more sense when you
+see the API.
+
+For a complete list of supported formats, see the Bio-Formats
+:doc:`supported formats table </supported-formats>`.
+
+For a few working examples of how to use Bio-Formats, see
+:sourcedir:`these Github pages <components/formats-gpl/utils>`.
+
+
+Introduction to Bio-Formats
+===========================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
-    using-bioformats
+    overview
     building-bioformats
-    generating-test-images
+    components
+    file-reader
+    file-writer
 
-Bio-Formats as a Java library
-=============================
-
-API documentation
------------------
+Using Bio-Formats as a Java library
+===================================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
     java-library
-
-Also see :javadoc:`Bio-Formats Javadocs <>`
-
-Examples
---------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
     export
     export2
     conversion
     matlab-dev
     python-dev
-
-Interfacing from non-Java code
-==============================
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
     non-java-code
-    c-bindings
-    buildBF-CPP
-    BF-CPP-windows
-    BF-CPP-macosx
-    BF-CPP-linux
 
-.. _bfapplications:
-
-
-Writing new Bio-Formats file format readers
-===========================================
+Using Bio-Formats as a native C++ library
+=========================================
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
-    reader-guide
+    cpp/overview
+    cpp/conversion
+    cpp/tutorial
+    cpp/bf-env
+    cpp/schema
+    cpp/commands/bf-test
+    cpp/commands/bf-test-info
+    cpp/commands/bf-test-view
 
 Contributing to Bio-Formats
 ===========================
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
 
     commit-testing
     testing-notes
+    generating-test-images
+    reader-guide
     service
     xsd-fu
+    useful-scripts
 
-See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org.uk/ome/report/44>`_ 
+See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org/ome/report/44>`_
 for information on work currently planned or in progress.
 
 For more general guidance about how to contribute to OME projects, see the 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,13 +50,14 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
  * Metamorph software version 7.5 and above.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
@@ -65,7 +66,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   // -- Constants --
 
-  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";
+  private static final String DATE_FORMAT = "yyyyMMdd HH:mm:ss";
 
   // -- Fields --
 
@@ -87,6 +88,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -96,6 +98,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     String[] domain = new String[1];
@@ -105,6 +108,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? new String[0] : files;
@@ -113,6 +117,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -148,13 +153,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
     Vector<String> uniqueChannels = new Vector<String>();
     Vector<Double> uniqueZs = new Vector<Double>();
-    Vector<Double> stageX = new Vector<Double>();
-    Vector<Double> stageY = new Vector<Double>();
+    Vector<Length> stageX = new Vector<Length>();
+    Vector<Length> stageY = new Vector<Length>();
 
     CoreMetadata m = core.get(0);
 
@@ -230,25 +236,30 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
-    Vector<Double> xPositions = new Vector<Double>();
-    Vector<Double> yPositions = new Vector<Double>();
+    final Vector<Length> xPositions = new Vector<Length>();
+    final Vector<Length> yPositions = new Vector<Length>();
 
     for (IFD ifd : ifds) {
       String xml = XMLTools.sanitizeXML(ifd.getComment());
       XMLTools.parseXML(xml, handler);
 
-      double x = handler.getStagePositionX();
-      double y = handler.getStagePositionY();
+      final Length x = handler.getStagePositionX();
+      final Length y = handler.getStagePositionY();
 
       if (xPositions.size() == 0) {
         xPositions.add(x);
         yPositions.add(y);
       }
       else {
-        double previousX = xPositions.get(xPositions.size() - 1);
-        double previousY = yPositions.get(yPositions.size() - 1);
+        final Length previousX = xPositions.get(xPositions.size() - 1);
+        final Length previousY = yPositions.get(yPositions.size() - 1);
 
-        if (Math.abs(previousX - x) > 0.21 || Math.abs(previousY - y) > 0.21) {
+        final double x1 = x.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double x2 = previousX.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double y1 = y.value(UNITS.REFERENCEFRAME).doubleValue();
+        final double y2 = previousY.value(UNITS.REFERENCEFRAME).doubleValue();
+
+        if (Math.abs(x1 - x2) > 0.21 || Math.abs(y1 - y2) > 0.21) {
           xPositions.add(x);
           yPositions.add(y);
         }
@@ -280,6 +291,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     for (Double z : zPositions) {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
+
     if (getSizeZ() == 0) m.sizeZ = 1;
     m.sizeZ *= uniqueZ.size();
 
@@ -297,9 +309,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     int seriesCount = wellCount * fieldRowCount * fieldColumnCount;
 
-    if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount) {
+    if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount ||
+      totalPlanes > getSizeZ() * getSizeT() * effectiveC)
+    {
       m.sizeZ = 1;
-      m.sizeT = totalPlanes / (seriesCount * getSizeT() * effectiveC);
+      m.sizeT = totalPlanes / (seriesCount * effectiveC);
     }
 
     m.imageCount = getSizeZ() * getSizeT() * effectiveC;
@@ -380,7 +394,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       store.setImageName(name, s);
 
       String date =
-        DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
+        DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT, ".");
       if (date != null) {
         store.setImageAcquisitionDate(new Timestamp(date), s);
       }
@@ -390,7 +404,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
         Vector<Double> exposures = handler.getExposures();
 
         for (int i=0; i<timestamps.size(); i++) {
-          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
+          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
           addSeriesMetaList("timestamp", timestamp);
         }
         for (int i=0; i<exposures.size(); i++) {
@@ -400,7 +414,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
         long startDate = 0;
         if (timestamps.size() > 0) {
-          startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT);
+          startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT, ".");
         }
 
         store.setImageDescription("", s);
@@ -414,13 +428,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
             if (t < timestamps.size()) {
               String stamp = timestamps.get(t);
-              long ms = DateTools.getTime(stamp, DATE_FORMAT);
-              store.setPlaneDeltaT((ms - startDate) / 1000.0, s, image);
+              long ms = DateTools.getTime(stamp, DATE_FORMAT, ".");
+              store.setPlaneDeltaT(new Time((ms - startDate) / 1000.0, UNITS.S), s, image);
             }
-            if (image < exposures.size()) {
-              store.setPlaneExposureTime(exposures.get(image), s, image);
+            if (image < exposures.size() && exposures.get(image) != null) {
+              store.setPlaneExposureTime(new Time(exposures.get(image), UNITS.S), s, image);
             }
-
             if (s < stageX.size()) {
               store.setPlanePositionX(stageX.get(s), s, image);
             }
@@ -431,13 +444,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
           }
         }
 
-        store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(handler.getTemperature(), UNITS.DEGREEC), s);
 
-        PositiveFloat sizeX =
+        Length sizeX =
           FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
-        PositiveFloat sizeY =
+        Length sizeY =
           FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, s);
@@ -550,6 +564,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       this.well = well;
     }
 
+    @Override
     public boolean equals(Object o) {
       if (!(o instanceof Well)) return false;
       Well w = (Well) o;
@@ -558,12 +573,14 @@ public class MetamorphTiffReader extends BaseTiffReader {
         w.fieldCol == this.fieldCol;
     }
 
+    @Override
     public int hashCode() {
       return (well << 16) | (fieldRow << 8) | fieldCol;
     }
   }
 
   class NumericComparator implements Comparator<String> {
+    @Override
     public int compare(String s1, String s2) {
       if (s1.equals(s2)) return 0;
 

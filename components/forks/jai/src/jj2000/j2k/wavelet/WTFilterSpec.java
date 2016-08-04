@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -128,8 +128,6 @@ public abstract class WTFilterSpec {
      *
      * @param nc The number of components
      *
-     * @param nt The number of tiles
-     *
      *
      * */
     protected WTFilterSpec(int nc) {
@@ -157,8 +155,6 @@ public abstract class WTFilterSpec {
      * <P>NOTE: The tile specific things are not supported yet
      *
      * @param n The component index
-     *
-     * @param t The tile index, in raster scan order.
      *
      * @return The specification type for component 'n' and tile 't'.
      *

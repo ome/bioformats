@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   RectROIMaskGenerator
  *
  * Description:             Generates masks when only rectangular ROIs exist
- *
  *
  *
  * COPYRIGHT:
@@ -131,8 +130,6 @@ public class RectROIMaskGenerator extends ROIMaskGenerator{
      * the SubbandRectROIMask trees for each component.
      *
      * @param ROIs The ROI info.
-     *
-     * @param maxShift The flag indicating use of Maxshift method.
      *
      * @param nrc number of components.
      * */

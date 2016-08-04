@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -137,9 +137,9 @@ public class PaletteBuilder {
      * is unable to create approximation of <code>src</code>
      * and <code>canCreatePalette</code> returns <code>false</code>.
      *
-     * @see createIndexColorModel
+     * @see #createIndexColorModel(RenderedImage)
      *
-     * @see canCreatePalette
+     * @see #canCreatePalette(RenderedImage)
      *
      */
     public static RenderedImage createIndexedImage(RenderedImage src) {
@@ -160,9 +160,9 @@ public class PaletteBuilder {
      * is unable to create approximation of <code>img</code>
      * and <code>canCreatePalette</code> returns <code>false</code>.
      *
-     * @see createIndexedImage
+     * @see #createIndexedImage(RenderedImage)
      *
-     * @see canCreatePalette
+     * @see #canCreatePalette(RenderedImage)
      *
      */
     public static IndexColorModel createIndexColorModel(RenderedImage img) {

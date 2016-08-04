@@ -14,7 +14,7 @@ function fileExt = bfGetFileExtensions
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -34,12 +34,20 @@ function fileExt = bfGetFileExtensions
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 % Get all readers and create cell array with suffixes and names
-imageReader = loci.formats.ImageReader();
-readers = imageReader.getReaders();
+readers = javaMethod('getReaders', javaObject('loci.formats.ImageReader'));
 fileExt = cell(numel(readers), 2);
 for i = 1:numel(readers)
     suffixes = readers(i).getSuffixes();
-    fileExt{i, 1} = arrayfun(@char, suffixes, 'Unif', false);
+    if is_octave()
+        %% FIXME when https://savannah.gnu.org/bugs/?42700 gets fixed
+        ExtSuf = cell(numel(suffixes), 1);
+        for j = 1:numel(suffixes)
+            ExtSuf{j} = char(suffixes(j));
+        end
+        fileExt{i, 1} = ExtSuf;
+    else
+        fileExt{i, 1} = arrayfun(@char, suffixes, 'Unif', false);
+    end
     fileExt{i, 2} = char(readers(i).getFormat().toString);
 end
 

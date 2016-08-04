@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2015 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,19 +34,27 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+include_directories(${OME_TOPLEVEL_INCLUDES}
+                    ${Boost_INCLUDE_DIRS})
 
-set(ome_compat_static_headers
+set(ome_compat_headers
+    array.h
     cstdint.h
     memory.h
+    regex.h
     tuple.h)
 
-set(ome_compat_generated_headers
-   ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+# Use INTERFACE for cmake 3.0 and later; earlier versions add regex to ome-common.
+if(CMAKE_MAJOR_VERSION GREATER 2)
+  add_library(ome-compat INTERFACE)
+  target_link_libraries(ome-compat INTERFACE
+                        ${REGEX_LIBRARY})
+endif()
 
 set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
 
-install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
+install(FILES ${ome_compat_headers}
         DESTINATION ${ome_compat_includedir})
 
+# Dump header list for testing
+header_include_list_write(ome_compat_headers "" ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)

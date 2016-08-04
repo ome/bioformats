@@ -1,0 +1,30 @@
+		List<Element> Value_nodeList =
+				getChildrenByTagName(element, "Value");
+		if (Value_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Value node list size %d != 1",
+					Value_nodeList.size()));
+		}
+		else if (Value_nodeList.size() != 0)
+		{
+			try {
+				java.util.List<MapPair> pairs = new java.util.ArrayList<MapPair>();
+				NodeList children = Value_nodeList.get(0).getChildNodes();
+
+				for (int i=0; i<children.getLength(); i++) {
+					Node child = children.item(i);
+					if (child.getNodeType() == Node.ELEMENT_NODE) {
+					    pairs.add(new MapPair(
+					      ((Element) child).getAttribute("K"), child.getTextContent()));
+					}
+				}
+				MapPairs mapPairs = new MapPairs(pairs);
+				setValue(mapPairs);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+		}

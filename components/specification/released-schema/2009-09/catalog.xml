@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri name="http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd" uri="ome.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/AnalysisChain/2009-09/AnalysisChain.xsd" uri="AnalysisChain.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09/AnalysisModule.xsd" uri="AnalysisModule.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09/BinaryFile.xsd" uri="BinaryFile.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/CA/2009-09/CA.xsd" uri="CA.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/CLI/2009-09/CLI.xsd" uri="CLI.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/DataHistory/2009-09/DataHistory.xsd" uri="DataHistory.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/MLI/2009-09/MLI.xsd" uri="MLI.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/STD/2009-09/STD.xsd" uri="STD.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/SPW/2009-09/SPW.xsd" uri="SPW.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/SA/2009-09/SA.xsd" uri="SA.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/ROI/2009-09/ROI.xsd" uri="ROI.xsd"/>
+  <uri name="http://www.openmicroscopy.org/Schemas/OMERO/2009-09" uri="OMERO.xsd"/>
+</catalog>

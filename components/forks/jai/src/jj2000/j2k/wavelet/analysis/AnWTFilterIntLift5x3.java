@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             An analyzing wavelet filter implementing the
  *                          lifting 5x3 transform.
- *
  *
  *
  * COPYRIGHT:
@@ -524,7 +523,7 @@ public class AnWTFilterIntLift5x3 extends AnWTFilterInt {
      * <P>Currently the implementation of this method only tests if 'obj' is
      * also of the class AnWTFilterIntLift5x3.
      *
-     * @param The object against which to test inequality.
+     * @param obj The object against which to test inequality.
      * */
     public boolean equals(Object obj) {
         // To speed up test, first test for reference equality

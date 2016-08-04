@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,6 +32,10 @@
 
 package spec.schema.samples;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+import loci.formats.FormatTools;
+
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.FillRule;
@@ -50,7 +54,6 @@ import ome.xml.model.primitives.PositiveInteger;
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- *
  */
 public class Upgrade2011_06
 {
@@ -133,8 +136,8 @@ public class Upgrade2011_06
         public static final String Image0Name = "6x6x1x8-swatch.tif";
         public static final String Image0AcquiredDate = "2010-02-23T12:51:30";
         public static final DimensionOrder Image0Pixels0_0DimensionOrder = DimensionOrder.XYCZT;
-        public static final Double Image0Pixels0_0PhysicalSizeX = Double.valueOf("10000.0");
-        public static final Double Image0Pixels0_0PhysicalSizeY = Double.valueOf("10000.0");
+        public static final Length Image0Pixels0_0PhysicalSizeX = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
+        public static final Length Image0Pixels0_0PhysicalSizeY = FormatTools.createLength(Double.valueOf("10000.0"), UNITS.MICROM);
         public static final PixelType Image0Pixels0_0Type = PixelType.UINT8;
         public static final PositiveInteger Image0Pixels0_0SizeC = PositiveInteger.valueOf("3");
         public static final PositiveInteger Image0Pixels0_0SizeT = PositiveInteger.valueOf("1");
@@ -161,14 +164,14 @@ public class Upgrade2011_06
         public static final Color ROI1Shape1Fill = Color.valueOf("1");
         public static final FillRule ROI1Shape1FillRule = FillRule.NONZERO;
         public static final FontFamily ROI1Shape1FontFamily = FontFamily.SANSSERIF;
-        public static final NonNegativeInteger ROI1Shape1FontSize = NonNegativeInteger.valueOf("1");
+        public static final Length ROI1Shape1FontSize = new Length(1, UNITS.PT);
         public static final FontStyle ROI1Shape1FontStyle = FontStyle.BOLD;
         public static final LineCap ROI1Shape1LineCap = LineCap.BUTT;
         public static final Marker ROI1Shape1MarkerStart = Marker.ARROW;
         public static final Marker ROI1Shape1MarkerEnd = Marker.CIRCLE;
         public static final Color ROI1Shape1Stroke = Color.valueOf("1");
         public static final String ROI1Shape1StrokeDashArray = "1";
-        public static final Double ROI1Shape1StrokeWidth = Double.valueOf("1");
+        public static final Length ROI1Shape1StrokeWidth = FormatTools.createLength(Double.valueOf("1"), UNITS.PIXEL);
         public static final String ROI1Shape1Label = "Hello";
         public static final NonNegativeInteger ROI1Shape1TheC = NonNegativeInteger.valueOf("2");
         public static final Double ROI1Shape1PointX = Double.valueOf("1");
@@ -201,38 +204,38 @@ public class Upgrade2011_06
         public static final Marker ROI2Shape4MarkerStart = Marker.CIRCLE;
         public static final Marker ROI2Shape4MarkerEnd = Marker.ARROW;
         public static final Color ROI2Shape4Stroke = Color.valueOf("15");
-        public static final Double ROI2Shape4StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape4StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI2Shape4PolylinePoints = "1,1 10,20, 20,20 20,10";
         public static final String ROI2Shape4PolylineClosed = "true";
         public static final Marker ROI2Shape5MarkerStart = Marker.ARROW;
         public static final Marker ROI2Shape5MarkerEnd = Marker.ARROW;
         public static final Color ROI2Shape5Stroke = Color.valueOf("16");
-        public static final Double ROI2Shape5StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape5StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI2Shape5PolylinePoints = "15,15 15,25, 25,25 25,15";
         public static final String ROI2Shape5PolylineClosed = "false";
         public static final Marker ROI2Shape6MarkerStart = Marker.CIRCLE;
         public static final Color ROI2Shape6Stroke = Color.valueOf("161");
-        public static final Double ROI2Shape6StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape6StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI2Shape6PolylinePoints = "1.1,1.1 10.1,20.1, 20.1,20.1 20.1,10.1";
         public static final String ROI2Shape6PolylineClosed = "false";
         public static final Marker ROI2Shape7MarkerStart = Marker.SQUARE;
         public static final Marker ROI2Shape7MarkerEnd = Marker.CIRCLE;
         public static final Color ROI2Shape7Stroke = Color.valueOf("17");
-        public static final Double ROI2Shape7StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape7StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final Double ROI2Shape7LineX1 = Double.valueOf("1.7");
         public static final Double ROI2Shape7LineY1 = Double.valueOf("2.7");
         public static final Double ROI2Shape7LineX2 = Double.valueOf("3.7");
         public static final Double ROI2Shape7LineY2 = Double.valueOf("4.7");
         public static final Marker ROI2Shape8MarkerEnd = Marker.CIRCLE;
         public static final Color ROI2Shape8Stroke = Color.valueOf("171");
-        public static final Double ROI2Shape8StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape8StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final Double ROI2Shape8LineX1 = Double.valueOf("1.71");
         public static final Double ROI2Shape8LineY1 = Double.valueOf("2.71");
         public static final Double ROI2Shape8LineX2 = Double.valueOf("3.71");
         public static final Double ROI2Shape8LineY2 = Double.valueOf("4.71");
         public static final Marker ROI2Shape9MarkerEnd = Marker.CIRCLE;
         public static final Color ROI2Shape9Stroke = Color.valueOf("172");
-        public static final Double ROI2Shape9StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape9StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final Double ROI2Shape9LineX1 = Double.valueOf("1.72");
         public static final Double ROI2Shape9LineY1 = Double.valueOf("2.72");
         public static final Double ROI2Shape9LineX2 = Double.valueOf("3.72");
@@ -240,22 +243,22 @@ public class Upgrade2011_06
         public static final Marker ROI2Shape10MarkerStart = Marker.SQUARE;
         public static final Marker ROI2Shape10MarkerEnd = Marker.CIRCLE;
         public static final Color ROI2Shape10Stroke = Color.valueOf("18");
-        public static final Double ROI2Shape10StrokeWidth = Double.valueOf("2");
+        public static final Length ROI2Shape10StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI2Shape10PathDefinition = "M1,1 L2,2";
         public static final Marker ROI3Shape11MarkerStart = Marker.SQUARE;
         public static final Marker ROI3Shape11MarkerEnd = Marker.CIRCLE;
         public static final Color ROI3Shape11Stroke = Color.valueOf("19");
-        public static final Double ROI3Shape11StrokeWidth = Double.valueOf("2");
+        public static final Length ROI3Shape11StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI3Shape11PathDefinition = "M1.9,1.9 L2.9,2.9";
         public static final Marker ROI4Shape12MarkerStart = Marker.SQUARE;
         public static final Marker ROI4Shape12MarkerEnd = Marker.CIRCLE;
         public static final Color ROI4Shape12Stroke = Color.valueOf("110");
-        public static final Double ROI4Shape12StrokeWidth = Double.valueOf("2");
+        public static final Length ROI4Shape12StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI4Shape12PathDefinition = "M1.1,1.1 L2.1,2.1";
         public static final Marker ROI4Shape13MarkerStart = Marker.SQUARE;
         public static final Marker ROI4Shape13MarkerEnd = Marker.CIRCLE;
         public static final Color ROI4Shape13Stroke = Color.valueOf("111");
-        public static final Double ROI4Shape13StrokeWidth = Double.valueOf("2");
+        public static final Length ROI4Shape13StrokeWidth = FormatTools.createLength(Double.valueOf("2"), UNITS.PIXEL);
         public static final String ROI4Shape13PathDefinition = "M1.11,1.11 L2.11,2.11";
     }
 }

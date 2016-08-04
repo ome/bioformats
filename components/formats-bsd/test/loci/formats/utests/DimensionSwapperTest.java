@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,7 +49,6 @@ import static org.testng.AssertJUnit.assertEquals;
  * dimension sizes and orders.
  * 
  * @author Mark Hiner
- *
  */
 public class DimensionSwapperTest {
   

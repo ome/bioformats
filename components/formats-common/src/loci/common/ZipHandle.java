@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,10 +42,6 @@ import java.util.zip.ZipInputStream;
 /**
  * StreamHandle implementation for reading from Zip-compressed files
  * or byte arrays.  Instances of ZipHandle are read-only.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ZipHandle.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/ZipHandle.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see StreamHandle
  *
@@ -155,6 +151,7 @@ public class ZipHandle extends StreamHandle {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     zip = null;
@@ -167,6 +164,7 @@ public class ZipHandle extends StreamHandle {
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
+  @Override
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
     if (in != null) {

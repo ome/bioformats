@@ -2,6 +2,7 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -28,6 +29,7 @@ classdef TestBfMatlab < TestCase
     
     properties
         jarPath
+        tmpdir
     end
     
     methods
@@ -44,6 +46,10 @@ classdef TestBfMatlab < TestCase
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
             end
+            
+            java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
+            uuid = char(java.util.UUID.randomUUID().toString());
+            self.tmpdir = fullfile(java_tmpdir, uuid);
         end
         
         function tearDown(self)

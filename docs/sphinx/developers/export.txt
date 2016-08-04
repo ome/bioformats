@@ -188,4 +188,4 @@ Known issues
 ------------
 
 `List of Trac tickets
-<http://trac.openmicroscopy.org.uk/ome/query?status=accepted&status=new&status=reopened&keywords=~export&component=Bio-Formats&col=id&col=summary&col=status&col=type&col=priority&col=milestone&col=component&order=priority>`_
+<https://trac.openmicroscopy.org/ome/query?status=accepted&status=new&status=reopened&keywords=~export&component=Bio-Formats&col=id&col=summary&col=status&col=type&col=priority&col=milestone&col=component&order=priority>`_

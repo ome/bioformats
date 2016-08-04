@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -65,7 +65,6 @@ import java.util.Locale;
  * really know what you're doing.  I recommend you read the Microsoft Excel 97 Developer's
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
- *
  *
  * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
  * @author  Sergei Kozello (sergeikozello at mail.ru)

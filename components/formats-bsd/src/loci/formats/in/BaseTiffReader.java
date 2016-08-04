@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,6 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +53,13 @@ import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
  * or derived from the TIFF 6.0 file format.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BaseTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BaseTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -72,10 +74,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
   public static final String[] DATE_FORMATS = {
     "yyyy:MM:dd HH:mm:ss",
-    "dd/MM/yyyy HH:mm:ss.SS",
-    "MM/dd/yyyy hh:mm:ss.SSS aa",
-    "yyyyMMdd HH:mm:ss.SSS",
-    "yyyy/MM/dd HH:mm:ss"
+    "dd/MM/yyyy HH:mm:ss",
+    "MM/dd/yyyy hh:mm:ss aa",
+    "yyyyMMdd HH:mm:ss",
+    "yyyy/MM/dd HH:mm:ss",
+    "yyyy-MM-dd'T'HH:mm:ssZ"
   };
 
   // -- Constructors --
@@ -186,7 +189,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put("Instrument Make", firstIFD, IFD.MAKE);
     put("Instrument Model", firstIFD, IFD.MODEL);
     put("Document Name", firstIFD, IFD.DOCUMENT_NAME);
-    put("DateTime", firstIFD, IFD.DATE_TIME);
+    put("DateTime", getImageCreationDate());
     put("Artist", firstIFD, IFD.ARTIST);
 
     put("HostComputer", firstIFD, IFD.HOST_COMPUTER);
@@ -266,7 +269,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     }
     put("ResolutionUnit", resUnit);
 
-    putInt("PageNumber", firstIFD, IFD.PAGE_NUMBER);
+    putString("PageNumber", firstIFD, IFD.PAGE_NUMBER);
     putInt("TransferFunction", firstIFD, IFD.TRANSFER_FUNCTION);
 
     int predict = firstIFD.getIFDIntValue(IFD.PREDICTOR);
@@ -424,7 +427,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // format the creation date to ISO 8601
 
     String creationDate = getImageCreationDate();
-    String date = DateTools.formatDate(creationDate, DATE_FORMATS);
+    String date = DateTools.formatDate(creationDate, DATE_FORMATS, ".");
     if (creationDate != null && date == null) {
       LOGGER.warn("unknown creation date format: {}", creationDate);
     }
@@ -462,9 +465,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixY);
-
+      String unit = getResolutionUnitFromComment(firstIFD);
+      
+      Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
+      
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -477,7 +482,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         if (exif.containsKey(IFD.EXPOSURE_TIME)) {
           Object exp = exif.get(IFD.EXPOSURE_TIME);
           if (exp instanceof TiffRational) {
-            Double exposure = ((TiffRational) exp).doubleValue();
+            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.S);
             for (int i=0; i<getImageCount(); i++) {
               store.setPlaneExposureTime(exposure, 0, i);
             }
@@ -485,6 +490,27 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         }
       }
     }
+  }
+  
+  /**
+   * Extracts the resolution unit symbol from the comment field
+   * 
+   * @param ifd
+   *          The {@link IFD}
+   * @return The unit symbol or <code>null</code> if the information is not
+   *         available
+   */
+  private String getResolutionUnitFromComment(IFD ifd) {
+    String comment = ifd.getComment();
+    if (comment != null && comment.trim().length() > 0) {
+      String p = "(.*)unit=(\\w+)(.*)";
+      Pattern pattern = Pattern.compile(p, Pattern.DOTALL);
+      Matcher m = pattern.matcher(comment);
+      if (m.matches()) {
+        return m.group(2);
+      }
+    }
+    return null;
   }
 
   /**
@@ -533,9 +559,19 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     put(key, ifd.getIFDIntValue(tag));
   }
 
+  protected void putString(String key, IFD ifd, int tag) {
+    String value = "";
+    try {
+      value = ifd.getIFDStringValue(tag);
+    } catch (FormatException e) {
+    }
+    put(key, value);
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     initMetadata();

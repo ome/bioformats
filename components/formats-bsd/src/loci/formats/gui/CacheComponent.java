@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -65,10 +65,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * GUI component for managing a cache.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/CacheComponent.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/CacheComponent.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CacheComponent extends JPanel
   implements ActionListener, CacheListener, ChangeListener
@@ -258,6 +254,7 @@ public class CacheComponent extends JPanel
   // -- ActionListener API methods --
 
   /** Handles combo box changes. */
+  @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("source".equals(cmd)) updateSource();
@@ -282,6 +279,7 @@ public class CacheComponent extends JPanel
   // -- CacheListener API methods --
 
   /** Updates GUI to match latest cache state. */
+  @Override
   public void cacheUpdated(CacheEvent e) {
     int type = e.getType();
     ICacheStrategy strategy = cache.getStrategy();
@@ -326,6 +324,7 @@ public class CacheComponent extends JPanel
   // -- ChangeListener API methods --
 
   /** Handles range spinner changes. */
+  @Override
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     for (int i=0; i<range.length; i++) {

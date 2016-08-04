@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@
  * Description:             Holds specs corresponding to an Integer
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -72,8 +71,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 package jj2000.j2k;
@@ -125,7 +122,7 @@ public class IntegerSpec extends ModuleSpec{
      *
      * @param type The allowed specifications type
      *
-     * @param optName The name of the option to process
+     * @param defaultValue The name of the option to process
      *
      * */
     public IntegerSpec(int nt, int nc, byte type, J2KImageWriteParamJava wp, String values,

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,10 +39,6 @@ import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * ImspectorReader is the file format reader for Imspector .msr files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImspectorReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImspectorReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImspectorReader extends FormatReader {
 
@@ -83,6 +79,7 @@ public class ImspectorReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 32;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -92,6 +89,7 @@ public class ImspectorReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -104,26 +102,19 @@ public class ImspectorReader extends FormatReader {
     }
     index += no;
 
-    int block = 0;
-    int plane = 0;
-    while (index >= 0) {
-      int planeCount = planesPerBlock.get(block);
-      if (planeCount <= index) {
-        index -= planeCount;
-        block++;
-      }
-      else {
-        plane = index;
-        index = -1;
-      }
-    }
+    int[] zct = getZCTCoords(no);
+    int block = getSeries() * getSizeC() + zct[1];
+    int plane = getIndex(zct[0], 0, zct[2]);
 
-    in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
-    readPlane(in, x, y, w, h, buf);
+    if (plane < planesPerBlock.get(block)) {
+      in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
+      readPlane(in, x, y, w, h, buf);
+    }
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -138,6 +129,7 @@ public class ImspectorReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -212,7 +204,8 @@ public class ImspectorReader extends FormatReader {
       }
     }
     m.pixelType = FormatTools.UINT16;
-    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock.get(0) * FormatTools.getBytesPerPixel(m.pixelType) + 2);
+    int bpp = FormatTools.getBytesPerPixel(m.pixelType);
+    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock.get(0) * bpp + 2);
 
     int tileX = 1;
     int tileY = 1;
@@ -250,7 +243,8 @@ public class ImspectorReader extends FormatReader {
         if (tag.equals("CImageStack")) {
           readStackHeader();
 
-          in.skipBytes(65);
+          in.skipBytes(60);
+          while ((in.read() & 0xff) != 0xff);
           length = in.readShort();
           if (length == 0) {
             in.skipBytes(1);
@@ -265,7 +259,6 @@ public class ImspectorReader extends FormatReader {
             }
           }
           in.skipBytes(length + 50);
-
 
           findOffset();
           break;
@@ -417,14 +410,21 @@ public class ImspectorReader extends FormatReader {
     }
 
     if (isFLIM) {
-      m.sizeZ = 1;
-      m.sizeT = m.imageCount;
+      if (getSizeZ() == 1 || getSizeT() == 1) {
+        m.sizeZ = 1;
+        m.sizeT = m.imageCount;
+      }
       LOGGER.debug("m.imageCount = {}", m.imageCount);
       m.moduloT.parentType = FormatTools.SPECTRA;
       m.moduloT.type = FormatTools.LIFETIME;
 
       m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
-      m.dimensionOrder = "XYZTC";
+      if (getSizeZ() > 1 && getSizeT() > 1) {
+        m.dimensionOrder = "XYTZC";
+      }
+      else {
+        m.dimensionOrder = "XYZTC";
+      }
 
       // convert time base to picoseconds
       if (timeBase > 1) {
@@ -444,8 +444,19 @@ public class ImspectorReader extends FormatReader {
         m.sizeC = 1;
       }
       if (m.imageCount != m.sizeZ * m.sizeC * m.sizeT) {
-        m.sizeZ = m.imageCount / m.sizeC;
-        m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+        if (planesPerBlock.size() > 1) {
+          m.sizeZ = 1;
+          for (Integer block : planesPerBlock) {
+            if (block > m.sizeZ) {
+              m.sizeZ = block;
+            }
+          }
+          m.imageCount = m.sizeZ * m.sizeC * m.sizeT;
+        }
+        else {
+          m.sizeZ = m.imageCount / m.sizeC;
+          m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+        }
       }
       if (m.sizeC > 1 && m.sizeT != 1) {
         m.dimensionOrder = "XYZTC";
@@ -530,8 +541,18 @@ public class ImspectorReader extends FormatReader {
       readStackHeader();
     }
 
-    while (in.readShort() != 3) {
+    int pmtCheck = in.readShort();
+    while (pmtCheck != 3 && pmtCheck != 2) {
       in.seek(in.getFilePointer() - 1);
+      pmtCheck = in.readShort();
+      if (pmtCheck == 2) {
+        if (in.readShort() == 0) {
+          in.seek(in.getFilePointer() - 2);
+        }
+        else {
+          pmtCheck = 0;
+        }
+      }
     }
 
     in.skipBytes(26);
@@ -552,8 +573,21 @@ public class ImspectorReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
     in.skipBytes(14);
-    planesPerBlock.add(in.readInt() * m.sizeT);
-    in.skipBytes(noPMT ? 16 : 20);
+    int newT = in.readInt();
+    int newZ = in.readInt();
+    long planeSize = (long) getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    long newCount = (long) newZ * newT;
+    if (newZ > getSizeZ() && newT > getSizeT() &&
+      newCount * planeSize < in.length() - in.getFilePointer() &&
+      newCount > 0 && newCount * planeSize > 0)
+    {
+      planesPerBlock.remove(planesPerBlock.size() - 1);
+      pixelsOffsets.remove(pixelsOffsets.size() - 1);
+      m.sizeZ = newZ;
+      m.sizeT = newT;
+    }
+    planesPerBlock.add(newZ * newT);
+    in.skipBytes(noPMT ? 12 : 16);
     for (int i=0; i<4; i++) {
       len = in.read();
       if (len < 0) {
@@ -570,7 +604,7 @@ public class ImspectorReader extends FormatReader {
       return;
     }
 
-    long planeSize = (long) m.sizeX * m.sizeY *
+    planeSize = (long) m.sizeX * m.sizeY *
       planesPerBlock.get(planesPerBlock.size() - 1) * 2;
     if (planeSize > 0 && in.getFilePointer() + planeSize < in.length()) {
       pixelsOffsets.add(in.getFilePointer());

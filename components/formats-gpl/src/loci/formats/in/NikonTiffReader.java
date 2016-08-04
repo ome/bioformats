@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,16 +35,15 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NikonTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NikonTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NikonTiffReader extends BaseTiffReader {
 
@@ -64,7 +63,7 @@ public class NikonTiffReader extends BaseTiffReader {
   private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
   private Vector<Double> gain;
-  private Vector<Integer> wavelength, emWave, exWave;
+  private Vector<Double> wavelength, emWave, exWave;
 
   // -- Constructor --
 
@@ -77,6 +76,7 @@ public class NikonTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -86,6 +86,7 @@ public class NikonTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -102,6 +103,7 @@ public class NikonTiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -113,9 +115,9 @@ public class NikonTiffReader extends BaseTiffReader {
     dichroicModels = new Vector<String>();
     laserIDs = new Vector<String>();
     gain = new Vector<Double>();
-    wavelength = new Vector<Integer>();
-    emWave = new Vector<Integer>();
-    exWave = new Vector<Integer>();
+    wavelength = new Vector<Double>();
+    emWave = new Vector<Double>();
+    exWave = new Vector<Double>();
 
     // parse key/value pairs in the comment
     String comment = ifds.get(0).getComment();
@@ -187,19 +189,19 @@ public class NikonTiffReader extends BaseTiffReader {
         pinholeSize = new Double(value.substring(0, value.indexOf(" ")));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
-        wavelength.add(new Integer(value.replaceAll("\\D", "")));
+        wavelength.add(new Double(value.replaceAll("\\D", "")));
       }
       else if (key.startsWith("history laser") && key.endsWith("name")) {
         laserIDs.add(value);
       }
       else if (key.equals("sensor s_params LambdaEx")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          exWave.add(new Integer(tokens[i]));
+          exWave.add(new Double(tokens[i]));
         }
       }
       else if (key.equals("sensor s_params LambdaEm")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          emWave.add(new Integer(tokens[i]));
+          emWave.add(new Double(tokens[i]));
         }
       }
 
@@ -209,6 +211,7 @@ public class NikonTiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 
@@ -218,9 +221,9 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -244,7 +247,7 @@ public class NikonTiffReader extends BaseTiffReader {
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);
       store.setObjectiveLensNA(lensNA, 0, 0);
-      store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       if (immersion == null) immersion = "Other";
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
@@ -253,7 +256,7 @@ public class NikonTiffReader extends BaseTiffReader {
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
 
-        PositiveInteger wave = FormatTools.getWavelength(wavelength.get(i));
+        Length wave = FormatTools.getWavelength(wavelength.get(i));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }
@@ -268,17 +271,15 @@ public class NikonTiffReader extends BaseTiffReader {
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
         if (c < exWave.size()) {
-          PositiveInteger wave =
-            FormatTools.getExcitationWavelength(exWave.get(c));
+          Length wave = FormatTools.getExcitationWavelength(exWave.get(c));
           if (wave != null) {
             store.setChannelExcitationWavelength(wave, 0, c);
           }
         }
         if (c < emWave.size()) {
-          PositiveInteger wave =
-            FormatTools.getEmissionWavelength(emWave.get(c));
+          Length wave = FormatTools.getEmissionWavelength(emWave.get(c));
           if (wave != null) {
             store.setChannelEmissionWavelength(wave, 0, c);
           }

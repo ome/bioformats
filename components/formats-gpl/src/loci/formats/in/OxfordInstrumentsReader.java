@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,14 +36,11 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * OxfordInstrumentsReader is the file format reader for
  * Oxford Instruments .top files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class OxfordInstrumentsReader extends FormatReader {
 
@@ -67,6 +64,7 @@ public class OxfordInstrumentsReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = OXFORD_MAGIC_STRING.length();
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -76,6 +74,7 @@ public class OxfordInstrumentsReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -89,6 +88,7 @@ public class OxfordInstrumentsReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -176,8 +176,8 @@ public class OxfordInstrumentsReader extends FormatReader {
     double physicalSizeX = xSize / getSizeX();
     double physicalSizeY = ySize / getSizeY();
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+    Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+    Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
 
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);

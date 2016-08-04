@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,12 +41,11 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/GatanDM2Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/GatanDM2Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class GatanDM2Reader extends FormatReader {
 
@@ -73,6 +72,7 @@ public class GatanDM2Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -80,6 +80,7 @@ public class GatanDM2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -92,6 +93,7 @@ public class GatanDM2Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -105,8 +107,8 @@ public class GatanDM2Reader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
-    id = new Location(id).getAbsolutePath();
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.setEncoding("ISO-8859-1");
@@ -331,10 +333,10 @@ public class GatanDM2Reader extends FormatReader {
       store.setImageName(name, 0);
     }
     if (pixelSizeX != null) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(pixelSizeX, UNITS.MICROM), 0);
     }
     if (pixelSizeY != null) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(pixelSizeY, UNITS.MICROM), 0);
     }
   }
 

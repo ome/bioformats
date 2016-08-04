@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   HeaderEncoder
  *
  * Description:             Write codestream headers.
- *
  *
  *
  * COPYRIGHT:
@@ -112,7 +111,6 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriteParamJava;
  * whereas tile-part headers are written when the EBCOTRateAllocator instance
  * calls encodeTilePartHeader.
  *
- * @see Encoder
  * @see Markers
  * @see EBCOTRateAllocator
  * */
@@ -186,7 +184,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
      *
      * @param tiler The tiler module.
      *
-     * @param encSpec The encoder specifications
+     * @param wp The encoder specifications
      *
      * @param roiSc The ROI scaler module.
      *
@@ -1718,7 +1716,7 @@ public class HeaderEncoder implements Markers, StdEntropyCoderOptions {
      * (if needed)</li> <li>RGN (if needed)</li> <li>POC (if needed)</li>
      * <li>SOD</li> </ol>
      *
-     * @param length The length of the current tile-part.
+     * @param tileLength The length of the current tile-part.
      *
      * @param tileIdx Index of the tile to write
      * */

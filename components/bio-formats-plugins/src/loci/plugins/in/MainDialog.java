@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,9 +45,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -56,10 +57,6 @@ import loci.plugins.util.WindowTools;
 
 /**
  * Bio-Formats Importer general options dialog box.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/MainDialog.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/MainDialog.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MainDialog extends ImporterDialog
   implements FocusListener, ItemListener, MouseListener
@@ -169,6 +166,7 @@ public class MainDialog extends ImporterDialog
   // -- FocusListener methods --
 
   /** Handles information pane updates when component focus changes. */
+  @Override
   public void focusGained(FocusEvent e) {
     Object src = e.getSource();
     String text = infoTable.get(src);
@@ -176,11 +174,13 @@ public class MainDialog extends ImporterDialog
     infoPane.setCaretPosition(0);
   }
 
+  @Override
   public void focusLost(FocusEvent e) { }
 
   // -- ItemListener methods --
 
   /** Handles toggling of mutually exclusive options. */
+  @Override
   public void itemStateChanged(ItemEvent e) {
     Object src = e.getSource();
     verifyOptions(src);
@@ -198,6 +198,7 @@ public class MainDialog extends ImporterDialog
   // -- MouseListener methods --
 
   /** Focuses the component upon mouseover. */
+  @Override
   public void mouseEntered(MouseEvent e) {
     Object src = e.getSource();
     if (src instanceof Component) {
@@ -205,9 +206,13 @@ public class MainDialog extends ImporterDialog
     }
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) { }
+  @Override
   public void mouseExited(MouseEvent e) { }
+  @Override
   public void mousePressed(MouseEvent e) { }
+  @Override
   public void mouseReleased(MouseEvent e) { }
 
   // -- Helper methods --
@@ -215,17 +220,17 @@ public class MainDialog extends ImporterDialog
   /** Fancies up the importer dialog to look much nicer. */
   private void rebuildDialog(GenericDialog gd) {
     // extract GUI components from dialog and add listeners
-    Vector<Checkbox> boxes = null;
-    Vector<Choice> choices = null;
-    Vector<Label> labels = null;
+    List<Checkbox> boxes = null;
+    List<Choice> choices = null;
+    List<Label> labels = null;
     Label colorModeLabel = null;
     Label stackFormatLabel = null;
     Label stackOrderLabel = null;
     Component[] c = gd.getComponents();
     if (c != null) {
-      boxes = new Vector<Checkbox>();
-      choices = new Vector<Choice>();
-      labels = new Vector<Label>();
+      boxes = new ArrayList<Checkbox>();
+      choices = new ArrayList<Choice>();
+      labels = new ArrayList<Label>();
       for (int i=0; i<c.length; i++) {
         if (c[i] instanceof Checkbox) {
           Checkbox item = (Checkbox) c[i];

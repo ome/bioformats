@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,12 +51,12 @@ import loci.formats.tiff.TiffSaver;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * TiffWriter is the file format writer for TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/TiffWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/TiffWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TiffWriter extends FormatWriter {
 
@@ -72,6 +72,15 @@ public class TiffWriter extends FormatWriter {
     CompressionType.J2K_LOSSY.getCompression();
   public static final String COMPRESSION_JPEG =
     CompressionType.JPEG.getCompression();
+
+  private static final String[] BIG_TIFF_SUFFIXES = {"tf2", "tf8", "btf"};
+
+  /**
+   * Number of bytes at which to automatically switch to BigTIFF
+   * This is approximately 3.9 GB instead of 4 GB,
+   * to allow space for the IFDs.
+   */
+  private static final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
 
   // -- Fields --
 
@@ -117,7 +126,8 @@ public class TiffWriter extends FormatWriter {
   // -- Constructors --
 
   public TiffWriter() {
-    this("Tagged Image File Format", new String[] {"tif", "tiff"});
+    this("Tagged Image File Format",
+      new String[] {"tif", "tiff", "tf2", "tf8", "btf"});
   }
 
   public TiffWriter(String format, String[] exts) {
@@ -132,11 +142,42 @@ public class TiffWriter extends FormatWriter {
     isBigTiff = false;
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
+
+    // if a BigTIFF extension is used, or we know that
+    // more than 4GB of data will be written, then automatically
+    // switch to BigTIFF
+    if (!isBigTiff) {
+      if (checkSuffix(id, BIG_TIFF_SUFFIXES)) {
+        LOGGER.info("Switching to BigTIFF (by file extension)");
+        isBigTiff = true;
+      }
+      else if (compression == null || compression.equals(COMPRESSION_UNCOMPRESSED)) {
+        MetadataRetrieve retrieve = getMetadataRetrieve();
+        long totalBytes = 0;
+        for (int i=0; i<retrieve.getImageCount(); i++) {
+          int sizeX = retrieve.getPixelsSizeX(i).getValue();
+          int sizeY = retrieve.getPixelsSizeY(i).getValue();
+          int sizeZ = retrieve.getPixelsSizeZ(i).getValue();
+          int sizeC = retrieve.getPixelsSizeC(i).getValue();
+          int sizeT = retrieve.getPixelsSizeT(i).getValue();
+          int type = FormatTools.pixelTypeFromString(
+            retrieve.getPixelsType(i).toString());
+          long bpp = FormatTools.getBytesPerPixel(type);
+          totalBytes += sizeX * sizeY * sizeZ * sizeC * sizeT * bpp;
+        }
+
+        if (totalBytes >= BIG_TIFF_CUTOFF) {
+          LOGGER.info("Switching to BigTIFF (by file size)");
+          isBigTiff = true;
+        }
+      }
+    }
 
     synchronized (this) {
       setupTiffSaver();
@@ -275,15 +316,15 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Long(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
-    PositiveFloat px = retrieve.getPixelsPhysicalSizeX(series);
-    Double physicalSizeX = px == null ? null : px.getValue();
+    Length px = retrieve.getPixelsPhysicalSizeX(series);
+    Double physicalSizeX = px == null || px.value(UNITS.MICROM) == null ? null : px.value(UNITS.MICROM).doubleValue();
     if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
     }
     else physicalSizeX = 1d / physicalSizeX;
 
-    PositiveFloat py = retrieve.getPixelsPhysicalSizeY(series);
-    Double physicalSizeY = py == null ? null : py.getValue();
+    Length py = retrieve.getPixelsPhysicalSizeY(series);
+    Double physicalSizeY = py == null || py.value(UNITS.MICROM) == null ? null : py.value(UNITS.MICROM).doubleValue();
     if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
     }
@@ -312,7 +353,7 @@ public class TiffWriter extends FormatWriter {
     else {
       out.seek((Long) ifd.get(IFD.REUSE));
     }
-    
+
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION,
       interleaved || getSamplesPerPixel() == 1 ? 1 : 2);
 
@@ -321,13 +362,17 @@ public class TiffWriter extends FormatWriter {
     if (FormatTools.isFloatingPoint(type)) sampleFormat = 3;
     ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
 
+    int channels = retrieve.getPixelsSizeC(series).getValue().intValue();
+    int z = retrieve.getPixelsSizeZ(series).getValue().intValue();
+    int t = retrieve.getPixelsSizeT(series).getValue().intValue();
+    ifd.putIFDValue(IFD.IMAGE_DESCRIPTION,
+      "ImageJ=\nhyperstack=true\nimages=" + (channels * z * t) + "\nchannels=" +
+      channels + "\nslices=" + z + "\nframes=" + t);
+
     int index = no;
-    int realSeries = getSeries();
-    for (int i=0; i<realSeries; i++) {
-      setSeries(i);
-      index += getPlaneCount();
+    for (int i=0; i<getSeries(); i++) {
+      index += getPlaneCount(i);
     }
-    setSeries(realSeries);
     return index;
   }
 
@@ -342,20 +387,29 @@ public class TiffWriter extends FormatWriter {
     if (in != null) {
       in.close();
     }
+    if (tiffSaver != null) {
+      tiffSaver.close();
+    }
   }
 
   /* @see loci.formats.FormatWriter#getPlaneCount() */
+  @Override
   public int getPlaneCount() {
+    return getPlaneCount(series);
+  }
+  
+  @Override
+  protected int getPlaneCount(int series) {
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    int c = getSamplesPerPixel();
+    int c = getSamplesPerPixel(series);
     int type = FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
     if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      return super.getPlaneCount() * c;
+      return super.getPlaneCount(series) * c;
     }
-    return super.getPlaneCount();
+    return super.getPlaneCount(series);
   }
 
   // -- IFormatWriter API methods --
@@ -363,6 +417,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -387,9 +442,11 @@ public class TiffWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     if (codec != null && codec.equals(COMPRESSION_JPEG)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8,

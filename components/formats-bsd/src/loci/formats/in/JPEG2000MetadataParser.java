@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,10 +46,6 @@ import loci.formats.codec.JPEG2000SegmentMarker;
 
 /**
  * A parser for JPEG 2000 metadata.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPEG2000MetadataParser.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPEG2000MetadataParser.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000MetadataParser {
 
@@ -181,7 +177,7 @@ public class JPEG2000MetadataParser {
         length -= 8;
       }
       if (boxType == null) {
-        LOGGER.warn("Unknown JPEG 2000 box 0x{} at {}",
+        LOGGER.info("Unknown JPEG 2000 box 0x{} at {}",
             Integer.toHexString(boxCode), pos);
         if (pos == originalPos) {
           in.seek(originalPos);
@@ -217,6 +213,7 @@ public class JPEG2000MetadataParser {
               headerPixelType = convertPixelType(type);
             }
             parseBoxes();
+            nextPos = in.getFilePointer();
             break;
           }
           case PALETTE:

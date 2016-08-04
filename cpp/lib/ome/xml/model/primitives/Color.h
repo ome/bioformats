@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -50,6 +50,12 @@ namespace ome
   {
     namespace model
     {
+      /**
+       * Model primitive data types.  All the classes in this
+       * namespace are fundamental data types used by the OME model
+       * objects, but are not themselves model objects.  They map to
+       * types defined in the OME-XML schema.
+       */
       namespace primitives
       {
 
@@ -123,7 +129,10 @@ namespace ome
                  component_type g,
                  component_type b,
                  component_type a = std::numeric_limits<component_type>::max()):
-            value(r << 24 | g << 16 | b << 8 | a << 0)
+            value(static_cast<composed_type>(r) << 24U |
+                  static_cast<composed_type>(g) << 16U |
+                  static_cast<composed_type>(b) <<  8U |
+                  static_cast<composed_type>(a) <<  0U)
           {
           }
 
@@ -152,7 +161,7 @@ namespace ome
           inline component_type
           getRed () const
           {
-            return static_cast<component_type>((this->value >> 24) & 0xff);
+            return static_cast<component_type>((this->value >> 24U) & 0xffU);
           }
 
           /**
@@ -163,8 +172,8 @@ namespace ome
           inline void
           setRed (component_type red)
           {
-            this->value &= ~(0xff << 24);
-            this->value |= red << 24;
+            this->value &= ~(0xFFU << 24U);
+            this->value |= static_cast<composed_type>(red) << 24U;
           }
 
           /**
@@ -175,7 +184,7 @@ namespace ome
           inline component_type
           getGreen () const
           {
-            return static_cast<component_type>((this->value >> 16) & 0xff);
+            return static_cast<component_type>((this->value >> 16U) & 0xffU);
           }
 
           /**
@@ -186,8 +195,8 @@ namespace ome
           inline void
           setGreen (component_type green)
           {
-            this->value &= ~(0xff << 16);
-            this->value |= green << 16;
+            this->value &= ~(0xffU << 16U);
+            this->value |= static_cast<composed_type>(green) << 16U;
           }
 
           /**
@@ -198,7 +207,7 @@ namespace ome
           inline component_type
           getBlue () const
           {
-            return static_cast<component_type>((this->value >> 8) & 0xff);
+            return static_cast<component_type>((this->value >> 8U) & 0xffU);
           }
 
           /**
@@ -209,8 +218,8 @@ namespace ome
           inline void
           setBlue (component_type blue)
           {
-            this->value &= ~(0xff << 8);
-            this->value |= blue << 8;
+            this->value &= ~(0xffU << 8U);
+            this->value |= static_cast<composed_type>(blue) << 8U;
           }
 
           /**
@@ -221,7 +230,7 @@ namespace ome
           inline component_type
           getAlpha () const
           {
-            return static_cast<component_type>((this->value >> 0) & 0xff);
+            return static_cast<component_type>((this->value >> 0) & 0xffU);
           }
 
           /**
@@ -232,8 +241,8 @@ namespace ome
           inline void
           setAlpha (component_type alpha)
           {
-            this->value &= ~(0xff << 0);
-            this->value |= alpha << 0;
+            this->value &= ~(0xffU << 0);
+            this->value |= static_cast<composed_type>(alpha) << 0;
           }
 
           /**

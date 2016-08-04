@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,16 +56,18 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Power;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
  * files. More information on ICS can be found at http://libics.sourceforge.net
  *
  * TODO : remove sub-C logic once N-dimensional support is in place
  *        see http://dev.loci.wisc.edu/trac/java/ticket/398
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ICSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ICSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -559,6 +561,7 @@ public class ICSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     // check if we have a v2 ICS file - means there is no companion IDS file
     RandomAccessInputStream f = new RandomAccessInputStream(id);
@@ -568,10 +571,11 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     String[] domain = new String[] {FormatTools.GRAPHICS_DOMAIN};
-    if (getChannelDimLengths().length > 1) {
+    if (getModuloC().length() > 1) {
       domain[0] = FormatTools.FLIM_DOMAIN;
     }
     else if (hasInstrumentData) {
@@ -581,29 +585,15 @@ public class ICSReader extends FormatReader {
     return domain;
   }
 
-  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1);
-    int[] len = new int[channelLengths.size()];
-    for (int i=0; i<len.length; i++) {
-      len[i] = channelLengths.get(i).intValue();
-    }
-    return len;
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1);
-    return channelTypes.toArray(new String[channelTypes.size()]);
-  }
-
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
+  @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
     return subC == 0 && core.get(0).interleaved;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -611,6 +601,7 @@ public class ICSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -716,6 +707,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (versionTwo) {
@@ -726,6 +718,7 @@ public class ICSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -746,9 +739,25 @@ public class ICSReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#reopenFile() */
+  @Override
+  public void reopenFile() throws IOException {
+    if (in != null) {
+      in.close();
+    }
+    if (versionTwo) {
+      in = new RandomAccessInputStream(currentIcsId);
+    }
+    else {
+      in = new RandomAccessInputStream(currentIdsId);
+    }
+    in.order(isLittleEndian());
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -797,7 +806,7 @@ public class ICSReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
 
-    Double[] pixelSizes = null;
+    Double[] scales = null;
     Double[] timestamps = null;
     String[] units = null;
     String[] axes = null;
@@ -815,14 +824,14 @@ public class ICSReader extends FormatReader {
     StringBuffer textBlock = new StringBuffer();
     double[] sizes = null;
 
-    Integer[] emWaves = null, exWaves = null;
-    Double[] stagePos = null;
+    Double[] emWaves = null, exWaves = null;
+    Length[] stagePos = null;
     String imageName = null, date = null, description = null;
     Double magnification = null, lensNA = null, workingDistance = null;
     String objectiveModel = null, immersion = null, lastName = null;
     Hashtable<Integer, Double> gains = new Hashtable<Integer, Double>();
     Hashtable<Integer, Double> pinholes = new Hashtable<Integer, Double>();
-    Hashtable<Integer, Integer> wavelengths = new Hashtable<Integer, Integer>();
+    Hashtable<Integer, Double> wavelengths = new Hashtable<Integer, Double>();
     Hashtable<Integer, String> channelNames = new Hashtable<Integer, String>();
 
     String laserModel = null;
@@ -834,7 +843,7 @@ public class ICSReader extends FormatReader {
     String microscopeModel = null;
     String microscopeManufacturer = null;
     String experimentType = null;
-    Double exposureTime = null;
+    Time exposureTime = null;
 
     String filterSetModel = null;
     String dichroicModel = null;
@@ -922,7 +931,7 @@ public class ICSReader extends FormatReader {
 
           if (key.equalsIgnoreCase("parameter scale")) {
             // parse physical pixel sizes and time increment
-            pixelSizes = splitDoubles(value);
+            scales = splitDoubles(value);
           }
           else if (key.equalsIgnoreCase("parameter t")) {
             // parse explicit timestamps
@@ -999,7 +1008,7 @@ public class ICSReader extends FormatReader {
               metadata.remove(key);
             }
             else if (key.startsWith("history gain")) {
-              Integer n = new Integer(0);
+              Integer n = 0;
               try {
                 n = new Integer(key.substring(12).trim());
                 n = new Integer(n.intValue() - 1);
@@ -1015,7 +1024,7 @@ public class ICSReader extends FormatReader {
                 Integer.parseInt(key.substring(13, key.indexOf(" ", 13))) - 1;
               value = value.replaceAll("nm", "").trim();
               try {
-                wavelengths.put(new Integer(laser), new Integer(value));
+                wavelengths.put(new Integer(laser), new Double(value));
               }
               catch (NumberFormatException e) {
                 LOGGER.debug("Could not parse wavelength", e);
@@ -1024,7 +1033,7 @@ public class ICSReader extends FormatReader {
             else if (key.equalsIgnoreCase("history Wavelength*")) {
               String[] waves = value.split(" ");
               for (int i=0; i<waves.length; i++) {
-                wavelengths.put(new Integer(i), new Integer(waves[i]));
+                wavelengths.put(new Integer(i), new Double(waves[i]));
               }
             }
             else if (key.equalsIgnoreCase("history laser manufacturer")) {
@@ -1091,10 +1100,11 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage_xyzum")) {
               String[] positions = value.split(" ");
-              stagePos = new Double[positions.length];
+              stagePos = new Length[positions.length];
               for (int n=0; n<stagePos.length; n++) {
                 try {
-                  stagePos[n] = new Double(positions[n]);
+                  final Double number = Double.valueOf(positions[n]);
+                  stagePos[n] = new Length(number, UNITS.REFERENCEFRAME);
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse stage position", e);
@@ -1103,21 +1113,24 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history stage positionx")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[0] = new Double(value); //TODO doubleValue
+              final Double number = Double.valueOf(value);
+              stagePos[0] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positiony")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[1] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[1] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history stage positionz")) {
               if (stagePos == null) {
-                stagePos = new Double[3];
+                stagePos = new Length[3];
               }
-              stagePos[2] = new Double(value);
+              final Double number = Double.valueOf(value);
+              stagePos[2] = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (key.equalsIgnoreCase("history other text")) {
               description = value;
@@ -1131,15 +1144,15 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history cube emm nm")) {
               if (emWaves == null) {
-                emWaves = new Integer[1];
+                emWaves = new Double[1];
               }
-              emWaves[0] = new Integer(value.split(" ")[1].trim());
+              emWaves[0] = new Double(value.split(" ")[1].trim());
             }
             else if (key.equalsIgnoreCase("history cube exc nm")) {
               if (exWaves == null) {
-                exWaves = new Integer[1];
+                exWaves = new Double[1];
               }
-              exWaves[0] = new Integer(value.split(" ")[1].trim());
+              exWaves[0] = new Double(value.split(" ")[1].trim());
             }
             else if (key.equalsIgnoreCase("history microscope")) {
               microscopeModel = value;
@@ -1152,7 +1165,10 @@ public class ICSReader extends FormatReader {
               if (expTime.indexOf(" ") != -1) {
                 expTime = expTime.substring(0, expTime.indexOf(" "));
               }
-              exposureTime = new Double(expTime);
+              Double expDouble = new Double(expTime);
+              if (expDouble != null) {
+                exposureTime = new Time(expDouble, UNITS.S);
+              }
             }
             else if (key.equalsIgnoreCase("history filterset")) {
               filterSetModel = value;
@@ -1188,10 +1204,10 @@ public class ICSReader extends FormatReader {
           {
             if (key.equalsIgnoreCase("sensor s_params LambdaEm")) {
               String[] waves = value.split(" ");
-              emWaves = new Integer[waves.length];
+              emWaves = new Double[waves.length];
               for (int n=0; n<emWaves.length; n++) {
                 try {
-                  emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+                  emWaves[n] = new Double(Double.parseDouble(waves[n]));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse emission wavelength", e);
@@ -1200,10 +1216,10 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("sensor s_params LambdaEx")) {
               String[] waves = value.split(" ");
-              exWaves = new Integer[waves.length];
+              exWaves = new Double[waves.length];
               for (int n=0; n<exWaves.length; n++) {
                 try {
-                  exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+                  exWaves[n] = new Double(Double.parseDouble(waves[n]));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse excitation wavelength", e);
@@ -1347,8 +1363,8 @@ public class ICSReader extends FormatReader {
       }
     }
 
-    if (channelLengths.size() == 0) {
-      channelLengths.add(new Integer(1));
+    if (channelLengths.isEmpty()) {
+      channelLengths.add(1);
       channelTypes.add(FormatTools.CHANNEL);
     }
 
@@ -1363,6 +1379,37 @@ public class ICSReader extends FormatReader {
     if (getSizeZ() == 0) m.sizeZ = 1;
     if (getSizeC() == 0) m.sizeC = 1;
     if (getSizeT() == 0) m.sizeT = 1;
+
+    // Set up ModuloC.  It appears that for ICS, different channels
+    // can have different lengths, which isn't supported by ModuloC
+    // which requires all channels have the same length.  This could
+    // be rectified by setting SizeC=1 and allowing multiple Modulo
+    // annotations per dimension, but would require a model change.
+    // Here, ModuloC is only set if all channels are of the same
+    // length and type.
+    if (channelLengths.size() > 0) {
+      int clen0 = channelLengths.get(0);
+      String ctype0 = channelTypes.get(0);
+      boolean same = true;
+
+      for (Integer len : channelLengths) {
+        if (clen0 != len) same = false;
+      }
+      for (String type : channelTypes) {
+        if (!ctype0.equals(type)) same = false;
+      }
+
+      if (same) {
+        m.moduloC.type = ctype0;
+        if (FormatTools.LIFETIME.equals(ctype0)) {
+          m.moduloC.parentType = FormatTools.SPECTRA;
+        }
+        m.moduloC.typeDescription = "TCSPC";
+        m.moduloC.start = 0;
+        m.moduloC.step = 1;
+        m.moduloC.end = clen0 - 1;
+      }
+    }
 
     m.interleaved = isRGB();
     m.indexed = false;
@@ -1454,8 +1501,8 @@ public class ICSReader extends FormatReader {
 
       // populate Dimensions data
 
-      if (pixelSizes != null) {
-        if (units != null && units.length == pixelSizes.length - 1) {
+      if (scales != null) {
+        if (units != null && units.length == scales.length - 1) {
           // correct for missing units
           // sometimes, the units for the C axis are missing entirely
           ArrayList<String> realUnits = new ArrayList<String>();
@@ -1471,10 +1518,10 @@ public class ICSReader extends FormatReader {
           units = realUnits.toArray(new String[realUnits.size()]);
         }
 
-        for (int i=0; i<pixelSizes.length; i++) {
-          Double pixelSize = pixelSizes[i];
+        for (int i=0; i<scales.length; i++) {
+          Double scale = scales[i];
 
-          if (pixelSize == null) {
+          if (scale == null) {
             continue;
           }
 
@@ -1482,7 +1529,7 @@ public class ICSReader extends FormatReader {
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+              Length x = FormatTools.getPhysicalSizeX(scale);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
@@ -1490,7 +1537,7 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("y")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+              Length y = FormatTools.getPhysicalSizeY(scale);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
@@ -1498,32 +1545,32 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("z")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSize);
+              Length z = FormatTools.getPhysicalSizeZ(scale);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
             }
           }
-          else if (axis.equals("t")) {
+          else if (axis.equals("t") && scale != null) {
             if (checkUnit(unit, "ms")) {
-              store.setPixelsTimeIncrement(1000 * pixelSize, 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.MS), 0);
             }
-            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s")) {
-              store.setPixelsTimeIncrement(pixelSize, 0);
+            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.S), 0);
             }
           }
         }
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          PositiveFloat x = FormatTools.getPhysicalSizeX(sizes[0]);
+          Length x = FormatTools.getPhysicalSizeX(sizes[0]);
           if (x != null) {
             store.setPixelsPhysicalSizeX(x, 0);
           }
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          PositiveFloat y = FormatTools.getPhysicalSizeY(sizes[1]);
+          Length y = FormatTools.getPhysicalSizeY(sizes[1]);
           if (y != null) {
             store.setPixelsPhysicalSizeY(y, 0);
           }
@@ -1536,8 +1583,8 @@ public class ICSReader extends FormatReader {
         for (int t=0; t<timestamps.length; t++) {
           if (t >= getSizeT()) break; // ignore superfluous timestamps
           if (timestamps[t] == null) continue; // ignore missing timestamp
-          double deltaT = timestamps[t];
-          if (Double.isNaN(deltaT)) continue; // ignore invalid timestamp
+          Time deltaT = new Time(timestamps[t], UNITS.S);
+          if (Double.isNaN(deltaT.value().doubleValue())) continue; // ignore invalid timestamp
           // assign timestamp to all relevant planes
           for (int z=0; z<getSizeZ(); z++) {
             for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -1555,16 +1602,16 @@ public class ICSReader extends FormatReader {
           store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setChannelPinholeSize(pinholes.get(i), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROM), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves[i]);
+          Length em = FormatTools.getEmissionWavelength(emWaves[i]);
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (exWaves != null && i < exWaves.length) {
-          PositiveInteger ex = FormatTools.getExcitationWavelength(exWaves[i]);
+          Length ex = FormatTools.getExcitationWavelength(exWaves[i]);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
@@ -1578,7 +1625,7 @@ public class ICSReader extends FormatReader {
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
 
-        PositiveInteger wave =
+        Length wave =
           FormatTools.getWavelength(wavelengths.get(lasers[i]));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
@@ -1588,8 +1635,14 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        store.setLaserPower(laserPower, 0, i);
-        store.setLaserRepetitionRate(laserRepetitionRate, 0, i);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, i);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, i);
+        }
       }
 
       if (lasers.length == 0 && laserManufacturer != null) {
@@ -1598,8 +1651,14 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        store.setLaserPower(laserPower, 0, 0);
-        store.setLaserRepetitionRate(laserRepetitionRate, 0, 0);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        if (theLaserPower != null) {
+          store.setLaserPower(theLaserPower, 0, 0);
+        }
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        if (theLaserRepetitionRate != null) {
+          store.setLaserRepetitionRate(theLaserRepetitionRate, 0, 0);
+        }
       }
 
       // populate FilterSet data
@@ -1632,7 +1691,7 @@ public class ICSReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(workingDistance, 0, 0);
+        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
       }
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);

@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -108,7 +108,7 @@ import javax.imageio.stream.ImageOutputStream;
  * The encoding process may clip, subsample using the parameters
  * specified in the <code>ImageWriteParam</code>.
  *
- * @see com.sun.media.imageio.plugins.WBMPImageWriteParam
+ * @see ImageWriteParam
  */
 public class WBMPImageWriter extends ImageWriter {
     /** The output stream to write into */

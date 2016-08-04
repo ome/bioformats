@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.0.8</version>
+  <version>5.1.4</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -31,10 +31,12 @@
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
     <module>components/bundles/ome-tools</module>
+    <module>components/ome-jxr</module>
     <module>components/ome-xml</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
+    <module>components/stubs/mipav</module>
     <module>components/xsd-fu</module>
   </modules>
 
@@ -47,16 +49,21 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.0.8</release.version>
+    <release.version>5.1.4</release.version>
+    <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
-    <year>2014</year>
+    <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.48s</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
     <slf4j.version>1.7.6</slf4j.version>
-    <xsdfu.schemaver>2013-06</xsdfu.schemaver>
+    <kryo.version>2.24.0</kryo.version>
+    <testng.version>6.8</testng.version>
+    <guava.version>17.0</guava.version>
+
+    <xsdfu.schemaver>2015-01</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
@@ -148,10 +155,18 @@
 
                 def ant = new AntBuilder()
                 try {
-                  ant.exec(outputproperty:"revision",
+                  ant.exec(outputproperty:"shortrevision",
                     failifexecutionfails:"false",
                     executable: 'git') {
                       arg(line:"rev-parse --short HEAD")
+                  }
+                }
+                catch (Exception e) { }
+                try {
+                  ant.exec(outputproperty:"revision",
+                    failifexecutionfails:"false",
+                    executable: 'git') {
+                      arg(line:"rev-parse HEAD")
                   }
                 }
                 catch (Exception e) { }
@@ -212,6 +227,7 @@
                   // version number
                   project.properties.release = project.properties.default
                 }
+                project.properties.shortrevision = ant.project.properties.shortrevision
                 project.properties.revision = ant.project.properties.revision
 
                 if (!project.properties.release) {
@@ -230,9 +246,13 @@
                     else if ('vcs.revision' == property.'@name') {
                       project.properties.revision = property.'@value'
                     }
+                    else if ('vcs.shortrevision' == property.'@name') {
+                      project.properties.shortrevision = property.'@value'
+                    }
                   }
                 }
 
+                println "shortrevision = " + project.properties.shortrevision
                 println "revision = " + project.properties.revision
                 println "release = " + project.properties.release
               </source>
@@ -617,12 +637,12 @@
 
   <issueManagement>
     <system>Trac</system>
-    <url>http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats</url>
+    <url>https://trac.openmicroscopy.org/ome</url>
   </issueManagement>
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>http://ci.openmicroscopy.org/</url>
+    <url>https://ci.openmicroscopy.org/</url>
   </ciManagement>
 
   <mailingLists>
@@ -652,16 +672,16 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
+        <id>ome.experimental</id>
+        <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+    </repository>
+    <repository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </repository>
     <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
-    </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
     <repository>
       <id>unidata.releases</id>
@@ -681,32 +701,87 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
     <pluginRepository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
+    <pluginRepository>
+      <id>ome.experimental</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.experimental</url>
+    </pluginRepository>
   </pluginRepositories>
 
-  <distributionManagement>
-    <repository>
-      <id>ome.staging</id>
-      <name>OME Staging Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
-    </repository>
-    <snapshotRepository>
-      <id>ome.snapshots</id>
-      <name>OME Snapshots Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <profiles>
+    <profile>
+      <id>merge-build</id>
+
+      <repositories>
+        <repository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+
+      <distributionManagement>
+        <repository>
+          <id>ome.unstable</id>
+          <name>OME Unstable Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+        <snapshotRepository>
+          <id>ome.unstable</id>
+          <name>OME Unstable Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </repository>
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+
+      <distributionManagement>
+        <repository>
+          <id>ome.staging</id>
+          <name>OME Staging Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+        </repository>
+        <snapshotRepository>
+          <id>ome.snapshots</id>
+          <name>OME Snapshots Repository</name>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
     <!-- Build test artifact when tests are present. -->
     <profile>
       <id>test-jar</id>

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,13 +45,10 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * This is a file format reader for AmiraMesh data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AmiraReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AmiraReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de
@@ -60,11 +57,13 @@ public class AmiraReader extends FormatReader {
 
   // -- Fields --
 
-  AmiraParameters parameters;
   long offsetOfFirstStream;
 
   // for non-raw plane formats
-  PlaneReader planeReader;
+  transient PlaneReader planeReader;
+  private boolean hasPlaneReader = false;
+  private String compression;
+  private boolean ascii = false;
 
   // for labels
   byte[][] lut;
@@ -79,6 +78,7 @@ public class AmiraReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
@@ -87,18 +87,23 @@ public class AmiraReader extends FormatReader {
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int planeSize = FormatTools.getPlaneSize(this);
-    if (planeReader != null) {
+    if (hasPlaneReader) {
+      if (planeReader == null) {
+        initPlaneReader();
+      }
+
       // plane readers can only read whole planes, so we need to blit
       int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       byte[] planeBuf = new byte[planeSize];
       planeReader.read(no, planeBuf);
-      int srcWidth = parameters.width * bytesPerPixel;
+      int srcWidth = getSizeX() * bytesPerPixel;
       int destWidth = w * bytesPerPixel;
       for (int j = y; j < y + h; j++) {
         int src = j * srcWidth + x * bytesPerPixel;
@@ -114,14 +119,28 @@ public class AmiraReader extends FormatReader {
     return buf;
   }
 
+  /* @see loci.formats.FormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+
+    offsetOfFirstStream = 0;
+    planeReader = null;
+    hasPlaneReader = false;
+    compression = null;
+    ascii = false;
+    lut = null;
+  }
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#initFile(java.lang.String)
    */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    parameters = new AmiraParameters(in);
+    AmiraParameters parameters = new AmiraParameters(in);
     offsetOfFirstStream = in.getFilePointer();
 
     LOGGER.info("Populating metadata hashtable");
@@ -195,9 +214,9 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelWidth);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelHeight);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelWidth);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelHeight);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -210,29 +229,15 @@ public class AmiraReader extends FormatReader {
       }
     }
 
-    if (parameters.ascii) {
-      planeReader = new ASCII(m.pixelType,
-        parameters.width * parameters.height);
-    }
-
-    int compressionType = 0;
+    ascii = parameters.ascii;
     ArrayList streamData = (ArrayList) parameters.getStreams().get("@1");
     if (streamData.size() > 2) {
-      String compression = (String) streamData.get(2);
-      if (compression.startsWith("HxZip,")) {
-        compressionType = 1;
-        long size = Long.parseLong(compression.substring("HxZip,".length()));
-        planeReader = new HxZip(size);
-      }
-      else if (compression.startsWith("HxByteRLE,")) {
-        compressionType = 2;
-        long size =
-          Long.parseLong(compression.substring("HxByteRLE,".length()));
-        planeReader = new HxRLE(parameters.depth, size);
-      }
-
+      compression = (String) streamData.get(2);
     }
-    addGlobalMeta("Compression", compressionType);
+    initPlaneReader();
+    hasPlaneReader = planeReader != null;
+
+    addGlobalMeta("Compression", compression);
 
     Map params = (Map) parameters.getMap().get("Parameters");
     if (params != null) {
@@ -244,7 +249,26 @@ public class AmiraReader extends FormatReader {
     }
   }
 
+  private void initPlaneReader() {
+    if (ascii) {
+      planeReader = new ASCII(getPixelType(), getSizeX() * getSizeY());
+    }
+
+    if (compression != null) {
+      if (compression.startsWith("HxZip,")) {
+        long size = Long.parseLong(compression.substring("HxZip,".length()));
+        planeReader = new HxZip(size);
+      }
+      else if (compression.startsWith("HxByteRLE,")) {
+        long size =
+          Long.parseLong(compression.substring("HxByteRLE,".length()));
+        planeReader = new HxRLE(getSizeZ(), size);
+      }
+    }
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     if (!FormatTools.validStream(stream, 50, false)) return false;
     String c = stream.readLine();
@@ -255,6 +279,7 @@ public class AmiraReader extends FormatReader {
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true ,1);
     return lut;
@@ -312,10 +337,11 @@ public class AmiraReader extends FormatReader {
       this.pixelType = pixelType;
       this.pixelsPerPlane = pixelsPerPlane;
       bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-      offsets = new long[parameters.depth + 1];
+      offsets = new long[getSizeZ() + 1];
       offsets[0] = offsetOfFirstStream;
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (offsets[no] == 0) {
         int i = no - 1;
@@ -379,7 +405,7 @@ public class AmiraReader extends FormatReader {
   class HxZip implements PlaneReader {
     long offsetOfStream, compressedSize;
     int currentNo, planeSize;
-    InflaterInputStream decompressor;
+    transient InflaterInputStream decompressor;
 
     HxZip(long compressedSize) {
       this.compressedSize = compressedSize;
@@ -394,6 +420,7 @@ public class AmiraReader extends FormatReader {
       decompressor = new InflaterInputStream(in);
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (no < currentNo) {
         initDecompressor();
@@ -465,6 +492,7 @@ public class AmiraReader extends FormatReader {
       }
     }
 
+    @Override
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);

@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -35,6 +35,8 @@
  * policies, either expressed or implied, of any organization.
  * #L%
  */
+
+#include <boost/range/size.hpp>
 
 #include <ome/xml/model/primitives/PositiveInteger.h>
 
@@ -124,7 +126,14 @@ namespace
       {   43,   43,          0, MODULO,           false, true,  false},
       {  901,  900,          1, MODULO_ASSIGN,    true,  false, false},
       {  901,  900,          2, MODULO_ASSIGN,    false, false, false},
-      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false}
+      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false},
+
+      {  33,     1,         34, INCREMENT,        true,  false, false},
+      {  33,     1,         33, INCREMENT,        false, false, false},
+      {   1,     1,          2, INCREMENT,        true,  false, false},
+      {  33,     1,         32, DECREMENT,        true,  false, false},
+      {  33,     1,         33, DECREMENT,        false, false, false},
+      {   1,     1,          0, DECREMENT,        false, true,  false}
     };
 
 }
@@ -132,12 +141,12 @@ namespace
 template<>
 const std::vector<NumericTest<PositiveInteger>::test_str>
 NumericTest<PositiveInteger>::strings(init_strings,
-                                      init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                      init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<PositiveInteger>::test_op>
 NumericTest<PositiveInteger>::ops(init_ops,
-                                  init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+                                  init_ops + boost::size(init_ops));
 
 template<>
 const PositiveInteger::value_type NumericTest<PositiveInteger>::error(0);

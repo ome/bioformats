@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,10 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
 
 /**
  * JPEG2000Writer is the file format writer for JPEG2000 files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/JPEG2000Writer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/JPEG2000Writer.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000Writer extends FormatWriter {
 
@@ -68,6 +64,7 @@ public class JPEG2000Writer extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -130,12 +127,14 @@ public class JPEG2000Writer extends FormatWriter {
    * Overridden to indicate that stacks are not supported. 
    * @see loci.formats.IFormatWriter#canDoStacks() 
    */
+  @Override
   public boolean canDoStacks() { return false; }
 
   /**
    * Overridden to return the formats supported by the writer.
    * @see loci.formats.IFormatWriter#getPixelTypes(String) 
    */
+  @Override
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32};

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,10 +38,6 @@ import loci.common.DataTools;
 
 /**
  * Logic to automatically separate the channels in a file.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ChannelSeparator.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ChannelSeparator.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ChannelSeparator extends ReaderWrapper {
 
@@ -108,6 +104,7 @@ public class ChannelSeparator extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getImageCount() */
+  @Override
   public int getImageCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return (reader.isRGB() && !reader.isIndexed()) ?
@@ -116,6 +113,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#getDimensionOrder() */
+  @Override
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     String order = super.getDimensionOrder();
@@ -129,17 +127,20 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#isRGB() */
+  @Override
   public boolean isRGB() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return isIndexed() && !isFalseColor() && getSizeC() > 1;
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return openBytes(no, 0, 0, getSizeX(), getSizeY());
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -147,6 +148,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -156,6 +158,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -223,6 +226,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
@@ -237,6 +241,7 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -250,22 +255,36 @@ public class ChannelSeparator extends ReaderWrapper {
     }
   }
 
+  @Override
   public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
   }
 
+  @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+      return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
+  }
+
+  @Override
   public int[] getZCTCoords(int index) {
     return FormatTools.getZCTCoords(this, index);
+  }
+
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return FormatTools.getZCTModuloCoords(this, index);
   }
 
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#getNativeDataType() */
+  @Override
   public Class<?> getNativeDataType() {
     return byte[].class;
   }
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 

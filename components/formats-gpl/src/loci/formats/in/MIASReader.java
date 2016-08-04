@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,12 +27,11 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -57,12 +56,12 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MIASReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MIASReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -79,8 +78,8 @@ public class MIASReader extends FormatReader {
   /** Path to file containing analysis results for all plates. */
   private String resultFile = null;
 
-  private Vector<AnalysisFile> analysisFiles;
-  private Vector<AnalysisFile> roiFiles;
+  private List<AnalysisFile> analysisFiles;
+  private List<AnalysisFile> roiFiles;
 
   private int[] wellNumber;
 
@@ -92,10 +91,10 @@ public class MIASReader extends FormatReader {
 
   private String templateFile;
 
-  private Hashtable<String, String> overlayFiles =
-    new Hashtable<String, String>();
-  private Hashtable<String, Integer> overlayPlanes =
-    new Hashtable<String, Integer>();
+  private final Map<String, String> overlayFiles =
+    new HashMap<String, String>();
+  private final Map<String, Integer> overlayPlanes =
+    new HashMap<String, Integer>();
 
   /** Whether or not mask pixel data should be parsed in setId. */
   private boolean parseMasks = false;
@@ -118,6 +117,7 @@ public class MIASReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
@@ -155,11 +155,13 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
@@ -188,6 +190,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -204,11 +207,13 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
@@ -218,6 +223,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0][0].getCurrentFile() == null) {
@@ -229,6 +235,7 @@ public class MIASReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -281,9 +288,10 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
 
     if (!noPixels && tiffs != null) {
       String[] f = new String[tiffs[getSeries()].length];
@@ -307,6 +315,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
@@ -335,6 +344,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -351,6 +361,7 @@ public class MIASReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -369,6 +380,7 @@ public class MIASReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -419,9 +431,9 @@ public class MIASReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
 
       r.close();
@@ -432,7 +444,7 @@ public class MIASReader extends FormatReader {
       return;
     }
 
-    analysisFiles = new Vector<AnalysisFile>();
+    analysisFiles = new ArrayList<AnalysisFile>();
 
     // MIAS is a high content screening format which supports multiple plates,
     // wells and fields.
@@ -510,7 +522,7 @@ public class MIASReader extends FormatReader {
 
     String[] list = plate.list(true);
     Arrays.sort(list);
-    Vector<String> wellDirectories = new Vector<String>();
+    final List<String> wellDirectories = new ArrayList<String>();
     for (String dir : list) {
       Location f = new Location(plate, dir);
       if (f.getName().startsWith("Well") || f.getName().length() == 4) {
@@ -573,7 +585,7 @@ public class MIASReader extends FormatReader {
       wellNumber[j] = Integer.parseInt(wellName) - 1;
 
       String[] tiffFiles = well.list(true);
-      Vector<String> tmpFiles = new Vector<String>();
+      final List<String> tmpFiles = new ArrayList<String>();
       for (String tiff : tiffFiles) {
         String name = tiff.toLowerCase();
         if (name.endsWith(".tif") || name.endsWith(".tiff")) {
@@ -727,7 +739,7 @@ public class MIASReader extends FormatReader {
       getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
     {
       String[] cols = null;
-      Vector<String> rows = new Vector<String>();
+      final List<String> rows = new ArrayList<String>();
 
       boolean doKeyValue = true;
       int nStarLines = 0;
@@ -846,7 +858,7 @@ public class MIASReader extends FormatReader {
         store.setImageInstrumentRef(instrumentID, well);
       }
 
-      roiFiles = new Vector<AnalysisFile>();
+      roiFiles = new ArrayList<AnalysisFile>();
       for (AnalysisFile af : analysisFiles) {
         String file = af.filename;
         String name = new Location(file).getName();
@@ -926,12 +938,12 @@ public class MIASReader extends FormatReader {
   private Color getChannelColorFromFile(String file)
     throws FormatException, IOException
   {
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
     TiffParser tp = new TiffParser(s);
     IFD ifd = tp.getFirstIFD();
     s.close();
     if (ifd == null) return null;
-    int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP);
+    int[] colorMap = tp.getColorMap(ifd);
     if (colorMap == null) return null;
 
     int nEntries = colorMap.length / 3;
@@ -988,16 +1000,13 @@ public class MIASReader extends FormatReader {
   private void populateROI(List<String> columns, String[] data, int series,
     int roi, int time, int z, MetadataStore store)
   {
-    Integer tv = new Integer(time);
-    Integer zv = new Integer(z);
-
     String roiID = MetadataTools.createLSID("ROI", roi, 0);
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
     store.setEllipseID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
-    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 0);
-    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
+    store.setEllipseTheT(new NonNegativeInteger(time), roi, 0);
+    store.setEllipseTheZ(new NonNegativeInteger(z), roi, 0);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
     store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
     store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
@@ -1038,7 +1047,7 @@ public class MIASReader extends FormatReader {
     if (templateFile == null) return;
 
     Double physicalSizeX = null, physicalSizeY = null, exposure = null;
-    Vector<String> channelNames = new Vector<String>();
+    final List<String> channelNames = new ArrayList<String>();
     String date = null;
 
     String data = DataTools.readFile(templateFile);
@@ -1087,8 +1096,8 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, well);
@@ -1106,8 +1115,10 @@ public class MIASReader extends FormatReader {
         store.setImageAcquisitionDate(new Timestamp(date), well);
       }
 
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(exposure, well, i);
+      if (exposure != null) {
+        for (int i=0; i<getImageCount(); i++) {
+          store.setPlaneExposureTime(new Time(exposure, UNITS.S), well, i);
+        }
       }
     }
   }
@@ -1142,7 +1153,7 @@ public class MIASReader extends FormatReader {
       String maskId =
         MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
       overlayFiles.put(maskId, overlayTiff);
-      overlayPlanes.put(maskId, new Integer(i));
+      overlayPlanes.put(maskId, i);
 
       boolean validMask = populateMaskPixels(series, roi + nOverlays, 0, store);
       if (validMask) {
@@ -1150,10 +1161,10 @@ public class MIASReader extends FormatReader {
 
         String maskID = MetadataTools.createLSID("Shape", roi + nOverlays, 0);
         store.setMaskID(maskID, roi + nOverlays, 0);
-        store.setMaskX(new Double(0), roi + nOverlays, 0);
-        store.setMaskY(new Double(0), roi + nOverlays, 0);
-        store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
-        store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
+        store.setMaskX(0d, roi + nOverlays, 0);
+        store.setMaskY(0d, roi + nOverlays, 0);
+        store.setMaskWidth((double) getSizeX(), roi + nOverlays, 0);
+        store.setMaskHeight((double) getSizeY(), roi + nOverlays, 0);
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
         store.setMaskStrokeColor(new Color(color), roi + nOverlays, 0);

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,10 +48,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * SAX handler for parsing XML in Zeiss TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ZeissTIFFHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ZeissTIFFHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Roger Leigh <r.leigh at dundee.ac.uk>
  */
@@ -108,6 +104,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     this.reader = reader;
   }
 
+  @Override
   public String toString()
   {
     String s = new String("TIFF-XML parsing\n");
@@ -126,6 +123,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
   // -- DefaultHandler API methods --
 
+  @Override
   public void endElement(String uri,
       String localName,
       String qName) {
@@ -470,6 +468,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
   }
 
+  @Override
   public void characters(char[] ch,
       int start,
       int length)
@@ -478,6 +477,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     cdata += s;
   }
 
+  @Override
   public void startElement(String uri, String localName, String qName,
       Attributes attributes)
   {
@@ -563,6 +563,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       return key != -1 && value != null && category != -1;
     }
 
+    @Override
     public String toString() {
       return new String("      T: K=" + key +
           " V=" + value + " C=" + category +
@@ -581,6 +582,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     // Mapping between tag key number and tag.
     public ArrayList<BaseZeissReader.Tag> tags = new ArrayList<BaseZeissReader.Tag>();
 
+    @Override
     public String toString() {
       String s = new String("  Tags(" + count + "):\n");
       for (BaseZeissReader.Tag t : tags) {
@@ -611,6 +613,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       this.tagset = tagset;
     }
 
+    @Override
     public String toString() {
       String s = new String("  Plane: " + basename + '\n');
       s += tagset;
@@ -638,7 +641,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     /**
      * Get a dimension by its index.  If the dimension does not yet
      * exist, a new one will be created.
-     * @param An XML element name.  The index number will be parsed
+     * @param key An XML element name.  The index number will be parsed
      * from this name.
      * @return A Dimension object.
      */
@@ -656,6 +659,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       return d;
     }
 
+    @Override
     public String toString() {
       String s = new String("Scaling\n");
       s += "  Key=" + key + "\n";

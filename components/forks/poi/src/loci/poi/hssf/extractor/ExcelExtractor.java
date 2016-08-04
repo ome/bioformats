@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,7 +56,6 @@ import loci.poi.poifs.filesystem.POIFSFileSystem;
  *  intended for display to the user.
  * To turn an excel file into a CSV or similar, then see
  *  the XLS2CSVmra example
- * @see loci.poi.hssf.eventusermodel.examples.XLS2CSVmra
  */
 public class ExcelExtractor extends POITextExtractor{
 	private HSSFWorkbook wb;

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,14 +49,11 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
  * companion XML file.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TCSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TCSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -64,7 +61,7 @@ public class TCSReader extends FormatReader {
 
   // -- Constants --
 
-  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss.SSS";
+  public static final String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
   public static final String PREFIX =
     "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><LEICA>";
   public static final String SUFFIX = "</LEICA>";
@@ -98,6 +95,7 @@ public class TCSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, "xml")) return false;
     Location file = new Location(id);
@@ -111,6 +109,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
 
@@ -142,11 +141,13 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     // check for Leica TCS IFD directory entries
     TiffParser tp = new TiffParser(stream);
@@ -164,12 +165,14 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return tiffReaders[lastPlane].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     return tiffReaders[lastPlane].get16BitLookupTable();
@@ -178,6 +181,7 @@ public class TCSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -205,6 +209,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -217,6 +222,7 @@ public class TCSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -237,6 +243,7 @@ public class TCSReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
@@ -264,7 +271,7 @@ public class TCSReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(id, 16);
     tiffParser = new TiffParser(in);
     tiffs = new Vector<String>();
 
@@ -338,7 +345,7 @@ public class TCSReader extends FormatReader {
       idx[i] = Integer.parseInt(n);
 
       date = document.substring(space, document.indexOf("FORMAT")).trim();
-      stamp[i] = DateTools.getTime(date, DATE_FORMAT);
+      stamp[i] = DateTools.getTime(date, DATE_FORMAT, ".");
       addGlobalMetaList("Timestamp for plane", stamp[i]);
     }
 
@@ -489,9 +496,9 @@ public class TCSReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
-    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+    Length sizeX = FormatTools.getPhysicalSizeX(voxelX);
+    Length sizeY = FormatTools.getPhysicalSizeY(voxelY);
+    Length sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
@@ -529,7 +536,7 @@ public class TCSReader extends FormatReader {
     HashMap<String, Long> timestamps = new HashMap<String, Long>();
 
     RandomAccessInputStream s =
-      new RandomAccessInputStream(current.getAbsolutePath());
+      new RandomAccessInputStream(current.getAbsolutePath(), 16);
     TiffParser p = new TiffParser(s);
     IFD ifd = p.getIFDs().get(0);
     s.close();
@@ -543,7 +550,7 @@ public class TCSReader extends FormatReader {
       file = new Location(parent, file).getAbsolutePath();
       if (file.length() != current.getAbsolutePath().length()) continue;
 
-      RandomAccessInputStream rais = new RandomAccessInputStream(file);
+      RandomAccessInputStream rais = new RandomAccessInputStream(file, 16);
       TiffParser tp = new TiffParser(rais);
       if (!tp.isValidHeader()) {
         continue;
@@ -576,7 +583,7 @@ public class TCSReader extends FormatReader {
       long thisStamp = timestamps.get(file).longValue();
       boolean match = false;
       for (String tiff : tiffs) {
-        s = new RandomAccessInputStream(tiff);
+        s = new RandomAccessInputStream(tiff, 16);
         TiffParser parser = new TiffParser(s);
         ifd = parser.getIFDs().get(0);
         s.close();

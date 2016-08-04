@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,6 +52,7 @@ import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
@@ -62,10 +63,6 @@ import loci.plugins.util.VirtualImagePlus;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/ImagePlusReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/ImagePlusReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImagePlusReader implements StatusReporter {
 
@@ -122,14 +119,17 @@ public class ImagePlusReader implements StatusReporter {
 
   // -- StatusReporter methods --
 
+  @Override
   public void addStatusListener(StatusListener l) {
     listeners.add(l);
   }
 
+  @Override
   public void removeStatusListener(StatusListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public void notifyListeners(StatusEvent e) {
     for (StatusListener l : listeners) l.statusUpdated(e);
   }
@@ -575,9 +575,19 @@ public class ImagePlusReader implements StatusReporter {
     r.setSeries(series);
 
     final int[] zct = r.getZCTCoords(ndx);
-    final int[] subC = r.getChannelDimLengths();
-    final String[] subCTypes = r.getChannelDimTypes();
+    final int sizeC = r.getSizeC();
     final StringBuffer sb = new StringBuffer();
+
+    int[] subC;
+    String[] subCTypes;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+      subCTypes = new String[] {moduloC.parentType, moduloC.type};
+    } else {
+      subC = new int[] {r.getSizeC()};
+      subCTypes = new String[] {FormatTools.CHANNEL};
+    }
 
     boolean first = true;
     if (cCount > 1) {
@@ -585,7 +595,8 @@ public class ImagePlusReader implements StatusReporter {
       else sb.append("; ");
       int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
       for (int i=0; i<subC.length; i++) {
-        boolean ch = subCTypes[i].equals(FormatTools.CHANNEL);
+        boolean ch =
+          subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
         sb.append(ch ? "c" : subCTypes[i]);
         sb.append(":");
         sb.append(subCPos[i] + 1);

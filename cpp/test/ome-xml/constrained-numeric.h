@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -39,7 +39,7 @@
 #ifndef TEST_CONSTRAINED_NUMERIC_H
 #define TEST_CONSTRAINED_NUMERIC_H
 
-#include <gtest/gtest.h>
+#include <ome/test/test.h>
 
 #include <cmath>
 #include <sstream>
@@ -62,7 +62,9 @@ enum operation
     DIVIDE,
     DIVIDE_ASSIGN,
     MODULO,
-    MODULO_ASSIGN
+    MODULO_ASSIGN,
+    INCREMENT,
+    DECREMENT
   };
 
 template <typename T>
@@ -96,44 +98,6 @@ public:
 };
 
 TYPED_TEST_CASE_P(NumericTest);
-
-TYPED_TEST_P(NumericTest, Stream)
-{
-  for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
-       i != this->strings.end();
-       ++i)
-    {
-      if (i->v1pass)
-        ASSERT_NO_THROW(TypeParam(i->v1));
-      else
-        ASSERT_THROW(TypeParam(i->v1), std::invalid_argument);
-
-      if (i->v2pass)
-        ASSERT_NO_THROW(TypeParam(i->v2));
-      else
-        ASSERT_THROW(TypeParam(i->v2), std::invalid_argument);
-
-      if (!i->v1pass || !i->v2pass) // deliberate failure
-        continue;
-
-      TypeParam v1(i->v1);
-      TypeParam v2(i->v2);
-
-      ASSERT_EQ(v1, v2);
-      ASSERT_EQ(v2, v2);
-      ASSERT_EQ(v1, i->v2);
-      ASSERT_EQ(v2, i->v2);
-
-      std::istringstream is(i->v1);
-      TypeParam v3(TestFixture::safedefault);
-      ASSERT_NO_THROW(is >> v3);
-      ASSERT_EQ(i->v2, v3);
-
-      std::ostringstream os;
-      ASSERT_NO_THROW(os << v1);
-      ASSERT_EQ(i->v1, os.str());
-    }
-}
 
 template<typename T>
 struct CompareEqual
@@ -185,7 +149,7 @@ struct CompareGreaterOrEqual
 
 template<typename Comparison, typename Test>
 void
-compare_test(const Test&                   fixture,
+compare_test(const Test&                   /* fixture */,
              const typename Test::test_op& test)
 {
   typedef typename Test::test_op::numeric_type NumericType;
@@ -275,9 +239,23 @@ struct OperationModuloAssign
   T eval(T lhs, typename T::value_type rhs) { return lhs %= rhs; }
 };
 
+template<typename T>
+struct OperationIncrement
+{
+  T eval(T lhs,                      T /* rhs */) { return ++lhs; }
+  T eval(T lhs, typename T::value_type /* rhs */) { return ++lhs; }
+};
+
+template<typename T>
+struct OperationDecrement
+{
+  T eval(T lhs,                      T /* rhs */) { return --lhs; }
+  T eval(T lhs, typename T::value_type /* rhs */) { return --lhs; }
+};
+
 template<typename Operation, typename Test>
 void
-operation_test(const Test&                   fixture,
+operation_test(const Test&                   /* fixture */,
                const typename Test::test_op& test)
 {
   typedef typename Test::test_op::numeric_type NumericType;
@@ -285,6 +263,8 @@ operation_test(const Test&                   fixture,
 
   Operation op;
   NumericType val(test.v1);
+  CompareEqual<NumericType> eq;
+  CompareNotEqual<NumericType> ne;
 
   if (test.except)
     {
@@ -308,8 +288,8 @@ operation_test(const Test&                   fixture,
                 }
               else
                 {
-                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
-                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                  ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected));
+                  ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected)));
                 }
             }
           if (Test::error > 0)
@@ -319,8 +299,8 @@ operation_test(const Test&                   fixture,
             }
           else
             {
-              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), test.expected);
-              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+              ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), test.v2), test.expected));
+              ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected)));
             }
         }
       else
@@ -334,8 +314,8 @@ operation_test(const Test&                   fixture,
                 }
               else
                 {
-                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
-                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                  ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected));
+                  ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected)));
                 }
             }
           if (Test::error > 0)
@@ -345,10 +325,57 @@ operation_test(const Test&                   fixture,
             }
           else
             {
-              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), test.expected);
-              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+              ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), test.v2), test.expected));
+              ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected)));
             }
         }
+    }
+}
+
+TYPED_TEST_P(NumericTest, DefaultConstruct)
+{
+  TypeParam v1;
+
+  ASSERT_EQ(TypeParam::default_value, v1);
+}
+
+TYPED_TEST_P(NumericTest, Stream)
+{
+  for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
+       i != this->strings.end();
+       ++i)
+    {
+      if (i->v1pass)
+        ASSERT_NO_THROW(TypeParam(i->v1));
+      else
+        ASSERT_THROW(TypeParam(i->v1), std::invalid_argument);
+
+      if (i->v2pass)
+        ASSERT_NO_THROW(TypeParam(i->v2));
+      else
+        ASSERT_THROW(TypeParam(i->v2), std::invalid_argument);
+
+      if (!i->v1pass || !i->v2pass) // deliberate failure
+        continue;
+
+      TypeParam v1(i->v1);
+      TypeParam v2(i->v2);
+
+      CompareEqual<TypeParam> c;
+
+      ASSERT_TRUE(c.compare(v1, v2));
+      ASSERT_TRUE(c.compare(v2, v2));
+      ASSERT_TRUE(c.compare(v1, i->v2));
+      ASSERT_TRUE(c.compare(v2, i->v2));
+
+      std::istringstream is(i->v1);
+      TypeParam v3(TestFixture::safedefault);
+      ASSERT_NO_THROW(is >> v3);
+      ASSERT_TRUE(c.compare(i->v2, v3));
+
+      std::ostringstream os;
+      ASSERT_NO_THROW(os << v1);
+      ASSERT_EQ(i->v1, os.str());
     }
 }
 
@@ -496,7 +523,26 @@ TYPED_TEST_P(NumericTest, OperatorModuloAssign)
       operation_test<OperationModuloAssign<TypeParam> >(*this, *i);
 }
 
+TYPED_TEST_P(NumericTest, OperatorIncrement)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == INCREMENT)
+      operation_test<OperationIncrement<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorDecrement)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == DECREMENT)
+      operation_test<OperationDecrement<TypeParam> >(*this, *i);
+}
+
 REGISTER_TYPED_TEST_CASE_P(NumericTest,
+                           DefaultConstruct,
                            Stream,
                            OperatorEqual,
                            OperatorNotEqual,
@@ -513,7 +559,9 @@ REGISTER_TYPED_TEST_CASE_P(NumericTest,
                            OperatorDivide,
                            OperatorDivideAssign,
                            OperatorModulo,
-                           OperatorModuloAssign);
+                           OperatorModuloAssign,
+                           OperatorIncrement,
+                           OperatorDecrement);
 
 #endif // TEST_CONSTRAINED_NUMERIC_H
 

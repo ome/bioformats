@@ -43,7 +43,8 @@ The Bio-Formats code is divided into several projects. Core components
 are located in subfolders of the :sourcedir:`components <components/>` folder,
 with some components further classified into :sourcedir:`components/forks
 <components/forks/>` or :sourcedir:`components/stubs <components/stubs/>`,
-depending on the nature of the project.
+depending on the nature of the project. See the :doc:`components` for more
+information, including associated build targets for each component.
 
 Each project has a corresponding Maven POM file, which can be used to
 work with the project in your favorite IDE, or from the command line,
@@ -87,10 +88,17 @@ NetBeans
 NetBeans comes with Maven support built in. To import the Bio-Formats
 source, perform the following steps:
 
-#. Choose :menuselection:`File --> Open Project` from the menu
-#. Select the top-level folder of your Bio-Formats working copy
-#. Expand the Modules folder and double-click desired project(s) to work
-   with them
+#. Select :menuselection:`File --> Open Project` from the menu - choose the
+   top-level path to bioformats.git and click :menuselection:`Open Project`
+#. In the 'Projects' tab on the left-hand side, expand the 'Bio-Formats
+   projects' entry - you should now have a series of folders including 'Other
+   Sources', 'Modules' and 'Dependencies.
+#. Expand the 'Modules' folder to give a list of components and then
+   double-click the desired project(s) to work with them.
+
+.. figure:: /images/netbeans.png
+    :align: center
+    :alt: Opening Bio-Formats in Netbeans
 
 Alternately, you can clone the source directly from NetBeans into a
 project by selecting :menuselection:`Team --> Git --> Clone Other...` from
@@ -113,6 +121,9 @@ We recommend using Eclipse 4.3 (Kepler), specifically -
 You can then import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
+Alternatively, run the Eclipse Maven target with :command:`mvn
+eclipse:eclipse` to create the Eclipse project files, then use
+:menuselection:`File --> Import --> Existing Projects into Workspace`.
 
 To remove post-import errors, either close the ``ome-xml`` project or run::
 
@@ -143,3 +154,22 @@ in ~/.m2/repository. Simply run::
 
 With either Ant or Maven, you can use similar commands in any subproject
 folder to build just that component.
+
+Using Gradle, Maven or Ivy
+--------------------------
+
+All released :file:`.jar` artifacts may be obtained through the OME
+`Artifactory server
+<http://artifacts.openmicroscopy.org/artifactory>`_.  The "Client
+Settings" section of the Artifactory main page provides example code
+snippets for inclusion into your Gradle, Maven or Ivy project, which
+will enable the use of this repository.
+
+Example snippets for using the Bio-Formats |version|-SNAPSHOT
+``formats-gpl`` artifact are available for :download:`Gradle
+<artifactory/build.gradle>` and for :download:`Maven
+<artifactory/pom.xml>`.  These may be copied into your project to
+enable the use of the Bio-Formats library components, and may be
+adjusted to use different components or different release or
+development versions of Bio-Formats.
+

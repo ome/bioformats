@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,10 +47,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * BrukerReader is the file format reader for Bruker MRI files.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BrukerReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/BrukerReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class BrukerReader extends FormatReader {
@@ -63,6 +59,9 @@ public class BrukerReader extends FormatReader {
 
   private ArrayList<String> pixelsFiles = new ArrayList<String>();
   private ArrayList<String> allFiles = new ArrayList<String>();
+
+  private int lastSeries = -1;
+  private RandomAccessInputStream seriesStream;
 
   // -- Constructor --
 
@@ -79,6 +78,7 @@ public class BrukerReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
@@ -86,17 +86,20 @@ public class BrukerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     Location file = new Location(name).getAbsoluteFile();
     return file.getName().equals("fid") || file.getName().equals("acqp");
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
@@ -104,20 +107,27 @@ public class BrukerReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(pixelsFiles.get(getSeries()));
-    s.seek(no * FormatTools.getPlaneSize(this));
-    readPlane(s, x, y, w, h, buf);
-    s.close();
+    if (getSeries() != lastSeries) {
+      if (seriesStream != null) {
+        seriesStream.close();
+      }
+      seriesStream = new RandomAccessInputStream(pixelsFiles.get(getSeries()));
+      lastSeries = getSeries();
+    }
+
+    seriesStream.seek((long) no * FormatTools.getPlaneSize(this));
+    readPlane(seriesStream, x, y, w, h, buf);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -127,10 +137,13 @@ public class BrukerReader extends FormatReader {
     realDir = realDir.getParentFile();
     dir = realDir.getAbsolutePath();
     ArrayList<String> files = new ArrayList<String>();
+    files.add(new Location(getCurrentFile()).getAbsolutePath());
 
     for (String f : allFiles) {
       if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
-        files.add(f);
+        if (!files.contains(f)) {
+          files.add(f);
+        }
       }
     }
 
@@ -138,22 +151,30 @@ public class BrukerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelsFiles.clear();
       allFiles.clear();
+      lastSeries = -1;
+      if (seriesStream != null) {
+        seriesStream.close();
+      }
+      seriesStream = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -163,6 +184,7 @@ public class BrukerReader extends FormatReader {
     String[] acquisitionDirs = parent.list(true);
 
     Comparator<String> comparator = new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         Integer i1 = 0;
         try {

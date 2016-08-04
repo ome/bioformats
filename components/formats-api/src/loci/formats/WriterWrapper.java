@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,10 +43,6 @@ import loci.formats.meta.MetadataRetrieve;
 /**
  * Abstract superclass of writer logic that wraps other writers.
  * All methods are simply delegated to the wrapped writer.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/WriterWrapper.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/WriterWrapper.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class WriterWrapper implements IFormatWriter {
 
@@ -150,148 +146,181 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   // -- IFormatWriter API methods --
 
+  @Override
   public void changeOutputFile(String id) throws FormatException, IOException {
     writer.changeOutputFile(id);
   }
 
+  @Override
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
     writer.saveBytes(no, buf);
   }
 
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     writer.saveBytes(no, buf, x, y, w, h);
   }
 
+  @Override
   public void saveBytes(int no, byte[] buf, Region tile)
     throws FormatException, IOException
   {
     writer.saveBytes(no, buf, tile);
   }
 
+  @Override
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
     writer.savePlane(no, plane);
   }
 
+  @Override
   public void savePlane(int no, Object plane, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     writer.savePlane(no, plane, x, y, w, h);
   }
 
+  @Override
   public void savePlane(int no, Object plane, Region tile)
     throws FormatException, IOException
   {
     writer.savePlane(no, plane, tile);
   }
 
+  @Override
   public void setSeries(int series) throws FormatException {
     writer.setSeries(series);
   }
 
+  @Override
   public int getSeries() {
     return writer.getSeries();
   }
 
+  @Override
   public void setInterleaved(boolean interleaved) {
     writer.setInterleaved(interleaved);
   }
 
+  @Override
   public boolean isInterleaved() {
     return writer.isInterleaved();
   }
 
+  @Override
   public void setValidBitsPerPixel(int bits) {
     writer.setValidBitsPerPixel(bits);
   }
 
+  @Override
   public boolean canDoStacks() {
     return writer.canDoStacks();
   }
 
+  @Override
   public void setMetadataRetrieve(MetadataRetrieve r) {
     writer.setMetadataRetrieve(r);
   }
 
+  @Override
   public MetadataRetrieve getMetadataRetrieve() {
     return writer.getMetadataRetrieve();
   }
 
+  @Override
   public void setColorModel(ColorModel cm) {
     writer.setColorModel(cm);
   }
 
+  @Override
   public ColorModel getColorModel() {
     return writer.getColorModel();
   }
 
+  @Override
   public void setFramesPerSecond(int rate) {
     writer.setFramesPerSecond(rate);
   }
 
+  @Override
   public int getFramesPerSecond() {
     return writer.getFramesPerSecond();
   }
 
+  @Override
   public String[] getCompressionTypes() {
     return writer.getCompressionTypes();
   }
 
+  @Override
   public int[] getPixelTypes() {
     return writer.getPixelTypes();
   }
 
+  @Override
   public int[] getPixelTypes(String codec) {
     return writer.getPixelTypes(codec);
   }
 
+  @Override
   public boolean isSupportedType(int type) {
     return writer.isSupportedType(type);
   }
 
+  @Override
   public void setCompression(String compress) throws FormatException {
     writer.setCompression(compress);
   }
 
   /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  @Override
   public void setCodecOptions(CodecOptions options) {
     writer.setCodecOptions(options);
   }
 
+  @Override
   public String getCompression() {
     return writer.getCompression();
   }
 
+  @Override
   public void setWriteSequentially(boolean sequential) {
     writer.setWriteSequentially(sequential);
   }
 
   // -- IFormatHandler API methods --
 
+  @Override
   public boolean isThisType(String name) {
     return writer.isThisType(name);
   }
 
+  @Override
   public String getFormat() {
     return writer.getFormat();
   }
 
+  @Override
   public String[] getSuffixes() {
     return writer.getSuffixes();
   }
 
+  @Override
   public Class<?> getNativeDataType() {
     return writer.getNativeDataType();
   }
 
+  @Override
   public void setId(String id) throws FormatException, IOException {
     writer.setId(id);
   }
 
+  @Override
   public void close() throws IOException {
     writer.close();
   }

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -67,10 +67,6 @@ import org.slf4j.LoggerFactory;
  * and OME-XML strings.
  * Most of the methods require the optional {@link loci.formats.ome}
  * package, and optional ome-xml.jar library, to be present at runtime.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/MetadataTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class MetadataTools {
 
@@ -81,7 +77,7 @@ public final class MetadataTools {
 
   // -- Static fields --
 
-  private static boolean defaultDateEnabled = true;
+  private static boolean defaultDateEnabled = false;
 
   // -- Constructor --
 
@@ -90,17 +86,33 @@ public final class MetadataTools {
   // -- Utility methods - OME-XML --
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
+   * Populates the Pixels element of the given metadata store, using core
    * metadata from the given reader.
+   *
+   * Delegate to
+   * {@link #populatePixels(MetadataStore, IFormatReader, boolean, boolean)}
+   * with {@code doPlane} set to {@code false} and {@code doImageName} set to
+   * {@code true}.
+   *
+   * @param store The metadata store whose Pixels should be populated
+   * @param r     The format reader whose core metadata should be used
    */
   public static void populatePixels(MetadataStore store, IFormatReader r) {
     populatePixels(store, r, false, true);
   }
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
-   * metadata from the given reader.  If the 'doPlane' flag is set,
-   * then the 'plane' elements will be populated as well.
+   * Populates the Pixels element of the given metadata store, using core
+   * metadata from the given reader.  If the {@code doPlane} flag is set,
+   * then the Plane elements will be populated as well.
+   *
+   * Delegates to
+   * {@link #populatePixels(MetadataStore, IFormatReader, boolean, boolean)}
+   * with {@code doImageName} set to {@code true}.
+   *
+   * @param store   The metadata store whose Pixels should be populated
+   * @param r       The format reader whose core metadata should be used
+   * @param doPlane Specifies whether Plane elements should be populated
    */
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane)
@@ -109,11 +121,16 @@ public final class MetadataTools {
   }
 
   /**
-   * Populates the 'pixels' element of the given metadata store, using core
-   * metadata from the given reader.  If the 'doPlane' flag is set,
-   * then the 'plane' elements will be populated as well.
-   * If the 'doImageName' flag is set, then the image name will be populated
-   * as well.  By default, 'doImageName' is true.
+   * Populates the Pixels element of the given metadata store, using core
+   * metadata from the given reader.  If the {@code doPlane} flag is set,
+   * then the Plane elements will be populated as well. If the
+   * {@code doImageName} flag is set, then the image name will be populated as
+   * well.
+   *
+   * @param store       The metadata store whose Pixels should be populated
+   * @param r           The format reader whose core metadata should be used
+   * @param doPlane     Specifies whether Plane elements should be populated
+   * @param doImageName Specifies whether the Image name should be populated
    */
   public static void populatePixels(MetadataStore store, IFormatReader r,
     boolean doPlane, boolean doImageName)
@@ -154,7 +171,7 @@ public final class MetadataTools {
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
               if (omeMeta.getTiffDataCount(i) == 0) {
-                service.addMetadataOnly(omeMeta, i);
+                service.addMetadataOnly(omeMeta, i, i == 0);
               }
             }
             catch (ServiceException e) {

@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -91,10 +91,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * A utility class for working with XML.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/XMLTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/XMLTools.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -114,11 +110,20 @@ public final class XMLTools {
   private static final SchemaFactory FACTORY =
     SchemaFactory.newInstance(XML_SCHEMA_PATH);
 
+  private static final TransformerFactory transformFactory = createTransformFactory();
+
+  private static TransformerFactory createTransformFactory() {
+    TransformerFactory factory = TransformerFactory.newInstance();
+    factory.setErrorListener(new XMLListener());
+    return factory;
+  };
+
   // -- Fields --
 
   private static ThreadLocal<HashMap<URI, Schema>> schemas =
     new ThreadLocal<HashMap<URI, Schema>>()
   {
+    @Override
     protected HashMap<URI, Schema> initialValue() {
       return new HashMap<URI, Schema>();
     }
@@ -198,14 +203,9 @@ public final class XMLTools {
   public static String getXML(Document doc)
     throws TransformerConfigurationException, TransformerException
   {
-    Source source = new DOMSource(doc);
     StringWriter stringWriter = new StringWriter();
     Result result = new StreamResult(stringWriter);
-    // Java XML factories are not declared to be thread safe
-    TransformerFactory factory = TransformerFactory.newInstance();
-    factory.setErrorListener(new XMLListener());
-    Transformer transformer = factory.newTransformer();
-    transformer.transform(source, result);
+    writeXML(result, doc, true);
     return stringWriter.getBuffer().toString();
   }
 
@@ -453,13 +453,19 @@ public final class XMLTools {
     boolean includeXMLDeclaration)
     throws TransformerException
   {
-    TransformerFactory transformFactory = TransformerFactory.newInstance();
+    writeXML(new StreamResult(os), doc, includeXMLDeclaration);
+  }
+
+  /** Writes the specified DOM to the given stream. */
+  public static void writeXML(Result output, Document doc,
+    boolean includeXMLDeclaration)
+    throws TransformerException
+  {
     Transformer idTransform = transformFactory.newTransformer();
     if (!includeXMLDeclaration) {
       idTransform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     }
     Source input = new DOMSource(doc);
-    Result output = new StreamResult(os);
     idTransform.transform(input, output);
   }
 
@@ -486,9 +492,7 @@ public final class XMLTools {
     try {
       StreamSource xsltSource = new StreamSource(xsltStream);
       // Java XML factories are not declared to be thread safe
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
-      transformerFactory.setErrorListener(new XMLListener());
-      return transformerFactory.newTemplates(xsltSource);
+      return transformFactory.newTemplates(xsltSource);
     }
     catch (TransformerConfigurationException exc) {
       LOGGER.debug("Could not construct template", exc);
@@ -708,14 +712,17 @@ public final class XMLTools {
 
   /** ErrorListener implementation that logs errors and warnings using SLF4J. */
   static class XMLListener implements ErrorListener {
+    @Override
     public void error(TransformerException e) {
       LOGGER.debug("", e);
     }
 
+    @Override
     public void fatalError(TransformerException e) {
       LOGGER.debug("", e);
     }
 
+    @Override
     public void warning(TransformerException e) {
       LOGGER.debug("", e);
     }

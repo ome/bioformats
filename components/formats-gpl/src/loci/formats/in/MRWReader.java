@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -42,10 +41,6 @@ import loci.formats.tiff.TiffParser;
 
 /**
  * MRWReader is the file format reader for Minolta MRW files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MRWReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MRWReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MRWReader extends FormatReader {
 
@@ -81,6 +76,7 @@ public class MRWReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -90,6 +86,7 @@ public class MRWReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -99,10 +96,7 @@ public class MRWReader extends FormatReader {
     if (dataSize == 12) nBytes *= 3;
     else if (dataSize == 16) nBytes *= 4;
 
-    byte[] tmp = new byte[nBytes];
     in.seek(offset);
-    in.read(tmp);
-    BitBuffer bb = new BitBuffer(tmp);
 
     short[] s = new short[getSizeX() * getSizeY() * 3];
 
@@ -110,7 +104,7 @@ public class MRWReader extends FormatReader {
       boolean evenRow = (row % 2) == 0;
       for (int col=0; col<getSizeX(); col++) {
         boolean evenCol = (col % 2) == 0;
-        short val = (short) (bb.getBits(dataSize) & 0xffff);
+        short val = (short) (in.readBits(dataSize) & 0xffff);
 
         int redOffset = row * getSizeX() + col;
         int greenOffset = (getSizeY() + row) * getSizeX() + col;
@@ -141,7 +135,7 @@ public class MRWReader extends FormatReader {
           }
         }
       }
-      bb.skipBits(dataSize * (sensorWidth - getSizeX()));
+      in.skipBits(dataSize * (sensorWidth - getSizeX()));
     }
 
     int[] colorMap = bayerPattern == 1 ? COLOR_MAP_1 : COLOR_MAP_2;
@@ -158,6 +152,7 @@ public class MRWReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -174,6 +169,7 @@ public class MRWReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);

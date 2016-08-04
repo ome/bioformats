@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,13 +41,13 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImprovisionTiffReader extends BaseTiffReader {
 
@@ -77,6 +77,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     String comment = tp.getComment();
@@ -85,6 +86,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -103,12 +105,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? null : files;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || lastFile < 0 || lastFile >= readers.length ||
@@ -120,6 +124,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || lastFile < 0 || lastFile >= readers.length ||
@@ -133,6 +138,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -150,6 +156,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -270,7 +277,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       files = new String[] {currentId};
     }
 
-    if (files.length > 1 && files.length * ifds.size() < getImageCount()) {
+    if (files.length * ifds.size() < getImageCount()) {
       files = new String[] {currentId};
       m.imageCount = ifds.size();
       m.sizeZ = ifds.size();
@@ -324,15 +331,16 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -343,7 +351,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT / 1000000.0, UNITS.S), 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (cNames != null && i < cNames.length) {
           store.setChannelName(cNames[i], 0, i);
@@ -356,7 +364,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   // -- Helper methods --
 
   private String getUUID(String path) throws FormatException, IOException {
-    RandomAccessInputStream s = new RandomAccessInputStream(path);
+    RandomAccessInputStream s = new RandomAccessInputStream(path, 16);
     TiffParser parser = new TiffParser(s);
     String comment = parser.getComment();
     s.close();

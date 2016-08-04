@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   FileCodestreamWriter
  *
  * Description:             Implementation of the bit stream writer for streams.
- *
  *
  *
  * COPYRIGHT:
@@ -164,8 +163,6 @@ public class FileCodestreamWriter extends CodestreamWriter
      *
      * @param mb The maximum number of bytes that can be written to the bit
      * stream.
-     *
-     * @param encSpec The encoder's specifications
      *
      * @exception IOException If an error occurs while trying to open the file
      * for writing or while writing the magic number.

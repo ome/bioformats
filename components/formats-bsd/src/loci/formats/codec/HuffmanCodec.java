@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,16 +35,13 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.HashMap;
 
+import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements Huffman decoding.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/HuffmanCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/HuffmanCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -64,6 +61,7 @@ public class HuffmanCodec extends BaseCodec {
   // -- Codec API methods --
 
   /* @see Codec#compress(byte[], CodecOptions) */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -80,6 +78,7 @@ public class HuffmanCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -91,10 +90,6 @@ public class HuffmanCodec extends BaseCodec {
     }
 
     HuffmanCodecOptions huffman = (HuffmanCodecOptions) options;
-    byte[] pix = new byte[huffman.maxBytes];
-    in.read(pix);
-
-    BitBuffer bb = new BitBuffer(pix);
 
     int nSamples = (huffman.maxBytes * 8) / huffman.bitsPerSample;
     int bytesPerSample = huffman.bitsPerSample / 8;
@@ -103,7 +98,7 @@ public class HuffmanCodec extends BaseCodec {
     BitWriter out = new BitWriter();
 
     for (int i=0; i<nSamples; i++) {
-      int sample = getSample(bb, options);
+      int sample = getSample(in, options);
       out.write(sample, bytesPerSample * 8);
     }
 
@@ -112,7 +107,26 @@ public class HuffmanCodec extends BaseCodec {
 
   // -- HuffmanCodec API methods --
 
+  @Deprecated
   public int getSample(BitBuffer bb, CodecOptions options)
+    throws FormatException
+  {
+    RandomAccessInputStream s = null;
+    try {
+      try {
+        s = new RandomAccessInputStream(new ByteArrayHandle(bb.getByteBuffer()));
+        return getSample(s, options);
+      }
+      finally {
+        s.close();
+      }
+    }
+    catch (IOException e) {
+      throw new FormatException(e);
+    }
+  }
+
+  public int getSample(RandomAccessInputStream bb, CodecOptions options)
     throws FormatException
   {
     if (bb == null) {
@@ -130,17 +144,21 @@ public class HuffmanCodec extends BaseCodec {
       cachedDecoders.put(huffman.table, decoder);
     }
 
-    int bitCount = decoder.decode(bb);
-    if (bitCount == 16) {
-      return 0x8000;
+    try {
+      int bitCount = decoder.decode(bb);
+      if (bitCount == 16) {
+        return 0x8000;
+      }
+      if (bitCount < 0) bitCount = 0;
+      int v = bb.readBits(bitCount) & ((int) Math.pow(2, bitCount) - 1);
+      if ((v & (1 << (bitCount - 1))) == 0) {
+        v -= (1 << bitCount) - 1;
+      }
+      return v;
     }
-    if (bitCount < 0) bitCount = 0;
-    int v = bb.getBits(bitCount) & ((int) Math.pow(2, bitCount) - 1);
-    if ((v & (1 << (bitCount - 1))) == 0) {
-      v -= (1 << bitCount) - 1;
+    catch (IOException e) {
+      throw new FormatException(e);
     }
-
-    return v;
   }
 
   // -- Helper class --
@@ -183,10 +201,10 @@ public class HuffmanCodec extends BaseCodec {
       }
     }
 
-    public int decode(BitBuffer bb) {
+    public int decode(RandomAccessInputStream bb) throws IOException {
       Decoder d = this;
       while (d.branch[0] != null) {
-        int v = bb.getBits(1);
+        int v = bb.readBits(1);
         if (v < 0) break; // eof
         d = d.branch[v];
       }

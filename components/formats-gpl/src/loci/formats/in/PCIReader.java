@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -27,9 +27,11 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -45,15 +47,16 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PCIReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PCIReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -66,11 +69,11 @@ public class PCIReader extends FormatReader {
   // -- Fields --
 
   private HashMap<Integer, String> imageFiles;
-  private POIService poi;
+  private transient POIService poi;
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
-  private Vector<Double> uniqueZ;
+  private List<Double> uniqueZ;
 
   // -- Constructor --
 
@@ -83,6 +86,7 @@ public class PCIReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -90,10 +94,16 @@ public class PCIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     String file = imageFiles.get(0);
+
     try {
+      if (poi == null) {
+       initPOIService();
+      }
+
       RandomAccessInputStream s = poi.getDocumentStream(file);
       TiffParser tp = new TiffParser(s);
       if (tp.isValidHeader()) {
@@ -113,10 +123,16 @@ public class PCIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     String file = imageFiles.get(0);
+
     try {
+      if (poi == null) {
+        initPOIService();
+      }
+
       RandomAccessInputStream s = poi.getDocumentStream(file);
       TiffParser tp = new TiffParser(s);
       if (tp.isValidHeader()) {
@@ -138,10 +154,15 @@ public class PCIReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (poi == null) {
+      initPOIService();
+    }
 
     String file = imageFiles.get(no);
     RandomAccessInputStream s = poi.getDocumentStream(file);
@@ -163,6 +184,7 @@ public class PCIReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -179,29 +201,22 @@ public class PCIReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
     imageFiles = new HashMap<Integer, String>();
     timestamps = new HashMap<Integer, Double>();
-    uniqueZ = new Vector<Double>();
+    uniqueZ = new ArrayList<Double>();
 
     CoreMetadata m = core.get(0);
 
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      poi = factory.getInstance(POIService.class);
-    }
-    catch (DependencyException de) {
-      throw new FormatException("POI library not found", de);
-    }
-
-    poi.initialize(Location.getMappedId(currentId));
+    initPOIService();
 
     double scaleFactor = 1;
 
-    Vector<String> allFiles = poi.getDocumentList();
-    if (allFiles.size() == 0) {
+    final List<String> allFiles = poi.getDocumentList();
+    if (allFiles.isEmpty()) {
       throw new FormatException(
         "No files were found - the .cxd may be corrupt.");
     }
@@ -282,12 +297,12 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
         double zPos = stream.readDouble();
-        if (!uniqueZ.contains(zPos) && (getImageCount() == 0 || getSizeZ() == 1))
+        if (!uniqueZ.contains(zPos) && getSizeZ() <= 1)
         {
           uniqueZ.add(zPos);
         }
-        if (name.indexOf("Field 1/") != -1) firstZ = zPos;
-        else if (name.indexOf("Field 2/") != -1) secondZ = zPos;
+        if (name.indexOf("Field 1" + File.separator) != -1) firstZ = zPos;
+        else if (name.indexOf("Field 2" + File.separator) != -1) secondZ = zPos;
       }
       else if (relativePath.equals("First Field Date & Time")) {
         long date = (long) stream.readDouble() * 1000;
@@ -329,7 +344,7 @@ public class PCIReader extends FormatReader {
       }
     }
 
-    boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
+    boolean zFirst = Math.abs(firstZ - secondZ) > Constants.EPSILON;
 
     if (getSizeC() == 0) m.sizeC = 1;
     if (mode == 0) {
@@ -337,7 +352,7 @@ public class PCIReader extends FormatReader {
     }
 
     if (getSizeZ() <= 1 || (getImageCount() % getSizeZ()) != 0) {
-      m.sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+      m.sizeZ = uniqueZ.isEmpty() ? 1 : uniqueZ.size();
     }
     m.sizeT = getImageCount() / getSizeZ();
 
@@ -369,6 +384,17 @@ public class PCIReader extends FormatReader {
       imageFiles.put(getImageIndex(parent), file);
     }
 
+    int bpp = FormatTools.getBytesPerPixel(m.pixelType);
+    int expectedPlaneSize = m.sizeX * m.sizeY * bpp * m.sizeC;
+    String file = imageFiles.get(0);
+    RandomAccessInputStream s = poi.getDocumentStream(file);
+    TiffParser tp = new TiffParser(s);
+    // don't correct the image width if it's stored as a TIFF
+    if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
+      m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
+    }
+    s.close();
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -377,8 +403,8 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
+      Length sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      Length sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -388,15 +414,19 @@ public class PCIReader extends FormatReader {
       }
 
       for (int i=0; i<timestamps.size(); i++) {
-        Double timestamp = new Double(timestamps.get(i).doubleValue());
         if (i >= getImageCount()) {
           break;
         }
-        store.setPlaneDeltaT(timestamp, 0, i);
+        Double timestamp = timestamps.get(i);
+        if (timestamp != null) {
+          store.setPlaneDeltaT(new Time(timestamp, UNITS.S), 0, i);
+        }
         if (i == 2) {
-          double first = timestamps.get(1).doubleValue();
-          Double increment = new Double(timestamp.doubleValue() - first);
-          store.setPixelsTimeIncrement(increment, 0);
+          Double first = timestamps.get(1);
+          Double increment = timestamp - first;
+          if (increment != null) {
+            store.setPixelsTimeIncrement(new Time(increment, UNITS.S), 0);
+          }
         }
       }
 
@@ -408,16 +438,28 @@ public class PCIReader extends FormatReader {
         store.setDetectorType(getDetectorType("Other"), 0, 0);
         store.setImageInstrumentRef(instrumentID, 0);
 
+        Binning binningEnum = getBinning(binning + "x" + binning);
         for (int c=0; c<getEffectiveSizeC(); c++) {
           store.setDetectorSettingsID(detectorID, 0, c);
-          store.setDetectorSettingsBinning(
-            getBinning(binning + "x" + binning), 0, c);
+          store.setDetectorSettingsBinning(binningEnum, 0, c);
         }
       }
     }
   }
 
   // -- Helper methods --
+
+  private void initPOIService() throws FormatException, IOException {
+   try {
+      ServiceFactory factory = new ServiceFactory();
+      poi = factory.getInstance(POIService.class);
+    }
+    catch (DependencyException de) {
+      throw new FormatException("POI library not found", de);
+    }
+
+    poi.initialize(Location.getMappedId(getCurrentFile()));
+  }
 
   /** Get the image index from the image file name. */
   private Integer getImageIndex(String path) {

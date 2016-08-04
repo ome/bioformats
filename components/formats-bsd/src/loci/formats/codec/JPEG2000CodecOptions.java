@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,10 +34,6 @@ package loci.formats.codec;
 
 /**
  * Options for compressing and decompressing JPEG-2000 data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000CodecOptions.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEG2000CodecOptions.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000CodecOptions extends CodecOptions {
 
@@ -62,7 +58,7 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   /**
    * The resolution level as would be provided to:
-   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam#setResolution(int)}
+   * {@link com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam#setResolution(int)}
    * (READ). Leaving this value <code>null</code> signifies that when a JPEG
    * 2000 parameter set is created for the purposes of compression the number
    * of decomposition levels will be left as the default.

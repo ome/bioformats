@@ -2,7 +2,7 @@
   #%L
   BSD implementations of Bio-Formats readers and writers
   %%
-  Copyright (C) 2005 - 2014 Open Microscopy Environment:
+  Copyright (C) 2005 - 2015 Open Microscopy Environment:
     - Board of Regents of the University of Wisconsin-Madison
     - Glencoe Software, Inc.
     - University of Dundee
@@ -29,7 +29,7 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-<suite name="SCIFIO Unit Tests">
+<suite name="Formats-BSD Unit Tests">
     <test name="ServiceTests">
         <groups/>
         <classes>
@@ -108,10 +108,10 @@
           <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
         </classes>
     </test>
-    <test name="FormatToolsTest">
+    <test name="MemoizerTest">
       <groups/>
       <classes>
-        <class name="loci.formats.utests.FormatToolsTest"/>
+        <class name="loci.formats.utests.MemoizerTest"/>
       </classes>
     </test>
 </suite>

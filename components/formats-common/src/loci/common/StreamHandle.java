@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,10 +42,6 @@ import java.nio.ByteOrder;
 /**
  * Abstract IRandomAccess implementation for reading from InputStreams and
  * writing to OutputStreams.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StreamHandle.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/StreamHandle.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see IRandomAccess
  *
@@ -91,6 +87,7 @@ public abstract class StreamHandle implements IRandomAccess {
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#close() */
+  @Override
   public void close() throws IOException {
     length = fp = mark = 0;
     if (stream != null) stream.close();
@@ -101,21 +98,25 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see IRandomAccess#getFilePointer() */
+  @Override
   public long getFilePointer() throws IOException {
     return fp;
   }
 
   /* @see IRandomAccess#length() */
+  @Override
   public long length() throws IOException {
     return length;
   }
 
   /* @see IRandomAccess#read(byte[]) */
+  @Override
   public int read(byte[] b) throws IOException {
     return read(b, 0, b.length);
   }
 
   /* @see IRandomAccess#read(byte[], int, int) */
+  @Override
   public int read(byte[] b, int off, int len) throws IOException {
     int n = stream.read(b, off, len);
     if (n >= 0) fp += n;
@@ -130,11 +131,13 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see IRandomAccess#read(ByteBuffer) */
+  @Override
   public int read(ByteBuffer buffer) throws IOException {
     return read(buffer, 0, buffer.capacity());
   }
 
   /* @see IRandomAccess#read(ByteBuffer, int, int) */
+  @Override
   public int read(ByteBuffer buffer, int off, int len) throws IOException {
     if (buffer.hasArray()) {
       return read(buffer.array(), off, len);
@@ -147,6 +150,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see IRandomAccess#seek(long) */
+  @Override
   public void seek(long pos) throws IOException {
     long diff = pos - fp;
     fp = pos;
@@ -164,11 +168,13 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
+  @Override
   public void write(ByteBuffer buf) throws IOException {
     write(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
+  @Override
   public void write(ByteBuffer buf, int off, int len) throws IOException {
     buf.position(off);
     if (buf.hasArray()) {
@@ -182,11 +188,13 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see IRandomAccess.getOrder() */
+  @Override
   public ByteOrder getOrder() {
     return order;
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
+  @Override
   public void setOrder(ByteOrder order) {
     this.order = order;
   }
@@ -194,24 +202,28 @@ public abstract class StreamHandle implements IRandomAccess {
   // -- DataInput API methods --
 
   /* @see java.io.DataInput#readBoolean() */
+  @Override
   public boolean readBoolean() throws IOException {
     fp++;
     return stream.readBoolean();
   }
 
   /* @see java.io.DataInput#readByte() */
+  @Override
   public byte readByte() throws IOException {
     fp++;
     return stream.readByte();
   }
 
   /* @see java.io.DataInput#readChar() */
+  @Override
   public char readChar() throws IOException {
     fp++;
     return stream.readChar();
   }
 
   /* @see java.io.DataInput#readDouble() */
+  @Override
   public double readDouble() throws IOException {
     fp += 8;
     double v = stream.readDouble();
@@ -219,6 +231,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#readFloat() */
+  @Override
   public float readFloat() throws IOException {
     fp += 4;
     float v = stream.readFloat();
@@ -226,18 +239,21 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#readFully(byte[]) */
+  @Override
   public void readFully(byte[] b) throws IOException {
     stream.readFully(b);
     fp += b.length;
   }
 
   /* @see java.io.DataInput#readFully(byte[], int, int) */
+  @Override
   public void readFully(byte[] b, int off, int len) throws IOException {
     stream.readFully(b, off, len);
     fp += len;
   }
 
   /* @see java.io.DataInput#readInt() */
+  @Override
   public int readInt() throws IOException {
     fp += 4;
     int v = stream.readInt();
@@ -245,11 +261,13 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#readLine() */
+  @Override
   public String readLine() throws IOException {
     throw new IOException("Unimplemented");
   }
 
   /* @see java.io.DataInput#readLong() */
+  @Override
   public long readLong() throws IOException {
     fp += 8;
     long v = stream.readLong();
@@ -257,6 +275,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#readShort() */
+  @Override
   public short readShort() throws IOException {
     fp += 2;
     short v = stream.readShort();
@@ -264,17 +283,20 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#readUnsignedByte() */
+  @Override
   public int readUnsignedByte() throws IOException {
     fp++;
     return stream.readUnsignedByte();
   }
 
   /* @see java.io.DataInput#readUnsignedShort() */
+  @Override
   public int readUnsignedShort() throws IOException {
     return readShort() & 0xffff;
   }
 
   /* @see java.io.DataInput#readUTF() */
+  @Override
   public String readUTF() throws IOException {
     String s = stream.readUTF();
     fp += s.length();
@@ -282,6 +304,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataInput#skipBytes(int) */
+  @Override
   public int skipBytes(int n) throws IOException {
     int skipped = 0;
     try {
@@ -297,6 +320,7 @@ public abstract class StreamHandle implements IRandomAccess {
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput#write(byte[]) */
+  @Override
   public void write(byte[] b) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -305,6 +329,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#write(byte[], int, int) */
+  @Override
   public void write(byte[] b, int off, int len) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -313,6 +338,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#write(int) */
+  @Override
   public void write(int b) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -322,6 +348,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeBoolean(boolean) */
+  @Override
   public void writeBoolean(boolean v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -330,6 +357,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeByte(int) */
+  @Override
   public void writeByte(int v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -339,6 +367,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeBytes(String) */
+  @Override
   public void writeBytes(String s) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -347,6 +376,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeChar(int) */
+  @Override
   public void writeChar(int v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -356,6 +386,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeChars(String) */
+  @Override
   public void writeChars(String s) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -364,6 +395,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeDouble(double) */
+  @Override
   public void writeDouble(double v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -373,6 +405,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeFloat(float) */
+  @Override
   public void writeFloat(float v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -382,6 +415,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeInt(int) */
+  @Override
   public void writeInt(int v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -391,6 +425,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeLong(long) */
+  @Override
   public void writeLong(long v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -400,6 +435,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeShort(int) */
+  @Override
   public void writeShort(int v) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");
@@ -409,6 +445,7 @@ public abstract class StreamHandle implements IRandomAccess {
   }
 
   /* @see java.io.DataOutput#writeUTF(String) */
+  @Override
   public void writeUTF(String str) throws IOException {
     if (outStream == null) {
       throw new HandleException("This stream is read-only.");

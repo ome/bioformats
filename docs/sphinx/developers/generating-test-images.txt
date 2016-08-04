@@ -12,6 +12,33 @@ Whatever is before the ``&`` is the image name; remaining key value pairs
 should be pretty self-explanatory. Just replace the values with whatever
 you need for testing.
 
+Additionally, you can put such values in a separate .ini file:
+
+::
+
+    touch my-special-test-file.fake
+    echo "pixelType=uint8" >> my-special-test-file.fake.ini
+    echo "sizeX=8192" >> my-special-test-file.fake.ini
+    echo "sizeY=8192" >> my-special-test-file.fake.ini
+
+In fact, just the .fake.ini file alone suffices:
+
+::
+
+    echo "pixelType=uint8" >> my-special-test-file.fake
+    echo "sizeX=8192" >> my-special-test-file.fake
+    echo "sizeY=8192" >> my-special-test-file.fake
+
+If you include a "[GlobalMetadata]" section to the ini file,
+then all the included values will be accessible from the
+global metadata map:
+
+::
+
+    echo "[GlobalMetadata]" >> my-special-test-file.fake.ini
+    echo "my.key=some.value" >> my-special-test-file.fake.ini
+
+
 There are a few other keys that can be added as well:
 
 .. tabularcolumns:: |p{3cm}|p{11cm}|
@@ -22,6 +49,16 @@ There are a few other keys that can be added as well:
 
     - * Key
       * Value
+    - * thumbSizeX
+      * number of pixels wide, for the thumbnail
+    - * thumbSizeY
+      * number of pixels tall, for the thumbnail
+    - * physicalSizeX
+      * real width of the pixels, supports units defaulting to microns
+    - * physicalSizeY
+      * real height of the pixels, supports units defaulting to microns
+    - * physicalSizeZ
+      * real depth of the pixels, supports units defaulting to microns
     - * sizeZ
       * number of Z sections
     - * sizeC
@@ -30,6 +67,8 @@ There are a few other keys that can be added as well:
       * number of timepoints
     - * bitsPerPixel
       * number of valid bits (<= number of bits implied by pixel type)
+    - * acquisitionDate
+      * timestamp formatted as "yyyy-MM-dd_HH-mm-ss"
     - * rgb
       * number of channels that are merged together
     - * dimOrder
@@ -46,6 +85,20 @@ There are a few other keys that can be added as well:
       * number of series (Images)
     - * lutLength
       * number of entries in the color lookup table
+    - * exposureTime
+      * time of exposure, supports units defaulting to seconds
+    - * plates
+      * number of plates to generate
+    - * plateAcqs
+      * number of plate runs
+    - * plateRows
+      * number of rows per plate
+    - * plateCols
+      * number of rows per plate
+    - * fields
+      * number of fields per well
+    - * annLong, annDouble, annMap, annComment, annBool, annTime, annTag, annTerm, annXml
+      * number of annotations of the given type to generate
 
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
@@ -57,4 +110,5 @@ the JARs in your :envvar:`CLASSPATH` (individual JARs or just bioformats_package
     bfconvert test&pixelType=uint8&sizeX=8192&sizeY=8192.fake test.tiff
 
 If you do not have the command line tools installed, substitute
-:source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
+:source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>`
+for `bfconvert`.

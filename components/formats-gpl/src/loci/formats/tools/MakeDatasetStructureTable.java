@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,11 +38,7 @@ import loci.formats.ImageReader;
  * Utility class for generating a table containing the dataset structure for
  * every supported format.
  * This class is used to generate this wiki page:
- * http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-DatasetStructureTable
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/MakeDatasetStructureTable.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/MakeDatasetStructureTable.java;hb=HEAD">Gitweb</a></dd></dl>
+ * http://www.openmicroscopy.org/site/support/bio-formats5.1/formats/dataset-table.html
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -143,6 +139,7 @@ public class MakeDatasetStructureTable {
     IFormatReader[] allReaders = baseReader.getReaders();
 
     Comparator<IFormatReader> comparator = new Comparator<IFormatReader>() {
+      @Override
       public int compare(IFormatReader r1, IFormatReader r2) {
         String s1 = r1.getFormat();
         String s2 = r2.getFormat();

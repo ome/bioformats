@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -39,12 +39,8 @@ package ome.xml.model.primitives;
  * point type and a further 0.0f minimum and 1.0f maximum.
  *
  * @author callan
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PercentFraction.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PercentFraction.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class PercentFraction extends PrimitiveType<Float> {
+public class PercentFraction extends PrimitiveType<Float> implements PrimitiveNumber {
 
   public PercentFraction(Float value) {
     super(value);
@@ -52,6 +48,10 @@ public class PercentFraction extends PrimitiveType<Float> {
       throw new IllegalArgumentException(
           value + " must not be null and between 0.0 and 1.0.");
     }
+  }
+
+  public Number getNumberValue() {
+    return value;
   }
 
   /**

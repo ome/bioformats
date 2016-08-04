@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,10 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -61,10 +61,6 @@ import ome.xml.model.primitives.PositiveInteger;
 /**
  * ScreenReader is a generic reader for files in non-HCS formats that have been
  * organized into a screen.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ScreenReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ScreenReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -99,12 +95,22 @@ public class ScreenReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  @Override
+  public void reopenFile() throws IOException {
+    super.reopenFile();
+    for (ImageReader reader : readers) {
+      reader.getReader().reopenFile();
+    }
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
@@ -126,16 +132,19 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0].getCurrentFile() == null) {
@@ -145,6 +154,7 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (readers == null || readers[0].getCurrentFile() == null) {
@@ -156,6 +166,7 @@ public class ScreenReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -169,13 +180,14 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
     int[] spwIndexes = getSPWIndexes(getSeries());
     int well = spwIndexes[0];
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     if (plateMetadataFiles != null) {
       for (String f : plateMetadataFiles) {
         files.add(f);
@@ -191,6 +203,7 @@ public class ScreenReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
@@ -208,6 +221,7 @@ public class ScreenReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -221,9 +235,10 @@ public class ScreenReader extends FormatReader {
     else throw new FormatException(id + " is not a valid well name.");
 
     // build the list of plate directories
-    Vector<String> metadataFiles = new Vector<String>();
+    final List<String> metadataFiles = new ArrayList<String>();
 
     Comparator<String> c = new Comparator<String>() {
+      @Override
       public int compare(String s1, String s2) {
         int row1 = (int) (getRow(s1).charAt(0) - 'A');
         int row2 = (int) (getRow(s2).charAt(0) - 'A');
@@ -239,7 +254,7 @@ public class ScreenReader extends FormatReader {
     };
 
     // build the list of well files for each plate
-    Vector<String> tmpWells = new Vector<String>();
+    final List<String> tmpWells = new ArrayList<String>();
 
     String[] plateList = plate.list(true);
     int maxRow = 0, maxCol = 0;

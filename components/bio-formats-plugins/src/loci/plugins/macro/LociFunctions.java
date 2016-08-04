@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,6 +44,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Modulo;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -56,15 +57,19 @@ import loci.plugins.util.LociPrefs;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * This class provides macro extensions in ImageJ for Bio-Formats.
  * Currently, it is a fairly tight mirror to the
  * {@link loci.formats.IFormatReader} interface, with some additional
  * functions to control the type of format reader used.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/macro/LociFunctions.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/macro/LociFunctions.java;hb=HEAD">Gitweb</a></dd></dl>
+ * Note that public methods in this class can only accept parameters of String,
+ * Double, String[], Double[], and Object[] types.  Anything else will prevent
+ * the method from being usable within a macro.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -74,11 +79,12 @@ public class LociFunctions extends MacroFunctions {
 
   /** URL for Javadocs. */
   public static final String URL_JAVADOCS =
-    "http://ci.openmicroscopy.org/job/BIOFORMATS-5.0-latest/javadoc/";
+    "http://ci.openmicroscopy.org/job/BIOFORMATS-5.1-latest/javadoc/";
 
   // -- Fields --
 
   private ImageProcessorReader r;
+  private int series = 0;
 
   // -- Constructor --
 
@@ -151,15 +157,26 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void getChannelDimCount(Double[] channelDimCount) {
-    channelDimCount[0] = new Double(r.getChannelDimLengths().length);
+    Modulo moduloC = r.getModuloC();
+    channelDimCount[0] = new Double(moduloC.length() > 1 ? 2 : 1);
   }
 
   public void getChannelDimLength(Double i, Double[] channelDimLength) {
-    channelDimLength[0] = new Double(r.getChannelDimLengths()[i.intValue()]);
+    Modulo moduloC = r.getModuloC();
+    if (i.intValue() == 0) { // index 0
+      channelDimLength[0] = new Double(moduloC.length() > 1 ? r.getSizeC() / moduloC.length() : r.getSizeC());
+    } else { // index 1
+      channelDimLength[0] = new Double(moduloC.length());
+    }
   }
 
   public void getChannelDimType(Double i, Double[] channelDimType) {
-    channelDimType[0] = new Double(r.getChannelDimTypes()[i.intValue()]);
+    Modulo moduloC = r.getModuloC();
+    if (i.intValue() == 0) { // index 0
+      channelDimType[0] = new Double(moduloC.length() > 1 ? moduloC.parentType : FormatTools.CHANNEL);
+    } else { // index 1
+      channelDimType[0] = new Double(moduloC.type);
+    }
   }
 
 //  public void getThumbSizeX(Double[] thumbSizeX) {
@@ -193,7 +210,10 @@ public class LociFunctions extends MacroFunctions {
   public void openImagePlus(String path) {
     ImagePlus[] imps = null;
     try {
-      imps = BF.openImagePlus(path);
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setSeriesOn(series, true);
+      imps = BF.openImagePlus(options);
       for (ImagePlus imp : imps) imp.show();
     }
     catch (IOException exc) {
@@ -207,7 +227,10 @@ public class LociFunctions extends MacroFunctions {
   public void openThumbImagePlus(String path) {
     ImagePlus[] imps = null;
     try {
-      imps = BF.openThumbImagePlus(path);
+      ImporterOptions options = new ImporterOptions();
+      options.setId(path);
+      options.setSeriesOn(series, true);
+      imps = BF.openThumbImagePlus(options);
       for (ImagePlus imp : imps) imp.show();
     }
     catch (IOException exc) {
@@ -295,7 +318,12 @@ public class LociFunctions extends MacroFunctions {
   }
 
   public void setSeries(Double seriesNum) {
-    r.setSeries(seriesNum.intValue());
+    if (seriesNum != null && seriesNum >= 0) {
+      series = seriesNum.intValue();
+      if (r.getCurrentFile() != null) {
+        r.setSeries(series);
+      }
+    }
   }
 
   public void getSeries(Double[] seriesNum) {
@@ -417,18 +445,23 @@ public class LociFunctions extends MacroFunctions {
 
   public void getImageCreationDate(String[] creationDate) {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    creationDate[0] = retrieve.getImageAcquisitionDate(r.getSeries()).getValue();
+    if (retrieve.getImageAcquisitionDate(r.getSeries()) != null) {
+      creationDate[0] = retrieve.getImageAcquisitionDate(r.getSeries()).getValue();
+    }
   }
 
   public void getPlaneTimingDeltaT(Double[] deltaT, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Double val = Double.NaN;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneDeltaT(imageIndex, planeIndex);
+      Time valTime = retrieve.getPlaneDeltaT(imageIndex, planeIndex);
+      if (valTime != null ) {
+        val = valTime.value(UNITS.S).doubleValue();
+      }
     }
-    deltaT[0] = val == null ? new Double(Double.NaN) : val;
+    deltaT[0] = val;
   }
 
   public void getPlaneTimingExposureTime(Double[] exposureTime, Double no) {
@@ -437,7 +470,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Double val = null;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex);
+      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex).value(UNITS.S).doubleValue();
     }
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
@@ -446,41 +479,50 @@ public class LociFunctions extends MacroFunctions {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionX(imageIndex, planeIndex);
     }
-    positionX[0] = val == null ? new Double(Double.NaN) : val;
+    positionX[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
   public void getPlanePositionY(Double[] positionY, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionY(imageIndex, planeIndex);
     }
-    positionY[0] = val == null ? new Double(Double.NaN) : val;
+    if (val == null) {
+        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
+    }
+    positionY[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
   public void getPlanePositionZ(Double[] positionZ, Double no) {
     int imageIndex = r.getSeries();
     int planeIndex = getPlaneIndex(r, no.intValue());
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    Double val = null;
+    Length val = null;
     if (planeIndex >= 0) {
       val = retrieve.getPlanePositionZ(imageIndex, planeIndex);
     }
-    positionZ[0] = val == null ? new Double(Double.NaN) : val;
+    if (val == null) {
+        val = new Length(Double.NaN, UNITS.REFERENCEFRAME);
+    }
+    positionZ[0] =
+      val == null ? Double.NaN : val.value(UNITS.REFERENCEFRAME).doubleValue();
   }
 
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat x = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    Length x = retrieve.getPixelsPhysicalSizeX(imageIndex);
     if (x != null) {
-      sizeX[0] = x.getValue();
+      sizeX[0] = x.value(UNITS.MICROM).doubleValue();
     }
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
@@ -488,9 +530,9 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat y = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    Length y = retrieve.getPixelsPhysicalSizeY(imageIndex);
     if (y != null) {
-      sizeY[0] = y.getValue();
+      sizeY[0] = y.value(UNITS.MICROM).doubleValue();
     }
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
@@ -498,9 +540,9 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    PositiveFloat z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    Length z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
     if (z != null) {
-      sizeZ[0] = z.getValue();
+      sizeZ[0] = z.value(UNITS.MICROM).doubleValue();
     }
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }
@@ -508,12 +550,13 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsTimeIncrement(Double[] sizeT) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex);
+    sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex).value(UNITS.S).doubleValue();
     if (sizeT[0] == null) sizeT[0] = new Double(Double.NaN);
   }
 
   // -- PlugIn API methods --
 
+  @Override
   public void run(String arg) {
     if (IJ.macroRunning()) super.run(arg);
     else {

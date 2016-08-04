@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -118,7 +118,6 @@ import com.sun.media.imageioimpl.plugins.bmp.BMPConstants;
  * <code>DirectColorModel</code>, the bit mask in the color model will be
  * written into the stream.  Otherwise, only 5-5-5 16-bit image or 8-8-8 
  * 32-bit images are supported.
- *
  */
 public class BMPImageWriteParam extends ImageWriteParam {
 

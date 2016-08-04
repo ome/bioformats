@@ -35,13 +35,18 @@ for carrying out a variety of tasks:
     comlinetools/conversion
     comlinetools/xml-validation
     comlinetools/edit
+    comlinetools/domainlist
+    comlinetools/formatlist
+    comlinetools/ijview
+    comlinetools/xmlindent
+    comlinetools/mkfake
 
 
 
 OMERO
 =====
 
-OMERO 5 uses Bio-Formats to read original files from over 130 file formats.
+OMERO 5 uses Bio-Formats to read original files from over 140 file formats.
 Please refer to the :omerodoc:`OMERO documentation <>` for further
 information.
 

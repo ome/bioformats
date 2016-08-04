@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   Quantizer
  *
  * Description:             An abstract class for quantizers
- *
  *
  *
  * COPYRIGHT:
@@ -286,7 +285,7 @@ public abstract class Quantizer extends ImgDataAdapter
      *
      * @param src The source of data to be quantized
      *
-     * @param encSpec Encoder specifications
+     * @param wp The encoder parameters
      *
      * @exception IllegalArgumentException If an error occurs while parsing
      * the options in 'pl'

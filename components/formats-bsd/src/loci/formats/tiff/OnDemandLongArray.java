@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,19 +33,16 @@
 package loci.formats.tiff;
 
 import java.io.IOException;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 
 /**
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/OnDemandLongArray.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/OnDemandLongArray.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert <melissa at glencoesoftware.com>
  */
 public class OnDemandLongArray {
 
-  private RandomAccessInputStream stream;
+  private transient RandomAccessInputStream stream;
   private int size;
   private long start;
 
@@ -56,6 +53,14 @@ public class OnDemandLongArray {
 
   public void setSize(int size) {
     this.size = size;
+  }
+
+  public RandomAccessInputStream getStream() {
+    return stream;
+  }
+
+  public void setStream(RandomAccessInputStream in) {
+    stream = in;
   }
 
   public long get(int index) throws IOException {
@@ -70,8 +75,19 @@ public class OnDemandLongArray {
     return size;
   }
 
+  public long[] toArray() throws IOException {
+    long fp = stream.getFilePointer();
+    stream.seek(start);
+    byte[] rawBytes = new byte[size * 8];
+    stream.readFully(rawBytes);
+    stream.seek(fp);
+    return (long[]) DataTools.makeDataArray(rawBytes, 8, false, stream.isLittleEndian());
+  }
+
   public void close() throws IOException {
-    stream.close();
+    if (stream != null) {
+      stream.close();
+    }
     stream = null;
     size = 0;
     start = 0;

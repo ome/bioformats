@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    compile(group: 'ome', name: 'formats-gpl', version: '5.0.4'){
+    compile(group: 'ome', name: 'formats-gpl', version: '5.1.0-SNAPSHOT'){
     }
 }

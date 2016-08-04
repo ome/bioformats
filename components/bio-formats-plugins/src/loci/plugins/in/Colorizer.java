@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -53,14 +53,13 @@ import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 
-import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * Logic for colorizing images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/Colorizer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/Colorizer.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -70,10 +69,8 @@ public class Colorizer {
   // -- Constants --
 
   private static final int BLUE_MIN = 400;
-  private static final int BLUE_MAX = 500;
-  private static final int GREEN_MIN = 501;
-  private static final int GREEN_MAX = 559;
-  private static final int RED_MIN = 560;
+  private static final int BLUE_TO_GREEN_MIN = 500;
+  private static final int GREEN_TO_RED_MIN = 560;
   private static final int RED_MAX = 700;
 
   // -- Fields --
@@ -133,7 +130,7 @@ public class Colorizer {
           // but had at least one lookup table defined. We use the color
           // display mode, with missing LUTs as grayscale.
           mode = CompositeImage.COLOR;
-          luts = makeLUTs(channelLUTs, false); // preserve original LUTs
+          luts = makeLUTs(channelLUTs, true); // preserve original LUTs
         }
         else {
           // NB: The original data had only one channel per plane,
@@ -169,11 +166,35 @@ public class Colorizer {
       if (doComposite) {
         final ImagePlus toClose = imp;
         CompositeImage compImage = new CompositeImage(imp, mode) {
+          @Override
           public void close() {
             super.close();
             toClose.close();
           }
+
+          @Override
+          public void show(String message) {
+            super.show(message);
+
+            // ensure that the display settings are consistent across channels
+            // autoscaling takes care of this for non-virtual stacks
+            // see ticket #12267
+            if (toClose instanceof VirtualImagePlus) {
+              int channel = getChannel();
+              double min = getDisplayRangeMin();
+              double max = getDisplayRangeMax();
+
+              for (int c=0; c<cSize; c++) {
+                setPositionWithoutUpdate(c + 1, getSlice(), getFrame());
+                setDisplayRange(min, max);
+              }
+              reset();
+              setPosition(channel, getSlice(), getFrame());
+            }
+          }
+
         };
+        compImage.setProperty(ImagePlusReader.PROP_SERIES, series);
         if (luts != null) compImage.setLuts(luts);
         imps.set(i, compImage);
         imp = compImage;
@@ -316,6 +337,12 @@ public class Colorizer {
   }
 
   private LUT[] makeLUTs(ColorModel[] cm, boolean colorize) {
+    // lookup tables can come from one of three places (in order of precedence):
+    //   1) Color attribute defined in the MetadataStore
+    //   2) lookup table returned by the reader's get8BitLookupTable or
+    //      get16BitLookupTable methods
+    //   3) EmissionWavelength attribute defined in the MetadataStore
+
     final ImporterOptions options = process.getOptions();
     final LUT[] luts = new LUT[cm.length];
     for (int c=0; c<luts.length; c++) {
@@ -323,50 +350,50 @@ public class Colorizer {
       else if (cm[c] instanceof IndexColorModel) {
         luts[c] = new LUT((IndexColorModel) cm[c], 0, 255);
       }
-      else {
-        Color color = null;
-        if (colorize) {
-          // rather than always assuming that the first channel is red, the
-          // second green, etc. we will take into account the channel color
-          // metadata and the acquisition wavelength
-          ImageReader reader = process.getImageReader();
-          MetadataStore store = reader.getMetadataStore();
-          if (store instanceof MetadataRetrieve) {
-            MetadataRetrieve retrieve = (MetadataRetrieve) store;
 
-            if (c < retrieve.getChannelCount(reader.getSeries())) {
-              ome.xml.model.primitives.Color metaColor =
-                retrieve.getChannelColor(reader.getSeries(), c);
-              if (metaColor != null) {
-                int r = metaColor.getRed();
-                int g = metaColor.getGreen();
-                int b = metaColor.getBlue();
-                int a = metaColor.getAlpha();
-                color = new Color(r, g, b, a);
-              }
-              else {
-                PositiveInteger wavelength =
-                  retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
-                if (wavelength != null) {
-                  int wave = wavelength.getValue();
-                  if (wave >= BLUE_MIN && wave <= BLUE_MAX) {
-                    color = Color.BLUE;
-                  }
-                  else if (wave >= GREEN_MIN && wave <= GREEN_MAX) {
-                    color = Color.GREEN;
-                  }
-                  else if (wave >= RED_MIN && wave <= RED_MAX) {
-                    color = Color.RED;
-                  }
+      Color color = null;
+      if (colorize) {
+        // rather than always assuming that the first channel is red, the
+        // second green, etc. we will take into account the channel color
+        // metadata and the acquisition wavelength
+        ImageReader reader = process.getImageReader();
+        MetadataStore store = reader.getMetadataStore();
+        if (store instanceof MetadataRetrieve) {
+          MetadataRetrieve retrieve = (MetadataRetrieve) store;
+
+          if (c < retrieve.getChannelCount(reader.getSeries())) {
+            ome.xml.model.primitives.Color metaColor =
+              retrieve.getChannelColor(reader.getSeries(), c);
+            if (metaColor != null) {
+              int r = metaColor.getRed();
+              int g = metaColor.getGreen();
+              int b = metaColor.getBlue();
+              int a = metaColor.getAlpha();
+              color = new Color(r, g, b, a);
+            }
+            else if (luts[c] == null) {
+              Length wavelength =
+                retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
+              if (wavelength != null) {
+                double wave = wavelength.value(UNITS.NM).doubleValue();
+                if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
+                  color = Color.BLUE;
+                }
+                else if (wave >= BLUE_TO_GREEN_MIN && wave < GREEN_TO_RED_MIN) {
+                  color = Color.GREEN;
+                }
+                else if (wave >= GREEN_TO_RED_MIN && wave <= RED_MAX) {
+                  color = Color.RED;
                 }
               }
             }
           }
         }
-        if (color == null) {
-          color = options.getDefaultCustomColor(c);
-        }
-
+      }
+      if (color == null && luts[c] == null) {
+        color = options.getDefaultCustomColor(c);
+      }
+      if (color != null) {
         luts[c] = makeLUT(color);
       }
     }

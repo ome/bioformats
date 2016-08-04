@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             Class that encodes a number of bits using the
  *                          MQ arithmetic coder
- *
  *
  *                          Diego SANTA CRUZ, Jul-26-1999 (improved speed)
  *
@@ -126,7 +125,6 @@ import java.io.*;
  * the number of operations whenever a renormalization occurs is
  * decreased. Maybe it is due to the number of extra operations in the
  * byteOut(), terminate() and getNumCodedBytes() procedures.
- *
  *
  * 3) Change the convention of MPS and LPS.
  *

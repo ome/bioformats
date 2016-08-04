@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,7 +34,6 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.CBZip2InputStream;
@@ -50,7 +49,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
-import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
@@ -63,13 +61,11 @@ import loci.formats.services.OMEXMLServiceImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
+import com.google.common.io.BaseEncoding;
+
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OMEXMLReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OMEXMLReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -97,6 +93,7 @@ public class OMEXMLReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 64;
     String xml = stream.readString(blockLen);
@@ -104,6 +101,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "companion.ome")) {
       // pass binary-only files along to the OME-TIFF reader
@@ -113,6 +111,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
@@ -122,9 +121,11 @@ public class OMEXMLReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    if (binDataOffsets.size() == 0) return buf;
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = no;
@@ -153,8 +154,14 @@ public class OMEXMLReader extends FormatReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    byte[] pixels = new Base64Codec().decompress(in, options);
-
+    String encoded = in.readString("<");
+    encoded = encoded.trim();
+    if (encoded.length() == 0 || encoded.equals("<")) {
+      LOGGER.debug("No pixel data for plane #{}", no);
+      return buf;
+    }
+    encoded = encoded.substring(0, encoded.length() - 1);
+    byte[] pixels =  BaseEncoding.base64().decode(encoded);
     // return a blank plane if no pixel data was stored
     if (pixels.length == 0) {
       LOGGER.debug("No pixel data for plane #{}", no);
@@ -198,6 +205,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -212,11 +220,12 @@ public class OMEXMLReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
-
+    in.setEncoding("ASCII");
     binData = new Vector<BinData>();
     binDataOffsets = new Vector<Long>();
     compression = new Vector<String>();
@@ -241,10 +250,6 @@ public class OMEXMLReader extends FormatReader {
         lineNumber++;
       }
       binDataOffsets.add(in.getFilePointer() + col - 1);
-    }
-
-    if (binDataOffsets.size() == 0) {
-      throw new FormatException("Pixel data not found");
     }
 
     LOGGER.info("Populating metadata");
@@ -289,7 +294,10 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Image dimensions not found");
       }
 
-      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      Boolean endian = null;
+      if (binData.size() > 0) {
+        endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+      }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       ms.sizeX = w.intValue();
@@ -329,18 +337,21 @@ public class OMEXMLReader extends FormatReader {
       xmlBuffer = new StringBuffer();
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) {
       if (currentQName.indexOf("BinData") < 0) {
         xmlBuffer.append(new String(ch, start, length));
       }
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
       xmlBuffer.append(">");
     }
 
+    @Override
     public void startElement(String ur, String localName, String qName,
       Attributes attributes)
     {
@@ -392,10 +403,12 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
+    @Override
     public void endDocument() {
       omexml = xmlBuffer.toString();
     }
 
+    @Override
     public void setDocumentLocator(Locator locator) {
       this.locator = locator;
     }

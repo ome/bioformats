@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,7 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -51,6 +53,13 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
  * The JAI ImageIO library is required to use this reader; it is available from
@@ -60,10 +69,6 @@ import ome.xml.model.primitives.PositiveInteger;
  * (2) the JAI jar file precedes JJ2000 in the classpath.
  *
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NativeND2Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NativeND2Reader extends FormatReader {
 
@@ -89,16 +94,19 @@ public class NativeND2Reader extends FormatReader {
 
   private ArrayList<Double> tsT = new ArrayList<Double>();
 
+  private int positionCount = 0;
+
   private int fieldIndex;
 
   private long xOffset, yOffset, zOffset;
+  private long pfsOffset, pfsStateOffset;
 
-  private ArrayList<Double> posX;
-  private ArrayList<Double> posY;
-  private ArrayList<Double> posZ;
+  private ArrayList<Length> posX;
+  private ArrayList<Length> posY;
+  private ArrayList<Length> posZ;
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
 
-  private Hashtable<String, Integer> channelColors;
+  private Map<String, Integer> channelColors;
   private boolean split = false;
   private int lastChannel = 0;
   private int[] colors;
@@ -110,10 +118,10 @@ public class NativeND2Reader extends FormatReader {
 
   private double trueSizeX = 0;
   private double trueSizeY = 0;
-  private double trueSizeZ = 0;
+  private Double trueSizeZ = null;
 
   private ArrayList<String> textChannelNames = new ArrayList<String>();
-  private ArrayList<Integer> textEmissionWavelengths = new ArrayList<Integer>();
+  private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
   private boolean textData = false;
   private Double refractiveIndex = null;
@@ -130,6 +138,7 @@ public class NativeND2Reader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -139,6 +148,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() {
     if (FormatTools.getBytesPerPixel(getPixelType()) != 1 ||
       !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
@@ -151,26 +161,22 @@ public class NativeND2Reader extends FormatReader {
 
     byte[][] lut = new byte[3][256];
 
-    int index = -1;
-    if (color > 0 && color < 256) index = 0;
-    else if (color >= 256 && color < 65280) index = 1;
-    else if (color > 65280 && color <= 16711680) index = 2;
+    int redMax = color & 0xff;
+    int greenMax = (color & 0xff00) >> 8;
+    int blueMax = (color & 0xff0000) >> 16;
 
     for (int i=0; i<256; i++) {
-      if (index == -1) {
-        lut[0][i] = (byte) i;
-        lut[1][i] = (byte) i;
-        lut[2][i] = (byte) i;
-      }
-      else {
-        lut[index][i] = (byte) i;
-      }
+      double scale = i / 255.0;
+      lut[0][i] = (byte) (redMax * scale);
+      lut[1][i] = (byte) (greenMax * scale);
+      lut[2][i] = (byte) (blueMax * scale);
     }
 
     return lut;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() {
     if (FormatTools.getBytesPerPixel(getPixelType()) != 2 ||
       !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
@@ -183,20 +189,16 @@ public class NativeND2Reader extends FormatReader {
 
     short[][] lut = new short[3][65536];
 
-    int index = -1;
-    if (color > 0 && color < 256) index = 0;
-    else if (color >= 256 && color <= 65280) index = 1;
-    else if (color > 65280 && color <= 16711680) index = 2;
+    int redMax = color & 0xff;
+    int greenMax = (color & 0xff00) >> 8;
+    int blueMax = (color & 0xff0000) >> 16;
 
     for (int i=0; i<65536; i++) {
-      if (index == -1) {
-        lut[0][i] = (short) i;
-        lut[1][i] = (short) i;
-        lut[2][i] = (short) i;
-      }
-      else {
-        lut[index][i] = (short) i;
-      }
+      // *Max values are from 0-255; we want LUT values from 0-65535
+      double scale = i / 255.0;
+      lut[0][i] = (short) (redMax * scale);
+      lut[1][i] = (short) (greenMax * scale);
+      lut[2][i] = (short) (blueMax * scale);
     }
 
     return lut;
@@ -205,6 +207,7 @@ public class NativeND2Reader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -303,6 +306,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -313,6 +317,7 @@ public class NativeND2Reader extends FormatReader {
 
       fieldIndex = 0;
       xOffset = yOffset = zOffset = 0;
+      pfsOffset = pfsStateOffset = 0;
       posX = posY = posZ = null;
       channelColors = null;
       split = false;
@@ -320,19 +325,21 @@ public class NativeND2Reader extends FormatReader {
       backupHandler = null;
       trueSizeX = 0;
       trueSizeY = 0;
-      trueSizeZ = 0;
+      trueSizeZ = null;
       textChannelNames.clear();
       textEmissionWavelengths.clear();
       useZ = null;
       textData = false;
       refractiveIndex = null;
       exposureTime.clear();
+      positionCount = 0;
     }
   }
 
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -340,7 +347,7 @@ public class NativeND2Reader extends FormatReader {
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
-    channelColors = new Hashtable<String, Integer>();
+    channelColors = new HashMap<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
@@ -417,6 +424,10 @@ public class NativeND2Reader extends FormatReader {
           nameAttri.contains("CalibrationLV") ||
           (nameAttri.contains("MetadataSeqLV") && !seq))
         {
+          // prevent position count from being doubled
+          if (nameAttri.equals("ImageMetadataLV!")) {
+            positionCount = 0;
+          }
           iterateIn(in, stop);
         }
 
@@ -491,7 +502,7 @@ public class NativeND2Reader extends FormatReader {
             extraZDataCount = 0;
             useLastText = true;
           }
-          imageOffsets.add(new Long(fp));
+          imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
@@ -519,8 +530,8 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
-          foundMetadata = true;
           if (blockType.equals("ImageAttribu")) {
+            foundMetadata = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -691,28 +702,38 @@ public class NativeND2Reader extends FormatReader {
               }
               xml.write(b, off, b.length - off);
             }
+
           }
           skip = 0;
         }
         else if (getMetadataOptions().getMetadataLevel() !=
           MetadataLevel.MINIMUM)
         {
+          int nDoubles = len / 8;
+          int nInts = len / 4;
+          long doubleOffset = fp + 8 * (nDoubles - imageOffsets.size());
+          long intOffset = fp + 4 * (nInts - imageOffsets.size());
           if (blockType.startsWith("CustomData|A")) {
-            customDataOffsets.add(new Long(fp));
+            customDataOffsets.add(fp);
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            int nDoubles = len / 8;
-            zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            zOffset = doubleOffset;
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
-            int nDoubles = len / 8;
-            xOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            xOffset = doubleOffset;
           }
           else if (blockType.startsWith("CustomData|Y")) {
-            int nDoubles = len / 8;
-            yOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            yOffset = doubleOffset;
+          }
+          else if (blockType.startsWith("CustomData|P")) {
+            if (pfsOffset == 0) {
+              pfsOffset = intOffset;
+            }
+            else if (pfsStateOffset == 0) {
+              pfsStateOffset = intOffset;
+            }
           }
         }
         if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
@@ -722,9 +743,16 @@ public class NativeND2Reader extends FormatReader {
 
       // parse text blocks
 
+      int nChannelNames = textChannelNames.size();
       for (int i=0; i<textStrings.size(); i++) {
         parseText(textStrings.get(i), imageOffsets.size(),
           validDimensions.get(i));
+      }
+      if (textChannelNames.size() > nChannelNames) {
+        int diff = textChannelNames.size() - nChannelNames;
+        while (textChannelNames.size() > diff) {
+          textChannelNames.remove(0);
+        }
       }
 
       // parse XML blocks
@@ -751,7 +779,7 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadataList();
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      final Map<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
         nXFields = 0;
@@ -794,6 +822,12 @@ public class NativeND2Reader extends FormatReader {
       // rearrange image data offsets
 
       if (numSeries == 0) numSeries = 1;
+      else if (numSeries == 1 && positionCount > 1) {
+        for (int i=1; i<positionCount; i++) {
+          core.add(core.get(0));
+        }
+        numSeries = core.size();
+      }
 
       if (getSizeZ() == 0) {
         for (int i=0; i<getSeriesCount(); i++) {
@@ -822,7 +856,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+      if (positionCount != getSeriesCount() && (getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1 && (extraZDataCount == getSizeC())) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         if (getSeriesCount() > ms0.sizeZ) {
           ms0.sizeZ = getSeriesCount();
@@ -915,7 +949,7 @@ public class NativeND2Reader extends FormatReader {
 
       in.seek(fp);
 
-      int planeSize = getSizeX() * getSizeY() * getSizeC() *
+      long planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
 
       if (availableBytes < planeSize) {
@@ -927,8 +961,17 @@ public class NativeND2Reader extends FormatReader {
         if (getSizeC() == 0) {
           core.get(0).sizeC = 1;
         }
+        planeSize = getSizeX() * getSizeY() * getSizeC() *
+          FormatTools.getBytesPerPixel(getPixelType());
       }
-      else if (planeSize > 0 &&
+
+      if (planeSize > 0 && availableBytes % planeSize != 0) {
+        // an extra 4K block of zeros may have been appended
+        if ((availableBytes - 4096) % planeSize == 0) {
+          availableBytes -= 4096;
+        }
+      }
+      if (planeSize > 0 &&
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
         if (availableBytes < DataTools.safeMultiply64(planeSize, 6)) {
@@ -945,7 +988,10 @@ public class NativeND2Reader extends FormatReader {
         getSizeC() > 3) && getPixelType() == FormatTools.INT8)
       {
         core.get(0).pixelType = FormatTools.UINT16;
-        if (getSizeC() > 3) {
+        planeSize *= 2;
+        if (getSizeC() > 3 && availableBytes % planeSize != 0 &&
+          planeSize > availableBytes)
+        {
           core.get(0).sizeC = 3;
           core.get(0).rgb = true;
         }
@@ -986,7 +1032,8 @@ public class NativeND2Reader extends FormatReader {
           ms.imageCount /= getSizeC();
         }
         if (ms.imageCount > imageOffsets.size() / getSeriesCount()) {
-          if (ms.imageCount == imageOffsets.size()) {
+          int diff = imageOffsets.size() - ms.imageCount;
+          if (diff >= 0 && diff < ms.sizeZ && diff < ms.sizeT) {
             CoreMetadata ms0 = core.get(0);
             core = new ArrayList<CoreMetadata>();
             core.add(ms0);
@@ -1017,6 +1064,7 @@ public class NativeND2Reader extends FormatReader {
       if (getSizeZ() * getSizeT() * (split ? 1 : getSizeC()) <
         imageOffsets.size() / getSeriesCount())
       {
+        split = getSizeC() > 1;
         int count = imageOffsets.size() / getSeriesCount();
         if (!split && count >= getSizeC()) {
           count /= getSizeC();
@@ -1093,7 +1141,8 @@ public class NativeND2Reader extends FormatReader {
       if (posX.size() == 0 && xOffset != 0) {
         in.seek(xOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double x = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length x = new Length(number, UNITS.REFERENCEFRAME);
           if (!posX.contains(x)) {
             uniqueX++;
           }
@@ -1103,7 +1152,8 @@ public class NativeND2Reader extends FormatReader {
       if (posY.size() == 0 && yOffset != 0) {
         in.seek(yOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double y = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length y = new Length(number, UNITS.REFERENCEFRAME);
           if (!posY.contains(y)) {
             uniqueY++;
           }
@@ -1113,12 +1163,15 @@ public class NativeND2Reader extends FormatReader {
       if (posZ.size() == 0 && zOffset != 0) {
         in.seek(zOffset);
         for (int i=0; i<imageOffsets.size(); i++) {
-          Double z = new Double(in.readDouble());
+          final Double number = Double.valueOf(in.readDouble());
+          final Length z = new Length(number, UNITS.REFERENCEFRAME);
           if (!posZ.contains(z)) {
             boolean unique = true;
             for (int q=0; q<posZ.size(); q++) {
               // account for potential stage drift
-              if (Math.abs(z - posZ.get(q)) <= 0.05) {
+              final double z1 = z.value(UNITS.REFERENCEFRAME).doubleValue();
+              final double z2 = posZ.get(q).value(UNITS.REFERENCEFRAME).doubleValue();
+              if (Math.abs(z1 - z2) <= 0.05) {
                 unique = false;
                 break;
               }
@@ -1128,6 +1181,18 @@ public class NativeND2Reader extends FormatReader {
             }
           }
           posZ.add(z);
+        }
+      }
+      if (pfsOffset != 0) {
+        in.seek(pfsOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          addGlobalMetaList("PFS Offset", in.readInt());
+        }
+      }
+      if (pfsStateOffset != 0) {
+        in.seek(pfsStateOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          addGlobalMetaList("PFS Status", in.readInt());
         }
       }
 
@@ -1305,7 +1370,7 @@ public class NativeND2Reader extends FormatReader {
             for (int plane=0; plane<count; plane++) {
               // timestamps are stored in ms; we want them in seconds
               double time = in.readDouble() / 1000;
-              tsT.add(new Double(time));
+              tsT.add(time);
               addSeriesMetaList("timestamp", time);
             }
           }
@@ -1347,7 +1412,7 @@ public class NativeND2Reader extends FormatReader {
       length -= 8;
 
       if (box == 0x6a703263) {
-        vs.add(new Long(pos));
+        vs.add(pos);
       }
       else if (box == 0x6a703268) {
         in.skipBytes(4);
@@ -1474,9 +1539,9 @@ public class NativeND2Reader extends FormatReader {
       ts = handler.getTimepoints();
       numSeries = handler.getSeriesCount();
       core = handler.getCoreMetadataList();
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
 
@@ -1607,13 +1672,12 @@ public class NativeND2Reader extends FormatReader {
             value = in.readLong();
             break;
           case (8): // String
-            //in.read(); // size of string
-            long start = in.getFilePointer();
-            value = DataTools.stripString(in.findString("\0\0\0"));
-            long end = in.getFilePointer();
-            if ((end - start) % 2 != 0) {
-              in.skipBytes(1);
+            char currentChar = 0;
+            StringBuilder resultString = new StringBuilder();
+            while((currentChar = in.readChar()) != 0) {
+                resultString.append(currentChar);
             }
+            value = resultString.toString();
             break;
           case (9): // ByteArray
             long length = in.readLong();
@@ -1683,7 +1747,13 @@ public class NativeND2Reader extends FormatReader {
         }
         else if (name.equals("EmWavelength")) {
           Double wave = Double.parseDouble(value.toString());
-          textEmissionWavelengths.add(wave.intValue());
+          textEmissionWavelengths.add(wave);
+        }
+        else if (name.equals("dZStep")) {
+          trueSizeZ = new Double(value.toString());
+        }
+        else if (name.equals("dPosX")) {
+          positionCount++;
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
@@ -1704,9 +1774,11 @@ public class NativeND2Reader extends FormatReader {
     String filename = new Location(getCurrentFile()).getName();
     if (handler != null) {
       ArrayList<String> posNames = handler.getPositionNames();
+      int nameWidth = String.valueOf(getSeriesCount()).length();
       for (int i=0; i<getSeriesCount(); i++) {
-        String suffix =
-          i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+        String seriesSuffix = String.format("(series %0" + nameWidth + "d)", i + 1);
+        String suffix = (i < posNames.size() && !posNames.get(i).equals("")) ?
+          posNames.get(i) : seriesSuffix;
         String name = filename + " " + suffix;
         store.setImageName(name.trim(), i);
       }
@@ -1723,14 +1795,11 @@ public class NativeND2Reader extends FormatReader {
       else if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
-      for (int i=0; i<getSeriesCount(); i++) {
-        for (int c=0; c<getEffectiveSizeC(); c++) {
-          int index = i * getSizeC() + c;
-          if (index < channelNames.size()) {
-            String channelName = channelNames.get(index);
-            Integer channelColor = channelColors.get(channelName);
-            colors[c] = channelColor == null ? 0 : channelColor.intValue();
-          }
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (c < channelNames.size()) {
+          String channelName = channelNames.get(c);
+          Integer channelColor = channelColors.get(channelName);
+          colors[c] = channelColor == null ? 0 : channelColor.intValue();
         }
       }
     }
@@ -1769,23 +1838,23 @@ public class NativeND2Reader extends FormatReader {
         double sizeZ = handler.getPixelSizeZ();
 
         if (trueSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+          Length size = FormatTools.getPhysicalSizeX(sizeX);
           if (size != null) {
             store.setPixelsPhysicalSizeX(size, i);
           }
         }
         if (trueSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeY), i);
         }
         else if (trueSizeX > 0) {
           // if the X size is set, assume X and Y are equal
-          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(trueSizeX), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+          Length size = FormatTools.getPhysicalSizeY(sizeY);
           if (size == null) {
             // if the X size is set, assume X and Y are equal
             size = FormatTools.getPhysicalSizeY(sizeX);
@@ -1794,11 +1863,11 @@ public class NativeND2Reader extends FormatReader {
             store.setPixelsPhysicalSizeY(size, i);
           }
         }
-        if (trueSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
+        if (trueSizeZ != null && trueSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(trueSizeZ), i);
         }
         else {
-          PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+          Length size = FormatTools.getPhysicalSizeZ(sizeZ);
           if (size != null) {
             store.setPixelsPhysicalSizeZ(size, i);
           }
@@ -1810,25 +1879,29 @@ public class NativeND2Reader extends FormatReader {
     if (handler != null && handler.getExposureTimes().size() > 0) {
       exposureTime = handler.getExposureTimes();
     }
+    int zcPlanes = getImageCount() / ((split ? getSizeC() : 1) * getSizeT());
     for (int i=0; i<getSeriesCount(); i++) {
       if (tsT.size() > 0) {
         setSeries(i);
         for (int n=0; n<getImageCount(); n++) {
           int[] coords = getZCTCoords(n);
-          int stampIndex = coords[2] + i * getSizeT();
+          int stampIndex = getIndex(coords[0], split ? 0 : coords[1], 0);
+          stampIndex += (coords[2] * getSeriesCount() + i) * zcPlanes;
           if (tsT.size() == getImageCount()) stampIndex = n;
           else if (tsT.size() == getSizeZ()) {
             stampIndex = coords[0];
           }
-          double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneDeltaT(stamp, i, n);
+          if (stampIndex < tsT.size()) {
+            double stamp = tsT.get(stampIndex).doubleValue();
+            store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+          }
 
           int index = i * getSizeC() + coords[1];
           if (exposureTime.size() == getSizeC()) {
             index = coords[1];
           }
-          if (exposureTime != null && index < exposureTime.size()) {
-            store.setPlaneExposureTime(exposureTime.get(index), i, n);
+          if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
           }
         }
       }
@@ -1841,11 +1914,9 @@ public class NativeND2Reader extends FormatReader {
 
       String pos = "for position";
       for (int n=0; n<getImageCount(); n++) {
-        int index = i * getImageCount() + n;
-        if (split) {
-          int planes = getImageCount() / getSizeC();
-          index = i * planes + (n % planes);
-        }
+        int[] coords = getZCTCoords(n);
+        int index = coords[0];
+        index += (coords[2] * getSeriesCount() + i) * zcPlanes;
         if (posX != null) {
           if (index >= posX.size()) index = i;
           if (index < posX.size()) {
@@ -1889,8 +1960,8 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<Double> speed = handler.getSpeeds();
     ArrayList<Double> gain = handler.getGains();
     ArrayList<Double> temperature = handler.getTemperatures();
-    ArrayList<Integer> exWave = handler.getExcitationWavelengths();
-    ArrayList<Integer> emWave = handler.getEmissionWavelengths();
+    ArrayList<Double> exWave = handler.getExcitationWavelengths();
+    ArrayList<Double> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
 
@@ -1909,7 +1980,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(pinholeSize, i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
@@ -1923,9 +1994,9 @@ public class NativeND2Reader extends FormatReader {
             getAcquisitionMode(modality.get(index)), i, c);
         }
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
-          Integer value = index < emWave.size() ? emWave.get(index) :
+          Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          PositiveInteger emission = FormatTools.getEmissionWavelength(value);
+          Length emission = FormatTools.getEmissionWavelength(value);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1934,7 +2005,7 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          PositiveInteger excitation =
+          Length excitation =
             FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);
@@ -1948,7 +2019,8 @@ public class NativeND2Reader extends FormatReader {
           store.setDetectorSettingsGain(gain.get(index), i, c);
         }
         if (index < speed.size()) {
-          store.setDetectorSettingsReadOutRate(speed.get(index), i, c);
+          store.setDetectorSettingsReadOutRate(
+                  new Frequency(speed.get(index), UNITS.HZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }
@@ -1957,14 +2029,16 @@ public class NativeND2Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       if (i * getSizeC() < temperature.size()) {
         Double temp = temperature.get(i * getSizeC());
-        store.setImagingEnvironmentTemperature(temp, i);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(temp, UNITS.DEGREEC), i);
       }
     }
 
     // populate DetectorSettings
     Double voltage = handler.getVoltage();
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(
+              new ElectricPotential(voltage, UNITS.V), 0, 0);
     }
 
     // populate Objective
@@ -2073,9 +2147,9 @@ public class NativeND2Reader extends FormatReader {
         backupHandler = handler;
       }
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
     catch (IOException e) {
@@ -2145,11 +2219,13 @@ public class NativeND2Reader extends FormatReader {
             value = key.substring(8, end);
             key = key.substring(0, 8);
           }
-          try {
-            trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
-          }
-          catch (NumberFormatException nfe) {
-            LOGGER.trace("Could not parse step", nfe);
+          if (trueSizeZ == null) {
+            try {
+              trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+            }
+            catch (NumberFormatException nfe) {
+              LOGGER.trace("Could not parse step", nfe);
+            }
           }
         }
         else if (key.equals("Name")) {
@@ -2161,7 +2237,7 @@ public class NativeND2Reader extends FormatReader {
             int last = key.lastIndexOf(";");
             try {
               textEmissionWavelengths.add(
-                new Integer(key.substring(first, last)) + 20);
+                new Double(key.substring(first, last)) + 20);
             }
             catch (NumberFormatException nfe) {
               LOGGER.trace("Could not parse emission wavelength", nfe);

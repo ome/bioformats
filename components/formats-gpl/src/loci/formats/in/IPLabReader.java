@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,12 +38,12 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/IPLabReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/IPLabReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -67,6 +67,7 @@ public class IPLabReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 12;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -84,6 +85,7 @@ public class IPLabReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -97,6 +99,7 @@ public class IPLabReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -107,6 +110,7 @@ public class IPLabReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -196,8 +200,8 @@ public class IPLabReader extends FormatReader {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSize);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -205,7 +209,7 @@ public class IPLabReader extends FormatReader {
         store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       if (timeIncrement != null) {
-        store.setPixelsTimeIncrement(timeIncrement, 0);
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
       }
     }
   }
@@ -394,7 +398,7 @@ public class IPLabReader extends FormatReader {
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {
               int plane = getIndex(z, c, i);
-              store.setPlaneDeltaT(new Double(timepoint), 0, plane);
+              store.setPlaneDeltaT(new Time(new Double(timepoint), UNITS.S), 0, plane);
             }
           }
           if (i == 1) {

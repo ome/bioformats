@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             Holds the type(s) of progression
  *
- *
  * Modified by:
  *
  * COPYRIGHT:
@@ -74,8 +73,6 @@
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
  *
- *
- *
  */
 package jj2000.j2k.entropy;
 
@@ -90,7 +87,6 @@ import jj2000.j2k.codestream.*;
  * defined, there is only Progression instance.
  *
  * @see ProgressionType
- *
  */
 public class Progression implements ProgressionType{
 

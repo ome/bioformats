@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,7 @@
 *               Western General Hospital,
 *               Edinburgh, EH4 2XU, UK.
 * \par
-* Copyright (C), [2013 - 2014],
+* Copyright (C), [2013],
 * The University Court of the University of Edinburgh,
 * Old College, Edinburgh, UK.
 * 
@@ -54,13 +54,16 @@
 * License along with this program; if not, write to the Free
 * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 * Boston, MA  02110-1301, USA.
-* \brief	Woolz writer for bioformats.
+* \brief        Woolz writer for bioformats.
 */
 
 package loci.formats.out;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
@@ -74,6 +77,9 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
+
+import ome.units.quantity.Length;
+import ome.units.UNITS;
 
 /**
  * WlzWriter is the file format writer for Woolz files.
@@ -116,6 +122,7 @@ public class WlzWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -126,11 +133,13 @@ public class WlzWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() {
     return true;
   }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     int[] spt;
     if(wlz != null) {
@@ -142,9 +151,10 @@ public class WlzWriter extends FormatWriter {
     return(spt);
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     try {
@@ -169,9 +179,12 @@ public class WlzWriter extends FormatWriter {
       int oZ = 0;
       if((stageLabelName != null) &&
          stageLabelName.equals(wlz.getWlzOrgLabelName())) {
-	oX = (int )Math.rint(meta.getStageLabelX(0));
-        oY = (int )Math.rint(meta.getStageLabelY(0));
-        oZ = (int )Math.rint(meta.getStageLabelZ(0));
+        final Length stageX = meta.getStageLabelX(0);
+        final Length stageY = meta.getStageLabelY(0);
+        final Length stageZ = meta.getStageLabelZ(0);
+        oX = (int) Math.rint(stageX.value(UNITS.REFERENCEFRAME).doubleValue());
+        oY = (int) Math.rint(stageY.value(UNITS.REFERENCEFRAME).doubleValue());
+        oZ = (int) Math.rint(stageZ.value(UNITS.REFERENCEFRAME).doubleValue());
       }
       int nX = meta.getPixelsSizeX(series).getValue().intValue();
       int nY = meta.getPixelsSizeY(series).getValue().intValue();
@@ -182,21 +195,22 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).getValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).getValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).getValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
-		  meta.getPixelsType(series).toString());
+                  meta.getPixelsType(series).toString());
       wlz.setupWrite(oX, oY, oZ, nX, nY, nZ, nC, nT, vX, vY, vZ, gType);
     }
   }
 
-  /* @see loci.formats.IFormatHandler#close() */
+  /* @see loci.formats.FormatWriter#close() */
+  @Override
   public void close() throws IOException {
     super.close();
     if(wlz != null) {

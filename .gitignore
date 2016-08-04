@@ -24,6 +24,7 @@ testng-results.xml
 testng.css
 tools/*.jar
 *.log
+*.xpr
 
 # For Fiji #
 loci_tools.jar

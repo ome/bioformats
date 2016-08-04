@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   CodestreamManipulator
  *
  * Description:             Manipulates codestream to create tile-parts etc
- *
  *
  *
  * COPYRIGHT:
@@ -148,7 +147,7 @@ public class CodestreamManipulator{
     /**
      * Instantiates a codestream manipulator..
      *
-     * @param outname The name of the original outfile
+     * @param file The name of the original outfile
      *
      * @param nt The number of tiles in the image
      *

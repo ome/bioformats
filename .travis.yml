@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-  - openjdk7
+  - oraclejdk8
   - oraclejdk7
   - openjdk6
 
@@ -9,6 +9,7 @@ env:
   - BUILD=maven
   - BUILD=cpp
   - BUILD=cppwrap
+  - BUILD=flake8
   - BUILD=sphinx
   - BUILD=ant
 
@@ -18,18 +19,22 @@ matrix:
     - env: "BUILD=cppwrap"
 
 before_install:
-  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ saucy main universe"
+  - if [[ $BUILD == 'cpp' ]]; then sudo add-apt-repository -y ppa:kubuntu-ppa/backports; fi
+  - if [[ $BUILD == 'cpp' ]]; then sudo apt-get -qq update; fi
+  - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq cmake; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ trusty main universe"; fi
+  - if [[ $BUILD == 'cpp' ]]; then sudo add-apt-repository -y ppa:dhor/myway; fi
   - sudo apt-get -qq update
   - if [[ $BUILD != 'sphinx' ]]; then sudo apt-get install -qq python-genshi; fi
-  - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq build-essential cmake libboost-all-dev; fi
-  - if [[ $BUILD == 'cpp' ]]; then sudo apt-get install -qq libgtest-dev libxerces-c-dev doxygen graphviz; fi
-  - if [[ $BUILD == 'sphinx' ]]; then sudo pip install Sphinx; fi
+  - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq build-essential libboost1.48-all-dev; fi
+  - if [[ $BUILD == 'cpp' ]]; then sudo apt-get install -qq libgtest-dev libxerces-c-dev libtiff4-dev doxygen graphviz graphicsmagick; fi
+  - if [[ $BUILD == 'sphinx' ]] || [[ $BUILD == 'flake8' ]]; then sudo pip install flake8 Sphinx==1.2.3; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-base texlive-latex-recommended texlive-xetex; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-extra texlive-fonts-recommended fonts-texgyre; fi
   - if [[ $BUILD == 'sphinx' ]]; then sudo fc-cache -rsfv; fi
 
 install:
-  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx' ]]; then git fetch --tags; fi
+  - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx' ]] && [[ $BUILD != 'flake8' ]]; then git fetch --tags; fi
   - if [[ $BUILD == 'maven' ]]; then mvn install -DskipTests=true; fi
 
 script:
@@ -37,15 +42,19 @@ script:
 
 matrix:
   exclude:
-    - jdk: openjdk7
+    - jdk: openjdk6
+      env: BUILD=flake8
+    - jdk: oraclejdk7
+      env: BUILD=flake8
+    - jdk: openjdk6
       env: BUILD=sphinx
     - jdk: oraclejdk7
       env: BUILD=sphinx
-    - jdk: openjdk7
+    - jdk: openjdk6
       env: BUILD=cpp
     - jdk: oraclejdk7
       env: BUILD=cpp
-    - jdk: openjdk7
+    - jdk: oraclejdk8
       env: BUILD=cppwrap
-    - jdk: oraclejdk7
+    - jdk: openjdk6
       env: BUILD=cppwrap

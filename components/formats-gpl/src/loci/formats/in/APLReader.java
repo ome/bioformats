@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,11 +27,11 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
@@ -47,13 +47,10 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/APLReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/APLReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class APLReader extends FormatReader {
 
@@ -66,9 +63,9 @@ public class APLReader extends FormatReader {
 
   private String[] tiffFiles;
   private String[] xmlFiles;
-  private TiffParser[] parser;
+  private transient TiffParser[] parser;
   private IFDList[] ifds;
-  private Vector<String> used;
+  private List<String> used;
 
   // -- Constructor --
 
@@ -85,6 +82,7 @@ public class APLReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, METADATA_SUFFIXES)) return true;
     if (checkSuffix(name, "tif") && open) {
@@ -106,14 +104,16 @@ public class APLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.addAll(used);
 
     if (getSeries() < xmlFiles.length) {
@@ -133,16 +133,26 @@ public class APLReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (parser == null) {
+      parser = new TiffParser[getSeriesCount()];
+    }
+    if (parser[getSeries()] == null) {
+      parser[getSeries()] = new TiffParser(tiffFiles[getSeries()]);
+      parser[getSeries()].setDoCaching(false);
+    }
 
     IFD ifd = ifds[getSeries()].get(no);
     return parser[getSeries()].getSamples(ifd, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -162,11 +172,13 @@ public class APLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -179,6 +191,7 @@ public class APLReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -193,6 +206,7 @@ public class APLReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -242,7 +256,7 @@ public class APLReader extends FormatReader {
     }
 
     String[] columnNames = null;
-    Vector<String[]> rows = null;
+    List<String[]> rows = null;
     try {
       mdb.initialize(mtb);
       rows = mdb.parseDatabase().get(0);
@@ -267,7 +281,7 @@ public class APLReader extends FormatReader {
       }
     }
 
-    used = new Vector<String>();
+    used = new ArrayList<String>();
     used.add(mtb);
     String tnb = mtb.substring(0, mtb.lastIndexOf("."));
     if (tnb.lastIndexOf("_") > tnb.lastIndexOf(File.separator)) {
@@ -341,7 +355,7 @@ public class APLReader extends FormatReader {
       throw new FormatException("Could not find a directory with TIFF files.");
     }
 
-    Vector<Integer> seriesIndexes = new Vector<Integer>();
+    final List<Integer> seriesIndexes = new ArrayList<Integer>();
 
     for (int i=1; i<rows.size(); i++) {
       String file = rows.get(i)[filename].trim();
@@ -440,8 +454,8 @@ public class APLReader extends FormatReader {
         }
         // TODO : add cases for other units
 
-        PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(px);
-        PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(py);
+        Length physicalSizeX = FormatTools.getPhysicalSizeX(px);
+        Length physicalSizeY = FormatTools.getPhysicalSizeY(py);
 
         if (physicalSizeX != null) {
           store.setPixelsPhysicalSizeX(physicalSizeX, i);

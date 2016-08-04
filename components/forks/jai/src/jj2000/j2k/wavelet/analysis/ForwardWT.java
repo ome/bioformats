@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             This interface defines the specifics
  *                          of forward wavelet transforms
- *
  *
  *
  * COPYRIGHT:
@@ -157,9 +156,7 @@ public abstract class ForwardWT extends ImgDataAdapter
      *
      * @param src The source of data to be transformed
      *
-     * @param pl The parameter list (or options).
-     *
-     * @param kers The encoder specifications.
+     * @param wp The writing parameters.
      *
      * @return A new ForwardWT object with the specified filters and options
      * from 'pl'.

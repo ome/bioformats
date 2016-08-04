@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,10 +73,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A utility for reorganizing and converting QuickTime movies,
  * TIFF series and other 4D datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/DataConverter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/DataConverter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class DataConverter extends JFrame implements
   ActionListener, ChangeListener, Runnable
@@ -327,6 +323,7 @@ public class DataConverter extends JFrame implements
 
   // -- ActionListener methods --
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("input".equals(cmd)) {
@@ -417,6 +414,7 @@ public class DataConverter extends JFrame implements
     else if ("quit".equals(cmd)) {
       shutdown = true;
       new Thread("Quitter") {
+        @Override
         public void run() { dispose(); }
       }.start();
     }
@@ -424,6 +422,7 @@ public class DataConverter extends JFrame implements
 
   // -- ChangeListener methods --
 
+  @Override
   public void stateChanged(ChangeEvent e) {
     if (e.getSource() == series) {
       swap.setSeries(((Integer) series.getValue()).intValue() - 1);
@@ -433,6 +432,7 @@ public class DataConverter extends JFrame implements
 
   // -- Runnable methods --
 
+  @Override
   public void run() {
     convert.setEnabled(false);
     includeZ.setEnabled(false);
@@ -739,6 +739,7 @@ public class DataConverter extends JFrame implements
   // -- Helper classes --
 
   private class RowPanel extends JPanel {
+    @Override
     public Dimension getMaximumSize() {
       int w = super.getMaximumSize().width;
       int h = getPreferredSize().height;

@@ -4,8 +4,8 @@
  superclass="${fully_qualified_class_name(parent_object(o.name).name)}"\
 {% end %}\
 {% otherwise %}\
-{% if obj.langBaseType != fu.DEFAULT_BASE_CLASS %}\
- superclass="${fully_qualified_class_name(obj.langBaseType)}"\
+{% if obj.modelBaseType != fu.DEFAULT_BASE_CLASS %}\
+ superclass="${fully_qualified_class_name(obj.modelBaseType)}"\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -145,7 +145,7 @@ ${fully_qualified_link_class_name(o, prop)}\
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright 2012 - 2014 University of Dundee. All rights reserved.
+# Copyright 2012 University of Dundee. All rights reserved.
 # Use is subject to license terms supplied in LICENSE.txt
 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -223,7 +223,13 @@ ${customContent[o.name]['properties']}\
             -->
             <{% if prop.minOccurs == 0 %}manyzero{% end %}{% if prop.minOccurs == 1 %}manyone{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
-{% when prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ABSTRACT_PROPRIETARY_OVERRIDE) %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ANNOTATION_OVERRIDE) %}\
+            <!--
+            // Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+            -->
+            <{% if prop.minOccurs == 0 and not prop.isUnique %}optional{% end %}{% if prop.minOccurs == 1 or prop.isUnique %}required{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ANNOTATION_OVERRIDE) %}\
             <!--
             // Property ${prop.name}
             -->

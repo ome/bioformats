@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@
  * Description:         A float implementation of DataBlk
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -72,8 +71,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 
@@ -134,7 +131,7 @@ public class DataBlkFloat extends DataBlk {
      * Creates a DataBlkFloat which is the copy of the DataBlkFloat
      * given as paramter.
      *
-     * @param DataBlkFloat the object to be copied.
+     * @param src the object to be copied.
      *
      *
      * */

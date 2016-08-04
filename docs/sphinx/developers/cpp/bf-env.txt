@@ -1,0 +1,86 @@
+.. _bf-env:
+
+Environment
+===========
+
+The Bio-Formats libraries and programs are configured and built to use
+a set of search paths for different components.  It should not be
+necessary to override these defaults.  The :program:`bf` command will
+be able to autodetect the installation directory configure paths on
+most platforms, and the Bio-Formats libraries are also able to
+determine the paths on most platforms so long as the library search
+path is configured correctly.  However, the following environment
+variables may be used to override the defaults if this proves
+necessary:
+
+Installation root
+-----------------
+
+:envvar:`BIOFORMATS_HOME`
+
+  The root of the installation (if applicable).  Setting this will
+  allow the installation to be used in a location other than the one
+  configured.  It will also default all the following variables unless
+  they are explicitly overridden individually.  This is not useful if
+  an absolute installation path has been configured (e.g. if using
+  :file:`/usr/local`).
+
+Basic paths
+-----------
+
+These may be shared with other packages if configured to do so
+(e.g. if using :file:`/usr/local`).  See `GNUInstallDirs
+<http://www.cmake.org/cmake/help/v3.0/module/GNUInstallDirs.html>`_
+for more details.  Not all of these paths are currently used, but may
+be used in the future.
+
+:envvar:`BIOFORMATS_BINDIR`
+  Programs invocable directly by an end user (on the default
+  :envvar:`PATH`)
+:envvar:`BIOFORMATS_SBINDIR`
+  Programs invocable directly by an end user or admin (not on the
+  default :envvar:`PATH`)
+:envvar:`BIOFORMATS_SYSLIBEXECDIR`
+  Programs not typically invoked directly (called internally by the
+  Bio-Formats tools and libraries as needed)
+:envvar:`BIOFORMATS_SYSCONFDIR`
+  Configuration files
+:envvar:`BIOFORMATS_SHAREDSTATEDIR`
+  Shared state
+:envvar:`BIOFORMATS_LOCALSTATEDIR`
+  Local state
+:envvar:`BIOFORMATS_LIBDIR`
+  Libraries
+:envvar:`BIOFORMATS_INCLUDEDIR`
+  C and C++ include files
+:envvar:`BIOFORMATS_OLDINCLUDEDIR`
+  C and C++ include files (system)
+:envvar:`BIOFORMATS_DATAROOTDIR`
+  Read-only architecture-independent data (root)
+:envvar:`BIOFORMATS_SYSDATADIR`
+  Read-only architecture-independent data
+:envvar:`BIOFORMATS_INFODIR`
+  GNU Info documentation files
+:envvar:`BIOFORMATS_LOCALEDIR`
+  Locale data
+:envvar:`BIOFORMATS_MANDIR`
+  Manual pages
+:envvar:`BIOFORMATS_DOCDIR`
+  Documentation files
+
+Bio-Formats package-specific paths
+----------------------------------
+
+These are used only by Bio-Formats and are not shared with other
+packages.  They are all subdirectories under the basic paths, above.
+
+:envvar:`BIOFORMATS_DATADIR`
+  Bio-Formats data files
+:envvar:`BIOFORMATS_ICONDIR`
+  Bio-Formats icons
+:envvar:`BIOFORMATS_LIBEXECDIR`
+  Bio-Formats program executables
+:envvar:`BIOFORMATS_SCHEMADIR`
+  Bio-Formats OME-XML model schemas
+:envvar:`BIOFORMATS_TRANSFORMDIR`
+  Bio-Formats OME-XML model transforms

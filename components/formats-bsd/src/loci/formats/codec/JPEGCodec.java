@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,10 +48,6 @@ import loci.formats.gui.AWTImageTools;
 
 /**
  * This class implements JPEG compression and decompression.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEGCodec.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEGCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEGCodec extends BaseCodec {
 
@@ -67,6 +63,7 @@ public class JPEGCodec extends BaseCodec {
    *
    * @see Codec#compress(byte[], CodecOptions)
    */
+  @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
@@ -98,6 +95,7 @@ public class JPEGCodec extends BaseCodec {
    *
    * @see Codec#decompress(RandomAccessInputStream, CodecOptions)
    */
+  @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
@@ -129,16 +127,20 @@ public class JPEGCodec extends BaseCodec {
       int nBytes = buf[0].length / (b.getWidth() * b.getHeight());
       int mask = (int) (Math.pow(2, nBytes * 8) - 1);
       for (int i=0; i<buf[0].length; i+=nBytes) {
-        int y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
-        int cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
-        int cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
+        double y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
+        double cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
+        double cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
 
-        cb = (int) Math.max(0, cb - 128);
-        cr = (int) Math.max(0, cr - 128);
+        cb = Math.max(0, cb - 128);
+        cr = Math.max(0, cr - 128);
 
-        int red = (int) (y + 1.402 * cr) & mask;
-        int green = (int) (y - 0.34414 * cb - 0.71414 * cr) & mask;
-        int blue = (int) (y + 1.772 * cb) & mask;
+        int red = (int) (y + 1.402 * cr);
+        int green = (int) (y - 0.34414 * cb - 0.71414 * cr);
+        int blue = (int) (y + 1.772 * cb);
+
+        red = (int) (Math.min(red, mask)) & mask;
+        green = (int) (Math.min(green, mask)) & mask;
+        blue = (int) (Math.min(blue, mask)) & mask;
 
         DataTools.unpackBytes(red, buf[0], i, nBytes, options.littleEndian);
         DataTools.unpackBytes(green, buf[1], i, nBytes, options.littleEndian);

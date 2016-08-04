@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.poi.util.LittleEndian;
  * REFERENCE:  <P>
  * @author Libin Roman (Vista Portal LDT. Developer)
  * @author Andrew C. Oliver (acoliver@apache.org)
- *
  */
 public class SupBookRecord extends Record
 {

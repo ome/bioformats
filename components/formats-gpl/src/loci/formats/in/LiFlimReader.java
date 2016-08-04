@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,7 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import ome.xml.model.primitives.Timestamp;
@@ -53,12 +54,11 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * LiFlimReader is the file format reader for LI-FLIM files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/LiFlimReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/LiFlimReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class LiFlimReader extends FormatReader {
 
@@ -131,9 +131,9 @@ public class LiFlimReader extends FormatReader {
   private String backgroundP;
   private String backgroundF;
 
-  private int numRegions = 0;
-  private Hashtable<Integer, ROI> rois;
-  private Hashtable<Integer, String> stampValues;
+  private int numRegions = 0;  /* note: set but not used */
+  private Map<Integer, ROI> rois;
+  private Map<Integer, String> stampValues;
   private Double exposureTime;
 
   /** True if gzip compression was used to deflate the pixels. */
@@ -161,6 +161,7 @@ public class LiFlimReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -200,6 +201,7 @@ public class LiFlimReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -238,6 +240,7 @@ public class LiFlimReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -261,8 +264,8 @@ public class LiFlimReader extends FormatReader {
   }
 
   private void initOriginalMetadata() {
-    rois = new Hashtable<Integer, ROI>();
-    stampValues = new Hashtable<Integer, String>();
+    rois = new HashMap<Integer, ROI>();
+    stampValues = new HashMap<Integer, String>();
 
     IniTable layoutTable = ini.getTable(LAYOUT_TABLE);
     datatype = layoutTable.get(DATATYPE_KEY);
@@ -446,7 +449,7 @@ public class LiFlimReader extends FormatReader {
           store.setImageAcquisitionDate(new Timestamp(date), 0);
         }
         firstStamp = stamp;
-        deltaT = new Double(0);
+        deltaT = Double.valueOf(0);
       }
       else {
         long ms = stamp - firstStamp;
@@ -455,8 +458,12 @@ public class LiFlimReader extends FormatReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {
           int index = getIndex(z, c, t);
-          store.setPlaneDeltaT(deltaT, 0, index);
-          store.setPlaneExposureTime(exposureTime, 0, index);
+          if (deltaT != null) {
+            store.setPlaneDeltaT(new Time(deltaT, UNITS.S), 0, index);
+          }
+          if (exposureTime != null) {
+            store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, index);
+          }
         }
       }
     }
@@ -544,7 +551,7 @@ public class LiFlimReader extends FormatReader {
 
   private class ROI {
     public String name;
-    public Hashtable<Integer, String> points = new Hashtable<Integer, String>();
+    public final Map<Integer, String> points = new HashMap<Integer, String>();
 
     public String pointsToString() {
       StringBuilder s = new StringBuilder();

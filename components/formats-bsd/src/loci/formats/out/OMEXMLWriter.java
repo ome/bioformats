@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -62,10 +62,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OMEXMLWriter is the file format writer for OME-XML files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/OMEXMLWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/OMEXMLWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class OMEXMLWriter extends FormatWriter {
 
@@ -85,9 +81,10 @@ public class OMEXMLWriter extends FormatWriter {
     compression = compressionTypes[0];
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatWriter API methods --
 
-  /* @see loci.formats.IFormatHandler#setId(String) */
+  /* @see loci.formats.FormatWriter#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) {
       return;
@@ -120,6 +117,7 @@ public class OMEXMLWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatHandler#close() */
+  @Override
   public void close() throws IOException {
     if (out != null) {
       out.writeBytes(xmlFragments.get(xmlFragments.size() - 1));
@@ -134,6 +132,7 @@ public class OMEXMLWriter extends FormatWriter {
   /**
    * @see loci.formats.IFormatWriter#saveBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -187,9 +186,11 @@ public class OMEXMLWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
+  @Override
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  @Override
   public int[] getPixelTypes(String codec) {
     if (codec != null && (codec.equals("J2K") || codec.equals("JPEG"))) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
@@ -234,10 +235,12 @@ public class OMEXMLWriter extends FormatWriter {
   // -- Helper class --
 
   class OMEHandler extends BaseHandler {
+    @Override
     public void characters(char[] ch, int start, int length) {
       currentFragment += new String(ch, start, length);
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -254,6 +257,7 @@ public class OMEXMLWriter extends FormatWriter {
       currentFragment += toAppend.toString();
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("Pixels")) {
         xmlFragments.add(currentFragment);

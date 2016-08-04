@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -180,7 +180,7 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      * @param param The <code>J2KImageWriteParamJava</code> used in encoding.
      * @param writer The <code>J2KImageWriter</code> performs the encoding.
      *
-     * @param IOException If an error occurs while opening the file.
+     * @throws IOException If an error occurs while opening the file.
      */
     public RenderedImageSrc(Raster raster,
                             J2KImageWriteParamJava param,
@@ -215,7 +215,7 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      * @param param The <code>J2KImageWriteParamJava</code> used in encoding.
      * @param writer The <code>J2KImageWriter</code> performs the encoding.
      *
-     * @param IOException If an error occurs while opening the file.
+     * @throws IOException If an error occurs while opening the file.
      * */
     public RenderedImageSrc(RenderedImage src,
                             J2KImageWriteParamJava param,
@@ -466,7 +466,7 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      * subsampling (i.e., all components, or components, have the same
      * dimensions in pixels).
      *
-     * @param c The index of the component, from 0 to C-1.
+     * @param n The index of the component, from 0 to C-1.
      *
      * @return The width in pixels of component <tt>n</tt> in the current
      * tile.
@@ -581,7 +581,7 @@ public class RenderedImageSrc implements BlkImgDataSrc {
      * coordinates). These are the coordinates of the current tile's (not
      * active tile) upper-left corner relative to the canvas.
      *
-     * @param co If not null the object is used to return the values, if null
+     * @param p If not null the object is used to return the values, if null
      * a new one is created and returned.
      *
      * @param c The index of the component (between 0 and C-1)

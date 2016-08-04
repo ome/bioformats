@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,13 +50,10 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
 
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -76,7 +73,7 @@ public class HamamatsuVMSReader extends FormatReader {
   private String[][][] tileFiles;
   private String[] jpeg;
 
-  private JPEGTurboService service = new JPEGTurboServiceImpl();
+  private JPEGTurboService service;
   private HashMap<String, long[]> restartMarkers =
     new HashMap<String, long[]>();
 
@@ -92,18 +89,21 @@ public class HamamatsuVMSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return 1024;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
@@ -121,6 +121,7 @@ public class HamamatsuVMSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -134,6 +135,10 @@ public class HamamatsuVMSReader extends FormatReader {
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();
       return buf;
+    }
+
+    if (service == null) {
+      service = new JPEGTurboServiceImpl();
     }
 
     try {
@@ -164,12 +169,16 @@ public class HamamatsuVMSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       tileFiles = null;
       files.clear();
-      service.close();
+      if (service != null) {
+        service.close();
+        service = null;
+      }
       jpeg = null;
       restartMarkers.clear();
       initializedSeries = -1;
@@ -180,12 +189,14 @@ public class HamamatsuVMSReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    in = new RandomAccessInputStream(id);
     IniParser parser = new IniParser();
     IniList layout = parser.parseINI(new BufferedReader(
-      new InputStreamReader(new FileInputStream(id), Constants.ENCODING)));
+      new InputStreamReader(in, Constants.ENCODING)));
     IniTable slideInfo = layout.getTable("Virtual Microscope Specimen");
 
     int nLayers = Integer.parseInt(slideInfo.get("NoLayers"));
@@ -208,7 +219,7 @@ public class HamamatsuVMSReader extends FormatReader {
       addGlobalMeta(key, slideInfo.get(key));
     }
 
-    Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    Location dir = new Location(id).getParentFile();
 
     tileFiles = new String[nLayers][nRows][nCols];
 
@@ -291,13 +302,13 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX(physicalWidth / ms0.sizeX);
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY(physicalHeight / ms0.sizeY);
-      PositiveFloat macroSizeX =
+      Length macroSizeX =
         FormatTools.getPhysicalSizeX(macroWidth / core.get(1).sizeX);
-      PositiveFloat macroSizeY =
+      Length macroSizeY =
         FormatTools.getPhysicalSizeY(macroHeight / core.get(1).sizeY);
 
       if (sizeX != null) {

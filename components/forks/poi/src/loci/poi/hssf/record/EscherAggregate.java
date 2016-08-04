@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,7 +63,6 @@ import java.util.*;
  * So what we do with this class is aggregate lazily.  That is
  * we don't aggregate the MSODRAWING -> OBJ records unless we
  * need to modify them.
- *
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */

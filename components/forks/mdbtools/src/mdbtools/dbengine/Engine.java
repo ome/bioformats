@@ -2,7 +2,7 @@
  * #%L
  * Fork of MDB Tools (Java port).
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,7 +36,6 @@ import java.sql.SQLException;
  * with the data via a set of defined interfaces.
  * A sql parser is not included here instead the caller must parse the sql and
  * pass in a parse tree.
- *
  */
 public class Engine
 {
@@ -57,7 +56,7 @@ public class Engine
 
   /**
    * Execute a sql select query
-   * @param sql
+   * @param select
    */
   private Data execute(Select select)
     throws SQLException

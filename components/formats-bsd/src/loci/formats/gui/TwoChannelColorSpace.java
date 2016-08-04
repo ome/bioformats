@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,10 +37,6 @@ import java.awt.color.ColorSpace;
 /**
  * ColorSpace for 2-channel images.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/TwoChannelColorSpace.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/TwoChannelColorSpace.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class TwoChannelColorSpace extends ColorSpace {
@@ -59,11 +55,13 @@ public class TwoChannelColorSpace extends ColorSpace {
 
   // -- ColorSpace API methods --
 
+  @Override
   public float[] fromCIEXYZ(float[] color) {
     ColorSpace rgb = ColorSpace.getInstance(ColorSpace.CS_sRGB);
     return rgb.fromCIEXYZ(toRGB(color));
   }
 
+  @Override
   public float[] fromRGB(float[] rgb) {
     return new float[] {rgb[0], rgb[1]};
   }
@@ -75,25 +73,31 @@ public class TwoChannelColorSpace extends ColorSpace {
     return ColorSpace.getInstance(colorSpace);
   }
 
+  @Override
   public String getName(int idx) {
     return idx == 0 ? "Red" : "Green";
   }
 
+  @Override
   public int getNumComponents() {
     return NUM_COMPONENTS;
   }
 
+  @Override
   public int getType() {
     return ColorSpace.TYPE_2CLR;
   }
 
+  @Override
   public boolean isCS_sRGB() { return false; }
 
+  @Override
   public float[] toCIEXYZ(float[] color) {
     ColorSpace rgb = ColorSpace.getInstance(ColorSpace.CS_sRGB);
     return rgb.toCIEXYZ(toRGB(color));
   }
 
+  @Override
   public float[] toRGB(float[] color) {
     return new float[] {color[0], color[1], 0};
   }

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,10 +37,6 @@ import java.awt.image.DataBuffer;
 /**
  * DataBuffer that stores signed bytes.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/SignedByteBuffer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/SignedByteBuffer.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class SignedByteBuffer extends DataBuffer {
@@ -71,21 +67,25 @@ public class SignedByteBuffer extends DataBuffer {
   }
 
   /* @see java.awt.image.DataBuffer#getElem(int) */
+  @Override
   public int getElem(int i) {
     return getElem(0, i);
   }
 
   /* @see java.awt.image.DataBuffer#getElem(int, int) */
+  @Override
   public int getElem(int bank, int i) {
     return (int) bankData[bank][i + getOffsets()[bank]];
   }
 
   /* @see java.awt.image.DataBuffer#setElem(int, int) */
+  @Override
   public void setElem(int i, int val) {
     setElem(0, i, val);
   }
 
   /* @see java.awt.image.DataBuffer#setElem(int, int, int) */
+  @Override
   public void setElem(int bank, int i, int val) {
     bankData[bank][i + getOffsets()[bank]] = (byte) val;
   }

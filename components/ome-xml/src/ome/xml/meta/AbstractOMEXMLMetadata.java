@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -60,10 +60,6 @@ import org.slf4j.LoggerFactory;
  * It is the superclass for all versions of OME-XML. It requires the
  * ome.xml package to compile (part of ome-xml.jar).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/meta/AbstractOMEXMLMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/meta/AbstractOMEXMLMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -77,7 +73,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** OME-XML schema location. */
   public static final String SCHEMA =
-    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
 
   protected static final Logger LOGGER =
     LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
@@ -104,6 +100,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Dumps the given OME-XML DOM tree to a string.
    * @return OME-XML as a string.
    */
+  @Override
   public String dumpXML() {
     if (root == null) {
       root = (OMEModelObject) getRoot();

@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<!-- Warning: this comment is an OME-XML metadata block, which contains crucial dimensional parameters and other important metadata. Please edit cautiously (if at all), and back up the original data before doing so. For more information, see the OME-TIFF web site: http://ome-xml.org/wiki/OmeTiff. -->
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2015-01"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2015-01"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2015-01"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2015-01"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2015-01"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2015-01
+	http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd">
+	<Image ID="Image:0" Name="LAMBDA">
+		<AcquisitionDate>2011-09-16T10:45:48</AcquisitionDate>
+		<Pixels ID="Pixels:0" DimensionOrder="XYCZT" Type="int8" SizeX="200" SizeY="200" SizeC="1"
+			SizeZ="5" SizeT="10">
+			<Channel ID="Channel:0:0" SamplesPerPixel="1"/>
+			<TiffData FirstC="0" FirstT="0" FirstZ="0" IFD="0" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="0" FirstZ="1" IFD="1" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="0" FirstZ="2" IFD="2" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="0" FirstZ="3" IFD="3" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="0" FirstZ="4" IFD="4" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="0" IFD="5" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="1" IFD="6" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="2" IFD="7" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="3" IFD="8" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="1" FirstZ="4" IFD="9" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="0" IFD="10" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="1" IFD="11" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="2" IFD="12" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="3" IFD="13" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="2" FirstZ="4" IFD="14" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="0" IFD="15" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="1" IFD="16" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="2" IFD="17" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="3" IFD="18" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="3" FirstZ="4" IFD="19" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="0" IFD="20" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="1" IFD="21" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="2" IFD="22" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="3" IFD="23" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="4" FirstZ="4" IFD="24" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="0" IFD="25" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="1" IFD="26" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="2" IFD="27" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="3" IFD="28" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="5" FirstZ="4" IFD="29" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="0" IFD="30" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="1" IFD="31" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="2" IFD="32" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="3" IFD="33" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="6" FirstZ="4" IFD="34" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="0" IFD="35" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="1" IFD="36" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="2" IFD="37" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="3" IFD="38" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="7" FirstZ="4" IFD="39" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="0" IFD="40" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="1" IFD="41" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="2" IFD="42" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="3" IFD="43" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="8" FirstZ="4" IFD="44" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="0" IFD="45" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="1" IFD="46" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="2" IFD="47" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="3" IFD="48" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+			<TiffData FirstC="0" FirstT="9" FirstZ="4" IFD="49" PlaneCount="1">
+				<UUID FileName="LAMBDA-modulo-sample.ome.tiff"
+					>urn:uuid:78585e08-44f6-4e44-bec7-382e4f3b998f</UUID>
+			</TiffData>
+		</Pixels>
+		<SA:AnnotationRef ID="Annotation:3"/>
+	</Image>
+	<SA:StructuredAnnotations>
+		<SA:XMLAnnotation ID="Annotation:3" Namespace="openmicroscopy.org/omero/dimension/modulo">
+			<SA:Value>
+				<Modulo namespace="http://www.openmicroscopy.org/Schemas/Additions/2011-09">
+					<ModuloAlongZ Type="phase" Start="480" Step="25" End="580"/>
+					<ModuloAlongT Type="lambda">
+						<Label>505-540</Label>
+						<Label>530-565</Label>
+						<Label>555-590</Label>
+						<Label>580-615</Label>
+						<Label>605-640</Label>
+						<Label>630-665</Label>
+						<Label>655-690</Label>
+						<Label>680-705</Label>
+						<Label>705-750</Label>
+						<Label>730-765</Label>
+					</ModuloAlongT>
+				</Modulo>
+			</SA:Value>
+		</SA:XMLAnnotation>
+	</SA:StructuredAnnotations>
+</OME>

@@ -43,14 +43,14 @@ can save yourself time by bypassing the Bio-Formats Import Options
 screen. You can accomplish this two ways:
 
 1. You can select the **Bio-Formats Windowless Importer**, located in
-the Bio-Formats menu under ImageJ's Plugin menu. When you select this option,
+the Bio-Formats menu under ImageJ's Plugin menu.  When you select this option,
 Bio-Formats will import the file using the same settings you used the
 last time you imported a file with the same format.
 
 2. If you invariably use the same settings when you open files in a
 specific format, you can always bypass the Import Options Screen by
 changing the settings in the **Bio-Formats Plugins Configuration** option,
-which is also located in the Bio-Formats menu under ImageJ's Plugin menu.
+which is also located in the Bio-Formats menu under ImageJ's Plugin menu. 
 
 Once you select this option, select the file format you are interested
 in from the list on the left side of the screen. Check both the **Enabled**

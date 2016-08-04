@@ -11,6 +11,22 @@ Type "ant -p" for a list of targets.
   <property file="${user.home}/.ant-global.properties"/>
   <property file="${root.dir}/ant/global.properties"/>
 
+  <!-- Convenient JDK version properties -->
+
+  <available property="jdk1.6+" classname="java.util.ServiceLoader"/>
+  <available property="jdk1.7+" classname="java.util.Objects"/>
+  <available property="jdk1.8+" classname="java.util.stream.IntStream"/>
+
+  <target name="javadoc-properties">
+    <if>
+      <isset property="jdk1.8+"/>
+      <then>
+        <property name="javadoc.doclint" value="-Xdoclint:none"/>
+      </then>
+    </if>
+    <property name="javadoc.doclint" value=""/>
+  </target>
+
   <!-- Convenient platform properties -->
 
   <condition property="isUnix">

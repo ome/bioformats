@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,10 +48,6 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.Location class.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/LocationTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/LocationTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @see loci.common.Location
  */
 public class LocationTest {
@@ -91,23 +87,25 @@ public class LocationTest {
       new Location(tmpDirectory),
       new Location("http://loci.wisc.edu/software/bio-formats"),
       new Location("http://www.openmicroscopy.org/site/foo/products/bio-formats"),
+      new Location("https://www.openmicroscopy.org/site/products/images"),
+      new Location("https://www.openmicroscopy.org/site/products/images/foo"),
       new Location(hiddenFile)
     };
 
     exists = new boolean[] {
-      true, false, true, true, false, true
+      true, false, true, true, false, true, false, true
     };
 
     isDirectory = new boolean[] {
-      false, false, true, false, false, false
+      false, false, true, false, false, false, false, false
     };
 
     isHidden = new boolean[] {
-      false, false, false, false, false, true
+      false, false, false, false, false, false, false, true
     };
 
     mode = new String[] {
-      "rw", "", "rw", "r", "", "rw"
+      "rw", "", "rw", "r", "", "r", "","rw"
     };
 
   }

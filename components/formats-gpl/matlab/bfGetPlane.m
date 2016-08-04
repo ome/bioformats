@@ -1,6 +1,6 @@
-function I = bfGetPlane(r, iPlane, varargin)
+function I = bfGetPlane(r, varargin)
 % BFGETPLANE Retrieve the plane data from a reader using Bio-Formats
-% 
+%
 %   I = bfGetPlane(r, iPlane) returns a specified plane from the input
 %   format reader. The index specifying the plane to retrieve should be
 %   contained between 1 and the number of planes for the series. Given a
@@ -22,7 +22,7 @@ function I = bfGetPlane(r, iPlane, varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -43,22 +43,22 @@ function I = bfGetPlane(r, iPlane, varargin)
 
 % Input check
 ip = inputParser;
-ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader') && ...
-    ~isempty(x.getCurrentFile()));
+isValidReader = @(x) isa(x, 'loci.formats.IFormatReader') && ...
+    ~isempty(x.getCurrentFile());
+ip.addRequired('r', isValidReader);
 ip.parse(r);
 
 % Plane check
 isValidPlane = @(x) isscalar(x) && ismember(x, 1 : r.getImageCount());
-ip.addRequired('iPlane', isValidPlane);
-
 % Optional tile arguments check
 isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
 isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeY());
+ip.addRequired('iPlane', isValidPlane);
 ip.addOptional('x', 1, isValidX);
 ip.addOptional('y', 1, isValidY);
 ip.addOptional('width', r.getSizeX(), isValidX);
 ip.addOptional('height', r.getSizeY(), isValidY);
-ip.parse(r, iPlane, varargin{:});
+ip.parse(r, varargin{:});
 
 % Additional check for tile size
 assert(ip.Results.x - 1 + ip.Results.width <= r.getSizeX(),...
@@ -70,23 +70,24 @@ assert(ip.Results.y - 1 + ip.Results.height <= r.getSizeY(),...
 
 % Get pixel type
 pixelType = r.getPixelType();
-bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
-fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
-sgn = loci.formats.FormatTools.isSigned(pixelType);
+bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', pixelType);
+fp = javaMethod('isFloatingPoint', 'loci.formats.FormatTools', pixelType);
+sgn = javaMethod('isSigned', 'loci.formats.FormatTools', pixelType);
 little = r.isLittleEndian();
 
-plane = r.openBytes(iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
+plane = r.openBytes(...
+    ip.Results.iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
     ip.Results.width, ip.Results.height);
-    
+
 % convert byte array to MATLAB image
 if sgn
     % can get the data directly to a matrix
-    I = loci.common.DataTools.makeDataArray2D(plane, ...
+    I = javaMethod('makeDataArray2D', 'loci.common.DataTools', plane, ...
         bpp, fp, little, ip.Results.height);
 else
     % get the data as a vector, either because makeDataArray2D
     % is not available, or we need a vector for typecast
-    I = loci.common.DataTools.makeDataArray(plane, ...
+    I = javaMethod('makeDataArray', 'loci.common.DataTools', plane, ...
         bpp, fp, little);
 end
 

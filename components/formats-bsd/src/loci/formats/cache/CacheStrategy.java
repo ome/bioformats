@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,10 +40,6 @@ import loci.formats.FormatTools;
 
 /**
  * Superclass of cache strategies.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/CacheStrategy.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/CacheStrategy.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class CacheStrategy
   implements CacheReporter, Comparator, ICacheStrategy
@@ -155,16 +151,19 @@ public abstract class CacheStrategy
   // -- CacheReporter API methods --
 
   /* @see CacheReporter#addCacheListener(CacheListener) */
+  @Override
   public void addCacheListener(CacheListener l) {
     synchronized (listeners) { listeners.add(l); }
   }
 
   /* @see CacheReporter#removeCacheListener(CacheListener) */
+  @Override
   public void removeCacheListener(CacheListener l) {
     synchronized (listeners) { listeners.remove(l); }
   }
 
   /* @see CacheReporter#getCacheListeners() */
+  @Override
   public CacheListener[] getCacheListeners() {
     CacheListener[] l;
     synchronized (listeners) {
@@ -180,6 +179,7 @@ public abstract class CacheStrategy
    * Default comparator orders dimensional positions based on distance from the
    * current position, taking into account axis priorities and planar ordering.
    */
+  @Override
   public int compare(Object o1, Object o2) {
     int[] p1 = (int[]) o1;
     int[] p2 = (int[]) o2;
@@ -216,6 +216,7 @@ public abstract class CacheStrategy
   // -- ICacheStrategy API methods --
 
   /* @see ICacheStrategy#getLoadList(int[]) */
+  @Override
   public int[][] getLoadList(int[] pos) throws CacheException {
     int[][] loadList = null;
     synchronized (positions) {
@@ -265,9 +266,11 @@ public abstract class CacheStrategy
   }
 
   /* @see ICacheStrategy#getPriorities() */
+  @Override
   public int[] getPriorities() { return priorities; }
 
   /* @see ICacheStrategy#setPriority() */
+  @Override
   public void setPriority(int priority, int axis) {
     if (priority < MIN_PRIORITY || priority > MAX_PRIORITY) {
       throw new IllegalArgumentException(
@@ -281,9 +284,11 @@ public abstract class CacheStrategy
   }
 
   /* @see ICacheStrategy#getOrder() */
+  @Override
   public int[] getOrder() { return order; }
 
   /* @see ICacheStrategy#getOrder() */
+  @Override
   public void setOrder(int order, int axis) {
     if (order != CENTERED_ORDER &&
       order != FORWARD_ORDER && order != BACKWARD_ORDER)
@@ -299,9 +304,11 @@ public abstract class CacheStrategy
   }
 
   /* @see ICacheStrategy#getRange() */
+  @Override
   public int[] getRange() { return range; }
 
   /* @see ICacheStrategy#setRange(int, int) */
+  @Override
   public void setRange(int num, int axis) {
     if (num < 0) {
       throw new IllegalArgumentException(
@@ -312,6 +319,7 @@ public abstract class CacheStrategy
   }
 
   /* @see ICacheStrategy#getLengths() */
+  @Override
   public int[] getLengths() { return lengths; }
 
   // -- Helper methods --

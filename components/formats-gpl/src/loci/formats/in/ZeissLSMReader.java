@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,9 +27,15 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -52,19 +58,15 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
-
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ZeissLSMReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ZeissLSMReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -155,29 +157,29 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- Static fields --
 
-  private static final Hashtable<Integer, String> METADATA_KEYS = createKeys();
+  private static final ImmutableMap<Integer, String> METADATA_KEYS =
+    createKeys();
 
   // -- Fields --
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
   private byte[][][] lut = null;
-  private Vector<Double> timestamps;
-  private int validChannels;
+  private List<Double> timestamps;
 
   private String[] lsmFilenames;
-  private Vector<IFDList> ifdsList;
-  private TiffParser tiffParser;
+  private List<IFDList> ifdsList;
+  private transient TiffParser tiffParser;
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextDichroicChannel = 0, nextDichroic = 0;
   private int nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
-  private Vector<String> imageNames;
+  private List<String> imageNames;
   private String binning;
-  private Vector<Double> xCoordinates, yCoordinates, zCoordinates;
+  private List<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
-  private Hashtable<String, Integer> seriesCounts;
+  private Map<String, Integer> seriesCounts;
   private String userName;
   private String[][] channelNames;
 
@@ -190,8 +192,9 @@ public class ZeissLSMReader extends FormatReader {
   private byte[] prevBuf = null;
   private Region prevRegion = null;
 
-  private Hashtable<Integer, String> acquiredDate =
-    new Hashtable<Integer, String>();
+  private Map<Integer, String> acquiredDate =
+    new HashMap<Integer, String>();
+  private Color[] channelColor;
 
   // -- Constructor --
 
@@ -220,6 +223,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
@@ -232,19 +236,20 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, MDB_SUFFIX)) return false;
     return isGroupFiles() ? getMDBFile(id) != null : true;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelSizeX = pixelSizeY = pixelSizeZ = 0;
       lut = null;
       timestamps = null;
-      validChannels = 0;
       lsmFilenames = null;
       ifdsList = null;
       tiffParser = null;
@@ -270,10 +275,12 @@ public class ZeissLSMReader extends FormatReader {
       userName = null;
       acquiredDate.clear();
       channelNames = null;
+      channelColor = null;
     }
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4096;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -291,6 +298,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return checkSuffix(id, MDB_SUFFIX) ||
       !new Location(id).getName().startsWith("spim_") ? FormatTools.MUST_GROUP :
@@ -298,6 +306,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -312,6 +321,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()]  == null ||
@@ -329,23 +339,26 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()] == null ||
-      getPixelType() != FormatTools.UINT16 || validChannels == 0)
+      getPixelType() != FormatTools.UINT16 || channelColor == null)
     {
       return null;
     }
     short[][] s = new short[3][65536];
-    for (int i=2; i>=3-validChannels; i--) {
-      for (int j=0; j<s[i].length; j++) {
-        s[i][j] = (short) j;
-      }
+    Color color = channelColor[prevChannel];
+    for (int j=0; j<s[0].length; j++) {
+      s[0][j] = (short) ((color.getRed() / 255.0) * j);
+      s[1][j] = (short) ((color.getGreen() / 255.0) * j);
+      s[2][j] = (short) ((color.getBlue() / 255.0) * j);
     }
     return s;
   }
 
   /* @see loci.formats.IFormatReader#setSeries(int) */
+  @Override
   public void setSeries(int series) {
     if (series != getSeries()) {
       prevBuf = null;
@@ -356,6 +369,7 @@ public class ZeissLSMReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -365,6 +379,9 @@ public class ZeissLSMReader extends FormatReader {
       in.close();
       in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
       in.order(!isLittleEndian());
+      tiffParser = new TiffParser(in);
+    }
+    else if (tiffParser == null) {
       tiffParser = new TiffParser(in);
     }
 
@@ -400,6 +417,7 @@ public class ZeissLSMReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -412,16 +430,17 @@ public class ZeissLSMReader extends FormatReader {
       throw new FormatException("LSM files were not found.");
     }
 
-    timestamps = new Vector<Double>();
-    imageNames = new Vector<String>();
-    xCoordinates = new Vector<Double>();
-    yCoordinates = new Vector<Double>();
-    zCoordinates = new Vector<Double>();
-    seriesCounts = new Hashtable<String, Integer>();
+    totalROIs = 0;
+    timestamps = new ArrayList<Double>();
+    imageNames = new ArrayList<String>();
+    xCoordinates = new ArrayList<Double>();
+    yCoordinates = new ArrayList<Double>();
+    zCoordinates = new ArrayList<Double>();
+    seriesCounts = new HashMap<String, Integer>();
 
     int seriesCount = 0;
 
-    Vector<String> validFiles = new Vector<String>();
+    final List<String> validFiles = new ArrayList<String>();
     for (String filename : lsmFilenames) {
       try {
         int extraSeries = getExtraSeries(filename);
@@ -441,46 +460,52 @@ public class ZeissLSMReader extends FormatReader {
         core.add(ms);
     }
     channelNames = new String[seriesCount][];
-    ifdsList = new Vector<IFDList>();
-    ifdsList.setSize(seriesCount);
+    ifdsList = new ArrayList<IFDList>();
+    for (int series = 0; series < seriesCount; series++) {
+      ifdsList.add(null);
+    }
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
-      RandomAccessInputStream stream =
-        new RandomAccessInputStream(lsmFilenames[i]);
-      int count = seriesCounts.get(lsmFilenames[i]);
+      RandomAccessInputStream stream = null;
+      try {
+        stream = new RandomAccessInputStream(lsmFilenames[i], 16);
+        int count = seriesCounts.get(lsmFilenames[i]);
+        TiffParser tp = new TiffParser(stream);
+        Boolean littleEndian = tp.checkHeader();
+        long[] ifdOffsets = tp.getIFDOffsets();
+        int ifdsPerSeries = (ifdOffsets.length / 2) / count;
 
-      TiffParser tp = new TiffParser(stream);
-      Boolean littleEndian = tp.checkHeader();
-      long[] ifdOffsets = tp.getIFDOffsets();
-      int ifdsPerSeries = (ifdOffsets.length / 2) / count;
+        int offset = 0;
+        Object zeissTag = null;
+        for (int s=0; s<count; s++, realSeries++) {
+          CoreMetadata ms = core.get(realSeries);
+          ms.littleEndian = littleEndian;
 
-      int offset = 0;
-      Object zeissTag = null;
-      for (int s=0; s<count; s++, realSeries++) {
-        CoreMetadata ms = core.get(realSeries);
-        ms.littleEndian = littleEndian;
-
-        IFDList ifds = new IFDList();
-        while (ifds.size() < ifdsPerSeries) {
-          tp.setDoCaching(offset == 0);
-          IFD ifd = tp.getIFD(ifdOffsets[offset]);
-          if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
-          if (offset > 0 && ifds.size() == 0) {
-            ifd.putIFDValue(ZEISS_ID, zeissTag);
+          IFDList ifds = new IFDList();
+          while (ifds.size() < ifdsPerSeries) {
+            tp.setDoCaching(offset == 0);
+            IFD ifd = tp.getIFD(ifdOffsets[offset]);
+            if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
+            if (offset > 0 && ifds.isEmpty()) {
+              ifd.putIFDValue(ZEISS_ID, zeissTag);
+            }
+            ifds.add(ifd);
+            if (zeissTag != null) offset += 2;
+            else offset++;
           }
-          ifds.add(ifd);
-          if (zeissTag != null) offset += 2;
-          else offset++;
-        }
 
-        for (IFD ifd : ifds) {
-          tp.fillInIFD(ifd);
-        }
+          for (IFD ifd : ifds) {
+            tp.fillInIFD(ifd);
+          }
 
-        ifdsList.set(realSeries, ifds);
+          ifdsList.set(realSeries, ifds);
+        }
+      } catch (IOException e) {
+          throw e;
+      } finally {
+        if (stream != null) stream.close();
       }
-      stream.close();
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -508,43 +533,48 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       // fix the offsets for > 4 GB files
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(getLSMFileFromSeries(series));
-      for (int i=0; i<ifds.size(); i++) {
-        long[] stripOffsets = ifds.get(i).getStripOffsets();
+      RandomAccessInputStream s = null;
+      try {
+        s = new RandomAccessInputStream(getLSMFileFromSeries(series));
+        for (int i=0; i<ifds.size(); i++) {
+            long[] stripOffsets = ifds.get(i).getStripOffsets();
 
-        if (stripOffsets == null || (i != 0 && previousStripOffsets == null)) {
-          throw new FormatException(
-            "Strip offsets are missing; this is an invalid file.");
-        }
-        else if (i == 0 && previousStripOffsets == null) {
-          previousStripOffsets = stripOffsets;
-          continue;
-        }
+            if (stripOffsets == null || (i != 0 &&
+                    previousStripOffsets == null)) {
+              throw new FormatException(
+                "Strip offsets are missing; this is an invalid file.");
+            }
+            else if (i == 0 && previousStripOffsets == null) {
+              previousStripOffsets = stripOffsets;
+              continue;
+            }
 
-        boolean neededAdjustment = false;
-        for (int j=0; j<stripOffsets.length; j++) {
-          if (j >= previousStripOffsets.length) break;
-          if (stripOffsets[j] < previousStripOffsets[j]) {
-            stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
-              (stripOffsets[j] & 0xffffffffL);
-            if (stripOffsets[j] < previousStripOffsets[j]) {
-              long newOffset = stripOffsets[j] + 0x100000000L;
-              if (newOffset < s.length()) {
-                stripOffsets[j] = newOffset;
+            boolean neededAdjustment = false;
+            for (int j=0; j<stripOffsets.length; j++) {
+              if (j >= previousStripOffsets.length) break;
+              if (stripOffsets[j] < previousStripOffsets[j]) {
+                stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
+                  (stripOffsets[j] & 0xffffffffL);
+                if (stripOffsets[j] < previousStripOffsets[j]) {
+                  long newOffset = stripOffsets[j] + 0x100000000L;
+                  if (newOffset < s.length()) {
+                    stripOffsets[j] = newOffset;
+                  }
+                }
+                neededAdjustment = true;
+              }
+              if (neededAdjustment) {
+                ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
               }
             }
-            neededAdjustment = true;
+            previousStripOffsets = stripOffsets;
           }
-          if (neededAdjustment) {
-            ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
-          }
-        }
-        previousStripOffsets = stripOffsets;
+        initMetadata(series);
+      } catch (IOException e) {
+        throw e;
+      } finally {
+        if (s != null) s.close();
       }
-      s.close();
-
-      initMetadata(series);
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -609,7 +639,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private int getExtraSeries(String file) throws FormatException, IOException {
     if (in != null) in.close();
-    in = new RandomAccessInputStream(file);
+    in = new RandomAccessInputStream(file, 16);
     boolean littleEndian = in.read() == TiffConstants.LITTLE;
     in.order(littleEndian);
 
@@ -666,7 +696,7 @@ public class ZeissLSMReader extends FormatReader {
     IFD ifd = ifds.get(0);
 
     in.close();
-    in = new RandomAccessInputStream(getLSMFileFromSeries(series));
+    in = new RandomAccessInputStream(getLSMFileFromSeries(series), 16);
     in.order(isLittleEndian());
 
     tiffParser = new TiffParser(in);
@@ -752,9 +782,9 @@ public class ZeissLSMReader extends FormatReader {
       pixelSizeY = ras.readDouble() * 1000000;
       pixelSizeZ = ras.readDouble() * 1000000;
 
-      addSeriesMeta("VoxelSizeX", new Double(pixelSizeX));
-      addSeriesMeta("VoxelSizeY", new Double(pixelSizeY));
-      addSeriesMeta("VoxelSizeZ", new Double(pixelSizeZ));
+      addSeriesMeta("VoxelSizeX", pixelSizeX);
+      addSeriesMeta("VoxelSizeY", pixelSizeY);
+      addSeriesMeta("VoxelSizeZ", pixelSizeZ);
 
       originX = ras.readDouble() * 1000000;
       originY = ras.readDouble() * 1000000;
@@ -864,7 +894,7 @@ public class ZeissLSMReader extends FormatReader {
     long scanInformationOffset = 0;
     long channelWavelengthOffset = 0;
     long applicationTagOffset = 0;
-    Color[] channelColor = new Color[getSizeC()];
+    channelColor = new Color[getSizeC()];
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -922,8 +952,6 @@ public class ZeissLSMReader extends FormatReader {
           parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
         }
       }
-
-      totalROIs = 0;
 
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
@@ -996,21 +1024,21 @@ public class ZeissLSMReader extends FormatReader {
           double zPos = originZ + in.readDouble() * 1000000;
           if (xCoordinates.size() > i) {
             xPos += xCoordinates.get(i);
-            xCoordinates.setElementAt(xPos, i);
+            xCoordinates.set(i, xPos);
           }
           else if (xCoordinates.size() == i) {
             xCoordinates.add(xPos);
           }
           if (yCoordinates.size() > i) {
             yPos += yCoordinates.get(i);
-            yCoordinates.setElementAt(yPos, i);
+            yCoordinates.set(i, yPos);
           }
           else if (yCoordinates.size() == i) {
             yCoordinates.add(yPos);
           }
           if (zCoordinates.size() > i) {
             zPos += zCoordinates.get(i);
-            zCoordinates.setElementAt(zPos, i);
+            zCoordinates.set(i, zPos);
           }
           else if (zCoordinates.size() == i) {
             zCoordinates.add(zPos);
@@ -1062,6 +1090,11 @@ public class ZeissLSMReader extends FormatReader {
             // we want to read until we find a null char
             int length = in.readInt();
             String name = in.readString(length);
+            while ((name.length() > 0) &&
+              (name.codePointAt(name.length()-1) == 0))
+            {
+              name = name.substring(0, name.length()-1);
+            }
             if (name.length() <= 128) {
               addSeriesMetaList("ChannelName", name);
             }
@@ -1076,7 +1109,7 @@ public class ZeissLSMReader extends FormatReader {
         for (int i=0; i<nStamps; i++) {
           double stamp = in.readDouble();
           addSeriesMetaList("TimeStamp", stamp);
-          timestamps.add(new Double(stamp));
+          timestamps.add(stamp);
         }
       }
 
@@ -1117,7 +1150,7 @@ public class ZeissLSMReader extends FormatReader {
         nextFilter = nextDichroicChannel = nextDichroic = 0;
         nextDetectChannel = nextIllumChannel = 0;
 
-        Vector<SubBlock> blocks = new Vector<SubBlock>();
+        final List<SubBlock> blocks = new ArrayList<SubBlock>();
 
         while (in.getFilePointer() < in.length() - 12) {
           if (in.getFilePointer() < 0) break;
@@ -1168,7 +1201,7 @@ public class ZeissLSMReader extends FormatReader {
           else break;
         }
 
-        Vector<SubBlock> nonAcquiredBlocks = new Vector<SubBlock>();
+        final List<SubBlock> nonAcquiredBlocks = new ArrayList<SubBlock>();
 
         SubBlock[] metadataBlocks = blocks.toArray(new SubBlock[0]);
         for (SubBlock block : metadataBlocks) {
@@ -1225,9 +1258,9 @@ public class ZeissLSMReader extends FormatReader {
         store.setExperimenterUserName(userName, 0);
       }
 
-      PositiveFloat pixX = FormatTools.getPhysicalSizeX(new Double(pixelSizeX));
-      PositiveFloat pixY = FormatTools.getPhysicalSizeY(new Double(pixelSizeY));
-      PositiveFloat pixZ = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ));
+      Length pixX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length pixY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length pixZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
       if (pixX != null) {
         store.setPixelsPhysicalSizeX(pixX, series);
       }
@@ -1260,12 +1293,31 @@ public class ZeissLSMReader extends FormatReader {
 
         if (getSizeT() > 1 && zct[2] < timestamps.size() - stampIndex) {
           double thisStamp = timestamps.get(stampIndex + zct[2]).doubleValue();
-          store.setPlaneDeltaT(thisStamp - firstStamp, series, i);
+          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.S), series, i);
         }
         if (xCoordinates.size() > series) {
-          store.setPlanePositionX(xCoordinates.get(series), series, i);
-          store.setPlanePositionY(yCoordinates.get(series), series, i);
-          store.setPlanePositionZ(zCoordinates.get(series), series, i);
+          final Double xCoord = xCoordinates.get(series);
+          final Double yCoord = yCoordinates.get(series);
+          final Double zCoord = zCoordinates.get(series);
+
+          if (xCoord == null) {
+              store.setPlanePositionX(null, series, i);
+          } else {
+              final Length x = new Length(xCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionX(x, series, i);
+          }
+          if (yCoord == null) {
+              store.setPlanePositionY(null, series, i);
+          } else {
+              final Length y = new Length(yCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionY(y, series, i);
+          }
+          if (zCoord == null) {
+              store.setPlanePositionZ(null, series, i);
+          } else {
+              final Length z = new Length(zCoord, UNITS.REFERENCEFRAME);
+              store.setPlanePositionZ(z, series, i);
+          }
         }
       }
     }
@@ -1327,7 +1379,10 @@ public class ZeissLSMReader extends FormatReader {
     else if (block instanceof Track) {
       Track track = (Track) block;
       if (track.acquire) {
-        store.setPixelsTimeIncrement(track.timeIncrement, series);
+        if (track.timeIncrement != null)
+        {
+          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+        }
       }
     }
     else if (block instanceof DetectionChannel) {
@@ -1335,7 +1390,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
-        store.setChannelPinholeSize(channel.pinhole, series, nextDetectChannel);
+        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROM), series, nextDetectChannel);
       }
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", instrument, nextFilter);
@@ -1357,8 +1412,8 @@ public class ZeissLSMReader extends FormatReader {
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
-            Integer cutIn = new Integer(v[0].trim());
-            PositiveInteger in = FormatTools.getCutIn(cutIn);
+            final Double cutIn = new Double(v[0].trim());
+            Length in = FormatTools.getCutIn(cutIn);
             if (in != null) {
               store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
             }
@@ -1366,8 +1421,8 @@ public class ZeissLSMReader extends FormatReader {
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
-              Integer cutOut = new Integer(v[1].trim());
-              PositiveInteger out = FormatTools.getCutOut(cutOut);
+              final Double cutOut = new Double(v[1].trim());
+              Length out = FormatTools.getCutOut(cutOut);
               if (out != null) {
                 store.setTransmittanceRangeCutOut(out, instrument, nextFilter);
               }
@@ -1421,7 +1476,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.acquire && channel.wavelength != null &&
         channel.wavelength > 0)
       {
-        PositiveInteger wave = FormatTools.getWavelength(channel.wavelength);
+        Length wave = FormatTools.getWavelength(channel.wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, instrument, nextIllumChannel);
         }
@@ -1486,8 +1541,8 @@ public class ZeissLSMReader extends FormatReader {
       String roiID = MetadataTools.createLSID("ROI", i);
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
 
-      NonNegativeInteger fontSize = FormatTools.getFontSize(fontHeight);
-
+      Length fontSize = FormatTools.getFontSize(fontHeight);
+      Length line = new Length(lineWidth, UNITS.PIXEL);
       switch (type) {
         case TEXT:
           double x = in.readDouble();
@@ -1502,7 +1557,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setLabelFontSize(fontSize, i, 0);
           }
-          store.setLabelStrokeWidth(lineWidth, i, 0);
+          store.setLabelStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1522,7 +1577,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setLineFontSize(fontSize, i, 0);
           }
-          store.setLineStrokeWidth(lineWidth, i, 0);
+          store.setLineStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1555,7 +1610,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setRectangleFontSize(fontSize, i, 0);
           }
-          store.setRectangleStrokeWidth(lineWidth, i, 0);
+          store.setRectangleStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1615,7 +1670,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1638,7 +1693,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1678,7 +1733,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setEllipseFontSize(fontSize, i, 0);
           }
-          store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setEllipseStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1705,7 +1760,7 @@ public class ZeissLSMReader extends FormatReader {
           if (fontSize != null) {
             store.setPolylineFontSize(fontSize, i, 0);
           }
-          store.setPolylineStrokeWidth(lineWidth, i, 0);
+          store.setPolylineStrokeWidth(line, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1735,7 +1790,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolylineFontSize(fontSize, i, 0);
             }
-            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineStrokeWidth(line, i, 0);
             store.setPolylineID(shapeID, i, 0);
           }
           else {
@@ -1743,7 +1798,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolygonFontSize(fontSize, i, 0);
             }
-            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonStrokeWidth(line, i, 0);
             store.setPolygonID(shapeID, i, 0);
           }
           store.setImageROIRef(roiID, series, i);
@@ -1776,7 +1831,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolylineFontSize(fontSize, i, 0);
             }
-            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineStrokeWidth(line, i, 0);
           }
           else {
             store.setPolygonID(shapeID, i, 0);
@@ -1784,7 +1839,7 @@ public class ZeissLSMReader extends FormatReader {
             if (fontSize != null) {
               store.setPolygonFontSize(fontSize, i, 0);
             }
-            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonStrokeWidth(line, i, 0);
           }
           store.setImageROIRef(roiID, series, i);
 
@@ -1825,7 +1880,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     Vector<Vector<String[]>> tables = mdbService.parseDatabase();
     mdbService.close();
-    Vector<String> referencedLSMs = new Vector<String>();
+    final List<String> referencedLSMs = new ArrayList<String>();
 
     int referenceCount = 0;
 
@@ -1868,9 +1923,14 @@ public class ZeissLSMReader extends FormatReader {
     String[] fileList = parent.list(true);
     Arrays.sort(fileList);
     for (int i=0; i<fileList.length; i++) {
-      String absolutePath = new Location(parent, fileList[i]).getAbsolutePath();
+      Location f = new Location(fileList[i]);
+      if (!f.exists()) {
+        f = new Location(parent, fileList[i]);
+      }
+      String absolutePath = f.getAbsolutePath();
       if (checkSuffix(fileList[i], "mdb") &&
-        (!absolutePath.equals(mdbFile) && !fileList[i].equals(mdbFile)))
+        (!absolutePath.equals(mdbFile) && !fileList[i].equals(mdbFile) &&
+        !absolutePath.equals(new Location(mdbFile).getAbsolutePath())))
       {
         if (referencedLSMs.size() > 0) {
           return referencedLSMs.toArray(new String[0]);
@@ -1912,174 +1972,174 @@ public class ZeissLSMReader extends FormatReader {
     return referencedLSMs.toArray(new String[0]);
   }
 
-  private static Hashtable<Integer, String> createKeys() {
-    Hashtable<Integer, String> h = new Hashtable<Integer, String>();
-    h.put(new Integer(0x10000001), "Name");
-    h.put(new Integer(0x4000000c), "Name");
-    h.put(new Integer(0x50000001), "Name");
-    h.put(new Integer(0x90000001), "Name");
-    h.put(new Integer(0x90000005), "Detection Channel Name");
-    h.put(new Integer(0xb0000003), "Name");
-    h.put(new Integer(0xd0000001), "Name");
-    h.put(new Integer(0x12000001), "Name");
-    h.put(new Integer(0x14000001), "Name");
-    h.put(new Integer(0x10000002), "Description");
-    h.put(new Integer(0x14000002), "Description");
-    h.put(new Integer(0x10000003), "Notes");
-    h.put(new Integer(0x10000004), "Objective");
-    h.put(new Integer(0x10000005), "Processing Summary");
-    h.put(new Integer(0x10000006), "Special Scan Mode");
-    h.put(new Integer(0x10000007), "Scan Type");
-    h.put(new Integer(0x10000008), "Scan Mode");
-    h.put(new Integer(0x10000009), "Number of Stacks");
-    h.put(new Integer(0x1000000a), "Lines Per Plane");
-    h.put(new Integer(0x1000000b), "Samples Per Line");
-    h.put(new Integer(0x1000000c), "Planes Per Volume");
-    h.put(new Integer(0x1000000d), "Images Width");
-    h.put(new Integer(0x1000000e), "Images Height");
-    h.put(new Integer(0x1000000f), "Number of Planes");
-    h.put(new Integer(0x10000010), "Number of Stacks");
-    h.put(new Integer(0x10000011), "Number of Channels");
-    h.put(new Integer(0x10000012), "Linescan XY Size");
-    h.put(new Integer(0x10000013), "Scan Direction");
-    h.put(new Integer(0x10000014), "Time Series");
-    h.put(new Integer(0x10000015), "Original Scan Data");
-    h.put(new Integer(0x10000016), "Zoom X");
-    h.put(new Integer(0x10000017), "Zoom Y");
-    h.put(new Integer(0x10000018), "Zoom Z");
-    h.put(new Integer(0x10000019), "Sample 0X");
-    h.put(new Integer(0x1000001a), "Sample 0Y");
-    h.put(new Integer(0x1000001b), "Sample 0Z");
-    h.put(new Integer(0x1000001c), "Sample Spacing");
-    h.put(new Integer(0x1000001d), "Line Spacing");
-    h.put(new Integer(0x1000001e), "Plane Spacing");
-    h.put(new Integer(0x1000001f), "Plane Width");
-    h.put(new Integer(0x10000020), "Plane Height");
-    h.put(new Integer(0x10000021), "Volume Depth");
-    h.put(new Integer(0x10000034), "Rotation");
-    h.put(new Integer(0x10000035), "Precession");
-    h.put(new Integer(0x10000036), "Sample 0Time");
-    h.put(new Integer(0x10000037), "Start Scan Trigger In");
-    h.put(new Integer(0x10000038), "Start Scan Trigger Out");
-    h.put(new Integer(0x10000039), "Start Scan Event");
-    h.put(new Integer(0x10000040), "Start Scan Time");
-    h.put(new Integer(0x10000041), "Stop Scan Trigger In");
-    h.put(new Integer(0x10000042), "Stop Scan Trigger Out");
-    h.put(new Integer(0x10000043), "Stop Scan Event");
-    h.put(new Integer(0x10000044), "Stop Scan Time");
-    h.put(new Integer(0x10000045), "Use ROIs");
-    h.put(new Integer(0x10000046), "Use Reduced Memory ROIs");
-    h.put(new Integer(0x10000047), "User");
-    h.put(new Integer(0x10000048), "Use B/C Correction");
-    h.put(new Integer(0x10000049), "Position B/C Contrast 1");
-    h.put(new Integer(0x10000050), "Position B/C Contrast 2");
-    h.put(new Integer(0x10000051), "Interpolation Y");
-    h.put(new Integer(0x10000052), "Camera Binning");
-    h.put(new Integer(0x10000053), "Camera Supersampling");
-    h.put(new Integer(0x10000054), "Camera Frame Width");
-    h.put(new Integer(0x10000055), "Camera Frame Height");
-    h.put(new Integer(0x10000056), "Camera Offset X");
-    h.put(new Integer(0x10000057), "Camera Offset Y");
-    h.put(new Integer(0x40000001), "Multiplex Type");
-    h.put(new Integer(0x40000002), "Multiplex Order");
-    h.put(new Integer(0x40000003), "Sampling Mode");
-    h.put(new Integer(0x40000004), "Sampling Method");
-    h.put(new Integer(0x40000005), "Sampling Number");
-    h.put(new Integer(0x40000006), "Acquire");
-    h.put(new Integer(0x50000002), "Acquire");
-    h.put(new Integer(0x7000000b), "Acquire");
-    h.put(new Integer(0x90000004), "Acquire");
-    h.put(new Integer(0xd0000017), "Acquire");
-    h.put(new Integer(0x40000007), "Sample Observation Time");
-    h.put(new Integer(0x40000008), "Time Between Stacks");
-    h.put(new Integer(0x4000000d), "Collimator 1 Name");
-    h.put(new Integer(0x4000000e), "Collimator 1 Position");
-    h.put(new Integer(0x4000000f), "Collimator 2 Name");
-    h.put(new Integer(0x40000010), "Collimator 2 Position");
-    h.put(new Integer(0x40000011), "Is Bleach Track");
-    h.put(new Integer(0x40000012), "Bleach After Scan Number");
-    h.put(new Integer(0x40000013), "Bleach Scan Number");
-    h.put(new Integer(0x40000014), "Trigger In");
-    h.put(new Integer(0x12000004), "Trigger In");
-    h.put(new Integer(0x14000003), "Trigger In");
-    h.put(new Integer(0x40000015), "Trigger Out");
-    h.put(new Integer(0x12000005), "Trigger Out");
-    h.put(new Integer(0x14000004), "Trigger Out");
-    h.put(new Integer(0x40000016), "Is Ratio Track");
-    h.put(new Integer(0x40000017), "Bleach Count");
-    h.put(new Integer(0x40000018), "SPI Center Wavelength");
-    h.put(new Integer(0x40000019), "Pixel Time");
-    h.put(new Integer(0x40000020), "ID Condensor Frontlens");
-    h.put(new Integer(0x40000021), "Condensor Frontlens");
-    h.put(new Integer(0x40000022), "ID Field Stop");
-    h.put(new Integer(0x40000023), "Field Stop Value");
-    h.put(new Integer(0x40000024), "ID Condensor Aperture");
-    h.put(new Integer(0x40000025), "Condensor Aperture");
-    h.put(new Integer(0x40000026), "ID Condensor Revolver");
-    h.put(new Integer(0x40000027), "Condensor Revolver");
-    h.put(new Integer(0x40000028), "ID Transmission Filter 1");
-    h.put(new Integer(0x40000029), "ID Transmission 1");
-    h.put(new Integer(0x40000030), "ID Transmission Filter 2");
-    h.put(new Integer(0x40000031), "ID Transmission 2");
-    h.put(new Integer(0x40000032), "Repeat Bleach");
-    h.put(new Integer(0x40000033), "Enable Spot Bleach Pos");
-    h.put(new Integer(0x40000034), "Spot Bleach Position X");
-    h.put(new Integer(0x40000035), "Spot Bleach Position Y");
-    h.put(new Integer(0x40000036), "Bleach Position Z");
-    h.put(new Integer(0x50000003), "Power");
-    h.put(new Integer(0x90000002), "Power");
-    h.put(new Integer(0x70000003), "Detector Gain");
-    h.put(new Integer(0x70000005), "Amplifier Gain");
-    h.put(new Integer(0x70000007), "Amplifier Offset");
-    h.put(new Integer(0x70000009), "Pinhole Diameter");
-    h.put(new Integer(0x7000000c), "Detector Name");
-    h.put(new Integer(0x7000000d), "Amplifier Name");
-    h.put(new Integer(0x7000000e), "Pinhole Name");
-    h.put(new Integer(0x7000000f), "Filter Set Name");
-    h.put(new Integer(0x70000010), "Filter Name");
-    h.put(new Integer(0x70000013), "Integrator Name");
-    h.put(new Integer(0x70000014), "Detection Channel Name");
-    h.put(new Integer(0x70000015), "Detector Gain B/C 1");
-    h.put(new Integer(0x70000016), "Detector Gain B/C 2");
-    h.put(new Integer(0x70000017), "Amplifier Gain B/C 1");
-    h.put(new Integer(0x70000018), "Amplifier Gain B/C 2");
-    h.put(new Integer(0x70000019), "Amplifier Offset B/C 1");
-    h.put(new Integer(0x70000020), "Amplifier Offset B/C 2");
-    h.put(new Integer(0x70000021), "Spectral Scan Channels");
-    h.put(new Integer(0x70000022), "SPI Wavelength Start");
-    h.put(new Integer(0x70000023), "SPI Wavelength End");
-    h.put(new Integer(0x70000026), "Dye Name");
-    h.put(new Integer(0xd0000014), "Dye Name");
-    h.put(new Integer(0x70000027), "Dye Folder");
-    h.put(new Integer(0xd0000015), "Dye Folder");
-    h.put(new Integer(0x90000003), "Wavelength");
-    h.put(new Integer(0x90000006), "Power B/C 1");
-    h.put(new Integer(0x90000007), "Power B/C 2");
-    h.put(new Integer(0xb0000001), "Filter Set");
-    h.put(new Integer(0xb0000002), "Filter");
-    h.put(new Integer(0xd0000004), "Color");
-    h.put(new Integer(0xd0000005), "Sample Type");
-    h.put(new Integer(0xd0000006), "Bits Per Sample");
-    h.put(new Integer(0xd0000007), "Ratio Type");
-    h.put(new Integer(0xd0000008), "Ratio Track 1");
-    h.put(new Integer(0xd0000009), "Ratio Track 2");
-    h.put(new Integer(0xd000000a), "Ratio Channel 1");
-    h.put(new Integer(0xd000000b), "Ratio Channel 2");
-    h.put(new Integer(0xd000000c), "Ratio Const. 1");
-    h.put(new Integer(0xd000000d), "Ratio Const. 2");
-    h.put(new Integer(0xd000000e), "Ratio Const. 3");
-    h.put(new Integer(0xd000000f), "Ratio Const. 4");
-    h.put(new Integer(0xd0000010), "Ratio Const. 5");
-    h.put(new Integer(0xd0000011), "Ratio Const. 6");
-    h.put(new Integer(0xd0000012), "Ratio First Images 1");
-    h.put(new Integer(0xd0000013), "Ratio First Images 2");
-    h.put(new Integer(0xd0000016), "Spectrum");
-    h.put(new Integer(0x12000003), "Interval");
-    return h;
+  private static ImmutableMap<Integer, String> createKeys() {
+    final Builder<Integer, String> h = ImmutableMap.builder();
+    h.put(0x10000001, "Name");
+    h.put(0x4000000c, "Name");
+    h.put(0x50000001, "Name");
+    h.put(0x90000001, "Name");
+    h.put(0x90000005, "Detection Channel Name");
+    h.put(0xb0000003, "Name");
+    h.put(0xd0000001, "Name");
+    h.put(0x12000001, "Name");
+    h.put(0x14000001, "Name");
+    h.put(0x10000002, "Description");
+    h.put(0x14000002, "Description");
+    h.put(0x10000003, "Notes");
+    h.put(0x10000004, "Objective");
+    h.put(0x10000005, "Processing Summary");
+    h.put(0x10000006, "Special Scan Mode");
+    h.put(0x10000007, "Scan Type");
+    h.put(0x10000008, "Scan Mode");
+    h.put(0x10000009, "Number of Stacks");
+    h.put(0x1000000a, "Lines Per Plane");
+    h.put(0x1000000b, "Samples Per Line");
+    h.put(0x1000000c, "Planes Per Volume");
+    h.put(0x1000000d, "Images Width");
+    h.put(0x1000000e, "Images Height");
+    h.put(0x1000000f, "Number of Planes");
+    h.put(0x10000010, "Number of Stacks");
+    h.put(0x10000011, "Number of Channels");
+    h.put(0x10000012, "Linescan XY Size");
+    h.put(0x10000013, "Scan Direction");
+    h.put(0x10000014, "Time Series");
+    h.put(0x10000015, "Original Scan Data");
+    h.put(0x10000016, "Zoom X");
+    h.put(0x10000017, "Zoom Y");
+    h.put(0x10000018, "Zoom Z");
+    h.put(0x10000019, "Sample 0X");
+    h.put(0x1000001a, "Sample 0Y");
+    h.put(0x1000001b, "Sample 0Z");
+    h.put(0x1000001c, "Sample Spacing");
+    h.put(0x1000001d, "Line Spacing");
+    h.put(0x1000001e, "Plane Spacing");
+    h.put(0x1000001f, "Plane Width");
+    h.put(0x10000020, "Plane Height");
+    h.put(0x10000021, "Volume Depth");
+    h.put(0x10000034, "Rotation");
+    h.put(0x10000035, "Precession");
+    h.put(0x10000036, "Sample 0Time");
+    h.put(0x10000037, "Start Scan Trigger In");
+    h.put(0x10000038, "Start Scan Trigger Out");
+    h.put(0x10000039, "Start Scan Event");
+    h.put(0x10000040, "Start Scan Time");
+    h.put(0x10000041, "Stop Scan Trigger In");
+    h.put(0x10000042, "Stop Scan Trigger Out");
+    h.put(0x10000043, "Stop Scan Event");
+    h.put(0x10000044, "Stop Scan Time");
+    h.put(0x10000045, "Use ROIs");
+    h.put(0x10000046, "Use Reduced Memory ROIs");
+    h.put(0x10000047, "User");
+    h.put(0x10000048, "Use B/C Correction");
+    h.put(0x10000049, "Position B/C Contrast 1");
+    h.put(0x10000050, "Position B/C Contrast 2");
+    h.put(0x10000051, "Interpolation Y");
+    h.put(0x10000052, "Camera Binning");
+    h.put(0x10000053, "Camera Supersampling");
+    h.put(0x10000054, "Camera Frame Width");
+    h.put(0x10000055, "Camera Frame Height");
+    h.put(0x10000056, "Camera Offset X");
+    h.put(0x10000057, "Camera Offset Y");
+    h.put(0x40000001, "Multiplex Type");
+    h.put(0x40000002, "Multiplex Order");
+    h.put(0x40000003, "Sampling Mode");
+    h.put(0x40000004, "Sampling Method");
+    h.put(0x40000005, "Sampling Number");
+    h.put(0x40000006, "Acquire");
+    h.put(0x50000002, "Acquire");
+    h.put(0x7000000b, "Acquire");
+    h.put(0x90000004, "Acquire");
+    h.put(0xd0000017, "Acquire");
+    h.put(0x40000007, "Sample Observation Time");
+    h.put(0x40000008, "Time Between Stacks");
+    h.put(0x4000000d, "Collimator 1 Name");
+    h.put(0x4000000e, "Collimator 1 Position");
+    h.put(0x4000000f, "Collimator 2 Name");
+    h.put(0x40000010, "Collimator 2 Position");
+    h.put(0x40000011, "Is Bleach Track");
+    h.put(0x40000012, "Bleach After Scan Number");
+    h.put(0x40000013, "Bleach Scan Number");
+    h.put(0x40000014, "Trigger In");
+    h.put(0x12000004, "Trigger In");
+    h.put(0x14000003, "Trigger In");
+    h.put(0x40000015, "Trigger Out");
+    h.put(0x12000005, "Trigger Out");
+    h.put(0x14000004, "Trigger Out");
+    h.put(0x40000016, "Is Ratio Track");
+    h.put(0x40000017, "Bleach Count");
+    h.put(0x40000018, "SPI Center Wavelength");
+    h.put(0x40000019, "Pixel Time");
+    h.put(0x40000020, "ID Condensor Frontlens");
+    h.put(0x40000021, "Condensor Frontlens");
+    h.put(0x40000022, "ID Field Stop");
+    h.put(0x40000023, "Field Stop Value");
+    h.put(0x40000024, "ID Condensor Aperture");
+    h.put(0x40000025, "Condensor Aperture");
+    h.put(0x40000026, "ID Condensor Revolver");
+    h.put(0x40000027, "Condensor Revolver");
+    h.put(0x40000028, "ID Transmission Filter 1");
+    h.put(0x40000029, "ID Transmission 1");
+    h.put(0x40000030, "ID Transmission Filter 2");
+    h.put(0x40000031, "ID Transmission 2");
+    h.put(0x40000032, "Repeat Bleach");
+    h.put(0x40000033, "Enable Spot Bleach Pos");
+    h.put(0x40000034, "Spot Bleach Position X");
+    h.put(0x40000035, "Spot Bleach Position Y");
+    h.put(0x40000036, "Bleach Position Z");
+    h.put(0x50000003, "Power");
+    h.put(0x90000002, "Power");
+    h.put(0x70000003, "Detector Gain");
+    h.put(0x70000005, "Amplifier Gain");
+    h.put(0x70000007, "Amplifier Offset");
+    h.put(0x70000009, "Pinhole Diameter");
+    h.put(0x7000000c, "Detector Name");
+    h.put(0x7000000d, "Amplifier Name");
+    h.put(0x7000000e, "Pinhole Name");
+    h.put(0x7000000f, "Filter Set Name");
+    h.put(0x70000010, "Filter Name");
+    h.put(0x70000013, "Integrator Name");
+    h.put(0x70000014, "Detection Channel Name");
+    h.put(0x70000015, "Detector Gain B/C 1");
+    h.put(0x70000016, "Detector Gain B/C 2");
+    h.put(0x70000017, "Amplifier Gain B/C 1");
+    h.put(0x70000018, "Amplifier Gain B/C 2");
+    h.put(0x70000019, "Amplifier Offset B/C 1");
+    h.put(0x70000020, "Amplifier Offset B/C 2");
+    h.put(0x70000021, "Spectral Scan Channels");
+    h.put(0x70000022, "SPI Wavelength Start");
+    h.put(0x70000023, "SPI Wavelength End");
+    h.put(0x70000026, "Dye Name");
+    h.put(0xd0000014, "Dye Name");
+    h.put(0x70000027, "Dye Folder");
+    h.put(0xd0000015, "Dye Folder");
+    h.put(0x90000003, "Wavelength");
+    h.put(0x90000006, "Power B/C 1");
+    h.put(0x90000007, "Power B/C 2");
+    h.put(0xb0000001, "Filter Set");
+    h.put(0xb0000002, "Filter");
+    h.put(0xd0000004, "Color");
+    h.put(0xd0000005, "Sample Type");
+    h.put(0xd0000006, "Bits Per Sample");
+    h.put(0xd0000007, "Ratio Type");
+    h.put(0xd0000008, "Ratio Track 1");
+    h.put(0xd0000009, "Ratio Track 2");
+    h.put(0xd000000a, "Ratio Channel 1");
+    h.put(0xd000000b, "Ratio Channel 2");
+    h.put(0xd000000c, "Ratio Const. 1");
+    h.put(0xd000000d, "Ratio Const. 2");
+    h.put(0xd000000e, "Ratio Const. 3");
+    h.put(0xd000000f, "Ratio Const. 4");
+    h.put(0xd0000010, "Ratio Const. 5");
+    h.put(0xd0000011, "Ratio Const. 6");
+    h.put(0xd0000012, "Ratio First Images 1");
+    h.put(0xd0000013, "Ratio First Images 2");
+    h.put(0xd0000016, "Spectrum");
+    h.put(0x12000003, "Interval");
+    return h.build();
   }
 
   private Integer readEntry() throws IOException {
-    return new Integer(in.readInt());
+    return in.readInt();
   }
 
   private Object readValue() throws IOException {
@@ -2088,11 +2148,11 @@ public class ZeissLSMReader extends FormatReader {
 
     switch (blockType) {
       case TYPE_LONG:
-        return new Long(in.readInt());
+        return in.readInt();
       case TYPE_RATIONAL:
-        return new Double(in.readDouble());
+        return in.readDouble();
       case TYPE_ASCII:
-        String s = in.readString(dataSize).trim();
+        String s = in.readByteToString(dataSize).trim();
         StringBuffer sb = new StringBuffer();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));
@@ -2127,16 +2187,16 @@ public class ZeissLSMReader extends FormatReader {
           data = in.readString(dataSize);
           break;
         case TYPE_LONG:
-          data = new Integer(in.readInt());
+          data = in.readInt();
           break;
         case TYPE_RATIONAL:
-          data = new Double(in.readDouble());
+          data = in.readDouble();
           break;
         case TYPE_DATE:
-          data = new Long(in.readLong());
+          data = in.readLong();
           break;
         case TYPE_BOOLEAN:
-          data = new Boolean(in.readInt() == 0);
+          data = in.readInt() == 0;
           break;
       }
 
@@ -2158,7 +2218,7 @@ public class ZeissLSMReader extends FormatReader {
   // -- Helper classes --
 
   class SubBlock {
-    public Hashtable<Integer, Object> blockData;
+    public Map<Integer, Object> blockData;
     public boolean acquire = true;
 
     public SubBlock() {
@@ -2171,30 +2231,30 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     protected int getIntValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1;
       return !(o instanceof Number) ? -1 : ((Number) o).intValue();
     }
 
     protected float getFloatValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1f;
       return !(o instanceof Number) ? -1f : ((Number) o).floatValue();
     }
 
     protected double getDoubleValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       if (o == null) return -1d;
       return !(o instanceof Number) ? -1d : ((Number) o).doubleValue();
     }
 
     protected String getStringValue(int key) {
-      Object o = blockData.get(new Integer(key));
+      Object o = blockData.get(key);
       return o == null ? null : o.toString();
     }
 
     protected void read() throws IOException {
-      blockData = new Hashtable<Integer, Object>();
+      blockData = new HashMap<Integer, Object>();
       Integer entry = readEntry();
       Object value = readValue();
       while (value != null && in.getFilePointer() < in.length()) {
@@ -2221,7 +2281,7 @@ public class ZeissLSMReader extends FormatReader {
           }
         }
       }
-      addGlobalMetaList(prefix + " Acquire", new Boolean(acquire));
+      addGlobalMetaList(prefix + " Acquire", acquire);
     }
   }
 
@@ -2236,6 +2296,7 @@ public class ZeissLSMReader extends FormatReader {
     public Double lensNA;
     public Boolean iris;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       description = getStringValue(RECORDING_DESCRIPTION);
@@ -2285,7 +2346,7 @@ public class ZeissLSMReader extends FormatReader {
       immersion = next < tokens.length ? tokens[next++] : "Unknown";
       iris = Boolean.FALSE;
       if (next < tokens.length) {
-        iris = new Boolean(tokens[next++].trim().equalsIgnoreCase("iris"));
+        iris = tokens[next++].trim().equalsIgnoreCase("iris");
       }
     }
   }
@@ -2294,6 +2355,7 @@ public class ZeissLSMReader extends FormatReader {
     public String medium, type, model;
     public Double power;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       model = getStringValue(LASER_NAME);
@@ -2330,6 +2392,7 @@ public class ZeissLSMReader extends FormatReader {
   class Track extends SubBlock {
     public Double timeIncrement;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       timeIncrement = getDoubleValue(TRACK_TIME_BETWEEN_STACKS);
@@ -2343,11 +2406,12 @@ public class ZeissLSMReader extends FormatReader {
     public String filter, filterSet;
     public String channelName;
 
+    @Override
     protected void read() throws IOException {
       super.read();
-      pinhole = new Double(getDoubleValue(CHANNEL_PINHOLE_DIAMETER));
-      gain = new Double(getDoubleValue(CHANNEL_DETECTOR_GAIN));
-      amplificationGain = new Double(getDoubleValue(CHANNEL_AMPLIFIER_GAIN));
+      pinhole = getDoubleValue(CHANNEL_PINHOLE_DIAMETER);
+      gain = getDoubleValue(CHANNEL_DETECTOR_GAIN);
+      amplificationGain = getDoubleValue(CHANNEL_AMPLIFIER_GAIN);
       filter = getStringValue(CHANNEL_FILTER);
       if (filter != null) {
         filter = filter.trim();
@@ -2363,19 +2427,20 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   class IlluminationChannel extends SubBlock {
-    public Integer wavelength;
+    public Double wavelength;
     public Double attenuation;
     public String name;
 
+    @Override
     protected void read() throws IOException {
       super.read();
-      wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
-      attenuation = new Double(getDoubleValue(ILLUM_CHANNEL_ATTENUATION));
+      wavelength = getDoubleValue(ILLUM_CHANNEL_WAVELENGTH);
+      attenuation = getDoubleValue(ILLUM_CHANNEL_ATTENUATION);
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
 
       name = getStringValue(ILLUM_CHANNEL_NAME);
       try {
-        wavelength = new Integer(name);
+        wavelength = new Double(name);
       }
       catch (NumberFormatException e) { }
     }
@@ -2384,6 +2449,7 @@ public class ZeissLSMReader extends FormatReader {
   class DataChannel extends SubBlock {
     public String name;
 
+    @Override
     protected void read() throws IOException {
       super.read();
       name = getStringValue(DATA_CHANNEL_NAME);
@@ -2401,6 +2467,7 @@ public class ZeissLSMReader extends FormatReader {
   class BeamSplitter extends SubBlock {
     public String filter, filterSet;
 
+    @Override
     protected void read() throws IOException {
       super.read();
 

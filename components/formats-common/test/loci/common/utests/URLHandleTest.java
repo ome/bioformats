@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,8 +35,11 @@ package loci.common.utests;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.HandleException;
 import loci.common.URLHandle;
 
@@ -46,29 +49,26 @@ import org.testng.annotations.Test;
 /**
  * Unit tests for the loci.common.URLHandle class.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/URLHandleTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/URLHandleTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @see loci.common.URLHandle
  */
 public class URLHandleTest {
 
-  // -- Constants --
-
-  /** The contents are "hello, world!". */
-  private static final String WEBSITE =
-    "http://dev.loci.wisc.edu/hello-world";
-
   // -- Fields --
 
   private URLHandle fileHandle;
+  private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
   // -- Setup methods --
 
   @BeforeMethod
   public void setup() throws IOException {
-    fileHandle = new URLHandle(WEBSITE);
+    File tmpFile = File.createTempFile("urlhandle", "tmp");
+    tmpFile.deleteOnExit();
+    FileOutputStream out = new FileOutputStream(tmpFile);
+    out.write("hello, world!\n".getBytes(Constants.ENCODING));
+    out.close();
+    String path = tmpFile.getAbsolutePath();
+    fileHandle = new URLHandle((IS_WINDOWS ? "file:/" : "file://") + path);
   }
 
   // -- Test methods --

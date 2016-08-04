@@ -2,10 +2,11 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -32,6 +33,9 @@ classdef TestBfGetPlane < ReaderTest
         y
         width
         height
+        bpp
+        sgn
+        fp
     end
     
     methods
@@ -49,9 +53,24 @@ classdef TestBfGetPlane < ReaderTest
         end
         
         % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfGetPlane(), 'MATLAB:minrhs');
+        end
+        
         function testReaderClass(self)
-            assertExceptionThrown(@() bfGetPlane(0, self.iPlane),...
+            assertExceptionThrown(@() bfGetPlane([]),...
                 'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidReader(self)
+            self.reader.close();
+            assertExceptionThrown(@() bfGetPlane(self.reader),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInputPlane(self)
+            f = @() bfGetPlane(self.reader);
+            assertExceptionThrown(f, 'MATLAB:InputParser:notEnoughInputs');
         end
         
         function checkInvalidInput(self)
@@ -59,25 +78,21 @@ classdef TestBfGetPlane < ReaderTest
             assertExceptionThrown(f,...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
-
-        function testInvalidReader(self)
-            self.reader.close();
-            self.checkInvalidInput();
-        end
         
         function testZeroPlane(self)
-            self.iPlane = 0;
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, 0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testOversizedPlaneIndex(self)
-            self.iPlane = self.reader.getImageCount()+1;
-            self.checkInvalidInput();
+            nmax = self.reader.getImageCount();
+            assertExceptionThrown(@() bfGetPlane(self.reader, nmax + 1),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testPlaneIndexArray(self)
-            self.iPlane = [1 1];
-            self.checkInvalidInput();
+            assertExceptionThrown(@() bfGetPlane(self.reader, [1 1]),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         %% Tile input tests
@@ -138,7 +153,7 @@ classdef TestBfGetPlane < ReaderTest
             self.height = self.sizeY;
             self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
-
+        
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
@@ -248,6 +263,24 @@ classdef TestBfGetPlane < ReaderTest
             self.height = 100;
             self.checkTile()
         end
+               
+        function testJavaMethod(self)
+            pixelType = self.reader.getPixelType();
+            
+            self.bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', pixelType);
+            self.fp = javaMethod('isFloatingPoint', 'loci.formats.FormatTools', pixelType);
+            self.sgn = javaMethod('isSigned', 'loci.formats.FormatTools', pixelType);
+            
+            bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
+            fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
+            sgn = loci.formats.FormatTools.isSigned(pixelType);
+            
+            assertEqual(self.bpp, bpp);
+            assertEqual(self.fp,fp);
+            assertEqual(self.sgn,sgn);
+            
+        end
 
+        
     end
 end

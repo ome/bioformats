@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,8 +27,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -40,16 +40,13 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-
+import ome.units.quantity.Length;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/L2DReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/L2DReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class L2DReader extends FormatReader {
 
@@ -64,7 +61,7 @@ public class L2DReader extends FormatReader {
   private String[][] tiffs;
 
   /** List of all metadata files in the dataset. */
-  private Vector[] metadataFiles;
+  private List<String>[] metadataFiles;
 
   private MinimalTiffReader reader;
   private int[] tileWidth, tileHeight;
@@ -84,6 +81,7 @@ public class L2DReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) {
       return super.isThisType(name, open);
@@ -107,6 +105,7 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = (int) Math.min(512, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -114,14 +113,8 @@ public class L2DReader extends FormatReader {
     return check.indexOf(LICOR_MAGIC_STRING) >= 0;
   }
 
-  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
-  public int getRequiredDirectories(String[] files)
-    throws FormatException, IOException
-  {
-    return 1;
-  }
-
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
@@ -129,6 +122,7 @@ public class L2DReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -139,14 +133,16 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (metadataFiles != null && getSeries() < metadataFiles.length) {
       files.addAll(metadataFiles[getSeries()]);
@@ -160,6 +156,7 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (reader != null) reader.close(fileOnly);
@@ -173,12 +170,14 @@ public class L2DReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tileWidth[getSeries()];
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tileHeight[getSeries()];
@@ -187,6 +186,7 @@ public class L2DReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // NB: This format cannot be imported using omebf.
     // See Trac ticket #266 for details.
@@ -215,9 +215,9 @@ public class L2DReader extends FormatReader {
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
-      Hashtable globalMetadata = r.getGlobalMetadata();
-      for (Object key : globalMetadata.keySet()) {
-        addGlobalMeta(key.toString(), globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = r.getGlobalMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
       r.close();
       reader = new MinimalTiffReader();
@@ -231,7 +231,7 @@ public class L2DReader extends FormatReader {
 
     // remove scan names that do not correspond to existing directories
 
-    Vector<String> validScans = new Vector<String>();
+    final List<String> validScans = new ArrayList<String>();
     for (String s : scans) {
       Location scanDir = new Location(parent, s);
       if (scanDir.exists() && scanDir.isDirectory()) validScans.add(s);
@@ -241,7 +241,7 @@ public class L2DReader extends FormatReader {
     // read metadata from each scan
 
     tiffs = new String[scans.length][];
-    metadataFiles = new Vector[scans.length];
+    metadataFiles = new List[scans.length];
 
     core = new ArrayList<CoreMetadata>(scans.length);
 
@@ -258,7 +258,7 @@ public class L2DReader extends FormatReader {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
       setSeries(i);
-      metadataFiles[i] = new Vector();
+      metadataFiles[i] = new ArrayList<String>();
       String scanName = scans[i] + ".scn";
       Location scanDir = new Location(parent, scans[i]);
 
@@ -355,8 +355,8 @@ public class L2DReader extends FormatReader {
           for (int q=0; q<waves.length; q++) {
             String laser = MetadataTools.createLSID("LightSource", 0, q);
             store.setLaserID(laser, 0, q);
-            Integer wave = new Integer(waves[q].trim());
-            PositiveInteger wavelength = FormatTools.getWavelength(wave);
+            Double wave = new Double(waves[q].trim());
+            Length wavelength = FormatTools.getWavelength(wave);
             if (wavelength != null) {
               store.setLaserWavelength(wavelength, 0, q);
             }

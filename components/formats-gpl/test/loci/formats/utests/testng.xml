@@ -2,7 +2,7 @@
   #%L
   OME Bio-Formats package for reading and converting biological file formats.
   %%
-  Copyright (C) 2005 - 2014 Open Microscopy Environment:
+  Copyright (C) 2005 - 2015 Open Microscopy Environment:
     - Board of Regents of the University of Wisconsin-Madison
     - Glencoe Software, Inc.
     - University of Dundee
@@ -29,13 +29,14 @@
         <classes>
             <class name="loci.formats.utests.MDBServiceTest"/>
             <class name="loci.formats.utests.NetCDFServiceTest"/>
+            <class name="loci.formats.utests.JHDFServiceTest"/>
             <class name="loci.formats.utests.POIServiceTest"/>
         </classes>
         <packages>
             <package name="loci.formats.utests.xml"/>
         </packages>
     </test>
-    <test name="2010-04SchemaModelObjects">
+    <test name="CurrentSchemaModelObjects">
         <groups>
             <run>
                 <exclude name="disabled"/>
@@ -44,10 +45,10 @@
         <parameter name="mockClassName"
                    value="loci.formats.utests.ObjectBasedOMEModelMock"/>
         <classes>
-            <class name="loci.formats.utests.InOut201004Test"/>
+            <class name="loci.formats.utests.InOutCurrentTest"/>
         </classes>
     </test>
-    <test name="2010-04SchemaIMetadata">
+    <test name="CurrentSchemaIMetadata">
         <groups>
             <run>
                 <exclude name="disabled"/>
@@ -56,7 +57,7 @@
         <parameter name="mockClassName"
                    value="loci.formats.utests.IMetadataBasedOMEModelMock"/>
         <classes>
-            <class name="loci.formats.utests.InOut201004Test"/>
+            <class name="loci.formats.utests.InOutCurrentTest"/>
         </classes>
     </test>
     <test name="XMLAnnotation">

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,7 +28,9 @@ package loci.formats.in;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 
 import loci.common.DateTools;
@@ -44,18 +46,17 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
 
 /**
  * FEITiffReader is the file format reader for TIFF files produced by various
  * FEI software.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/FEITiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/FEITiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FEITiffReader extends BaseTiffReader {
 
@@ -63,6 +64,7 @@ public class FEITiffReader extends BaseTiffReader {
 
   public static final int SFEG_TAG = 34680;
   public static final int HELIOS_TAG = 34682;
+  public static final int TITAN_TAG = 34683;
 
   private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss a";
   private static final double MAG_MULTIPLIER = 0.0024388925;
@@ -74,7 +76,7 @@ public class FEITiffReader extends BaseTiffReader {
   private String date;
   private String userName;
   private String microscopeModel;
-  private Double stageX, stageY, stageZ;
+  private Length stageX, stageY, stageZ;
   private Double sizeX, sizeY, timeIncrement;
   private ArrayList<String> detectors;
   private Double magnification;
@@ -90,14 +92,16 @@ public class FEITiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.containsKey(SFEG_TAG) || ifd.containsKey(HELIOS_TAG);
+    return ifd.containsKey(SFEG_TAG) || ifd.containsKey(HELIOS_TAG) || ifd.containsKey(TITAN_TAG);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -116,15 +120,44 @@ public class FEITiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
     boolean helios = ifds.get(0).containsKey(HELIOS_TAG);
-    addGlobalMeta("Software", helios ? "Helios NanoLab" : "S-FEG");
+    boolean titan = ifds.get(0).containsKey(TITAN_TAG);
 
-    String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
+    // Helios etc data might have a stray Titan tag
+    if (titan && ifds.get(0).getIFDTextValue(TITAN_TAG).trim().isEmpty()) {
+      titan = false;
+    }
+
+    // Titan data (always?) has an empty Helios tag as well, so the Titan tag is checked first
+    String software = "S-FEG";
+    if (titan) {
+      software = "Titan";
+    }
+    else if (helios) {
+      software = "Helios NanoLab";
+    }
+    addGlobalMeta("Software", software);
+
+    int tagKey = SFEG_TAG;
+    if (titan) {
+      tagKey = TITAN_TAG;
+    }
+    else if (helios) {
+      tagKey = HELIOS_TAG;
+    }
+
+    String tag = ifds.get(0).getIFDTextValue(tagKey);
+    if (tag == null) {
+      return;
+    }
     tag = tag.trim();
-
+    if (tag.isEmpty()) {
+      return;//fall back to regular reader
+    }
     // store metadata for later conversion to OME-XML
     if (tag.startsWith("<")) {
       XMLTools.parseXML(tag, new FEIHandler());
@@ -164,24 +197,30 @@ public class FEITiffReader extends BaseTiffReader {
             IniTable stageTable = ini.getTable("Stage");
 
             if (beamX != null) {
-              stageX = new Double(beamX);
+              final Double number = Double.valueOf(beamX);
+              stageX = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageX = new Double(stageTable.get("StageX"));
+              final Double number = Double.valueOf(stageTable.get("StageX"));
+              stageX = new Length(number, UNITS.REFERENCEFRAME);
             }
 
             if (beamY != null) {
-              stageY = new Double(beamY);
+              final Double number = Double.valueOf(beamY);
+              stageY = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageY = new Double(stageTable.get("StageY"));
+              final Double number = Double.valueOf(stageTable.get("StageY"));
+              stageY = new Length(number, UNITS.REFERENCEFRAME);
             }
 
             if (beamZ != null) {
-              stageZ = new Double(beamZ);
+              final Double number = Double.valueOf(beamZ);
+              stageZ = new Length(number, UNITS.REFERENCEFRAME);
             }
             else if (stageTable != null) {
-              stageZ = new Double(stageTable.get("StageZ"));
+              final Double number = Double.valueOf(stageTable.get("StageZ"));
+              stageZ = new Length(number, UNITS.REFERENCEFRAME);
             }
           }
 
@@ -202,8 +241,10 @@ public class FEITiffReader extends BaseTiffReader {
         sizeY = new Double(magnification) * MAG_MULTIPLIER;
 
         IniTable scanTable = ini.getTable("Vector.Sysscan");
-        stageX = new Double(scanTable.get("PositionX"));
-        stageY = new Double(scanTable.get("PositionY"));
+        final Double posX = Double.valueOf(scanTable.get("PositionX"));
+        final Double posY = Double.valueOf(scanTable.get("PositionY"));
+        stageX = new Length(posX, UNITS.REFERENCEFRAME);
+        stageY = new Length(posY, UNITS.REFERENCEFRAME);
 
         IniTable detectorTable = ini.getTable("Vector.Video.Detectors");
         int detectorCount =
@@ -223,6 +264,7 @@ public class FEITiffReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
@@ -277,8 +319,8 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
 
-      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
-      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      Length physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      Length physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
 
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(physicalSizeX, 0);
@@ -286,7 +328,9 @@ public class FEITiffReader extends BaseTiffReader {
       if (physicalSizeY != null) {
         store.setPixelsPhysicalSizeY(physicalSizeY, 0);
       }
-      store.setPixelsTimeIncrement(timeIncrement, 0);
+      if (timeIncrement != null) {
+        store.setPixelsTimeIncrement(new Time(timeIncrement, UNITS.S), 0);
+      }
     }
   }
 
@@ -295,29 +339,50 @@ public class FEITiffReader extends BaseTiffReader {
   class FEIHandler extends BaseHandler {
     private String key, value;
     private String qName;
+    private Deque<String> parentNames = new ArrayDeque<String>();
 
     // -- DefaultHandler API methods --
 
+    @Override
     public void characters(char[] data, int start, int len) {
+      String d = new String(data, start, len).trim();
+      if (d.isEmpty()) {
+        return;
+      }
+      String parent = parentNames.peek();
+      if (parent == null) {
+        return;
+      }
+      if (parent.equals(qName)) {
+        parentNames.pop();
+        parent = parentNames.peek();
+      }
       if (qName.equals("Label")) {
-        key = new String(data, start, len);
+        key = d;
         value = null;
       }
       else if (qName.equals("Value")) {
-        value = new String(data, start, len);
+        value = d;
+      }
+      else {
+        key = parent + " " + qName;
+        value = d;
       }
 
       if (key != null && value != null) {
         addGlobalMeta(key, value);
 
-        if (key.equals("Stage X")) {
-          stageX = new Double(value);
+        if (key.equals("Stage X") || ("StagePosition".equals(parent) && key.equals("X"))) {
+          final Double number = Double.valueOf(value);
+          stageX = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Y")) {
-          stageY = new Double(value);
+        else if (key.equals("Stage Y") || ("StagePosition".equals(parent) && key.equals("Y"))) {
+          final Double number = Double.valueOf(value);
+          stageY = new Length(number, UNITS.REFERENCEFRAME);
         }
-        else if (key.equals("Stage Z")) {
-          stageZ = new Double(value);
+        else if (key.equals("Stage Z") || ("StagePosition".equals(parent) && key.equals("Z"))) {
+          final Double number = Double.valueOf(value);
+          stageZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (key.equals("Microscope")) {
           microscopeModel = value;
@@ -328,13 +393,33 @@ public class FEITiffReader extends BaseTiffReader {
         else if (key.equals("Magnification")) {
           magnification = new Double(value);
         }
+        // physical sizes stored in meters, but usually too small to be used without converting
+        else if (key.endsWith("X") && "PixelSize".equals(parent)) {
+          sizeX = new Double(value) * 1000000;
+        }
+        else if (key.endsWith("Y") && "PixelSize".equals(parent)) {
+          sizeY = new Double(value) * 1000000;
+        }
       }
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       this.qName = qName;
+      parentNames.push(qName);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName)
+    {
+      if (parentNames.size() > 0) {
+        String name = parentNames.peek();
+        if (qName.equals(name)) {
+          parentNames.pop();
+        }
+      }
     }
 
   }

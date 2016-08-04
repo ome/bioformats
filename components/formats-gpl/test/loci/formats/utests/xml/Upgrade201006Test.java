@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,19 +34,20 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.formats.FormatTools;
 
 import ome.xml.model.Image;
 import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/Upgrade201006Test.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/Upgrade201006Test.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Colin Blackburn <cblackburn at dundee dot ac dot uk>
  */
@@ -76,7 +77,7 @@ public class Upgrade201006Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2013-06", service.getOMEXMLVersion(metadata));
+    assertEquals("2015-01", service.getOMEXMLVersion(metadata));
   }
 
   @Test
@@ -85,8 +86,9 @@ public class Upgrade201006Test {
     Image image = ome.getImage(0);
     Pixels pixels = image.getPixels();
     // Pixels physical sizes are restricted to positive values
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeX());
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeY());
+    PositiveFloat positiveFloatValue = new PositiveFloat(10000.0);
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeX());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeY());
     assertNull(pixels.getPhysicalSizeZ());
   }
 

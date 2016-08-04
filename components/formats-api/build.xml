@@ -11,4 +11,21 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+
+  <target name="test" depends="jar, compile-tests" description="run tests">
+    <!-- NOTE: Overrides default "test" target from java.xml -->
+    <copy tofile="${build.dir}/testng.xml"
+      file="${testng.xml.template}" overwrite="true"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
 </project>

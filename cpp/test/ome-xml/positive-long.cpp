@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,6 +36,8 @@
  * #L%
  */
 
+#include <boost/range/size.hpp>
+
 #include <ome/xml/model/primitives/PositiveLong.h>
 
 #include "constrained-numeric.h"
@@ -48,15 +50,15 @@ namespace
 {
 
   NumericTest<PositiveLong>::test_str init_strings[] =
-    { // str           pos           strpass pospass
-      {"743544628932", 743544628932, true,   true},
-      {"23",                     23, true,   true},
-      {"-42",                   -42, false,  false},
-      {"1",                     -53, true,   false},
-      {"82",                     82, true,   true},
-      {"0",                       0, false,  false},
-      {"1",                       0, true,   false},
-      {"invalid",                 1, false,  true},
+    { // str        pos         strpass pospass
+      {"743544628", 743544628L, true,   true},
+      {"23",                23, true,   true},
+      {"-42",              -42, false,  false},
+      {"1",                -53, true,   false},
+      {"82",                82, true,   true},
+      {"0",                  0, false,  false},
+      {"1",                  0, true,   false},
+      {"invalid",            1, false,  true},
     };
 
   NumericTest<PositiveLong>::test_op init_ops[] =
@@ -125,7 +127,14 @@ namespace
       {   43,   43,          0, MODULO,           false, true,  false},
       {  901,  900,          1, MODULO_ASSIGN,    true,  false, false},
       {  901,  900,          2, MODULO_ASSIGN,    false, false, false},
-      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false}
+      {   43,   43,          0, MODULO_ASSIGN,    false, true,  false},
+
+      {  33,     1,         34, INCREMENT,        true,  false, false},
+      {  33,     1,         33, INCREMENT,        false, false, false},
+      {   1,     1,          2, INCREMENT,        true,  false, false},
+      {  33,     1,         32, DECREMENT,        true,  false, false},
+      {  33,     1,         33, DECREMENT,        false, false, false},
+      {   1,     1,          0, DECREMENT,        false, true,  false}
     };
 
 }
@@ -133,7 +142,7 @@ namespace
 template<>
 const std::vector<NumericTest<PositiveLong>::test_str>
 NumericTest<PositiveLong>::strings(init_strings,
-                                   init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+                                   init_strings + boost::size(init_strings));
 
 template<>
 const std::vector<NumericTest<PositiveLong>::test_op>

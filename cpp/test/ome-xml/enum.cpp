@@ -2,9 +2,9 @@
 #include <ome/xml/model/enums/LaserType.h>
 #include <ome/xml/model/enums/PixelType.h>
 
-#include <sstream>
+#include <ome/test/test.h>
 
-#include <gtest/gtest.h>
+#include <sstream>
 
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
@@ -51,6 +51,40 @@ TEST(Enum, LaserTypeAssign)
   ASSERT_NE(lv1, lv2);
   ASSERT_EQ(lv1, lv3);
   ASSERT_NE(lv2, lv3);
+}
+
+TEST(Enum, LaserStrings)
+{
+  const LaserType::string_map_type& strings = LaserType::strings();
+  for(LaserType::string_map_type::const_iterator i = strings.begin();
+      i != strings.end();
+      ++i)
+    {
+      LaserType l1(i->first);
+      LaserType l2(i->second);
+      ASSERT_EQ(l1, l2);
+      ASSERT_EQ(l1, i->first);
+      ASSERT_EQ(l1, i->second);
+      ASSERT_EQ(l2, i->first);
+      ASSERT_EQ(l2, i->second);
+    }
+}
+
+TEST(Enum, LaserValues)
+{
+  const LaserType::value_map_type& values = LaserType::values();
+  for(LaserType::value_map_type::const_iterator i = values.begin();
+      i != values.end();
+      ++i)
+    {
+      LaserType l1(i->first);
+      LaserType l2(i->second);
+      ASSERT_EQ(l1, l2);
+      ASSERT_EQ(l1, i->first);
+      ASSERT_EQ(l1, i->second);
+      ASSERT_EQ(l2, i->first);
+      ASSERT_EQ(l2, i->second);
+    }
 }
 
 class EnumStringParameters
@@ -153,14 +187,21 @@ EnumStringParameters string_params[] =
     EnumStringParameters("invalid3",               false, false, true)
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
-                        ::testing::ValuesIn(string_params));
 
+// This enum test is intentionally setting an invalid value, so don't
+// warn about it.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wconversion"
+#endif
 TEST(Enum, LaserTypeCreateInvalidValue)
 {
   ASSERT_THROW(LaserType(static_cast<LaserType::enum_value>(50)),
                EnumerationException);
 }
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 template<typename E>
 class EnumValueParameters
@@ -274,6 +315,30 @@ TEST_P(LaserTypeValue, StreamOutput)
   ASSERT_NE(os.str(), params.nameneg);
 }
 
+TEST_P(LaserTypeValue, StreamInput)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is(params.namepos);
+  enum_type e(params.nameneg);
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(params.valuepos, e);
+  ASSERT_NE(params.valueneg, e);
+}
+
+TEST_P(LaserTypeValue, StreamInputFail)
+{
+  const param_type& params = GetParam();
+
+  std::istringstream is("INVALID_ENUM_VALUE__");
+  enum_type e(params.value);
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(LaserType::OTHER, e); // Unchanged.
+  ASSERT_NE(params.valueneg, e);
+}
+
 typedef EnumValueParameters<LaserType> lts_param;
 lts_param lt_value_params[] =
   {
@@ -300,8 +365,6 @@ lts_param lt_value_params[] =
               "SolidState", "FreeElectron"),
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
-                        ::testing::ValuesIn(lt_value_params));
 
 template<typename E>
 void
@@ -373,3 +436,44 @@ TEST(Enum, PixelTypeInvalid)
   // No fallback to other.
   ASSERT_THROW(PixelType("Invalid"), EnumerationException);
 }
+
+TEST(Enum, PixelTypeStreamOutput)
+{
+  std::ostringstream os;
+  os << PixelType("uint32");
+  ASSERT_EQ(os.str(), "uint32");
+}
+
+TEST(Enum, PixelTypeStreamInput)
+{
+  std::istringstream is("int8");
+  PixelType e("uint16");
+  is >> e;
+  ASSERT_TRUE(!!is);
+  ASSERT_EQ(PixelType::INT8, e);
+  ASSERT_NE(PixelType::UINT16, e);
+}
+
+TEST(Enum, PixelTypeStreamInputFail)
+{
+  std::istringstream is("INVALID_ENUM_VALUE__");
+  PixelType e("uint16");
+  is >> e;
+  ASSERT_FALSE(!!is);
+  ASSERT_EQ(PixelType::UINT16, e); // Unchanged.
+}
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
+INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
+                        ::testing::ValuesIn(string_params));
+
+INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
+                        ::testing::ValuesIn(lt_value_params));

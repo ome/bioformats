@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
@@ -51,10 +52,6 @@ import loci.plugins.util.WindowTools;
 /**
  * A plugin for splitting an image stack into separate
  * channels, focal planes and/or time points.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/Slicer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/Slicer.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -165,6 +162,8 @@ public class Slicer implements PlugInFilter {
         p = new ImagePlus(title, newStacks[i]);
       }
 
+      p.setProperty(ImagePlusReader.PROP_SERIES,
+              imp.getProperty(ImagePlusReader.PROP_SERIES));
       p.setProperty("Info", imp.getProperty("Info"));
       p.setDimensions(realSizeC, realSizeZ, realSizeT);
       p.setCalibration(calibration);
@@ -222,12 +221,14 @@ public class Slicer implements PlugInFilter {
 
   // -- PlugInFilter methods --
 
+  @Override
   public int setup(String arg, ImagePlus imp) {
     this.arg = arg;
     this.imp = imp;
     return DOES_ALL + NO_CHANGES;
   }
 
+  @Override
   public void run(ImageProcessor ip) {
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
 

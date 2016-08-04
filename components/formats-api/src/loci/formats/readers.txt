@@ -6,6 +6,8 @@
 # disabled for now, as it has been causing no end of problems outside of OMERO
 #loci.formats.in.ScreenReader
 
+loci.formats.in.FilePatternReader     # pattern
+
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
 
@@ -33,6 +35,7 @@ loci.formats.in.AVIReader             # avi
 loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt
 loci.formats.in.EPSReader             # eps, epsi
+loci.formats.in.SlideBook6Reader      # sld
 loci.formats.in.SlidebookReader       # sld
 loci.formats.in.AliconaReader         # al3d
 loci.formats.in.MNGReader             # mng
@@ -85,7 +88,11 @@ loci.formats.in.FakeReader            # fake
 loci.formats.in.AFIReader             # afi
 loci.formats.in.ImspectorReader       # msr
 loci.formats.in.BioRadSCNReader       # scn
+loci.formats.in.ZeissLMSReader        # lms
 loci.formats.in.PQBinReader           # bin
+loci.formats.in.FlowSightReader       # cif
+loci.formats.in.IM3Reader             # im3
+loci.formats.in.I2IReader             # i2i
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
@@ -117,8 +124,9 @@ loci.formats.in.JPXReader             # jpx [JAI-ImageIO]
 loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
+loci.formats.in.CellH5Reader          # ch5 [JHDF]
 loci.formats.in.WlzReader	      # wlz [JWlz]
-
+loci.formats.in.VeecoReader           # hdf [NetCDF]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]

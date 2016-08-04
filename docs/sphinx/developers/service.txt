@@ -35,8 +35,7 @@ Writing a service
 -----------------
 
 -  **Interface** -- The basic form of a service is an interface which
-   inherits from
-   :source:`loci.common.services.Service <components/formats-common/src/loci/common/services/Service.java>`.
+   inherits from :javadoc:`loci.common.services.Service <loci/common/services/Service.html>`.
    Here is a very basic example using the (now removed) ``OMENotesService``
 
    ::
@@ -97,11 +96,9 @@ Writing a service
 
 -  **Registration** -- A service's interface and implementation must
    finally be *registered* with the
-   :source:`loci.common.services.ServiceFactory <components/formats-common/src/loci/common/services/ServiceFactory.java>`
-   via the
-   :source:`services.properties <components/formats-common/src/loci/common/services/Service.java>`
-   file. Following the ``OMENotesService`` again, here is an example
-   registration:
+   :javadoc:`loci.common.services.ServiceFactory <loci/common/services/ServiceFactory.html>`
+   via the :file:`services.properties` file. Following the ``OMENotesService``
+   again, here is an example registration:
 
    ::
 
@@ -109,6 +106,14 @@ Writing a service
        # OME notes service (implementation in legacy ome-notes component)
        loci.common.services.OMENotesService=loci.ome.notes.services.OMENotesServiceImpl
        ...
+
+.. seealso::
+  :source:`loci.common.services.Service <components/formats-common/src/loci/common/services/Service.java>`.
+    Source code for ``loci.common.services.Service`` interface
+
+  :source:`loci.common.services.ServiceFactory <components/formats-common/src/loci/common/services/ServiceFactory.java>`
+    Source code for ``loci.common.services.Service`` interface
+
 
 Using a service
 ---------------

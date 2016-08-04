@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,10 +43,6 @@ import java.awt.image.DataBufferShort;
  * returns DataBuffer.TYPE_USHORT.
  * This is a workaround for the fact that java.awt.image.BufferedImage does
  * not support DataBuffers with type DataBuffer.TYPE_SHORT.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/SignedShortBuffer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/SignedShortBuffer.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SignedShortBuffer extends DataBuffer {
 
@@ -97,11 +93,13 @@ public class SignedShortBuffer extends DataBuffer {
   }
 
   /* @see java.awt.image.DataBufferShort#getElem(int, int) */
+  @Override
   public int getElem(int bank, int i) {
     return helper.getElem(bank, i);
   }
 
   /* @see java.awt.image.DataBufferShort#setElem(int, int, int) */
+  @Override
   public void setElem(int bank, int i, int val) {
     helper.setElem(bank, i, val);
   }

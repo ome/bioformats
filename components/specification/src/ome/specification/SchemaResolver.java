@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -25,7 +25,7 @@
 /*
  * $Id$
  *
- *   Copyright 2006-2014 University of Dundee. All rights reserved.
+ *   Copyright 2006-2013 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
@@ -125,7 +125,8 @@ public class SchemaResolver implements LSResourceResolver
      * @param baseURI Not used by function.
      * @return The requested resource.
      */
-     public LSInput  resolveResource(
+    @Override
+    public LSInput  resolveResource(
         String type, String namespaceURI, String publicId,
         String systemId, String baseURI)
     {
@@ -134,7 +135,7 @@ public class SchemaResolver implements LSResourceResolver
         // Match the requested schema locations and create the appropriate LSInput object
         if (systemId.equals("http://www.w3.org/2001/xml.xsd"))
         {
-            theResult = makeSubstutionStream("/released-schema/additions/jar/xml.xsd", systemId);
+            theResult = makeSubstutionStream("/released-schema/external/xml.xsd", systemId);
         }
         else if (systemId.startsWith(GIT_MASTER_PATH))
         {

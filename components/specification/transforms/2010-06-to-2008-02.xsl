@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009-2014 Open Microscopy Environment
+# Copyright (C) 2009-2010 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -164,7 +164,7 @@
 				<xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
 			</xsl:for-each>
 			<xsl:attribute name="DefaultPixels">
-				<xsl:variable name="firstPixels"><xsl:for-each select="* [name(.) = 'Pixels'][1]">
+				<xsl:variable name="firstPixels"><xsl:for-each select="* [local-name(.) = 'Pixels'][1]">
 					<xsl:value-of select="@ID"/>
 				</xsl:for-each>
 				</xsl:variable>
@@ -189,7 +189,6 @@
 			<xsl:apply-templates select="* [local-name(.) = 'InstrumentRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ObjectiveSettings']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ImagingEnvironment']"/>
-
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
 					<xsl:for-each select="@* [not(name(.) = 'Color' or name(.) = 'PinholeSize')]">
@@ -283,6 +282,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'StageLabel']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ROIRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']" mode="justROI"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
 		</xsl:element>
 	</xsl:template>
@@ -356,6 +356,59 @@
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Plane']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Plane">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [(name(.) = 'TheZ' or name(.) = 'TheC' or name(.) = 'TheT')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<!-- check if planetiming can be created -->
+			<xsl:choose>
+          		<xsl:when test="./@DeltaT">
+	            <xsl:choose>
+          			<xsl:when test="./@ExposureTime">
+	            		<xsl:element name="PlaneTiming" namespace="{$newOMENS}">
+	            			<xsl:attribute name="DeltaT">
+								<xsl:value-of select="./@DeltaT"/>
+							</xsl:attribute>
+							<xsl:attribute name="ExposureTime">
+								<xsl:value-of select="./@ExposureTime"/>
+							</xsl:attribute>
+	            		</xsl:element>
+          			</xsl:when>
+        		</xsl:choose>
+          		</xsl:when>
+        	</xsl:choose>
+        	<!-- check if StageLabel can be created -->
+			<xsl:choose>
+          		<xsl:when test="./@PositionX">
+	            <xsl:choose>
+          			<xsl:when test="./@PositionY">
+          				<xsl:choose>
+          					<xsl:when test="./@PositionZ">
+			            		<xsl:element name="StagePosition" namespace="{$newOMENS}">
+			            			<xsl:attribute name="PositionX">
+										<xsl:value-of select="./@PositionX"/>
+									</xsl:attribute>
+									<xsl:attribute name="PositionY">
+										<xsl:value-of select="./@PositionY"/>
+									</xsl:attribute>
+									<xsl:attribute name="PositionZ">
+										<xsl:value-of select="./@PositionZ"/>
+									</xsl:attribute>
+			            		</xsl:element>
+			            	</xsl:when>
+			            </xsl:choose>
+          			</xsl:when>
+        		</xsl:choose>
+          		</xsl:when>
+        	</xsl:choose>
+        	<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -422,13 +475,35 @@
 		</xsl:for-each>
 	</xsl:template>
 
+	<xsl:template match="OME:MicrobeamManipulationRef" mode="justROI">
+		<xsl:comment>Add the roi used by MicrobeamManipulation</xsl:comment>
+		<xsl:variable name="theMicrobeamManipulationID">
+			<xsl:value-of select="@ID"/>
+		</xsl:variable>
+		<xsl:for-each select="//OME:MicrobeamManipulation[@ID=$theMicrobeamManipulationID]">
+				<xsl:for-each select="* [local-name(.) = 'ROIRef']">
+					<xsl:apply-templates select="."/>
+				</xsl:for-each>
+		</xsl:for-each>
+	</xsl:template>
+
 	<xsl:template match="OME:MicrobeamManipulation">
+		<xsl:for-each select="* [name(.) = 'ExperimenterRef']">
+			<xsl:element name="{name()}" namespace="{$newOMENS}">
+	    		<xsl:for-each select="@* [name(.) = 'ID']">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+			</xsl:element>
+  		</xsl:for-each>
 		<xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [name(.) = 'ID']">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -718,7 +793,6 @@
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
-			<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulation']"/>
 		</xsl:element>
 	</xsl:template>
@@ -750,7 +824,7 @@
 					<xsl:value-of select="."/>
 				</xsl:element>
 			</xsl:for-each>
-			<xsl:for-each select="@* [name(.) = 'UserName']">
+			<xsl:for-each select="@* [name(.) = 'UserName' or name(.) = 'DisplayName']">
 				<xsl:element name="OMEName" namespace="{$newOMENS}">
 					<xsl:value-of select="."/>
 				</xsl:element>

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,9 +30,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import ome.xml.model.primitives.Timestamp;
@@ -55,12 +58,11 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * TillVisionReader is the file format reader for TillVision files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TillVisionReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TillVisionReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TillVisionReader extends FormatReader {
 
@@ -73,21 +75,21 @@ public class TillVisionReader extends FormatReader {
   private static final byte[] MARKER_3 = new byte[] {(byte) 0x83, 3, 0};
 
   private static final String[] DATE_FORMATS = new String[] {
-    "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
-    "HH:mm:ss aa", "HH:mm:ss.SSS aa"};
+    "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss aa", "mm/dd/yy",
+    "HH:mm:ss aa", "HH:mm:ss aa"};
 
   // -- Fields --
 
   private String[] pixelsFiles;
-  private RandomAccessInputStream pixelsStream;
-  private Hashtable<Integer, Double> exposureTimes;
+  private transient RandomAccessInputStream pixelsStream;
+  private Map<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long[] embeddedOffset;
   private String[] infFiles;
 
-  private Vector<String> imageNames = new Vector<String>();
-  private Vector<String> types = new Vector<String>();
-  private Vector<String> dates = new Vector<String>();
+  private final List<String> imageNames = new ArrayList<String>();
+  private final List<String> types = new ArrayList<String>();
+  private final List<String> dates = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -103,6 +105,7 @@ public class TillVisionReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "vws") || checkSuffix(name, "pst")) {
       return true;
@@ -118,6 +121,7 @@ public class TillVisionReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -141,6 +145,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -158,15 +163,17 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return !new Location(id.replaceAll(".vws", ".pst")).exists();
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    Vector<String> files = new Vector<String>();
+    final List<String> files = new ArrayList<String>();
     files.add(currentId);
     if (!noPixels) {
       if (pixelsFiles[getCoreIndex()] != null) {
@@ -180,6 +187,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
@@ -187,6 +195,7 @@ public class TillVisionReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // make sure that we have the .vws file
 
@@ -201,11 +210,16 @@ public class TillVisionReader extends FormatReader {
       else if (vwsFile.isDirectory()) {
         parent = pst.getParentFile();
         String[] list = parent.list(true);
+        boolean foundVWS = false;
         for (String f : list) {
           if (checkSuffix(f, "vws")) {
             id = new Location(parent, f).getAbsolutePath();
+            foundVWS = true;
             break;
           }
+        }
+        if (!foundVWS) {
+          throw new FormatException("Could not find .vws file.");
         }
       }
       else throw new FormatException("Could not find .vws file.");
@@ -213,7 +227,7 @@ public class TillVisionReader extends FormatReader {
 
     super.initFile(id);
 
-    exposureTimes = new Hashtable<Integer, Double>();
+    exposureTimes = new HashMap<Integer, Double>();
 
     POIService poi = null;
     try {
@@ -229,7 +243,7 @@ public class TillVisionReader extends FormatReader {
 
     int nImages = 0;
 
-    Hashtable tmpSeriesMetadata = new Hashtable();
+    final Hashtable<String, Object> tmpSeriesMetadata = new Hashtable<String, Object>();
 
     for (String name : documents) {
       LOGGER.debug("Reading {}", name);
@@ -372,7 +386,7 @@ public class TillVisionReader extends FormatReader {
               }
               else if (key.equals("Exposure time [ms]")) {
                 double exp = Double.parseDouble(value) / 1000;
-                exposureTimes.put(new Integer(nImages), new Double(exp));
+                exposureTimes.put(nImages, exp);
               }
               else if (key.equals("Image type")) {
                 types.add(value);
@@ -385,7 +399,7 @@ public class TillVisionReader extends FormatReader {
             boolean success = false;
             for (String format : DATE_FORMATS) {
               try {
-                dateTime = DateTools.formatDate(dateTime, format);
+                dateTime = DateTools.formatDate(dateTime, format, ".");
                 success = true;
               }
               catch (NullPointerException e) { }
@@ -518,7 +532,7 @@ public class TillVisionReader extends FormatReader {
       ms.littleEndian = true;
       ms.dimensionOrder = "XYCZT";
 
-      ms.seriesMetadata = new Hashtable();
+      ms.seriesMetadata = new Hashtable<String, Object>();
       for (Object key : metadataKeys) {
         String keyName = key.toString();
         if (keyName.startsWith("Series " + i + " ")) {
@@ -528,7 +542,6 @@ public class TillVisionReader extends FormatReader {
       }
     }
     setSeries(0);
-    tmpSeriesMetadata = null;
     populateMetadataStore();
 
     poi.close();
@@ -557,7 +570,9 @@ public class TillVisionReader extends FormatReader {
         // populate PlaneTiming data
 
         for (int q=0; q<core.get(i).imageCount; q++) {
-          store.setPlaneExposureTime(exposureTimes.get(i), i, q);
+          if (exposureTimes.get(i) != null) {
+            store.setPlaneExposureTime(new Time(exposureTimes.get(i), UNITS.S), i, q);
+          }
         }
 
         // populate Experiment data
@@ -624,7 +639,7 @@ public class TillVisionReader extends FormatReader {
   }
 
   private Long[] findImages(RandomAccessInputStream s) throws IOException {
-    Vector<Long> offsets = new Vector<Long>();
+    final List<Long> offsets = new ArrayList<Long>();
 
     byte[] buf = new byte[8192];
     int overlap = 128;

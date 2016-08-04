@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -58,10 +58,6 @@ package loci.formats.cache;
  *    3 |           1
  *    4 |           5
  * </pre>
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/cache/CrosshairStrategy.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/cache/CrosshairStrategy.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CrosshairStrategy extends CacheStrategy {
 
@@ -73,6 +69,7 @@ public class CrosshairStrategy extends CacheStrategy {
   // -- CacheStrategy API methods --
 
   /* @see CacheStrategy#getPossiblePositions() */
+  @Override
   protected int[][] getPossiblePositions() {
     // only positions diverging along a single axis can ever be cached
     int len = 1;

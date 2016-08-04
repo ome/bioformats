@@ -69,7 +69,7 @@ to the Plugins directory within ImageJ.
     Plugin Directory for ImageJ: Where in ImageJ's file structure you
     should place the file once you downloaded it.
 
-You may have to quit and restart ImageJ. Once you restart it, you will
+You may have to quit and restart ImageJ.  Once you restart it, you will
 find Bio-Formats in the Bio-Formats option under the Plugins menu:
 
 .. image:: /images/PluginsMenu.png

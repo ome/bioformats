@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,7 +44,9 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.Modulo;
 import loci.formats.gui.XMLWindow;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -57,10 +59,6 @@ import org.xml.sax.SAXException;
 
 /**
  * Logic for displaying images and metadata onscreen using ImageJ.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/DisplayHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/DisplayHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -148,9 +146,19 @@ public class DisplayHandler implements StatusListener {
 
   public void displayDataBrowser(ImagePlus imp) {
     IFormatReader r = process.getReader();
-    String[] dimTypes = r.getChannelDimTypes();
-    int[] dimLengths = r.getChannelDimLengths();
-    new DataBrowser(imp, null, dimTypes, dimLengths, xmlWindow);
+
+    int[] subC;
+    String[] subCTypes;
+    Modulo moduloC = r.getModuloC();
+    if (moduloC.length() > 1) {
+      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+      subCTypes = new String[] {moduloC.parentType, moduloC.type};
+    } else {
+      subC = new int[] {r.getSizeC()};
+      subCTypes = new String[] {FormatTools.CHANNEL};
+    }
+
+    new DataBrowser(imp, null, subCTypes, subC, xmlWindow);
   }
 
   public void displayImage5D(ImagePlus imp) {
@@ -203,12 +211,15 @@ public class DisplayHandler implements StatusListener {
 
   public void displayROIs(ImagePlus[] imps) {
     if (!options.showROIs()) return;
-    ROIHandler.openROIs(process.getOMEMetadata(), imps);
+    ROIHandler.openROIs(process.getOMEMetadata(), imps, options.isOMERO());
+    
   }
+   
 
   // -- StatusListener methods --
 
   /** Reports status updates via ImageJ's status bar mechanism. */
+  @Override
   public void statusUpdated(StatusEvent e) {
     String msg = e.getStatusMessage();
     if (msg != null) BF.status(options.isQuiet(), msg);

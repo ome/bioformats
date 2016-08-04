@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,8 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 
-import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
@@ -43,13 +43,16 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Frequency;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * NikonElementsTiffReader is the file format reader for TIFF files produced
  * by Nikon Elements.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NikonElementsTiffReader extends BaseTiffReader {
 
@@ -73,6 +76,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -81,6 +85,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -91,6 +96,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -109,15 +115,16 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     try {
       XMLTools.parseXML(xml, handler);
 
-      Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      for (String key : globalMetadata.keySet()) {
-        addGlobalMeta(key, globalMetadata.get(key));
+      final Map<String, Object> globalMetadata = handler.getMetadata();
+      for (final Map.Entry<String, Object> entry : globalMetadata.entrySet()) {
+        addGlobalMeta(entry.getKey(), entry.getValue());
       }
     }
     catch (IOException e) { }
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
@@ -132,9 +139,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
-    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
-    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
+    Length sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+    Length sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+    Length sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
     if (sizeX != null) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
     }
@@ -150,14 +157,14 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     store.setImageInstrumentRef(instrument, 0);
 
     ArrayList<Double> exposureTimes = handler.getExposureTimes();
-    ArrayList<Double> posX = handler.getXPositions();
-    ArrayList<Double> posY = handler.getYPositions();
-    ArrayList<Double> posZ = handler.getZPositions();
+    ArrayList<Length> posX = handler.getXPositions();
+    ArrayList<Length> posY = handler.getYPositions();
+    ArrayList<Length> posZ = handler.getZPositions();
 
     for (int i=0; i<getImageCount(); i++) {
       int c = getZCTCoords(i)[1];
-      if (c < exposureTimes.size()) {
-        store.setPlaneExposureTime(exposureTimes.get(c), 0, i);
+      if (c < exposureTimes.size() && exposureTimes.get(c) != null) {
+        store.setPlaneExposureTime(new Time(exposureTimes.get(c), UNITS.S), 0, i);
       }
 
       if (i < posX.size()) {
@@ -182,15 +189,15 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     ArrayList<Double> speed = handler.getSpeeds();
     ArrayList<Double> gain = handler.getGains();
     ArrayList<Double> temperature = handler.getTemperatures();
-    ArrayList<Integer> exWave = handler.getExcitationWavelengths();
-    ArrayList<Integer> emWave = handler.getEmissionWavelengths();
+    ArrayList<Double> exWave = handler.getExcitationWavelengths();
+    ArrayList<Double> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
     Double pinholeSize = handler.getPinholeSize();
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
       if (pinholeSize != null) {
-        store.setChannelPinholeSize(pinholeSize, 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
       }
       if (c < channelNames.size()) {
         store.setChannelName(channelNames.get(c), 0, c);
@@ -200,13 +207,13 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        PositiveInteger em = FormatTools.getEmissionWavelength(emWave.get(c));
+        Length em = FormatTools.getEmissionWavelength(emWave.get(c));
         if (em != null) {
           store.setChannelEmissionWavelength(em, 0, c);
         }
       }
       if (c < exWave.size()) {
-        PositiveInteger ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        Length ex = FormatTools.getExcitationWavelength(exWave.get(c));
         if (ex != null) {
           store.setChannelExcitationWavelength(ex, 0, c);
         }
@@ -218,18 +225,21 @@ public class NikonElementsTiffReader extends BaseTiffReader {
         store.setDetectorSettingsGain(gain.get(c), 0, c);
       }
       if (c < speed.size()) {
-        store.setDetectorSettingsReadOutRate(speed.get(c), 0, c);
+        store.setDetectorSettingsReadOutRate(
+                new Frequency(speed.get(c), UNITS.HZ), 0, c);
       }
       store.setDetectorSettingsID(detector, 0, c);
     }
 
     if (temperature.size() > 0) {
-      store.setImagingEnvironmentTemperature(temperature.get(0), 0);
+      store.setImagingEnvironmentTemperature(new Temperature(
+              temperature.get(0), UNITS.DEGREEC), 0);
     }
 
     Double voltage = handler.getVoltage();
     if (voltage != null) {
-      store.setDetectorSettingsVoltage(voltage, 0, 0);
+      store.setDetectorSettingsVoltage(
+              new ElectricPotential(voltage, UNITS.V), 0, 0);
     }
 
     Double na = handler.getNumericalAperture();

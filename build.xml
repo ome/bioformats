@@ -246,21 +246,4 @@ Apache XML-RPC
     Master build file for all Bio-Formats software components
   </description>
   <import file="ant/toplevel.xml"/>
-
-  <!-- OME-compatibility layer -->
-  <target name="dist" description="OME hook: build and publish Bio-Formats dist">
-    <ant target="tools"/>
-    <ant target="tools-ome"/>
-    <ant target="jar-formats-bsd-tests"/>
-    <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
-  </target>
-
-  <target name="eclipse" description="OME hook: create eclipse .classpath file">
-    <ant target="eclipse" antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
-  </target>
-
-  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
-
-  <target name="integration" description="No-op"/>
-
 </project>

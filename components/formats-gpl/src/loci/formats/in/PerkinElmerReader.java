@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,12 +47,12 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PerkinElmerReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PerkinElmerReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -111,11 +111,13 @@ public class PerkinElmerReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
 
@@ -168,11 +170,13 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     if (isTiff && tiff != null) {
       return tiff.get8BitLookupTable();
@@ -181,6 +185,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if (isTiff && tiff != null) {
       return tiff.get16BitLookupTable();
@@ -191,6 +196,7 @@ public class PerkinElmerReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -214,6 +220,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -240,6 +247,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiff != null) tiff.close(fileOnly);
@@ -256,6 +264,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (isTiff) {
@@ -265,6 +274,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (isTiff) {
@@ -276,6 +286,7 @@ public class PerkinElmerReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (currentId != null && (id.equals(currentId) || isUsedFile(id))) return;
 
@@ -461,8 +472,8 @@ public class PerkinElmerReader extends FormatReader {
 
     Vector<Double> exposureTimes = new Vector<Double>();
     Vector<Double> zPositions = new Vector<Double>();
-    Vector<Integer> emWaves = new Vector<Integer>();
-    Vector<Integer> exWaves = new Vector<Integer>();
+    Vector<Double> emWaves = new Vector<Double>();
+    Vector<Double> exWaves = new Vector<Double>();
 
     if (htmFile != null) {
       String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
@@ -489,14 +500,14 @@ public class PerkinElmerReader extends FormatReader {
             int slash = tokens[j].lastIndexOf("/", nmIndex);
             if (slash == -1) slash = nmIndex;
             emWaves.add(
-              new Integer(tokens[j].substring(paren + 1, slash).trim()));
+              new Double(tokens[j].substring(paren + 1, slash).trim()));
             if (tokens[j].indexOf("nm", nmIndex + 3) != -1) {
               nmIndex = tokens[j].indexOf("nm", nmIndex + 3);
               paren = tokens[j].lastIndexOf(" ", nmIndex);
               slash = tokens[j].lastIndexOf("/", nmIndex);
               if (slash == -1) slash = nmIndex + 2;
               exWaves.add(
-                new Integer(tokens[j].substring(paren + 1, slash).trim()));
+                new Double(tokens[j].substring(paren + 1, slash).trim()));
             }
           }
 
@@ -602,8 +613,8 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      Length sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      Length sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -620,14 +631,13 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves.get(i));
+          Length em = FormatTools.getEmissionWavelength(emWaves.get(i));
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (i < exWaves.size()) {
-          PositiveInteger ex =
-            FormatTools.getExcitationWavelength(exWaves.get(i));
+          Length ex = FormatTools.getExcitationWavelength(exWaves.get(i));
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
@@ -648,15 +658,24 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneDeltaT(i * secondsPerPlane, 0, i);
-        if (zct[1] < exposureTimes.size()) {
-          store.setPlaneExposureTime(exposureTimes.get(zct[1]), 0, i);
+        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.S), 0, i);
+        if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.S), 0, i);
         }
 
         if (zct[0] < zPositions.size()) {
-          store.setPlanePositionX(0.0, 0, i);
-          store.setPlanePositionY(0.0, 0, i);
-          store.setPlanePositionZ(zPositions.get(zct[0]), 0, i);
+          final Double zPosition = zPositions.get(zct[0]);
+          final Length xl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length yl = new Length(0d, UNITS.REFERENCEFRAME);
+          final Length zl;
+          if (zPosition == null) {
+              zl = null;
+          } else {
+              zl = new Length(zPosition, UNITS.REFERENCEFRAME);
+          }
+          store.setPlanePositionX(xl, 0, i);
+          store.setPlanePositionY(yl, 0, i);
+          store.setPlanePositionZ(zl, 0, i);
         }
       }
     }

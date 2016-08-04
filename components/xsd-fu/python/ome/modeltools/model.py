@@ -26,9 +26,9 @@ import logging
 
 from ome.modeltools.object import OMEModelObject
 from ome.modeltools.property import OMEModelProperty
+from ome.modeltools.exceptions import ModelProcessingError
 
 from ome.modeltools import config
-from ome.modeltools import language
 
 
 class ReferenceDelegate(object):
@@ -66,6 +66,7 @@ class ReferenceDelegate(object):
     def isComplex(self):
         return True
 
+
 class OMEModel(object):
     def __init__(self, opts):
         self.opts = opts
@@ -75,15 +76,17 @@ class OMEModel(object):
 
     def addObject(self, element, obj):
         elementName = element.getName()
-        if self.objects.has_key(element):
+        if element in self.objects:
             raise ModelProcessingError(
                 "Element %s has been processed!" % element)
         if elementName in self.elementNameObjectMap:
-            if elementName == "EmissionFilterRef" or elementName == "ExcitationFilterRef":
+            if (elementName == "EmissionFilterRef" or
+                    elementName == "ExcitationFilterRef"):
                 pass
             else:
-                logging.warn("Element %s has duplicate object with same name, skipping!" \
-                                 % element)
+                logging.warn(
+                    "Element %s has duplicate object with same name,"
+                    " skipping!" % element)
             return
         self.elementNameObjectMap[element.getName()] = obj
         self.objects[element] = obj
@@ -113,9 +116,9 @@ class OMEModel(object):
     def getAllHeaders(self):
         headers = set()
         for o in self.objects.values():
-            h = o.header
+            h = o.header_dependencies
             if h is not None:
-                headers.add(h)
+                headers.union(h)
         return sorted(headers)
 
     def getEnumHeaders(self):
@@ -129,6 +132,14 @@ class OMEModel(object):
                     headers.add(h)
         return sorted(headers)
 
+    def getObjectHeaders(self):
+        headers = set()
+        for obj in self.objects.values():
+            h = obj.header
+            if h is not None:
+                headers.add(h)
+        return sorted(headers)
+
     def processAttributes(self, element):
         """
         Process all the attributes for a given element (a leaf).
@@ -137,18 +148,18 @@ class OMEModel(object):
         obj = self.getObject(element)
         length = len(attributes)
         for i, key in enumerate(attributes):
-            logging.debug("Processing attribute: %s %d/%d" % (key, i + 1, length))
+            logging.debug("Processing attribute: %s %d/%d"
+                          % (key, i + 1, length))
             attribute = attributes[key]
             logging.debug("Dump: %s" % attribute.__dict__)
-            name = attribute.getName()
             obj.addAttribute(attribute)
 
         children = element.getChildren()
         length = len(children)
         for i, child in enumerate(children):
-            logging.debug("Processing child: %s %d/%d" % (child, i + 1, length))
+            logging.debug("Processing child: %s %d/%d"
+                          % (child, i + 1, length))
             logging.debug("Dump: %s" % child.__dict__)
-            name = child.getCleanName()
             obj.addElement(child)
 
     def processLeaf(self, element, parent):
@@ -156,22 +167,30 @@ class OMEModel(object):
         Process an element (a leaf).
         """
         e = element
-        logging.debug("Processing leaf (topLevel? %s): (%s) --> (%s)" % (e.topLevel, parent, e))
+        logging.debug("Processing leaf (topLevel? %s): (%s) --> (%s)"
+                      % (e.topLevel, parent, e))
         e_name = e.getName()
         e_type = e.getType()
         if parent is not None:
             if e_name not in self.parents:
                 self.parents[e_name] = list()
             self.parents[e_name].append(parent.getName())
-        if not e.isExplicitDefine() \
-           and e_name not in config.EXPLICIT_DEFINE_OVERRIDE and not e.topLevel:
-            logging.info("Element %s.%s not an explicit define, skipping." % (parent, e))
+        if (not e.isExplicitDefine() and
+                (e_name not in config.EXPLICIT_DEFINE_OVERRIDE and
+                 not e.topLevel)):
+            logging.info(
+                "Element %s.%s not an explicit define, skipping."
+                % (parent, e))
             return
         if e.getMixedExtensionError():
-            logging.error("Element %s.%s extension chain contains mixed and non-mixed content, skipping." % (parent, e))
+            logging.error(
+                "Element %s.%s extension chain contains mixed and non-mixed"
+                " content, skipping." % (parent, e))
             return
         if e_type != e_name and e_name not in config.EXPLICIT_DEFINE_OVERRIDE:
-            logging.info("Element %s.%s is not a concrete type (%s != %s), skipping." % (parent, e, e_type, e_name))
+            logging.info(
+                "Element %s.%s is not a concrete type (%s != %s), skipping."
+                % (parent, e, e_type, e_name))
             return
         obj = OMEModelObject(e, parent, self)
         self.addObject(e, obj)
@@ -183,7 +202,8 @@ class OMEModel(object):
         """
         length = len(elements)
         for i, element in enumerate(elements):
-            logging.info("Processing element: %s %d/%d" % (element, i + 1, length))
+            logging.info("Processing element: %s %d/%d"
+                         % (element, i + 1, length))
             self.processLeaf(element, parent)
             children = element.getChildren()
             if children:
@@ -221,8 +241,9 @@ class OMEModel(object):
                 o.properties[ref] = prop
         for o in self.objects.values():
             for prop in o.properties.values():
-                if not prop.isReference and (prop.isAttribute or prop.maxOccurs == 1 \
-                        or o.name == 'OME' or o.isAbstractProprietary):
+                if not prop.isReference and (
+                        prop.isAttribute or prop.maxOccurs == 1 or
+                        o.name == 'OME' or o.isAbstractProprietary):
                     continue
                 shortName = config.REF_REGEX.sub('', prop.type)
                 try:
@@ -249,7 +270,7 @@ class OMEModel(object):
             for ref in references[o.name]:
                 key = '%s.%s' % (ref['data_type'], ref['property_name'])
                 delegate = ReferenceDelegate(
-                        ref['data_type'], ref['data_type'], ref['plural'])
+                    ref['data_type'], ref['data_type'], ref['plural'])
                 delegate.minOccurs = ref['minOccurs']
                 delegate.maxOccurs = ref['maxOccurs']
                 prop = OMEModelProperty.fromReference(delegate, o, self)
@@ -291,18 +312,13 @@ class OMEModel(object):
         deps = set()
 
         for o in self.objects.values():
-            if o.langType != self.opts.lang.base_class and o.langType != "std::string":
-                if isinstance(self.opts.lang, language.Java):
-                    inc = "ome.xml.model.%s" % o.langType
-                elif isinstance(self.opts.lang, language.CXX):
-                    inc = "ome/xml/model/%s.h" % o.langType
-                    # Only add if it's a model type.  Also, add language mapping of
-                    # type to header; will also work for system types like
-                    # std::string.
-                deps.add(inc)
+            dep = o.header
+            if dep is not None:
+                deps.add(dep)
 
             deps.update(o.header_dependencies)
 
         return sorted(deps)
-    header_dependencies = property(_get_header_deps,
+    header_dependencies = property(
+        _get_header_deps,
         doc="""The model's dependencies for include/import in headers.""")

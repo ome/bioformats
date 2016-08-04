@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -122,7 +122,7 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * Thus, when read this raw image the proper image data type
  * should be provided.
  *
- * @see com.sun.media.imageio.plugins.RawImageWriteParam
+ * @see RawImageWriteParam
  */
 
  // <p> If the destination data is packed packed, the data is written in the

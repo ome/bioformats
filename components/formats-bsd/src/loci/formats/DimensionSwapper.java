@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,10 +43,6 @@ import loci.formats.CoreMetadata;
  * Handles swapping the dimension order of an image series. This class is
  * useful for both reassigning ZCT sizes (the input dimension order), and
  * shuffling around the resultant planar order (the output dimension order).
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/DimensionSwapper.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/DimensionSwapper.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class DimensionSwapper extends ReaderWrapper {
 
@@ -182,61 +178,55 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeX() */
+  @Override
   public int getSizeX() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
+  @Override
   public int getSizeY() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
+  @Override
   public int getSizeZ() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
+  @Override
   public int getSizeC() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
+  @Override
   public int getSizeT() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).sizeT;
   }
 
-  /* @see IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    int[] cLengths = core.get(getCoreIndex()).cLengths;
-    return cLengths == null ? super.getChannelDimLengths() : cLengths;
-  }
-
-  /* @see IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    String[] cTypes = core.get(getCoreIndex()).cTypes;
-    return cTypes == null ? super.getChannelDimTypes() : cTypes;
-  }
-
   /* @see IFormatReader#getDimensionOrder() */
+  @Override
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core.get(getCoreIndex()).dimensionOrder;
   }
 
   /* @see IFormatReader#openBytes(int) */
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return super.openBytes(reorder(no));
   }
 
   /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -244,6 +234,7 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[]) */
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -251,6 +242,7 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -258,28 +250,31 @@ public class DimensionSwapper extends ReaderWrapper {
   }
 
   /* @see IFormatReader#openThumbImage(int) */
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return super.openThumbBytes(reorder(no));
   }
 
   /* @see IFormatReader#getZCTCoords(int) */
+  @Override
   public int[] getZCTCoords(int no) {
     return FormatTools.getZCTCoords(this, no);
   }
 
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return FormatTools.getZCTModuloCoords(this, index);
+  }
+
   /* @see IFormatReader#getIndex(int, int, int) */
+  @Override
   public int getIndex(int z, int c, int t) {
     return FormatTools.getIndex(this, z, c, t);
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
   @Override
-  public CoreMetadata[] getCoreMetadata() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return core.toArray(new CoreMetadata[0]);
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+      return FormatTools.getIndex(this, z, c, t, moduloZ, moduloC, moduloT);
   }
 
   /* @see IFormatReader#getCoreMetadataList() */
@@ -292,6 +287,7 @@ public class DimensionSwapper extends ReaderWrapper {
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     String oldFile = getCurrentFile();
     super.setId(id);

@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@
  * Description:             This class implements the full page
  *                          forward wavelet transform for both integer
  *                          and floating point implementations.
- *
  *
  *
  * COPYRIGHT:
@@ -161,7 +160,7 @@ public class ForwWTFull extends ForwardWT {
      *
      * @param src From where the image data should be obtained.
      *
-     * @param encSpec The encoder specifications
+     * @param wp The writing parameters
      *
      * @param pox The horizontal coordinate of the cell and code-block
      * partition origin with respect to the canvas origin, on the reference

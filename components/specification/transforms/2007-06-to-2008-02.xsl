@@ -2,7 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Copyright (C) 2009-2014 Open Microscopy Environment
+# Copyright (C) 2009-2011 Open Microscopy Environment
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,

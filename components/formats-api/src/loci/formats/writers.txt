@@ -13,6 +13,8 @@ loci.formats.out.QTWriter       # mov
 loci.formats.out.EPSWriter      # eps
 loci.formats.out.ICSWriter      # ics
 loci.formats.out.JavaWriter     # java
+loci.formats.out.V3DrawWriter	# v3draw
 
 # writers requiring third-party libraries
 loci.formats.out.WlzWriter	# wlz
+loci.formats.out.CellH5Writer 	# ch5

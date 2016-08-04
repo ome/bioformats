@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,10 +55,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Parses TIFF data from an input source.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tiff/TiffSaver.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tiff/TiffSaver.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -89,7 +85,6 @@ public class TiffSaver {
   private CodecOptions options;
 
   // -- Constructors --
-
   /**
    * Constructs a new TIFF saver from the given filename.
    * @param filename Filename of the output stream that we may use to create
@@ -138,6 +133,16 @@ public class TiffSaver {
   }
 
   // -- TiffSaver methods --
+
+  /**
+   * Closes the output stream if not null.
+   * @throws IOException Thrown if an error occurred while closing.
+   */
+  public void close() throws IOException {
+    if (out != null) {
+      out.close();
+    }
+  }
 
   /**
    * Sets whether or not we know that the planes will be written sequentially.

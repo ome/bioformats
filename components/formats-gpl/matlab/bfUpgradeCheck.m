@@ -1,9 +1,9 @@
 function bfUpgradeCheck(varargin)
 % Check for new version of Bio-Formats and update it if applicable
-% 
+%
 % SYNOPSIS: bfUpgradeCheck(autoDownload, 'STABLE')
 %
-% Input 
+% Input
 %    autoDownload - Optional. A boolean specifying of the latest version
 %    should be downloaded
 %
@@ -15,7 +15,7 @@ function bfUpgradeCheck(varargin)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -41,12 +41,16 @@ ip.addOptional('version', 'STABLE', @(x) any(strcmpi(x, versions)))
 ip.parse(varargin{:})
 
 % Create UpgradeChecker
-upgrader = loci.formats.UpgradeChecker();
+upgrader = javaObject('loci.formats.UpgradeChecker');
 if upgrader.alreadyChecked(), return; end
 
 % Check for new version of Bio-Formats
-canUpgrade = upgrader.newVersionAvailable('MATLAB');
-if ~canUpgrade,
+if is_octave()
+    caller = 'Octave';
+else
+    caller = 'MATLAB';
+end
+if ~ upgrader.newVersionAvailable(caller)
     fprintf('*** bioformats_package.jar is up-to-date ***\n');
     return;
 end

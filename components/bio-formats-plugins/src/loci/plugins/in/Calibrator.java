@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,12 +38,12 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.units.quantity.Time;
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * Logic for calibrating images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/in/Calibrator.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/in/Calibrator.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Calibrator {
 
@@ -67,14 +67,14 @@ public class Calibrator {
     double xcal = Double.NaN, ycal = Double.NaN;
     double zcal = Double.NaN, tcal = Double.NaN;
 
-    PositiveFloat xd = meta.getPixelsPhysicalSizeX(series);
-    if (xd != null) xcal = xd.getValue();
-    PositiveFloat yd = meta.getPixelsPhysicalSizeY(series);
-    if (yd != null) ycal = yd.getValue();
-    PositiveFloat zd = meta.getPixelsPhysicalSizeZ(series);
-    if (zd != null) zcal = zd.getValue();
-    Double td = meta.getPixelsTimeIncrement(series);
-    if (td != null) tcal = td.floatValue();
+    Length xd = meta.getPixelsPhysicalSizeX(series);
+    if (xd != null) xcal = xd.value(UNITS.MICROM).doubleValue();
+    Length yd = meta.getPixelsPhysicalSizeY(series);
+    if (yd != null) ycal = yd.value(UNITS.MICROM).doubleValue();
+    Length zd = meta.getPixelsPhysicalSizeZ(series);
+    if (zd != null) zcal = zd.value(UNITS.MICROM).doubleValue();
+    Time td = meta.getPixelsTimeIncrement(series);
+    if (td != null) tcal = td.value(UNITS.S).doubleValue();
 
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);
@@ -130,8 +130,8 @@ public class Calibrator {
     final PositiveInteger sizeT = meta.getPixelsSizeT(series);
     final int tSize = sizeT == null ? 1 : sizeT.getValue();
     final int planeCount = meta.getPlaneCount(series);
-    final double[] deltas = new double[tSize];
-    Arrays.fill(deltas, Double.NaN);
+    final Time[] deltas = new Time[tSize];
+    Arrays.fill(deltas, new Time(Double.NaN, UNITS.S));
     for (int p=0; p<planeCount; p++) {
       final NonNegativeInteger theZ = meta.getPlaneTheZ(series, p);
       final NonNegativeInteger theC = meta.getPlaneTheC(series, p);
@@ -141,7 +141,7 @@ public class Calibrator {
       // store delta T value at appropriate index
       final int t = theT.getValue();
       if (t >= tSize) continue;
-      final Double deltaT = meta.getPlaneDeltaT(series, p);
+      final Time deltaT = meta.getPlaneDeltaT(series, p);
       if (deltaT == null) continue;
       deltas[t] = deltaT;
     }
@@ -149,8 +149,8 @@ public class Calibrator {
     double tiTotal = 0;
     int tiCount = 0;
     for (int t=1; t<tSize; t++) {
-      double delta1 = deltas[t - 1];
-      double delta2 = deltas[t];
+      double delta1 = deltas[t - 1].value(UNITS.S).doubleValue();;
+      double delta2 = deltas[t].value(UNITS.S).doubleValue();;
       if (Double.isNaN(delta1) || Double.isNaN(delta2)) continue;
       tiTotal += delta2 - delta1;
       tiCount++;

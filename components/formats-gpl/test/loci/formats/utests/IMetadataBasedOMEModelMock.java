@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,10 +31,10 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
+import ome.units.quantity.Power;
+import ome.units.UNITS;
+
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/IMetadataBasedOMEModelMock.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/IMetadataBasedOMEModelMock.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class IMetadataBasedOMEModelMock implements OMEModelMock {
 
@@ -50,160 +50,198 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.resolveReferences();
   }
 
+  @Override
   public MetadataRoot getRoot() {
     return store.getRoot();
   }
 
   private void makeImage() {
     // Create <Image/>
-    store.setImageID(InOut201004Test.IMAGE_ID, 0);
-    store.setListAnnotationID(InOut201004Test.IMAGE_LIST_ANNOTATION_ID, 0);
+    store.setImageID(InOutCurrentTest.IMAGE_ID, 0);
+    store.setListAnnotationID(InOutCurrentTest.IMAGE_LIST_ANNOTATION_ID, 0);
     store.setListAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setBooleanAnnotationID(InOut201004Test.IMAGE_ANNOTATION_ID, 0);
+        InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setBooleanAnnotationID(InOutCurrentTest.IMAGE_ANNOTATION_ID, 0);
     store.setBooleanAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+        InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setListAnnotationAnnotationRef(
-        InOut201004Test.IMAGE_ANNOTATION_ID, 0, 0);
-    store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
-    store.setBooleanAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
-    store.setImageAnnotationRef(InOut201004Test.IMAGE_LIST_ANNOTATION_ID, 0, 0);
+        InOutCurrentTest.IMAGE_ANNOTATION_ID, 0, 0);
+    store.setBooleanAnnotationValue(InOutCurrentTest.IMAGE_ANNOTATION_VALUE, 0);
+    store.setBooleanAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setBooleanAnnotationValue(InOutCurrentTest.IMAGE_ANNOTATION_VALUE, 0);
+    store.setImageAnnotationRef(InOutCurrentTest.IMAGE_LIST_ANNOTATION_ID, 0, 0);
     // Create <Pixels/>
-    store.setPixelsID(InOut201004Test.PIXELS_ID, 0);
-    store.setPixelsSizeX(new PositiveInteger(InOut201004Test.SIZE_X), 0);
-    store.setPixelsSizeY(new PositiveInteger(InOut201004Test.SIZE_Y), 0);
-    store.setPixelsSizeZ(new PositiveInteger(InOut201004Test.SIZE_Z), 0);
-    store.setPixelsSizeC(new PositiveInteger(InOut201004Test.SIZE_C), 0);
-    store.setPixelsSizeT(new PositiveInteger(InOut201004Test.SIZE_T), 0);
-    store.setPixelsDimensionOrder(InOut201004Test.DIMENSION_ORDER, 0);
-    store.setPixelsType(InOut201004Test.PIXEL_TYPE, 0);
-    store.setUUIDValue(InOut201004Test.TIFF_DATA_UUID, 0, 0);
+    store.setPixelsID(InOutCurrentTest.PIXELS_ID, 0);
+    store.setPixelsSizeX(new PositiveInteger(InOutCurrentTest.SIZE_X), 0);
+    store.setPixelsSizeY(new PositiveInteger(InOutCurrentTest.SIZE_Y), 0);
+    store.setPixelsSizeZ(new PositiveInteger(InOutCurrentTest.SIZE_Z), 0);
+    store.setPixelsSizeC(new PositiveInteger(InOutCurrentTest.SIZE_C), 0);
+    store.setPixelsSizeT(new PositiveInteger(InOutCurrentTest.SIZE_T), 0);
+    store.setPixelsDimensionOrder(InOutCurrentTest.DIMENSION_ORDER, 0);
+    store.setPixelsType(InOutCurrentTest.PIXEL_TYPE, 0);
+    store.setUUIDValue(InOutCurrentTest.TIFF_DATA_UUID, 0, 0);
     // Create <Channel/> under <Pixels/>
     store.setXMLAnnotationID(
-        InOut201004Test.CHANNEL_ANNOTATION_ID, 0);
+        InOutCurrentTest.CHANNEL_ANNOTATION_ID, 0);
     store.setXMLAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+        InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setXMLAnnotationValue(
-        InOut201004Test.CHANNEL_ANNOTATION_VALUE, 0);
+        InOutCurrentTest.CHANNEL_ANNOTATION_VALUE, 0);
     store.setXMLAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    for (int i = 0; i < InOut201004Test.SIZE_C; i++) {
+        InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    for (int i = 0; i < InOutCurrentTest.SIZE_C; i++) {
       store.setChannelID("Channel:" + i, 0, i);
       if (i == 0) {
         store.setChannelAnnotationRef(
-            InOut201004Test.CHANNEL_ANNOTATION_ID, 0, i, 0);
+            InOutCurrentTest.CHANNEL_ANNOTATION_ID, 0, i, 0);
       }
     }
-    // create Annotation for Pixels
-    store.setDoubleAnnotationID(
-        InOut201004Test.PIXELS_ANNOTATION_ID, 0);
-    store.setDoubleAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setDoubleAnnotationValue(
-        InOut201004Test.PIXELS_ANNOTATION_VALUE, 0);
-    store.setDoubleAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setPixelsAnnotationRef(InOut201004Test.PIXELS_ANNOTATION_ID, 0, 0);
   }
 
   private void makeInstrument() {
     // Create <Instrument/>
-    store.setInstrumentID(InOut201004Test.INSTRUMENT_ID, 0);
+    store.setInstrumentID(InOutCurrentTest.INSTRUMENT_ID, 0);
 
     // Create <Detector/> under <Instrument/>
-    store.setDetectorID(InOut201004Test.DETECTOR_ID, 0, 0);
-    store.setDetectorModel(InOut201004Test.DETECTOR_MODEL, 0, 0);
+    store.setDetectorID(InOutCurrentTest.DETECTOR_ID, 0, 0);
+    store.setDetectorModel(InOutCurrentTest.DETECTOR_MODEL, 0, 0);
+    // Create <Annotation/> under <Detector/>
+    store.setCommentAnnotationID(InOutCurrentTest.DETECTOR_ANNOTATION_ID, 0);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setCommentAnnotationValue(InOutCurrentTest.DETECTOR_ANNOTATION_VALUE, 0);
+    store.setDetectorAnnotationRef(InOutCurrentTest.DETECTOR_ANNOTATION_ID, 0, 0, 0);
 
     // Create <Laser/> under <Instrument/>
-    store.setLaserID(InOut201004Test.LIGHTSOURCE_LASER_ID, 0, 0);
-    store.setLaserModel(InOut201004Test.LIGHTSOURCE_LASER_MODEL, 0, 0);
-    store.setLaserType(InOut201004Test.LASER_TYPE, 0, 0);
-    store.setLaserPower(InOut201004Test.LIGHTSOURCE_LASER_POWER, 0, 0);
+    store.setLaserID(InOutCurrentTest.LIGHTSOURCE_LASER_ID, 0, 0);
+    store.setLaserModel(InOutCurrentTest.LIGHTSOURCE_LASER_MODEL, 0, 0);
+    store.setLaserType(InOutCurrentTest.LASER_TYPE, 0, 0);
+    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_LASER_POWER, UNITS.MW), 0, 0);
+    // Create <Annotation/> under <Laser/>
+    store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 1);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
+    store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE, 1);
+    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID, 0, 0, 0);
 
     // with a Pump>
-    store.setLaserID(InOut201004Test.LIGHTSOURCE_PUMP_ID, 0, 1);
-    store.setLaserModel(InOut201004Test.LIGHTSOURCE_PUMP_MODEL, 0, 1);
-    store.setLaserType(InOut201004Test.LASER_TYPE, 0, 1);
-    store.setLaserPower(InOut201004Test.LIGHTSOURCE_PUMP_POWER, 0, 1);
+    store.setLaserID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID, 0, 1);
+    store.setLaserModel(InOutCurrentTest.LIGHTSOURCE_PUMP_MODEL, 0, 1);
+    store.setLaserType(InOutCurrentTest.LASER_TYPE, 0, 1);
+    store.setLaserPower(new Power(InOutCurrentTest.LIGHTSOURCE_PUMP_POWER, UNITS.MW), 0, 1);
     // and link them
-    store.setLaserPump(InOut201004Test.LIGHTSOURCE_PUMP_ID, 0, 0);
+    store.setLaserPump(InOutCurrentTest.LIGHTSOURCE_PUMP_ID, 0, 0);
 
     // Create <Arc/> under <Instrument/>
-    store.setArcID(InOut201004Test.LIGHTSOURCE_ARC_ID, 0, 2);
-    store.setArcModel(InOut201004Test.LIGHTSOURCE_ARC_MODEL, 0, 2);
-    store.setArcType(InOut201004Test.ARC_TYPE, 0, 2);
-    store.setArcPower(InOut201004Test.LIGHTSOURCE_ARC_POWER, 0, 2);
+    store.setArcID(InOutCurrentTest.LIGHTSOURCE_ARC_ID, 0, 2);
+    store.setArcModel(InOutCurrentTest.LIGHTSOURCE_ARC_MODEL, 0, 2);
+    store.setArcType(InOutCurrentTest.ARC_TYPE, 0, 2);
+    store.setArcPower(new Power(InOutCurrentTest.LIGHTSOURCE_ARC_POWER, UNITS.MW), 0, 2);
+    // Create <Annotation/> under <Arc/>
+    store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 2);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
+    store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE, 2);
+    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID, 0, 2, 0);
     
     // Create <Filament/> under <Instrument/>
-    store.setFilamentID(InOut201004Test.LIGHTSOURCE_FILAMENT_ID, 0, 3);
-    store.setFilamentModel(InOut201004Test.LIGHTSOURCE_FILAMENT_MODEL, 0, 3);
-    store.setFilamentType(InOut201004Test.FILAMENT_TYPE, 0, 3);
-    store.setFilamentPower(InOut201004Test.LIGHTSOURCE_FILAMENT_POWER, 0, 3);
+    store.setFilamentID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ID, 0, 3);
+    store.setFilamentModel(InOutCurrentTest.LIGHTSOURCE_FILAMENT_MODEL, 0, 3);
+    store.setFilamentType(InOutCurrentTest.FILAMENT_TYPE, 0, 3);
+    store.setFilamentPower(new Power(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER, UNITS.MW), 0, 3);
+    // Create <Annotation/> under <Filament/>
+    store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 3);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 3);
+    store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE, 3);
+    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID, 0, 3, 0);
 
     // Create <LightEmittingDiode/> under <Instrument/>
-    store.setLightEmittingDiodeID(InOut201004Test.LIGHTSOURCE_LED_ID, 0, 4);
-    store.setLightEmittingDiodeModel(InOut201004Test.LIGHTSOURCE_LED_MODEL, 0, 4);
-    store.setLightEmittingDiodePower(InOut201004Test.LIGHTSOURCE_LED_POWER, 0, 4);
+    store.setLightEmittingDiodeID(InOutCurrentTest.LIGHTSOURCE_LED_ID, 0, 4);
+    store.setLightEmittingDiodeModel(InOutCurrentTest.LIGHTSOURCE_LED_MODEL, 0, 4);
+    store.setLightEmittingDiodePower(new Power(InOutCurrentTest.LIGHTSOURCE_LED_POWER, UNITS.MW), 0, 4);
+    // Create <Annotation/> under <LightEmittingDiode/>
+    store.setCommentAnnotationID(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID, 4);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 4);
+    store.setCommentAnnotationValue(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_VALUE, 4);
+    store.setLightEmittingDiodeAnnotationRef(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID, 0, 4, 0);
 
     // Create <Dichroic/> under <Instrument/>
-    store.setDichroicID(InOut201004Test.DICHROIC_ID, 0, 0);
-    store.setDichroicSerialNumber(InOut201004Test.DICHROIC_SN, 0, 0);
+    store.setDichroicID(InOutCurrentTest.DICHROIC_ID, 0, 0);
+    store.setDichroicSerialNumber(InOutCurrentTest.DICHROIC_SN, 0, 0);
+    // Create <Annotation/> under <Dichroic/>
+    store.setCommentAnnotationID(InOutCurrentTest.DICHROIC_ANNOTATION_ID, 5);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 5);
+    store.setCommentAnnotationValue(InOutCurrentTest.DICHROIC_ANNOTATION_VALUE, 5);
+    store.setDichroicAnnotationRef(InOutCurrentTest.DICHROIC_ANNOTATION_ID, 0, 0, 0);
 
     // Create <FilterSet/> under <Instrument/>
-    store.setFilterSetID(InOut201004Test.FILTERSET_ID, 0, 0);
-    store.setFilterSetLotNumber(InOut201004Test.FILTERSET_LOT, 0, 0);
-    store.setFilterSetDichroicRef(InOut201004Test.DICHROIC_ID, 0, 0);
-    store.setFilterSetEmissionFilterRef(InOut201004Test.EM_FILTER_ID, 0, 0, 0);
-    store.setFilterSetExcitationFilterRef(InOut201004Test.EX_FILTER_ID, 0, 0, 0);
-    
+    store.setFilterSetID(InOutCurrentTest.FILTERSET_ID, 0, 0);
+    store.setFilterSetLotNumber(InOutCurrentTest.FILTERSET_LOT, 0, 0);
+    store.setFilterSetDichroicRef(InOutCurrentTest.DICHROIC_ID, 0, 0);
+    store.setFilterSetEmissionFilterRef(InOutCurrentTest.EM_FILTER_ID, 0, 0, 0);
+    store.setFilterSetExcitationFilterRef(InOutCurrentTest.EX_FILTER_ID, 0, 0, 0);
+
     // Create <Filter/>s under <Instrument/>
-    store.setFilterID(InOut201004Test.EM_FILTER_ID, 0, 0);
-    store.setFilterType(InOut201004Test.EM_FILTER_TYPE, 0, 0);
-    
-    store.setFilterID(InOut201004Test.EX_FILTER_ID, 0, 1);
-    store.setFilterType(InOut201004Test.EX_FILTER_TYPE, 0, 1);
+    store.setFilterID(InOutCurrentTest.EM_FILTER_ID, 0, 0);
+    store.setFilterType(InOutCurrentTest.EM_FILTER_TYPE, 0, 0);
+    // Create <Annotation/> under first <Filter/>
+    store.setCommentAnnotationID(InOutCurrentTest.EM_FILTER_ANNOTATION_ID, 6);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 6);
+    store.setCommentAnnotationValue(InOutCurrentTest.EM_FILTER_ANNOTATION_VALUE, 6);
+    store.setFilterAnnotationRef(InOutCurrentTest.EM_FILTER_ANNOTATION_ID, 0, 0, 0);
+
+    store.setFilterID(InOutCurrentTest.EX_FILTER_ID, 0, 1);
+    store.setFilterType(InOutCurrentTest.EX_FILTER_TYPE, 0, 1);
 
     // Create <Objective/> under <Instrument/>
-    store.setObjectiveID(InOut201004Test.OBJECTIVE_ID, 0, 0);
-    store.setObjectiveModel(InOut201004Test.OBJECTIVE_MODEL, 0, 0);
-    
+    store.setObjectiveID(InOutCurrentTest.OBJECTIVE_ID, 0, 0);
+    store.setObjectiveModel(InOutCurrentTest.OBJECTIVE_MODEL, 0, 0);
+    // Create <Annotation/> under <Objective/>
+    store.setCommentAnnotationID(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID, 7);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 7);
+    store.setCommentAnnotationValue(InOutCurrentTest.OBJECTIVE_ANNOTATION_VALUE, 7);
+    store.setObjectiveAnnotationRef(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID, 0, 0, 0);
+
+    // Create <Annotation/> under <Instrument/>
+    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 8);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 8);
+    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 8);
+
+    store.setInstrumentAnnotationRef(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0, 0);
+
     // link Instrument to the first Image
-    store.setImageInstrumentRef(InOut201004Test.INSTRUMENT_ID, 0);
+    store.setImageInstrumentRef(InOutCurrentTest.INSTRUMENT_ID, 0);
   }
 
   private void makePlate() {
-    store.setPlateID(InOut201004Test.PLATE_ID, 0);
-    store.setPlateRows(InOut201004Test.WELL_ROWS, 0);
-    store.setPlateColumns(InOut201004Test.WELL_COLS, 0);
-    store.setPlateRowNamingConvention(InOut201004Test.WELL_ROW, 0);
-    store.setPlateColumnNamingConvention(InOut201004Test.WELL_COL, 0);
-    
-    store.setPlateAnnotationRef(InOut201004Test.PLATE_ANNOTATION_ID, 0, 0);
+    store.setPlateID(InOutCurrentTest.PLATE_ID, 0);
+    store.setPlateRows(InOutCurrentTest.WELL_ROWS, 0);
+    store.setPlateColumns(InOutCurrentTest.WELL_COLS, 0);
+    store.setPlateRowNamingConvention(InOutCurrentTest.WELL_ROW, 0);
+    store.setPlateColumnNamingConvention(InOutCurrentTest.WELL_COL, 0);
 
-    store.setTimestampAnnotationID(InOut201004Test.PLATE_ANNOTATION_ID, 0);
-    store.setTimestampAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setTimestampAnnotationValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE), 0);
+    store.setPlateAnnotationRef(InOutCurrentTest.PLATE_ANNOTATION_ID, 0, 0);
+
+    store.setTimestampAnnotationID(InOutCurrentTest.PLATE_ANNOTATION_ID, 0);
+    store.setTimestampAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setTimestampAnnotationValue(new Timestamp(InOutCurrentTest.PLATE_ANNOTATION_VALUE), 0);
 
     int wellSampleIndex = 0;
     int wellCount = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
+    for (int row=0; row<InOutCurrentTest.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOutCurrentTest.WELL_COLS.getValue(); col++) {
 
         store.setWellID(String.format("Well:%d_%d", row, col), 0, wellCount);
         store.setWellRow(new NonNegativeInteger(row), 0, wellCount);
         store.setWellColumn(new NonNegativeInteger(col), 0, wellCount);
 
         if (row == 0 && col == 0) {
-          store.setLongAnnotationID(InOut201004Test.WELL_ANNOTATION_ID, 0);
-          store.setLongAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-          store.setLongAnnotationValue(InOut201004Test.WELL_ANNOTATION_VALUE, 0);
-          store.setWellAnnotationRef(InOut201004Test.WELL_ANNOTATION_ID, 0, wellCount, 0);
+          store.setLongAnnotationID(InOutCurrentTest.WELL_ANNOTATION_ID, 0);
+          store.setLongAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+          store.setLongAnnotationValue(InOutCurrentTest.WELL_ANNOTATION_VALUE, 0);
+          store.setWellAnnotationRef(InOutCurrentTest.WELL_ANNOTATION_ID, 0, wellCount, 0);
         }
 
         store.setWellSampleID(String.format("WellSample:%d_%d", row, col), 0, wellCount, 0);
         store.setWellSampleIndex(new NonNegativeInteger(wellSampleIndex), 0, wellCount, 0);
-        store.setWellSampleImageRef(InOut201004Test.IMAGE_ID, 0, wellCount, 0);
+        store.setWellSampleImageRef(InOutCurrentTest.IMAGE_ID, 0, wellCount, 0);
 
         wellSampleIndex++;
         wellCount++;
@@ -212,20 +250,18 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   }
 
   private void makeROI() {
-    store.setROIID(InOut201004Test.ROI_ID, 0);
+    store.setROIID(InOutCurrentTest.ROI_ID, 0);
 
-    store.setCommentAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
-    store.setCommentAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setCommentAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
-    
-    store.setROIAnnotationRef(InOut201004Test.ROI_ANNOTATION_ID, 0, 0);
+    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 9);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 9);
+    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 9);
 
-    store.setRectangleID(InOut201004Test.SHAPE_ID, 0, 0);
-    store.setRectangleX(InOut201004Test.RECTANGLE_X, 0, 0);
-    store.setRectangleY(InOut201004Test.RECTANGLE_Y, 0, 0);
-    store.setRectangleWidth(InOut201004Test.RECTANGLE_WIDTH, 0, 0);
-    store.setRectangleHeight(InOut201004Test.RECTANGLE_HEIGHT, 0, 0);
-    
-    
+    store.setROIAnnotationRef(InOutCurrentTest.ROI_ANNOTATION_ID, 0, 0);
+
+    store.setRectangleID(InOutCurrentTest.SHAPE_ID, 0, 0);
+    store.setRectangleX(InOutCurrentTest.RECTANGLE_X, 0, 0);
+    store.setRectangleY(InOutCurrentTest.RECTANGLE_Y, 0, 0);
+    store.setRectangleWidth(InOutCurrentTest.RECTANGLE_WIDTH, 0, 0);
+    store.setRectangleHeight(InOutCurrentTest.RECTANGLE_HEIGHT, 0, 0);
   }
 }

@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,6 @@
  *                          wavelet transform.
  *
  *
- *
  * COPYRIGHT:
  *
  * This software module was originally developed by Raphaël Grosbois and
@@ -73,8 +72,6 @@
  * derivative works of this software module.
  *
  * Copyright (c) 1999/2000 JJ2000 Partners.
- *
- *
  *
  */
 
@@ -110,9 +107,6 @@ public interface InvWT extends WaveletTransform {
      * whereas the image has only 3 resolution levels available.
      *
      * @param rl The image resolution level.
-     *
-     * @return The vertical coordinate of the image origin in the canvas
-     * system, on the reference grid.
      *
      * */
     public void setImgResLevel(int rl);

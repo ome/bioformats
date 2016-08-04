@@ -2,7 +2,7 @@
  * #%L
  * The OME Data Model specification
  * %%
- * Copyright (C) 2003 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2003 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -25,30 +25,19 @@
 /*
  * $Id$
  *
- *   Copyright 2006-2014 University of Dundee. All rights reserved.
+ *   Copyright 2006-2013 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
 package ome.specification;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.io.FileInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
@@ -63,7 +52,6 @@ import org.w3c.dom.Document;
  */
 public class OmeValidator
 {
-
 
    /** Path the schema language. */
     public static final String JAXP_SCHEMA_LANGUAGE =
@@ -80,7 +68,8 @@ public class OmeValidator
     public OmeValidator()
     {
     }
-    /*
+
+    /**
      * Validate the specified file
      * @param file The file to parse.
      * @param schema The schema used to validate the specified file.
@@ -90,14 +79,14 @@ public class OmeValidator
     {
         try {
             // try parsing the file and return true if no errors
-            Document theDocument = parseFile(file, schema);
+            parseFile(file, schema);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    /*
+    /**
      * Validate the specified file
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
@@ -107,14 +96,14 @@ public class OmeValidator
     {
         try {
             // try parsing the file and return true if no errors
-            Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+            parseFileWithStreamArray(file, schemaStreamArray);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    /*
+    /**
      * Validate the specified file
      * Any validation errors thrown as an exception.
      * @param file The file to parse.
@@ -125,7 +114,7 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+        parseFileWithStreamArray(file, schemaStreamArray);
     }
 
     /*
@@ -139,10 +128,10 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFile(file, schema);
+        parseFile(file, schema);
     }
 
-    /*
+    /**
      * Validate the specified file
      * Any validation errors are sent to StdErr, not thrown as an exception.
      * @param file The file to parse.
@@ -153,7 +142,20 @@ public class OmeValidator
         throws Exception
     {
         // try parsing the file
-        Document theDocument = parseFileWithStreamArrayToSdtErr(file, schemaStreamArray);
+        parseFileWithStreamArrayToSdtErr(file, schemaStreamArray);
+    }
+
+    /**
+     * Parses the specified file and returns the document.
+     *
+     * @param file The file to parse.
+     * @return Document
+     * @throws Exception Thrown if an error occurred.
+     */
+    public Document parseFile(File file)
+        throws Exception
+    {
+        return parseFile(file, null);
     }
 
     /**
@@ -161,39 +163,45 @@ public class OmeValidator
      *
      * @param file The file to parse.
      * @param schema The schema used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if an error occurred.
      */
     public Document parseFile(File file, File schema)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
         if (schema != null) {
-            dbf.setValidating(true);
-            dbf.setNamespaceAware(true);
-            dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             // Set the schema file
             dbf.setAttribute(JAXP_SCHEMA_SOURCE, schema);
         }
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        return builder.parse(file);
+        FileInputStream is = null;
+        try {
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            is = new FileInputStream(file);
+            return builder.parse(is);
+        } catch (Exception e) {
+            throw new Exception("Not able to parse the file.", e);
+        } finally {
+            if (is != null) is.close();
+        }
     }
-
 
     /**
      * Parses the specified file and returns the document.
      * Any validation errors are thrown as an exception.
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if an error occurred.
      */
     public Document parseFileWithStreamArray(File file, StreamSource[] schemaStreamArray)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -206,10 +214,18 @@ public class OmeValidator
 
         // Version - two step parse then validate (throws error as exception)
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
-        Validator validator=theSchema.newValidator();
-        validator.validate(new DOMSource(theDoc));
-        return theDoc;
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            Document theDoc = builder.parse(is);
+            Validator validator=theSchema.newValidator();
+            validator.validate(new DOMSource(theDoc));
+            return theDoc;
+        } catch (Exception e) {
+            throw new Exception("Cannot parse the file", e);
+        } finally {
+            if (is != null) is.close();
+        }
     }
 
     /**
@@ -217,13 +233,13 @@ public class OmeValidator
      * Any validation errors are sent to StdErr, not thrown as an exception.
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
-     * @return
+     * @return Document
      * @throws Exception Thrown if other (NON-VALIDATION) errors occurred.
      */
     public Document parseFileWithStreamArrayToSdtErr(File file, StreamSource[] schemaStreamArray)
         throws Exception
     {
-        if (file == null)
+        if (file == null || !file.exists())
             throw new IllegalArgumentException("No file to parse.");
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -232,13 +248,20 @@ public class OmeValidator
         SchemaResolver theTestClassResolver = new SchemaResolver();
         sFactory.setResourceResolver(theTestClassResolver);
 
-        Schema theSchema = sFactory.newSchema( schemaStreamArray );
-
-        // Version - one step parse and validate (print error to stdErr)
-        dbf.setSchema(theSchema);
+        Schema theSchema = sFactory.newSchema(schemaStreamArray);
+        // Version - two step parse then validate (throws error as exception)
         DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
-        return theDoc;
+        FileInputStream is = null;
+        try {
+            dbf.setSchema(theSchema);
+            is = new FileInputStream(file);
+            Document theDoc = builder.parse(is);
+            return theDoc;
+        } catch (Exception e) {
+            throw new Exception("Cannot parse the file", e);
+        } finally {
+            if (is != null) is.close();
+        }
     }
 
 }

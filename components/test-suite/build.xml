@@ -85,6 +85,8 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -107,16 +109,19 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-config" depends="compile"
+  <target name="gen-config" depends="compile"
     description="generate config files for automated test suite">
     <testng groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
@@ -134,13 +139,17 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
+  <target name="test-config" depends="gen-config"/>
 
   <target name="test-automated" depends="compile"
     description="run automated tests in group 'automated'">
@@ -168,11 +177,15 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
+      <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -195,11 +208,14 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -222,11 +238,14 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -249,11 +268,14 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
@@ -276,16 +298,19 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
       <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-config-xml" depends="compile"
+  <target name="gen-config-xml" depends="compile"
     description="generate OME-XML files for automated test suite">
     <testng groups="config-xml" testname="OME-XML generation"
       listener="loci.tests.testng.DotTestListener"
@@ -307,8 +332,11 @@ Type "ant -p" for a list of targets.
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
       <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
+  <target name="test-config-xml" depends="gen-config-xml"/>
 
 </project>

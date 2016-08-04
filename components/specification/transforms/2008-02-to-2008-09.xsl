@@ -1,25 +1,35 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# Copyright (C) 2009-2014 Glencoe Software, Inc.
-#
-#    This library is free software; you can redistribute it and/or
-#    modify it under the terms of the GNU Lesser General Public
-#    License as published by the Free Software Foundation; either
-#    version 2.1 of the License, or (at your option) any later version.
-#
-#    This library is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    Lesser General Public License for more details.
-#
-#    You should have received a copy of the GNU Lesser General Public
-#    License along with this library; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
+  #%L
+  BSD implementations of Bio-Formats readers and writers
+  %%
+  Copyright (C) 2005 - 2015 Open Microscopy Environment:
+    - Board of Regents of the University of Wisconsin-Madison
+    - Glencoe Software, Inc.
+    - University of Dundee
+  %%
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+  #L%
+  -->
 
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -319,6 +329,11 @@
 				</xsl:for-each>
 			</xsl:for-each>
 		</xsl:variable>
+		<xsl:variable name="initROIID">
+			<xsl:for-each select="@* [name() = 'ID']">
+					<xsl:value-of select="."/>
+			</xsl:for-each>
+		</xsl:variable>
 		<xsl:variable name="X0">
 				<xsl:for-each select="@* [name() = 'X0']">
 					<xsl:value-of select="."/>
@@ -439,10 +454,63 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		<xsl:variable name="theShapeIDRoot"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
+		<xsl:variable name="theShapeIDRoot">
+			<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<xsl:number value="position()"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+					</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<xsl:element name="ROI" namespace="{$newOMENS}">
-			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
-			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
+			<xsl:variable name="shapeEndID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<xsl:number value="position()"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:variable name="roiID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($parentID))">
+						<!-- check if we have an id for roi -->
+						<xsl:choose>
+							<xsl:when test="not(normalize-space($initROIID))">
+								<xsl:number value="position()"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$initROIID"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="not(normalize-space($initROIID))">
+								<xsl:number value="position()"/>
+								<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$initROIID"/>:<xsl:value-of select="$parentID"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:attribute name="ID">
+				<xsl:choose>
+					<xsl:when test="not(normalize-space($initROIID))">
+						ROI:<xsl:value-of select="$roiID"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$roiID"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
 			<xsl:element name="Union" namespace="{$newOMENS}">
 				<xsl:choose>
 					<xsl:when test="(($theMaxT = $theMinT) and ($theMaxZ = $theMinZ) and not(( $T0 = 'NaN') or ( $Z0 = 'NaN') or ( $T1 = 'NaN') or ( $Z1 = 'NaN') ))">

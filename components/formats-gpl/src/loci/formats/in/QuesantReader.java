@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,13 +37,10 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.quantity.Length;
 
 /**
  * QuesantReader is the file format reader for Quesant .afm files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/QuesantReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/QuesantReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class QuesantReader extends FormatReader {
 
@@ -70,6 +67,7 @@ public class QuesantReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -81,6 +79,7 @@ public class QuesantReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -93,6 +92,7 @@ public class QuesantReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -121,7 +121,14 @@ public class QuesantReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (date != null) {
-      date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
+      // Insert fake separator between seconds and milliseconds to use
+      // DateTools.formatDate()
+      int separator = date.lastIndexOf(":");
+      if (separator > 0 && date.length() > (separator + 5)) {
+        date = date.substring(0, separator + 3) + "." +
+          date.substring(separator + 3);
+      }
+      date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ss", ".");
       if (date != null) {
         store.setImageAcquisitionDate(new Timestamp(date), 0);
       }
@@ -130,9 +137,9 @@ public class QuesantReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
 
-      PositiveFloat sizeX =
+      Length sizeX =
         FormatTools.getPhysicalSizeX((double) xSize / getSizeX());
-      PositiveFloat sizeY =
+      Length sizeY =
         FormatTools.getPhysicalSizeY((double) xSize / getSizeY());
 
       if (sizeX != null) {

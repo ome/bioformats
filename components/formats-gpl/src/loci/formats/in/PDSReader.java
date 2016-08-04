@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,13 +39,11 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PDSReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PDSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PDSReader extends FormatReader {
 
@@ -75,6 +73,7 @@ public class PDSReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false;
     if (checkSuffix(name, "hdr")) return super.isThisType(name, open);
@@ -86,6 +85,7 @@ public class PDSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 15;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -93,6 +93,7 @@ public class PDSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lutIndex < 0 || lutIndex >= 3) return null;
@@ -105,6 +106,7 @@ public class PDSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -116,6 +118,7 @@ public class PDSReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -161,6 +164,7 @@ public class PDSReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -174,6 +178,7 @@ public class PDSReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "hdr")) {
       String headerFile = id.substring(0, id.lastIndexOf(".")) + ".hdr";
@@ -194,7 +199,7 @@ public class PDSReader extends FormatReader {
     if (headerData.length == 1) {
       headerData = headerData[0].split("\r");
     }
-    Double xPos = null, yPos = null;
+    Length xPos = null, yPos = null;
     Double deltaX = null, deltaY = null;
     String date = null;
 
@@ -216,11 +221,13 @@ public class PDSReader extends FormatReader {
         m.sizeY = Integer.parseInt(value);
       }
       else if (key.equals("XPOS")) {
-        xPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        xPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("X position for position #1", xPos);
       }
       else if (key.equals("YPOS")) {
-        yPos = new Double(value);
+        final Double number = Double.valueOf(value);
+        yPos = new Length(number, UNITS.REFERENCEFRAME);
         addGlobalMeta("Y position for position #1", yPos);
       }
       else if (key.equals("SIGNX")) {
@@ -288,8 +295,8 @@ public class PDSReader extends FormatReader {
       store.setPlanePositionX(xPos, 0, 0);
       store.setPlanePositionY(yPos, 0, 0);
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(deltaX);
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(deltaY);
+      Length sizeX = FormatTools.getPhysicalSizeX(deltaX);
+      Length sizeY = FormatTools.getPhysicalSizeY(deltaY);
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }

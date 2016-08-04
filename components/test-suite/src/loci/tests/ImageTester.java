@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,10 +45,6 @@ import org.slf4j.LoggerFactory;
  * A class for testing the {@link loci.formats.gui.AWTImageTools#makeImage}
  * methods.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/ImageTester.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/ImageTester.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageTester extends JPanel implements WindowListener {
@@ -68,6 +64,7 @@ public class ImageTester extends JPanel implements WindowListener {
 
   // -- Component API methods --
 
+  @Override
   public void paint(Graphics g) {
     Dimension size = getSize();
     g.setColor(Color.black);
@@ -86,6 +83,7 @@ public class ImageTester extends JPanel implements WindowListener {
     }
   }
 
+  @Override
   public Dimension getPreferredSize() {
     int width = 0, height = 0;
     for (int y=0; y<img.length; y++) {
@@ -104,12 +102,19 @@ public class ImageTester extends JPanel implements WindowListener {
 
   // -- WindowListener API methods --
 
+  @Override
   public void windowActivated(WindowEvent e) { }
+  @Override
   public void windowClosed(WindowEvent e) { }
+  @Override
   public void windowClosing(WindowEvent e) { System.exit(0); }
+  @Override
   public void windowDeactivated(WindowEvent e) { }
+  @Override
   public void windowDeiconified(WindowEvent e) { }
+  @Override
   public void windowIconified(WindowEvent e) { }
+  @Override
   public void windowOpened(WindowEvent e) { }
 
   // -- Main method --

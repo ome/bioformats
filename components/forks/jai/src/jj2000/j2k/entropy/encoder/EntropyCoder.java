@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   EntropyCoder
  *
  * Description:             The abstract class for entropy encoders
- *
  *
  *
  * COPYRIGHT:
@@ -321,7 +320,7 @@ public abstract class EntropyCoder extends ImgDataAdapter
      *
      * @param wp The parameter list (or options).
      *
-     * @param cbks Code-block size specifications
+     * @param cblks Code-block size specifications
      *
      * @param pss Precinct partition specifications
      *

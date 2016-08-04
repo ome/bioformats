@@ -1,0 +1,53 @@
+.. index:: Amnis FlowSight
+.. index:: .cif
+
+Amnis FlowSight
+===============================================================================
+
+Extensions: .cif
+
+
+Owner: `Amnis <http://www.amnis.com/>`_
+
+**Support**
+
+
+BSD-licensed: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Amnis FlowSight <amnis-flowsight-metadata>`
+
+
+
+We currently have:
+
+* a few sample datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bsd-reader:`FlowSightReader.java`
+
+Notes:
+
+

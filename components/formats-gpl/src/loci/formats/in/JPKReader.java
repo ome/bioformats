@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,10 +36,6 @@ import loci.formats.tiff.PhotoInterp;
 
 /**
  * JPKReader is the file format reader for JPK Instruments files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPKReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPKReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPKReader extends BaseTiffReader {
 
@@ -54,6 +50,7 @@ public class JPKReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     return checkSuffix(name, "jpk");
   }
@@ -61,6 +58,7 @@ public class JPKReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -69,6 +67,11 @@ public class JPKReader extends BaseTiffReader {
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int ifd = getSeries() == 0 ? 0 : no + 1;
+
+    if (tiffParser == null) {
+      initTiffParser();
+    }
+
     tiffParser.fillInIFD(ifds.get(ifd));
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
@@ -77,6 +80,7 @@ public class JPKReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -123,6 +127,7 @@ public class JPKReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
+  @Override
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
 

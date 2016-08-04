@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.8</version>
+    <version>5.1.4</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -70,22 +70,7 @@
     <dependency>
      <groupId>com.esotericsoftware.kryo</groupId>
      <artifactId>kryo</artifactId>
-     <version>2.21</version>
-     <classifier>shaded</classifier>
-       <exclusions>
-         <exclusion>
-           <groupId>com.esotericsoftware.reflectasm</groupId>
-           <artifactId>reflectasm</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>com.esotericsoftware.minlog</groupId>
-           <artifactId>minlog</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>org.objenesis</groupId>
-           <artifactId>objenesis</artifactId>
-         </exclusion>
-      </exclusions>
+     <version>${kryo.version}</version>
     </dependency>
     <dependency>
       <groupId>org.perf4j</groupId>
@@ -97,12 +82,30 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lwf-stubs</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mipav-stubs</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+	    <groupId>com.drewnoakes</groupId>
+	    <artifactId>metadata-extractor</artifactId>
+	    <version>2.6.2</version>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
@@ -125,7 +128,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -162,25 +165,6 @@
     </resources>
 
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.4</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>target/generated-sources</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -313,10 +297,6 @@
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
-    <repository>
-      <id>ome.snapshots</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -327,17 +307,40 @@
       <layout>default</layout>
     </pluginRepository>
     <pluginRepository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
     <pluginRepository>
       <id>imagej.thirdparty</id>
       <url>http://maven.imagej.net/content/repositories/thirdparty</url>
     </pluginRepository>
-    <pluginRepository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
-    </pluginRepository>
   </pluginRepositories>
+
+  <profiles>
+    <profile>
+      <id>latest-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>ome.snapshots</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+        </repository>
+      </repositories>
+    </profile>
+
+    <profile>
+      <id>merge-build</id>
+
+      <repositories>
+        <repository>
+          <id>ome.unstable</id>
+          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 
 </project>

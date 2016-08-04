@@ -1,6 +1,6 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
-{% def indexes_name_string(indexes) %}${", ".join([v.replace('int ', '') for v in indexes])}{% end %}\
+{% def indexes_name_string(indexes) %}${", ".join(map(lambda x: lang.index_argname(x),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -31,7 +31,7 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -39,7 +39,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
 				if (result != null) return result;
 			}
 		}
@@ -47,7 +47,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -55,7 +55,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
 				if (result != null) return result;
 			}
 		}
@@ -63,7 +63,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -71,7 +71,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
 				if (result != null) return result;
 			}
 		}
@@ -84,7 +84,10 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+{% if debug %}\
+	// MARKER [A-GET]
+{% end debug %}\
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -98,7 +101,10 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+{% if debug %}\
+	// MARKER [B-GET]
+{% end debug %}\
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -112,7 +118,10 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+{% if debug %}\
+	// MARKER [C-GET]
+{% end debug %}\
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -170,7 +179,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -211,14 +220,27 @@
  *-----------------------------------------------------------------------------
  */
 
-package ome.xml.meta;
+package ${lang.metadata_package};
 
 import java.util.Iterator;
 import java.util.List;
 
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
+
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
@@ -267,8 +289,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public MetadataRoot getRoot()
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-		                           "Use getDelegates() and getRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	/**
@@ -277,19 +298,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public void setRoot(MetadataRoot root)
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
-	}
-
-	/**
-	 * Unsupported with an AggregateMetadata.
-	 * @throws RuntimeException Always.
-	 */
-	@Deprecated
-	public void setRoot(Object root)
-	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	// -- AggregateMetadata API methods --
@@ -390,6 +399,19 @@ public class AggregateMetadata implements IMetadata
     return -1;
   }
 
+  public int getMapAnnotationAnnotationCount(int mapAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getMapAnnotationAnnotationCount(mapAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
   public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();
@@ -475,10 +497,10 @@ public class AggregateMetadata implements IMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -490,14 +512,14 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
 			Object o = iter.next();
 			if (o instanceof MetadataRetrieve)
 			{
-				${o.langType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
+				${o.langBaseType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
 				if (result != null)
 				{
 					return result;
@@ -537,8 +559,6 @@ ${counter(k, o, v)}\
 		return null;
 	}
 
-	// -- Entity retrieval (code generated definitions) --
-
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
@@ -555,6 +575,56 @@ ${counter(k, o, v)}\
 		return null;
 	}
 
+	/** Gets the Map value associated with this annotation */
+	public java.util.List<ome.xml.model.MapPair> getMapAnnotationValue(int mapAnnotationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	/** Gets the Map value associated with this generic light source */
+	public java.util.List<ome.xml.model.MapPair> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getGenericExcitationSourceMap(instrumentIndex, lightSourceIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	/** Gets the Map value associated with this imaging environment */
+	public java.util.List<ome.xml.model.MapPair> getImagingEnvironmentMap(int imageIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				java.util.List<ome.xml.model.MapPair> result = retrieve.getImagingEnvironmentMap(imageIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// -- Entity retrieval (code generated definitions) --
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
@@ -568,10 +638,12 @@ ${counter(k, o, v)}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -581,11 +653,16 @@ ${counter(k, o, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA-AGG]
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -600,13 +677,25 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF-AGG]
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
+{% if debug %}\
+	// MARKER [HHH-AGG]
+{% end debug %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
@@ -647,8 +736,6 @@ ${getter(k, o, prop, v)}\
 		}
 	}
 
-	// -- Entity storage (code generated definitions) --
-
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
@@ -662,6 +749,50 @@ ${getter(k, o, prop, v)}\
 		}
 	}
 
+	/** Sets the Map value associated with this annotation */
+	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMapAnnotationValue(value, mapAnnotationIndex);
+			}
+		}
+	}
+
+	/** Sets the Map value associated with this generic light source */
+	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
+			}
+		}
+	}
+
+	/** Sets the Map value associated with this imaging environment */
+	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setImagingEnvironmentMap(map, imageIndex);
+			}
+		}
+	}
+
+	// -- Entity storage (code generated definitions) --
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
@@ -674,10 +805,12 @@ ${getter(k, o, prop, v)}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -687,11 +820,13 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -706,10 +841,19 @@ ${setter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [GGG-AGG]
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

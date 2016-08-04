@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,6 +44,8 @@ import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.OME;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
@@ -52,10 +54,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/OMEXMLServiceTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/OMEXMLServiceTest.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  */
 public class OMEXMLServiceTest {
 
@@ -84,5 +82,61 @@ public class OMEXMLServiceTest {
     assertEquals(txt, xmlAnn.getValue());
     OriginalMetadataAnnotation omAnn = (OriginalMetadataAnnotation) xmlAnn;
     assertEquals("testValue", omAnn.getValueForKey());
+  }
+
+  /**
+   * Test that the XML serialization of floating point unit properties
+   * includes a decimal point. In the schema a shape's stroke width is
+   * {@code type="xsd:float"} which in OMERO is mapped to a {@code double}.
+   * @throws ServiceException unexpected
+   */
+  @Test
+  public void testFloatingPointUnitProperty() throws ServiceException {
+    final Length propertyValue = new Length(3.0d, UNITS.PIXEL);
+
+    final StringBuffer expectedText = new StringBuffer();
+    expectedText.append(" StrokeWidth=");
+    expectedText.append('"');
+    expectedText.append(propertyValue.value().doubleValue());
+    expectedText.append('"');
+
+    final OMEXMLMetadata metadata = service.createOMEXMLMetadata();
+    metadata.setROIID("test ROI", 0);
+    metadata.setPointID("test point", 0, 0);
+    metadata.setPointX(0.0, 0, 0);
+    metadata.setPointY(0.0, 0, 0);
+    metadata.setPointStrokeWidth(propertyValue, 0, 0);
+    final String xml = service.getOMEXML(metadata);
+
+    assertTrue(xml.contains(expectedText));
+  }
+
+
+  /**
+   * Test that the XML serialization of integer unit properties does not
+   * include a decimal point. In the schema a shape's font size is
+   * {@code type="OME:NonNegativeInt"} which in OMERO is mapped to a
+   * {@code double}.
+   * @throws ServiceException unexpected
+   */
+  @Test
+  public void testIntegerUnitProperty() throws ServiceException {
+    final Length propertyValue = new Length(12.0d, UNITS.PT);
+
+    final StringBuffer expectedText = new StringBuffer();
+    expectedText.append(" FontSize=");
+    expectedText.append('"');
+    expectedText.append(propertyValue.value().longValue());
+    expectedText.append('"');
+
+    final OMEXMLMetadata metadata = service.createOMEXMLMetadata();
+    metadata.setROIID("test ROI", 0);
+    metadata.setPointID("test point", 0, 0);
+    metadata.setPointX(0.0, 0, 0);
+    metadata.setPointY(0.0, 0, 0);
+    metadata.setPointFontSize(propertyValue, 0, 0);
+    final String xml = service.getOMEXML(metadata);
+
+    assertTrue(xml.contains(expectedText));
   }
 }

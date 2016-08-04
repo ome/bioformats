@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,7 +43,6 @@
  *
  *                          Mergerd from StdQuantizerInt and
  *                          StdQuantizerFloat from Joel Askelof.
- *
  *
  * COPYRIGHT:
  *
@@ -166,7 +165,7 @@ public class StdQuantizer extends Quantizer {
      *
      * @param src The source of wavelet transform coefficients.
      *
-     * @param encSpec The encoder specifications
+     * @param wp The encoder parameters
      * */
     public StdQuantizer(CBlkWTDataSrc src,J2KImageWriteParamJava wp){
 	super(src);

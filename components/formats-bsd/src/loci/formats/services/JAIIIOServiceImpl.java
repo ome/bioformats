@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -60,10 +60,6 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
 
 /**
  * Implementation of JAIIIOService for reading and writing JPEG-2000 data.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JAIIIOServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JAIIIOServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JAIIIOServiceImpl extends AbstractService
   implements JAIIIOService
@@ -98,6 +94,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#writeImage(OutputStream, BufferedImage, JPEG2000CodecOptions) */
+  @Override
   public void writeImage(OutputStream out, BufferedImage img,
       JPEG2000CodecOptions options) throws IOException, ServiceException
   {
@@ -140,6 +137,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readImage(InputStream, JPEG2000CodecOptions) */
+  @Override
   public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -150,10 +148,13 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
-    return reader.read(0, param);
+    BufferedImage image = reader.read(0, param);
+    reader.dispose();
+    return image;
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
+  @Override
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
@@ -161,6 +162,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /* @see JAIIIOService#readRaster(InputStream, JPEG2000CodecOptions) */
+  @Override
   public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
@@ -171,10 +173,13 @@ public class JAIIIOServiceImpl extends AbstractService
     if (options.resolution != null) {
       param.setResolution(options.resolution.intValue());
     }
-    return reader.readRaster(0, param);
+    Raster raster = reader.readRaster(0, param);
+    reader.dispose();
+    return raster;
   }
 
   /* @see JAIIIOService#readRaster(InputStream) */
+  @Override
   public Raster readRaster(InputStream in) throws IOException, ServiceException
   {
     return readRaster(in, JPEG2000CodecOptions.getDefaultOptions());

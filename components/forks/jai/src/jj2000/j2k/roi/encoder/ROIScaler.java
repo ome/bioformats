@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,6 @@
  *
  * Description:             This class takes care of the scaling of the
  *                          samples
- *
  *
  *
  * COPYRIGHT:
@@ -188,7 +187,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      *
      * @param uba Flag indicating whether block aligning is used.
      *
-     * @param encSpec The encoder specifications for addition of roi specs
+     * @param wp The encoder parameters for addition of roi specs
      * */
     public ROIScaler(Quantizer src,
                      ROIMaskGenerator mg,
@@ -267,9 +266,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      *
      * @param src The source of data to scale
      *
-     * @param pl The parameter list (or options).
-     *
-     * @param encSpec The encoder specifications for addition of roi specs
+     * @param wp The encoder parameters for addition of roi specs
      *
      * @exception IllegalArgumentException If an error occurs while parsing
      * the options in 'pl'
@@ -746,7 +743,7 @@ public class ROIScaler extends ImgDataAdapter implements CBlkQuantDataSrcEnc {
      * tile-component, and stores it in the 'maxMagBits' array. This is called
      * by the constructor
      *
-     * @param encSpec The encoder specifications for addition of roi specs
+     * @param wp The encoder parameters for addition of roi specs
      * */
     private void calcMaxMagBits(J2KImageWriteParamJava wp) {
         int tmp;

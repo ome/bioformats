@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -54,7 +54,6 @@ import loci.poi.hssf.eventusermodel.HSSFUserException;
  * @see loci.poi.hssf.eventusermodel.HSSFUserException
  *
  * @author Carey Sublette (careysub@earthling.net)
- *
  */
 
 public abstract class AbortableHSSFListener implements HSSFListener

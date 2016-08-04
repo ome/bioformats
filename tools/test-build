@@ -30,7 +30,7 @@ cpp()
             cmake /usr/src/gtest
             make
         )
-        GTEST_ROOT=$(pwd)/gtest cmake ../..
+        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF -Dextended-tests=OFF ../.. || cat CMakeFiles/CMakeError.log
         make
         make test
         make DESTDIR=../install install
@@ -50,7 +50,15 @@ cppwrap()
         cd build
         cmake ..
         make
+        ./showinf ../../../../specification/samples/2009-09/18x24y5z1t1c8b-text.ome.tiff
+        ./minimum_writer test.ome.tiff
     )
+}
+
+# Check python sources with flake8
+flake()
+{
+    flake8 -v components cpp docs
 }
 
 # Test sphinx docs build
@@ -58,8 +66,8 @@ sphinx()
 {
     (
         export SPHINXOPTS="-W"
-        ant -Dsphinx.opts=$SPHINXOPTS clean-docs-sphinx
-        ant -Dsphinx.opts=$SPHINXOPTS docs-sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx
+        ant -Dsphinx.warnopts=$SPHINXOPTS docs-sphinx
     )
 }
 
@@ -74,6 +82,7 @@ antbuild()
       ant clean compile-formats-common
       ant clean compile-bio-formats-plugins
       ant clean compile-lwf-stubs
+      ant clean compile-mipav-stubs
       ant clean compile-mdbtools
       ant clean compile-metakit
       ant clean compile-ome-xml
@@ -83,6 +92,7 @@ antbuild()
       ant clean compile-bio-formats-tools
       ant clean compile-tests
       ant clean compile-turbojpeg
+      ant clean utils
     )
 }
 
@@ -97,6 +107,8 @@ do
             cpp ;;
         cppwrap)
             cppwrap ;;
+        flake8)
+            flake ;;
         sphinx)
             sphinx ;;
         ant)

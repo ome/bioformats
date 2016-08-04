@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -57,12 +57,14 @@ import ome.xml.model.primitives.Timestamp;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ome.units.quantity.ElectricPotential;
+import ome.units.quantity.Length;
+import ome.units.quantity.Temperature;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
+
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MicromanagerReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MicromanagerReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MicromanagerReader extends FormatReader {
 
@@ -99,11 +101,13 @@ public class MicromanagerReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
@@ -122,6 +126,12 @@ public class MicromanagerReader extends FormatReader {
         return false;
       }
     }
+    else if (!isGroupFiles()) {
+      // if file grouping was disabled, allow each of the TIFFs to be
+      // read separately; this will have no effect if the metadata file
+      // is chosen
+      return false;
+    }
     try {
       Location parent = new Location(name).getAbsoluteFile().getParentFile();
       Location metaFile = new Location(parent, METADATA);
@@ -136,11 +146,13 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException
   {
     if (tiffReader == null) tiffReader = new MinimalTiffReader();
@@ -148,6 +160,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
@@ -170,6 +183,7 @@ public class MicromanagerReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -188,6 +202,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiffReader != null) tiffReader.close(fileOnly);
@@ -197,6 +212,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
@@ -206,6 +222,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
@@ -217,6 +234,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new MinimalTiffReader();
@@ -297,9 +315,9 @@ public class MicromanagerReader extends FormatReader {
           store.setChannelName(p.channels[c], i, c);
         }
 
-        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
-        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
-        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
+        Length sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
+        Length sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
+        Length sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, i);
         }
@@ -315,9 +333,10 @@ public class MicromanagerReader extends FormatReader {
           store.setPlaneExposureTime(p.exposureTime, i, q);
           String tiff = positions.get(getSeries()).getFile(q);
           if (tiff != null && new Location(tiff).exists() &&
-            nextStamp < p.timestamps.length)
+            nextStamp < p.timestamps.length &&
+            p.timestamps[nextStamp] != null)
           {
-            store.setPlaneDeltaT(p.timestamps[nextStamp++], i, q);
+            store.setPlaneDeltaT(new Time(p.timestamps[nextStamp++], UNITS.MS), i, q);
           }
         }
 
@@ -328,7 +347,8 @@ public class MicromanagerReader extends FormatReader {
           store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
           store.setDetectorSettingsGain(new Double(p.gain), i, c);
           if (c < p.voltage.size()) {
-            store.setDetectorSettingsVoltage(p.voltage.get(c), i, c);
+            store.setDetectorSettingsVoltage(
+                    new ElectricPotential(p.voltage.get(c), UNITS.V), i, c);
           }
           store.setDetectorSettingsID(p.detectorID, i, c);
         }
@@ -348,7 +368,8 @@ public class MicromanagerReader extends FormatReader {
 
         if (p.cameraMode == null) p.cameraMode = "Other";
         store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
-        store.setImagingEnvironmentTemperature(p.temperature, i);
+        store.setImagingEnvironmentTemperature(
+                new Temperature(p.temperature, UNITS.DEGREEC), i);
       }
     }
   }
@@ -561,20 +582,20 @@ public class MicromanagerReader extends FormatReader {
         token = st.nextToken().trim();
         String key = "", value = "";
         boolean valueArray = false;
-	int nestedCount = 0;
+        int nestedCount = 0;
 
         while (!token.startsWith("}") || nestedCount > 0) {
 
-	  if (token.trim().endsWith("{")) {
-	      nestedCount++;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
-	  else if (token.trim().startsWith("}")) {
-	      nestedCount--;
-	      token = st.nextToken().trim();
-	      continue;
-	  }
+          if (token.trim().endsWith("{")) {
+            nestedCount++;
+            token = st.nextToken().trim();
+            continue;
+          }
+          else if (token.trim().startsWith("}")) {
+            nestedCount--;
+            token = st.nextToken().trim();
+            continue;
+          }
 
           if (valueArray) {
             if (token.trim().equals("],")) {
@@ -604,12 +625,10 @@ public class MicromanagerReader extends FormatReader {
           addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
-            double t = Double.parseDouble(value);
-            p.exposureTime = new Double(t / 1000);
+            p.exposureTime = new Time(Double.valueOf(value), UNITS.MS);
           }
           else if (key.equals("ElapsedTime-ms")) {
-            double t = Double.parseDouble(value);
-            stamps.add(new Double(t / 1000));
+            stamps.add(Double.valueOf(value));
           }
           else if (key.equals("Core-Camera")) p.cameraRef = value;
           else if (key.equals(p.cameraRef + "-Binning")) {
@@ -794,11 +813,13 @@ public class MicromanagerReader extends FormatReader {
   /** Initialize the TIFF reader with the first file in the current series. */
   private void setupReader() {
     try {
-      String file = positions.get(getSeries()).getFile(0);
+      String file = positions.get(getSeries()).getFile(
+        getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+        getImageCount(), 0);
       tiffReader.setId(file);
     }
     catch (Exception e) {
-      LOGGER.debug("", e);
+      LOGGER.warn("", e);
     }
   }
 
@@ -806,6 +827,7 @@ public class MicromanagerReader extends FormatReader {
 
   /** SAX handler for parsing Acqusition.xml. */
   class MicromanagerHandler extends BaseHandler {
+    @Override
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -829,7 +851,8 @@ public class MicromanagerReader extends FormatReader {
     public String[] channels;
 
     public String comment, time;
-    public Double exposureTime, sliceThickness, pixelSize;
+    public Time exposureTime;
+    public Double sliceThickness, pixelSize;
     public Double[] timestamps;
 
     public int gain;

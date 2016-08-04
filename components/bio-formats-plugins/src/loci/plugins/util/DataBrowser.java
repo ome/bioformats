@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -66,10 +66,6 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * Extension of StackWindow with additional UI trimmings for animation,
  * virtual stack caching options, metadata, and general beautification.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats-plugins/src/loci/plugins/util/DataBrowser.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats-plugins/src/loci/plugins/util/DataBrowser.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class DataBrowser extends StackWindow {
 
@@ -133,6 +129,7 @@ public class DataBrowser extends StackWindow {
     // build fancy UI widgets
     while (getComponentCount() > 1) remove(1);
     Panel controls = new Panel() {
+      @Override
       public Dimension getPreferredSize() {
         int minWidth = MIN_BROWSER_WIDTH;
         int w = imp.getCanvas().getWidth();
@@ -334,6 +331,7 @@ public class DataBrowser extends StackWindow {
       // NB: Cannot implement Runnable because one of the superclasses does so
       // for its SliceSelector thread, and overriding results in a conflict.
       new Thread("DataBrowser-Animation") {
+        @Override
         public void run() {
           while (isVisible()) {
             int ms = 200;
@@ -448,6 +446,7 @@ public class DataBrowser extends StackWindow {
 
   // -- MouseWheelListener methods --
 
+  @Override
   public void mouseWheelMoved(MouseWheelEvent event) {
     super.mouseWheelMoved(event);
     syncSliders();

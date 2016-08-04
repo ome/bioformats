@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,16 +35,14 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.UNITS;
 
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
  * Specifications available at
  * http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImarisReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImarisReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -75,6 +73,7 @@ public class ImarisReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, IS_LITTLE)) {
@@ -86,6 +85,7 @@ public class ImarisReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -102,6 +102,7 @@ public class ImarisReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) offsets = null;
@@ -110,6 +111,7 @@ public class ImarisReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
@@ -214,9 +216,9 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
-      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
-      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+      Length sizeX = FormatTools.getPhysicalSizeX((double) dx);
+      Length sizeY = FormatTools.getPhysicalSizeY((double) dy);
+      Length sizeZ = FormatTools.getPhysicalSizeZ((double) dz);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -227,13 +229,13 @@ public class ImarisReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(1.0, 0);
+      store.setPixelsTimeIncrement(new Time(1.0, UNITS.S), 0);
 
       // populate LogicalChannel data
 
       for (int i=0; i<getSizeC(); i++) {
         if (pinholes[i] > 0) {
-          store.setChannelPinholeSize(new Double(pinholes[i]), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes[i], UNITS.MICROM), 0, i);
         }
       }
 
@@ -241,9 +243,9 @@ public class ImarisReader extends FormatReader {
 
       for (int i=0; i<getSizeC(); i++) {
         if (gains[i] > 0) {
-          store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
+          store.setDetectorSettingsGain((double) gains[i], 0, i);
         }
-        store.setDetectorSettingsOffset(new Double(offsets[i]), i, 0);
+        store.setDetectorSettingsOffset((double) offsets[i], i, 0);
 
         // link DetectorSettings to an actual Detector
         String detectorID = MetadataTools.createLSID("Detector", 0, i);

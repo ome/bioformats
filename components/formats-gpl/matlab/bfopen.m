@@ -13,7 +13,7 @@ function [result] = bfopen(id, varargin)
 %    y - (Optional) A scalar giving the y-origin of the tile.
 %    Default: 1
 %
-%    w - (Optional) A scalar giving the width of the tile. 
+%    w - (Optional) A scalar giving the width of the tile.
 %    Set to the width of the plane by default.
 %
 %    h - (Optional) A scalar giving the height of the tile.
@@ -21,8 +21,8 @@ function [result] = bfopen(id, varargin)
 %
 % Output
 %
-%    result - a cell array of cell arrays of (matrix, label) pairs, 
-%    with each matrix representing a single image plane, and each inner 
+%    result - a cell array of cell arrays of (matrix, label) pairs,
+%    with each matrix representing a single image plane, and each inner
 %    list of matrices representing an image series.
 %
 % Portions of this code were adapted from:
@@ -46,11 +46,11 @@ function [result] = bfopen(id, varargin)
 %     bioformats_package.jar.
 %
 % For many examples of how to use the bfopen function, please see:
-%     http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
+%     http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/matlab-dev.html
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2007 - 2014 Open Microscopy Environment:
+% Copyright (C) 2007 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -108,16 +108,17 @@ if nargin == 0 || exist(id, 'file') == 0
 end
 
 % initialize logging
-loci.common.DebugTools.enableLogging('INFO');
+javaMethod('enableLogging', 'loci.common.DebugTools', 'INFO');
 
 % Get the channel filler
 r = bfGetReader(id, stitchFiles);
 
 % Test plane size
 if nargin >=4
-    planeSize = loci.formats.FormatTools.getPlaneSize(r, varargin{3}, varargin{4});
+    planeSize = javaMethod('getPlaneSize', 'loci.formats.FormatTools', ...
+                           r, varargin{3}, varargin{4});
 else
-    planeSize = loci.formats.FormatTools.getPlaneSize(r);
+    planeSize = javaMethod('getPlaneSize', 'loci.formats.FormatTools', r);
 end
 
 if planeSize/(1024)^3 >= 2,
@@ -135,7 +136,8 @@ for s = 1:numSeries
     fprintf('Reading series #%d', s);
     r.setSeries(s - 1);
     pixelType = r.getPixelType();
-    bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
+    bpp = javaMethod('getBytesPerPixel', 'loci.formats.FormatTools', ...
+                     pixelType);
     bppMax = power(2, bpp * 8);
     numImages = r.getImageCount();
     imageList = cell(numImages, 2);
@@ -153,14 +155,14 @@ for s = 1:numSeries
         else
             colorMaps{s, i} = r.get16BitLookupTable()';
         end
-        
-        warning off
+
+        warning_state = warning ('off');
         if ~isempty(colorMaps{s, i})
             newMap = single(colorMaps{s, i});
             newMap(newMap < 0) = newMap(newMap < 0) + bppMax;
             colorMaps{s, i} = newMap / (bppMax - 1);
         end
-        warning on
+        warning (warning_state);
 
 
         % build an informative title for our figure
@@ -214,7 +216,8 @@ for s = 1:numSeries
 
     % extract metadata table for this series
     seriesMetadata = r.getSeriesMetadata();
-    loci.formats.MetadataTools.merge(globalMetadata, seriesMetadata, 'Global ');
+    javaMethod('merge', 'loci.formats.MetadataTools', ...
+               globalMetadata, seriesMetadata, 'Global ');
     result{s, 2} = seriesMetadata;
     result{s, 3} = colorMaps;
     result{s, 4} = r.getMetadataStore();

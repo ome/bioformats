@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,10 +44,16 @@
 #include <string>
 #include <vector>
 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/identity.hpp>
+#include <boost/multi_index/indexed_by.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/random_access_index.hpp>
+
 #include <ome/compat/memory.h>
 
-#include <ome/xerces/dom/Element.h>
-#include <ome/xerces/dom/Document.h>
+#include <ome/common/xml/dom/Element.h>
+#include <ome/common/xml/dom/Document.h>
 
 namespace ome
 {
@@ -60,7 +66,7 @@ namespace ome
       class Reference;
 
       /**
-       * OME model object.
+       * OME model object interface.
        *
        * @todo Check constness and reference type for params/return types.
        * @todo Consider dropping redundant parts of typenames which
@@ -68,16 +74,68 @@ namespace ome
        * could just be Object, since it's really an
        * ome::xml::model::Object.
        */
-      class OMEModelObject : public std::enable_shared_from_this<OMEModelObject>
+      class OMEModelObject : public ome::compat::enable_shared_from_this<OMEModelObject>
       {
-      public:
-        /// Constructor.
-        OMEModelObject ();
+      protected:
+        /**
+         * Multi-index container for efficient ordered insertion and
+         * deletion of model object references.
+         */
+        template<typename T, template <typename ElementType> class Ptr>
+        struct indexed_container
+        {
+          /// Multi-index container type.
+          typedef boost::multi_index_container<
+            Ptr<T>, // value type
+            boost::multi_index::indexed_by<
+              boost::multi_index::random_access<>, // insertion order
+              boost::multi_index::ordered_unique<boost::multi_index::identity<Ptr<T> >, ome::compat::owner_less<Ptr<T> > > // sorted order
+              >
+            > type;
+        };
 
+        /// Constructor.
+        OMEModelObject ()
+        {}
+
+      public:
         /// Destructor.
         virtual
-        ~OMEModelObject ();
+        ~OMEModelObject ()
+        {}
 
+        /**
+         * Get the element name of this model object.
+         *
+         * This will be the most-derived class name.
+         *
+         * @returns the element type.
+         */
+        virtual const std::string&
+        elementName() const = 0;
+
+        /**
+         * Check if a given element name is valid for processing by
+         * this model object.
+         *
+         * Used for processing nodes when interitance is involved.
+         *
+         * @param name the element name to check.
+         *
+         * @returns @c true if valid, @c false if invalid.
+         */
+        virtual bool
+        validElementName(const std::string& name) const = 0;
+
+      private:
+        /// Copy constructor (deleted).
+        OMEModelObject (const OMEModelObject&);
+
+        /// Assignment operator (deleted).
+        OMEModelObject&
+        operator= (const OMEModelObject&);
+
+      public:
         /**
          * Transform the object hierarchy rooted at this element to
          * XML.
@@ -85,25 +143,9 @@ namespace ome
          * @param document document for element creation
          * @returns an XML DOM tree root element for this model object.
          */
-        virtual xerces::dom::Element&
-        asXMLElement (xerces::dom::Document& document) const = 0;
+        virtual common::xml::dom::Element
+        asXMLElement (common::xml::dom::Document& document) const = 0;
 
-      protected:
-        /**
-         * Transform the object hierarchy rooted at this element to
-         * XML.  This internal implementation of asXMLelement also
-         * requires an XML element, which may be null, or may be
-         * instantiated and passed from superclasses.
-         *
-         * @param document XML document for element creation.
-         * @param element XML element for setting model data.
-         * @returns an XML DOM tree root element for this model object.
-         */
-        virtual xerces::dom::Element&
-        asXMLElementInternal (xerces::dom::Document& document,
-                              xerces::dom::Element&  element) const = 0;
-
-      public:
         /**
          * Update the object hierarchy recursively from an XML DOM tree.
          *
@@ -114,11 +156,13 @@ namespace ome
          * @param model handler for the OME model used to track
          * instances and references seen during the update.
          * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
+         * instantiating an enumeration during model object creation,
+         * or ModelException if there are any consistency or validity
+         * errors found during processing.
          */
         virtual void
-        update (const xerces::dom::Element& element,
-                OMEModel&                   model);
+        update (const common::xml::dom::Element& element,
+                OMEModel&                   model) = 0;
 
         /**
          * Link a given OME model object to this model object.
@@ -142,94 +186,16 @@ namespace ome
          * to all generated model objects implementing this interface.
          */
         virtual bool
-        link (std::shared_ptr<Reference>&      reference,
-              std::shared_ptr<OMEModelObject>& object);
+        link (ome::compat::shared_ptr<Reference>&      reference,
+              ome::compat::shared_ptr<OMEModelObject>& object) = 0;
 
         /**
-         * Retrieves all the children of an element that have a given tag name. If a
-         * tag has a namespace prefix it will be stripped prior to attempting a
-         * name match.
-         * @param parent DOM element to retrieve tags based upon.
-         * @param name Name of the tags to retrieve.
-         * @return List of elements which have the tag <code>name</code>.
-         */
-        static std::vector<xerces::dom::Element>
-        getChildrenByTagName (const xerces::dom::Element& parent,
-                              const std::string&          name);
-
-        /**
-         * Strip the namespace prefix from a tag name.
+         * Get the XML namespace for this model object.
          *
-         * @param value tag name
-         * @returns @a value with the namespace prefix stripped or @a
-         * value if it does not have a namespace prefix.
+         * @returns the XML namespace.
          */
-        static std::string
-        stripNamespacePrefix (const std::string& value);
-
-      protected:
-        /**
-         * Comparison functor.  Compares the referenced object with
-         * the object reference passed by the function operator.  All
-         * objects must be shared_ptr or weak_ptr of the same type (or
-         * castable to the same type).
-         *
-         * @todo: Use of strict const since this is nonmodifying.
-         */
-        template<typename T>
-        class compare_element
-        {
-        private:
-          /// The element to compare other elements with.
-          std::shared_ptr<const T> cmp;
-
-        public:
-          /**
-           * Constructor.
-           *
-           * @param cmp the element to compare other elements with.
-           */
-          compare_element(const std::shared_ptr<const T>& cmp):
-            cmp(cmp)
-          {}
-
-          /**
-           * Compare element with another element.
-           *
-           * @note This is a shared_ptr comparison, not a value
-           * comparison.
-           *
-           * @param element the element to compare the original element with.
-           * @returns @c true if the elements are the same, otherwise @c false.
-           */
-          bool
-          operator () (std::weak_ptr<const T> element)
-          {
-            std::shared_ptr<const T> shared_element(element);
-            return cmp && shared_element && cmp == shared_element;
-          }
-        };
-
-        /**
-         * Check if a container contains a particular element.
-         *
-         * @note This is a shared_ptr comparison, not an element value
-         * comparison.
-         *
-         * @param container the container to check.
-         * @param element the element to check for.
-         * @returns @c true if the element was found, otherwise @c false.
-         */
-        template<class C, typename T>
-        bool
-        contains(const C&                  container,
-                 const std::shared_ptr<T>& element)
-        {
-          return (std::find_if(container.begin(),
-                               container.end(),
-                               compare_element<T>(element)) != container.end());
-        }
-
+        virtual const std::string&
+        getXMLNamespace() const = 0;
       };
 
     }

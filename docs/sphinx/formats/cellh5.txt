@@ -1,0 +1,56 @@
+.. index:: CellH5
+.. index:: .ch5
+
+CellH5
+===============================================================================
+
+Extensions: .ch5
+
+Developer: `CellH5 <http://cellh5.org/>`_
+
+
+**Support**
+
+
+BSD-licensed: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`CellH5 <cellh5-metadata>`
+
+Freely Available Software:
+
+- `CellH5 <http://cellh5.org/>`_
+
+
+We currently have:
+
+* a few CellH5 datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Very good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`CellH5Reader.java`
+
+Notes:
+
+

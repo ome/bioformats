@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2014 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -44,14 +44,17 @@ public class ThreadNameBasedDiscriminator implements Discriminator<ILoggingEvent
         return KEY;
     }
  
+    @Override
     public void start() {
         started = true;
     }
  
+    @Override
     public void stop() {
         started = false;
     }
  
+    @Override
     public boolean isStarted() {
         return started;
     }

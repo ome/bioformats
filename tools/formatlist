@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # formatlist: a script for listing supported formats in Bio-Formats
 

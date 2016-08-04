@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,16 +41,23 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.services.EXIFService;
+
+import java.util.Date;
+import java.util.HashMap;
+import org.joda.time.DateTime;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * JPEGReader is the file format reader for JPEG images.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPEGReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPEGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -73,9 +80,10 @@ public class JPEGReader extends DelegateReader {
     suffixNecessary = false;
   }
 
-  // -- IFormatHandler API methods --
+  // -- FormatReader API methods --
 
-  /* @see IFormatHandler#setId(String) */
+  /* @see FormatReader#setId(String) */
+  @Override
   public void setId(String id) throws FormatException, IOException {
     try {
       super.setId(id);
@@ -137,12 +145,22 @@ public class JPEGReader extends DelegateReader {
       useLegacy = true;
       super.setId(id);
     }
-    currentId = id;
+    if (currentId.endsWith(".fixed")) {
+      currentId = currentId.substring(0, currentId.lastIndexOf("."));
+    }
   }
 
   // -- IFormatReader API methods --
 
+  /* @see IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels ? null : new String[] {currentId.replaceAll(".fixed", "")};
+  }
+
   /* @see IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     Location.mapId(currentId, null);
@@ -158,6 +176,7 @@ public class JPEGReader extends DelegateReader {
     }
 
     /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+    @Override
     public boolean isThisType(String name, boolean open) {
       if (open) {
         return super.isThisType(name, open);
@@ -166,7 +185,42 @@ public class JPEGReader extends DelegateReader {
       return checkSuffix(name, getSuffixes());
     }
 
+    /* @see loci.formats.FormatReader#initFile(String) */
+    protected void initFile(String id) throws FormatException, IOException {
+      super.initFile(id);
+
+      MetadataStore store = makeFilterMetadata();
+      LOGGER.info("Parsing JPEG EXIF data");
+
+      try {
+        EXIFService exif = new ServiceFactory().getInstance(EXIFService.class);
+        if (exif == null) {
+          return;
+        }
+        exif.initialize(id);
+
+        // Set the acquisition date
+        Date date = exif.getCreationDate();
+        if (date != null) {
+          Timestamp timestamp = new Timestamp(new DateTime(date));
+          store.setImageAcquisitionDate(timestamp, 0);
+        }
+
+        HashMap<String, String> tags = exif.getTags();
+        for (String tagName : tags.keySet()) {
+          addGlobalMeta(tagName, tags.get(tagName));
+        }
+      }
+      catch (ServiceException e) {
+        LOGGER.debug("Could not parse EXIF data", e);
+      }
+      catch (DependencyException e) {
+        LOGGER.debug("Could not parse EXIF data", e);
+      }
+    }
+
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+    @Override
     public boolean isThisType(RandomAccessInputStream stream) throws IOException
     {
       final int blockLen = 4;

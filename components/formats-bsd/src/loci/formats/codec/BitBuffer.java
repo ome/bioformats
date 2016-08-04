@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,11 +39,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/BitBuffer.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/BitBuffer.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
+ * @deprecated Use loci.common.RandomAccessInputStream instead
  */
 public class BitBuffer {
 
@@ -87,6 +85,11 @@ public class BitBuffer {
     currentByte = 0;
     currentBit = 0;
     eofByte = byteBuffer.length;
+  }
+
+  /** Return the backing byte array. */
+  public byte[] getByteBuffer() {
+    return byteBuffer;
   }
 
   /**
@@ -187,6 +190,16 @@ public class BitBuffer {
   }
 
   /**
+   * Checks if the current position is on a byte boundary, that is the next
+   * bit in the byte array is the first bit in a byte.
+   *
+   * @return true if bit is on byte boundary, false otherwise.
+   */
+  public boolean isBitOnByteBoundary() {
+    return currentBit % 8 == 0 ? true : false;
+  }
+
+  /**
    * Testing method.
    * @param args Ignored.
    */
@@ -235,6 +248,7 @@ public class BitBuffer {
         bb.skipBits(len[i]);
       }
     }
+
     // Test reading past end of buffer.
     LOGGER.info("Testing end of buffer");
     bb = new BitBuffer(bw.toByteArray());
@@ -243,6 +257,21 @@ public class BitBuffer {
     int read = bb.getBits(1);
     if (-1 != read) {
       LOGGER.info("-1 expected at end of buffer, {} received.", read);
+    }
+
+    // Test byte boundary detection
+    LOGGER.info("Testing byte boundary detection");
+    bb = new BitBuffer(bw.toByteArray());
+    for (int i = 0; i < trials; i++) {
+      int c = r.nextInt(100);
+      if (c > 50) {
+        if (len[i] > 8) {
+          bb.getBits(8);
+          if (!bb.isBitOnByteBoundary()){
+            LOGGER.info("Bit on byte boundary expected, but not returned.");
+          }
+        }
+      }
     }
   }
 }

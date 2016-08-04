@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,10 +51,6 @@ import loci.common.Constants;
 /**
  * This class is used to generate a text file containing all of the
  * image file extensions supported by Bio-Formats.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/BioFormatsExtensionPrinter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/BioFormatsExtensionPrinter.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Mark Hiner hiner at wisc.edu
  */

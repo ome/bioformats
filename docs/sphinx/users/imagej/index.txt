@@ -110,3 +110,31 @@ ImageJ.
 simple plugin that demonstrates how to open all image files in a directory
 using Bio-Formats, grouping files with similar names to avoiding opening the
 same dataset more than once.
+
+Usage tips
+----------
+
+-  "How do I make the options window go away?" is a common question.
+   There are a few ways to do this:
+
+   -  To disable the options window only for files in a specific format,
+      select :menuselection:`Plugins > Bio-Formats > Bio-Formats Plugins Configuration`,
+      then pick the format from the list and make sure the "Windowless"
+      option is checked.
+   -  To avoid the options window entirely, use the
+      :menuselection:`Plugins > Bio-Formats > Bio-Formats Windowless Importer`
+      menu item to import files.
+   -  Open files by calling the Bio-Formats importer plugin from a
+      macro.
+
+-  A common cause of problems having multiple copies
+   of :file:`bioformats_package.jar` in you ImageJ plugins folder, or a copy
+   of :file:`bioformats_package.jar` and a copy of :file:`formats-gpl.jar`. It
+   is often difficult to determine for sure that this is the problem - the
+   only error message that pretty much guarantees it is a
+   ``NoSuchMethodException``. If you downloaded the latest version and
+   whatever error message or odd behavior you are seeing has been reported as
+   fixed, it is worth removing all copies of :file:`bioformats_package.jar`
+   (and :file:`loci_tools.jar` or any other Bio-Formats jars) and download a
+   fresh version.
+

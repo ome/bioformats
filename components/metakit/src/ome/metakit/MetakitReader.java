@@ -2,7 +2,7 @@
  * #%L
  * OME Metakit package for reading Metakit database files.
  * %%
- * Copyright (C) 2011 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2011 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,10 +34,6 @@ import loci.common.RandomAccessInputStream;
  * Top-level reader for Metakit database files.
  * See http://equi4.com/metakit/metakit-ff.html for basic documentation on the
  * Metakit file format.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/metakit/src/ome/metakit/MetakitReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/metakit/src/ome/metakit/MetakitReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -100,7 +96,8 @@ public class MetakitReader {
 
   /**
    * Retrieve the name of every table in this database file.
-   * The length of the returned array is equivalent to {@link getTableCount()}.
+   * The length of the returned array is equivalent to
+   * {@link #getTableCount()}.
    */
   public String[] getTableNames() {
     return tableNames;
@@ -108,7 +105,7 @@ public class MetakitReader {
 
   /**
    * Retrieve the name of every column in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    */
   public String[] getColumnNames(int tableIndex) {
     String[] columnNames = new String[columns[tableIndex].length];
@@ -131,10 +128,10 @@ public class MetakitReader {
 
   /**
    * Retrieve the type for every column in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * Every Object in the arrays returned by {@link getTableData(int)} and
-   * {@link getTableData(String)} will be an instance of the corresponding
+   * Every Object in the arrays returned by {@link #getTableData(int)} and
+   * {@link #getTableData(String)} will be an instance of the corresponding
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(int tableIndex) {
@@ -148,8 +145,8 @@ public class MetakitReader {
   /**
    * Retrieve the type for every column in the named table.
    *
-   * Every Object in the arrays returned by {@link getTableData(int)} and
-   * {@link getTableData(String)} will be an instance of the corresponding
+   * Every Object in the arrays returned by {@link #getTableData(int)} and
+   * {@link #getTableData(String)} will be an instance of the corresponding
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(String tableName) {
@@ -162,7 +159,7 @@ public class MetakitReader {
 
   /**
    * Retrieve the number of rows in the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    */
   public int getRowCount(int tableIndex) {
     return rowCount[tableIndex];
@@ -177,9 +174,9 @@ public class MetakitReader {
 
   /**
    * Retrieve all of the tabular data for the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * @see getColumnTypes(int)
+   * @see #getColumnTypes(int)
    */
   public Object[][] getTableData(int tableIndex) {
     Object[][] table = data[tableIndex];
@@ -203,7 +200,7 @@ public class MetakitReader {
   /**
    * Retrieve all of the tabular data for the named table.
    *
-   * @see getColumnTypes(String)
+   * @see #getColumnTypes(String)
    */
   public Object[][] getTableData(String tableName) {
     int index = DataTools.indexOf(tableNames, tableName);
@@ -215,9 +212,9 @@ public class MetakitReader {
 
   /**
    * Retrieve the given row of data from the table with the given index.
-   * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
+   * Tables are indexed from 0 to <code>{@link #getTableCount()} - 1</code>.
    *
-   * @see getColumnTypes(int)
+   * @see #getColumnTypes(int)
    */
   public Object[] getRowData(int rowIndex, int tableIndex) {
     Object[] row = new Object[data[tableIndex].length];
@@ -230,7 +227,7 @@ public class MetakitReader {
   /**
    * Retrieve the given row of data from the named table.
    *
-   * @see getColumnTypes(String)
+   * @see #getColumnTypes(String)
    */
   public Object[] getRowData(int rowIndex, String tableName) {
     int index = DataTools.indexOf(tableNames, tableName);
@@ -242,6 +239,11 @@ public class MetakitReader {
 
   // -- Helper methods --
 
+  /**
+   * Read the tables for the current database file.
+   * @throws IOException if the file could not be read
+   * @throws MetakitException if the file is not valid for the Metakit format
+   */
   private void initialize() throws IOException, MetakitException {
     String magic = stream.readString(2);
 
@@ -269,6 +271,11 @@ public class MetakitReader {
     readFooter();
   }
 
+  /**
+   * Read the footer data for the current database file.
+   * @throws IOException if the footer cannot be read from the file
+   * @throws MetakitException if the footer is not valid for the Metakit format
+   */
   private void readFooter() throws IOException, MetakitException {
     stream.skipBytes(4);
 
@@ -281,6 +288,11 @@ public class MetakitReader {
     readTOC();
   }
 
+  /**
+   * Reads the table of contents (TOC) for the current database file.
+   * @throws IOException if the footer cannot be read from the file
+   * @throws MetakitException if the footer is not valid for the Metakit format
+   */
   private void readTOC() throws IOException, MetakitException {
     int tocMarker = MetakitTools.readBpInt(stream);
     String structureDefinition = MetakitTools.readPString(stream);

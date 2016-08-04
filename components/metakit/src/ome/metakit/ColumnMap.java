@@ -2,7 +2,7 @@
  * #%L
  * OME Metakit package for reading Metakit database files.
  * %%
- * Copyright (C) 2011 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2011 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -33,10 +33,6 @@ import loci.common.RandomAccessInputStream;
 
 /**
  * Class representating a column mapping in a Metakit database file.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/metakit/src/ome/metakit/ColumnMap.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/metakit/src/ome/metakit/ColumnMap.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -86,6 +82,9 @@ public class ColumnMap {
 
   // -- Helper methods --
 
+  /**
+   * Read the data values for the current column.
+   */
   private void setup() throws IOException {
     if (isFixedMap()) {
       // read a single IVecRef
@@ -142,6 +141,13 @@ public class ColumnMap {
     }
   }
 
+  /**
+   * Read the value for this column at the given row index.
+   * @param vectorSize the number of stored bytes for this value
+   * @param index the row index
+   * @return the value for the given row and column
+   * @throws IOException if the value could not be read
+   */
   private Object readElement(int vectorSize, int index) throws IOException {
     char type = col.getTypeString().charAt(0);
 
@@ -175,6 +181,14 @@ public class ColumnMap {
     return null;
   }
 
+  /**
+   * Read a bit-packed integer value.
+   * @param nBytes the total number of bytes used for all rows
+   * @param bits the number of bits to read for the specified row
+   * @param index the row index
+   * @return the value for the given row and column
+   * @throws IOException if the value could not be read
+   */
   private int readBits(int nBytes, int bits, int index) throws IOException {
     if (bits == 8) {
       return stream.read();

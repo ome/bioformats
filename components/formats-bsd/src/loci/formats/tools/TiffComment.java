@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,10 +49,6 @@ import loci.formats.tiff.TiffSaver;
 
 /**
  * Extracts the comment from the first IFD of the given TIFF file(s).
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/TiffComment.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/TiffComment.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TiffComment {
 
@@ -121,12 +117,7 @@ public class TiffComment {
     for (String file : files) {
       if (edit) EditTiffG.openFile(file);
       else if (newComment != null) {
-        RandomAccessInputStream in = new RandomAccessInputStream(file);
-        RandomAccessOutputStream out = new RandomAccessOutputStream(file);
-        TiffSaver saver = new TiffSaver(out, file);
-        saver.overwriteComment(in, newComment);
-        in.close();
-        out.close();
+          overwriteComment(file, newComment);
       }
       else {
         String comment = new TiffParser(file).getComment();
@@ -136,4 +127,30 @@ public class TiffComment {
     }
   }
 
+  /**
+   * Overwrites the comment.
+   *
+   * @param file The path to the file to handle.
+   * @param comment The new comment to write.
+   */
+  private static void overwriteComment(String file, String comment)
+  {
+    RandomAccessInputStream in = null;
+    RandomAccessOutputStream out = null;
+    try {
+      in = new RandomAccessInputStream(file);
+      out = new RandomAccessOutputStream(file);
+      TiffSaver saver = new TiffSaver(out, file);
+      saver.overwriteComment(in, comment);
+    } catch (Exception e) {
+      System.out.println(e.toString());
+    } finally {
+      try {
+        if (in != null) in.close();
+      } catch (Exception e) {}
+      try {
+        if (out != null) out.close();
+      } catch (Exception e) {}
+    }
+  }
 }

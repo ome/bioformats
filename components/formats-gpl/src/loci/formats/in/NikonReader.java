@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -39,7 +40,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
 import loci.formats.meta.MetadataStore;
@@ -52,10 +52,6 @@ import loci.formats.tiff.TiffRational;
 
 /**
  * NikonReader is the file format reader for Nikon NEF (TIFF) files.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NikonReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NikonReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -125,6 +121,7 @@ public class NikonReader extends BaseTiffReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     // extension is sufficient as long as it is NEF
     if (checkSuffix(name, NEF_SUFFIX)) return true;
@@ -132,6 +129,7 @@ public class NikonReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
@@ -144,6 +142,7 @@ public class NikonReader extends BaseTiffReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -200,7 +199,8 @@ public class NikonReader extends BaseTiffReader {
         src.write(t);
       }
 
-      BitBuffer bb = new BitBuffer(src.toByteArray());
+      RandomAccessInputStream bb = new RandomAccessInputStream(
+        new ByteArrayHandle(src.toByteArray()));
       short[] pix = new short[getSizeX() * getSizeY() * 3];
 
       src.close();
@@ -230,7 +230,7 @@ public class NikonReader extends BaseTiffReader {
         int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
           row * 2 : (row - (getSizeY() / 2)) * 2 + 1) : row;
         for (int col=0; col<getSizeX(); col++) {
-          short val = (short) (bb.getBits(dataSize) & 0xffff);
+          short val = (short) (bb.readBits(dataSize) & 0xffff);
           int mapIndex = (realRow % 2) * 2 + (col % 2);
 
           int redOffset = realRow * getSizeX() + col;
@@ -259,6 +259,7 @@ public class NikonReader extends BaseTiffReader {
           }
         }
       }
+      bb.close();
 
       lastPlane = new byte[FormatTools.getPlaneSize(this)];
       ImageTools.interpolate(pix, lastPlane, colorMap, getSizeX(), getSizeY(),
@@ -278,6 +279,7 @@ public class NikonReader extends BaseTiffReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
@@ -297,6 +299,7 @@ public class NikonReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
+  @Override
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
@@ -432,6 +435,7 @@ public class NikonReader extends BaseTiffReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 

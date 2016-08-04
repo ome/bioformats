@@ -2,10 +2,11 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2014 Open Microscopy Environment:
+% Copyright (C) 2012 - 2015 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -39,15 +40,12 @@ classdef TestBfsave < ReaderTest
         
         function setUp(self)
             setUp@ReaderTest(self);
-            if isunix,
-                self.path = '/tmp/test.ome.tiff';
-            else
-                self.path = 'C:\test.ome.tiff';
-            end
+            mkdir(self.tmpdir);
+            self.path = fullfile(self.tmpdir, 'test.ome.tif');
         end
         
         function tearDown(self)
-            if exist(self.path,'file')==2, delete(self.path); end
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
             tearDown@ReaderTest(self);
         end
         
@@ -69,6 +67,30 @@ classdef TestBfsave < ReaderTest
                     sprintf('Channel:0:%g', i - 1));
             end
 
+        end
+        
+        % Input check tests
+        function testNoInput(self)
+            assertExceptionThrown(@() bfsave(),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testNoOutputPath(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I),...
+                'MATLAB:InputParser:notEnoughInputs');
+        end
+        
+        function testInvalidI(self)
+            self.I = 'a';
+            assertExceptionThrown(@() bfsave(self.I, self.path),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testInvalidDimensionOrder(self)
+            self.I = 1;
+            assertExceptionThrown(@() bfsave(self.I, self.path, 'XY'),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         % Dimension order tests

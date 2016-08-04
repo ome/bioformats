@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   ROI
  *
  * Description:             This class describes a single ROI
- *
  *
  *
  * COPYRIGHT:
@@ -145,9 +144,9 @@ public class ROI{
      *
      * @param comp The component the ROI belongs to
      *
-     * @param x x-coordinate of upper left corner of ROI
+     * @param ulx x-coordinate of upper left corner of ROI
      *
-     * @param y y-coordinate of upper left corner of ROI
+     * @param uly y-coordinate of upper left corner of ROI
      *
      * @param w width of ROI
      *
@@ -172,7 +171,7 @@ public class ROI{
      *
      * @param y y-coordinate of center of ROI
      *
-     * @param w radius of ROI
+     * @param rad radius of ROI
      */
     public ROI(int comp, int x, int y, int rad){
         arbShape = false;

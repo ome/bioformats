@@ -17,25 +17,25 @@ Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Nikon NEF format reader:
-  * :schema:`Channel : ID <OME-2013-06/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : SamplesPerPixel <OME-2013-06/ome_xsd.html#Channel_SamplesPerPixel>`
-  * :schema:`Image : AcquisitionDate <OME-2013-06/ome_xsd.html#Image_AcquisitionDate>`
-  * :schema:`Image : ID <OME-2013-06/ome_xsd.html#Image_ID>`
-  * :schema:`Image : Name <OME-2013-06/ome_xsd.html#Image_Name>`
-  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
-  * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
-  * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
-  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
-  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
-  * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
-  * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
-  * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
-  * :schema:`Pixels : SizeY <OME-2013-06/ome_xsd.html#Pixels_SizeY>`
-  * :schema:`Pixels : SizeZ <OME-2013-06/ome_xsd.html#Pixels_SizeZ>`
-  * :schema:`Pixels : Type <OME-2013-06/ome_xsd.html#Pixels_Type>`
-  * :schema:`Plane : TheC <OME-2013-06/ome_xsd.html#Plane_TheC>`
-  * :schema:`Plane : TheT <OME-2013-06/ome_xsd.html#Plane_TheT>`
-  * :schema:`Plane : TheZ <OME-2013-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Channel : ID <OME-2015-01/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : SamplesPerPixel <OME-2015-01/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate <OME-2015-01/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : ID <OME-2015-01/ome_xsd.html#Image_ID>`
+  * :schema:`Image : Name <OME-2015-01/ome_xsd.html#Image_Name>`
+  * :schema:`Pixels : BigEndian <OME-2015-01/ome_xsd.html#Pixels_BigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2015-01/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2015-01/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2015-01/ome_xsd.html#Pixels_Interleaved>`
+  * :schema:`Pixels : SignificantBits <OME-2015-01/ome_xsd.html#Pixels_SignificantBits>`
+  * :schema:`Pixels : SizeC <OME-2015-01/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2015-01/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2015-01/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2015-01/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2015-01/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : Type <OME-2015-01/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : TheC <OME-2015-01/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2015-01/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2015-01/ome_xsd.html#Plane_TheZ>`
 
 **Total supported: 19**
 

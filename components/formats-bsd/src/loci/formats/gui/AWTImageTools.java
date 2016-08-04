@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -91,10 +91,6 @@ import org.slf4j.LoggerFactory;
  * <a href="http://forum.java.sun.com/thread.jspa?threadID=522483">
  * DrLaszloJamf's posts</a>
  * on the Java forums.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/AWTImageTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/AWTImageTools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -1772,7 +1768,8 @@ public final class AWTImageTools {
     ColorModel sourceModel = source.getColorModel();
     if ((sourceModel instanceof Index16ColorModel) ||
       (sourceModel instanceof IndexColorModel) ||
-      (sourceModel instanceof SignedColorModel))
+      (sourceModel instanceof SignedColorModel) ||
+      FormatTools.isFloatingPoint(pixelType))
     {
       DataBuffer buffer = source.getData().getDataBuffer();
       WritableRaster raster = Raster.createWritableRaster(

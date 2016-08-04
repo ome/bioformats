@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,10 +48,6 @@ import loci.formats.meta.MetadataStore;
 /**
  * Abstract superclass of reader logic that wraps other readers.
  * All methods are simply delegated to the wrapped reader.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ReaderWrapper.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ReaderWrapper.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class ReaderWrapper implements IFormatReader {
 
@@ -153,6 +149,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
    */
+  @Override
   public Set<MetadataLevel> getSupportedMetadataLevels() {
     return reader.getSupportedMetadataLevels();
   }
@@ -160,6 +157,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
    */
+  @Override
   public MetadataOptions getMetadataOptions() {
     return reader.getMetadataOptions();
   }
@@ -167,60 +165,74 @@ public abstract class ReaderWrapper implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
    */
+  @Override
   public void setMetadataOptions(MetadataOptions options) {
     reader.setMetadataOptions(options);
   }
 
   // -- IFormatReader API methods --
 
+  @Override
   public boolean isThisType(String name, boolean open) {
     return reader.isThisType(name, open);
   }
 
+  @Override
   public boolean isThisType(byte[] block) {
     return reader.isThisType(block);
   }
 
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException{
     return reader.isThisType(stream);
   }
 
+  @Override
   public int getImageCount() {
     return reader.getImageCount();
   }
 
+  @Override
   public boolean isRGB() {
     return reader.isRGB();
   }
 
+  @Override
   public int getSizeX() {
     return reader.getSizeX();
   }
 
+  @Override
   public int getSizeY() {
     return reader.getSizeY();
   }
 
+  @Override
   public int getSizeZ() {
     return reader.getSizeZ();
   }
 
+  @Override
   public int getSizeC() {
     return reader.getSizeC();
   }
 
+  @Override
   public int getSizeT() {
     return reader.getSizeT();
   }
 
+  @Override
   public int getPixelType() {
     return reader.getPixelType();
   }
 
+  @Override
   public int getBitsPerPixel() {
     return reader.getBitsPerPixel();
   }
 
+  @Override
   public int getEffectiveSizeC() {
     //return reader.getEffectiveSizeC();
     int sizeZT = getSizeZ() * getSizeT();
@@ -228,6 +240,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return getImageCount() / sizeZT;
   }
 
+  @Override
   public int getRGBChannelCount() {
     //return reader.getRGBChannelCount();
     int effSizeC = getEffectiveSizeC();
@@ -235,210 +248,251 @@ public abstract class ReaderWrapper implements IFormatReader {
     return getSizeC() / effSizeC;
   }
 
+  @Override
   public boolean isIndexed() {
     return reader.isIndexed();
   }
 
+  @Override
   public boolean isFalseColor() {
     return reader.isFalseColor();
   }
 
+  @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     return reader.get8BitLookupTable();
   }
 
+  @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     return reader.get16BitLookupTable();
   }
 
+  @Override
   public Modulo getModuloZ() {
     return reader.getModuloZ();
   }
 
+  @Override
   public Modulo getModuloC() {
     return reader.getModuloC();
   }
 
+  @Override
   public Modulo getModuloT() {
     return reader.getModuloT();
   }
 
-  public int[] getChannelDimLengths() {
-    return reader.getChannelDimLengths();
-  }
-
-  public String[] getChannelDimTypes() {
-    return reader.getChannelDimTypes();
-  }
-
+  @Override
   public int getThumbSizeX() {
     return reader.getThumbSizeX();
   }
 
+  @Override
   public int getThumbSizeY() {
     return reader.getThumbSizeY();
   }
 
+  @Override
   public boolean isLittleEndian() {
     return reader.isLittleEndian();
   }
 
+  @Override
   public String getDimensionOrder() {
     return reader.getDimensionOrder();
   }
 
+  @Override
   public boolean isOrderCertain() {
     return reader.isOrderCertain();
   }
 
+  @Override
   public boolean isThumbnailSeries() {
     return reader.isThumbnailSeries();
   }
 
+  @Override
   public boolean isInterleaved() {
     return reader.isInterleaved();
   }
 
+  @Override
   public boolean isInterleaved(int subC) {
     return reader.isInterleaved(subC);
   }
 
+  @Override
   public byte[] openBytes(int no) throws FormatException, IOException {
     return reader.openBytes(no);
   }
 
+  @Override
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     return reader.openBytes(no, x, y, w, h);
   }
 
+  @Override
   public byte[] openBytes(int no, byte[] buf)
     throws FormatException, IOException
   {
     return reader.openBytes(no, buf);
   }
 
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
+  @Override
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     return reader.openPlane(no, x, y, w, h);
   }
 
+  @Override
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     return reader.openThumbBytes(no);
   }
 
+  @Override
   public void close(boolean fileOnly) throws IOException {
     reader.close(fileOnly);
   }
 
+  @Override
   public int getSeriesCount() {
     return reader.getSeriesCount();
   }
 
+  @Override
   public void setSeries(int no) {
     reader.setSeries(no);
   }
 
+  @Override
   public int getSeries() {
     return reader.getSeries();
   }
 
+  @Override
   public void setGroupFiles(boolean group) {
     reader.setGroupFiles(group);
   }
 
+  @Override
   public boolean isGroupFiles() {
     return reader.isGroupFiles();
   }
 
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return reader.fileGroupOption(id);
   }
 
+  @Override
   public boolean isMetadataComplete() {
     return reader.isMetadataComplete();
   }
 
+  @Override
   public void setNormalized(boolean normalize) {
     reader.setNormalized(normalize);
   }
 
+  @Override
   public boolean isNormalized() { return reader.isNormalized(); }
 
+  @Override
   public void setOriginalMetadataPopulated(boolean populate) {
     reader.setOriginalMetadataPopulated(populate);
   }
 
+  @Override
   public boolean isOriginalMetadataPopulated() {
     return reader.isOriginalMetadataPopulated();
   }
 
+  @Override
   public String[] getUsedFiles() {
     return reader.getUsedFiles();
   }
 
+  @Override
   public String[] getUsedFiles(boolean noPixels) {
     return reader.getUsedFiles(noPixels);
   }
 
+  @Override
   public String[] getSeriesUsedFiles() {
     return reader.getSeriesUsedFiles();
   }
 
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     return reader.getSeriesUsedFiles(noPixels);
   }
 
+  @Override
   public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
     return reader.getAdvancedUsedFiles(noPixels);
   }
 
+  @Override
   public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
     return reader.getAdvancedSeriesUsedFiles(noPixels);
   }
 
+  @Override
   public String getCurrentFile() { return reader.getCurrentFile(); }
 
+  @Override
   public int getIndex(int z, int c, int t) {
     return reader.getIndex(z, c, t);
   }
 
+  @Override
+  public int getIndex(int z, int c, int t, int moduloZ, int moduloC, int moduloT) {
+    return reader.getIndex(z, c, t, moduloZ, moduloC, moduloT);
+  }
+
+  @Override
   public int[] getZCTCoords(int index) {
     return reader.getZCTCoords(index);
   }
 
+  @Override
+  public int[] getZCTModuloCoords(int index) {
+    return reader.getZCTModuloCoords(index);
+  }
+
+  @Override
   public Object getMetadataValue(String field) {
     return reader.getMetadataValue(field);
   }
 
+  @Override
   public Object getSeriesMetadataValue(String field) {
     return reader.getSeriesMetadataValue(field);
   }
 
+  @Override
   public Hashtable<String, Object> getGlobalMetadata() {
     return reader.getGlobalMetadata();
   }
 
+  @Override
   public Hashtable<String, Object> getSeriesMetadata() {
     return reader.getSeriesMetadata();
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#getCoreMetadataList()
-   */
-  public CoreMetadata[] getCoreMetadata() {
-    return getCoreMetadataList().toArray(new CoreMetadata[0]);
-  }
-
+  @Override
   public List<CoreMetadata> getCoreMetadataList() {
     // Only used for determining the object type.
     List<CoreMetadata> oldcore = reader.getCoreMetadataList();
@@ -453,122 +507,156 @@ public abstract class ReaderWrapper implements IFormatReader {
     return newcore;
   }
 
+  @Override
   public void setMetadataFiltered(boolean filter) {
     reader.setMetadataFiltered(filter);
   }
 
+  @Override
   public boolean isMetadataFiltered() { return reader.isMetadataFiltered(); }
 
+  @Override
   public void setMetadataStore(MetadataStore store) {
     reader.setMetadataStore(store);
   }
 
+  @Override
   public MetadataStore getMetadataStore() {
     return reader.getMetadataStore();
   }
 
+  @Override
   public Object getMetadataStoreRoot() {
     return reader.getMetadataStoreRoot();
   }
 
+  @Override
   public IFormatReader[] getUnderlyingReaders() {
     return new IFormatReader[] {reader};
   }
 
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return reader.isSingleFile(id);
   }
 
+  @Override
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
     return reader.getRequiredDirectories(files);
   }
 
+  @Override
   public String getDatasetStructureDescription() {
     return reader.getDatasetStructureDescription();
   }
 
+  @Override
   public boolean hasCompanionFiles() {
     return reader.hasCompanionFiles();
   }
 
+  @Override
   public String[] getPossibleDomains(String id)
     throws FormatException, IOException
   {
     return reader.getPossibleDomains(id);
   }
 
+  @Override
   public String[] getDomains() {
     return reader.getDomains();
   }
 
+  @Override
   public int getOptimalTileWidth() {
     return reader.getOptimalTileWidth();
   }
 
+  @Override
   public int getOptimalTileHeight() {
     return reader.getOptimalTileHeight();
   }
 
+  @Override
   public int getCoreIndex() {
     return reader.getCoreIndex();
   }
 
+  @Override
   public void setCoreIndex(int no) {
     reader.setCoreIndex(no);
   }
 
+  @Override
   public int seriesToCoreIndex(int series) {
     return reader.seriesToCoreIndex(series);
   }
 
+  @Override
   public int coreIndexToSeries(int index) {
     return reader.coreIndexToSeries(index);
   }
 
+  @Override
   public int getResolutionCount() {
     return reader.getResolutionCount();
   }
 
+  @Override
   public void setResolution(int no) {
     reader.setResolution(no);
   }
 
+  @Override
   public int getResolution() {
     return reader.getResolution();
   }
 
+  @Override
   public boolean hasFlattenedResolutions() {
     return reader.hasFlattenedResolutions();
   }
 
+  @Override
   public void setFlattenedResolutions(boolean flattened) {
     reader.setFlattenedResolutions(flattened);
   }
 
   // -- IFormatHandler API methods --
 
+  @Override
   public boolean isThisType(String name) {
     return reader.isThisType(name);
   }
 
+  @Override
   public String getFormat() {
     return reader.getFormat();
   }
 
+  @Override
   public String[] getSuffixes() {
     return reader.getSuffixes();
   }
 
+  @Override
   public Class<?> getNativeDataType() {
     return reader.getNativeDataType();
   }
 
+  @Override
   public void setId(String id) throws FormatException, IOException {
     reader.setId(id);
   }
 
+  @Override
+  public void reopenFile() throws IOException {
+    reader.reopenFile();
+  }
+
+  @Override
   public void close() throws IOException {
     reader.close();
   }

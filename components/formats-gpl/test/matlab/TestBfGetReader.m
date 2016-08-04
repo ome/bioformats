@@ -2,6 +2,7 @@
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+% https://github.com/psexton/matlab-xunit (GitHub source code)
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -29,6 +30,52 @@ classdef TestBfGetReader < ReaderTest
     methods
         function self = TestBfGetReader(name)
             self = self@ReaderTest(name);
+        end
+        
+        % Input check tests
+        function testInputClass(self)
+            assertExceptionThrown(@() bfGetReader(0),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testNoInput(self)
+            self.reader = bfGetReader();
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testEmptyInput(self)
+            self.reader = bfGetReader('');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertTrue(isempty(self.reader.getCurrentFile()));
+        end
+        
+        function testFakeInput(self)
+            self.reader = bfGetReader('test.fake');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
+        end
+        
+        function testNonExistingInput(self)
+            assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
+                'bfGetReader:FileNotFound');
+        end
+        
+        function testFormatTypeInput(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(char(self.reader.getFormat),'Simulated data');
+        end
+        
+        function testFileInput(self)
+            % Create fake file
+            mkdir(self.tmpdir);
+            filepath = fullfile(self.tmpdir, 'test.fake');
+            fid = fopen(filepath, 'w+');
+            fclose(fid);
+            self.reader = bfGetReader(filepath);
+            rmdir(self.tmpdir, 's');
+            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            assertEqual(char(self.reader.getCurrentFile()), filepath);
         end
         
         % Pixel type tests
@@ -128,5 +175,62 @@ classdef TestBfGetReader < ReaderTest
             self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
             assertFalse(self.reader.isInterleaved());
         end
+        
+        function testGetPixelsPhysicalSizeX(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeX=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeX = metadata.getPixelsPhysicalSizeX(0);
+            assertFalse(isempty(physicalSizeX));
+            assertEqual(physicalSizeX.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeX.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeX.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
+        
+        function testGetPixelsPhysicalSizeY(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeY=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeY = metadata.getPixelsPhysicalSizeY(0);
+            assertFalse(isempty(physicalSizeY));
+            assertEqual(physicalSizeY.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeY.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeY.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
+        
+        function testGetPixelsPhysicalSizeZ(self)
+            self.reader = bfGetReader('pixelSize-test&physicalSizeZ=.3.fake');
+            metadata = self.reader.getMetadataStore();
+            physicalSizeZ = metadata.getPixelsPhysicalSizeZ(0);
+            assertFalse(isempty(physicalSizeZ));
+            assertEqual(physicalSizeZ.value().doubleValue(), .3);
+            assertEqual(char(physicalSizeZ.unit().getSymbol()), 'µm');
+            assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NM).doubleValue(), 300.0);
+        end
+        
+        function testJavaMethod(self)
+            self.reader = loci.formats.ChannelFiller();
+            self.reader = loci.formats.ChannelSeparator(self.reader);
+            
+            reader = javaObject('loci.formats.ChannelSeparator', ...
+                javaObject('loci.formats.ChannelFiller'));
+            assertEqual(self.reader.getClass(),reader.getClass());
+            
+            OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+            OMEXMLService1 = javaObject('loci.formats.services.OMEXMLServiceImpl');
+            assertEqual(OMEXMLService.getClass(),OMEXMLService1.getClass());
+            
+            self.reader.setMetadataStore(OMEXMLService1.createOMEXMLMetadata());
+        end
+        
+        %Test Default Thumb Size
+        function testThumbSizeX(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(self.reader.getThumbSizeX(),128);
+        end
+        
+        function testThumbSizeY(self)
+            self.reader = bfGetReader('test.fake');
+            assertEqual(self.reader.getThumbSizeY(),128);
+        end
+       
     end
 end

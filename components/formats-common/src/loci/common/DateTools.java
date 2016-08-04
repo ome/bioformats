@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,10 +47,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A utility class with convenience methods for working with dates.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/DateTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/DateTools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
@@ -180,12 +176,74 @@ public final class DateTools {
   }
 
   /**
+   * Parse the given date as a Joda instant
+   *
+   * @param date      The date to parse as a Joda timestamp
+   * @param format    The date format to parse the string date
+   * @param separator The separator for milliseconds
+   */
+  protected static Instant parseDate(String date, String format, String separator) {
+
+      long ms = 0L;
+      int msSeparator = 0;
+      String newDate = date.trim();
+
+      if (separator != null) {
+        msSeparator = date.lastIndexOf(separator);
+      }
+      if (msSeparator > 0) {
+        newDate = date.substring(0, msSeparator);
+        String msString = date.substring(msSeparator + 1);
+        // Handle formats ending with another pattern, e.g. "SSS aa" or "SSSZ"
+        int postmsSeparator = 0;
+        for (int pos=0; pos<msString.length(); pos++) {
+          if (!Character.isDigit(msString.charAt(pos))) {
+            postmsSeparator = pos;
+            break;
+          }
+        }
+        if (postmsSeparator > 0) {
+          try {
+            ms = Long.parseLong(msString.substring(0, postmsSeparator));
+          }
+          catch (NumberFormatException e) {
+            LOGGER.debug("Failed to parse milliseconds from '{}'", ms);
+          }
+          newDate = newDate + msString.substring(postmsSeparator);
+        }
+        else {
+          try {
+            ms = Long.parseLong(msString);
+          }
+          catch (NumberFormatException e) {
+            LOGGER.debug("Failed to parse milliseconds from '{}'", ms);
+          }
+        }
+      }
+
+      final DateTimeFormatter parser =
+        DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
+      Instant timestamp = null;
+      try {
+        timestamp = Instant.parse(newDate, parser);
+        timestamp = timestamp.plus(ms);
+      }
+      catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+      }
+      catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+      }
+      return timestamp;
+  }
+
+  /**
    * Formats the given date as an ISO 8601 date.
    * Delegates to {@link #formatDate(String, String, boolean)}, with the
-   * 'lenient' flag set to false.
+   * {@code lenient} flag set to false.
    *
-   * @param date The date to format as ISO 8601.
-   * @param format The date's input format.
+   * @param date   The date to format as ISO 8601
+   * @param format The date format to parse the string date
    */
   public static String formatDate(String date, String format) {
     return formatDate(date, format, false);
@@ -193,26 +251,40 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link #formatDate(String, String, boolean, String)} with the
+   * {@code lenient} flag set to false.
    *
-   * @param date The date to format as ISO 8601.
-   * @param format The date's input format.
+   * @param date      The date to format as ISO 8601
+   * @param format    The date format to parse the string date
+   * @param separator The separator for milliseconds
+   */
+  public static String formatDate(String date, String format, String separator) {
+    return formatDate(date, format, false, separator);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date    The date to format as ISO 8601.
+   * @param format  The date format to parse the string date
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String format, boolean lenient) {
-    if (date == null) return null;
-    final DateTimeFormatter parser =
-      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
-    Instant timestamp = null;
+   return formatDate(date, format, false, null);
+  }
 
-    try {
-      timestamp = Instant.parse(date, parser);
-    }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Invalid timestamp '{}'", date);
-    }
-    catch (UnsupportedOperationException e) {
-      LOGGER.debug("Error parsing timestamp '{}'", date, e);
-    }
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date      The date to format as ISO 8601
+   * @param format    The date format to parse the string date
+   * @param lenient   Whether or not to leniently parse the date.
+   * @param separator The separator for milliseconds
+   */
+  public static String formatDate(String date, String format, boolean lenient, String separator) {
+    if (date == null) return null;
+
+    Instant timestamp = parseDate(date, format, separator);
 
     if (timestamp == null) {
       return null;
@@ -231,28 +303,59 @@ public final class DateTools {
 
   /**
    * Formats the given date as an ISO 8601 date.
-   * Delegates to {@link #formatDate(String, String[], boolean)}, with the
-   * 'lenient' flag set to false.
    *
-   * @param date The date to format as ISO 8601.
-   * @param formats The date's possible input formats.
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code lenient} set to false and {@code separator} set to null.
+   *
+   * @param date    The date to format as ISO 8601
+   * @param formats The date possible formats to parse the string date
    */
   public static String formatDate(String date, String[] formats) {
-    return formatDate(date, formats, false);
+    return formatDate(date, formats, false, null);
   }
 
   /**
    * Formats the given date as an ISO 8601 date.
    *
-   * @param date The date to format as ISO 8601.
-   * @param formats The date's possible input formats.
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code separator} set to null.
+   *
+   * @param date    The date to format as ISO 8601.
+   * @param formats The date possible formats to parse the string date
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String[] formats,
     boolean lenient)
   {
+    return formatDate(date, formats, lenient, null);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   * Delegates to {@link #formatDate(String, String[], boolean, String)} with
+   * {@code lenient} set to false.
+   *
+   * @param date    The date to format as ISO 8601
+   * @param formats The date possible formats to parse the string date
+   * @param separator  The separator for milliseconds
+   */
+  public static String formatDate(String date, String[] formats, String separator) {
+    return formatDate(date, formats, false, separator);
+  }
+
+  /**
+   * Formats the given date as an ISO 8601 date.
+   *
+   * @param date       The date to format as ISO 8601.
+   * @param formats    The date possible formats to parse the string date
+   * @param lenient    Whether or not to leniently parse the date.
+   * @param separator  The separator for milliseconds
+   */
+  public static String formatDate(String date, String[] formats,
+    boolean lenient, String separator)
+  {
     for (int i=0; i<formats.length; i++) {
-      String result = formatDate(date, formats[i], lenient);
+      String result = formatDate(date, formats[i], lenient, separator);
       if (result != null) return result;
     }
     return null;
@@ -261,22 +364,33 @@ public final class DateTools {
   /**
    * Converts a string date in the given format to a long timestamp
    * (in Unix format: milliseconds since January 1, 1970).
+   *
+   * @param date   The date to convert
+   * @param format The date format to parse the string date
+   * @return       The date in milliseconds
    */
   public static long getTime(String date, String format) {
-    final DateTimeFormatter parser =
-      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
-    Instant timestamp = null;
-    try {
-      timestamp = Instant.parse(date, parser);
+    return getTime(date, format, null);
+  }
+
+  /**
+   * Converts a string date in the given format to a long timestamp
+   * (in Unix format: milliseconds since January 1, 1970) with special
+   * milliseconds handling.
+   *
+   * @param date       The date to convert
+   * @param format     The date format to parse the string date
+   * @param separator  The separator for milliseconds
+   * @return           The date in milliseconds
+   */
+  public static long getTime(String date, String format, String separator) {
+    Instant timestamp = parseDate(date, format, separator);
+    if (timestamp == null) {
+      return -1;
     }
-    catch (IllegalArgumentException e) {
-      LOGGER.debug("Invalid timestamp '{}'", date);
+    else {
+      return timestamp.getMillis();
     }
-    catch (UnsupportedOperationException e) {
-      LOGGER.debug("Error parsing timestamp '{}'", date, e);
-    }
-    if (timestamp == null) return -1;
-    return timestamp.getMillis();
   }
 
   /**

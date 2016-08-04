@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@
  * Class:                   StringSpec
  *
  * Description:             String specification for an option
- *
  *
  *
  * COPYRIGHT:
@@ -124,7 +123,7 @@ public class StringSpec extends ModuleSpec{
      * @param type the type of the specification module i.e. tile specific,
      * component specific or both.
      *
-     * @param name of the option using boolean spec.
+     * @param defaultValue name of the option using boolean spec.
      *
      * @param list The list of all recognized argument in a String array
      *

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -36,6 +36,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 import loci.common.Location;
 import loci.formats.ChannelFiller;
@@ -54,9 +55,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/WrapperTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/WrapperTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class WrapperTest {
 
@@ -90,22 +88,23 @@ public class WrapperTest {
   @Test(dataProvider = "wrappers")
   public void testCoreMetadata(IFormatReader reader) {
     assertNotNull(reader.getCurrentFile());
-    CoreMetadata[] core = reader.getCoreMetadata();
-    assertEquals(core.length, reader.getSeriesCount());
+    List<CoreMetadata> coreList = reader.getCoreMetadataList();
+    assertEquals(coreList.size(), reader.getSeriesCount());
     for (int i=0; i<reader.getSeriesCount(); i++) {
+      CoreMetadata core = coreList.get(i);
       reader.setSeries(i);
-      assertEquals(core[i].sizeX, reader.getSizeX());
-      assertEquals(core[i].sizeY, reader.getSizeY());
-      assertEquals(core[i].sizeZ, reader.getSizeZ());
-      assertEquals(core[i].sizeC, reader.getSizeC());
-      assertEquals(core[i].sizeT, reader.getSizeT());
-      assertEquals(core[i].pixelType, reader.getPixelType());
-      assertEquals(core[i].imageCount, reader.getImageCount());
-      assertEquals(core[i].dimensionOrder, reader.getDimensionOrder());
-      assertEquals(core[i].littleEndian, reader.isLittleEndian());
-      assertEquals(core[i].rgb, reader.isRGB());
-      assertEquals(core[i].interleaved, reader.isInterleaved());
-      assertEquals(core[i].indexed, reader.isIndexed());
+      assertEquals(core.sizeX, reader.getSizeX());
+      assertEquals(core.sizeY, reader.getSizeY());
+      assertEquals(core.sizeZ, reader.getSizeZ());
+      assertEquals(core.sizeC, reader.getSizeC());
+      assertEquals(core.sizeT, reader.getSizeT());
+      assertEquals(core.pixelType, reader.getPixelType());
+      assertEquals(core.imageCount, reader.getImageCount());
+      assertEquals(core.dimensionOrder, reader.getDimensionOrder());
+      assertEquals(core.littleEndian, reader.isLittleEndian());
+      assertEquals(core.rgb, reader.isRGB());
+      assertEquals(core.interleaved, reader.isInterleaved());
+      assertEquals(core.indexed, reader.isIndexed());
     }
   }
 }

@@ -1,0 +1,53 @@
+.. index:: PerkinElmer Nuance
+.. index:: .im3
+
+PerkinElmer Nuance
+===============================================================================
+
+Extensions: .im3
+
+Developer: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+
+**Support**
+
+
+BSD-licensed: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`PerkinElmer Nuance <perkinelmer-nuance-metadata>`
+
+
+
+We currently have:
+
+* a few sample datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Poor|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bsd-reader:`IM3Reader.java`
+
+Notes:
+
+

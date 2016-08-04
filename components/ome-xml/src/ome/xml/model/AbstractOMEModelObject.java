@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -47,16 +47,13 @@ import org.w3c.dom.NodeList;
 /**
  * @author callan
  *
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/AbstractOMEModelObject.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/AbstractOMEModelObject.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class AbstractOMEModelObject implements OMEModelObject {
 
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element, ome.xml.r201004.OMEModel)
    */
+  @Override
   public void update(Element element, OMEModel model)
   throws EnumerationException {
     // Nothing to update.
@@ -65,6 +62,7 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#asXMLElement(org.w3c.dom.Document)
    */
+  @Override
   public abstract Element asXMLElement(Document document);
   
   /**
@@ -82,6 +80,7 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#link(ome.xml.r201004.Reference, ome.xml.r201004.OMEModelObject)
    */
+  @Override
   public boolean link(Reference reference, OMEModelObject o) {
     return false;
   }

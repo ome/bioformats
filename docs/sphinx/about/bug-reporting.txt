@@ -14,11 +14,48 @@ You can also download the :downloads:`latest version of Bio-Formats <>`.
 If you are not sure which version you need, select the latest build of the
 Bio-Formats package bundle from the components table.
 
+Common issues to check
+----------------------
+
+-  If your 12, 14 or 16-bit images look all black when you open them,
+   typically the problem is that the pixel values
+   are very, very small relative to the maximum possible pixel value (4095,
+   16383, and 65535, respectively), so when displayed the pixels are
+   effectively black. In ImageJ/Fiji, this is fixable
+   by checking the "Autoscale" option; with the command line tools, the
+   "-autoscale -fast" options should work.
+-  If the file is very, very small (4096 bytes) and any exception is
+   generated when reading the file, then make sure it is not a `Mac OS
+   X resource
+   fork <http://en.wikipedia.org/wiki/Resource_fork#The_Macintosh_file_system>`_.
+   The 'file' command should tell you:
+
+   ::
+
+       $ file /path/to/suspicious-file
+       suspicious-file: AppleDouble encoded Macintosh file
+-  If you get an ``OutOfMemory`` or ``NegativeArraySize`` error message when
+   attempting to open an SVS or JPEG-2000 file then the amount of pixel data
+   in a single image plane exceeds the amount of memory allocated to the |JVM|
+   or 2 GB, respectively. For the former, you can increase the amount of
+   memory allocated; in the latter case, you will need to open the image in
+   sections. If you are using Bio-Formats as a library, this means using the
+   ``openBytes(int, int, int, int, int)`` method in 
+   loci.formats.IFormatReader. If you are using Bio-Formats within ImageJ,
+   you can use the :menuselection:`Crop on import` option.
+   
+   Note that JPEG-2000 is a very efficient compression algorithm - thus the
+   size of the file on disk will be substantially smaller than the amount of
+   memory required to store the uncompressed pixel data. It is not uncommon
+   for a JPEG-2000 or SVS file to occupy less than 200 MB on disk, and yet
+   have over 2 GB of uncompressed pixel data.
+
 Sending a bug report
 --------------------
 
 If you can still reproduce the bug after updating to the latest version
-of Bio-Formats, please send a bug report to the
+of Bio-Formats, and your issue does not relate to anything listed above or
+noted on the relevant file format page, please send a bug report to the
 :mailinglist:`OME Users mailing list <ome-users>`. You can upload files to our
 `QA system <http://qa.openmicroscopy.org.uk/qa/upload/>`_ or for large files
 (>2 GB), we can provide you with an FTP server address if you write to the

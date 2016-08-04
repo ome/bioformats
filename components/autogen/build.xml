@@ -30,9 +30,8 @@ Type "ant -p" for a list of targets.
 
   <target name="gen-meta-support" depends="compile"
     description="generate docs for Bio-Formats metadata support">
-    <exec executable="bash">
-      <arg value="${dest.dir}/gen-meta-support.sh"/>
-      <arg value="${root.dir}"/>
+    <exec executable="python">
+      <arg value="${src.dir}/gen-meta-support.py"/>
     </exec>
     <if>
       <isset property="omexml.version"/>

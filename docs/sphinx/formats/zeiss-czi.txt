@@ -22,7 +22,7 @@ Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
 
 Freely Available Software:
 
-- `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
+- `Zeiss ZEN <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen.html>`_
 
 
 We currently have:

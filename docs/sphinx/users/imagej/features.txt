@@ -6,7 +6,7 @@ following features:
 
 - The **Bio-Formats Importer** is a plugin for :doc:`loading
   images <load-images>` into ImageJ or
-  Fiji. It can read over 100 proprietary life sciences formats and
+  Fiji. It can read over 140 proprietary life sciences formats and
   standardizes their acquisition metadata into the common
   :doc:`OME data model </about/index>`. It will also extract and set basic
   metadata values such as `spatial
@@ -38,11 +38,11 @@ following features:
   planes or time points.
 
 - The **Bio-Formats Plugins Configuration** dialog is a useful way to configure
-  the behavior of each file format. The Formats tab lists supported file
-  formats and toggles each format on or off, which is useful if your file
-  is detected as the wrong format. It also toggles whether each format
-  bypasses the importer options dialog through the "Windowless" checkbox.
-  You can also configure any specific option for each format. The Libraries
+  the behavior of each file format. The Formats tab lists supported file 
+  formats and toggles each format on or off, which is useful if your file 
+  is detected as the wrong format. It also toggles whether each format 
+  bypasses the importer options dialog through the "Windowless" checkbox. 
+  You can also configure any specific option for each format. The Libraries 
   tab provides a list of available helper libraries used by Bio-Formats.
 
 - The **Bio-Formats Plugins Shortcut Window** opens a small window with a
@@ -50,7 +50,6 @@ following features:
   onto the shortcut window opens them quickly using the **Bio-Formats
   Importer** plugin.
 
-- The **Update Bio-Formats Plugins** command will check for Bio-Formats
-  Plugins updates.
-  We recommend you update to the latest build as soon as you think
-  you may have :doc:`discovered a bug. </about/bug-reporting>`
+- The **Update Bio-Formats Plugins** command will check for updates to the
+  plugins.  We recommend you update to the newest Trunk build as soon as you
+  think you may have :doc:`discovered a bug. </about/bug-reporting>`

@@ -2,7 +2,7 @@
  * #%L
  * Fork of Apache Jakarta POI.
  * %%
- * Copyright (C) 2008 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,7 +51,6 @@ import java.util.*;
  * internal list and hashmap. If so could you please make sure that
  * you can add elements half way into the list and have the value-key mappings
  * update</p>
- *
  *
  * @author Jason Height
  */

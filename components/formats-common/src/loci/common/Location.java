@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -32,28 +32,29 @@
 
 package loci.common;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.MapMaker;
 
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
  * other things).
  * It is strongly recommended to use this instead of java.io.File.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Location.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Location.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Location {
 
@@ -68,6 +69,7 @@ public class Location {
   /** Map from given filenames to actual filenames. */
   private static ThreadLocal<HashMap<String, Object>> idMap =
     new ThreadLocal<HashMap<String, Object>>() {
+      @Override
       protected HashMap<String, Object> initialValue() {
         return new HashMap<String, Object>();
       }
@@ -86,8 +88,8 @@ public class Location {
       this.time = time;
     }
   }
-  private static Map<String, ListingsResult> fileListings =
-    new ConcurrentHashMap<String, ListingsResult>();
+  private static final Map<String, ListingsResult> fileListings =
+    new MapMaker().makeMap();  // like Java's ConcurrentHashMap
 
   // -- Fields --
 
@@ -179,7 +181,7 @@ public class Location {
    * Do this if directory contents might have changed in a significant way.
    */
   public static void clearDirectoryListingsCache() {
-    fileListings = new ConcurrentHashMap<String, ListingsResult>();
+    fileListings.clear();
   }
 
   /**
@@ -187,14 +189,12 @@ public class Location {
    */
   public static void cleanStaleCacheEntries() {
     long t = System.nanoTime() - cacheNanos;
-    ArrayList<String> staleKeys = new ArrayList();
-    for (String key : fileListings.keySet()) {
-      if (fileListings.get(key).time < t) {
-        staleKeys.add(key);
+    final Iterator<ListingsResult> cacheValues =
+      fileListings.values().iterator();
+    while (cacheValues.hasNext()) {
+      if (cacheValues.next().time < t) {
+        cacheValues.remove();
       }
-    }
-    for (String key : staleKeys) {
-      fileListings.remove(key);
     }
   }
 
@@ -303,16 +303,16 @@ public class Location {
       LOGGER.trace("no handle was mapped for this ID");
       String mapId = getMappedId(id);
 
-      if (id.startsWith("http://")) {
+      if (id.startsWith("http://") || id.startsWith("https://")) {
         handle = new URLHandle(mapId);
       }
-      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(mapId)) {
         handle = new ZipHandle(mapId);
       }
-      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(mapId)) {
         handle = new GZipHandle(mapId);
       }
-      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(mapId)) {
         handle = new BZip2Handle(mapId);
       }
       else {
@@ -356,6 +356,7 @@ public class Location {
    * @see java.io.File#list()
    */
   public String[] list(boolean noHiddenFiles) {
+    LOGGER.trace("list({})", noHiddenFiles);
     String key = getAbsolutePath() + Boolean.toString(noHiddenFiles);
     String [] result = null;
     if (cacheListings) {
@@ -365,18 +366,23 @@ public class Location {
         return listingsResult.listing;
       }
     }
-    ArrayList<String> files = new ArrayList<String>();
+    final List<String> files = new ArrayList<String>();
     if (isURL) {
       try {
         URLConnection c = url.openConnection();
         InputStream is = c.getInputStream();
         boolean foundEnd = false;
-
+        BufferedReader br = new BufferedReader(
+              new InputStreamReader(is, Constants.ENCODING));
+        String input;
+        StringBuffer buffer = new StringBuffer();
+        while ((input = br.readLine()) != null){
+          buffer.append(input);
+        }
+        br.close();
+        String s = buffer.toString();
         while (!foundEnd) {
-          byte[] b = new byte[is.available()];
-          is.read(b);
-          String s = new String(b, Constants.ENCODING);
-          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
+         if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 
           while (s.indexOf("a href") != -1) {
             int ndx = s.indexOf("a href") + 8;
@@ -422,6 +428,7 @@ public class Location {
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
     }
+    LOGGER.trace("  returning {} files", files.size());
     return result;
   }
 
@@ -435,6 +442,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
+    LOGGER.trace("canRead()");
     return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
@@ -445,6 +453,7 @@ public class Location {
    * @see java.io.File#canWrite()
    */
   public boolean canWrite() {
+    LOGGER.trace("canWrite()");
     return isURL ? false : file.canWrite();
   }
 
@@ -504,6 +513,7 @@ public class Location {
    * @see java.io.File#equals(Object)
    * @see java.net.URL#equals(Object)
    */
+  @Override
   public boolean equals(Object obj) {
     String absPath = getAbsolutePath();
     String thatPath = null;
@@ -518,6 +528,7 @@ public class Location {
     return absPath.equals(thatPath);
   }
 
+  @Override
   public int hashCode() {
     return getAbsolutePath().hashCode();
   }
@@ -530,6 +541,7 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean exists() {
+    LOGGER.trace("exists()");
     if (isURL) {
       try {
         url.getContent();
@@ -554,6 +566,7 @@ public class Location {
 
   /* @see java.io.File#getAbsolutePath() */
   public String getAbsolutePath() {
+    LOGGER.trace("getAbsolutePath()");
     return isURL ? url.toExternalForm() : file.getAbsolutePath();
   }
 
@@ -579,6 +592,7 @@ public class Location {
    * @see java.io.File#getName()
    */
   public String getName() {
+    LOGGER.trace("getName()");
     if (isURL) {
       String name = url.getFile();
       name = name.substring(name.lastIndexOf("/") + 1);
@@ -595,6 +609,7 @@ public class Location {
    * @see java.io.File#getParent()
    */
   public String getParent() {
+    LOGGER.trace("getParent()");
     if (isURL) {
       String absPath = getAbsolutePath();
       absPath = absPath.substring(0, absPath.lastIndexOf("/"));
@@ -620,6 +635,7 @@ public class Location {
    * @see java.io.File#isAbsolute()
    */
   public boolean isAbsolute() {
+    LOGGER.trace("isAbsolute()");
     return isURL ? true : file.isAbsolute();
   }
 
@@ -629,6 +645,7 @@ public class Location {
    * @see java.io.File#isDirectory()
    */
   public boolean isDirectory() {
+    LOGGER.trace("isDirectory()");
     if (isURL) {
       String[] list = list();
       return list != null;
@@ -642,6 +659,7 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean isFile() {
+    LOGGER.trace("isFile()");
     return isURL ? (!isDirectory() && exists()) : file.isFile();
   }
 
@@ -652,13 +670,15 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
+    LOGGER.trace("isHidden()");
     if (isURL) {
       return false;
     }
+    boolean dotFile = file.getName().startsWith(".");
     if (IS_WINDOWS) {
-      return file.isHidden();
+      return dotFile || file.isHidden();
     }
-    return file.getName().startsWith(".");
+    return dotFile;
   }
 
   /**
@@ -670,6 +690,7 @@ public class Location {
    * @see java.net.URLConnection#getLastModified()
    */
   public long lastModified() {
+    LOGGER.trace("lastModified()");
     if (isURL) {
       try {
         return url.openConnection().getLastModified();
@@ -687,6 +708,7 @@ public class Location {
    * @see java.net.URLConnection#getContentLength()
    */
   public long length() {
+    LOGGER.trace("length()");
     if (isURL) {
       try {
         return url.openConnection().getContentLength();
@@ -737,6 +759,7 @@ public class Location {
    * @see java.io.File#toString()
    * @see java.net.URL#toString()
    */
+  @Override
   public String toString() {
     return isURL ? url.toString() : file.toString();
   }

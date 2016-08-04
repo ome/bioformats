@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,10 +40,6 @@ import loci.formats.IFormatReader;
 
 /**
  * A file filter for a biological file format, for use with a JFileChooser.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/gui/FormatFileFilter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/gui/FormatFileFilter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
@@ -96,6 +92,7 @@ public class FormatFileFilter extends FileFilter
   // -- FileFilter API methods --
 
   /** Accepts files in accordance with the file format reader. */
+  @Override
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
     return reader.isThisType(f.getPath(), allowOpen);
@@ -105,16 +102,19 @@ public class FormatFileFilter extends FileFilter
   public IFormatReader getReader() { return reader; }
 
   /** Gets the filter's description. */
+  @Override
   public String getDescription() { return desc; }
 
   // -- Object API methods --
 
   /** Gets a string representation of this file filter. */
+  @Override
   public String toString() { return "FormatFileFilter: " + desc; }
 
   // -- Comparable API methods --
 
   /** Compares two FileFilter objects alphanumerically. */
+  @Override
   public int compareTo(Object o) {
     return desc.compareTo(((FileFilter) o).getDescription());
   }

@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2015 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,12 +50,11 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
+import ome.units.quantity.Length;
+import ome.units.UNITS;
+
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
- *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NRRDReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NRRDReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NRRDReader extends FormatReader {
 
@@ -96,17 +95,20 @@ public class NRRDReader extends FormatReader {
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return checkSuffix(id, "nrrd");
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true;
     if (!open) return false;
@@ -126,6 +128,7 @@ public class NRRDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = NRRD_MAGIC_STRING.length();
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -133,11 +136,13 @@ public class NRRDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
@@ -151,12 +156,13 @@ public class NRRDReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (initializeHelper && dataFile != null) {
+    if (initializeHelper && dataFile != null && helper.getCurrentFile() == null) {
       helper.setId(dataFile);
     }
 
@@ -186,6 +192,7 @@ public class NRRDReader extends FormatReader {
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (helper != null) helper.close(fileOnly);
@@ -201,6 +208,7 @@ public class NRRDReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     // make sure we actually have the .nrrd/.nhdr file
     if (!checkSuffix(id, "nhdr") && !checkSuffix(id, "nrrd")) {
@@ -346,19 +354,19 @@ public class NRRDReader extends FormatReader {
           try {
             Double d = new Double(pixelSizes[i].trim());
             if (i == 0) {
-              PositiveFloat x = FormatTools.getPhysicalSizeX(d);
+              Length x = FormatTools.getPhysicalSizeX(d);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
             }
             else if (i == 1) {
-              PositiveFloat y = FormatTools.getPhysicalSizeY(d);
+              Length y = FormatTools.getPhysicalSizeY(d);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
             }
             else if (i == 2) {
-              PositiveFloat z = FormatTools.getPhysicalSizeZ(d);
+              Length z = FormatTools.getPhysicalSizeZ(d);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
