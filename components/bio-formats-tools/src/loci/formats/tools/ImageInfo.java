@@ -119,7 +119,7 @@ public class ImageInfo {
   private boolean ascii = false;
   private boolean usedFiles = true;
   private boolean omexmlOnly = false;
-  private boolean validate = false;
+  private boolean validate = true;
   private boolean flat = true;
   private String omexmlVersion = null;
   private int start = 0;
@@ -169,7 +169,7 @@ public class ImageInfo {
     preload = false;
     usedFiles = true;
     omexmlOnly = false;
-    validate = false;
+    validate = true;
     flat = true;
     omexmlVersion = null;
     xmlSpaces = 3;
@@ -204,10 +204,7 @@ public class ImageInfo {
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
         else if (args[i].equals("-cache")) cache = true;
-        else if (args[i].equals("-omexml")) {
-          omexml = true; 
-          validate = true;
-        }
+        else if (args[i].equals("-omexml")) omexml = true;
         else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
