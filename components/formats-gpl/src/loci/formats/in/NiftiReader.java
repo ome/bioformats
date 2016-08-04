@@ -230,7 +230,7 @@ public class NiftiReader extends FormatReader {
       pixelsFilename = id;
       pixelFile = in;
     } else {
-      throw new FormatException("File does not have one of the required NIfTI extensions (.hdr, .nii, .nii.gz)");
+      throw new FormatException("File does not have one of the required NIfTI extensions (.img, .hdr, .nii, .nii.gz)");
     }
 
     in.order(little);
