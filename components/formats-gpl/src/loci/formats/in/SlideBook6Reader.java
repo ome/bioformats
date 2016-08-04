@@ -211,7 +211,6 @@ public class SlideBook6Reader  extends FormatReader {
 				core.add(ms);
 				setSeries(capture);
 				ms.sizeX = getNumXColumns(capture);
-				if (ms.sizeX % 2 != 0) ms.sizeX++;
 				ms.sizeY = getNumYRows(capture);
 				ms.sizeZ = numZPlanes[capture];
 				ms.sizeT = numTimepoints[capture] * numPositions[capture]; 
