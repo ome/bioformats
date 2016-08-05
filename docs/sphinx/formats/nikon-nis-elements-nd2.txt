@@ -61,9 +61,11 @@ for either format.
 Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ 
 library to read ND2 files compressed with JPEG-2000. 
 
-There is also an ND2 reader that uses Nikon's native libraries.  To use 
-it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ 
+There is also a **legacy** ND2 reader that uses Nikon's native libraries. 
+To use it, you must be using Windows 32-bit and have `Nikon's ND2 reader plugin for ImageJ 
 <http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. 
 Additionally, you will need to download :source:`LegacyND2Reader.dll 
 <lib/LegacyND2Reader.dll?raw=true>` 
-and place it in your ImageJ plugin folder.
+and place it in your ImageJ plugin folder. 
+Note that this reader is **unmaintained** and no additional support effort 
+will be made.
