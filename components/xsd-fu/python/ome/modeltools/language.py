@@ -122,6 +122,8 @@ class Language(object):
         self.template_dir = None
         self.source_suffix = None
         self.header_suffix = None
+        self.converter_dir = None
+        self.converter_name = None
 
         self.omexml_model_package = None
         self.omexml_model_enums_package = None
@@ -148,6 +150,12 @@ class Language(object):
         return os.path.join(self._templatepath, self.getTemplateDirectory(),
                             self.getTemplate(template))
 
+    def getConverterDir(self):
+        return self.converter_dir
+        
+    def getConverterName(self):
+        return self.converter_name
+        
     def generatedFilename(self, name, type):
         gen_name = None
         if type == TYPE_SOURCE and self.source_suffix is not None:
@@ -302,6 +310,8 @@ class Java(Language):
         self.template_dir = "templates-java"
         self.source_suffix = ".java"
         self.header_suffix = None
+        self.converter_name = "MetadataConverter"
+        self.converter_dir = "components/formats-api/src/loci/formats/meta"
 
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"
@@ -391,6 +401,8 @@ class CXX(Language):
         self.template_dir = "templates-cpp"
         self.source_suffix = ".cpp"
         self.header_suffix = ".h"
+        self.converter_name = "Convert"
+        self.converter_dir = "cpp/lib/ome/xml/meta"
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
