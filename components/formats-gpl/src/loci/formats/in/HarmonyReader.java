@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -45,9 +46,15 @@ import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.units.unit.Unit;
+import ome.xml.model.enums.AcquisitionMode;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -367,6 +374,11 @@ public class HarmonyReader extends FormatReader {
       s.close();
     }
 
+    HashMap<String, String> xmlMetadata = handler.getMetadataMap();
+    for (String key : xmlMetadata.keySet()) {
+      addGlobalMeta(key, xmlMetadata.get(key));
+    }
+
     // populate the MetadataStore
 
     MetadataStore store = makeFilterMetadata();
@@ -382,6 +394,10 @@ public class HarmonyReader extends FormatReader {
     PositiveInteger fieldCount = FormatTools.getMaxFieldCount(fields.length);
     if (fieldCount != null) {
       store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
+    }
+    String startTime = handler.getMeasurementTime();
+    if (startTime != null) {
+      store.setPlateAcquisitionStartTime(new Timestamp(startTime), 0, 0);
     }
 
     for (int row=0; row<rows.length; row++) {
@@ -402,7 +418,7 @@ public class HarmonyReader extends FormatReader {
           store.setImageID(imageID, imageIndex);
           store.setWellSampleImageRef(imageID, 0, well, field);
 
-          String name = "Well " + (well + 1) + ", Field " + (field + 1);
+          String name = "Well Row " + rows[row] + ", Column " + cols[col] + ", Field " + (field + 1);
           store.setImageName(name, imageIndex);
           store.setPlateAcquisitionWellSampleRef(
             wellSampleID, 0, 0, imageIndex);
@@ -421,20 +437,40 @@ public class HarmonyReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenterID, i);
+        if (planes[i][0].acqTime != null) {
+          store.setImageAcquisitionDate(new Timestamp(planes[i][0].acqTime), i);
+        }
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(planes[i][c].channelName, i, c);
+          store.setChannelAcquisitionMode(getAcquisitionMode(planes[i][c].acqType), i, c);
+          if (planes[i][c].channelType != null) {
+            store.setChannelContrastMethod(getContrastMethod(planes[i][c].channelType), i, c);
+          }
+          if (planes[i][c].emWavelength != null) {
+            store.setChannelEmissionWavelength(planes[i][c].emWavelength, i, c);
+          }
+          if (planes[i][c].exWavelength != null) {
+            store.setChannelExcitationWavelength(planes[i][c].exWavelength, i, c);
+          }
         }
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(planes[i][0].resolutionX), i);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(planes[i][0].resolutionY), i);
+        store.setPixelsPhysicalSizeX(planes[i][0].resolutionX, i);
+        store.setPixelsPhysicalSizeY(planes[i][0].resolutionY, i);
+
+        if (getSizeZ() > 1) {
+          Unit<Length> firstZUnit = planes[i][0].positionZ.unit();
+          double firstZ = planes[i][0].positionZ.value().doubleValue();
+          double lastZ = planes[i][planes[i].length - 1].positionZ.value(firstZUnit).doubleValue();
+          double averageStep = (lastZ - firstZ) / (getSizeZ() - 1);
+          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(averageStep, firstZUnit), i);
+        }
 
         for (int p=0; p<getImageCount(); p++) {
           store.setPlanePositionX(planes[i][p].positionX, i, p);
           store.setPlanePositionY(planes[i][p].positionY, i, p);
           store.setPlanePositionZ(planes[i][p].positionZ, i, p);
+          store.setPlaneDeltaT(planes[i][p].deltaT, i, p);
         }
       }
 
@@ -444,10 +480,13 @@ public class HarmonyReader extends FormatReader {
   // -- Helper classes --
 
   class HarmonyHandler extends BaseHandler {
+    private static final String ROOT_ELEMENT = "EvaluationInputData";
+
     // -- Fields --
 
     private String currentName;
     private Plane activePlane;
+    private String currentUnit;
 
     private String displayName;
     private String plateID;
@@ -459,7 +498,16 @@ public class HarmonyReader extends FormatReader {
 
     private StringBuffer currentValue = new StringBuffer();
 
+    private ArrayList<String> elementNames = new ArrayList<String>();
+
+    private HashMap<String, String> metadata = new HashMap<String, String>();
+    private HashMap<String, Integer> keyCounter = new HashMap<String, Integer>();
+
     // -- HarmonyHandler API methods --
+
+    public HashMap<String, String> getMetadataMap() {
+      return metadata;
+    }
 
     public ArrayList<Plane> getPlanes() {
       return planes;
@@ -505,39 +553,77 @@ public class HarmonyReader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      if (!qName.equals(ROOT_ELEMENT)) {
+        elementNames.add(qName);
+      }
       currentValue.setLength(0);
-      currentName = qName;
 
       if (qName.equals("Image") && attributes.getValue("id") == null) {
         activePlane = new Plane();
       }
+
+      currentUnit = attributes.getValue("Unit");
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = currentValue.toString();
+
+      int elementCount = elementNames.size();
+      String currentName = null;
+      if (elementCount > 0) {
+        currentName = elementNames.get(elementCount - 1);
+      }
+      String parentName = null;
+      if (elementCount > 1) {
+        parentName = elementNames.get(elementCount - 2);
+      }
+
+      if (parentName == null) {
+        metadata.put(currentName, value);
+      }
+      else {
+        int keyCount = 1;
+        if (keyCounter.containsKey(parentName)) {
+          keyCount = keyCounter.get(parentName);
+        }
+
+        metadata.put(parentName + " #" + keyCount + " " + currentName, value);
+      }
+
+      if (keyCounter.containsKey(currentName) || elementNames.size() == 2) {
+        int keyCount = 1;
+        if (keyCounter.containsKey(currentName)) {
+          keyCount = keyCounter.get(currentName);
+        }
+        keyCounter.put(currentName, keyCount + 1);
+      }
+
+      if ("Plate".equals(parentName)) {
+        if ("Name".equals(currentName)) {
+          plateName = value;
+        }
+        else if ("PlateTypeName".equals(currentName)) {
+          plateDescription = value;
+        }
+        else if ("PlateRows".equals(currentName)) {
+          plateRows = Integer.parseInt(value);
+        }
+        else if ("PlateColumns".equals(currentName)) {
+          plateCols = Integer.parseInt(value);
+        }
+        else if ("PlateID".equals(currentName)) {
+          plateID = value;
+        }
+        else if ("MeasurementStartTime".equals(currentName)) {
+          measurementTime = value;
+        }
+      }
+
       if ("User".equals(currentName)) {
         displayName = value;
       }
-      else if ("PlateID".equals(currentName)) {
-        plateID = value;
-      }
-      else if ("MeasurementStartTime".equals(currentName)) {
-        measurementTime = value;
-      }
-      else if ("Name".equals(currentName)) {
-        plateName = value;
-      }
-      else if ("PlateTypeName".equals(currentName)) {
-        plateDescription = value;
-      }
-      else if ("PlateRows".equals(currentName)) {
-        plateRows = Integer.parseInt(value);
-      }
-      else if ("PlateColumns".equals(currentName)) {
-        plateCols = Integer.parseInt(value);
-      }
-      else if (activePlane != null) {
+      else if (activePlane != null && "Image".equals(parentName)) {
         if ("URL".equals(currentName)) {
           Location parent =
             new Location(currentId).getAbsoluteFile().getParentFile();
@@ -571,27 +657,43 @@ public class HarmonyReader extends FormatReader {
           activePlane.channelName = value;
         }
         else if ("ImageResolutionX".equals(currentName)) {
-          // resolution stored in meters
-          activePlane.resolutionX = Double.parseDouble(value) * 1000000;
+          activePlane.resolutionX =
+            FormatTools.getPhysicalSizeX(Double.parseDouble(value), currentUnit);
         }
         else if ("ImageResolutionY".equals(currentName)) {
-          // resolution stored in meters
-          activePlane.resolutionY = Double.parseDouble(value) * 1000000;
+          activePlane.resolutionY =
+            FormatTools.getPhysicalSizeY(Double.parseDouble(value), currentUnit);
         }
         else if ("PositionX".equals(currentName)) {
-          // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionX = new Length(meters, UNITS.REFERENCEFRAME);
+          final double x = Double.parseDouble(value);
+          try {
+            UnitsLength ul = UnitsLength.fromString(currentUnit);
+            activePlane.positionX = UnitsLength.create(x, ul);
+          }
+          catch (EnumerationException e) {
+          }
         }
         else if ("PositionY".equals(currentName)) {
-          // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionY = new Length(meters, UNITS.REFERENCEFRAME);
+          final double y = Double.parseDouble(value);
+          try {
+            UnitsLength ul = UnitsLength.fromString(currentUnit);
+            activePlane.positionY = UnitsLength.create(y, ul);
+          }
+          catch (EnumerationException e) {
+          }
         }
-        else if ("AbsPositionZ".equals(currentName)) {
-          // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionZ = new Length(meters, UNITS.REFERENCEFRAME);
+        else if ("PositionZ".equals(currentName)) {
+          final double z = Double.parseDouble(value);
+          try {
+            UnitsLength ul = UnitsLength.fromString(currentUnit);
+            activePlane.positionZ = UnitsLength.create(z, ul);
+          }
+          catch (EnumerationException e) {
+          }
+        }
+        else if ("MeasurementTimeOffset".equals(currentName)) {
+          final double t = Double.parseDouble(value);
+          activePlane.deltaT = FormatTools.getTime(t, currentUnit);
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
@@ -600,18 +702,32 @@ public class HarmonyReader extends FormatReader {
           activePlane.lensNA = Double.parseDouble(value);
         }
         else if ("MainEmissionWavelength".equals(currentName)) {
-          activePlane.emWavelength = Double.parseDouble(value);
+          final double wave = Double.parseDouble(value);
+          activePlane.emWavelength = FormatTools.getWavelength(wave, currentUnit);
         }
         else if ("MainExcitationWavelength".equals(currentName)) {
-          activePlane.exWavelength = Double.parseDouble(value);
+          final double wave = Double.parseDouble(value);
+          activePlane.exWavelength = FormatTools.getWavelength(wave, currentUnit);
+        }
+        else if ("AcquisitionType".equals(currentName)) {
+          activePlane.acqType = value;
+        }
+        else if ("ChannelType".equals(currentName)) {
+          activePlane.channelType = value;
+        }
+        else if ("AbsTime".equals(currentName)) {
+          activePlane.acqTime = value;
         }
       }
-
-      currentName = null;
 
       if (qName.equals("Image") && activePlane != null) {
         planes.add(activePlane);
       }
+
+      if (!qName.equals(ROOT_ELEMENT)) {
+        elementNames.remove(elementNames.size() - 1);
+      }
+      currentUnit = null;
     }
 
   }
@@ -627,17 +743,36 @@ public class HarmonyReader extends FormatReader {
     public int t;
     public int c;
     public String channelName;
-    public double resolutionX;
-    public double resolutionY;
+    public Length resolutionX;
+    public Length resolutionY;
     public Length positionX;
     public Length positionY;
     public Length positionZ;
-    public double emWavelength;
-    public double exWavelength;
+    public Time deltaT;
+    public Length emWavelength;
+    public Length exWavelength;
     public double magnification;
     public double lensNA;
+    public String acqType;
+    public String channelType;
+    public String acqTime;
   }
 
-  // -- Helper methods --
+  @Override
+  protected AcquisitionMode getAcquisitionMode(String mode) throws FormatException {
+    if (mode == null) {
+      return null;
+    }
+    if (mode.equalsIgnoreCase("nipkowconfocal")) {
+      return AcquisitionMode.SPINNINGDISKCONFOCAL;
+    }
+    else if (mode.equalsIgnoreCase("confocal")) {
+      return AcquisitionMode.LASERSCANNINGCONFOCALMICROSCOPY;
+    }
+    else if (mode.equalsIgnoreCase("nonconfocal")) {
+      return AcquisitionMode.WIDEFIELD;
+    }
+    return super.getAcquisitionMode(mode);
+  }
 
 }
