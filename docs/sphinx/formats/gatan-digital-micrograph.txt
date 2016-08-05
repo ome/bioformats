@@ -52,4 +52,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.
+Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_. 
+
+Note that the Gatan Reader does not currently support stacks.
