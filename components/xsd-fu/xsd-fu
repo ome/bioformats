@@ -706,8 +706,9 @@ def validateMetadataConverter():
     storeFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(storeFilename, opts.filetype)))
     retrieveFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(retrieveFilename, opts.filetype)))
     convertFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(convertFilename, opts.filetype)))
-    regexp = re.compile(r'(?<=[gs]et)[a-zA-Z0-9]*(?=\()')
-    grepper = grep(regexp, lambda line: regexp.search(line) is not None and "Root" not in line and "Datasets" not in line and "Count" not in line)
+    white_list = ['Root', 'Datasets', 'Count', 'ShapeType', 'LightSourceType']
+    regexp = re.compile(r'(?<=[\s\.:][gs]et)((?:(?!'+'|'.join(white_list)+r')\w)*)[\(,]')
+    grepper = grep(regexp, lambda line: regexp.search(line))
     storeSet = set(grepper(storeFile))
     retrieveSet = set(grepper(retrieveFile))
     convertSet = set(grepper(convertFile))
