@@ -58,8 +58,8 @@ Utility: |Poor|
 
 Bio-Formats has two modes of operation for QuickTime: 
 
-* QTJava mode requires `QuickTime <https://support.apple.com/downloads/quicktime>`_ to be 
-  installed (32-bit JVM only, not supported with 64-bit). 
+* QTJava mode requires QuickTime for Java to be installed (no longer available 
+  from Apple) and is 32-bit JVM only, not supported with 64-bit. 
 * Native mode works on systems with no QuickTime (e.g. Linux). 
 
 Bio-Formats can save image stacks as QuickTime movies. 

@@ -1890,9 +1890,8 @@ opennessRating = Fair
 presenceRating = Very good
 utilityRating = Poor
 reader = PictReader
-notes = `QuickTime for Java \n
-<http://www.apple.com/quicktime/download/standalone.html>`_ is required \n
-for reading vector files and some compressed files. \n
+notes = QuickTime for Java is required for reading vector files and some \n
+compressed files but note that this is no longer available from Apple. \n
 \n
 .. seealso:: \n
   `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ \n
@@ -1986,8 +1985,8 @@ reader = NativeQTReader
 writer = QTWriter
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-* QTJava mode requires `QuickTime <https://support.apple.com/downloads/quicktime>`_ to be \n
-  installed (32-bit JVM only, not supported with 64-bit). \n
+* QTJava mode requires QuickTime for Java to be installed (no longer available \n
+  from Apple) and is 32-bit JVM only, not supported with 64-bit. \n
 * Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n

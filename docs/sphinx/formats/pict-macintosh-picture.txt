@@ -46,9 +46,8 @@ Utility: |Poor|
 **Additional Information**
 
 
-`QuickTime for Java 
-<http://www.apple.com/quicktime/download/standalone.html>`_ is required 
-for reading vector files and some compressed files. 
+QuickTime for Java is required for reading vector files and some 
+compressed files but note that this is no longer available from Apple. 
 
 .. seealso:: 
   `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ 
