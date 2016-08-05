@@ -1026,49 +1026,44 @@ public class OMETiffReader extends FormatReader {
             new Timestamp(acquiredDates[i]), i);
       }
     }
-    metadataStore = getMetadataStoreForConversion();
   }
 
   // -- OMETiffReader API methods --
 
   /**
-   * Returns a MetadataStore that is populated in such a way as to
-   * produce valid OME-XML.  The returned MetadataStore cannot be used
-   * by an IFormatWriter, as it will not contain the required
-   * BinData.BigEndian attributes.
+   * Get a MetadataStore suitable for display.
+   *
+   * Note: Historically, this method removed certain elements
+   * for display purposes and was not be suitable for use with
+   * FormatWriter due to not containing required BinData
+   * BigEndian attributes. This is no longer the case; the general
+   * {@link FormatReader#getMetadataStore()} method will always create
+   * valid metadata which is suitable for both display and use
+   * with FormatWriter, and so should be used instead.
+   *
+   * @return the metadata store.
+   * @deprecated Use the general {@link FormatReader#getMetadataStore()} method.
    */
   public MetadataStore getMetadataStoreForDisplay() {
-    MetadataStore store = getMetadataStore();
-    if (service.isOMEXMLMetadata(store)) {
-      service.removeBinData((OMEXMLMetadata) store);
-      for (int i=0; i<getSeriesCount(); i++) {
-        if (((OMEXMLMetadata) store).getTiffDataCount(i) == 0) {
-          service.addMetadataOnly((OMEXMLMetadata) store, i);
-        }
-      }
-    }
-    return store;
+    return getMetadataStore();
   }
 
   /**
-   * Returns a MetadataStore that is populated in such a way as to be
-   * usable by an IFormatWriter.  Any OME-XML generated from this
-   * MetadataStore is <em>very unlikely</em> to be valid, as more than
-   * likely both BinData and TiffData element will be present.
+   * Get a MetadataStore suitable for writing.
+   *
+   * Note: Historically, this method created metadata suitable
+   * for use with FormatWriter, but would possibly not generate
+   * valid OME-XML if both BinData and TiffData elements were
+   * present.  This is no longer the case; the general
+   * {@link FormatReader#getMetadataStore()} method will always create
+   * valid metadata which is suitable for use with FormatWriter,
+   * and so should be used instead.
+   *
+   * @return the metadata store.
+   * @deprecated Use the general {@link FormatReader#getMetadataStore()} method.
    */
   public MetadataStore getMetadataStoreForConversion() {
-    MetadataStore store = getMetadataStore();
-    int realSeries = getSeries();
-    for (int i=0; i<getSeriesCount(); i++) {
-      setSeries(i);
-      if (meta.getPixelsBinDataCount(i) > 0) {
-        for (int j=0; j<meta.getPixelsBinDataCount(i); j++) {
-          store.setPixelsBinDataBigEndian(new Boolean(!isLittleEndian()), i, j);
-        }
-      }
-    }
-    setSeries(realSeries);
-    return store;
+    return getMetadataStore();
   }
 
   // -- Helper methods --
