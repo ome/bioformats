@@ -1494,7 +1494,7 @@ notes = .. seealso:: \n
   `NEF Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_
 
 [NIfTI]
-extensions = .img, .hdr, .nii
+extensions = .img, .hdr, .nii, .nii.gz
 developer = `National Institutes of Health <http://www.nih.gov/>`_
 bsd = no
 samples = `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_

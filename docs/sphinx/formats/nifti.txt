@@ -1,10 +1,10 @@
 .. index:: NIfTI
-.. index:: .img, .hdr, .nii
+.. index:: .img, .hdr, .nii, .nii.gz
 
 NIfTI
 ===============================================================================
 
-Extensions: .img, .hdr, .nii
+Extensions: .img, .hdr, .nii, .nii.gz
 
 Developer: `National Institutes of Health <http://www.nih.gov/>`_
 
