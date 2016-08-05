@@ -24,7 +24,7 @@ Writer: QTWriter (:bsd-writer:`Source Code <QTWriter.java>`)
 
 Freely Available Software:
 
-- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+- `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
 
 
 We currently have:
@@ -58,7 +58,7 @@ Utility: |Poor|
 
 Bio-Formats has two modes of operation for QuickTime: 
 
-* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be 
+* QTJava mode requires `QuickTime <https://support.apple.com/downloads/quicktime>`_ to be 
   installed (32-bit JVM only, not supported with 64-bit). 
 * Native mode works on systems with no QuickTime (e.g. Linux). 
 

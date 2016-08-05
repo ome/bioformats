@@ -1969,7 +1969,7 @@ reader = QuesantReader
 extensions = .mov
 owner = `Apple Computer <http://www.apple.com/>`_
 bsd = yes
-software = `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+software = `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
 weHave = * a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
 * several QuickTime datasets \n
 * the ability to produce more datasets
@@ -1986,7 +1986,7 @@ reader = NativeQTReader
 writer = QTWriter
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+* QTJava mode requires `QuickTime <https://support.apple.com/downloads/quicktime>`_ to be \n
   installed (32-bit JVM only, not supported with 64-bit). \n
 * Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
