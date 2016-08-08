@@ -1555,12 +1555,14 @@ for either format. \n
 Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ \n
 library to read ND2 files compressed with JPEG-2000. \n
 \n
-There is also an ND2 reader that uses Nikon's native libraries.  To use \n
-it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ \n
+There is also a **legacy** ND2 reader that uses Nikon's native libraries. \n
+To use it, you must be using Windows 32-bit and have `Nikon's ND2 reader plugin for ImageJ \n
 <http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. \n
 Additionally, you will need to download :source:`LegacyND2Reader.dll \n
 <lib/LegacyND2Reader.dll?raw=true>` \n
-and place it in your ImageJ plugin folder.
+and place it in your ImageJ plugin folder. \n
+Note that this reader is **unmaintained** and no additional support effort \n
+will be made. \n
 
 [NRRD (Nearly Raw Raster Data)]
 pagename = nrrd
