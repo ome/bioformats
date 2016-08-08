@@ -47,12 +47,6 @@ same folder.
     - LGPL
     - Java library; for HDF5-based formats (Imaris 5.5, MINC MRI)
 
-  *
-    - `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_
-    - **QTJava.zip**
-    - Commercial
-    - For additional QuickTime codecs
-
 See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can
 all be found in our :sourcedir:`Git repository <jar>`.
