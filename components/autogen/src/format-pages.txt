@@ -1985,8 +1985,8 @@ reader = NativeQTReader, LegacyQTReader
 writer = QTWriter
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-* The Legacy QTJava mode requires QuickTime for Java to be installed \n
-  (no longer available from Apple) and is 32-bit JVM only, not supported with 64-bit. \n
+* The legacy QTJava mode requires QuickTime for Java which will only run \n
+  with a 32-bit JVM and is no longer available from Apple. \n
 * Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
