@@ -112,6 +112,15 @@ name pattern, then the other must be included too.  The only exception is if
 
       bfconvert -nooverwrite /path/to/input /path/to/output
 
+.. option:: -nolookup
+
+    To disable the conversion of lookup tables, leaving the output
+    file without any lookup tables::
+
+      bfconvert -nolookup /path/to/input /path/to/output
+
+    .. versionadded:: 5.2.0
+
 .. option:: -bigtiff
 
     This option forces the writing of a BigTiff file::
