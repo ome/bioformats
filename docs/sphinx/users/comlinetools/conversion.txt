@@ -129,7 +129,7 @@ name pattern, then the other must be included too.  The only exception is if
 
     .. versionadded:: 5.1.2
 
-      The :option:`-bigtiff` option is not necessary if a BigTiff extension is
-      used for the output file, e.g.::
+    The :option:`-bigtiff` option is not necessary if a BigTiff extension is
+    used for the output file, e.g.::
 
-        bfconvert /path/to/input output.ome.btf
+      bfconvert /path/to/input output.ome.btf
