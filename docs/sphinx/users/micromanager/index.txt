@@ -1,0 +1,36 @@
+Micro-Manager
+=============
+
+- Micromanager offers the functionality for saving the acquired images in tiff/ome-tiff format. 
+- Based on the mode of saving and the configuration settings, the acquired image can be saved 
+with/without a companion file (metadata.txt).
+
+.. figure:: /images/micromanager_saving.png
+    :align: center
+    :alt: Saving options in Micro-Manager
+
++———————--------+——————----+—————---------+--------------+--------------------+
+|Saving         |          |              |              |                    |
+|Options within |          |              |              |                    |
+|Micro-Manager  |          |Companion     |              |                    | 
+|(Default       |          |File          |Bio-Formats   |                    |
+|Configuration) |Format    |(metadata.txt)|Reading       | Reader Used        |
++===============+==========+==============+==============+====================+ 
+| Save as       |          |              |              |                    |
+| seperate      |          |              |              |                    | 
+| image files   | Tiff     | Yes          | Full Support | MicromanagerReader |
++---------------+----------+--------------+--------------+--------------------+ 
+|               |          |              | Pixel data   |                    |
+|               |          |              | plus minimal |                    |
+|               | ome-tiff | No           | metadata*    | omeTiffReader      |
+| Save as image +----------+--------------+--------------+--------------------+
+| stack file    |          |              |              |                    |
+|               | ome-tiff | Yes**        | Full Support | MicromanagerReader |
++---------------+----------+--------------+--------------+--------------------+ 
+
+* : minimal metadata : Minimum amount of metadata required to validate an ome-xml.
+** : A small change in the acquisition side, facilitates better handling of the metadata from the 
+Bio-Formats side. 
+Micro-Manager --> Options --> Select : Create metadata.txt file with Image Stack Files
+
+
