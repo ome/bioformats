@@ -84,6 +84,7 @@ public class HarmonyReader extends FormatReader {
     super("PerkinElmer Harmony", new String[] {"xml"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
     suffixSufficient = false;
+    hasCompanionFiles = true;
     datasetDescription =
       "Directory with XML file and one .tif/.tiff file per plane";
   }
@@ -703,11 +704,15 @@ public class HarmonyReader extends FormatReader {
         }
         else if ("MainEmissionWavelength".equals(currentName)) {
           final double wave = Double.parseDouble(value);
-          activePlane.emWavelength = FormatTools.getWavelength(wave, currentUnit);
+          if (wave > 0) {
+            activePlane.emWavelength = FormatTools.getWavelength(wave, currentUnit);
+          }
         }
         else if ("MainExcitationWavelength".equals(currentName)) {
           final double wave = Double.parseDouble(value);
-          activePlane.exWavelength = FormatTools.getWavelength(wave, currentUnit);
+          if (wave > 0) {
+            activePlane.exWavelength = FormatTools.getWavelength(wave, currentUnit);
+          }
         }
         else if ("AcquisitionType".equals(currentName)) {
           activePlane.acqType = value;
