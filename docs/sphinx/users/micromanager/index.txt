@@ -9,7 +9,7 @@ with/without a companion file (metadata.txt).
     :align: center
     :alt: Saving options in Micro-Manager
 
-+———————--------+——————----+—————---------+--------------+--------------------+
++---------------+----------+—————---------+--------------+--------------------+
 |Saving         |          |              |              |                    |
 |Options within |          |              |              |                    |
 |Micro-Manager  |          |Companion     |              |                    | 
