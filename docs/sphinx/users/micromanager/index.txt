@@ -3,13 +3,15 @@ Micro-Manager
 
 - Micromanager offers the functionality for saving the acquired images in tiff/ome-tiff format. 
 - Based on the mode of saving and the configuration settings, the acquired image can be saved 
-with/without a companion file (metadata.txt).
+  with/without a companion file (metadata.txt).
 
 .. figure:: /images/micromanager_saving.png
+    :width: 180px
     :align: center
     :alt: Saving options in Micro-Manager
 
-+---------------+----------+—————---------+--------------+--------------------+
+
++---------------+----------+--------------+--------------+--------------------+
 |Saving         |          |              |              |                    |
 |Options within |          |              |              |                    |
 |Micro-Manager  |          |Companion     |              |                    | 
@@ -28,9 +30,10 @@ with/without a companion file (metadata.txt).
 |               | ome-tiff | Yes**        | Full Support | MicromanagerReader |
 +---------------+----------+--------------+--------------+--------------------+ 
 
-* : minimal metadata : Minimum amount of metadata required to validate an ome-xml.
-** : A small change in the acquisition side, facilitates better handling of the metadata from the 
-Bio-Formats side. 
-Micro-Manager --> Options --> Select : Create metadata.txt file with Image Stack Files
+
+| ``*``  : minimal metadata : Minimum amount of metadata required to validate an ome-xml.
+
+| ``**`` : A small change in the acquisition side, facilitates better handling of the metadata from the Bio-Formats side. 
+| Micro-Manager --> Options --> Select : Create metadata.txt file with Image Stack Files
 
 
