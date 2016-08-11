@@ -118,7 +118,32 @@ We recommend using Eclipse 4.3 (Kepler), specifically -
 "Eclipse IDE for Java developers". It comes with m2e installed
 (http://eclipse.org/downloads/compare.php?release=kepler).
 
-You can then import the Bio-Formats source by choosing
+Bio-Formats can be included as a dependency in any Maven project. The 
+dependency can be added to the project pom file and should include the
+desired Bio-Formats version. Using bioformats_package as the artifactId
+will include the complete Bio-Formats package, or individual components 
+can be chosen as desired.
+
+  <dependency>
+    <groupId>OME</groupId>
+    <artifactId>bioformats_package</artifactId>
+    <version>5.2.0</version>
+  </dependency>
+
+In order to include this Bio-Formats dependency a custom repository 
+must also be added to the project pom or ${user.home}/.m2/settings.xml 
+The repositories element is inherited so for a group of projects the 
+repositories element can be defined at the top of your inheritance chain. 
+
+  <repositories>
+    <repository>
+      <id>OME</id>
+      <name>Bio-Formats Repo</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/repo</url>
+    </repository>
+  </repositories>
+
+Alternatively you can import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
 Alternatively, run the Eclipse Maven target with :command:`mvn
