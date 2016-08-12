@@ -28,24 +28,29 @@ package ome.units.quantity;
 import ome.units.unit.Unit;
 
 /**
- * A wrapper for the Power class from the units implementation.
+ * Power quantity.
  *
- * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
- * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- * @version 1.0
- * <small>
- * (<b>Internal version:</b> $Revision: $Date: $)
- * </small>
  * @since 5.1
  */
 public class Power extends Quantity implements Comparable<Power>
 {
+  /** Seed for hashCode. */
   private static final int SEED1 = 56;
+  /** Seed for hashCode. */
   private static final int SEED2 = 67;
+  /** Value of this quantity. */
   Number value;
+  /** Unit type of this quantity. */
   Unit<ome.units.quantity.Power> unit;
+  /** Cached value for hashCode. */
   private int hashCodeValue;
 
+  /**
+   * Create an Power.
+   *
+   * @param inValue the value.
+   * @param inUnit the unit type.
+   */
   public Power(Number inValue,
     Unit<ome.units.quantity.Power> inUnit)
   {
@@ -65,7 +70,14 @@ public class Power extends Quantity implements Comparable<Power>
   {
     return value;
   }
-  
+
+  /**
+   * Perform a unit conversion.
+   *
+   * @param inUnit the unit to convert to.
+   * @return the current quantity value converted to the specified
+   * unit, or null if the conversion is not possible.
+   */
   public Number value(Unit<ome.units.quantity.Power> inUnit)
   {
     if (unit.equals(inUnit))
@@ -79,6 +91,18 @@ public class Power extends Quantity implements Comparable<Power>
     return null;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public boolean equals(Object other)
   {
@@ -105,6 +129,18 @@ public class Power extends Quantity implements Comparable<Power>
     return false;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public int compareTo(Power other)
   {
