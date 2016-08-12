@@ -112,6 +112,7 @@ formats (e.g. JPEG, AVI, MOV), then you could also use a separate
 IFormatWriter for each file, like this:
 
 ::
+
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
       // again, you should have set up a reader already
       String[] outputFiles = new String[] {"/path/to/file/1.avi", "/path/to/file/2.avi"};
