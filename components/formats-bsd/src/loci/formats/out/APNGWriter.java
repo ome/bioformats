@@ -40,6 +40,7 @@ import java.util.zip.DeflaterOutputStream;
 
 import loci.common.Constants;
 import loci.common.DataTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -62,6 +63,7 @@ public class APNGWriter extends FormatWriter {
   private long numFramesPointer = 0;
   private int nextSequenceNumber;
   private boolean littleEndian;
+  private long footerPointer = 0;
 
   // -- Constructor --
 
@@ -88,6 +90,7 @@ public class APNGWriter extends FormatWriter {
     int width = meta.getPixelsSizeX(series).getValue().intValue();
     int height = meta.getPixelsSizeY(series).getValue().intValue();
 
+    out.seek(footerPointer);
     if (!initialized[series][no]) {
       writeFCTL(width, height);
       if (numFrames == 0) writePLTE();
@@ -96,9 +99,7 @@ public class APNGWriter extends FormatWriter {
 
     writePixels(numFrames == 0 ? "IDAT" : "fdAT", buf, x, y, w, h);
     numFrames++;
-    if (numFrames == getPlaneCount()) {
-      writeFooter();
-    }
+    writeFooter();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -130,7 +131,12 @@ public class APNGWriter extends FormatWriter {
       int nChannels = getSamplesPerPixel();
       boolean indexed =
         getColorModel() != null && (getColorModel() instanceof IndexColorModel);
-      littleEndian = !r.getPixelsBinDataBigEndian(series, 0);
+      if (r.getPixelsBigEndian(series) != null) {
+        littleEndian = !r.getPixelsBigEndian(series).booleanValue();
+      }
+      else if (r.getPixelsBinDataCount(series) == 0) {
+        littleEndian = !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+      }
 
       // write 8-byte PNG signature
       out.write(PNG_SIG);
@@ -168,6 +174,29 @@ public class APNGWriter extends FormatWriter {
       out.writeInt(0);
       out.writeInt(0);
       out.writeInt(0); // save a place for the CRC
+      footerPointer = out.getFilePointer();
+    }
+    else {
+      numFramesPointer = PNG_SIG.length + 33;
+      RandomAccessInputStream in = new RandomAccessInputStream(id);
+      in.order(littleEndian);
+      in.seek(8);
+      while (in.getFilePointer() < in.length()) {
+        int length = in.readInt();
+        String type = in.readString(4);
+        if (type.equals("fcTL") || type.equals("fdAT")) {
+          nextSequenceNumber = in.readInt() + 1;
+          length -= 4;
+        }
+        in.skipBytes(length + 4);
+      }
+      in.seek(numFramesPointer);
+      numFrames = in.readInt();
+      in.close();
+      footerPointer = out.length() - 12;
+    }
+    if (numFrames == 0) {
+      nextSequenceNumber = 0;
     }
   }
 
@@ -175,10 +204,12 @@ public class APNGWriter extends FormatWriter {
   @Override
   public void close() throws IOException {
     super.close();
+
     numFrames = 0;
     numFramesPointer = 0;
     nextSequenceNumber = 0;
     littleEndian = false;
+    footerPointer = 0;
   }
 
   // -- Helper methods --
@@ -308,7 +339,9 @@ public class APNGWriter extends FormatWriter {
   }
 
   private void writeFooter() throws IOException {
+    footerPointer = out.getFilePointer();
     // write IEND chunk
+
     out.writeInt(0);
     out.writeBytes("IEND");
     out.writeInt(crc("IEND".getBytes(Constants.ENCODING)));

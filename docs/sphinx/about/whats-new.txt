@@ -1,6 +1,151 @@
 Version history
 ===============
 
+5.2.0-m5 (2016 July 7)
+-----------------------
+
+Java format support improvements are listed below.
+
+†Denotes a major breaking change to the reader (typically modification of core
+metadata). Code changes or re-import may be necessary in ImageJ/FIJI and
+OMERO.
+
+* added support for :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
+* added support for :doc:`Princeton Instruments .spe </formats/princeton-instruments-spe>` data
+* bug fixes for many formats including:
+   - Tiff
+       - fixed integer overflow to read resolutions correctly
+       - fixed handling of tiled images with tile width less than 64
+   - PNG writing
+   - Zeiss ZVI†
+       - reworked image ordering calculation to allow for tiles
+   - Leica LIF
+       - fixed incorrect plane offsets for large multi-tile files
+   - MRC and Spider
+       - fixes for format type checking
+   - OME-XML
+       - fixed metadata store
+   - CellSens VSI†
+       - fixes for correctly reading dimensions
+   - ICS writing
+       - fixed dimension population for split files
+   - FlowSight
+       - fixes to infer channel count from channel names (thanks to Lee
+         Kamentsky)
+   - Hamamatsu VMS†
+       - fixed dimensions of full-resolution images
+   - PicoQuant
+       - updated reader to always buffer data
+   - Zeiss LSM
+       - fixed Plane population errors
+   - Nifti
+       - fixed planeSize to prevent crashes when loading large files (thanks
+         to Christian Niedworok)
+   - LiFlim
+       - fixed ExposureTime check and units usage
+   - SDT
+       - performance improvements for loading of large files
+   - OME-TIFF
+       - fixed Plane population errors
+       - fixed NullPointerException when closing reader for partial multi-file
+         filesets
+   - Zeiss CZI
+       - fixed timestamp indexing when multiple separate channels are present
+   - SVS
+       - fixed FormatNumberException
+   - Micro-Manager
+       - fixed handling of large datasets saved as image stacks and split
+         over multiple files
+
+Top-level Bio-Formats API changes:
+
+* Java 1.7 is now the minimum supported version
+* the native-lib-loader dependency has been bumped to version 2.1.4
+* the xalan dependency has been bumped to version 2.7.2
+* all the ome.jxr classes have been deprecated to make clear that there is no
+  JPEG-XR support implemented in Bio-Formats as yet
+* the DataTools API has been extended to add a number of utility functions to:
+   - account for decimal separators in different locales
+   - parse a String into Double, Float, Integer etc
+   - handle NumberFormatException thrown when parsing Unit tests
+* the Logging API has been updated to respect logging frameworks
+  (log4j/logback) initialized via a binding-specific configuration file and
+  to prevent `DebugTools.enableLogging(String)` from overriding initialized
+  logger levels (see :doc:`/developers/logging` for more information)
+* helper methods have been added to FormatTools allowing a stage position to
+  be formatted from an input Double and an input unit
+* the Formats API has also been updated to add a new validate property to
+  MetadataOptions and support for MetadataOptions has been moved to
+  FormatHandler level to allow it to be used by both Readers and Writers
+
+Other general improvements include:
+
+* improved performance of `getUsedFiles`
+* fixes for `FilePatternBlock`, `AxisGuesser`, `FilePattern`
+* fixes for the detection of csv pattern blocks by `FilePatternBlock`
+* bioformats_package.jar now includes bio-formats-tools as a dependency so
+  ImageConverter, ImageFaker and ImageInfo classes are included in the bundle
+* initial work on
+  `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_ now allows the
+  :file:`readers.txt` configuration file to be annotated using key/value pairs
+  to mark optional Readers and specify additional per-Reader options
+* the JACE C++ implementation has been decoupled as it does not function with
+  Java 1.7 (see `legacy repo <https://github.com/ome/bio-formats-jace>`_)
+* ImageJ fixes
+   - to allow reader delegation when a legacy reader is enabled
+     but not working
+   - to allow ROIs to be imported to the ImageJ ROI manager or added to a new
+     overlay
+* MATLAB fixes
+   - improved integration with Octave (thanks to Carnë Draug)
+   - added logging initialization
+* Command-line tools fixes
+   - upgrade check no longer run when passing -version
+   - common methods refactoring
+   - showinf improvements to preload format
+* Added more Java examples to the developer documentation
+* Added many automated tests and improved FakeReader testing framework
+
+The Data Model version 2016-06 has been released to introduce
+`Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
+and to simplify both the graphical aspects of the model and code generation.
+Full details are available in the
+:model_doc:`OME Model and Formats Documentation <schemas/june-2016.html>`.
+OME-XML changes include:
+
+* `Map` is now a complexType rather than an element and `MapPairs` has been
+  dropped
+* extended enum metadata has been introduced to better support units
+* `Shape` and `LightSource` are now complexTypes rather than elements
+* BinData has been added to code generation to handle raw binary data
+* various code generation improvements to:
+   - simplify and standardize the generation process
+   - remove a number of hard-coded exceptional cases allowing for easier
+     maintenance and growth
+   - allow for genuine abstract model types and enable C++ model
+     implementation
+
+The Bio-Formats C++ native implementation has been decoupled from
+the Java codebase and will be released as
+`OME-Files C++ <http://downloads.openmicroscopy.org/ome-files-cpp/>`_ from now
+on, with the exception of OME-XML which is still within Bio-Formats at present
+(there is a plan to decouple both the Java and the C++ versions of OME-XML in
+future).
+
+5.1.10 (2016 May 9)
+-------------------
+
+Java bug fixes:
+
+* fixed warnings being thrown for ImageJ and other non-FIJI users on Windows
+  (these warnings were triggered by the removal of the 3i Slidebook DLLs from
+  the source code repository in Bio-Formats 5.1.9 and should now only be
+  triggered when opening Slidebook files without the update site enabled -
+  http://www.openmicroscopy.org/info/slidebook)
+* a fix in the ImageJ plugin for files grouped using the "Dimensions" option
+* a fix for writing TIFF files in tiles
+
+
 5.1.9 (2016 April 14)
 ---------------------
 

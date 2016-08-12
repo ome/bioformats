@@ -27,10 +27,9 @@ to the arguments specified.  Valid arguments are:
   * `clean`: cleans the Maven build directories
   * `maven`: builds all Java components using Maven and runs unit tests
   * `cpp`: builds the native C++ code alone
-  * `cppwrap`: builds the auto-generated C++ bindings for the Java API
   * `sphinx`: builds the Sphinx documentation alone
   * `ant`: builds all Java components using Ant and runs unit tests
-  * `all`: equivalent of `clean maven cppwrap sphinx ant`
+  * `all`: equivalent of `clean maven sphinx ant`
 
 update_copyright
 ----------------

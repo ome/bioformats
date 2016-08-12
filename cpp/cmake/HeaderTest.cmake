@@ -95,7 +95,19 @@ function(header_test_from_file component library path)
       string(REPLACE "${headerdir}/" "" include ${include})
       string(REGEX REPLACE "\\.h$" "-${repeat}.cpp" genheader ${genheader})
       string(REGEX REPLACE "[/.-]" "_" safeheader ${include})
-      string(CONFIGURE "#include <@include@>
+      unset(ome_system_include)
+      if (repeat EQUAL 1)
+        if (MSVC)
+          set(ome_system_include "#include <windows.h>")
+        endif()
+        if (UNIX)
+          set(ome_system_include "#include <unistd.h>")
+        endif()
+      endif()
+
+      string(CONFIGURE "@ome_system_include@
+
+#include <@include@>
 
 #include <ome/test/test.h>
 

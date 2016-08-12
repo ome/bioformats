@@ -55,7 +55,7 @@ namespace ome
                          const std::string& klass,
                          const std::string& property)
         {
-          boost::format fmt("Failed to parse %1% %2% property value ‘%1%’");
+          boost::format fmt("Failed to parse %1% %2% property value ‘%3%’");
           fmt % klass % property % text;
           throw ModelException(fmt.str());
         }

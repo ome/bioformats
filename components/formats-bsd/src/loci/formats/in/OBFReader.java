@@ -241,7 +241,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthX > 0)
           {
-            Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROM);
+            Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROMETER);
             if (physicalSizeX != null) {
               ome.setPixelsPhysicalSizeX(physicalSizeX, series);
             }
@@ -256,7 +256,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthY > 0)
           {
-            Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROM);
+            Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROMETER);
             if (physicalSizeY != null) {
               ome.setPixelsPhysicalSizeY(physicalSizeY, series);
             }
@@ -271,7 +271,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthZ > 0)
           {
-            Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROM);
+            Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROMETER);
             if (physicalSizeZ != null) {
               ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
             }

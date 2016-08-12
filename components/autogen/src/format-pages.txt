@@ -12,17 +12,17 @@ metadataRating = Fair
 opennessRating = Fair
 presenceRating = Very good
 utilityRating = Fair
-reader = SlidebookReader, SlideBook6Reader
+reader = SlidebookReader
 mif = true
 notes = We strongly encourage users to export their .sld files to OME-TIFF \n
 using the SlideBook software.  Bio-Formats is not likely to support the full \n
 range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
-Free software from 3I can export the files to OME-TIFF post-acquisition, see \n
+Free software from 3i can export the files to OME-TIFF post-acquisition, see \n
 https://www.slidebook.com/reader.php.\n
 \n
-SlideBook6Reader requires a native binary file to work, see\n
+3i also develops a native SlideBook reader which works with Bio-Formats. See \n
 http://www.openmicroscopy.org/info/slidebook for details.\n
 \n
 .. seealso:: \n
@@ -65,7 +65,7 @@ extensions = .al3d
 owner = `Alicona Imaging <http://www.alicona.com/>`_
 bsd = no
 versions = 1.0
-weHave = * an `AL3D specification document <http://www.alicona.co.uk/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
+weHave = * an AL3D specification document (v1.0, from 2003, in PDF)\n
 * a few AL3D datasets
 weWant = * more AL3D datasets (Z series, T series, 16-bit)
 pixelsRating = Very good
@@ -283,6 +283,24 @@ presenceRating = Fair
 utilityRating = Good
 reader = BDReader
 mif = true
+
+[Becker & Hickl SPC FIFO]
+pagename = becker-hickl-fifo
+extensions = .spc
+owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
+bsd = no
+weHave = * an `SPC specification document <http://www.becker-hickl.com/handbookphp.htm>`_ \n
+* `public sample images <http://downloads.openmicroscopy.org/images/SPC-FIFO/>`__
+weWant = * more SPC sample files
+pixelsRating = Poor
+metadataRating = Fair
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = SPCReader
+mif = true
+notes = * Only files containing frame, line and pixel clock information \n
+  are currently supported
 
 [Becker & Hickl SPCImage]
 extensions = .sdt
@@ -680,7 +698,9 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = GatanReader
-notes = Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.
+notes = Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_. \n
+\n
+Note that the Gatan Reader does not currently support stacks.
 
 [GIF (Graphics Interchange Format)]
 pagename = gif
@@ -1476,12 +1496,13 @@ notes = .. seealso:: \n
   `NEF Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_
 
 [NIfTI]
-extensions = .img, .hdr
+extensions = .img, .hdr, .nii, .nii.gz
 developer = `National Institutes of Health <http://www.nih.gov/>`_
 bsd = no
 samples = `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_
 weHave = * `NIfTI specification documents <http://afni.nimh.nih.gov/pub/dist/doc/nifti/nifti_revised.html>`_ \n
-* several NIfTI datasets
+* several NIfTI datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/NIfTI/>`__
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -1536,12 +1557,14 @@ for either format. \n
 Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ \n
 library to read ND2 files compressed with JPEG-2000. \n
 \n
-There is also an ND2 reader that uses Nikon's native libraries.  To use \n
-it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ \n
+There is also a **legacy** ND2 reader that uses Nikon's native libraries. \n
+To use it, you must be using Windows 32-bit and have `Nikon's ND2 reader plugin for ImageJ \n
 <http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. \n
 Additionally, you will need to download :source:`LegacyND2Reader.dll \n
 <lib/LegacyND2Reader.dll?raw=true>` \n
-and place it in your ImageJ plugin folder.
+and place it in your ImageJ plugin folder. \n
+Note that this reader is **unmaintained** and no additional support effort \n
+will be made. \n
 
 [NRRD (Nearly Raw Raster Data)]
 pagename = nrrd
@@ -1871,9 +1894,8 @@ opennessRating = Fair
 presenceRating = Very good
 utilityRating = Poor
 reader = PictReader
-notes = `QuickTime for Java \n
-<http://www.apple.com/quicktime/download/standalone.html>`_ is required \n
-for reading vector files and some compressed files. \n
+notes = QuickTime for Java is required for reading vector files and some \n
+compressed files but note that this is no longer available from Apple. \n
 \n
 .. seealso:: \n
   `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ \n
@@ -1914,6 +1936,22 @@ utilityRating = Good
 reader = PrairieReader
 mif = true
 
+[Princeton Instruments SPE]
+extensions = .spe
+developer = `Princeton Instruments <http://www.princetoninstruments.com>`_
+bsd = no
+versions = 3.0
+weHave = * `An official specification document <ftp://ftp.princetoninstruments.com/public/Manuals/Princeton%20Instruments/SPE%203.0%20File%20Format%20Specification.pdf>`_ \n
+* two SPE files
+weWant = * more SPE files
+pixelsRating = Good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+reader = SPEReader
+mif = true
+
 [Quesant]
 extensions = .afm
 owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
@@ -1934,7 +1972,7 @@ reader = QuesantReader
 extensions = .mov
 owner = `Apple Computer <http://www.apple.com/>`_
 bsd = yes
-software = `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+software = `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
 weHave = * a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
 * several QuickTime datasets \n
 * the ability to produce more datasets
@@ -1947,19 +1985,19 @@ metadataRating = Very good
 opennessRating = Fair
 presenceRating = Outstanding
 utilityRating = Poor
-reader = NativeQTReader
+reader = NativeQTReader, LegacyQTReader
 writer = QTWriter
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
-  installed (32-bit JVM only, not supported with 64-bit). \n
+* The legacy QTJava mode requires QuickTime for Java which will only run \n
+  with a 32-bit JVM and is no longer available from Apple. \n
 * Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
 The following table shows supported codecs: \n
 \n
 ====== ================================== =================== ============ \n
-Codec  Description                        Native              QTJava \n
+Codec  Description                        Native              LegacyQTJava \n
 ====== ================================== =================== ============ \n
 raw    Full Frames (Uncompressed)         read & write        read & write \n
 iraw   Intel YUV Uncompressed             read only           read & write \n
@@ -2203,7 +2241,8 @@ reader = UnisokuReader
 
 [Varian FDF]
 extensions = .fdf
-developer = `Varian, Inc. <http://www.varianinc.com>`_
+owner = `Agilent Technologies <http://www.agilent.com/home>`_
+developer = Varian, Inc.
 bsd = no
 weHave = * a few Varian FDF datasets
 weWant = * an official specification document \n
@@ -2256,7 +2295,7 @@ mif = true
 
 [Volocity Library Clipping]
 extensions = .acff
-developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 bsd = no
 weHave = * several Volocity library clipping datasets
 weWant = * any datasets that do not open correctly \n
@@ -2271,7 +2310,7 @@ notes = RGB .acff files are not yet supported.  See :ticket:`6413`.
 
 [Volocity]
 extensions = .mvd2
-developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
 bsd = no
 samples = `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 weHave = * many example Volocity datasets
@@ -2369,7 +2408,7 @@ mif = true
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
-developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
+developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision.html>`_
 bsd = no
 versions = 1.0, 2.0
 software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
@@ -2393,9 +2432,6 @@ using the Bio-Formats Importer plugin, you can just remove the \n
 ZVI_Reader.class from the plugins folder. \n
 \n
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
-\n
-.. seealso:: \n
-  `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
 indexExtensions = .czi
@@ -2440,7 +2476,7 @@ notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.n
 \n
 Commercial applications that support this format include: \n
 \n
-* `SVI Huygens <http://www2.svi.nl/>`_ \n
+* `SVI Huygens <https://svi.nl/HomePage>`_ \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 * `Amira <http://www.amira.com/>`_ \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_

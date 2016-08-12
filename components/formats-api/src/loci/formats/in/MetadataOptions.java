@@ -46,4 +46,10 @@ public interface MetadataOptions {
    */
   MetadataLevel getMetadataLevel();
 
+  /** Specifies whether or not to validate files when reading. */
+  void setValidate(boolean validate);
+
+  /** Returns true if files should be validated when read.*/
+  boolean isValidate();
+
 }

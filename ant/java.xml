@@ -59,34 +59,13 @@ Type "ant -p" for a list of targets.
 
   <target name="test" depends="jar, compile-tests"
     description="run tests" if="doTests">
-    <!-- run JUnit tests -->
-    <if>
-      <equals arg1="${component.junit}" arg2="true"/>
-      <then>
-        <junit haltonfailure="true" fork="true">
-          <classpath>
-            <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
-            <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
-            <pathelement location="${test-classes.dir}"/>
-            <pathelement location="${classes.dir}"/>
-            <pathelement path="${component.runtime-cp}"/>
-          </classpath>
-          <formatter type="brief" usefile="false"/>
-          <batchtest>
-            <fileset dir="${test-classes.dir}">
-              <include name="**/*Test.class"/>
-            </fileset>
-          </batchtest>
-        </junit>
-      </then>
-    </if>
     <!-- run TestNG tests -->
     <if>
       <isset property="testng.xml"/>
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
           <classpath>
-            <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+            <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
             <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
             <pathelement location="${classes.dir}"/>

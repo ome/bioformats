@@ -179,12 +179,6 @@ ImageJ
     Notes:     used by plugins for ImageJ and OME plugins for ImageJ
     License:   Public domain
 
-JUnit
-    JAR file:  junit-4.8.2.jar
-    URL:       http://www.junit.org/
-    Notes:     unit testing framework used for a few unit tests
-    License:   Common Public License
-
 Logback
     JAR file:  logback-core-1.1.1.jar, logback-classic-1.1.1.jar
     URL:       http://logback.qos.ch

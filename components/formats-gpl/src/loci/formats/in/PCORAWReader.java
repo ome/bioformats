@@ -212,7 +212,7 @@ public class PCORAWReader extends FormatReader {
           Double parsedExp = new Double(exp);
           Time exposure = null;
           if (parsedExp != null) {
-            exposure = new Time(parsedExp / 1000, UNITS.S);
+            exposure = new Time(parsedExp / 1000, UNITS.SECOND);
           }
 
           for (int plane=0; plane<getImageCount(); plane++) {

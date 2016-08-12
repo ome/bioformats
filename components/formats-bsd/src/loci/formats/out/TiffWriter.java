@@ -238,9 +238,13 @@ public class TiffWriter extends FormatWriter {
       int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
   throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
-    boolean littleEndian = bigEndian == null ?
-      false : !bigEndian.booleanValue();
+    boolean littleEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      littleEndian = !retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     // Ensure that no more than one thread manipulated the initialized array
     // at one time.
@@ -317,14 +321,14 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
     Length px = retrieve.getPixelsPhysicalSizeX(series);
-    Double physicalSizeX = px == null || px.value(UNITS.MICROM) == null ? null : px.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeX = px == null || px.value(UNITS.MICROMETER) == null ? null : px.value(UNITS.MICROMETER).doubleValue();
     if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
     }
     else physicalSizeX = 1d / physicalSizeX;
 
     Length py = retrieve.getPixelsPhysicalSizeY(series);
-    Double physicalSizeY = py == null || py.value(UNITS.MICROM) == null ? null : py.value(UNITS.MICROM).doubleValue();
+    Double physicalSizeY = py == null || py.value(UNITS.MICROMETER) == null ? null : py.value(UNITS.MICROMETER).doubleValue();
     if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
     }
@@ -481,9 +485,13 @@ public class TiffWriter extends FormatWriter {
     tiffSaver = new TiffSaver(out, currentId);
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
-    boolean littleEndian = bigEndian == null ?
-      false : !bigEndian.booleanValue();
+    boolean littleEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      littleEndian = !retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);

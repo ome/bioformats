@@ -232,6 +232,95 @@ namespace ome
           (object.*setter)(attr);
         }
 
+        /**
+         * Parse an arbitrary quantity.
+         *
+         * @param text the text to parse.
+         * @param unit the unit symbol name to parse.
+         * @param klass the class owning the property.
+         * @param property the property name.
+         * @returns the parsed quantity.
+         * @throws a ModelException on failure.
+         */
+        template<typename T>
+        inline typename boost::disable_if_c<
+          is_shared_ptr<T>::value,
+          typename boost::remove_const<typename boost::remove_reference<T>::type>::type
+          >::type
+        parse_quantity(const std::string& text,
+                       const std::string& unit,
+                       const std::string& klass,
+                       const std::string& property)
+        {
+          typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type raw_type;
+
+          typename raw_type::element_type::value_type v;
+          parse_value(text, v, klass, property);
+          typename raw_type::element_type::unit_type u(unit);
+          raw_type attr(v, u);
+          return attr;
+        }
+
+        /**
+         * Parse an arbitrary shared_ptr quantity.
+         *
+         * @param text the text to parse.
+         * @param unit the unit symbol name to parse.
+         * @param klass the class owning the property.
+         * @param property the property name.
+         * @returns the parsed quantity.
+         * @throws a ModelException on failure.
+         */
+        template<typename T>
+        inline typename boost::enable_if_c<
+          is_shared_ptr<T>::value,
+          typename boost::remove_const<typename boost::remove_reference<T>::type>::type
+          >::type
+        parse_quantity(const std::string& text,
+                       const std::string& unit,
+                       const std::string& klass,
+                       const std::string& property)
+        {
+          typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type raw_type;
+
+          typename raw_type::element_type::value_type v;
+          parse_value(text, v, klass, property);
+          typename raw_type::element_type::unit_type u(unit);
+          raw_type attr(ome::compat::make_shared<typename raw_type::element_type>(v, u));
+          return attr;
+        }
+
+        /**
+         * Set an arbitrary quantity.
+         *
+         * The type to set will be obtained from the setter argument
+         * type.
+         *
+         * @param text the text to parse.
+         * @param unit the unit to use.
+         * @param object on which to set the parsed value.
+         * @param setter the class method to call to set the parsed
+         * value.
+         * @param klass the class owning the property.
+         * @param property the property name.
+         * @throws a ModelException on failure.
+         */
+        template<class C, typename T>
+        inline void
+        set_quantity(const std::string&       text,
+                     const std::string&       unit,
+                     C&                       object,
+                     void               (C::* setter)(T value),
+                     const std::string&       klass,
+                     const std::string&       property)
+        {
+          typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type raw_type;
+
+          raw_type attr(parse_quantity<raw_type>(text, unit, klass, property));
+
+          (object.*setter)(attr);
+        }
+
       }
     }
   }

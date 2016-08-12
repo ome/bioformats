@@ -49,58 +49,26 @@ import org.testng.annotations.Test;
  */
 public class FormatToolsTest {
 
-  @Test
-  public void testDefaultMinMaxInt8() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT8);
-    assertEquals(lim[0], -128);
-    assertEquals(lim[1], 127);
+
+  @DataProvider(name = "pixelTypes")
+  public Object[][] createPixelTypes() {
+    return new Object[][] {
+      {FormatTools.INT8, -128L, 127L},
+      {FormatTools.INT16, -32768L, 32767L},
+      {FormatTools.INT32, -2147483648L, 2147483647L},
+      {FormatTools.UINT8, 0L, 255L},
+      {FormatTools.UINT16, 0L, 65535L},
+      {FormatTools.UINT32, 0L, 4294967295L},
+      {FormatTools.FLOAT, -2147483648L, 2147483647L},
+      {FormatTools.DOUBLE, -2147483648L, 2147483647L},
+    };
   }
 
-  @Test
-  public void testDefaultMinMaxInt16() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT16);
-    assertEquals(lim[0], -32768);
-    assertEquals(lim[1], 32767);
-  }
-
-  @Test
-  public void testDefaultMinMaxInt32() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.INT32);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint8() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT8);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 255);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint16() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT16);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 65535);
-  }
-
-  @Test
-  public void testDefaultMinMaxUint32() {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.UINT32);
-    assertEquals(lim[0], 0);
-    assertEquals(lim[1], 4294967295L);
-  }
-
-  public void testDefaultMinMaxFloat() throws IllegalArgumentException {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.FLOAT);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
-  }
-
-  public void testDefaultMinMaxDouble() throws IllegalArgumentException {
-    long[] lim = FormatTools.defaultMinMax(FormatTools.DOUBLE);
-    assertEquals(lim[0], -2147483648);
-    assertEquals(lim[1], 2147483647);
+  @Test(dataProvider = "pixelTypes")
+  public void testDefaultMinMax(int type, long min, long max) {
+    long[] lim = FormatTools.defaultMinMax(type);
+    assertEquals(lim[0], min);
+    assertEquals(lim[1], max);
   }
 
   @Test(expectedExceptions={IllegalArgumentException.class})
@@ -115,8 +83,8 @@ public class FormatToolsTest {
       {Constants.EPSILON, null},
       {0.0, null},
       {Double.POSITIVE_INFINITY, null},
-      {1.0, new Length(1.0, UNITS.MICROM)},
-      {.1, new Length(.1, UNITS.MICROM)},
+      {1.0, new Length(1.0, UNITS.MICROMETER)},
+      {.1, new Length(.1, UNITS.MICROMETER)},
     };
   }
 
@@ -127,33 +95,28 @@ public class FormatToolsTest {
       {Constants.EPSILON, "mm", null},
       {0.0, "mm", null},
       {Double.POSITIVE_INFINITY, "mm", null},
-      {1.0, "microns", new Length(1.0, UNITS.MICROM)},
-      {1.0, "mm", new Length(1.0, UNITS.MM)},
-      {.1, "microns", new Length(.1, UNITS.MICROM)},
-      {.1, "mm", new Length(.1, UNITS.MM)},
-    };
-  }
-
-  @DataProvider(name = "physicalSizeInvalidStringUnit")
-  public Object[][] createValueInvalidStringLengths() {
-    return new Object[][] {
-      {1.0, null, new Length(1.0, UNITS.MICROM)},
-      {1.0, "foo", new Length(1.0, UNITS.MICROM)},
-      {1.0, "s", new Length(1.0, UNITS.MICROM)},
+      {1.0, "microns", new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {.1, "microns", new Length(.1, UNITS.MICROMETER)},
+      {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
+      // Invalid length units
+      {1.0, null, new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "foo", new Length(1.0, UNITS.MICROMETER)},
+      {1.0, "s", new Length(1.0, UNITS.MICROMETER)},
     };
   }
 
   @DataProvider(name = "physicalSizeUnit")
   public Object[][] createValueUnitLengths() {
     return new Object[][] {
-      {null, UNITS.MICROM, null},
-      {Constants.EPSILON, UNITS.MICROM, null},
-      {0.0, UNITS.MICROM, null},
-      {Double.POSITIVE_INFINITY, UNITS.MICROM, null},
-      {1.0, UNITS.MICROM, new Length(1.0, UNITS.MICROM)},
-      {1.0, UNITS.MM, new Length(1.0, UNITS.MM)},
-      {.1, UNITS.MICROM, new Length(.1, UNITS.MICROM)},
-      {.1, UNITS.MM, new Length(.1, UNITS.MM)},
+      {null, UNITS.MICROMETER, null},
+      {Constants.EPSILON, UNITS.MICROMETER, null},
+      {0.0, UNITS.MICROMETER, null},
+      {Double.POSITIVE_INFINITY, UNITS.MICROMETER, null},
+      {1.0, UNITS.MICROMETER, new Length(1.0, UNITS.MICROMETER)},
+      {1.0, UNITS.MILLIMETER, new Length(1.0, UNITS.MILLIMETER)},
+      {.1, UNITS.MICROMETER, new Length(.1, UNITS.MICROMETER)},
+      {.1, UNITS.MILLIMETER, new Length(.1, UNITS.MILLIMETER)},
     };
   }
 
@@ -171,17 +134,57 @@ public class FormatToolsTest {
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
   }
 
-  @Test(dataProvider = "physicalSizeInvalidStringUnit")
-  public void testGetPhysicalSizeInvalidStringUnit(Double value, String unit, Length length) {
-    assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
-    assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
-  }
-
   @Test(dataProvider = "physicalSizeUnit")
   public void testGetPhysicalSizeUnit(Double value, Unit<Length> unit, Length length) {
     assertEquals(length, FormatTools.getPhysicalSizeX(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeY(value, unit));
     assertEquals(length, FormatTools.getPhysicalSizeZ(value, unit));
+  }
+
+
+  @DataProvider(name = "stagePositionStringUnit")
+  public Object[][] createStagePositionStringUnit() {
+    return new Object[][] {
+      {null, "mm", null},
+      {0.0, "mm", new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, "mm", new Length(1.0, UNITS.MILLIMETER)},
+      {.1, "mm", new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, "mm", new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, "mm", new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, "mm", null},
+      {Double.NaN, "mm", null},
+      // Invalid length string units
+      {1.0, null, new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "foo", new Length(1.0, UNITS.REFERENCEFRAME)},
+      {1.0, "s", new Length(1.0, UNITS.REFERENCEFRAME)},
+    };
+  }
+
+  @DataProvider(name = "stagePositionUnit")
+  public Object[][] createStagePositionUnit() {
+    return new Object[][] {
+      {null, UNITS.MILLIMETER, null},
+      {0.0, UNITS.MILLIMETER, new Length(0.0, UNITS.MILLIMETER)},
+      {1.0, UNITS.MILLIMETER, new Length(1.0, UNITS.MILLIMETER)},
+      {.1, UNITS.MILLIMETER, new Length(.1, UNITS.MILLIMETER)},
+      {Constants.EPSILON, UNITS.MILLIMETER, new Length(Constants.EPSILON, UNITS.MILLIMETER)},
+      {-Constants.EPSILON, UNITS.MILLIMETER, new Length(-Constants.EPSILON, UNITS.MILLIMETER)},
+      {Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {-Double.POSITIVE_INFINITY, UNITS.MILLIMETER, null},
+      {Double.NaN, UNITS.MILLIMETER, null},
+      {1.0, null, null},
+    };
+  }
+
+  @Test(dataProvider = "stagePositionStringUnit")
+  public void testGetStagePositionStringUnit(Double value, String unit, Length length) {
+    assertEquals(length, FormatTools.getStagePosition(value, unit));
+  }
+
+
+  @Test(dataProvider = "stagePositionUnit")
+  public void testGetStagePositionUnit(Double value, Unit<Length> unit, Length length) {
+    assertEquals(length, FormatTools.getStagePosition(value, unit));
   }
 }

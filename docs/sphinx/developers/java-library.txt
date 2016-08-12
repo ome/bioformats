@@ -5,7 +5,7 @@ If you wish to make use of Bio-Formats within your own software, you can
 :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to use it as
 a library. Just add **formats-gpl.jar** to your CLASSPATH or build path. You
 will also need **common.jar** for common I/O functions, **ome-xml.jar** for
-metadata standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
+metadata standardization, and `SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
 
 There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
@@ -46,12 +46,6 @@ same folder.
     - :downloads:`netcdf-4.3.19.jar <artifacts/netcdf-4.3.19.jar>`
     - LGPL
     - Java library; for HDF5-based formats (Imaris 5.5, MINC MRI)
-
-  *
-    - `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_
-    - **QTJava.zip**
-    - Commercial
-    - For additional QuickTime codecs
 
 See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can

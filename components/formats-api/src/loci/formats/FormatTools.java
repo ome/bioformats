@@ -54,6 +54,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
@@ -1060,7 +1061,7 @@ public final class FormatTools {
       if (retrieve.getPlaneCount(series) > image) {
         Time deltaT = retrieve.getPlaneDeltaT(series, image);
         if (deltaT != null) {
-          stamp = (long) (deltaT.value(UNITS.S).doubleValue() * 1000);
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
         }
       }
       stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
@@ -1414,7 +1415,7 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Length(value, UNITS.NM);
+    return new Length(value, UNITS.NANOMETER);
   }
   
   /**
@@ -1435,9 +1436,61 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Time(value, UNITS.S);
+    return new Time(value, UNITS.SECOND);
   }
-  
+
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} if {@code value} is {@code null} or infinite
+   *               or {@code unit} is {@code null}.
+   */
+  public static Length getStagePosition(Double value, Unit<Length> unit) {
+    if (value == null || value.isNaN() || value.isInfinite()) {
+      LOGGER.debug("Expected float value for stage position; got {}", value);
+      return null;
+    }
+
+    if (unit == null) {
+      LOGGER.debug("Expected valid unit for stage position; got {}", unit);
+      return null;
+    }
+
+    return new Length(value, unit);
+  }
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position. If the string cannot be
+   *               converted into a base length unit, the stage position length
+   *               will be constructure using the default reference frame unit.
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} under the same conditions as
+   *               {@link #getStagePosition(Double, String)}.
+   */
+  public static Length getStagePosition(Double value, String unit) {
+      Unit<Length> baseunit = null;
+      try {
+        baseunit = UnitsLengthEnumHandler.getBaseUnit(
+          UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        LOGGER.warn("Invalid base unit: using default reference frame unit");
+        LOGGER.debug(e.getMessage());
+        baseunit = UNITS.REFERENCEFRAME;
+      }
+      return getStagePosition(value, baseunit);
+  }
+
   public static Length getPhysicalSize(Double value, String unit) {
     if (value != null && value != 0 && value < Double.POSITIVE_INFINITY) {
       if (unit != null) {
@@ -1468,7 +1521,7 @@ public final class FormatTools {
         } catch (EnumerationException e) {
         }
       }
-      return new Length(value, UNITS.MICROM);
+      return new Length(value, UNITS.MICROMETER);
     }
     LOGGER.debug("Expected positive value for PhysicalSize; got {}", value);
     return null;
@@ -1483,7 +1536,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value) {
-   return getPhysicalSizeX(value, UNITS.MICROM);
+   return getPhysicalSizeX(value, UNITS.MICROMETER);
   }
   
   /**
@@ -1522,7 +1575,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value) {
-    return getPhysicalSizeY(value, UNITS.MICROM);
+    return getPhysicalSizeY(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1554,14 +1607,14 @@ public final class FormatTools {
 
   /**
    * Formats the input value for the physical size in Z into a length in
-   * microns
+   * microns.
    *
    * @param value  the value of the physical size in Z in microns
    *
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeZ(Double value) {
-    return getPhysicalSizeZ(value, UNITS.MICROM);
+    return getPhysicalSizeZ(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1586,7 +1639,6 @@ public final class FormatTools {
    * @param unit   the unit of the physical size in Z
    *
    * @return       the physical size formatted as a {@link Length}
-
    */
   public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
       return getPhysicalSize(value, unit.getSymbol());
@@ -1596,7 +1648,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
@@ -1607,7 +1659,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
@@ -1616,7 +1668,7 @@ public final class FormatTools {
 
   public static Length getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;
@@ -1633,7 +1685,7 @@ public final class FormatTools {
 
   public static Length getCutIn(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutIn; got {}", value);
     return null;
@@ -1641,7 +1693,7 @@ public final class FormatTools {
 
   public static Length getCutOut(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutOut; got {}", value);
     return null;
@@ -1649,7 +1701,7 @@ public final class FormatTools {
 
   public static Length getFontSize(Integer value) {
     if (value != null && value >= 0) {
-      return new Length(value, UNITS.PT);
+      return new Length(value, UNITS.POINT);
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;

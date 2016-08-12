@@ -1167,7 +1167,7 @@ public class ICSReader extends FormatReader {
               }
               Double expDouble = new Double(expTime);
               if (expDouble != null) {
-                exposureTime = new Time(expDouble, UNITS.S);
+                exposureTime = new Time(expDouble, UNITS.SECOND);
               }
             }
             else if (key.equalsIgnoreCase("history filterset")) {
@@ -1553,10 +1553,10 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("t") && scale != null) {
             if (checkUnit(unit, "ms")) {
-              store.setPixelsTimeIncrement(new Time(scale, UNITS.MS), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.MILLISECOND), 0);
             }
             else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
-              store.setPixelsTimeIncrement(new Time(scale, UNITS.S), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.SECOND), 0);
             }
           }
         }
@@ -1583,7 +1583,7 @@ public class ICSReader extends FormatReader {
         for (int t=0; t<timestamps.length; t++) {
           if (t >= getSizeT()) break; // ignore superfluous timestamps
           if (timestamps[t] == null) continue; // ignore missing timestamp
-          Time deltaT = new Time(timestamps[t], UNITS.S);
+          Time deltaT = new Time(timestamps[t], UNITS.SECOND);
           if (Double.isNaN(deltaT.value().doubleValue())) continue; // ignore invalid timestamp
           // assign timestamp to all relevant planes
           for (int z=0; z<getSizeZ(); z++) {
@@ -1602,7 +1602,7 @@ public class ICSReader extends FormatReader {
           store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROM), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROMETER), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
           Length em = FormatTools.getEmissionWavelength(emWaves[i]);
@@ -1635,11 +1635,11 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MILLIWATT);
         if (theLaserPower != null) {
           store.setLaserPower(theLaserPower, 0, i);
         }
-        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HERTZ);
         if (theLaserRepetitionRate != null) {
           store.setLaserRepetitionRate(theLaserRepetitionRate, 0, i);
         }
@@ -1651,11 +1651,11 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MILLIWATT);
         if (theLaserPower != null) {
           store.setLaserPower(theLaserPower, 0, 0);
         }
-        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HERTZ);
         if (theLaserRepetitionRate != null) {
           store.setLaserRepetitionRate(theLaserRepetitionRate, 0, 0);
         }
@@ -1691,7 +1691,7 @@ public class ICSReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
       }
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);

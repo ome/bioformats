@@ -55,5 +55,6 @@ if(BUILD_DOXYGEN)
   add_custom_target(doc DEPENDS doc-api)
 
   install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ome-xml/"
-          DESTINATION "${CMAKE_INSTALL_DOCDIR}/api")
+          DESTINATION "${CMAKE_INSTALL_DOCDIR}/api"
+          COMPONENT "development")
 endif(BUILD_DOXYGEN)

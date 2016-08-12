@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-2147483648"
+                   ID="Channel:0"/>
+      <Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-2147483648"
+                   ID="Channel:1"/>
+      <Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2147483648" ID="Channel:2"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</BinData>
+      <BinData BigEndian="false" Length="32"
+                   >//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BinData>
+    </Pixels>
+    <ROIRef ID="ROI:1"/>
+    <ROIRef ID="ROI:2"/>
+    <ROIRef ID="ROI:3"/>
+  </Image>
+  <ROI ID="ROI:1">
+    <Union>
+      <Point ID="Shape:1" TheC="0" X="1" Y="1"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:2">
+    <Union>
+      <Point ID="Shape:2" FillColor="1" FillRule="NonZero" FontFamily="sans-serif"
+                 FontSize="1" FontStyle="Bold" StrokeColor="1" StrokeDashArray="1"
+                 StrokeWidth="1" Text="Hello" TheC="2" X="1" Y="1"/>
+      <Line ID="Shape:5" X1="1" Y1="1" X2="2" Y2="2" MarkerStart="Arrow" MarkerEnd="Arrow"/>
+    </Union>
+  </ROI>
+  <ROI ID="ROI:3">
+    <Union>
+      <Rectangle ID="Shape:3" FillRule="EvenOdd" Text="Hi There!" X="1" Y="2" Width="3" Height="4"/>
+      <Label ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif" X="1" Y="1"/>
+    </Union>
+  </ROI>
+</OME>

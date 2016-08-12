@@ -460,7 +460,7 @@ public class FluoviewReader extends BaseTiffReader {
         setSeries(s);
         for (int i=0; i<getImageCount(); i++) {
           int index = getImageIndex(i);
-          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.S), s, i);
+          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.SECOND), s, i);
         }
       }
       setSeries(0);
@@ -480,7 +480,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.S), i);
+      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.SECOND), i);
 
       int montage = getMontage(i);
       int field = getField(i);
@@ -515,7 +515,7 @@ public class FluoviewReader extends BaseTiffReader {
         final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
         Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
         if (zPositions != null && zPositions.length > image) {
-          zl = new Length(zPositions[image], UNITS.MICROM);
+          zl = new Length(zPositions[image], UNITS.MICROMETER);
         }
         store.setPlanePositionX(xl, i, image);
         store.setPlanePositionY(yl, i, image);
@@ -538,7 +538,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltages[i]), UNITS.V), 0, i);
+                new ElectricPotential(new Double(voltages[i]), UNITS.VOLT), 0, i);
       }
       if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
@@ -653,7 +653,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Temperature(new Double(temperature.floatValue()), UNITS.DEGREEC), 0);
+      new Temperature(new Double(temperature.floatValue()), UNITS.CELSIUS), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -665,14 +665,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     if (exposureTime != null) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.SECOND), 0, i);
       }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Frequency(new Double(readoutTime.floatValue()), UNITS.HZ), 0, i);
+        new Frequency(new Double(readoutTime.floatValue()), UNITS.HERTZ), 0, i);
     }
   }
 

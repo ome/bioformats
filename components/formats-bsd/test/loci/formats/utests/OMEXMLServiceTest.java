@@ -121,7 +121,7 @@ public class OMEXMLServiceTest {
    */
   @Test
   public void testIntegerUnitProperty() throws ServiceException {
-    final Length propertyValue = new Length(12.0d, UNITS.PT);
+    final Length propertyValue = new Length(12.0d, UNITS.POINT);
 
     final StringBuffer expectedText = new StringBuffer();
     expectedText.append(" FontSize=");

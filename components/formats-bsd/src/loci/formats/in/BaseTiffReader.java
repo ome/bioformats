@@ -490,7 +490,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         if (exif.containsKey(IFD.EXPOSURE_TIME)) {
           Object exp = exif.get(IFD.EXPOSURE_TIME);
           if (exp instanceof TiffRational) {
-            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.S);
+            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.SECOND);
             for (int i=0; i<getImageCount(); i++) {
               store.setPlaneExposureTime(exposure, 0, i);
             }

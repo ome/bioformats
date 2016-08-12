@@ -64,6 +64,7 @@ public class Configuration {
   private static final String ACCESS_TIME = "access_ms";
   private static final String MEMORY = "mem_mb";
   private static final String TEST = "test";
+  private static final String HAS_VALID_XML = "hasValidXML";
   private static final String READER = "reader";
   private static final String SERIES = " series_";
 
@@ -166,6 +167,11 @@ public class Configuration {
 
   public boolean doTest() {
     return new Boolean(globalTable.get(TEST)).booleanValue();
+  }
+
+  public boolean hasValidXML() {
+    if (globalTable.get(HAS_VALID_XML) == null) return true;
+    return new Boolean(globalTable.get(HAS_VALID_XML)).booleanValue();
   }
 
   public String getReader() {
@@ -607,7 +613,7 @@ public class Configuration {
         try {
           Time deltaT = retrieve.getPlaneDeltaT(series, p);
           if (deltaT != null) {
-            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {

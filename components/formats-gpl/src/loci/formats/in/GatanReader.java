@@ -286,7 +286,7 @@ public class GatanReader extends FormatReader {
       store.setDetectorID(detector, 0, 0);
 
       store.setDetectorSettingsID(detector, 0, 0);
-      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.V),
+      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.VOLT),
               0, 0);
 
       if (info == null) info = "";
@@ -304,7 +304,7 @@ public class GatanReader extends FormatReader {
       store.setPlanePositionX(posX, 0, 0);
       store.setPlanePositionY(posY, 0, 0);
       store.setPlanePositionZ(posZ, 0, 0);
-      store.setPlaneExposureTime(new Time(sampleTime, UNITS.S), 0, 0);
+      store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, 0);
     }
   }
 
@@ -617,12 +617,12 @@ public class GatanReader extends FormatReader {
     Collator c = Collator.getInstance(Locale.ENGLISH);
     if (units != null) {
       if (c.compare("nm", units) == 0) {
-        return UNITS.NM;
+        return UNITS.NANOMETER;
       } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
         LOGGER.warn("Not adjusting for unknown units: {}", units);
       }
     }
-    return UNITS.MICROM;
+    return UNITS.MICROMETER;
   }
 
 }

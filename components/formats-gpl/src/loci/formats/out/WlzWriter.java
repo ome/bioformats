@@ -195,13 +195,13 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
                   meta.getPixelsType(series).toString());

@@ -63,7 +63,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
 
-    <xsdfu.schemaver>2016-DEV0</xsdfu.schemaver>
+    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
 
@@ -283,7 +283,6 @@
             <root>test</root>
             <root>utils</root>
             <root>doc</root>
-            <root>cppwrap</root>
           </roots>
         </configuration>
       </plugin>
@@ -689,6 +688,10 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+    <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
     </repository>
@@ -706,6 +709,13 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
     <pluginRepository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
       <id>ome.external</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
@@ -715,44 +725,20 @@
     </pluginRepository>
   </pluginRepositories>
 
+  <distributionManagement>
+    <repository>
+      <id>ome.staging</id>
+      <name>OME Staging Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+    </repository>
+    <snapshotRepository>
+      <id>ome.snapshots</id>
+      <name>OME Snapshots Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <profiles>
-    <profile>
-      <id>merge-build</id>
-
-      <distributionManagement>
-        <repository>
-          <id>ome.unstable</id>
-          <name>OME Unstable Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-        <snapshotRepository>
-          <id>ome.unstable</id>
-          <name>OME Unstable Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <distributionManagement>
-        <repository>
-          <id>ome.staging</id>
-          <name>OME Staging Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
-        </repository>
-        <snapshotRepository>
-          <id>ome.snapshots</id>
-          <name>OME Snapshots Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-
     <!-- Run integration tests when "-P run-its" is passed.
          This works using the maven-invoker-plugin. -->
     <profile>

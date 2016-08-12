@@ -758,9 +758,9 @@ public class DeltavisionReader extends FormatReader {
         DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
         // plane timing
-        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.S), series, i);
+        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.SECOND), series, i);
         store.setPlaneExposureTime(
-          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.S), series, i);
+          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.SECOND), series, i);
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {
@@ -1128,7 +1128,7 @@ public class DeltavisionReader extends FormatReader {
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
                 store.setDetectorSettingsReadOutRate(
-                        new Frequency(khz, UNITS.KHZ), series, c);
+                        new Frequency(khz, UNITS.KILOHERTZ), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }
@@ -2275,7 +2275,7 @@ public class DeltavisionReader extends FormatReader {
       store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MILLIMETER), 0, 0);
     }
   }
 

@@ -36,13 +36,15 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
 import loci.common.Location;
 
-import org.testng.annotations.BeforeMethod;
+import org.testng.SkipException;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -61,10 +63,12 @@ public class LocationTest {
   private boolean[] isDirectory;
   private boolean[] isHidden;
   private String[] mode;
+  private boolean[] isRemote;
+  private boolean isOnline;
 
   // -- Setup methods --
 
-  @BeforeMethod
+  @BeforeClass
   public void setup() throws IOException {
     File tmpDirectory = new File(System.getProperty("java.io.tmpdir"),
       System.currentTimeMillis() + "-location-test");
@@ -107,6 +111,25 @@ public class LocationTest {
       "rw", "", "rw", "", "r", "","rw"
     };
 
+    isRemote = new boolean[] {
+      false, false, false, true, true, true, false
+    };
+  }
+
+  @BeforeClass
+  public void checkIfOnline() throws IOException {
+    try {
+      new Socket("www.openmicroscopy.org", 80).close();
+      isOnline = true;
+    } catch (IOException e) {
+      isOnline = false;
+    }
+  }
+
+  private void skipIfOffline(int i) throws SkipException {
+    if (isRemote[i] && !isOnline) {
+      throw new SkipException("must be online to test " + files[i].getName());
+    }
   }
 
   // -- Tests --
@@ -114,9 +137,10 @@ public class LocationTest {
   @Test
   public void testReadWriteMode() {
     for (int i=0; i<files.length; i++) {
+      skipIfOffline(i);
       String msg = files[i].getName();
-      assertEquals(msg, files[i].canRead(), mode[i].indexOf("r") != -1);
-      assertEquals(msg, files[i].canWrite(), mode[i].indexOf("w") != -1);
+      assertEquals(msg, files[i].canRead(), mode[i].contains("r"));
+      assertEquals(msg, files[i].canWrite(), mode[i].contains("w"));
     }
   }
 
@@ -131,6 +155,7 @@ public class LocationTest {
   @Test
   public void testExists() {
     for (int i=0; i<files.length; i++) {
+      skipIfOffline(i);
       assertEquals(files[i].getName(), files[i].exists(), exists[i]);
     }
   }
@@ -161,6 +186,7 @@ public class LocationTest {
   @Test
   public void testIsFile() {
     for (int i=0; i<files.length; i++) {
+      skipIfOffline(i);
       assertEquals(files[i].getName(), files[i].isFile(),
         !isDirectory[i] && exists[i]);
     }
@@ -207,7 +233,7 @@ public class LocationTest {
   public void testToURL() throws IOException {
     for (Location file : files) {
       String path = file.getAbsolutePath();
-      if (path.indexOf("://") == -1) {
+      if (!path.contains("://")) {
         if (IS_WINDOWS) {
           path = "file:/" + path;
         }

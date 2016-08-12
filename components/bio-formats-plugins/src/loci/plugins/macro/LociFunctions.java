@@ -458,7 +458,7 @@ public class LociFunctions extends MacroFunctions {
     if (planeIndex >= 0) {
       Time valTime = retrieve.getPlaneDeltaT(imageIndex, planeIndex);
       if (valTime != null ) {
-        val = valTime.value(UNITS.S).doubleValue();
+        val = valTime.value(UNITS.SECOND).doubleValue();
       }
     }
     deltaT[0] = val;
@@ -470,7 +470,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Double val = null;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex).value(UNITS.S).doubleValue();
+      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex).value(UNITS.SECOND).doubleValue();
     }
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
@@ -522,7 +522,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Length x = retrieve.getPixelsPhysicalSizeX(imageIndex);
     if (x != null) {
-      sizeX[0] = x.value(UNITS.MICROM).doubleValue();
+      sizeX[0] = x.value(UNITS.MICROMETER).doubleValue();
     }
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
@@ -532,7 +532,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Length y = retrieve.getPixelsPhysicalSizeY(imageIndex);
     if (y != null) {
-      sizeY[0] = y.value(UNITS.MICROM).doubleValue();
+      sizeY[0] = y.value(UNITS.MICROMETER).doubleValue();
     }
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
@@ -542,7 +542,7 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Length z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
     if (z != null) {
-      sizeZ[0] = z.value(UNITS.MICROM).doubleValue();
+      sizeZ[0] = z.value(UNITS.MICROMETER).doubleValue();
     }
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }
@@ -550,7 +550,7 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsTimeIncrement(Double[] sizeT) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex).value(UNITS.S).doubleValue();
+    sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex).value(UNITS.SECOND).doubleValue();
     if (sizeT[0] == null) sizeT[0] = new Double(Double.NaN);
   }
 

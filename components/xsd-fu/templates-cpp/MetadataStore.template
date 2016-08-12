@@ -3,7 +3,7 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -12,14 +12,14 @@
 {% end for %}\
          * @param ${lang.index_signature(prop.name, 0, 0)['argname']} ${prop.name} index (unused).
          */
-	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${lang.index_string(lang.index_signature(prop.name, 0, 0))} = 0) = 0;
+        virtual void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${lang.index_string(lang.index_signature(prop.name, 0, 0))} = 0) = 0;
 
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
@@ -27,20 +27,20 @@
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;
+        virtual void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;
 
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the ${prop.name} property of ${o.name}.
          *
          * @param ${prop.argumentName} ${prop.name} to set.
          */
-	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;
+        virtual void
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;
 
 {% end header%}\
 {% end %}\
@@ -51,7 +51,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-        (o.isAbstract or o.isAbstractProprietary):
+        (o.isAbstract):
       return True
     return False
 
@@ -127,6 +127,7 @@
 #include <ome/xml/model/primitives/NonNegativeInteger.h>
 #include <ome/xml/model/primitives/NonNegativeLong.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>
+#include <ome/xml/model/primitives/OrderedMultimap.h>
 #include <ome/xml/model/primitives/PercentFraction.h>
 #include <ome/xml/model/primitives/PositiveFloat.h>
 #include <ome/xml/model/primitives/PositiveInteger.h>
@@ -240,36 +241,56 @@ namespace ome
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-        /**
-         * Set the BigEndian property of Pixels.
-         *
-         * @param bigEndian @c true if big endian, or @c false if little endian.
-         * @param imageIndex the Image index.
-         * @param binDataIndex BinData index (unused).
-         */
-        virtual void
-        setPixelsBinDataBigEndian(bool bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex = 0) = 0;
-
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
 {% end debug %}\
-	/**
+        /**
          * Set the UUID associated with this collection of metadata.
          *
          * @param uuid the UUID to set.
          */
-	virtual void
+        virtual void
         setUUID(const std::string& uuid) = 0;
 
-{% end header%}\
+        /**
+         * Set the map value of MapAnnotation.
+         *
+         * @param value the map value to set.
+         * @param mapAnnotationIndex the MapAnnotation index.
+         */
+        virtual void
+        setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                              index_type                                          mapAnnotationIndex) = 0;
+
+       /**
+         * Set the map value of GenericExcitationSource.
+         *
+         * @param map the map value to set.
+         * @param instrumentIndex the Instrument index.
+         * @param lightSourceIndex the LightSource index.
+         */
+        virtual void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& map,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex) = 0;
+
+       /**
+         * Set the map value of ImagingEnvironment.
+         *
+         * @param map the map value to set.
+         * @param imageIndex the Image index.
+         */
+        virtual void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& map,
+                                 index_type                                          imageIndex) = 0;
+
+{% end header %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
+        /**
          * Set the text value of ${o.name}.
          *
          * @param value text value.
@@ -277,27 +298,27 @@ namespace ome
          * @param ${param['argname']} the ${param['type']} index.
 {% end for %}\
          */
-	virtual void
+        virtual void
         set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
 
 {% end header%}\
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}\
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+        //
+        // ${o.name} property storage
+        //
+        // ${repr(parents[o.name])}
+        // Is multi path? ${is_multi_path[o.name]}
 
 {% end debug %}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+        // ${prop.minOccurs}:${prop.maxOccurs}
+        // Is multi path? ${is_multi_path[o.name]}
+        // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -310,12 +331,12 @@ namespace ome
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+        // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
   // ${prop.name} accessor from parent ${k}
 {% end debug %}\
@@ -332,12 +353,17 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+        // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+        // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

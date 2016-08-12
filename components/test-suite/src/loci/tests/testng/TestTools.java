@@ -48,7 +48,6 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
-import loci.formats.in.SlideBook6Reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +140,11 @@ public class TestTools {
   /** Returns true if a byte buffer of the given size will fit in memory. */
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
-    long mem = r.freeMemory() / 2;
+
+    // better indicator than freeMemory() of how much memory is actually available
+    long mem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+
+    mem /= 2;
     int threadCount = 1;
     try {
       threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
@@ -328,7 +331,7 @@ public class TestTools {
       }
     });
 
-    ImageReader typeTester = TestTools.getTestImageReader();
+    ImageReader typeTester = new ImageReader();
 
     for (int i=0; i<subsList.size(); i++) {
       Location file = new Location(subsList.get(i));
@@ -478,16 +481,24 @@ public class TestTools {
     return false;
   }
 
+
   /**
-   * Return an ImageReader that is appropriate for testing.
-   * All constructed reader wrappers should use this ImageReader,
-   * as it removes any readers that aren't to be tested.
+   * Determine whether or not a Throwable was caused by an OutOfMemoryError.
+   *
+   * @param t Throwable object to check
+   * @return true if <code>t</code> is or was caused by an OutOfMemoryError, false otherwise
    */
-  public static ImageReader getTestImageReader() {
-    // Remove external SlideBook6Reader class for testing purposes
-    ImageReader ir = new ImageReader();
-    ir.getDefaultReaderClasses().removeClass(SlideBook6Reader.class);
-    return ir;
+  public static boolean isOutOfMemory(Throwable t) {
+    if (t instanceof OutOfMemoryError) {
+      return true;
+    }
+    while (t.getCause() != null) {
+      if (t.getCause() instanceof OutOfMemoryError) {
+        return true;
+      }
+      t = t.getCause();
+    }
+    return false;
   }
 
 }

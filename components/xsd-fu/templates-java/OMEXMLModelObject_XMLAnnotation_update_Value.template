@@ -1,47 +1,47 @@
-		List<Element> Value_nodeList =
-				getChildrenByTagName(element, "Value");
-		if (Value_nodeList.size() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Value node list size %d != 1",
-					Value_nodeList.size()));
-		}
-		else if (Value_nodeList.size() != 0)
-		{
-			// Element property Value which is complex (has only
-			// sub-elements, no attributes, no text content)
-			java.io.StringWriter sw = new java.io.StringWriter();
-			javax.xml.transform.stream.StreamResult sr =
-				new javax.xml.transform.stream.StreamResult(sw);
-			javax.xml.transform.TransformerFactory tf =
-				javax.xml.transform.TransformerFactory.newInstance();
+    List<Element> Value_nodeList =
+      getChildrenByTagName(element, "Value");
+    if (Value_nodeList.size() > 1)
+    {
+      // TODO: Should be its own Exception
+      throw new RuntimeException(String.format(
+        "Value node list size %d != 1",
+        Value_nodeList.size()));
+    }
+    else if (Value_nodeList.size() != 0)
+    {
+      // Element property Value which is complex (has only
+      // sub-elements, no attributes, no text content)
+      java.io.StringWriter sw = new java.io.StringWriter();
+      javax.xml.transform.stream.StreamResult sr =
+      new javax.xml.transform.stream.StreamResult(sw);
+      javax.xml.transform.TransformerFactory tf =
+      javax.xml.transform.TransformerFactory.newInstance();
 
-			try
-			{
-				javax.xml.transform.Transformer t = tf.newTransformer();
-				t.setOutputProperty(
-					javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-				t.setOutputProperty(
-					javax.xml.transform.OutputKeys.INDENT, "no");
-				NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
-				for (int i = 0; i < childNodeList.getLength(); i++)
-				{
-					// some parsers will pick up text nodes here, which we can ignore
-					if (childNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-					  try {
-						  t.transform(new javax.xml.transform.dom.DOMSource(
-								childNodeList.item(i)), sr);
-					  }
-					  catch (javax.xml.transform.TransformerException te) {
-							LOGGER.warn("Failed to transform node #" + i, te);
-					  }
-					}
-				}
-				setValue(sw.toString().trim());
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
+      try
+      {
+        javax.xml.transform.Transformer t = tf.newTransformer();
+        t.setOutputProperty(
+          javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+        t.setOutputProperty(
+        javax.xml.transform.OutputKeys.INDENT, "no");
+        NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
+        for (int i = 0; i < childNodeList.getLength(); i++)
+        {
+          // some parsers will pick up text nodes here, which we can ignore
+          if (childNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+          try {
+            t.transform(new javax.xml.transform.dom.DOMSource(
+              childNodeList.item(i)), sr);
+          }
+          catch (javax.xml.transform.TransformerException te) {
+            LOGGER.warn("Failed to transform node #" + i, te);
+          }
+        }
+      }
+      setValue(sw.toString().trim());
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+  }

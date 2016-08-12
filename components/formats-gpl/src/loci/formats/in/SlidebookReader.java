@@ -1316,7 +1316,7 @@ public class SlidebookReader extends FormatReader {
           {
             store.setPlaneExposureTime(
               new Time(exposureTimes.get(exposureIndex + c).doubleValue(),
-                       UNITS.S), i, plane);
+                       UNITS.SECOND), i, plane);
           }
         }
         exposureIndex += getSizeC();

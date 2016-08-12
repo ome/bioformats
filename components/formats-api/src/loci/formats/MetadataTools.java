@@ -170,7 +170,7 @@ public final class MetadataTools {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
-              if (omeMeta.getTiffDataCount(i) == 0) {
+              if (omeMeta.getTiffDataCount(i) == 0 && omeMeta.getPixelsBinDataCount(i) == 0) {
                 service.addMetadataOnly(omeMeta, i, i == 0);
               }
             }
@@ -361,8 +361,11 @@ public final class MetadataTools {
           " is null");
       }
     }
-    if (src.getPixelsBinDataBigEndian(n, 0) == null) {
-      throw new FormatException("BigEndian #" + n + " is null");
+    if (src.getPixelsBigEndian(n) == null)
+    {
+      if (src.getPixelsBinDataCount(n) == 0 || src.getPixelsBinDataBigEndian(n, 0) == null) {
+        throw new FormatException("BigEndian #" + n + " is null");
+      }
     }
     if (src.getPixelsDimensionOrder(n) == null) {
       throw new FormatException("DimensionOrder #" + n + " is null");

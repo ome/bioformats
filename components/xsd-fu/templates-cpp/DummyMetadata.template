@@ -35,39 +35,39 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)}) const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)}) const
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string(indexes)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string_dummy(indexes)}) const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${indexes_string_dummy(indexes)}) const
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const
+      DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}() const
 {% end source %}\
 {% end %}\
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       {
-        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}",
+        throw MetadataException("DummyMetadata", "get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}",
                                 "intentionally not implemented");
       }
 {% end source %}\
@@ -79,33 +79,33 @@
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)}, ${index_string_dummy(prop.name)})
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType}, ${indexes_string_dummy(indexes)})
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} /* ${prop.argumentName} */)
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} /* ${prop.argumentName} */)
 {% end source %}\
 {% end %}\
 {% end %}\
@@ -119,20 +119,22 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-      (o.isAbstract or o.isAbstractProprietary):
+      (o.isAbstract):
         return True
     return False
 
   def sorted_properties(o):
     return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 
-  def accessor_string(name, max_occurs, level):
+  def accessor_string(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    return accessor_string_complex(name, max_occurs, level)['accessor']
+    return accessor_string_complex(name, max_occurs, level, concreteName)['accessor']
 
-  def accessor_string_complex(name, max_occurs, level):
+  def accessor_string_complex(name, max_occurs, level, concreteName=None):
     """Makes a Java method accessor string from an index name."""
-    to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+    if concreteName is None:
+      concreteName = name
+    to_return = {'level': level, 'name': concreteName, 'max_occurs': max_occurs}
     if max_occurs == 1:
       to_return['accessor'] = "get%s()" % (name)
       return to_return
@@ -297,20 +299,6 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
-        getPixelsBinDataCount(index_type imageIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      BaseMetadata::index_type
-      DummyMetadata::getPixelsBinDataCount(index_type /* imageIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPixelsBinDataCount",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        index_type
         getBooleanAnnotationAnnotationCount(index_type booleanAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -395,6 +383,20 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      BaseMetadata::index_type
+      DummyMetadata::getMapAnnotationAnnotationCount(index_type /* mapAnnotationIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getMapAnnotationAnnotationCount",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        index_type
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -462,9 +464,9 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::string&
-      AggregateMetadata::get${abstractClass}Type(${indexes_string(v)}) const;
+      DummyMetadata::get${abstractClass}Type(${indexes_string_dummy(v)}) const
       {
-        throw MetadataException("AggregateMetadata", "get${abstractClass}Type",
+        throw MetadataException("DummyMetadata", "get${abstractClass}Type",
                                 "intentionally not implemented");
       }
 {% end source %}\
@@ -472,46 +474,20 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
         index_type
-        get${abstractClass}Count(${indexes_string(v)}) const;
+        get${abstractClass}Count(${indexes_string(v[:-1])}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      AggregateMetadata::index_type
-      AggregateMetadata::get${abstractClass}Count(${indexes_string(v)}) const;
+      DummyMetadata::index_type
+      DummyMetadata::get${abstractClass}Count(${indexes_string_dummy(v[:-1])}) const
       {
-        throw MetadataException("AggregateMetadata", "get${abstractClass}Count",
+        throw MetadataException("DummyMetadata", "get${abstractClass}Count",
                                 "intentionally not implemented");
       }
-{% end source %}\   
-{% end %}\
-{% end %}\
-{% if len(model.opts.lang.getSubstitutionTypes()) == 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getLightSourceType(index_type instrumentIndex, index_type lightSourceIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      DummyMetadata::getLightSourceType(index_type /* instrumentIndex */, index_type /* lightSourceIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getLightSourceType", "intentionally not implemented");
-      }
 {% end source %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        const std::string&
-        getShapeType(index_type roiIndex, index_type shapeIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      const std::string&
-      DummyMetadata::getShapeType(index_type /* roiIndex */, index_type /* shapeIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getShapeType", "intentionally not implemented");
-      }
-{% end source %}\
+{% end %}\
 {% end %}\
 {% if debug %}\
-        // -- Entity counting (code generated definitions) --  
+        // -- Entity counting (code generated definitions) --
 {% end debug %}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
@@ -565,22 +541,6 @@ ${counter(k, o, v)}\
         // -- Entity retrieval (manual definitions) --
 
 {% end debug %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        bool
-        getPixelsBinDataBigEndian(index_type imageIndex,
-                                  index_type binDataIndex) const;
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      bool
-      DummyMetadata::getPixelsBinDataBigEndian(index_type /* imageIndex */,
-                                               index_type /* binDataIndex */) const
-      {
-        throw MetadataException("DummyMetadata", "getPixelsBinDataBigEndian",
-                                "intentionally not implemented");
-      }
-{% end source %}\
-
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -599,9 +559,53 @@ ${counter(k, o, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getMapAnnotationValue(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      DummyMetadata::getMapAnnotationValue(index_type /* mapAnnotationIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getMapAnnotationValue",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      DummyMetadata::getGenericExcitationSourceMap(index_type /* instrumentIndex */,
+                                                   index_type /* lightSourceIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getGenericExcitationSourceMap",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::primitives::OrderedMultimap&
+        getImagingEnvironmentMap(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::primitives::OrderedMultimap&
+      DummyMetadata::getImagingEnvironmentMap(index_type /* imageIndex */) const
+      {
+        throw MetadataException("DummyMetadata", "getImagingEnvironmentMap",
+                                "intentionally not implemented");
+      }
+{% end source %}\
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}\
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -633,6 +637,11 @@ ${counter(k, o, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -661,6 +670,11 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.topLevelName].items() %}\
 ${getter(k, o, prop, v)}\
@@ -679,22 +693,6 @@ ${getter(k, o, prop, v)}\
         // -- Entity storage (manual definitions) --
 
 {% end debug %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-        // Documented in base class.
-        void
-        setPixelsBinDataBigEndian(bool       bigEndian,
-                                  index_type imageIndex,
-                                  index_type binDataIndex);
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      DummyMetadata::setPixelsBinDataBigEndian(bool       /* bigEndian */,
-                                               index_type /* imageIndex */,
-                                               index_type /* binDataIndex */)
-      {
-      }
-{% end source %}\
-
 {% if debug %}\
         // -- Entity storage (code generated definitions) --
 
@@ -711,9 +709,53 @@ ${getter(k, o, prop, v)}\
       }
 {% end source %}\
 
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& value,
+                              index_type                                          mapAnnotationIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setMapAnnotationValue(const ome::xml::model::primitives::OrderedMultimap& /* value */,
+                                           index_type                                          /* mapAnnotationIndex */)
+      {
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                      index_type                                          instrumentIndex,
+                                      index_type                                          lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setGenericExcitationSourceMap(const ome::xml::model::primitives::OrderedMultimap& /* value */,
+                                                   index_type                                          /* instrumentIndex */,
+                                                   index_type                                          /* lightSourceIndex */)
+      {
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& value,
+                                 index_type                                          imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      DummyMetadata::setImagingEnvironmentMap(const ome::xml::model::primitives::OrderedMultimap& /* value */,
+                                              index_type                                          /* imageIndex */)
+      {
+      }
+{% end source %}\
+
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
         //
         // ${o.name} property storage
@@ -744,6 +786,11 @@ ${getter(k, o, prop, v)}\
         // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
+{% end debug %}\
+{% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if not prop.isBackReference %}\
@@ -770,6 +817,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
         // Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+        // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

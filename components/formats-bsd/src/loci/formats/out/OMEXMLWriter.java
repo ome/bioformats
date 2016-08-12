@@ -127,6 +127,15 @@ public class OMEXMLWriter extends FormatWriter {
     if (out != null) {
       out.writeBytes(xmlFragments.get(xmlFragments.size() - 1));
     }
+    if (getMetadataOptions().isValidate()) {
+      try {
+        MetadataRetrieve r = getMetadataRetrieve();
+        String omexml = service.getOMEXML(r);
+        service.validateOMEXML(omexml);
+      } catch (ServiceException | NullPointerException e) {
+        LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+      }
+    }
     super.close();
     xmlFragments = null;
     service = null;
@@ -159,7 +168,13 @@ public class OMEXMLWriter extends FormatWriter {
     int sizeX = retrieve.getPixelsSizeX(series).getValue().intValue();
     int sizeY = retrieve.getPixelsSizeY(series).getValue().intValue();
     int planeSize = sizeX * sizeY * bytes;
-    boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
+    boolean bigEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      bigEndian = retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     String namespace =
       "xmlns=\"http://www.openmicroscopy.org/Schemas/OME/" +
@@ -221,8 +236,14 @@ public class OMEXMLWriter extends FormatWriter {
     options.channels = 1;
     options.interleaved = false;
     options.signed = FormatTools.isSigned(pixelType);
-    options.littleEndian =
-      !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    boolean littleEndian = false;
+    if (r.getPixelsBigEndian(series) != null) {
+      littleEndian = !r.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (r.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !r.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
+    options.littleEndian =littleEndian;
     options.bitsPerSample = bytes * 8;
 
     if (compression.equals("J2K")) {

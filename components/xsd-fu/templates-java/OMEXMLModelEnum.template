@@ -61,7 +61,31 @@ import ome.xml.model.primitives.*;
 
 public enum ${klass.langType} implements Enumeration
 {
-  ${", ".join(['%s("%s")' % (enum_value_name(value, klass.isUnitsEnumeration), value) for value in klass.possibleValues])};
+{% for value in klass.possibleValues %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
+  /** ${klass.enumDocumentation[value]} */
+{% if value == klass.possibleValues[-1] %}\
+  ${klass.enumProperties[value].enum}("${value}");
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+  ${klass.enumProperties[value].enum}("${value}"),
+{% end %}\
+{% end %}\
+{% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}\
+{% if value == klass.possibleValues[-1] %}\
+  ${value.upper()}("${value}");
+{% end %}\
+{% if value != klass.possibleValues[-1] %}\
+  ${value.upper()}("${value}"),
+{% end %}\
+{% end %}\
+{% end %}\
+{% for value in klass.possibleValues %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('cppenum', None) is not None %}\
+  /** C++ compatibility name for ${klass.enumProperties[value].enum}. */
+  public static final ${klass.langType} ${klass.enumProperties[value].cppenum} = ${klass.enumProperties[value].enum};
+{% end %}\
+{% end %}\
 
   private ${klass.langType}(String value)
   {
@@ -72,11 +96,20 @@ public enum ${klass.langType} implements Enumeration
     throws EnumerationException
   {
 {% for value in klass.possibleValues %}\
+{% if klass.enumProperties is not None and value in klass.enumProperties and klass.enumProperties[value].get('enum', None) is not None %}\
+    if ("${value}".equals(value))
+    {
+      return ${klass.enumProperties[value].enum};
+    }
+{% end %}\
+{% if klass.enumProperties is None or not value in klass.enumProperties or klass.enumProperties[value].get('enum', None) is None %}\
     if ("${value}".equals(value))
     {
       return ${enum_value_name(value, klass.isUnitsEnumeration).upper()};
     }
 {% end %}\
+{% end %}\
+
     String s = String.format("'%s' not a supported value of '%s'",
                              value, ${klass.langType}.class);
     throw new EnumerationException(s);
@@ -98,7 +131,7 @@ public enum ${klass.langType} implements Enumeration
   public static <T extends PrimitiveNumber> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
   {
     ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
-    
+
     try
     {
       theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
@@ -112,7 +145,7 @@ public enum ${klass.langType} implements Enumeration
   public static <T extends Number> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
   {
     ${lang.typeToUnitsType(klass.langType)} theQuantity = null;
-    
+
     try
     {
       theQuantity = ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);

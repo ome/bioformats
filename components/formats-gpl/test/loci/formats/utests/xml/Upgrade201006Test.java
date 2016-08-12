@@ -77,7 +77,7 @@ public class Upgrade201006Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2016-DEV0", service.getOMEXMLVersion(metadata));
+    assertEquals("2016-06", service.getOMEXMLVersion(metadata));
   }
 
   @Test
@@ -87,8 +87,8 @@ public class Upgrade201006Test {
     Pixels pixels = image.getPixels();
     // Pixels physical sizes are restricted to positive values
     PositiveFloat positiveFloatValue = new PositiveFloat(10000.0);
-    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeX());
-    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeY());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROMETER), pixels.getPhysicalSizeX());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROMETER), pixels.getPhysicalSizeY());
     assertNull(pixels.getPhysicalSizeZ());
   }
 

@@ -86,11 +86,11 @@ stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
 
 voxelSizeXdefaultValue = omeMeta.getPixelsPhysicalSizeX(0).value();           % returns value in default unit
 voxelSizeXdefaultUnit = omeMeta.getPixelsPhysicalSizeX(0).unit().getSymbol(); % returns the default unit type
-voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeXdouble = voxelSizeX.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeYdouble = voxelSizeY.doubleValue();                                  % The numeric value represented by this object after conversion to type double
-voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROM); % in µm
+voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).value(ome.units.UNITS.MICROMETER); % in µm
 voxelSizeZdouble = voxelSizeZ.doubleValue();                                  % The numeric value represented by this object after conversion to type double
 % read-ome-metadata-end
 
@@ -111,10 +111,10 @@ delete('multiple-planes.ome.tiff');
 % bfsave-metadata-start
 plane = zeros(64, 64, 1, 2, 2, 'uint8');
 metadata = createMinimalOMEXMLMetadata(plane);
-pixelSize = ome.units.quantity.Length(java.lang.Double(.05), ome.units.UNITS.MICROM);
+pixelSize = ome.units.quantity.Length(java.lang.Double(.05), ome.units.UNITS.MICROMETER);
 metadata.setPixelsPhysicalSizeX(pixelSize, 0);
 metadata.setPixelsPhysicalSizeY(pixelSize, 0);
-pixelSizeZ = ome.units.quantity.Length(java.lang.Double(.2), ome.units.UNITS.MICROM);
+pixelSizeZ = ome.units.quantity.Length(java.lang.Double(.2), ome.units.UNITS.MICROMETER);
 metadata.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
 bfsave(plane, 'metadata.ome.tiff', 'metadata', metadata);
 % bfsave-metadata-end
@@ -122,7 +122,7 @@ delete('metadata.ome.tiff');
 
 % logging-start
 % Set the logging level to DEBUG
-loci.common.DebugTools.enableLogging('DEBUG');
+loci.common.DebugTools.setRootLevel('DEBUG');
 % logging-end
 
 % memoizer-start

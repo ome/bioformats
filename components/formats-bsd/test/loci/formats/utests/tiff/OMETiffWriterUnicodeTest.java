@@ -85,9 +85,9 @@ public class OMETiffWriterUnicodeTest {
       ms.setPixelsSizeZ(new PositiveInteger(SIZE_Z), 0);
       ms.setPixelsSizeC(new PositiveInteger(SIZE_C), 0);
       ms.setPixelsSizeT(new PositiveInteger(SIZE_T), 0);
-      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROM), 0);
-      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROM), 0);
-      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROM), 0);
+      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROMETER), 0);
+      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROMETER), 0);
+      ms.setPixelsPhysicalSizeX(new Length(10, UNITS.MICROMETER), 0);
       ms.setPixelsType(PixelType.UINT8, 0);
       ms.setPixelsBinDataBigEndian(true, 0, 0);
       ms.setChannelID("Channel:1", 0, 0);

@@ -22,6 +22,7 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
+      <url>https://opensource.org/licenses/BSD-2-Clause</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -101,6 +102,14 @@
     </resources>
 
     <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+              <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
@@ -214,6 +223,10 @@
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -222,32 +235,5 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
   </pluginRepositories>
-
-  <profiles>
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-    </profile>
-
-    <profile>
-      <id>merge-build</id>
-
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
 
 </project>
