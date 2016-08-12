@@ -147,7 +147,7 @@ repositories element can be defined at the top of your inheritance chain.
     </repository>
   </repositories>
 
-Alternatively you can import the Bio-Formats source by choosing
+If you wish you can instead import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
 Alternatively, run the Eclipse Maven target with :command:`mvn
