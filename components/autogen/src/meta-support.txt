@@ -5082,7 +5082,6 @@ Image.AcquisitionDate = Yes
 Image.ID = Yes
 Image.Name = Yes
 Pixels.BigEndian = Yes
-Pixels.BinDataBigEndian = Yes
 Pixels.DimensionOrder = Yes
 Pixels.ID = Yes
 Pixels.Interleaved = Yes
