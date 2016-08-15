@@ -46,7 +46,7 @@ public class Frequency extends Quantity implements Comparable<Frequency>
   private int hashCodeValue;
 
   /**
-   * Create an Frequency.
+   * Create a Frequency.
    *
    * @param inValue the value.
    * @param inUnit the unit type.

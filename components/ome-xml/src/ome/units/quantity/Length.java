@@ -46,7 +46,7 @@ public class Length extends Quantity implements Comparable<Length>
   private int hashCodeValue;
 
   /**
-   * Create an Length.
+   * Create a Length.
    *
    * @param inValue the value.
    * @param inUnit the unit type.

@@ -46,7 +46,7 @@ public class Power extends Quantity implements Comparable<Power>
   private int hashCodeValue;
 
   /**
-   * Create an Power.
+   * Create a Power.
    *
    * @param inValue the value.
    * @param inUnit the unit type.

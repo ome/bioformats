@@ -28,7 +28,7 @@ package ome.units.quantity;
 import ome.units.unit.Unit;
 
 /**
- * Length quantity.
+ * Temperature quantity.
  *
  * @since 5.1
  */
