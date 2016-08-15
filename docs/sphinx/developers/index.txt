@@ -54,6 +54,7 @@ Contributing to Bio-Formats
 .. toctree::
     :maxdepth: 1
 
+    code-formatting
     commit-testing
     generating-test-images
     reader-guide
