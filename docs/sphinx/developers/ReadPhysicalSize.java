@@ -54,7 +54,7 @@ public class ReadPhysicalSize {
    *
    * @param inputFile the file to be read
    */
-  public ReadPhysicalSize(String inputFile) {
+  public ReadPhysicalSize(String inputFile) throws FormatException, IOException {
     ImageReader reader = new ImageReader();
     IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
     reader.setMetadataStore(omeMeta);
