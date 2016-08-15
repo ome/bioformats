@@ -37,7 +37,8 @@ OMERO.
    - Nifti
        - fixed planeSize to prevent crashes when loading large files (thanks
          to Christian Niedworok)
-       - added support for gzipped compressed .nii.gz files
+       - added support for gzipped compressed .nii.gz files (thanks to Eric
+         Barnhill)
        - added public samples and updated documented supported file extensions
    - OME-TIFF
        - fixed Plane population errors
@@ -55,9 +56,9 @@ OMERO.
    - SDT
        - performance improvements for loading of large files
    - Slidebook
-       - Slide6Reader is now completely external (see
-         http://www.openmicroscopy.org/info/slidebook) and is specified as
-         such in the :file:`readers.txt` configuration file
+       - Slidebook6Reader is now completely external and fully maintained by
+         3i (see http://www.openmicroscopy.org/info/slidebook) and is
+         specified as such in the :file:`readers.txt` configuration file
    - SVS
        - fixed FormatNumberException
    - Tiff
