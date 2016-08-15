@@ -1,8 +1,8 @@
 Version history
 ===============
 
-5.2.0-m5 (2016 July 7)
------------------------
+5.2.0 (2016 August 18)
+----------------------
 
 Java format support improvements are listed below.
 
