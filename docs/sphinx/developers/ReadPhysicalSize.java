@@ -25,23 +25,13 @@
 
 import java.io.IOException;
 
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.ImageReader;
-import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEXMLService;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
-import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Example class that shows how to read and convert the physical X, Y and Z dimensions of a file
@@ -50,37 +40,39 @@ import ome.xml.model.primitives.PositiveInteger;
 public class ReadPhysicalSize {
 
   /**
-   * Construct a new ReadPhysicalSize that will read and convert the physical dimensions of a file
+   * Reads the physical dimensions of the input file provided then converts and displays them in micrometers
    *
    * @param inputFile the file to be read
+   * @throws FormatException if a parsing error occurs processing the file.
+   * @throws IOException if an I/O error occurs processing the file
    */
-  public ReadPhysicalSize(String inputFile) throws FormatException, IOException {
-    ImageReader reader = new ImageReader();
-    IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
+  public static void readPhysicalSize(final String inputFile) throws FormatException, IOException {
+    final ImageReader reader = new ImageReader();
+    final IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
     reader.setMetadataStore(omeMeta);
     reader.setId(inputFile);
 
-    Unit<Length> targetUnit = UNITS.MICROMETER;
+    final Unit<Length> targetUnit = UNITS.MICROMETER;
 
     for (int image=0; image<omeMeta.getImageCount(); image++) {
-      Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
-      Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
-      Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
+      final Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
+      final Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
+      final Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
 
       System.out.println("Physical calibration - Image: " + image);
 
       if (physSizeX != null) {
-        Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
+        final Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
         System.out.println("\tX = " + physSizeX.value() + " " + physSizeX.unit().getSymbol()
             + " = " + convertedSizeX.value() + " " + convertedSizeX.unit().getSymbol());
       }
       if (physSizeY != null) {
-        Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
+        final Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
         System.out.println("\tY = " + physSizeY.value() + " " + physSizeY.unit().getSymbol()
             + " = " + convertedSizeY.value() + " " + convertedSizeY.unit().getSymbol());
       }
       if (physSizeZ != null) {
-        Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
+        final Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
         System.out.println("\tZ = " + physSizeZ.value() + " " + physSizeZ.unit().getSymbol()
             + " = " + convertedSizeZ.value() + " " + convertedSizeZ.unit().getSymbol());
       }
@@ -94,7 +86,7 @@ public class ReadPhysicalSize {
    * $ java ReadPhysicalSize input-file.ome.tiff
    */
   public static void main(String[] args) throws Exception {
-    ReadPhysicalSize exporter = new ReadPhysicalSize(args[0]);
+    readPhysicalSize(args[0]);
   }
 
 }
