@@ -2447,6 +2447,7 @@ opennessRating = Very good
 presenceRating = Fair
 utilityRating = Good
 privateSpecification = true
+pyramid = yes
 reader = ZeissCZIReader
 mif = true
 notes = Bio-Formats does not support CZI files generated using JPEG-XR compression.
