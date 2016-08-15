@@ -48,54 +48,53 @@ import ome.xml.model.primitives.PositiveInteger;
  * Bio-Formats version 5.1 or later.
  */
 public class ReadPhysicalSize {
-    
-    /**
-     * Construct a new ReadPhysicalSize that will read and convert the physical dimensions of a file
-     *
-     * @param inputFile the file to be read
-     */
-    public ReadPhysicalSize(String inputFile) {
-        ImageReader reader = new ImageReader();
-        IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
-        reader.setMetadataStore(omeMeta);
-        reader.setId(inputFile);
-        
-        Unit<Length> targetUnit = UNITS.MICROMETER;
-        
-        for (int image=0; image<omeMeta.getImageCount(); image++) {
-            Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
-            Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
-            Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
-                
-            System.out.println("Physical calibration - Image: " + image);
-                
-            if (physSizeX != null) {
-                Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
-                System.out.println("\tX = " + physSizeX.value() + " " + physSizeX.unit().getSymbol()
-                            + " = " + convertedSizeX.value() + " " + convertedSizeX.unit().getSymbol());
-            }
-            if (physSizeY != null) {
-                Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
-                System.out.println("\tY = " + physSizeY.value() + " " + physSizeY.unit().getSymbol()
-                            + " = " + convertedSizeY.value() + " " + convertedSizeY.unit().getSymbol());
-            }
-            if (physSizeZ != null) {
-                Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
-                System.out.println("\tZ = " + physSizeZ.value() + " " + physSizeZ.unit().getSymbol()
-                            + " = " + convertedSizeZ.value() + " " + convertedSizeZ.unit().getSymbol());
-            }
-        }
-        reader.close();
+
+  /**
+   * Construct a new ReadPhysicalSize that will read and convert the physical dimensions of a file
+   *
+   * @param inputFile the file to be read
+   */
+  public ReadPhysicalSize(String inputFile) {
+    ImageReader reader = new ImageReader();
+    IMetadata omeMeta = MetadataTools.createOMEXMLMetadata();
+    reader.setMetadataStore(omeMeta);
+    reader.setId(inputFile);
+
+    Unit<Length> targetUnit = UNITS.MICROMETER;
+
+    for (int image=0; image<omeMeta.getImageCount(); image++) {
+      Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
+      Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
+      Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
+
+      System.out.println("Physical calibration - Image: " + image);
+
+      if (physSizeX != null) {
+        Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
+        System.out.println("\tX = " + physSizeX.value() + " " + physSizeX.unit().getSymbol()
+            + " = " + convertedSizeX.value() + " " + convertedSizeX.unit().getSymbol());
+      }
+      if (physSizeY != null) {
+        Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
+        System.out.println("\tY = " + physSizeY.value() + " " + physSizeY.unit().getSymbol()
+            + " = " + convertedSizeY.value() + " " + convertedSizeY.unit().getSymbol());
+      }
+      if (physSizeZ != null) {
+        Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
+        System.out.println("\tZ = " + physSizeZ.value() + " " + physSizeZ.unit().getSymbol()
+            + " = " + convertedSizeZ.value() + " " + convertedSizeZ.unit().getSymbol());
+      }
     }
+    reader.close();
+  }
     
-    /**
-     * To read the physical size dimensions and units of a file and display them in micrometers:
-     *
-     * $ java ReadPhysicalSize input-file.ome.tiff
-     */
-    public static void main(String[] args) throws Exception {
-        ReadPhysicalSize exporter = new ReadPhysicalSize(args[0]);
-        
-    }
-    
+  /**
+   * To read the physical size dimensions and units of a file and display them in micrometers:
+   *
+   * $ java ReadPhysicalSize input-file.ome.tiff
+   */
+  public static void main(String[] args) throws Exception {
+    ReadPhysicalSize exporter = new ReadPhysicalSize(args[0]);
+  }
+
 }
