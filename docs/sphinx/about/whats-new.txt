@@ -14,40 +14,31 @@ OMERO.
   :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
 * added support for :doc:`Princeton Instruments .spe </formats/princeton-instruments-spe>` data
 * bug fixes for many formats including:
-   - Tiff
-       - fixed integer overflow to read resolutions correctly
-       - fixed handling of tiled images with tile width less than 64
-   - PNG writing
-   - Zeiss ZVI†
-       - reworked image ordering calculation to allow for tiles
-   - Leica LIF
-       - fixed incorrect plane offsets for large multi-tile files
-   - MRC and Spider
-       - fixes for format type checking
-   - OME-XML
-       - fixed metadata store
    - CellSens VSI†
        - fixes for correctly reading dimensions
-   - ICS writing
-       - fixed dimension population for split files
    - FlowSight
        - fixes to infer channel count from channel names (thanks to Lee
          Kamentsky)
    - Hamamatsu VMS†
        - fixed dimensions of full-resolution images
-   - PicoQuant
-       - updated reader to always buffer data
-   - Zeiss LSM
-       - fixed Plane population errors
+   - ICS writing
+       - fixed dimension population for split files
+   - Kodak BIP
+       - fixed handling of CCD temperature stored in hexadecimal
+   - Leica LIF
+       - fixed incorrect plane offsets for large multi-tile files
+   - LiFlim
+       - fixed ExposureTime check and units usage
+   - MRC and Spider
+       - fixed format type checking
+   - Micro-Manager
+       - fixed handling of large datasets saved as image stacks and split
+         over multiple files
    - Nifti
        - fixed planeSize to prevent crashes when loading large files (thanks
          to Christian Niedworok)
        - added support for gzipped compressed .nii.gz files
        - added public samples and updated documented supported file extensions
-   - LiFlim
-       - fixed ExposureTime check and units usage
-   - SDT
-       - performance improvements for loading of large files
    - OME-TIFF
        - fixed Plane population errors
        - fixed NullPointerException when closing reader for partial multi-file
@@ -56,23 +47,33 @@ OMERO.
          performance
        - deprecated getMetadataStoreForConversion and
          getMetadataStoreForDisplay methods
+   - OME-XML
+       - fixed metadata store
+   - PicoQuant
+       - updated reader to always buffer data
+   - PNG writing
+   - SDT
+       - performance improvements for loading of large files
+   - Slidebook
+       - Slide6Reader is now completely external (see
+         http://www.openmicroscopy.org/info/slidebook) and is specified as
+         such in the :file:`readers.txt` configuration file
+   - SVS
+       - fixed FormatNumberException
+   - Tiff
+       - fixed integer overflow to read resolutions correctly
+       - fixed handling of tiled images with tile width less than 64
    - Zeiss CZI
        - fixed timestamp indexing when multiple separate channels are present
        - improved slide support - slides are now detected as a complete
          full-resolution image (instead of each tile being a separate series)
          and pyramid sub-resolutions and label/overview images are also
          detected
-   - SVS
-       - fixed FormatNumberException
-   - Micro-Manager
-       - fixed handling of large datasets saved as image stacks and split
-         over multiple files
-   - Slidebook
-       - Slide6Reader is now completely external (see
-         http://www.openmicroscopy.org/info/slidebook) and is specified as
-         such in the :file:`readers.txt` configuration file
-   - Kodak BIP
-       - fixed handling of CCD temperature stored in hexadecimal
+   - Zeiss LSM
+       - fixed Plane population errors
+   - Zeiss ZVI†
+       - reworked image ordering calculation to allow for tiles
+
 
 Top-level Bio-Formats API changes:
 
