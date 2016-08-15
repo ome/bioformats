@@ -127,7 +127,7 @@ can be chosen as desired.
 ::
 
   <dependency>
-    <groupId>OME</groupId>
+    <groupId>ome</groupId>
     <artifactId>bioformats_package</artifactId>
     <version>5.2.0</version>
   </dependency>
@@ -141,7 +141,7 @@ repositories element can be defined at the top of your inheritance chain.
 
   <repositories>
     <repository>
-      <id>OME</id>
+      <id>ome</id>
       <name>Bio-Formats Repo</name>
       <url>http://artifacts.openmicroscopy.org/artifactory/repo</url>
     </repository>
