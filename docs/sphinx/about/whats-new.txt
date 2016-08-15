@@ -10,7 +10,8 @@ Java format support improvements are listed below.
 metadata). Code changes or re-import may be necessary in ImageJ/FIJI and
 OMERO.
 
-* added support for :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
+* added support (and public sample files) for
+  :doc:`Becker & Hickl .spc FIFO </formats/becker-hickl-fifo>` data
 * added support for :doc:`Princeton Instruments .spe </formats/princeton-instruments-spe>` data
 * bug fixes for many formats including:
    - Tiff
@@ -41,6 +42,8 @@ OMERO.
    - Nifti
        - fixed planeSize to prevent crashes when loading large files (thanks
          to Christian Niedworok)
+       - added support for gzipped compressed .nii.gz files
+       - added public samples and updated documented supported file extensions
    - LiFlim
        - fixed ExposureTime check and units usage
    - SDT
@@ -49,13 +52,27 @@ OMERO.
        - fixed Plane population errors
        - fixed NullPointerException when closing reader for partial multi-file
          filesets
+       - reduced buffer size for RandomAccessInputStreams to improve
+         performance
+       - deprecated getMetadataStoreForConversion and
+         getMetadataStoreForDisplay methods
    - Zeiss CZI
        - fixed timestamp indexing when multiple separate channels are present
+       - improved slide support - slides are now detected as a complete
+         full-resolution image (instead of each tile being a separate series)
+         and pyramid sub-resolutions and label/overview images are also
+         detected
    - SVS
        - fixed FormatNumberException
    - Micro-Manager
        - fixed handling of large datasets saved as image stacks and split
          over multiple files
+   - Slidebook
+       - Slide6Reader is now completely external (see
+         http://www.openmicroscopy.org/info/slidebook) and is specified as
+         such in the :file:`readers.txt` configuration file
+   - Kodak BIP
+       - fixed handling of CCD temperature stored in hexadecimal
 
 Top-level Bio-Formats API changes:
 
@@ -77,6 +94,10 @@ Top-level Bio-Formats API changes:
 * the Formats API has also been updated to add a new validate property to
   MetadataOptions and support for MetadataOptions has been moved to
   FormatHandler level to allow it to be used by both Readers and Writers
+* initial work on `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_
+  extended the ClassList API to allow the :file:`readers.txt` configuration
+  file to be annotated using key/value pairs to mark optional Readers and
+  specify additional per-Reader options
 
 Other general improvements include:
 
@@ -85,10 +106,6 @@ Other general improvements include:
 * fixes for the detection of csv pattern blocks by `FilePatternBlock`
 * bioformats_package.jar now includes bio-formats-tools as a dependency so
   ImageConverter, ImageFaker and ImageInfo classes are included in the bundle
-* initial work on
-  `Reader discoverability <https://github.com/openmicroscopy/design/issues/42>`_ now allows the
-  :file:`readers.txt` configuration file to be annotated using key/value pairs
-  to mark optional Readers and specify additional per-Reader options
 * the JACE C++ implementation has been decoupled as it does not function with
   Java 1.7 (see `legacy repo <https://github.com/ome/bio-formats-jace>`_)
 * ImageJ fixes
@@ -103,8 +120,13 @@ Other general improvements include:
    - upgrade check no longer run when passing -version
    - common methods refactoring
    - showinf improvements to preload format
-* Added more Java examples to the developer documentation
-* Added many automated tests and improved FakeReader testing framework
+   - tiffcomment now warns that it requires an ImageDescription tag to be
+     present in the TIFF file
+* added more Java examples to the developer documentation
+* added many automated tests and improved FakeReader testing framework
+* documentation improvements include:
+   - clarifying status of legacy Quicktime and ND2 readers
+   - noting that the Gatan reader does not currently support stacks
 
 The Data Model version 2016-06 has been released to introduce
 `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
@@ -124,13 +146,21 @@ OME-XML changes include:
      maintenance and growth
    - allow for genuine abstract model types and enable C++ model
      implementation
+* updated OME-XML and OME-TIFF public sample files
 
 The Bio-Formats C++ native implementation has been decoupled from
 the Java codebase and will be released as
 `OME-Files C++ <http://downloads.openmicroscopy.org/ome-files-cpp/>`_ from now
 on, with the exception of OME-XML which is still within Bio-Formats at present
 (there is a plan to decouple both the Java and the C++ versions of OME-XML in
-future).
+future). All the C++ dependencies remaining in the main Bio-Formats repository
+have had their licensing updated to simplified (2-clause) BSD. This now
+covers:
+
+* XSL transforms
+* specification code
+* xsd-fu python code
+
 
 5.1.10 (2016 May 9)
 -------------------
