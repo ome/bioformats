@@ -45,7 +45,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Example class that shows how to read and convert the physical X, Y and Z dimensions of a file
- * Bio-Formats version 5.2 or later.
+ * Bio-Formats version 5.1 or later.
  */
 public class ReadPhysicalSize {
     
