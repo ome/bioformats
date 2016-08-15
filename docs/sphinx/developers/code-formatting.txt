@@ -3,7 +3,7 @@ Code formatting
 
 Note, these guidelines do not cover:
 
-- third party code imported into the source tree, which is covered by
+- third-party code imported into the source tree, which is covered by
   the guidelines for the upstream projects
 - released schema files which would require re-releasing if changed by
   reindenting
