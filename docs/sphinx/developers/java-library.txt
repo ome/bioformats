@@ -1,7 +1,43 @@
 Using Bio-Formats as a Java library
 ===================================
 
-If you wish to make use of Bio-Formats within your own software, you can
+Bio-Formats as a Maven dependency
+-----------------
+
+If you wish to make use of Bio-Formats within your own software it can be 
+included as a dependency in any Maven project. The dependency can be added 
+to the project pom file and should include the desired Bio-Formats version. 
+Using `bioformats_package` as the artifactId will include the complete 
+Bio-Formats package, or individual components can be chosen as desired.
+
+::
+
+  <dependency>
+    <groupId>ome</groupId>
+    <artifactId>bioformats_package</artifactId>
+    <version>5.2.0</version>
+  </dependency>
+
+In order to include this Bio-Formats dependency a custom repository 
+must also be added to the project pom or :file:`${user.home}/.m2/settings.xml`.
+The repositories element is inherited so for a group of projects the 
+repositories element can be defined at the top of your inheritance chain. 
+
+::
+
+  <repositories>
+    <repository>
+      <id>ome</id>
+      <name>Bio-Formats Repo</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/maven</url>
+    </repository>
+  </repositories>
+  
+
+Bio-Formats as a Java library
+-----------------
+
+Alternatively Bio-Formats can be used by including its component jar files. You can
 :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to use it as
 a library. Just add **formats-gpl.jar** to your CLASSPATH or build path. You
 will also need **common.jar** for common I/O functions, **ome-xml.jar** for
