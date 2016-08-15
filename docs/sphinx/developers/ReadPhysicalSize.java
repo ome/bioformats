@@ -62,30 +62,27 @@ public class ReadPhysicalSize {
         
         Unit<Length> targetUnit = UNITS.MICROMETER;
         
-        for (int series=0; series<reader.getSeriesCount(); series++) {
-            reader.setSeries(series);
-            for (int image=0; image<reader.getImageCount(); image++) {
-                Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
-                Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
-                Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
+        for (int image=0; image<omeMeta.getImageCount(); image++) {
+            Length physSizeX = omeMeta.getPixelsPhysicalSizeX(image);
+            Length physSizeY = omeMeta.getPixelsPhysicalSizeY(image);
+            Length physSizeZ = omeMeta.getPixelsPhysicalSizeZ(image);
                 
-                System.out.println("Physical calibration - Series: " + series + " Image: " + image);
+            System.out.println("Physical calibration - Image: " + image);
                 
-                if (physSizeX != null) {
-                    Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
-                    System.out.println("\tX = " + physSizeX.value() + " " + physSizeX.unit().getSymbol()
-                                       + " = " + convertedSizeX.value() + " " + convertedSizeX.unit().getSymbol());
-                }
-                if (physSizeY != null) {
-                    Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
-                    System.out.println("\tY = " + physSizeY.value() + " " + physSizeY.unit().getSymbol()
-                                       + " = " + convertedSizeY.value() + " " + convertedSizeY.unit().getSymbol());
-                }
-                if (physSizeZ != null) {
-                    Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
-                    System.out.println("\tZ = " + physSizeZ.value() + " " + physSizeZ.unit().getSymbol()
-                                       + " = " + convertedSizeZ.value() + " " + convertedSizeZ.unit().getSymbol());
-                }
+            if (physSizeX != null) {
+                Length convertedSizeX = new Length(physSizeX.value(targetUnit), targetUnit);
+                System.out.println("\tX = " + physSizeX.value() + " " + physSizeX.unit().getSymbol()
+                            + " = " + convertedSizeX.value() + " " + convertedSizeX.unit().getSymbol());
+            }
+            if (physSizeY != null) {
+                Length convertedSizeY = new Length(physSizeY.value(targetUnit), targetUnit);
+                System.out.println("\tY = " + physSizeY.value() + " " + physSizeY.unit().getSymbol()
+                            + " = " + convertedSizeY.value() + " " + convertedSizeY.unit().getSymbol());
+            }
+            if (physSizeZ != null) {
+                Length convertedSizeZ = new Length(physSizeZ.value(targetUnit), targetUnit);
+                System.out.println("\tZ = " + physSizeZ.value() + " " + physSizeZ.unit().getSymbol()
+                            + " = " + convertedSizeZ.value() + " " + convertedSizeZ.unit().getSymbol());
             }
         }
         reader.close();
