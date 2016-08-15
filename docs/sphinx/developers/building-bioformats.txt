@@ -120,7 +120,7 @@ We recommend using Eclipse 4.3 (Kepler) or later, specifically -
 
 Bio-Formats can be included as a dependency in any Maven project. The 
 dependency can be added to the project pom file and should include the
-desired Bio-Formats version. Using bioformats_package as the artifactId
+desired Bio-Formats version. Using `bioformats_package` as the artifactId
 will include the complete Bio-Formats package, or individual components 
 can be chosen as desired.
 
@@ -133,7 +133,7 @@ can be chosen as desired.
   </dependency>
 
 In order to include this Bio-Formats dependency a custom repository 
-must also be added to the project pom or ${user.home}/.m2/settings.xml 
+must also be added to the project pom or :file:`${user.home}/.m2/settings.xml`.
 The repositories element is inherited so for a group of projects the 
 repositories element can be defined at the top of your inheritance chain. 
 
