@@ -36,6 +36,9 @@
  * #L%
  */
 
+#ifndef OME_XML_MODEL_ENUMS_UNITSLENGTHCONVERT_H
+#define OME_XML_MODEL_ENUMS_UNITSLENGTHCONVERT_H
+
 #include <boost/preprocessor.hpp>
 
 #include <ome/common/units/length.h>
@@ -43,15 +46,21 @@
 #include <ome/xml/model/enums/UnitsLength.h>
 #include <ome/xml/model/primitives/Quantity.h>
 
-using ome::xml::model::enums::UnitsLength;
-
-namespace
+namespace ome
 {
+  namespace xml
+  {
+    namespace model
+    {
+      namespace primitives
+      {
+        namespace detail
+        {
 
-  using namespace ome::common::units;
+          using namespace ::ome::common::units;
+          using ::ome::xml::model::enums::UnitsLength;
 
-  // For future use if portable (to replace the static property structs); tuples are enum name, unit quantity type and unit system ID
-#define LENGTH_PROPERTY_LIST                                            \
+#define OME_XML_MODEL_ENUMS_UNITSLENGTH_PROPERTY_LIST                   \
   ((YOTTAMETER)(yottameter_quantity)(0))                                \
   ((ZETTAMETER)(zettameter_quantity)(0))                                \
   ((EXAMETER)(exameter_quantity)(0))                                    \
@@ -87,13 +96,13 @@ namespace
   ((PIXEL)(pixel_quantity)(1))                                          \
   ((REFERENCEFRAME)(reference_frame_quantity)(2))
 
-  /**
-   * Map a given UnitsLength enum to the corresponding language types.
-   */
-  template<int>
-  struct LengthProperties;
-  
-#define LENGTH_UNIT_CASE(maR, maProperty, maType)                       \
+          /**
+           * Map a given UnitsLength enum to the corresponding language types.
+           */
+          template<int>
+          struct LengthProperties;
+
+#define OME_XML_MODEL_ENUMS_UNITSLENGTH_UNIT_CASE(maR, maProperty, maType) \
   template<>                                                            \
   struct LengthProperties<UnitsLength::BOOST_PP_SEQ_ELEM(0, maType)>    \
   {                                                                     \
@@ -101,91 +110,86 @@ namespace
     static const int system = BOOST_PP_SEQ_ELEM(2, maType);             \
   };
 
-  BOOST_PP_SEQ_FOR_EACH(LENGTH_UNIT_CASE, %%, LENGTH_PROPERTY_LIST)
+          BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSLENGTH_UNIT_CASE, %%, OME_XML_MODEL_ENUMS_UNITSLENGTH_PROPERTY_LIST)
 
-  /**
-   * Test if a given conversion is valid.
-   */
-  template<int U1, int U2>
-  struct LengthConversion
-  {
-    static const bool valid = LengthProperties<U1>::system == LengthProperties<U2>::system;
-  };
+#undef OME_XML_MODEL_ENUMS_UNITSLENGTH_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSLENGTH_PROPERTY_LIST
 
-  // Convert two units
-  template<typename Q, int Src, int Dest>
-  inline
-  typename boost::enable_if_c<
-    LengthConversion<Src, Dest>::valid,
-    Q
-    >::type
-  convert_src_dest(typename Q::value_type v,
-                   typename Q::unit_type dest)
-  {
-    typename LengthProperties<Dest>::quantity_type d(LengthProperties<Src>::quantity_type::from_value(v));
-    return Q(quantity_cast<typename Q::value_type>(d), dest);
-  }
+          /**
+           * Test if a given conversion is valid.
+           */
+          template<int U1, int U2>
+          struct LengthConversion
+          {
+            /// Is the conversion valid?
+            static const bool valid = LengthProperties<U1>::system == LengthProperties<U2>::system;
+          };
 
-  // Fail conversion: incompatible unit systems
-  template<typename Q, int Src, int Dest>
-  inline
-  typename boost::disable_if_c<
-    LengthConversion<Src, Dest>::valid,
-    Q
-    >::type
-  convert_src_dest(typename Q::value_type /* v */,
-                   typename Q::unit_type  /*dest */)
-  {
-    throw std::logic_error("Unit conversion failed: incompatible unit systems");
-  }
+          // Convert two units
+          template<typename Q, int Src, int Dest>
+          inline
+          typename boost::enable_if_c<
+            LengthConversion<Src, Dest>::valid,
+            Q
+            >::type
+          length_convert_src_dest(typename Q::value_type v,
+                                  typename Q::unit_type  dest)
+          {
+            typename LengthProperties<Dest>::quantity_type d(LengthProperties<Src>::quantity_type::from_value(v));
+            return Q(quantity_cast<typename Q::value_type>(d), dest);
+          }
 
-// No switch default to avoid -Wunreachable-code errors.
-// However, this then makes -Wswitch-default complain.  Disable
-// temporarily.
+          // Fail conversion: incompatible unit systems
+          template<typename Q, int Src, int Dest>
+          inline
+          typename boost::disable_if_c<
+            LengthConversion<Src, Dest>::valid,
+            Q
+            >::type
+          length_convert_src_dest(typename Q::value_type /* v */,
+                                  typename Q::unit_type  /*dest */)
+          {
+            throw std::logic_error("Unit conversion failed: incompatible unit systems");
+          }
+
+          // No switch default to avoid -Wunreachable-code errors.
+          // However, this then makes -Wswitch-default complain.  Disable
+          // temporarily.
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define DEST_UNIT_CASE(maR, maProperty, maType)                         \
+#define OME_XML_MODEL_ENUMS_UNITSLENGTH_DEST_UNIT_CASE(maR, maProperty, maType) \
   case UnitsLength::maType:                                             \
   {                                                                     \
-    maProperty = convert_src_dest<Q, Src, UnitsLength::maType>(value, dest); \
+    maProperty = length_convert_src_dest<Q, Src, UnitsLength::maType>(value, dest); \
   }                                                                     \
   break;
 
-  template<typename Q, int Src>
-  Q
-  convert_dest(typename Q::value_type value,
-               typename Q::unit_type dest)
-  {
-    Q q;
+          template<typename Q, int Src>
+          Q
+          length_convert_dest(typename Q::value_type value,
+                              typename Q::unit_type  dest)
+          {
+            Q q;
 
-    switch(dest)
-      {
-        BOOST_PP_SEQ_FOR_EACH(DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSLENGTH_VALUES);
-      }
+            switch(dest)
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSLENGTH_DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSLENGTH_VALUES);
+              }
 
-    return q;
-  }
+            return q;
+          }
 
-#undef DEST_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSLENGTH_DEST_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
 #endif
 
-}
+        }
 
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-      namespace primitives
-      {
-        
         // No switch default to avoid -Wunreachable-code errors.
         // However, this then makes -Wswitch-default complain.  Disable
         // temporarily.
@@ -194,26 +198,33 @@ namespace ome
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define SRC_UNIT_CASE(maR, maProperty, maType)                                \
-        case UnitsLength::maType:                                             \
-        maProperty = convert_dest<Quantity<UnitsLength>, UnitsLength::maType>(quantity.getValue(), unit); \
+#define OME_XML_MODEL_ENUMS_UNITSLENGTH_SRC_UNIT_CASE(maR, maProperty, maType) \
+        case ome::xml::model::enums::UnitsLength::maType:               \
+          maProperty = detail::length_convert_dest<Quantity<ome::xml::model::enums::UnitsLength>, ome::xml::model::enums::UnitsLength::maType>(quantity.getValue(), unit); \
           break;
 
-        Quantity<UnitsLength>
-        convert(const Quantity<UnitsLength>&     quantity,
-                Quantity<UnitsLength>::unit_type unit)
+        /// @copydoc ome::xml::model::primitives::QuantityConverter
+        template<typename Value>
+        struct QuantityConverter<ome::xml::model::enums::UnitsLength, Value>
         {
-          Quantity<UnitsLength> q;
+          /// @copydoc ome::xml::model::primitives::QuantityConverter::operator()()
+          inline
+          Quantity<ome::xml::model::enums::UnitsLength, Value>
+          operator() (const Quantity<ome::xml::model::enums::UnitsLength, Value>&              quantity,
+                      typename Quantity<ome::xml::model::enums::UnitsLength, Value>::unit_type unit) const
+          {
+            Quantity<ome::xml::model::enums::UnitsLength, Value> q;
 
-          switch(quantity.getUnit())
-            {
-              BOOST_PP_SEQ_FOR_EACH(SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSLENGTH_VALUES);
-            }
+            switch(quantity.getUnit())
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSLENGTH_SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSLENGTH_VALUES);
+              }
 
-          return q;
-        }
+            return q;
+          }
+        };
 
-#undef SRC_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSLENGTH_SRC_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
@@ -223,3 +234,11 @@ namespace ome
     }
   }
 }
+
+#endif // OME_XML_MODEL_ENUMS_UNITSLENGTHCONVERT_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

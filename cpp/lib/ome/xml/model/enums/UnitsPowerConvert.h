@@ -36,6 +36,9 @@
  * #L%
  */
 
+#ifndef OME_XML_MODEL_ENUMS_UNITSPOWERCONVERT_H
+#define OME_XML_MODEL_ENUMS_UNITSPOWERCONVERT_H
+
 #include <boost/preprocessor.hpp>
 
 #include <ome/common/units/power.h>
@@ -43,15 +46,21 @@
 #include <ome/xml/model/enums/UnitsPower.h>
 #include <ome/xml/model/primitives/Quantity.h>
 
-using ome::xml::model::enums::UnitsPower;
-
-namespace
+namespace ome
 {
+  namespace xml
+  {
+    namespace model
+    {
+      namespace primitives
+      {
+        namespace detail
+        {
 
-  using namespace ome::common::units;
+          using namespace ::ome::common::units;
+          using ::ome::xml::model::enums::UnitsPower;
 
-  // For future use if portable (to replace the static property structs); tuples are enum name and unit quantity type
-#define POWER_PROPERTY_LIST                                         \
+#define OME_XML_MODEL_ENUMS_UNITSPOWER_PROPERTY_LIST                \
   ((YOTTAWATT)(yottawatt_quantity))                                 \
   ((ZETTAWATT)(zettawatt_quantity))                                 \
   ((EXAWATT)(exawatt_quantity))                                     \
@@ -73,79 +82,73 @@ namespace
   ((ATTOWATT)(attowatt_quantity))                                   \
   ((ZEPTOWATT)(zeptowatt_quantity))                                 \
   ((YOCTOWATT)(yoctowatt_quantity))
-    
-  /**
-   * Map a given UnitsPower enum to the corresponding language types.
-   */
-  template<int>
-  struct PowerProperties;
-  
-#define POWER_UNIT_CASE(maR, maProperty, maType)                       \
+
+          /**
+           * Map a given UnitsPower enum to the corresponding language types.
+           */
+          template<int>
+          struct PowerProperties;
+
+#define OME_XML_MODEL_ENUMS_UNITSPOWER_UNIT_CASE(maR, maProperty, maType) \
   template<>                                                            \
-  struct PowerProperties<UnitsPower::BOOST_PP_SEQ_ELEM(0, maType)> \
+  struct PowerProperties<UnitsPower::BOOST_PP_SEQ_ELEM(0, maType)>      \
   {                                                                     \
     typedef BOOST_PP_SEQ_ELEM(1, maType) quantity_type;                 \
   };
 
-  BOOST_PP_SEQ_FOR_EACH(POWER_UNIT_CASE, %%, POWER_PROPERTY_LIST)
+          BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSPOWER_UNIT_CASE, %%, OME_XML_MODEL_ENUMS_UNITSPOWER_PROPERTY_LIST)
 
-  // Convert two units
-  template<typename Q, int Src, int Dest>
-  Q
-  convert_src_dest(typename Q::value_type v,
-                   typename Q::unit_type dest)
-  {
-    typename PowerProperties<Dest>::quantity_type d(PowerProperties<Src>::quantity_type::from_value(v));
-    return Q(quantity_cast<typename Q::value_type>(d), dest);
-  }
+#undef OME_XML_MODEL_ENUMS_UNITSPOWER_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSPOWER_PROPERTY_LIST
 
-// No switch default to avoid -Wunreachable-code errors.
-// However, this then makes -Wswitch-default complain.  Disable
-// temporarily.
+          // Convert two units
+          template<typename Q, int Src, int Dest>
+          Q
+          power_convert_src_dest(typename Q::value_type v,
+                                 typename Q::unit_type  dest)
+          {
+            typename PowerProperties<Dest>::quantity_type d(PowerProperties<Src>::quantity_type::from_value(v));
+            return Q(quantity_cast<typename Q::value_type>(d), dest);
+          }
+
+          // No switch default to avoid -Wunreachable-code errors.
+          // However, this then makes -Wswitch-default complain.  Disable
+          // temporarily.
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define DEST_UNIT_CASE(maR, maProperty, maType)                         \
-  case UnitsPower::maType:                                           \
+#define OME_XML_MODEL_ENUMS_UNITSPOWER_DEST_UNIT_CASE(maR, maProperty, maType) \
+  case UnitsPower::maType:                                              \
   {                                                                     \
-    maProperty = convert_src_dest<Q, Src, UnitsPower::maType>(value, dest); \
+    maProperty = power_convert_src_dest<Q, Src, UnitsPower::maType>(value, dest); \
   }                                                                     \
   break;
 
-  template<typename Q, int Src>
-  Q
-  convert_dest(typename Q::value_type value,
-               typename Q::unit_type dest)
-  {
-    Q q;
+          template<typename Q, int Src>
+          Q
+          power_convert_dest(typename Q::value_type value,
+                             typename Q::unit_type  dest)
+          {
+            Q q;
 
-    switch(dest)
-      {
-        BOOST_PP_SEQ_FOR_EACH(DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSPOWER_VALUES);
-      }
+            switch(dest)
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSPOWER_DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSPOWER_VALUES);
+              }
 
-    return q;
-  }
+            return q;
+          }
 
-#undef DEST_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSPOWER_DEST_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
 #endif
 
-}
+        }
 
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-      namespace primitives
-      {
-        
         // No switch default to avoid -Wunreachable-code errors.
         // However, this then makes -Wswitch-default complain.  Disable
         // temporarily.
@@ -154,26 +157,33 @@ namespace ome
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define SRC_UNIT_CASE(maR, maProperty, maType)                          \
-        case UnitsPower::maType:                                     \
-          maProperty = convert_dest<Quantity<UnitsPower>, UnitsPower::maType>(quantity.getValue(), unit); \
+#define OME_XML_MODEL_ENUMS_UNITSPOWER_SRC_UNIT_CASE(maR, maProperty, maType) \
+        case ome::xml::model::enums::UnitsPower::maType:                \
+          maProperty = detail::power_convert_dest<Quantity<ome::xml::model::enums::UnitsPower>, ome::xml::model::enums::UnitsPower::maType>(quantity.getValue(), unit); \
           break;
 
-        Quantity<UnitsPower>
-        convert(const Quantity<UnitsPower>&     quantity,
-                Quantity<UnitsPower>::unit_type unit)
+        /// @copydoc ome::xml::model::primitives::QuantityConverter
+        template<typename Value>
+        struct QuantityConverter<ome::xml::model::enums::UnitsPower, Value>
         {
-          Quantity<UnitsPower> q;
+          /// @copydoc ome::xml::model::primitives::QuantityConverter::operator()()
+          inline
+          Quantity<ome::xml::model::enums::UnitsPower, Value>
+          operator() (const Quantity<ome::xml::model::enums::UnitsPower, Value>&              quantity,
+                      typename Quantity<ome::xml::model::enums::UnitsPower, Value>::unit_type unit) const
+          {
+            Quantity<ome::xml::model::enums::UnitsPower, Value> q;
 
-          switch(quantity.getUnit())
-            {
-              BOOST_PP_SEQ_FOR_EACH(SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSPOWER_VALUES);
-            }
+            switch(quantity.getUnit())
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSPOWER_SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSPOWER_VALUES);
+              }
 
-          return q;
-        }
+            return q;
+          }
+        };
 
-#undef SRC_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSPOWER_SRC_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
@@ -183,3 +193,11 @@ namespace ome
     }
   }
 }
+
+#endif // OME_XML_MODEL_ENUMS_UNITSPOWERCONVERT_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

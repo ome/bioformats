@@ -36,6 +36,9 @@
  * #L%
  */
 
+#ifndef OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIALCONVERT_H
+#define OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIALCONVERT_H
+
 #include <boost/preprocessor.hpp>
 
 #include <ome/common/units/electric-potential.h>
@@ -43,15 +46,21 @@
 #include <ome/xml/model/enums/UnitsElectricPotential.h>
 #include <ome/xml/model/primitives/Quantity.h>
 
-using ome::xml::model::enums::UnitsElectricPotential;
-
-namespace
+namespace ome
 {
+  namespace xml
+  {
+    namespace model
+    {
+      namespace primitives
+      {
+        namespace detail
+        {
 
-  using namespace ome::common::units;
+          using namespace ::ome::common::units;
+          using ::ome::xml::model::enums::UnitsElectricPotential;
 
-  // For future use if portable (to replace the static property structs); tuples are enum name and unit quantity type
-#define ELECTRICPOTENTIAL_PROPERTY_LIST                                            \
+#define OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_PROPERTY_LIST    \
   ((YOTTAVOLT)(yottavolt_quantity))                                 \
   ((ZETTAVOLT)(zettavolt_quantity))                                 \
   ((EXAVOLT)(exavolt_quantity))                                     \
@@ -73,79 +82,73 @@ namespace
   ((ATTOVOLT)(attovolt_quantity))                                   \
   ((ZEPTOVOLT)(zeptovolt_quantity))                                 \
   ((YOCTOVOLT)(yoctovolt_quantity))
-    
-  /**
-   * Map a given UnitsElectricPotential enum to the corresponding language types.
-   */
-  template<int>
-  struct ElectricPotentialProperties;
-  
-#define ELECTRICPOTENTIAL_UNIT_CASE(maR, maProperty, maType)                       \
+
+          /**
+           * Map a given UnitsElectricPotential enum to the corresponding language types.
+           */
+          template<int>
+          struct ElectricPotentialProperties;
+
+#define OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_UNIT_CASE(maR, maProperty, maType) \
   template<>                                                            \
   struct ElectricPotentialProperties<UnitsElectricPotential::BOOST_PP_SEQ_ELEM(0, maType)> \
   {                                                                     \
     typedef BOOST_PP_SEQ_ELEM(1, maType) quantity_type;                 \
   };
 
-  BOOST_PP_SEQ_FOR_EACH(ELECTRICPOTENTIAL_UNIT_CASE, %%, ELECTRICPOTENTIAL_PROPERTY_LIST)
+          BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_UNIT_CASE, %%, OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_PROPERTY_LIST)
 
-  // Convert two units
-  template<typename Q, int Src, int Dest>
-  Q
-  convert_src_dest(typename Q::value_type v,
-                   typename Q::unit_type dest)
-  {
-    typename ElectricPotentialProperties<Dest>::quantity_type d(ElectricPotentialProperties<Src>::quantity_type::from_value(v));
-    return Q(quantity_cast<typename Q::value_type>(d), dest);
-  }
+#undef OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_PROPERTY_LIST
 
-// No switch default to avoid -Wunreachable-code errors.
-// However, this then makes -Wswitch-default complain.  Disable
-// temporarily.
+          // Convert two units
+          template<typename Q, int Src, int Dest>
+          Q
+          electricpotential_convert_src_dest(typename Q::value_type v,
+                                             typename Q::unit_type  dest)
+          {
+            typename ElectricPotentialProperties<Dest>::quantity_type d(ElectricPotentialProperties<Src>::quantity_type::from_value(v));
+            return Q(quantity_cast<typename Q::value_type>(d), dest);
+          }
+
+          // No switch default to avoid -Wunreachable-code errors.
+          // However, this then makes -Wswitch-default complain.  Disable
+          // temporarily.
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define DEST_UNIT_CASE(maR, maProperty, maType)                         \
-  case UnitsElectricPotential::maType:                                           \
+#define OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_DEST_UNIT_CASE(maR, maProperty, maType) \
+  case UnitsElectricPotential::maType:                                  \
   {                                                                     \
-    maProperty = convert_src_dest<Q, Src, UnitsElectricPotential::maType>(value, dest); \
+    maProperty = electricpotential_convert_src_dest<Q, Src, UnitsElectricPotential::maType>(value, dest); \
   }                                                                     \
   break;
 
-  template<typename Q, int Src>
-  Q
-  convert_dest(typename Q::value_type value,
-               typename Q::unit_type dest)
-  {
-    Q q;
+          template<typename Q, int Src>
+          Q
+          electricpotential_convert_dest(typename Q::value_type value,
+                                         typename Q::unit_type  dest)
+          {
+            Q q;
 
-    switch(dest)
-      {
-        BOOST_PP_SEQ_FOR_EACH(DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_VALUES);
-      }
+            switch(dest)
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_VALUES);
+              }
 
-    return q;
-  }
+            return q;
+          }
 
-#undef DEST_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_DEST_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
 #endif
 
-}
+        }
 
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-      namespace primitives
-      {
-        
         // No switch default to avoid -Wunreachable-code errors.
         // However, this then makes -Wswitch-default complain.  Disable
         // temporarily.
@@ -154,26 +157,33 @@ namespace ome
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define SRC_UNIT_CASE(maR, maProperty, maType)                          \
-        case UnitsElectricPotential::maType:                                     \
-          maProperty = convert_dest<Quantity<UnitsElectricPotential>, UnitsElectricPotential::maType>(quantity.getValue(), unit); \
+#define OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_SRC_UNIT_CASE(maR, maProperty, maType) \
+        case ome::xml::model::enums::UnitsElectricPotential::maType:    \
+          maProperty = detail::electricpotential_convert_dest<Quantity<ome::xml::model::enums::UnitsElectricPotential>, ome::xml::model::enums::UnitsElectricPotential::maType>(quantity.getValue(), unit); \
           break;
 
-        Quantity<UnitsElectricPotential>
-        convert(const Quantity<UnitsElectricPotential>&     quantity,
-                Quantity<UnitsElectricPotential>::unit_type unit)
+        /// @copydoc ome::xml::model::primitives::QuantityConverter
+        template<typename Value>
+        struct QuantityConverter<ome::xml::model::enums::UnitsElectricPotential, Value>
         {
-          Quantity<UnitsElectricPotential> q;
+          /// @copydoc ome::xml::model::primitives::QuantityConverter::operator()()
+          inline
+          Quantity<ome::xml::model::enums::UnitsElectricPotential, Value>
+          operator() (const Quantity<ome::xml::model::enums::UnitsElectricPotential, Value>&              quantity,
+                      typename Quantity<ome::xml::model::enums::UnitsElectricPotential, Value>::unit_type unit) const
+          {
+            Quantity<ome::xml::model::enums::UnitsElectricPotential, Value> q;
 
-          switch(quantity.getUnit())
-            {
-              BOOST_PP_SEQ_FOR_EACH(SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_VALUES);
-            }
+            switch(quantity.getUnit())
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_VALUES);
+              }
 
-          return q;
-        }
+            return q;
+          }
+        };
 
-#undef SRC_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIAL_SRC_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
@@ -183,3 +193,11 @@ namespace ome
     }
   }
 }
+
+#endif // OME_XML_MODEL_ENUMS_UNITSELECTRICPOTENTIALCONVERT_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

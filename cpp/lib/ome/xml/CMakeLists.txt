@@ -66,13 +66,6 @@ set(OME_XML_STATIC_SOURCES
   model/detail/OMEModelObject.cpp
   model/detail/Parse.cpp
   model/enums/EnumerationException.cpp
-  model/enums/UnitsElectricPotentialConvert.cpp
-  model/enums/UnitsFrequencyConvert.cpp
-  model/enums/UnitsLengthConvert.cpp
-  model/enums/UnitsPowerConvert.cpp
-  model/enums/UnitsPressureConvert.cpp
-  model/enums/UnitsTemperatureConvert.cpp
-  model/enums/UnitsTimeConvert.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
   model/primitives/NonNegativeInteger.cpp
@@ -115,7 +108,14 @@ set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
     model/detail/Parse.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
-    model/enums/EnumerationException.h)
+    model/enums/EnumerationException.h
+    model/enums/UnitsElectricPotentialConvert.h
+    model/enums/UnitsFrequencyConvert.h
+    model/enums/UnitsLengthConvert.h
+    model/enums/UnitsPowerConvert.h
+    model/enums/UnitsPressureConvert.h
+    model/enums/UnitsTemperatureConvert.h
+    model/enums/UnitsTimeConvert.h)
 
 set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/Color.h
