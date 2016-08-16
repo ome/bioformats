@@ -18,9 +18,9 @@ settings, the acquired image can be saved with or without a companion file
 
 
 +---------------+----------+--------------+--------------+--------------------+
-|Saving         |          |Companion     |              |                    | 
-|Options within |          |File          |Bio-Formats   |                    |
-|Micro-Manager  |Format    |(*metadata.txt)|Reading       | Reader Used        |
+|Saving         |          |              |              |                    | 
+|Options within |          |Companion     |Bio-Formats   |                    |
+|Micro-Manager  |Format    |File          |Reading       | Reader Used        |
 +===============+==========+==============+==============+====================+ 
 | Save as       |          |              |              |                    |
 | separate      |          |              |              |                    | 
