@@ -509,7 +509,7 @@ Java bug fixes:
 * Improvements to developer documentation
 * Initial version of `native C++ implementation <http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/cpp/overview.html>`__
 * Improved support for opening and saving ROI data with ImageJ
-* Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christophe Sommer)
+* Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christoph Sommer)
 * Added support for :doc:`Perkin Elmer Nuance </formats/perkinelmer-nuance>` data (thanks to Lee Kamentsky)
 * Added support for :doc:`Amnis FlowSight </formats/amnis-flowsight>` data (thanks to Lee Kamentsky and Sebastien Simard)
 * Added support for :doc:`Veeco AFM </formats/veeco-afm>` data
