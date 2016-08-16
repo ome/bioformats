@@ -123,7 +123,7 @@ The complete list of current dependencies is as follows:
     * - `Assume NG v1.2.4 <http://github.com/hierynomus/assumeng>`_
       - nl.javadude.assumeng:assumeng:1.2.4
       - `Apache License v2.0`_
-    * - `Apache Velocity v1.6.4 <http://velocity.apache.org/engine/releases/velocity-1.6.2>`_
+    * - `Apache Velocity v1.6.4 <http://velocity.apache.org>`_
       - org.apache.velocity:velocity:1.6.4
       - `Apache License v2.0`_
     * - `BeanShell v2.0b4 <http://www.beanshell.org>`_
