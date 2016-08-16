@@ -28,7 +28,7 @@ OMERO.
    - Leica LIF
        - fixed incorrect plane offsets for large multi-tile files
    - LiFlim
-       - fixed ExposureTime check and units usage
+       - fixed ``ExposureTime`` check and units usage
    - Micro-Manager
        - fixed handling of large datasets saved as image stacks and split
          over multiple files
@@ -36,13 +36,13 @@ OMERO.
    - MRC and Spider
        - fixed format type checking
    - Nifti
-       - fixed planeSize to prevent crashes when loading large files (thanks
-         to Christian Niedworok)
+       - fixed ``planeSize`` to prevent crashes when loading large files
+         (thanks to Christian Niedworok)
        - added support for gzipped compressed .nii.gz files (thanks to Eric
          Barnhill)
        - added public samples and updated documented supported file extensions
    - OME-TIFF
-       - fixed Plane population errors
+       - fixed ``Plane`` population errors
        - fixed ``NullPointerException`` when closing reader for partial
          multi-file filesets
        - reduced buffer size for ``RandomAccessInputStreams`` to improve
@@ -72,7 +72,7 @@ OMERO.
          and pyramid sub-resolutions and label/overview images are also
          detected
    - Zeiss LSM
-       - fixed Plane population errors
+       - fixed ``Plane`` population errors
    - Zeiss ZVI†
        - reworked image ordering calculation to allow for tiles
 
@@ -104,7 +104,7 @@ Top-level Bio-Formats API changes:
 
 Other general improvements include:
 
-* improved performance of `getUsedFiles`
+* improved performance of ``getUsedFiles``
 * fixes for ``FilePatternBlock``, ``AxisGuesser``, ``FilePattern``
 * fixes for the detection of CSV pattern blocks by ``FilePatternBlock``
 * :file:`bioformats_package.jar` now includes bio-formats-tools as a
