@@ -1,5 +1,8 @@
+.. _reading_files:
+
 Reading files
 =============
+
 
 Basic file reading
 ------------------
