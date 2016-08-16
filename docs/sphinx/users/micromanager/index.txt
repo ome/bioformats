@@ -39,7 +39,7 @@ settings, the acquired image can be saved with or without a companion file
 
 ``**`` A small change in the acquisition side facilitates better handling of
 the metadata from the Bio-Formats side:
-:menuselection:`Tools --> Options...` and then select "create metadata.txt
+:menuselection:`Tools --> Options...` and then select "Create metadata.txt
 file with Image Stack Files" in the text box.
 
 .. seealso:: `Micro-Manager User's Guide - Files on Disk <https://micro-manager.org/wiki/Micro-Manager_User%27s_Guide#Files_on_Disk>`_
