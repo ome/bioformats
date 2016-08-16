@@ -140,7 +140,7 @@ The complete list of current dependencies is as follows:
       - `Apache License v2.0`_
     * - `Native Library Loader v2.1.4 <http://github.com/scijava/native-lib-loader>`_
       - org.scijava:native-lib-loader:2.1.4
-      - `Simplified BSD License`_
+      - `BSD License`_
     * - `SLF4J API v1.7.4 <http://www.slf4j.org>`_
       - org.slf4j:slf4j-api:1.7.6
       - `MIT License`_
@@ -175,7 +175,6 @@ The complete list of current dependencies is as follows:
 
 .. _Apache License v2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 .. _MIT License: http://opensource.org/licenses/MIT
-.. _Simplified BSD License: https://github.com/scijava/native-lib-loader/blob/master/LICENSE.txt
 .. _BSD 3-Clause: http://opensource.org/licenses/BSD-3-Clause
 .. _Sun Public License / LGPL: http://www.beanshell.org/license.html
 .. _Common Public License v1.0: http://www.opensource.org/licenses/cpl1.0.txt
