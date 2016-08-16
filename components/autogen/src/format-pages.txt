@@ -439,28 +439,6 @@ presenceRating = Fair
 utilityRating = Fair
 reader = DNGReader
 
-[Micro-Manager]
-extensions = .tif, .txt, .xml
-developer = `Vale Lab <http://valelab.ucsf.edu/>`_
-bsd = yes
-software = `Micro-Manager <http://micro-manager.org/>`_
-weHave = * many Micro-manager datasets\n
-* `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
-pixelsRating = Outstanding
-metadataRating = Very good
-opennessRating = Outstanding
-presenceRating = Fair
-utilityRating = Good
-reader = MicromanagerReader
-mif = true
-notes = - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a\n
-  Micro-Manager fileset if pointed at it and will load the fileset including\n
-  the companion TIFF files.\n
-- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize\n
-  an OME-TIFF format instead. This means it may load the fileset if there are\n
-  multiple .ome.tif but it will not include :file:`*metadata.txt` in this\n
-  fileset and therefore the extended Micro-Manager metadata will be skipped.
-
 [CellH5]
 extensions = .ch5
 developer = `CellH5 <http://cellh5.org/>`_
@@ -1393,6 +1371,29 @@ presenceRating = Poor
 utilityRating = Poor
 reader = MIASReader
 mif = true
+
+[Micro-Manager]
+extensions = .tif, .txt, .xml
+developer = `Vale Lab <http://valelab.ucsf.edu/>`_
+bsd = yes
+software = `Micro-Manager <http://micro-manager.org/>`_
+weHave = * many Micro-manager datasets\n
+* `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Good
+reader = MicromanagerReader
+mif = true
+notes = - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a\n
+  Micro-Manager fileset if pointed at it and will load the fileset including\n
+  the companion TIFF files.\n
+- If pointed at a companion :file:`.ome.tif` file, Bio-Formats will recognize\n
+  an OME-TIFF format instead. This means it may load the fileset if there are\n
+  multiple .ome.tif but it will not include :file:`*metadata.txt` in this\n
+  fileset and therefore the extended Micro-Manager metadata will be skipped.\n
+- See :doc:`/users/micromanager/index` for more information.
 
 [MINC MRI]
 extensions = .mnc
