@@ -28,18 +28,25 @@ package ome.units.quantity;
 import ome.units.unit.Unit;
 
 /**
- * A wrapper for the Quantity class from the units implimintation.
+ * An abstract quantity.
  *
- * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
- * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- * @version 1.0
- * <small>
- * (<b>Internal version:</b> $Revision: $Date: $)
- * </small>
+ * This represents a quantity (value) for a given unit system.
+ *
  * @since 5.1
  */
 public abstract class Quantity
 {
+  /**
+   * Get the numerical value of this quantity.
+   *
+   * @return the value.
+   */
   public abstract Number value();
+
+  /**
+   * Get the unit for this quantity.
+   *
+   * @return the unit.
+   */
   public abstract Unit<? extends Quantity> unit();
 }
