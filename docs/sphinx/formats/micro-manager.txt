@@ -57,3 +57,4 @@ Utility: |Good|
   an OME-TIFF format instead. This means it may load the fileset if there are
   multiple .ome.tif but it will not include :file:`*metadata.txt` in this
   fileset and therefore the extended Micro-Manager metadata will be skipped.
+- See :doc:`/users/micromanager/index` for more information.
