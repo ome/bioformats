@@ -157,13 +157,14 @@ the Java codebase and will be released as
 `OME-Files C++ <http://downloads.openmicroscopy.org/ome-files-cpp/>`_ from now
 on, with the exception of OME-XML which is still within Bio-Formats at present
 (there is a plan to decouple both the Java and the C++ versions of OME-XML in
-future). All the C++ dependencies remaining in the main Bio-Formats repository
-have had their licensing updated to simplified (2-clause) BSD. This now
-covers:
+future).
+
+The following components have had their licensing updated to Simplified
+(2-clause) BSD:
 
 * XSL transforms
 * specification code
-* xsd-fu python code
+* xsd-fu Python code
 
 
 5.1.10 (2016 May 9)
