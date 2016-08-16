@@ -7,7 +7,7 @@ extending functionality, customization and rapid development of specialized
 imaging applications.
 
 Micro-Manager offers the functionality for saving the acquired images in
-Tiff/OME-Tiff format. Based on the mode of saving and the configuration
+TIFF/OME-TIFF format. Based on the mode of saving and the configuration
 settings, the acquired image can be saved with or without a companion file
 (:file:`*metadata.txt`):
 
@@ -24,24 +24,22 @@ settings, the acquired image can be saved with or without a companion file
 +===============+==========+==============+==============+====================+ 
 | Save as       |          |              |              |                    |
 | separate      |          |              |              |                    | 
-| image files   | Tiff     | Yes          | Full Support | MicromanagerReader |
+| image files   | TIFF     | Yes          | Full Support | MicromanagerReader |
 +---------------+----------+--------------+--------------+--------------------+ 
 |               |          |              | Pixel data   |                    |
 |               |          |              | plus minimal |                    |
-|               | ome-tiff | No           | metadata*    | OMETiffReader      |
+|               | OME-TIFF | No           | metadata*    | OMETiffReader      |
 | Save as image +----------+--------------+--------------+--------------------+
 | stack file    |          |              |              |                    |
-|               | ome-tiff | Yes**        | Full Support | MicromanagerReader |
+|               | OME-TIFF | Yes**        | Full Support | MicromanagerReader |
 +---------------+----------+--------------+--------------+--------------------+ 
 
 
-``*`` Minimal metadata: minimum amount of metadata required to validate
-OME-XML
+``*`` Not all acquisition metadata is converted to OME-XML.
 
 ``**`` A small change in the acquisition side facilitates better handling of
 the metadata from the Bio-Formats side:
-
-:menuselection:`Micro-Manager --> Options --> Select` create a metadata.txt
-file with Image Stack Files
+:menuselection:`Tools --> Options...` and then select "create metadata.txt
+file with Image Stack Files" in the text box.
 
 .. seealso:: `Micro-Manager User's Guide - Files on Disk <https://micro-manager.org/wiki/Micro-Manager_User%27s_Guide#Files_on_Disk>`_
