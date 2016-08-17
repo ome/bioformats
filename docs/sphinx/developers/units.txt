@@ -7,7 +7,7 @@ APIs have added support for units of measurement.  Previously, the
 units for various properties such as the physical size of an image,
 stage position, confocal pinhole size, light wavelengths etc. were
 fixed in the model.  This was however somewhat inflexible, and not
-appropriate for imaging modalities at widely different scales, and the
+appropriate for imaging modalities at widely different scales.  The
 solution to this was to add a unit of measurement to each of these
 properties.  The image size, for example, was previously specified to
 be stored in micrometers but may now be specified in any SI length
