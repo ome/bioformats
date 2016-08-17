@@ -126,11 +126,12 @@ Other general improvements include:
    - showinf improvements to preload format
    - tiffcomment now warns that it requires an ImageDescription tag to be
      present in the TIFF file
-* added more Java examples to the developer documentation
 * added many automated tests and improved FakeReader testing framework
 * documentation improvements include:
    - clarifying status of legacy Quicktime and ND2 readers
    - noting that the Gatan reader does not currently support stacks
+   - more Java examples added to the developer documentation
+   - new units page for developers
 
 The Data Model version 2016-06 has been released to introduce
 `Folders <http://blog.openmicroscopy.org/data-model/future-plans/2016/05/23/folders-upcoming/>`_,
