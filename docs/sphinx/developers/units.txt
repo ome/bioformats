@@ -16,10 +16,10 @@ permits the preservation of the unit used by a proprietary file format
 or used at acquisition time, for example nanometers, millimeters,
 meters, or inches or thousandths of an inch could be used instead.
 
-At the OME-XML level, the properties continue to use the old names.
-For example, the ``PhysicalSizeX`` attribute.  They are supplemented
-by an additional attribute with a ``Unit`` suffix, for example
-``PhysicalSizeXUnit``.
+At the OME-XML level, the properties continue to use the old attribute
+names. They are supplemented by an additional attribute with a
+``Unit`` suffix, for example the ``PhysicalSizeX`` attribute and its
+companion ``PhysicalSizeXUnit`` attribute.
 
 At the API level, two classes are used:
 
