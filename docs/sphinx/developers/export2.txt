@@ -1,3 +1,5 @@
+.. _writing_files_details:
+
 Further details on exporting raw pixel data to OME-TIFF files
 ============================================================= 
 

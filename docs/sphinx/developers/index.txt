@@ -35,6 +35,7 @@ Using Bio-Formats as a Java library
     :maxdepth: 1
 
     java-library
+    units
     export
     export2
     logging
