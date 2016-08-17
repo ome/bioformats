@@ -119,7 +119,7 @@ name pattern, then the other must be included too.  The only exception is if
 
       bfconvert -nolookup /path/to/input /path/to/output
 
-    .. versionadded:: 5.2.0
+    .. versionadded:: 5.2.1
 
 .. option:: -bigtiff
 
