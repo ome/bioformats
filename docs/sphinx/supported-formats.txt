@@ -1599,7 +1599,7 @@ Supported Formats
      - |no|
      - |no|
      - |yes|
-     - |no|
+     - |yes|
    * - :doc:`formats/zeiss-lsm`
      - .lsm, .mdb
      - |Outstanding|
