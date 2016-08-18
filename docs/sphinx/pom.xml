@@ -15,7 +15,7 @@
   <artifactId>formats-docs</artifactId>
 
   <name>Bio-Formats Sphinx documentation</name>
-  <description>Reader and writer implementations that are BSD-licensed.</description>
+  <description>Sphinx-generated Bio-Formats documentation.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
