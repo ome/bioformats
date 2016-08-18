@@ -97,6 +97,7 @@ public final class ImageConverter {
   private boolean stitch = false, separate = false, merge = false, fill = false;
   private boolean bigtiff = false, group = true;
   private boolean printVersion = false;
+  private boolean lookup = true;
   private boolean autoscale = false;
   private Boolean overwrite = null;
   private int series = -1;
@@ -141,6 +142,7 @@ public final class ImageConverter {
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-compression")) compression = args[++i];
         else if (args[i].equals("-nogroup")) group = false;
+        else if (args[i].equals("-nolookup")) lookup = false;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
@@ -220,8 +222,8 @@ public final class ImageConverter {
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
       "    [-bigtiff] [-compression codec] [-series series] [-map id]",
       "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-      "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
-      "    [-no-upgrade] in_file out_file",
+      "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
+      "    [-version] [-no-upgrade] in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -237,6 +239,7 @@ public final class ImageConverter {
       "      -range: specify range of planes to convert (inclusive)",
       "    -nogroup: force multi-file datasets to be read as individual" +
       "              files",
+      "   -nolookup: disable the conversion of lookup tables",
       "  -autoscale: automatically adjust brightness and contrast before",
       "              converting; this may mean that the original pixel",
       "              values are not preserved",
@@ -848,18 +851,20 @@ public final class ImageConverter {
   private void applyLUT(IFormatWriter writer)
     throws FormatException, IOException
   {
-    byte[][] lut = reader.get8BitLookupTable();
-    if (lut != null) {
-      IndexColorModel model = new IndexColorModel(8, lut[0].length,
-        lut[0], lut[1], lut[2]);
-      writer.setColorModel(model);
-    }
-    else {
-      short[][] lut16 = reader.get16BitLookupTable();
-      if (lut16 != null) {
-        Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
-          lut16, reader.isLittleEndian());
+    if (lookup) {
+      byte[][] lut = reader.get8BitLookupTable();
+      if (lut != null) {
+        IndexColorModel model = new IndexColorModel(8, lut[0].length,
+          lut[0], lut[1], lut[2]);
         writer.setColorModel(model);
+      }
+      else {
+        short[][] lut16 = reader.get16BitLookupTable();
+        if (lut16 != null) {
+          Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
+            lut16, reader.isLittleEndian());
+          writer.setColorModel(model);
+        }
       }
     }
   }
