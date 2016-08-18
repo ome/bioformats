@@ -70,7 +70,7 @@
         <configuration>
           <mainClass>ReadPhysicalSize</mainClass>
           <arguments>
-            <argument>{project.basedir}/developers/examples/test.fake</argument>
+            <argument>${project.basedir}/developers/examples/test.fake</argument>
           </arguments>
         </configuration>
       </plugin>
