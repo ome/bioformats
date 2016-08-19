@@ -36,6 +36,9 @@
  * #L%
  */
 
+#ifndef OME_XML_MODEL_ENUMS_UNITSFREQUENCYCONVERT_H
+#define OME_XML_MODEL_ENUMS_UNITSFREQUENCYCONVERT_H
+
 #include <boost/preprocessor.hpp>
 
 #include <ome/common/units/frequency.h>
@@ -43,15 +46,21 @@
 #include <ome/xml/model/enums/UnitsFrequency.h>
 #include <ome/xml/model/primitives/Quantity.h>
 
-using ome::xml::model::enums::UnitsFrequency;
-
-namespace
+namespace ome
 {
+  namespace xml
+  {
+    namespace model
+    {
+      namespace primitives
+      {
+        namespace detail
+        {
 
-  using namespace ome::common::units;
+          using namespace ::ome::common::units;
+          using ::ome::xml::model::enums::UnitsFrequency;
 
-  // For future use if portable (to replace the static property structs); tuples are enum name and unit quantity type
-#define FREQUENCY_PROPERTY_LIST                                            \
+#define OME_XML_MODEL_ENUMS_UNITSFREQUENCY_PROPERTY_LIST              \
   ((YOTTAHERTZ)(yottahertz_quantity))                                 \
   ((ZETTAHERTZ)(zettahertz_quantity))                                 \
   ((EXAHERTZ)(exahertz_quantity))                                     \
@@ -73,79 +82,73 @@ namespace
   ((ATTOHERTZ)(attohertz_quantity))                                   \
   ((ZEPTOHERTZ)(zeptohertz_quantity))                                 \
   ((YOCTOHERTZ)(yoctohertz_quantity))
-    
-  /**
-   * Map a given UnitsFrequency enum to the corresponding language types.
-   */
-  template<int>
-  struct FrequencyProperties;
-  
-#define FREQUENCY_UNIT_CASE(maR, maProperty, maType)                       \
+
+          /**
+           * Map a given UnitsFrequency enum to the corresponding language types.
+           */
+          template<int>
+          struct FrequencyProperties;
+
+#define OME_XML_MODEL_ENUMS_UNITSFREQUENCY_UNIT_CASE(maR, maProperty, maType) \
   template<>                                                            \
   struct FrequencyProperties<UnitsFrequency::BOOST_PP_SEQ_ELEM(0, maType)> \
   {                                                                     \
     typedef BOOST_PP_SEQ_ELEM(1, maType) quantity_type;                 \
   };
 
-  BOOST_PP_SEQ_FOR_EACH(FREQUENCY_UNIT_CASE, %%, FREQUENCY_PROPERTY_LIST)
+          BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSFREQUENCY_UNIT_CASE, %%, OME_XML_MODEL_ENUMS_UNITSFREQUENCY_PROPERTY_LIST)
 
-  // Convert two units
-  template<typename Q, int Src, int Dest>
-  Q
-  convert_src_dest(typename Q::value_type v,
-                   typename Q::unit_type dest)
-  {
-    typename FrequencyProperties<Dest>::quantity_type d(FrequencyProperties<Src>::quantity_type::from_value(v));
-    return Q(quantity_cast<typename Q::value_type>(d), dest);
-  }
+#undef OME_XML_MODEL_ENUMS_UNITSFREQUENCY_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSFREQUENCY_PROPERTY_LIST
 
-// No switch default to avoid -Wunreachable-code errors.
-// However, this then makes -Wswitch-default complain.  Disable
-// temporarily.
+          // Convert two units
+          template<typename Q, int Src, int Dest>
+          Q
+          frequency_convert_src_dest(typename Q::value_type v,
+                                     typename Q::unit_type  dest)
+          {
+            typename FrequencyProperties<Dest>::quantity_type d(FrequencyProperties<Src>::quantity_type::from_value(v));
+            return Q(quantity_cast<typename Q::value_type>(d), dest);
+          }
+
+          // No switch default to avoid -Wunreachable-code errors.
+          // However, this then makes -Wswitch-default complain.  Disable
+          // temporarily.
 #ifdef __GNUC__
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define DEST_UNIT_CASE(maR, maProperty, maType)                         \
-  case UnitsFrequency::maType:                                           \
+#define OME_XML_MODEL_ENUMS_UNITSFREQUENCY_DEST_UNIT_CASE(maR, maProperty, maType) \
+          case UnitsFrequency::maType:                                  \
   {                                                                     \
-    maProperty = convert_src_dest<Q, Src, UnitsFrequency::maType>(value, dest); \
+    maProperty = frequency_convert_src_dest<Q, Src, UnitsFrequency::maType>(value, dest); \
   }                                                                     \
   break;
 
-  template<typename Q, int Src>
-  Q
-  convert_dest(typename Q::value_type value,
-               typename Q::unit_type dest)
-  {
-    Q q;
+          template<typename Q, int Src>
+          Q
+          frequency_convert_dest(typename Q::value_type value,
+                                 typename Q::unit_type  dest)
+          {
+            Q q;
 
-    switch(dest)
-      {
-        BOOST_PP_SEQ_FOR_EACH(DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSFREQUENCY_VALUES);
-      }
+            switch(dest)
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSFREQUENCY_DEST_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSFREQUENCY_VALUES);
+              }
 
-    return q;
-  }
+            return q;
+          }
 
-#undef DEST_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSFREQUENCY_DEST_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
 #endif
 
-}
+        }
 
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-      namespace primitives
-      {
-        
         // No switch default to avoid -Wunreachable-code errors.
         // However, this then makes -Wswitch-default complain.  Disable
         // temporarily.
@@ -154,26 +157,33 @@ namespace ome
 #  pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 
-#define SRC_UNIT_CASE(maR, maProperty, maType)                          \
-        case UnitsFrequency::maType:                                     \
-          maProperty = convert_dest<Quantity<UnitsFrequency>, UnitsFrequency::maType>(quantity.getValue(), unit); \
+#define OME_XML_MODEL_ENUMS_UNITSFREQUENCY_SRC_UNIT_CASE(maR, maProperty, maType) \
+        case ome::xml::model::enums::UnitsFrequency::maType:            \
+          maProperty = detail::frequency_convert_dest<Quantity<ome::xml::model::enums::UnitsFrequency>, ome::xml::model::enums::UnitsFrequency::maType>(quantity.getValue(), unit); \
           break;
 
-        Quantity<UnitsFrequency>
-        convert(const Quantity<UnitsFrequency>&     quantity,
-                Quantity<UnitsFrequency>::unit_type unit)
+        /// @copydoc ome::xml::model::primitives::QuantityConverter
+        template<typename Value>
+        struct QuantityConverter<ome::xml::model::enums::UnitsFrequency, Value>
         {
-          Quantity<UnitsFrequency> q;
+          /// @copydoc ome::xml::model::primitives::QuantityConverter::operator()()
+          inline
+          Quantity<ome::xml::model::enums::UnitsFrequency, Value>
+          operator() (const Quantity<ome::xml::model::enums::UnitsFrequency, Value>&              quantity,
+                      typename Quantity<ome::xml::model::enums::UnitsFrequency, Value>::unit_type unit) const
+          {
+            Quantity<ome::xml::model::enums::UnitsFrequency, Value> q;
 
-          switch(quantity.getUnit())
-            {
-              BOOST_PP_SEQ_FOR_EACH(SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSFREQUENCY_VALUES);
-            }
+            switch(quantity.getUnit())
+              {
+                BOOST_PP_SEQ_FOR_EACH(OME_XML_MODEL_ENUMS_UNITSFREQUENCY_SRC_UNIT_CASE, q, OME_XML_MODEL_ENUMS_UNITSFREQUENCY_VALUES);
+              }
 
-          return q;
-        }
+            return q;
+          }
+        };
 
-#undef SRC_UNIT_CASE
+#undef OME_XML_MODEL_ENUMS_UNITSFREQUENCY_SRC_UNIT_CASE
 
 #ifdef __GNUC__
 #  pragma GCC diagnostic pop
@@ -183,3 +193,11 @@ namespace ome
     }
   }
 }
+
+#endif // OME_XML_MODEL_ENUMS_UNITSFREQUENCYCONVERT_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

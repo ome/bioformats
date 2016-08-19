@@ -154,11 +154,7 @@ namespace ome
            * @returns the new quantity.
            */
           inline Quantity&
-          operator+= (const Quantity& quantity)
-          {
-            this->value += convert_value(quantity, this->unit);
-            return *this;
-          }
+          operator+= (const Quantity& quantity);
 
           /**
            * Subtract a quantity from the quantity.
@@ -167,11 +163,7 @@ namespace ome
            * @returns the new quantity.
            */
           inline Quantity&
-          operator-= (const Quantity& quantity)
-          {
-            this->value -= convert_value(quantity, this->unit);
-            return *this;
-          }
+          operator-= (const Quantity& quantity);
 
           /**
            * Multiply the quantity by a value.
@@ -243,10 +235,7 @@ namespace ome
            * @returns true if the condition is true, else false.
            */
           inline bool
-          operator< (const Quantity& quantity) const
-          {
-            return this->value < convert_value(quantity, this->unit);
-          }
+          operator< (const Quantity& quantity) const;
 
           // Note operator> (const Quantity& value) const is
           // provided by Boost.Operators.
@@ -258,27 +247,37 @@ namespace ome
            * @returns true if the condition is true, else false.
            */
           inline bool
-          operator== (const Quantity& quantity) const
-          {
-            return this->value == convert_value(quantity, this->unit);
-          }
+          operator== (const Quantity& quantity) const;
 
         private:
-          /**
-           * Convert a quantity to a specific unit.
-           *
-           * @param quantity the quantity to convert.
-           * @param unit the unit to which to convert the quantity.
-           * @returns the converted quantity.
-           */
-          value_type
-          convert_value(const Quantity& quantity,
-                        unit_type       unit) const;
-
           /// Quantity value.
           value_type value;
           /// Quantity unit.
           unit_type unit;
+        };
+
+        /**
+         * Convert a quantity to a different unit.
+         *
+         * Helper to work around the lack of partial function template
+         * specialization.  You shouldn't need to use this directly;
+         * use the plain convert() function instead.
+         */
+        template<typename Unit, typename Value>
+        struct QuantityConverter
+        {
+          /**
+           * Convert quantity to another unit.
+           *
+           * @param quantity the quantity to convert.
+           * @param unit the unit to which to convert the quantity.
+           * @returns the converted quantity.
+           * @throws std::logic error if the unit systems are
+           * incompatible making conversion impossible.
+           */
+          Quantity<Unit, Value>
+          operator() (const Quantity<Unit, Value>&              quantity,
+                      typename Quantity<Unit, Value>::unit_type unit) const;
         };
 
         /**
@@ -290,17 +289,48 @@ namespace ome
          * @throws std::logic error if the unit systems are
          * incompatible making conversion impossible.
          */
-        template<typename T>
-        Quantity<T>
-        convert(const Quantity<T>&              quantity,
-                typename Quantity<T>::unit_type unit);
+        template<class Unit, typename Value>
+        inline
+        Quantity<Unit, Value>
+        convert(const Quantity<Unit, Value>&              quantity,
+                typename Quantity<Unit, Value>::unit_type unit)
+        {
+          QuantityConverter<Unit, Value> conv;
+          return conv(quantity, unit);
+        }
 
         template<class Unit, typename Value>
-        inline typename Quantity<Unit, Value>::value_type
-        Quantity<Unit, Value>::convert_value(const Quantity<Unit, Value>&              quantity,
-                                             typename Quantity<Unit, Value>::unit_type unit) const
+        inline
+        Quantity<Unit, Value>&
+        Quantity<Unit, Value>::operator+= (const Quantity<Unit, Value>& quantity)
         {
-          return convert<Quantity<Unit, Value> >(quantity, unit).getValue();
+          this->value += convert(quantity, this->unit).getValue();
+          return *this;
+        }
+
+        template<class Unit, typename Value>
+        inline
+        Quantity<Unit, Value>&
+        Quantity<Unit, Value>::operator-= (const Quantity<Unit, Value>& quantity)
+        {
+          this->value -= convert(quantity, this->unit).getValue();
+          return *this;
+        }
+
+        template<class Unit, typename Value>
+        inline
+        bool
+        Quantity<Unit, Value>::operator< (const Quantity<Unit, Value>& quantity) const
+        {
+          return this->value < convert(quantity, this->unit).getValue();
+        }
+
+        template<class Unit, typename Value>
+        inline
+        bool
+        Quantity<Unit, Value>::operator== (const Quantity<Unit, Value>& quantity) const
+        {
+          return this->value == convert(quantity, this->unit).getValue();
         }
 
         /**
