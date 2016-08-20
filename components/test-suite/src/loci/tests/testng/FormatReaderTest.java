@@ -2461,7 +2461,7 @@ public class FormatReaderTest {
   }
 
   @Test(groups = {"config"})
-  public void writeConfigFile() {
+  public void writeConfigFile() throws IOException {
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -2480,14 +2480,13 @@ public class FormatReaderTest {
       LOGGER.info("Generating configuration: {}", f);
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
-      reader.close();
 
       String cacheDir = configTree.getCacheDirectory();
       if (cacheDir != null) {
         Memoizer memo = new Memoizer(0, new File(cacheDir));
         memo.setId(reader.getCurrentFile());
         memo.close();
-        File memoFile = memo.getMemoFile();
+        File memoFile = memo.getMemoFile(reader.getCurrentFile());
         assert memo.isSavedToMemo();
         LOGGER.info("Saved memo file to  {}", memoFile);
       }
@@ -2495,6 +2494,8 @@ public class FormatReaderTest {
     catch (Throwable t) {
       LOGGER.info("", t);
       assert false;
+    } finally {
+      reader.close();
     }
   }
 
