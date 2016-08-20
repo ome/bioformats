@@ -121,6 +121,35 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
+  <target name="gen-cache" depends="compile"
+    description="generate config files for automated test suite">
+    <testng groups="cache" testname="Cache generation"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="Bio-Formats software test suite"
+      failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${basedir}"/><!-- logback.xml -->
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
+      <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
+      <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
   <target name="gen-config" depends="compile"
     description="generate config files for automated test suite">
     <testng groups="config" testname="Config generation"

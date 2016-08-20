@@ -2489,16 +2489,32 @@ public class FormatReaderTest {
       LOGGER.info("Generating configuration: {}", f);
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    } finally {
+      reader.close();
+    }
+  }
 
-      String cacheDir = configTree.getCacheDirectory();
-      if (cacheDir != null) {
-        Memoizer memo = new Memoizer(0, new File(cacheDir));
-        memo.setId(reader.getCurrentFile());
-        memo.close();
-        File memoFile = memo.getMemoFile(reader.getCurrentFile());
-        assert memo.isSavedToMemo();
-        LOGGER.info("Saved memo file to  {}", memoFile);
-      }
+  @Test(groups = {"cache"})
+  public void writeCacheFile() throws IOException {
+    setupReader();
+    if (!initFile(false)) return;
+    String cacheDir = configTree.getCacheDirectory();
+    if (cacheDir == null) {
+      LOGGER.info("No cache directory specified");
+      return;
+    }
+    String file = reader.getCurrentFile();
+    try {
+      Memoizer memo = new Memoizer(0, new File(cacheDir));
+      memo.setId(reader.getCurrentFile());
+      memo.close();
+      File memoFile = memo.getMemoFile(reader.getCurrentFile());
+      assert memo.isSavedToMemo();
+      LOGGER.info("Saved memo file to {}", memoFile);
     }
     catch (Throwable t) {
       LOGGER.info("", t);
