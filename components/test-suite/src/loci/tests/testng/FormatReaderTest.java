@@ -112,6 +112,7 @@ public class FormatReaderTest {
   private boolean skip = false;
   private Configuration config;
   private String omexmlDir = System.getProperty("testng.omexmlDirectory");
+  private String cacheDir  = System.getProperty("testng.cacheDirectory");
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -2480,6 +2481,16 @@ public class FormatReaderTest {
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
       reader.close();
+
+      String cacheDir = configTree.getCacheDirectory();
+      if (cacheDir != null) {
+        Memoizer memo = new Memoizer(0, new File(cacheDir));
+        memo.setId(reader.getCurrentFile());
+        memo.close();
+        File memoFile = memo.getMemoFile();
+        assert memo.isSavedToMemo();
+        LOGGER.info("Saved memo file to  {}", memoFile);
+      }
     }
     catch (Throwable t) {
       LOGGER.info("", t);
@@ -2515,7 +2526,6 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    // Remove external SlideBook6Reader class for testing purposes
     ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));

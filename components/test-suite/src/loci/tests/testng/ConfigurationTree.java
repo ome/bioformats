@@ -67,6 +67,10 @@ public class ConfigurationTree {
    */
   private String configDir;
 
+  /** Base directory on the file system associated with the memo files.
+   */
+  private String cacheDir;
+
   /**
    * Root of tree structure containing configuration data.
    * Each node's user object is a hashtable of key/value pairs.
@@ -95,6 +99,18 @@ public class ConfigurationTree {
    *
    */
   public ConfigurationTree(String rootDir, String configDir) {
+    this(rootDir, configDir, null);
+  }
+
+  /**
+   *  Constructs a new configuration tree rooted at the given directory in the
+   *  file system with a custom configuration directory anc cache directory.
+   *
+   *  @param rootDir a string specifying the root directory
+   *  @param configDir a string specifying the base configuration directory
+   *  @param cacheDir a string specifying the cache  directory
+   */
+  public ConfigurationTree(String rootDir, String configDir, String cacheDir) {
     if (rootDir == null) {
       throw new IllegalArgumentException("rootDir cannot be null.");
     }
@@ -111,6 +127,9 @@ public class ConfigurationTree {
       this.configDir = configLocation.getAbsolutePath();
     } else {
       this.rootDir = new File(rootDir).getAbsolutePath();
+    }
+    if (cacheDir != null) {
+      this.cacheDir = new File(cacheDir).getAbsolutePath();
     }
     root = new DefaultMutableTreeNode();
   }
@@ -129,6 +148,13 @@ public class ConfigurationTree {
    */
   public String getConfigDirectory() {
     return this.configDir;
+  }
+
+  /**
+   *  Returns the base directory holding the configuration files
+   */
+  public String getCacheDirectory() {
+    return this.cacheDir;
   }
 
   /**

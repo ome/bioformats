@@ -140,6 +140,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
       <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
+      <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>

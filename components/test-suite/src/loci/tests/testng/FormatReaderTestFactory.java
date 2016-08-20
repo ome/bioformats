@@ -118,16 +118,24 @@ public class FormatReaderTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
+      LOGGER.info("testng.directory = {}", baseDir);
 
       // check for an alternate configuration directory
       final String configDirProperty = "testng.configDirectory";
       String configDir = getProperty(configDirProperty);
-      LOGGER.info("testng.directory = {}", baseDir);
       if (configDir != null) {
         LOGGER.info("testng.configDirectory = {}", configDir);
       }
 
-      FormatReaderTest.configTree = new ConfigurationTree(baseDir, configDir);
+      // check for an alternate configuration directory
+      final String cacheDirProperty = "testng.cacheDirectory";
+      String cacheDir = getProperty(cacheDirProperty);
+      if (cacheDir != null) {
+        LOGGER.info("testng.cacheDirectory = {}", cacheDir);
+      }
+
+      FormatReaderTest.configTree = new ConfigurationTree(
+        baseDir, configDir, cacheDir);
     }
 
     // parse multiplier
@@ -151,7 +159,6 @@ public class FormatReaderTestFactory {
     LOGGER.info("testng.in-memory = {}", inMemory);
 
     // check for an alternate top level configuration file
-
     final String toplevelConfig = "testng.toplevel-config";
     String configFile = getProperty(toplevelConfig);
     if (configFile != null) {
