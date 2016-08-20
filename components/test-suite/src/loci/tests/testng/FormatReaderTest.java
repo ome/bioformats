@@ -2422,6 +2422,17 @@ public class FormatReaderTest {
       }
       memo.openBytes(0, 0, 0, 1, 1);
       memo.close();
+
+      String cacheDir = configTree.getCacheDirectory();
+      if (cacheDir != null) {
+          LOGGER.info("Loading memo from pre-cache");
+        memo = new Memoizer(0, new File(cacheDir));
+        memo.setId(reader.getCurrentFile());
+        if (!memo.isLoadedFromMemo()) {
+          result(testName, false, "Memo file could not be loaded");
+        }
+        memo.close();
+      }
       result(testName, true);
     }
     catch (Throwable t) {
