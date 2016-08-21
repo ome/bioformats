@@ -284,3 +284,24 @@ and pass this object directly to ``bfsave``::
 
 For more information about the methods to store the metadata, see the
 :javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
+
+Debugging Bio-Formats from MATLAB
+---------------------------------
+
+To debug Bio-Formats code when invoked from MATLAB, the following steps may
+be helpful if you are using Netbeans and Mac OS X:
+
+1) Invoke Matlab from the command line with the -jdb option:
+
+   ``/Applications/MATLAB_R2013b.app/bin/matlab -jdb``
+
+2) Find PID (Process ID) for MATLAB:
+
+   ``ps -ax | grep LAB``
+
+3) In Netbeans, select the required project (e.g. bioformats_package bundle),
+   set breakpoints then :menuselection:`Debug->Attach Debugger`. Change
+   `Connector` field to `ProcessAttach`, and `Process ID` field to PID output
+   from 2.
+
+4) Call java process from your MATLAB window as normal.
