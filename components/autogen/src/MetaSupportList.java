@@ -162,11 +162,12 @@ public class MetaSupportList {
     try {
       r.exec("import loci.formats.in." + handlerName);
     }
-    catch (ReflectException exc) { }
-    try {
-      r.exec("import loci.formats.out." + handlerName);
+    catch (ReflectException exc) {
+      try {
+        r.exec("import loci.formats.out." + handlerName);
+      }
+      catch (ReflectException e) { }
     }
-    catch (ReflectException exc) { }
     try {
       handler = (IFormatHandler) r.exec("new " + handlerName + "()");
       return handler.getFormat();
