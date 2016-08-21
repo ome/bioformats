@@ -821,7 +821,7 @@ public class ICSReader extends FormatReader {
     String line = reader.readString(NL);
     boolean signed = false;
 
-    StringBuffer textBlock = new StringBuffer();
+    final StringBuilder textBlock = new StringBuilder();
     double[] sizes = null;
 
     Double[] emWaves = null, exWaves = null;
@@ -1776,7 +1776,7 @@ public class ICSReader extends FormatReader {
     List<String> tokens = new ArrayList<String>();
     boolean inWhiteSpace = true;
     boolean withinQuotes = false;
-    StringBuffer token = null;
+    StringBuilder token = null;
     for (int i = 0; i < line.length(); ++i) {
       char c = line.charAt(i);
       if (Character.isWhitespace(c) || c == 0x04) {
@@ -1801,7 +1801,7 @@ public class ICSReader extends FormatReader {
         if (inWhiteSpace) {
           inWhiteSpace = false;
           // start a new token string
-          token = new StringBuffer();
+          token = new StringBuilder();
         }
         // build token string
         token.append(c);
@@ -1834,7 +1834,7 @@ public class ICSReader extends FormatReader {
    * Builds a string from a list of tokens.
    */
   private String concatenateTokens(String[] tokens, int start, int stop) {
-    StringBuffer returnValue = new StringBuffer();
+    final StringBuilder returnValue = new StringBuilder();
     for (int i = start; i < tokens.length && i < stop; ++i) {
       returnValue.append(tokens[i]);
       if (i < stop - 1) {

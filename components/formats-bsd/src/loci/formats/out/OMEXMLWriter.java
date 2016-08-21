@@ -33,7 +33,8 @@
 package loci.formats.out;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.services.DependencyException;
@@ -60,7 +61,6 @@ import loci.formats.services.OMEXMLServiceImpl;
 import ome.xml.meta.OMEXMLMetadataRoot;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OMEXMLWriter is the file format writer for OME-XML files.
@@ -69,7 +69,7 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- Fields --
 
-  private Vector<String> xmlFragments;
+  private List<String> xmlFragments;
   private String currentFragment;
   private OMEXMLService service;
 
@@ -114,7 +114,7 @@ public class OMEXMLWriter extends FormatWriter {
       throw new FormatException(se);
     }
 
-    xmlFragments = new Vector<String>();
+    xmlFragments = new ArrayList<String>();
     currentFragment = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     XMLTools.parseXML(xml, new OMEHandler());
 
@@ -185,7 +185,7 @@ public class OMEXMLWriter extends FormatWriter {
         interleaved);
       byte[] encodedPix = compress(b);
 
-      StringBuffer plane = new StringBuffer("\n<BinData ");
+      final StringBuilder plane = new StringBuilder("\n<BinData ");
       plane.append(namespace);
       plane.append(" Length=\"");
       plane.append(planeSize);
@@ -270,7 +270,7 @@ public class OMEXMLWriter extends FormatWriter {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      StringBuffer toAppend = new StringBuffer("\n<");
+      final StringBuilder toAppend = new StringBuilder("\n<");
       toAppend.append(XMLTools.escapeXML(qName));
       for (int i=0; i<attributes.getLength(); i++) {
         toAppend.append(" ");

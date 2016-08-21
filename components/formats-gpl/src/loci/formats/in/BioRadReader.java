@@ -1128,7 +1128,7 @@ public class BioRadReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer(100);
+      final StringBuilder sb = new StringBuilder(100);
       sb.append("level=");
       sb.append(level);
       sb.append("; num=");

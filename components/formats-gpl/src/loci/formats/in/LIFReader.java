@@ -1139,7 +1139,7 @@ public class LIFReader extends FormatReader {
       if (suffix == null || suffix.trim().length() == 0) {
         suffix = root.getAttribute("Description");
       }
-      StringBuffer key = new StringBuffer();
+      final StringBuilder key = new StringBuilder();
       final Iterator<String> nameStackIterator = nameStack.descendingIterator();
       while (nameStackIterator.hasNext()) {
         final String k = nameStackIterator.next();
@@ -1620,7 +1620,7 @@ public class LIFReader extends FormatReader {
       else if (attribute.equals("Objective")) {
         StringTokenizer tokens = new StringTokenizer(variant, " ");
         boolean foundMag = false;
-        StringBuffer model = new StringBuffer();
+        final StringBuilder model = new StringBuilder();
         while (!foundMag) {
           String token = tokens.nextToken();
           int x = token.indexOf("x");
@@ -2190,7 +2190,7 @@ public class LIFReader extends FormatReader {
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
-          StringBuffer points = new StringBuffer();
+          final StringBuilder points = new StringBuilder();
           for (int i=0; i<x.size(); i++) {
             points.append(x.get(i).doubleValue() + roiX);
             points.append(",");

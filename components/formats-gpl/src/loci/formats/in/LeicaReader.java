@@ -1040,7 +1040,7 @@ public class LeicaReader extends FormatReader {
     }
 
     String[] tokens = name.split("_");
-    StringBuffer buf = new StringBuffer();
+    final StringBuilder buf = new StringBuilder();
     for (int p=1; p<tokens.length; p++) {
       String lcase = tokens[p].toLowerCase();
       if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
@@ -1375,7 +1375,7 @@ public class LeicaReader extends FormatReader {
         }
         else if (tokens[2].equals("Objective")) {
           String[] objectiveData = data.split(" ");
-          StringBuffer model = new StringBuffer();
+          final StringBuilder model = new StringBuilder();
           String mag = null, na = null;
           String immersion = null, correction = null;
           for (int i=0; i<objectiveData.length; i++) {

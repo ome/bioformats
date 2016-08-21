@@ -35,8 +35,8 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -47,6 +47,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 /**
  * MNGReader is the file format reader for Multiple-image Network Graphics
@@ -60,7 +63,7 @@ public class MNGReader extends BIFormatReader {
 
   // -- Fields --
 
-  private Vector<SeriesInfo> seriesInfo;
+  private List<SeriesInfo> seriesInfo;
 
   private boolean isJNG = false;
 
@@ -122,7 +125,7 @@ public class MNGReader extends BIFormatReader {
 
     LOGGER.info("Verifying MNG format");
 
-    seriesInfo = new Vector<SeriesInfo>();
+    seriesInfo = new ArrayList<SeriesInfo>();
     seriesInfo.add(new SeriesInfo());
 
     in.skipBytes(12);
@@ -135,7 +138,7 @@ public class MNGReader extends BIFormatReader {
 
     in.skipBytes(32);
 
-    Vector<Long> stack = new Vector<Long>();
+    final List<Long> stack = new ArrayList<Long>();
     int maxIterations = 0;
     int currentIteration = 0;
 
@@ -184,8 +187,8 @@ public class MNGReader extends BIFormatReader {
 
     // easiest way to get image dimensions is by opening the first plane
 
-    Hashtable<String, Vector> seriesOffsets = new Hashtable<String, Vector>();
-    Hashtable<String, Vector> seriesLengths = new Hashtable<String, Vector>();
+    final ListMultimap<String, Long> seriesOffsets = ArrayListMultimap.create();
+    final ListMultimap<String, Long> seriesLengths = ArrayListMultimap.create();
 
     SeriesInfo info = seriesInfo.get(0);
     addGlobalMeta("Number of frames", info.offsets.size());
@@ -197,19 +200,8 @@ public class MNGReader extends BIFormatReader {
       BufferedImage img = readImage(end);
       String data = img.getWidth() + "-" + img.getHeight() + "-" +
         img.getRaster().getNumBands() + "-" + AWTImageTools.getPixelType(img);
-      Vector<Long> v = new Vector<Long>();
-      if (seriesOffsets.containsKey(data)) {
-        v = seriesOffsets.get(data);
-      }
-      v.add(new Long(offset));
-      seriesOffsets.put(data, v);
-
-      v = new Vector();
-      if (seriesLengths.containsKey(data)) {
-        v = seriesLengths.get(data);
-      }
-      v.add(new Long(end));
-      seriesLengths.put(data, v);
+      seriesOffsets.put(data, offset);
+      seriesLengths.put(data, end);
     }
 
     String[] keys = seriesOffsets.keySet().toArray(new String[0]);
@@ -277,8 +269,8 @@ public class MNGReader extends BIFormatReader {
   // -- Helper class --
 
   private class SeriesInfo {
-    public Vector<Long> offsets = new Vector<Long>();
-    public Vector<Long> lengths = new Vector<Long>();
+    public List<Long> offsets = new ArrayList<Long>();
+    public List<Long> lengths = new ArrayList<Long>();
   }
 
 }

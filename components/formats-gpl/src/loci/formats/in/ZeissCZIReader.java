@@ -2688,7 +2688,7 @@ public class ZeissCZIReader extends FormatReader {
     }
     nameStack.push(name);
 
-    StringBuffer key = new StringBuffer();
+    final StringBuilder key = new StringBuilder();
     String k = null;
     Iterator<String> keys = nameStack.descendingIterator();
     while (keys.hasNext()) {

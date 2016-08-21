@@ -718,7 +718,7 @@ public class ScanrReader extends FormatReader {
     private int nextXPos = 0;
     private int nextYPos = 0;
 
-    private StringBuffer currentValue = new StringBuffer();
+    private final StringBuilder currentValue = new StringBuilder();
 
     // -- DefaultHandler API methods --
 

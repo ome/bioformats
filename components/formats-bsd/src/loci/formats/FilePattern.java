@@ -488,7 +488,7 @@ public class FilePattern {
       q++;
     }
 
-    StringBuffer sb = new StringBuffer(dir);
+    final StringBuilder sb = new StringBuilder(dir);
 
     for (int i=0; i<q; i++) {
       // Get the list of matching files. For instance, if name is
@@ -594,7 +594,7 @@ public class FilePattern {
     String dir =
       names[0].substring(0, names[0].lastIndexOf(File.separator) + 1);
 
-    StringBuffer pattern = new StringBuffer();
+    final StringBuilder pattern = new StringBuilder();
     pattern.append(Pattern.quote(dir));
 
     for (int i=0; i<names.length; i++) {
@@ -735,7 +735,7 @@ public class FilePattern {
     }
     String sb = b.toString();
     String se = e.toString();
-    StringBuffer bounds = new StringBuffer("<");
+    final StringBuilder bounds = new StringBuilder("<");
     if (fixed) {
       int zeroes = se.length() - sb.length();
       for (int i=0; i<zeroes; i++) bounds.append("0");

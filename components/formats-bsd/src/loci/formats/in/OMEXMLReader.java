@@ -34,7 +34,8 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.CBZip2InputStream;
 import loci.common.RandomAccessInputStream;
@@ -74,9 +75,9 @@ public class OMEXMLReader extends FormatReader {
   // -- Fields --
 
   // compression value and offset for each BinData element
-  private Vector<BinData> binData;
-  private Vector<Long> binDataOffsets;
-  private Vector<String> compression;
+  private List<BinData> binData;
+  private List<Long> binDataOffsets;
+  private List<String> compression;
 
   private String omexml;
   private boolean hasSPW = false;
@@ -226,9 +227,9 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
     in.setEncoding("ASCII");
-    binData = new Vector<BinData>();
-    binDataOffsets = new Vector<Long>();
-    compression = new Vector<String>();
+    binData = new ArrayList<BinData>();
+    binDataOffsets = new ArrayList<Long>();
+    compression = new ArrayList<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
     try {
@@ -334,12 +335,12 @@ public class OMEXMLReader extends FormatReader {
   // -- Helper class --
 
   class OMEXMLHandler extends BaseHandler {
-    private StringBuffer xmlBuffer;
+    private final StringBuilder xmlBuffer;
     private String currentQName;
     private Locator locator;
 
     public OMEXMLHandler() {
-      xmlBuffer = new StringBuffer();
+      xmlBuffer = new StringBuilder();
     }
 
     @Override

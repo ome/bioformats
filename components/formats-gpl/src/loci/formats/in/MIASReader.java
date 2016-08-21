@@ -121,7 +121,7 @@ public class MIASReader extends FormatReader {
   public int getRequiredDirectories(String[] files)
     throws FormatException, IOException
   {
-    StringBuffer commonParent = new StringBuffer();
+    final StringBuilder commonParent = new StringBuilder();
 
     int dirCount = 0;
 

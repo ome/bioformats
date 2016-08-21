@@ -233,7 +233,7 @@ public class PCORAWReader extends FormatReader {
           store.setDetectorSettingsBinning(getBinning(value), 0, 0);
         }
         else if (key.equals("Comment")) {
-          StringBuffer description = new StringBuffer();
+          final StringBuilder description = new StringBuilder();
           for (int j=i + 1; j<lines.length; j++) {
             lines[j] = lines[j].trim();
             if (lines[j].length() > 0) {

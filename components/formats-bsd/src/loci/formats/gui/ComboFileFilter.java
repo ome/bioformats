@@ -139,7 +139,7 @@ public class ComboFileFilter extends FileFilter
   /** Gets a string representation of this file filter. */
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer("ComboFileFilter: ");
+    final StringBuilder sb = new StringBuilder("ComboFileFilter: ");
     sb.append(desc);
     for (int i=0; i<filts.length; i++) {
       sb.append("\n\t");
