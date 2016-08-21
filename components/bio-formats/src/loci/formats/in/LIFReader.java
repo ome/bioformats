@@ -1519,10 +1519,14 @@ public class LIFReader extends FormatReader {
         refractiveIndex[image] = new Double(variant);
       }
       else if (attribute.equals("XPos")) {
-        posX[image] = new Double(variant);
+        double x = Double.parseDouble(variant);
+        x *= (1000.0 * 1000.0);
+        posX[image] = new Double(x);
       }
       else if (attribute.equals("YPos")) {
-        posY[image] = new Double(variant);
+        double y = Double.parseDouble(variant);
+        y *= (1000.0 * 1000.0);
+        posY[image] = new Double(y);
       }
       else if (attribute.equals("ZPos")) {
         posZ[image] = new Double(variant);
