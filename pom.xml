@@ -5,6 +5,13 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.scijava</groupId>
+    <artifactId>pom-scijava</artifactId>
+    <version>1.140</version>
+    <relativePath />
+  </parent>
+
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
   <version>5.0.9-SNAPSHOT</version>
@@ -39,19 +46,13 @@
   </modules>
 
   <properties>
-    <!-- If two artifacts on the classpath use two different versions of the
-         same dependency, behavior is inconsistent at best, and often broken.
-         The following properties facilitate consistency of dependency
-         versions between various projects in the SciJava software stack.
-         When possible, we advise using the relevant groupId and version
-         properties for your dependencies rather than hardcoding them. -->
+    <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
 
     <vcs.revision>${revision}</vcs.revision>
     <release.version>5.0.9-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2014</year>
     <project.rootdir>${basedir}</project.rootdir>
-    <imagej1.version>1.48s</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
@@ -63,22 +64,9 @@
     <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
     <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
     <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
-
-    <!-- NB: Avoid platform encoding warning when copying resources. -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <!-- NB: Specify formatting of the maven.build.timestamp property. -->
-    <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
-
-    <!-- NB: Override argLine property for extra maven-surefire-plugin args. -->
-    <argLine/>
   </properties>
 
   <build>
-    <!-- It is nice for "mvn" with no arguments to do something reasonable. -->
-    <defaultGoal>install</defaultGoal>
-
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
     <resources>
@@ -118,17 +106,10 @@
         </excludes>
       </testResource>
     </testResources>
-
     <plugins>
-      <!-- Create -sources.jar when building. -->
       <plugin>
-        <artifactId>maven-source-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
       </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -240,14 +221,16 @@
           </execution>
         </executions>
       </plugin>
-
-      <!-- Add Implementation-Build entry to JAR manifest. -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
       </plugin>
-
-      <!-- Enable 'license:' goals. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
@@ -257,8 +240,8 @@
   - Board of Regents of the University of Wisconsin-Madison
   - Glencoe Software, Inc.
   - University of Dundee</organizationName>
-            <!-- NB: Avoid stomping on variant copyright holders. -->
-            <canUpdateCopyright>false</canUpdateCopyright>
+          <!-- NB: Avoid stomping on variant copyright holders. -->
+          <canUpdateCopyright>false</canUpdateCopyright>
           <roots>
             <root>src</root>
             <root>target/generated-sources</root>
@@ -271,234 +254,8 @@
         </configuration>
       </plugin>
     </plugins>
-
-    <!-- We use wagon-webdav-jackrabbit 1.0 for deploys, since it is
-         compatible with both Maven 2.2.x and Maven 3.0.x cross-platform. -->
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>1.0</version>
-      </extension>
-    </extensions>
-
     <pluginManagement>
       <plugins>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.4</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <!-- Require the Java 6 platform. -->
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.8</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.1</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.1</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
-          <!-- Always add classpath to JAR manifests. -->
-          <configuration>
-            <archive>
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              </manifest>
-              <manifestEntries>
-                <!-- Add SCM revision from buildnumber plugin, if available. -->
-                <Implementation-Build>${buildNumber}</Implementation-Build>
-                <!-- Add a formatted timestamp for the build. -->
-                <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
-              </manifestEntries>
-            </archive>
-            <excludes>
-              <exclude>**/*.cpp</exclude>
-              <exclude>**/*.h</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <!-- NB: The same version declaration and configuration block also
-               appears in the <reporting> section, and must be kept in sync. -->
-          <version>2.9.1</version>
-          <configuration>
-            <javadocDirectory>${project.basedir}/src</javadocDirectory>
-            <maxmemory>1024m</maxmemory>
-            <!-- Workaround for javadoc bug when classes in the default
-                 package access classes from non-default packages. See:
-                 http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
-            <use>false</use>
-            <links>
-              <!-- Java 6 -->
-              <link>http://docs.oracle.com/javase/6/docs/api/</link>
-
-              <!-- ImageJ1 -->
-              <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
-            </links>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.2</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.2</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.scm</groupId>
-              <artifactId>maven-scm-provider-gitexe</artifactId>
-              <version>1.9</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
-          <!-- Build source artifact in addition to main artifact. -->
-          <executions>
-            <execution>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.16</version>
-          <!-- Make sure that:
-               A) unit tests run with sufficient RAM allocated;
-               B) unit tests do not pop a Java dock icon on OS X;
-               C) additional args can be given via argLine property;
-
-               Sometimes, one needs to pass JVM options to the JVM
-               running the unit tests, such as -verbose:class or
-               -Djava.awt.headless=true.
-
-               Unfortunately, maven-surefire does not expose a
-               command-line interface to do so, therefore let's
-               simulate it by re-using the property 'argLine' to
-               specify those options. -->
-          <configuration>
-            <argLine>-Xms512m -Xmx512m -Dapple.awt.UIElement="true" ${argLine}</argLine>
-          </configuration>
-        </plugin>
-
-        <!-- Build Number Maven plugin -
-             http://mojo.codehaus.org/buildnumber-maven-plugin/
-             This plugin embeds a build number in the JAR manifest. -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>1.2</version>
-          <!-- Record SCM revision in manifest. -->
-          <executions>
-            <execution>
-              <phase>validate</phase>
-              <goals>
-                <goal>create</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-            <revisionOnScmFailure>UNKNOWN</revisionOnScmFailure>
-          </configuration>
-        </plugin>
-
-        <!-- Exec Maven plugin -
-        http://mojo.codehaus.org/exec-maven-plugin/
-        This plugin launches a Java class using Maven. -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-        </plugin>
-
-        <!-- License Maven plugin -
-             http://mojo.codehaus.org/license-maven-plugin/
-             This plugin manages project licenses and source file headers. -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>1.6</version>
-          <configuration>
-            <projectName>${project.description}</projectName>
-            <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-            <canUpdateDescription>true</canUpdateDescription>
-            <canUpdateCopyright>true</canUpdateCopyright>
-            <extraExtensions>
-              <bsh>java</bsh>
-              <config>properties</config>
-              <ijm>java</ijm>
-            </extraExtensions>
-          </configuration>
-        </plugin>
-
-        <!-- Versions Maven plugin -
-             http://mojo.codehaus.org/versions-maven-plugin/
-             Check for new plugin versions using
-             "mvn versions:display-plugin-updates" -->
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-
-        <!-- Eclipse-specific configuration
-
-             With a recent version of m2e, Eclipse's Maven binding, it is no
-             longer enough to configure plugins; they will be ignored by
-             default. But we really want the buildnumber and the jar plugin to
-             do their job. So now we have to add lifecycle mappings in addition
-             to configuring the plugins.
-
-             Let's hope that m2e remains the only IDE Maven binding that
-             requires such a lot of additional work just to get the same result
-             as plain Maven would produce out of the box. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -519,51 +276,6 @@
                     <ignore />
                   </action>
                 </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <versionRange>[1.0,)</versionRange>
-                    <goals>
-                      <goal>create</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute>
-                      <runOnIncremental>true</runOnIncremental>
-                      <runOnConfiguration>true</runOnConfiguration>
-                    </execute>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <versionRange>[2.0,)</versionRange>
-                    <goals>
-                      <goal>jar</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute>
-                      <runOnIncremental>true</runOnIncremental>
-                      <runOnConfiguration>true</runOnConfiguration>
-                    </execute>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>net.imagej</groupId>
-                    <artifactId>imagej-maven-plugin</artifactId>
-                    <versionRange>[0.1.0,)</versionRange>
-                    <goals>
-                      <goal>set-rootdir</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
@@ -574,41 +286,14 @@
 
   <reporting>
     <plugins>
-      <!-- Generate javadocs as part of site generation. -->
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <!-- NB: The following version declaration and configuration block
-             are fully replicated from the pluginManagement section. This
-             is necessary because many versions of maven-site-plugin
-             (including 3.3) do not respect the pluginManagement values.
-             See: http://jira.codehaus.org/browse/MSITE-443
-             While the maven-site-plugin documentation states that it
-             "search[es] the same groupId/artifactId in the
-             build.pluginManagement.plugins section", this claim
-             unfortunately does not seem to reflect reality. -->
-        <version>2.9.1</version>
         <configuration>
           <javadocDirectory>${project.basedir}/src</javadocDirectory>
-          <maxmemory>1024m</maxmemory>
-          <!-- Workaround for javadoc bug when classes in the default
-               package access classes from non-default packages. See:
-               http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
-          <use>false</use>
-          <links>
-            <!-- Java 6 -->
-            <link>http://docs.oracle.com/javase/6/docs/api/</link>
-
-            <!-- ImageJ1 -->
-            <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
-          </links>
         </configuration>
       </plugin>
     </plugins>
   </reporting>
-
-  <prerequisites>
-    <maven>2.2.1</maven>
-  </prerequisites>
 
   <organization>
     <name>Open Microscopy Environment</name>
@@ -705,72 +390,5 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
   </distributionManagement>
-
-  <profiles>
-    <!-- Build test artifact when tests are present. -->
-    <profile>
-      <id>test-jar</id>
-      <activation>
-        <file>
-          <!-- NB: Cannot use ${project.build.testSourceDirectory} because
-               Maven only limitedly interpolates this section of the POM.
-               See: http://maven.apache.org/pom.html#Activation -->
-          <exists>${basedir}/src/test/java</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>test-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Run integration tests when "-P run-its" is passed.
-         This works using the maven-invoker-plugin. -->
-    <profile>
-      <id>run-its</id>
-      <build>
-        <defaultGoal>integration-test</defaultGoal>
-        <plugins>
-          <plugin>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.8</version>
-            <configuration>
-              <debug>${invoker.debug}</debug>
-              <showErrors>true</showErrors>
-              <streamLogs>true</streamLogs>
-              <projectsDirectory>src/it</projectsDirectory>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <preBuildHookScript>setup.bsh</preBuildHookScript>
-              <postBuildHookScript>verify.bsh</postBuildHookScript>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
