@@ -1,11 +1,13 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
- *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -37,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-09-10 13:40:25-0400
+ * Created by rleigh via xsd-fu on 2013-02-04 15:52:37.542053
  *
  *-----------------------------------------------------------------------------
  */
