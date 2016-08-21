@@ -522,8 +522,8 @@ public class ImportProcess implements StatusReporter {
 
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
-    if (options.isAutoscale() || FormatTools.isFloatingPoint(r.getPixelType()))
-    {
+
+    if (options.isAutoscale() || FormatTools.isFloatingPoint(r)) {
       r = minMaxCalculator = new MinMaxCalculator(r);
     }
     if (options.doStitchTiles()) {
