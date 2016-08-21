@@ -2,7 +2,7 @@
  * #%L
  * # Bio-Formats C++ libraries (test infrastructure)
  * %%
- * Copyright © 2006 - 2014 Open Microscopy Environment:
+ * Copyright © 2006 - 2015 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee

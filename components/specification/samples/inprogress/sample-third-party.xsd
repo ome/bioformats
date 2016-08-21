@@ -2,7 +2,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2011 Open Microscopy Environment
+	# Copyright (C) 2011 - 2015 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -33,7 +33,7 @@
 				Open Microscopy Environment
 				OME Sample Third Party
 				Author: Andrew J Patterson
-				Copyright (C) 2011 Open Microscopy Environment
+				Copyright (C) 2011 - 2015 Open Microscopy Environment
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
