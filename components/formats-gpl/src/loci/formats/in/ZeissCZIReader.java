@@ -2496,9 +2496,9 @@ public class ZeissCZIReader extends FormatReader {
           String y = position.getAttribute("Y");
           String z = position.getAttribute("Z");
 
-          Length xPos = FormatTools.getPhysicalSizeX(DataTools.parseDouble(x), UNITS.REFERENCEFRAME);
-          Length yPos = FormatTools.getPhysicalSizeY(DataTools.parseDouble(y), UNITS.REFERENCEFRAME);
-          Length zPos = FormatTools.getPhysicalSizeZ(DataTools.parseDouble(z), UNITS.REFERENCEFRAME);
+          Length xPos = FormatTools.getStagePosition(DataTools.parseDouble(x), UNITS.REFERENCEFRAME);
+          Length yPos = FormatTools.getStagePosition(DataTools.parseDouble(y), UNITS.REFERENCEFRAME);
+          Length zPos = FormatTools.getStagePosition(DataTools.parseDouble(z), UNITS.REFERENCEFRAME);
 
           int numTiles = (tilesX == null || tilesY == null) ? 0 : tilesX * tilesY;
           for (int tile=0; tile<numTiles; tile++) {
