@@ -211,8 +211,7 @@ public class FilePatternDialog extends ImporterDialog {
       }
     }
     else if (useRanges) {
-      String pattern =
-        originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
+      String pattern = "";
       for (int i=0; i<counts.length; i++) {
         BigInteger first = new BigInteger(firsts[i]);
         BigInteger fileCount = new BigInteger(counts[i]);
