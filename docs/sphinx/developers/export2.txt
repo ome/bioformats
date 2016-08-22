@@ -1,3 +1,5 @@
+.. _writing_files_details:
+
 Further details on exporting raw pixel data to OME-TIFF files
 ============================================================= 
 
@@ -57,10 +59,18 @@ We populate that metadata as follows:
       omexml.setPixelsSizeT(new PositiveInteger(timepointCount), 0);
 
       for (int channel=0; channel<channelCount; channel++) {
-       omexml.setChannelID("Channel:0:" + channel, 0, channel);
-       omexml.setChannelSamplesPerPixel(new PositiveInteger(samplesPerChannel),
-       0, channel);
-       }
+        omexml.setChannelID("Channel:0:" + channel, 0, channel);
+        omexml.setChannelSamplesPerPixel(new PositiveInteger(samplesPerChannel),
+          0, channel);
+      }
+      
+      Unit<Length> unit = UNITS.MICROMETER;
+      Length physicalSizeX = new Length(1.0, unit);
+      Length physicalSizeY = new Length(1.5, unit);
+      Length physicalSizeZ = new Length(2, unit);
+      omexml.setPixelsPhysicalSizeX(physicalSizeX, 0);
+      omexml.setPixelsPhysicalSizeY(physicalSizeY, 0);
+      omexml.setPixelsPhysicalSizeZ(physicalSizeZ, 0);
 
 There is much more metadata that can be stored; please see the Javadoc for
 loci.formats.meta.MetadataStore for a complete list.

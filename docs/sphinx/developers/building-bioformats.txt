@@ -114,11 +114,11 @@ and JAR dependencies (stored in the Maven repository in
 :file:`~/.m2/repository`) on the build path, depending on which projects are
 currently open.
 
-We recommend using Eclipse 4.3 (Kepler), specifically -
+We recommend using Eclipse 4.3 (Kepler) or later, specifically -
 "Eclipse IDE for Java developers". It comes with m2e installed
 (http://eclipse.org/downloads/compare.php?release=kepler).
 
-You can then import the Bio-Formats source by choosing
+You can import the Bio-Formats source by choosing
 :menuselection:`File --> Import --> Existing Maven Projects` from the menu
 and browsing to the top-level folder of your Bio-Formats working copy.
 Alternatively, run the Eclipse Maven target with :command:`mvn

@@ -62,7 +62,7 @@ sphinx_html()
 {
     (
         cd docs/sphinx
-        ant -Dsphinx.warnopts=$SPHINXOPTS html
+        ant -Dsphinx.warnopts=-W html
      )
  }
 

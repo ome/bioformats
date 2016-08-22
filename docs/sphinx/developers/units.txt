@@ -1,0 +1,52 @@
+Units of measurement
+====================
+
+Since Bio-Formats 5.1 and the adoption of the 2015-01 OME Data Model,
+the data model and the corresponding Bio-Formats model and metadata
+APIs have added support for units of measurement.  Previously, the
+units for various properties such as the physical size of an image,
+stage position, confocal pinhole size, light wavelengths etc. were
+fixed in the model.  This was however somewhat inflexible, and not
+appropriate for imaging modalities at widely different scales.  The
+solution to this was to add a unit of measurement to each of these
+properties.  The image size, for example, was previously specified to
+be stored in micrometers but may now be specified in any SI length
+unit of choice, or one of the supported non-SI length units.  This
+permits the preservation of the unit used by a proprietary file format
+or used at acquisition time, for example nanometers, millimeters,
+meters, or inches or thousandths of an inch could be used instead.
+
+At the OME-XML level, the properties continue to use the old attribute
+names. They are supplemented by an additional attribute with a
+``Unit`` suffix, for example the ``PhysicalSizeX`` attribute and its
+companion ``PhysicalSizeXUnit`` attribute.
+
+At the API level, two classes are used:
+
+``Unit<T>``
+  represents a unit system for a given dimension such as length, pressure or time.
+``Quantity``
+  represents a value and unit in a given unit system; this is
+  subclassed for each of the supported dimensions such as ``Length``,
+  ``Pressure`` etc.  For example the ``Length`` class could represent
+  the value and unit of 5.3 µm and the ``Pressure`` class 956 mbar.
+
+All of the model and metadata APIs pass ``Quantity`` objects in place
+of raw numerical values.  Updating your code will require replacing
+the use of raw values with quantities.  Where your code needs to deal
+with the quantity in a specific unit, for example µm, you will need to
+perform an explicit unit conversion to transform the value to the
+required unit.
+
+The three situations you will need to deal with are:
+
+- getting a quantity from a ``get`` method in the API
+- converting a quantity to a desired unit
+- setting a quantity with a ``set`` method in the API (possibly also
+  requiring the creation of a quantity)
+
+Examples of how to use units and quantities for these purposes are
+shown in the sections :ref:`reading_files` (``ReadPhysicalSize``
+example which uses ``getPixelsPhysicalSize`` and also demonstrates
+unit conversion) and :ref:`writing_files_details`
+(``setPixelsPhysicalSize``).

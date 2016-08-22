@@ -35,9 +35,12 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 import loci.common.Region;
 import loci.formats.codec.CodecOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -142,6 +145,32 @@ public abstract class WriterWrapper implements IFormatWriter {
     wrapperCopy.setFramesPerSecond(rate);
     wrapperCopy.setCompression(compress);
     return wrapperCopy;
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  @Override
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    return writer.getSupportedMetadataLevels();
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  @Override
+  public MetadataOptions getMetadataOptions() {
+    return writer.getMetadataOptions();
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    writer.setMetadataOptions(options);
   }
 
   // -- IFormatWriter API methods --

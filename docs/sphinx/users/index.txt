@@ -121,6 +121,7 @@ Visualization and analysis applications
     imago/index
     iqm/index
     macnif/index
+    micromanager/index
     mipav/index
     vaa3d/index
     visbio/index

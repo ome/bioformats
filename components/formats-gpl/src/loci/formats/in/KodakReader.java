@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -234,9 +236,18 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("CCD Temperature")) {
-        Double temp = new Double(value.substring(0, value.indexOf(" ")));
-        store.setImagingEnvironmentTemperature(
+        Double temp;
+        Matcher hexMatcher = Pattern.compile("0x([0-9A-F]+)").matcher(value);
+        if (hexMatcher.matches()) {
+          // CCD temperature stored as a hexadecimal string such as "0xEB".
+          temp = new Double(Integer.parseInt(hexMatcher.group(1), 16));
+          LOGGER.debug("CCD temperature detected as {}; assumed to be invalid", temp);
+        }
+        else {
+          temp = new Double(value.substring(0, value.indexOf(" ")));
+          store.setImagingEnvironmentTemperature(
                 new Temperature(temp, UNITS.CELSIUS), 0);
+        }
       }
     }
   }

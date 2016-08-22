@@ -192,6 +192,17 @@ Supported Formats
      - |no|
      - |yes|
      - |no|
+   * - :doc:`formats/becker-hickl-fifo`
+     - .spc
+     - |Poor|
+     - |Fair|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+     - |yes|
+     - |no|
    * - :doc:`formats/becker-hickl-spcimage`
      - .sdt
      - |Very good|
@@ -963,7 +974,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/nifti`
-     - .img, .hdr
+     - .img, .hdr, .nii, .nii.gz
      - |Very good|
      - |Good|
      - |Very good|
@@ -1242,6 +1253,17 @@ Supported Formats
      - |Very good|
      - |Good|
      - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+     - |yes|
+     - |no|
+   * - :doc:`formats/princeton-instruments-spe`
+     - .spe
+     - |Good|
+     - |Very good|
+     - |Very good|
      - |Fair|
      - |Good|
      - |no|
@@ -1577,7 +1599,7 @@ Supported Formats
      - |no|
      - |no|
      - |yes|
-     - |no|
+     - |yes|
    * - :doc:`formats/zeiss-lsm`
      - .lsm, .mdb
      - |Outstanding|
@@ -1590,7 +1612,7 @@ Supported Formats
      - |yes|
      - |no|
 
-Bio-Formats currently supports **142** formats
+Bio-Formats currently supports **144** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1675,6 +1697,7 @@ Bio-Formats currently supports **142** formats
     formats/avi
     formats/axon-raw-format
     formats/bd-pathway
+    formats/becker-hickl-fifo
     formats/becker-hickl-spcimage
     formats/bio-rad-gel
     formats/bio-rad-pic
@@ -1771,6 +1794,7 @@ Bio-Formats currently supports **142** formats
     formats/pict-macintosh-picture
     formats/png
     formats/prairie-tech-tiff
+    formats/princeton-instruments-spe
     formats/quesant
     formats/quicktime-movie
     formats/rhk

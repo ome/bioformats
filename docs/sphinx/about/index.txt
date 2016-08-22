@@ -43,15 +43,10 @@ include:
 -  `ome-users mailing
    list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
    (searchable using google with 'site:lists.openmicroscopy.org.uk')
--  ImageJ mailing list (for ImageJ/Fiji issues)
-   `forum archive <http://imagej.1557.n6.nabble.com/>`_ and
-   `mailing list <http://imagej.nih.gov/ij/list.html>`_
--  `ImageJ developer mailing
-   list <http://imagej.net/mailman/listinfo/imagej-devel>`_
--  `Fiji Bugzilla (for ImageJ/Fiji
-   issues) <http://fiji.sc/cgi-bin/bugzilla/index.cgi>`_
--  `Fiji developer google
-   group <https://groups.google.com/forum/#!forum/fiji-devel>`_
+-  `ImageJ forum <http://forum.imagej.net>`_ (for ImageJ/Fiji issues)
+-  `ImageJ mailing list <http://imagej.nih.gov/ij/list.html>`_ (and
+   `archive <http://imagej.1557.n6.nabble.com/>`_)
+-  `Fiji GitHub Issues <https://github.com/fiji/fiji/issues>`_
 -  `Confocal microscopy mailing
    list <http://lists.umn.edu/cgi-bin/wa?A0=confocalmicroscopy>`_
 

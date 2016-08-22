@@ -379,7 +379,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         omeMeta = omexmlService.createOMEXMLMetadata();
         omeMeta.setImageID(MetadataTools.createLSID("Image", 0), 0);
         omeMeta.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
-        omeMeta.setPixelsBinDataBigEndian(false, 0, 0);
+        omeMeta.setPixelsBigEndian(false, 0);
 
         String order = "XYCZT";
         if (in != null) order = in.getDimensionOrder();

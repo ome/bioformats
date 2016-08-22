@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Instrument ID="Instrument:0">
+    <Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3"
+               SerialNumber="L3-1234"/>
+    <Laser ID="LightSource:0" Power="200" Manufacturer="OME Lights" Model="Ruby60"
+               SerialNumber="A654321" Type="SolidState" LaserMedium="Ruby">
+      <Pump ID="LightSource:1"/>
+    </Laser>
+    <Arc ID="LightSource:1" Power="300" Manufacturer="OME Lights" Model="Arc60"
+               SerialNumber="A123456" Type="Xe"/>
+    <Detector ID="Detector:0" Type="CCD" Manufacturer="OME Detectors" Model="Standard CCD Mk2"/>
+    <Objective Correction="UV" Immersion="Air" LensNA="1.2" NominalMagnification="60"
+               CalibratedMagnification="60.12" WorkingDistance="20" ID="Objective:0"
+               Manufacturer="OME Objectives" Model="60xUV-Air"/>
+    <FilterSet ID="FilterSet:0" Manufacturer="OME Filters" Model="Standard Mk3"
+               LotNumber="Lot174-A">
+      <ExcitationFilterRef ID="Filter:0"/>
+      <DichroicRef ID="Dichroic:0"/>
+      <EmissionFilterRef ID="Filter:1"/>
+    </FilterSet>
+    <Filter ID="Filter:0" Manufacturer="OME Filters" Model="Model1" FilterWheel="Disc A">
+      <TransmittanceRange CutIn="350" CutOut="450" CutInTolerance="10" CutOutTolerance="20"
+                          Transmittance="0.3"/>
+    </Filter>
+    <Filter ID="Filter:1" Manufacturer="OME Filters" Model="Delux Mk4" Type="BandPass">
+      <TransmittanceRange CutIn="560" CutOut="630" CutInTolerance="25" CutOutTolerance="30"
+                          Transmittance="0.8"/>
+    </Filter>
+    <Filter ID="Filter:2" Manufacturer="OME Filters" Model="Delux Mk5" Type="BandPass">
+      <TransmittanceRange CutIn="562" CutOut="633" CutInTolerance="11" CutOutTolerance="23"
+                          Transmittance="0.5"/>
+    </Filter>
+    <Filter ID="Filter:3" Manufacturer="OME Filters" Model="Delux Mk6" Type="BandPass">
+      <TransmittanceRange CutIn="463" CutOut="535" CutInTolerance="21" CutOutTolerance="34"
+                          Transmittance="0.7"/>
+    </Filter>
+    <Dichroic ID="Dichroic:0" Model="Standard Mk3" Manufacturer="OME Insturuments"/>
+  </Instrument>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Description>This image is linked to the Control Set</Description>
+    <InstrumentRef ID="Instrument:0"/>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:0:1">
+        <LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="510"/>
+        <DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7"
+                          ReadOutRate="3200" Voltage="120"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:3"/>
+          <!-- Was SecondaryExcitationFilter-->
+          <EmissionFilterRef ID="Filter:2"/>
+          <!-- Was SecondaryEmissionFilter-->
+        </LightPath>
+      </Channel>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+</OME>

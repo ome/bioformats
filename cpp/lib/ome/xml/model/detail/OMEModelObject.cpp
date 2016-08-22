@@ -108,10 +108,17 @@ namespace ome
             {
               try
                 {
-                  common::xml::dom::Element child(pos->get(), false);
-                  if (child && name == stripNamespacePrefix(common::xml::String(child->getNodeName())))
+                  // This pointer check is unnecessary--the Element
+                  // class would throw; but this avoids the need to
+                  // throw and catch many std::logic_error exceptions
+                  // during document processing.
+                  if (dynamic_cast<const xercesc::DOMElement *>(pos->get()))
                     {
-                      ret.push_back(child);
+                      common::xml::dom::Element child(pos->get(), false);
+                      if (child && name == stripNamespacePrefix(common::xml::String(child->getNodeName())))
+                        {
+                          ret.push_back(child);
+                        }
                     }
                 }
               catch (std::logic_error&)

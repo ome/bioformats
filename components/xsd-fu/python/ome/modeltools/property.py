@@ -1,3 +1,30 @@
+# Copyright (C) 2009 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 import logging
 import re
 
@@ -134,7 +161,7 @@ class OMEModelProperty(OMEModelEntity):
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
-                  name != "std::string"):
+                  not name.startswith("std::")):
                 name = ("%s::primitives::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.instanceType or
@@ -207,12 +234,21 @@ class OMEModelProperty(OMEModelEntity):
     def _get_langTypeNS(self):
         name = self.langType
         if isinstance(self.model.opts.lang, language.CXX):
-            if self.isEnumeration:
+            if self.hasUnitsCompanion:
+                if name == "double":
+                    name = self.model.opts.lang.typeToUnitsType(
+                        self.unitsCompanion.langTypeNS)
+                else:
+                    name = self.model.opts.lang.typeToUnitsType(
+                        self.unitsCompanion.langTypeNS,
+                        "%s::primitives::%s"
+                        % (self.model.opts.lang.omexml_model_package, name))
+            elif self.isEnumeration:
                 name = ("%s::enums::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (self.model.opts.lang.hasPrimitiveType(name) and
                   not self.model.opts.lang.hasFundamentalType(name) and
-                  name != "std::string"):
+                  not name.startswith("std::")):
                 name = ("%s::primitives::%s"
                         % (self.model.opts.lang.omexml_model_package, name))
             elif (name != self.langType or
@@ -228,8 +264,11 @@ class OMEModelProperty(OMEModelEntity):
         mstype = None
 
         if self.hasUnitsCompanion:
-            mstype = self.model.opts.lang.typeToUnitsType(
-                self.unitsCompanion.metadataStoreArgType)
+            if isinstance(self.model.opts.lang, language.Java):
+                mstype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.metadataStoreArgType)
+            elif isinstance(self.model.opts.lang, language.CXX):
+                mstype = self.langTypeNS
 
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
@@ -252,7 +291,10 @@ class OMEModelProperty(OMEModelEntity):
                     not self.isEnumeration):
                 mstype = "const std::string&"
             if mstype is None:
-                mstype = self.langTypeNS
+                if self.langTypeNS.startswith("std::"):
+                    mstype = "const %s&" % (self.langTypeNS)
+                else:
+                    mstype = self.langTypeNS
         return mstype
     metadataStoreArgType = property(
         _get_metadataStoreArgType,
@@ -262,8 +304,11 @@ class OMEModelProperty(OMEModelEntity):
         mstype = None
 
         if self.hasUnitsCompanion:
-            mstype = self.model.opts.lang.typeToUnitsType(
-                self.unitsCompanion.metadataStoreRetType)
+            if isinstance(self.model.opts.lang, language.Java):
+                mstype = self.model.opts.lang.typeToUnitsType(
+                    self.unitsCompanion.metadataStoreRetType)
+            elif isinstance(self.model.opts.lang, language.CXX):
+                mstype = self.langTypeNS
 
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
@@ -286,7 +331,10 @@ class OMEModelProperty(OMEModelEntity):
                     not self.isEnumeration):
                 mstype = "const std::string&"
             if mstype is None:
-                mstype = self.langTypeNS
+                if self.langTypeNS.startswith("std::"):
+                    mstype = "const %s&" % (self.langTypeNS)
+                else:
+                    mstype = self.langTypeNS
         return mstype
     metadataStoreRetType = property(
         _get_metadataStoreRetType,
@@ -350,6 +398,14 @@ class OMEModelProperty(OMEModelEntity):
     unitsType = property(
         _get_unitsType,
         doc="""The property's units type.""")
+
+    def _get_unitsDefault(self):
+        if self.hasUnitsCompanion:
+            return self.unitsCompanion.defaultXsdValue
+        return None
+    unitsDefault = property(
+        _get_unitsDefault,
+        doc="""The property's default unit.""")
 
     def _get_enumProperties(self):
         if self.isEnumeration:
@@ -415,6 +471,17 @@ class OMEModelProperty(OMEModelEntity):
         _get_isReference,
         doc="""Whether or not the property is a reference.""")
 
+    def _get_concreteClasses(self):
+        returnList = []
+        if self.model.opts.lang.hasSubstitutionGroup(self.name):
+            for o in sorted(self.model.objects.values(), lambda x, y: cmp(x.name, y.name)):
+                if o.parentName == self.name:
+                    returnList.append(o.name)
+        return returnList
+    concreteClasses = property(
+        _get_concreteClasses,
+        doc="""Concrete instance types for an abstract type.""")
+
     def _get_possibleValues(self):
         return self.delegate.getValues()
     possibleValues = property(
@@ -431,10 +498,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""If the property is an enumeration, its default value.""")
 
     def _get_defaultXsdValue(self):
-        if hasattr(self.delegate, 'default'):
-            return self.delegate.default
-        else:
-            return None
+        return self.delegate.getDefault()
     defaultXsdValue = property(
         _get_defaultXsdValue,
         doc="""The default value, if any, that is set on the attribute.""")
@@ -452,14 +516,14 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 pass
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
                         not self.model.opts.lang.hasPrimitiveType(
                             self.langType) and not self.isEnumeration):
                     shared = True
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 shared = True
 
         return shared
@@ -477,11 +541,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 weak = True
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 pass
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 pass
 
         return weak
@@ -500,8 +564,7 @@ class OMEModelProperty(OMEModelEntity):
                     self.minOccurs > 0):
                 itype = self.langTypeNS
             elif self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
                         itype = "const ome::compat::shared_ptr<%s>&" % qtype
@@ -519,7 +582,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = "ome::compat::weak_ptr<%s>&" % ns_sep
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -528,7 +591,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = "ome::compat::shared_ptr<%s>&" % ns_sep
                 else:
                     itype = "const %s&" % self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "std::vector<ome::compat::shared_ptr<%s> >&" % ns_sep
 
         return itype
@@ -554,17 +617,20 @@ class OMEModelProperty(OMEModelEntity):
                     self.minOccurs > 0):
                 itype = {' const': self.langTypeNS}
             elif self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
-                        itype = "ome::compat::shared_ptr<%s>" % qtype
+                        itype = {' const': "const ome::compat::shared_ptr<%s>&" % qtype,
+                                 '': "ome::compat::shared_ptr<%s>&" % qtype}
                     else:
-                        itype = "std::vector<%s>" % qtype
+                        itype = {' const': "const std::vector<%s>&" % qtype,
+                                 '': "std::vector<%s>&" % qtype}
                 elif self.minOccurs == 0 and self.maxOccurs == 1:
-                    qtype = itype
+                    itype = {' const': "const %s&" % qtype,
+                             '': "%s&" % qtype}
                 else:
-                    itype = "std::vector<%s>" % qtype
+                    itype = {' const': "const std::vector<%s>&" % qtype,
+                             '': "std::vector<%s>&" % qtype}
             elif self.isEnumeration:
                 if self.minOccurs == 0:
                     itype = {' const': "const ome::compat::shared_ptr<%s>"
@@ -578,7 +644,7 @@ class OMEModelProperty(OMEModelEntity):
                 itype = {' const': "const ome::compat::weak_ptr<%s>" % ns_sep,
                          '':       "ome::compat::weak_ptr<%s>" % ns_sep}
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -592,7 +658,7 @@ class OMEModelProperty(OMEModelEntity):
                              % ns_sep}
                 else:
                     itype = {' const': "const %s&" % self.langTypeNS}
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = {' const':
                          "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
@@ -620,11 +686,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = self.argType()
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "ome::compat::shared_ptr<%s>&" % ns_sep
 
         return itype
@@ -656,12 +722,12 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = self.argType()
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.argType()
             elif (self.maxOccurs > 1 and
-                  not self.parent.isAbstractProprietary):
+                  not self.parent.isAbstract):
                 itype = {' const': "const ome::compat::shared_ptr<%s>&"
                          % ns_sep,
                          '':       "ome::compat::shared_ptr<%s>&"
@@ -711,7 +777,7 @@ class OMEModelProperty(OMEModelEntity):
                          '':       "ome::compat::shared_ptr<%s>"
                          % ns_sep}
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -725,7 +791,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = {' const': "const %s&" % self.langTypeNS,
                              '':       "%s&" % self.langTypeNS}
             elif (self.maxOccurs > 1 and
-                    not self.parent.isAbstractProprietary):
+                    not self.parent.isAbstract):
                 itype = {' const':
                          "const std::vector<ome::compat::shared_ptr<%s> >"
                          % ns_sep,
@@ -785,26 +851,25 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 itype = self.langTypeNS
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 itype = self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "List<%s>" % self.langTypeNS
         elif isinstance(self.model.opts.lang, language.CXX):
             ns_sep = self.langTypeNS
             if ns_sep.startswith('::'):
                 ns_sep = ' ' + ns_sep
             if self.hasUnitsCompanion:
-                qtype = self.model.opts.lang.typeToUnitsType(
-                    self.unitsCompanion.langTypeNS)
+                qtype = self.langTypeNS
                 if self.minOccurs == 0:
                     if self.maxOccurs == 1:
                         itype = "ome::compat::shared_ptr<%s>" % qtype
                     else:
                         itype = "std::vector<%s>" % qtype
                 elif self.minOccurs == 0 and self.maxOccurs == 1:
-                    qtype = itype
+                    itype = qtype
                 else:
                     itype = "std::vector<%s>" % qtype
             elif self.isReference and self.maxOccurs > 1:
@@ -818,7 +883,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 itype = "ome::compat::weak_ptr<%s>" % ns_sep
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.minOccurs == 0 or (
@@ -827,7 +892,7 @@ class OMEModelProperty(OMEModelEntity):
                     itype = "ome::compat::shared_ptr<%s>" % ns_sep
                 else:
                     itype = self.langTypeNS
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 itype = "std::vector<ome::compat::shared_ptr<%s> >" % ns_sep
 
         return itype
@@ -846,11 +911,11 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 idefault = None
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 idefault = None
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 idefault = "ArrayList<%s>" % self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
             ns_sep = self.langTypeNS
@@ -874,7 +939,7 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     pass
             elif self.maxOccurs == 1 and (
-                    not self.parent.isAbstractProprietary or
+                    not self.parent.isAbstract or
                     self.isAttribute or not self.isComplex() or
                     not self.isChoice):
                 if self.isEnumeration:
@@ -886,7 +951,7 @@ class OMEModelProperty(OMEModelEntity):
                             % (self.langTypeNS, self.defaultValue.upper()))
                 else:
                     pass
-            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            elif self.maxOccurs > 1 and not self.parent.isAbstract:
                 pass
 
         return idefault
@@ -907,10 +972,10 @@ class OMEModelProperty(OMEModelEntity):
         elif self.isBackReference:
             icomment = "%s back reference" % self.name
         elif self.maxOccurs == 1 and (
-                not self.parent.isAbstractProprietary or self.isAttribute or
+                not self.parent.isAbstract or self.isAttribute or
                 not self.isComplex() or not self.isChoice):
             icomment = "%s property" % self.name
-        elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+        elif self.maxOccurs > 1 and not self.parent.isAbstract:
             icomment = "%s property (occurs more than once)" % self.name
 
         return icomment
@@ -921,7 +986,7 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_header(self):
         header = None
-        if self.name in self.model.opts.lang.model_type_map.keys():
+        if self.name in self.model.opts.lang.model_type_map.keys() and not self.name in self.model.opts.lang.primitive_type_map.keys():
             pass
         elif self.langType is None:
             pass
@@ -935,7 +1000,7 @@ class OMEModelProperty(OMEModelEntity):
             path = re.sub("::", "/", self.langType)
             if (not self.model.opts.lang.hasPrimitiveType(self.langType) and
                     not self.model.opts.lang.hasFundamentalType(
-                        self.langType) and self.langType != "std::string"):
+                        self.langType) and not self.langType.startswith("std::")):
                 if self.isEnumeration:
                     header = "ome/xml/model/enums/%s.h" % path
                 else:
@@ -946,16 +1011,16 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         header = "ome/xml/model/%s.h" % path
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         header = "ome/xml/model/%s.h" % path
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         pass
             elif (self.model.opts.lang.hasPrimitiveType(self.langType) and
                   not self.model.opts.lang.hasFundamentalType(
-                    self.langType) and self.langType != "std::string"):
+                    self.langType) and not self.langType.startswith("std::")):
                 header = "ome/xml/model/primitives/%s.h" % path
         return header
     header = property(
@@ -999,12 +1064,12 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         deps.add("ome/xml/model/%s.h" % path)
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         deps.add("ome/xml/model/%s.h" % path)
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         deps.add("ome/xml/model/%s.h" % path)
                 if self.isReference:
                     # Make sure that the reference is a real generated object.
@@ -1018,6 +1083,9 @@ class OMEModelProperty(OMEModelEntity):
                 for prop in o.properties.values():
                     if not prop.hasBaseAttribute:
                         deps.update(prop.source_dependencies)
+            for c in self.concreteClasses:
+                path = re.sub("::", "/", c)
+                deps.add("ome/xml/model/%s.h" % path)
 
         return deps
     source_dependencies = property(
@@ -1038,12 +1106,12 @@ class OMEModelProperty(OMEModelEntity):
                     elif self.isBackReference:
                         pass
                     elif self.maxOccurs == 1 and (
-                            not self.parent.isAbstractProprietary or
+                            not self.parent.isAbstract or
                             self.isAttribute or not self.isComplex() or
                             not self.isChoice):
                         pass
                     elif (self.maxOccurs > 1 and
-                            not self.parent.isAbstractProprietary):
+                            not self.parent.isAbstract):
                         fwd.add(self.langType)
         return fwd
     forward = property(
@@ -1066,15 +1134,6 @@ class OMEModelProperty(OMEModelEntity):
             return False
         return self.delegate.isComplex()
 
-    def _get_isAbstractProprietary(self):
-        o = self.model.getObjectByName(self.name)
-        if o is None:
-            return False
-        return o.isAbstractProprietary
-    isAbstractProprietary = property(
-        _get_isAbstractProprietary,
-        doc="""Is the property abstract proprietary.""")
-        
     def _get_isAbstract(self):
         o = self.model.getObjectByName(self.name)
         if o is None:

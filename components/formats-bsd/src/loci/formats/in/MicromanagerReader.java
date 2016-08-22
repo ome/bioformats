@@ -541,7 +541,7 @@ public class MicromanagerReader extends FormatReader {
                 }
               }
               if (!value.equals("PropVal")) {
-                parseKeyAndValue(key, value, digits, (plane * nIFDs) + i, 1);
+                parseKeyAndValue(key, value, digits, plane + i, 1);
               }
               propType = null;
               key = null;
@@ -717,6 +717,13 @@ public class MicromanagerReader extends FormatReader {
         }
         else if (key.equals("Slices")) {
           ms.sizeZ = Integer.parseInt(value);
+        }
+        else if (key.equals("SlicesFirst")) {
+          if (value.equals("false")) {
+            ms.dimensionOrder = "XYCZT";
+          } else {
+            ms.dimensionOrder = "XYZCT";
+          }
         }
         else if (key.equals("PixelSize_um")) {
           p.pixelSize = new Double(value);
@@ -909,7 +916,7 @@ public class MicromanagerReader extends FormatReader {
     if (getSizeZ() == 0) ms.sizeZ = 1;
     if (getSizeT() == 0) ms.sizeT = 1;
 
-    ms.dimensionOrder = "XYZCT";
+    if (ms.dimensionOrder == null) ms.dimensionOrder = "XYZCT";
     ms.interleaved = false;
     ms.rgb = false;
     ms.littleEndian = false;

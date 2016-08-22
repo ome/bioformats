@@ -901,8 +901,6 @@ Type "ant -p" for a list of targets.
         <unjar src="${artifact.dir}/@{jar}" dest="${package.dir}">
           <patternset>
             <exclude name="META-INF/*"/>
-            <exclude name="META-INF/maven/**"/>
-            <exclude name="META-INF/services/**"/>
           </patternset>
         </unjar>
       </sequential>

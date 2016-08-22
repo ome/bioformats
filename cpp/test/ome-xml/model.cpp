@@ -46,8 +46,15 @@
 #include <ome/common/xml/Platform.h>
 #include <ome/common/xml/dom/Document.h>
 
+#include <ome/common/xsl/Platform.h>
+#include <ome/common/xsl/Transformer.h>
+
 #include <ome/xml/config-internal.h>
+#include <ome/xml/version.h>
 #include <ome/xml/Document.h>
+#include <ome/xml/OMEEntityResolver.h>
+#include <ome/xml/OMETransformResolver.h>
+#include <ome/xml/OMETransform.h>
 
 #include <ome/xml/meta/OMEXMLMetadata.h>
 
@@ -76,7 +83,7 @@ namespace
 
     /// @todo Use the correct model version when available.
     /// @todo Use all model versions when transforms available.
-    path dir(PROJECT_SOURCE_DIR "/components/specification/samples/" "2013-06");
+    path dir(PROJECT_SOURCE_DIR "/components/specification/samples/" "2015-01");
     if (exists(dir) && is_directory(dir))
       {
         for(directory_iterator i(dir); i != directory_iterator(); ++i)
@@ -105,7 +112,7 @@ class ModelTest : public ::testing::TestWithParam<ModelTestParameters>
 {
 public:
   ome::common::xml::Platform xmlplat;
-  std::string xmltext;
+  std::string original_xml;
   ome::common::xml::dom::Document doc;
 
   virtual void SetUp()
@@ -116,13 +123,32 @@ public:
 
     ASSERT_TRUE(!!in);
     in.seekg(0, std::ios::end);
-    xmltext.reserve(in.tellg());
+    original_xml.reserve(in.tellg());
     in.seekg(0, std::ios::beg);
 
-    xmltext.assign(std::istreambuf_iterator<char>(in),
-                   std::istreambuf_iterator<char>());
+    original_xml.assign(std::istreambuf_iterator<char>(in),
+                        std::istreambuf_iterator<char>());
 
-    doc = ome::xml::createDocument(xmltext);
+    if (std::string("2015") != OME_XML_MODEL_VERSION)
+      {
+        // Apply upgrade if needed.
+        ome::common::xsl::Platform xslplat;
+        ome::common::xml::dom::Document upgraded_doc;
+        ome::common::xml::dom::Element docroot;
+
+        ome::xml::OMEEntityResolver entity_resolver;
+        ome::xml::OMETransformResolver transform_resolver;
+
+        std::string upgraded_xml;
+        ome::xml::transform(OME_XML_MODEL_VERSION, original_xml, upgraded_xml,
+                            entity_resolver, transform_resolver);
+
+        doc = ome::xml::createDocument(upgraded_xml);
+      }
+    else
+      {
+        doc = ome::xml::createDocument(original_xml);
+      }
   }
 };
 

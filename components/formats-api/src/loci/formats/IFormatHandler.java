@@ -38,7 +38,7 @@ import java.io.IOException;
 /**
  * Interface for all biological file format readers and writers.
  */
-public interface IFormatHandler extends Closeable {
+public interface IFormatHandler extends Closeable, IMetadataConfigurable {
 
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);

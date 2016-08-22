@@ -57,18 +57,12 @@ ismostrecent() {
 # Check if a schema is current (not necessarily the latest version).
 # $1=schema name
 iscurrent() {
-    if [ "${1%.xsd}" = "AnalysisChain" ] || \
-        [ "${1%.xsd}" = "AnalysisModule" ] || \
-        [ "${1%.xsd}" = "CA" ] || \
-        [ "${1%.xsd}" = "CLI" ] || \
-        [ "${1%.xsd}" = "DataHistory" ] || \
-        [ "${1%.xsd}" = "MLI" ] || \
-        [ "${1%.xsd}" = "STD" ]
+    if [ "${1%.xsd}" = "ome" ] || [ "${1%.xsd}" = "OME" ]
     then
-        return 1
+        return 0
     fi
 
-    return 0
+    return 1
 }
 
 # Check if the a schema is the most recent version (return true) or legacy (return false)
@@ -105,18 +99,18 @@ schemaversion() {
 schemadesc() {
     case "${1%.xsd}" in
         BinaryFile)
-            echo "Binary File schema used to describe a file location, or the location of a fragment within a file." ;;
+            echo "Binary File schema used to describe a file location, or the location of a fragment within a file. It is combined with the main OME schema as of 2016-06." ;;
         OME|ome)
-            echo "main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
+            echo "main schema which defines the OME ontology for microscopy." ;;
 
         OMERO)
             echo "schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
         ROI)
-            echo "Region Of Interest schema." ;;
+            echo "Region Of Interest schema. It is combined with the main OME schema as of 2016-06." ;;
         SA)
-            echo "Structured Annotation schema." ;;
+            echo "Structured Annotation schema. It is combined with the main OME schema as of 2016-06." ;;
         SPW)
-            echo "Screen/Plate/Well schema." ;;
+            echo "Screen/Plate/Well schema. It is combined with the main OME schema as of 2016-06." ;;
         AnalysisChain)
             echo "Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
         AnalysisModule)
@@ -152,7 +146,7 @@ contains() {
     fi
 }
 
-devmarker="dev"
+devmarker="DEV"
 root=published
 
 
@@ -163,33 +157,9 @@ mkdir -p "$root"
 
 for dir in released-schema/20*
 do
-    # Don't copy legacy or other material
-    if [ "$dir" = "released-schema/additions" ]; then
-        continue
-    fi
 
-    # Copy dev material, but don't make index
     if contains $dir $devmarker; then
-        echo "DEV Folder Found"
-        for schema in "$dir"/*.xsd
-        do
-            rel=$(basename "$dir")
-            base=${schema%.xsd}
-            base=$(basename "$base")
-            name=$(basename "$schema")
-
-            # For some reason, the OME schema has always been lowercased
-            if [ "$base" = "ome" ]; then
-                base="OME"
-            fi
-
-            path="${root}/Schemas/${base}/${rel}"
-
-            # Copy schema
-            mkdir -p "$path"
-            cp -v "$schema" "${path}/${name}"
-
-        done
+        echo "Skipping $dir folder"
         continue
     fi
 
@@ -221,11 +191,11 @@ do
 
         # Special case copying of legacy schemas
         if [ "$year" = "2003" ]; then
-            path="${root}/XMLschemas/${base}/${month}"
+            path="${root}/${base}/${month}"
             path=$(echo "$path" | sed -e 's;/2003-\(.*\);/\1;')
             reldate="2003 ($month)"
         else
-            path="${root}/Schemas/${base}/${rel}"
+            path="${root}/${base}/${rel}"
             reldate=$(parsedate "$rel")
         fi
 
@@ -237,8 +207,11 @@ do
         echo "HTML [1] -> ${path}/index.html"
         cat <<EOF > "${path}/index.html"
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment ${base} Schema</title>
 </head>
@@ -257,18 +230,25 @@ do
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the ${base} Schema created by the Open Microscopy Environment Group. Detailed information on the schema and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the ${base} Schema created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>.
+Detailed information on the schema is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 <div id="status">
 <h2>Status</h2>
-<p>This schema is <strong>${type}</strong> and at version <strong>${version}</strong>.</p>
-<p>A list of the current versions of all the Open Microscopy Environment Group schemas is available at <a href="http://www.openmicroscopy.org/Schemas/">http://www.openmicroscopy.org/Schemas/</a></p>
+<p>This schema is <strong>${type}</strong> and at version 
+<strong>${version}</strong>.</p>
+<p>A list of the current versions of all the Open Microscopy Environment
+schemas is available <a href="../../index.html">here</a>.</p>
 </div>
 <div id="schema">
 <h2>Schema</h2>
 <p>The schema XSD file is <a href="${name}">${name}</a>.</p>
-<p>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</p>
+<p>Note: Some browsers will try to render XSD files when you view them. This
+can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</p>
 </div>
 <hr/>
 </body>
@@ -280,21 +260,16 @@ done
 # Special cases
 
 # Transforms folder
-path="${root}/Schemas/Transforms/"
+path="${root}/Transforms/"
 dir="transforms"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
 do
+    if contains $transform $devmarker; then
+        echo "Skipping $transform"
+        continue
+    fi
     cp -v "$transform" "$path"
-done
-
-# Samples folder
-path="${root}/Schemas/Samples/"
-dir="samples"
-mkdir -p "$path"
-for sample in "$dir"/*
-do
-    cp -vRL "$sample" "$path"
 done
 
 # Root index
@@ -305,7 +280,6 @@ done
 # $3=filter (current or legacy)
 # $4=verbose (true or false)
 # $5=schema set (current or legacy)
-# $6=schema location (current=Schemas, legacy=XMLschemas)
 createlink() {
     name=$(basename "$1")
     release="$2"
@@ -332,34 +306,15 @@ createlink() {
     if [ "$4" = "false" ]; then
         reldesc=""
     fi
-    if [ "$5" = "current" ]; then
-        link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/Schemas/;;')
-        if [ "$6" = "legacy" ]; then
-            if [ -z "$2" ]; then
-                link="../Schemas/$link"
-            else
-                link="../../Schemas/$link"
-            fi
-        fi
-    else
-        link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
-        link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
-        if [ "$6" = "current" ]; then
-            if [ -z "$2" ]; then
-                link="../XMLschemas/$link"
-            else
-                link="../../XMLschemas/$link"
-            fi
-        fi
-    fi
+    link=$(find published -name "$name" | grep "$release" | head -n1)
+    link=$(echo "$link" | sed -e 's;published/;;')
     if [ -n "$2" ]; then
         link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
     if [ -z "$2" ]; then
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
+        line="<li><a href=\"${shortname}/index.html\">${shortname}</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
     else
-        line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${2}</a>]${reldesc}</li>"
+        line="<li><a href=\"$2/index.html\">$2</a> - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>] ${reldesc}</li>"
     fi
     if [ -z "$2" ]; then
         if iscurrent "$name" && [ "$3" = "current" ]; then
@@ -381,8 +336,11 @@ createlink() {
 createmainindex() {
     cat <<EOF
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment Schemas</title>
 </head>
@@ -395,23 +353,56 @@ createmainindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
-</p>
-<p>Auto generated documentation for the schemas is available on the development server: <a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2015-01/ome.html</a> and <a  href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2011-06/OMERO.html</a>
+<p>This document outlines the XML Schemas created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>.
+Detailed information on the schemas is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 EOF
 
     cat <<EOF
+<div id="schema.list">
+<h2>Schemas</h2>
+<p>This has the schema name, the current version, a link to the XSD file, and
+a short description. Generated documentation for the schemas is available at:
+<a href="http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2016-06/ome.html">http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2016-06/ome.html</a></a>
+</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them.
+This can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</em></p>
+<h4>Active Schemas</h4>
+<ul>
+EOF
+
+    for schema in $(find published -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
+        createlink "$schema" "" "current" "true" "current" "$1"
+    done
+
+    cat <<EOF
+</ul>
+<h4>Legacy Schemas</h4>
+<ul>
+EOF
+
+    for schema in $(find published -name '*xsd' | xargs $XARGSOPTS -n1 basename | sort | uniq); do
+        createlink "$schema" "" "legacy" "true" "current" "$1"
+    done
+    cat <<EOF
+</ul>
+</div>
 <div id="history">
 <h2>History</h2>
-<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model.
+<p>This lists the most recent version of past schemas. The schemas are in a
+process of constant development to extend and refine the OME Data Model. See
+the
+<a href="http://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a> for more information.
 </p>
 <ul>
 EOF
@@ -425,32 +416,6 @@ EOF
         echo "<li>$reldate - namespace /$release/*.xsd</li>"
     done
 
-    cat <<EOF
-</ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
-</div>
-<div id="schema.list">
-<h2>Schemas</h2>
-<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
-<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
-<h4>Active Schemas</h4>
-<ul>
-EOF
-
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
-        createlink "$schema" "" "current" "true" "current" "$1"
-    done
-
-    cat <<EOF
-</ul>
-<h4>Legacy Schemas</h4>
-<ul>
-EOF
-
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
-        createlink "$schema" "" "legacy" "true" "current" "$1"
-    done
     cat <<EOF
 </ul>
 </div>
@@ -472,8 +437,11 @@ createintermediateindex() {
 
     cat <<EOF
 <?xml version='1.0'?>
-<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN"
+ "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:rddl="http://www.rddl.org/" xml:lang="en">
 <head>
         <title>Open Microscopy Environment $1 Schemas</title>
 </head>
@@ -486,56 +454,38 @@ createintermediateindex() {
 <h2>Table of contents</h2>
         <ol>
                 <li><a href="#intro">Introduction</a></li>
-                <li><a href="#history">History</a></li>
                 <li><a href="#schema.list">Schemas</a></li>
+                <li><a href="#history">History</a></li>
         </ol>
 </div>
 <div id="intro">
 <h2>Introduction</h2>
-<p>This document outlines the XML $1 Schemas created by the Open Microscopy Environment Group. This is the $(schemadesc "$1")  Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+<p>This document outlines the XML $1 Schemas created by the
+<a href="http://www.openmicroscopy.org/">Open Microscopy Environment</a>. This
+is the $(schemadesc "$1") Detailed information on the schemas is available
+<a href="http://www.openmicroscopy.org/site/support/ome-model/index.html">here</a>.
 </p>
 </div>
 EOF
 
     cat <<EOF
-<div id="history">
-<h2>History</h2>
-<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model.
-</p>
-<ul>
-EOF
-
-    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        reldate=$(parsedate "$release")
-        echo "<li>$reldate - namespace /$release/</li>"
-    done
-    if [ -d "${root}/XMLschemas/$1" ]; then
-        for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-            reldate="2003 ($release)"
-            echo "<li>$reldate - namespace /$release/$schema</li>"
-        done
-    fi
-
-
-    cat <<EOF
-</ul>
-<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
-</p>
-</div>
 <div id="schema.list">
 <h2>Schemas</h2>
-<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
-<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<p>This has the schema name, the current version, a link to the XSD file, and
+a short description</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them.
+This can result in either a blank screen or unformatted text. Choose to either
+download the file or view the source.</em></p>
 <p><b>$current</b></p>
 <h4>Most recent schema</h4>
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "current" "false" "current" "$2"
+    for year in $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | grep 20 | sort -r); do
+        createlink "$schema" "$year" "current" "false" "current"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-        createlink "$schema" "$year" "current" "false" "legacy" "$2"
+    for year in $(find published -name "$schema" | grep 2003 | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
+        createlink "$schema" "$year" "current" "false" "legacy"
     done
 
     cat <<EOF
@@ -544,12 +494,36 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r); do
-        createlink "$schema" "$year" "legacy" "false" "current" "$2"
+    for year in $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | grep 20 | sort -r); do
+        createlink "$schema" "$year" "legacy" "false" "current"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v FC); do
-        createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
+    for year in $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep FC) $(find published -name "$schema" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
+        createlink "$schema" "$year" "legacy" "false" "legacy"
     done
+
+    cat <<EOF
+</ul>
+</div>
+<div id="history">
+<h2>History</h2>
+<p>This lists the current and prior versions of the $1 schema. The schemas are
+in a process of constant development to extend and refine the OME Data Model.
+See the
+<a href="https://www.openmicroscopy.org/site/support/ome-model/schemas/index.html">Schema version history</a>
+for more information.
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d "$root"/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r ); do
+        reldate=$(parsedate "$release")
+        echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html  | sort -r | grep FC) $(ls -1d "$root"/$1/* | xargs $XARGSOPTS -n1 basename | grep -v $devmarker | grep -v html | sort -r | grep -v 20 | grep -v FC); do
+        reldate="2003 ($release)"
+        echo "<li>$reldate - namespace /$release/$schema</li>"
+    done
+
 
     cat <<EOF
 </ul>
@@ -560,27 +534,13 @@ EOF
 EOF
 }
 
-for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [2] -> $root/Schemas/${type}/index.html"
-        createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
+for type in $(find "${root}" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/;;'); do
+    if [ $type != "Transforms" ]; then
+        echo "HTML [2] -> $root/${type}/index.html"
+        createintermediateindex "$type" > "$root/${type}/index.html"
     fi
 done
 
-for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/XMLschemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
-        echo "HTML [3] -> $root/XMLschemas/${type}/index.html"
-        createintermediateindex "$type" "legacy" > "$root/XMLschemas/${type}/index.html"
-    fi
-done
 
-echo "HTML [4] -> ${root}/Schemas/index.html"
-createmainindex "current" > "${root}/Schemas/index.html"
-echo "HTML [5] -> ${root}/XMLschemas/index.html"
-createmainindex "legacy" > "${root}/XMLschemas/index.html"
-
-echo "Add any web-extras"
-if [ -d "web-extra" ]; then
-    rsync --stats -r -t "web-extra/" "${root}"
-fi
-
+echo "HTML [4] -> ${root}/index.html"
+createmainindex "current" > "${root}/index.html"

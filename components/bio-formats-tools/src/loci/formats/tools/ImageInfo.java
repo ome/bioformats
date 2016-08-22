@@ -63,7 +63,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
@@ -91,8 +90,6 @@ public class ImageInfo {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
-
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
 
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
@@ -191,8 +188,11 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals("-nopix")) pixels = false;
-        else if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(CommandLineTools.VERSION)){
+          printVersion = true;
+          return true;
+        }
+        else if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
@@ -213,6 +213,7 @@ public class ImageInfo {
           autoscale = true;
         }
         else if (args[i].equals("-novalid")) validate = false;
+        else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
           DebugTools.setRootLevel("DEBUG");
@@ -270,7 +271,7 @@ public class ImageInfo {
             cache = true;
             cachedir = args[++i];
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -940,9 +941,6 @@ public class ImageInfo {
     if (baseReader instanceof ImageReader) {
       baseReader = ((ImageReader) baseReader).getReader();
     }
-    if (baseReader instanceof OMETiffReader) {
-      ms = ((OMETiffReader) baseReader).getMetadataStoreForDisplay();
-    }
 
     OMEXMLService service;
     try {
@@ -958,16 +956,6 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
-      // adding MetadataOnly elements to an OME-TIFF's XML will cause
-      // validation errors
-      if (!(baseReader instanceof OMETiffReader)) {
-        service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          service.addMetadataOnly(
-            service.getOMEMetadata((MetadataRetrieve) ms), i);
-        }
-      }
-
       if (omexmlOnly) {
         DebugTools.setRootLevel("INFO");
       }
@@ -975,9 +963,6 @@ public class ImageInfo {
       LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
         DebugTools.setRootLevel("OFF");
-      }
-      if (validate) {
-        service.validateOMEXML(xml);
       }
     }
     else {
@@ -1012,11 +997,10 @@ public class ImageInfo {
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
+    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1030,7 +1014,17 @@ public class ImageInfo {
 
     // initialize reader
     long s = System.currentTimeMillis();
-    reader.setId(id);
+    try {
+      MetadataOptions options= new DefaultMetadataOptions();
+      options.setValidate(validate);
+      reader.setMetadataOptions(options);
+      reader.setId(id);
+    } catch (FormatException exc) {
+      reader.close();
+      LOGGER.error("Failure during the reader initialization");
+      LOGGER.debug("", exc);
+      return false;
+    }
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
     LOGGER.info("Initialization took {}s", sec);
@@ -1052,7 +1046,7 @@ public class ImageInfo {
       printOriginalMetadata();
     }
 
-    // output and validate OME-XML
+    // output OME-XML
     if (omexml) printOMEXML();
 
     if (!pixels) {
@@ -1110,16 +1104,6 @@ public class ImageInfo {
 
   public static void main(String[] args) throws Exception {
     DebugTools.enableLogging("INFO");
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

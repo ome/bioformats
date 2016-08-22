@@ -272,16 +272,17 @@ public abstract class DelegateReader extends FormatReader {
   /* @see IFormatHandler#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    super.setId(id);
     if (useLegacy && !nativeReaderInitialized && !legacyReaderInitialized) {
       try {
         legacyReader.setId(id);
         legacyReaderInitialized = true;
+        currentId = legacyReader.getCurrentFile();
       }
       catch (FormatException e) {
         LOGGER.debug("", e);
         nativeReader.setId(id);
         nativeReaderInitialized = true;
+        currentId = nativeReader.getCurrentFile();
       }
     }
     else {
@@ -289,6 +290,7 @@ public abstract class DelegateReader extends FormatReader {
       try {
         nativeReader.setId(id);
         nativeReaderInitialized = true;
+        currentId = nativeReader.getCurrentFile();
       }
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
@@ -297,6 +299,7 @@ public abstract class DelegateReader extends FormatReader {
         LOGGER.info("", exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
+        currentId = legacyReader.getCurrentFile();
       }
       if (legacyReaderInitialized) {
         nativeReaderInitialized = false;

@@ -35,6 +35,7 @@ package loci.common;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.LinkageError;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -80,7 +81,7 @@ public final class DebugTools {
         Method m = k.getMethod("isEnabled");
         return (Boolean) m.invoke(null);
       }
-      catch (ReflectiveOperationException t) {
+      catch (ReflectiveOperationException|LinkageError t) {
         // no-op. Ignore error and try the next class.
       }
     }
@@ -103,7 +104,7 @@ public final class DebugTools {
         m.invoke(null, level);
         return;
       }
-      catch (ReflectiveOperationException t) {
+      catch (ReflectiveOperationException|LinkageError t) {
         // no-op. Ignore error and try the next class.
       }
     }
@@ -127,7 +128,7 @@ public final class DebugTools {
         m.invoke(null);
         return true;
       }
-      catch (ReflectiveOperationException t) {
+      catch (ReflectiveOperationException|LinkageError t) {
         // no-op. Ignore error and try the next class.
       }
     }

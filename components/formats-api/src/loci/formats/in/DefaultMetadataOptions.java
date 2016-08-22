@@ -39,6 +39,7 @@ package loci.formats.in;
 public class DefaultMetadataOptions implements MetadataOptions {
 
   private MetadataLevel level;
+  private boolean validate;
 
   /**
    * Construct a new DefaultMetadataOptions.
@@ -46,6 +47,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
    */
   public DefaultMetadataOptions() {
     this.level = MetadataLevel.ALL;
+    this.validate = false;
   }
 
   /**
@@ -70,6 +72,22 @@ public class DefaultMetadataOptions implements MetadataOptions {
   @Override
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.MetadataOptions#isValidate()
+   */
+  @Override
+  public boolean isValidate() {
+    return validate;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.in.MetadataOptions#setValidate(boolean)
+   */
+  @Override
+  public void setValidate(boolean validateMetadata) {
+    this.validate = validateMetadata;
   }
 
 }

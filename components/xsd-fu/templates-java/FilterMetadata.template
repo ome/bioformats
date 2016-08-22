@@ -15,39 +15,39 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if debug %}\
-	// MARKER [A-GET]
+  // MARKER [A-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
-	{
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+  {
 {% if prop.langType == "String" %}\
-		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
+    ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
-	}
+    store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+  }
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if debug %}\
-	// MARKER [B-GET]
+  // MARKER [B-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
-	{
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
+  {
 {% if prop.langType == "String" %}\
-		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
+    ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
-	}
+    store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName}, ${indexes_name_string(indexes)});
+  }
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
-	// MARKER [C-GET]
+  // MARKER [C-GET]
 {% end debug %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
-	{
+  public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.metadataStoreArgType} ${prop.argumentName})
+  {
 {% if prop.langType == "String" %}\
-		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
+    ${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
-	}
+    store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}{% if not prop.hasBaseAttribute %}${prop.name}{% end %}(${prop.argumentName});
+  }
 {% end %}\
 {% end %}\
 {% end %}\
@@ -56,7 +56,7 @@
   def is_abstract(name):
     o = model.getObjectByName(name)
     if o is not None and \
-       (o.isAbstract or o.isAbstractProprietary):
+       (o.isAbstract):
       return True
     return False
 
@@ -139,6 +139,8 @@
 
 package ${lang.metadata_package};
 
+import java.util.List;
+
 import loci.common.DataTools;
 
 import ${lang.omexml_model_package}.*;
@@ -165,108 +167,108 @@ import ${lang.units_package}.unit.Unit;
  */
 public class FilterMetadata implements MetadataStore
 {
-	// -- Fields --
+  // -- Fields --
 
-        /** The wrapped metadata store. */
-	private MetadataStore store;
-        /** Is filtering enabled? */
-	private boolean filter;
+  /** The wrapped metadata store. */
+  private MetadataStore store;
+  /** Is filtering enabled? */
+  private boolean filter;
 
-	// -- Constructor --
+  // -- Constructor --
 
-        /**
-         * Creates a new instance.
-         * @param store the metadata store to wrap.
-         * @param filter true to enable filtering, false to
-         * disable.
-         */
-	public FilterMetadata(MetadataStore store, boolean filter)
-	{
-		this.store = store;
-		this.filter = filter;
-	}
+  /**
+   * Creates a new instance.
+   * @param store the metadata store to wrap.
+   * @param filter true to enable filtering, false to
+   * disable.
+   */
+  public FilterMetadata(MetadataStore store, boolean filter)
+  {
+    this.store = store;
+    this.filter = filter;
+  }
 
-	// -- MetadataStore API methods --
+  // -- MetadataStore API methods --
 
-	/* @see MetadataStore#createRoot() */
-	public void createRoot()
-	{
-		store.createRoot();
-	}
+  /* @see MetadataStore#createRoot() */
+  public void createRoot()
+  {
+    store.createRoot();
+  }
 
-	/* @see MetadataStore#getRoot() */
-	public MetadataRoot getRoot()
-	{
-		return store.getRoot();
-	}
+  /* @see MetadataStore#getRoot() */
+  public MetadataRoot getRoot()
+  {
+    return store.getRoot();
+  }
 
-	/* @see MetadataStore#setRoot(MetadataRoot) */
-	public void setRoot(MetadataRoot root)
-	{
-		store.setRoot(root);
-	}
+  /* @see MetadataStore#setRoot(MetadataRoot) */
+  public void setRoot(MetadataRoot root)
+  {
+    store.setRoot(root);
+  }
 
-	/* @see MetadataStore#setUUID(String) */
-	public void setUUID(String uuid)
-	{
-		store.setUUID(uuid);
-	}
+  /* @see MetadataStore#setUUID(String) */
+  public void setUUID(String uuid)
+  {
+    store.setUUID(uuid);
+  }
 
-	// -- AggregateMetadata API methods --
+  // -- AggregateMetadata API methods --
 
-	// -- Entity storage (manual definitions) --
+  // -- Entity storage (manual definitions) --
 
-	/** Sets the Map value associated with this annotation */
-	public void setMapAnnotationValue(java.util.List<ome.xml.model.MapPair> value, int mapAnnotationIndex)
-	{
-		store.setMapAnnotationValue(value, mapAnnotationIndex);
-	}
+  /** Sets the Map value associated with this annotation */
+  public void setMapAnnotationValue(List<MapPair> value, int mapAnnotationIndex)
+  {
+    store.setMapAnnotationValue(value, mapAnnotationIndex);
+  }
 
-	/** Sets the Map value associated with this generic light source */
-	public void setGenericExcitationSourceMap(java.util.List<ome.xml.model.MapPair> map, int instrumentIndex, int lightSourceIndex)
-	{
-		store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
-	}
+  /** Sets the Map value associated with this generic light source */
+  public void setGenericExcitationSourceMap(List<MapPair> map, int instrumentIndex, int lightSourceIndex)
+  {
+    store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
+  }
 
-	/** Sets the Map value associated with this imaging environment */
-	public void setImagingEnvironmentMap(java.util.List<ome.xml.model.MapPair> map, int imageIndex)
-	{
-		store.setImagingEnvironmentMap(map, imageIndex);
-	}
+  /** Sets the Map value associated with this imaging environment */
+  public void setImagingEnvironmentMap(List<MapPair> map, int imageIndex)
+  {
+    store.setImagingEnvironmentMap(map, imageIndex);
+  }
 
-	// -- Entity storage (code generated definitions) --
+  // -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if o.langBaseType != 'Object' %}\
-	// Element's text data
-	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
-	{
+  // Element's text data
+  // ${repr(indexes[o.name])}
+  public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+  {
 {% if o.langBaseType == "String" %}\
-		value = filter? DataTools.sanitize(value) : value;
+    value = filter? DataTools.sanitize(value) : value;
 {% end %}\
-		store.set${o.name}Value(value, ${indexes_name_string(indexes[o.name].items()[0][1])});
-	}
+    store.set${o.name}Value(value, ${indexes_name_string(indexes[o.name].items()[0][1])});
+  }
 
 {% end %}\
-{% if (parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary) or o.isConcreteSubstitution %}
+{% if (parents[o.name] is not None and not o.isAbstract) or o.isConcreteSubstitution %}
 {% if debug %}\
-	// MARKER [EEE]
+  // MARKER [EEE]
 {% end debug %}\
-	//
-	// ${o.name} property storage
-	//
-	// ${repr(parents[o.name])}
-	// Is multi path? ${is_multi_path[o.name]}
+  //
+  // ${o.name} property storage
+  //
+  // ${repr(parents[o.name])}
+  // Is multi path? ${is_multi_path[o.name]}
 
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% if debug %}\
-	// ${prop.minOccurs}:${prop.maxOccurs}
-	// Is multi path? ${is_multi_path[o.name]}
-	// Ignoring ${prop.name} property of reference ${o.name}
+  // ${prop.minOccurs}:${prop.maxOccurs}
+  // Is multi path? ${is_multi_path[o.name]}
+  // Ignoring ${prop.name} property of reference ${o.name}
 
 {% end debug %}\
 {% end %}\
@@ -279,20 +281,20 @@ public class FilterMetadata implements MetadataStore
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
-	// MARKER [CCC]
+  // MARKER [CCC]
 {% end debug %}\
 {% if debug %}\
-	// Ignoring ${prop.name} of parent abstract type
+  // Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
 {% if debug %}\
-	// MARKER [DDD]
+  // MARKER [DDD]
 {% end debug %}\
 {% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+  // MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
   // ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
@@ -309,26 +311,26 @@ ${setter(k, o, prop, v)}\
 {% choose %}\
 {% when prop.isBackReference %}\
 {% if debug %}\
-	// Ignoring ${prop.name} back reference
+  // Ignoring ${prop.name} back reference
 {% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() and (not prop.name in fu.COMPLEX_OVERRIDE) %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, complex property
+  // Ignoring ${prop.name} element, complex property
 {% end debug %}\
 {% end %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
-	// MARKER [FFF]
+  // MARKER [FFF]
 {% end debug %}\
 {% if debug %}\
-	// Ignoring ${prop.name} element, unit enumeration property
+  // Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.topLevelName].items() %}\
 {% if debug %}\
-	// MARKER [BBB]
+  // MARKER [BBB]
 {% end debug %}\
 ${setter(k, o, prop, v)}\
 

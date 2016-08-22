@@ -103,9 +103,6 @@ namespace
                     // timestampannotation.ome.xml - Contains non-POSIX timestamps.
                     if (p.file.filename() == path("timestampannotation.ome.xml"))
                       continue;
-                    // Map Annotation cannot be converted
-                    if (p.file.filename() == path("mapannotation.ome.xml"))
-                      p.throws = true;
 
                     if (p.file.extension() == path(".ome") ||
                         p.file.extension() == path(".xml"))

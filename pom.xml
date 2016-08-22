@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
+  <version>5.2.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -49,7 +49,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.2.0-SNAPSHOT</release.version>
+    <release.version>5.2.1-SNAPSHOT</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>
@@ -63,7 +63,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
 
-    <xsdfu.schemaver>2016-DEV0</xsdfu.schemaver>
+    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
 

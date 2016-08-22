@@ -100,14 +100,6 @@ public class FileStitcherTest {
     return ret;
   }
 
-  private static int[] readSpecialPixels(byte[] plane) {
-    int[] idx = new int[5];  // S, no., Z, C, T
-    for (int i = 0; i < idx.length; i++) {
-      idx[i] = plane[i * FakeReader.BOX_SIZE] & 0xFF;
-    }
-    return idx;
-  }
-
   private static List<Integer> range(Integer len) {
     List<Integer> ret = new ArrayList<Integer>();
     for (int i = 0; i < len; i++) {
@@ -150,7 +142,7 @@ public class FileStitcherTest {
     }
     int[] specialPixels;
     for (int i = 0; i < fs.getImageCount(); i++) {
-      specialPixels = readSpecialPixels(fs.openBytes(i));
+      specialPixels = FakeReader.readSpecialPixels(fs.openBytes(i));
       for (int k = 0; k < 5; k++) {
         idxSets.get(k).add(specialPixels[k]);
       }

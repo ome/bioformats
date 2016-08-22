@@ -171,7 +171,7 @@ public class SPCReader extends FormatReader {
 
   /** Constructs a new SPC reader. */
   public SPCReader() {
-    super("SPCImage Data", new String[] {"spc", "set"});
+    super("SPC FIFO Data", new String[] {"spc", "set"});
     domains = new String[] {FormatTools.FLIM_DOMAIN};
     suffixSufficient = true;
     hasCompanionFiles = true;

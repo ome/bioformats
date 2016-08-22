@@ -4,23 +4,32 @@
 Generate code to process OME-XML from an OME-XML schema.
 """
 
+# Copyright (C) 2007 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
 #
-#  Copyright (C) 2007 - 2016 Open Microscopy Environment. All rights reserved.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
 #
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License along
-#  with this program; if not, write to the Free Software Foundation, Inc.,
-#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -91,6 +100,7 @@ Options:
   --ome-xml-model-package=pkg                OME-XML model package
   --ome-xml-model-enums-package=pkg          OME-XML model enum package
   --ome-xml-model-enum-handlers-package=pkg  OME-XML model enum handler package
+  --ome-xml-model-quantity-package=pkg       OME-XML model quantity package
   -o, --output-directory=dir                 Generated output directory
   --print-depends                            Output command dependencies
   --print-generated                          Output generated file names
@@ -107,6 +117,7 @@ Available subcommands:
   omexml_model_enums
   omexml_model_enum_handlers
   omexml_model_enum_includeall
+  omexml_model_quantity
   tab_gen
 
 Default XSD namespace: "%s"
@@ -119,6 +130,7 @@ Default Java OME-XML metadata package: "%s"
 
 Default C++ OME-XML package: "%s"
 Default C++ OME-XML enum package: "%s"
+Default C++ OME-XML quantity package: "%s"
 Default C++ metadata package: "%s"
 Default C++ OME-XML metadata package: "%s"
 
@@ -131,7 +143,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
      cmd,
      java.modelNamespace,
      java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
-     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.metadata_package, cpp.omexml_metadata_package,
+     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.omexml_model_quantity_package, cpp.metadata_package, cpp.omexml_metadata_package,
      cmd, java.modelNamespace, java.omexml_model_package,
      cmd, cpp.modelNamespace, cpp.omexml_model_package))
     sys.exit(2)
@@ -412,6 +424,57 @@ def enumHandlersMain(model, opts):
         for file in sorted(used_files):
             print(file)
 
+def quantityTypesMain(model, opts):
+    """
+    Default main() that parses command line options and generates
+    classes for quantity types in an output directory.
+    """
+
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('QUANTITY'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('QUANTITY')))
+    for obj in model.objects.values():
+        for prop in obj.properties.values():
+            if not prop.isUnitsEnumeration:
+                continue
+
+            try:
+                quantityUnit = re.sub("^Units", "", prop.langType)
+                quantityType = quantityUnit + "Quantity"
+                fullname = opts.lang.generatedFilename(quantityType, opts.filetype)
+                fullname = os.path.join("ome", "xml", "model", "primitives", fullname)
+            except ModelProcessingError:
+                continue
+
+            fu.GUARD = guard(fullname)
+            fu.SOURCE_TYPE = opts.filetype;
+
+            fullname = os.path.join(opts.outdir, fullname)
+
+            if opts.print_generated:
+                print(fullname)
+
+            outputDirectory = os.path.dirname(fullname)
+            if not opts.dryrun and not os.path.exists(outputDirectory):
+                os.makedirs(outputDirectory)
+
+            classContent = template.generate(fu=fu, klass=prop, opts=opts, lang=opts.lang, debug=opts.debug,
+                                             enum_value_name=enum_value_name, quantityUnit=quantityUnit,
+                                             quantityType=quantityType).render(encoding='utf-8')
+
+            if not opts.dryrun:
+                f = codecs.open(fullname, "w", encoding='utf-8')
+                f.write(classContent.decode('utf-8'))
+                f.close()
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
 def max_occurs_under_parent(model, parent, name):
     """
     Returns the maximum occurrances of a given object under its current
@@ -492,7 +555,6 @@ def processMetadataTemplate(template, outputFilename, model, opts):
     fu.METADATA_OBJECT_IGNORE = config.METADATA_OBJECT_IGNORE
     fu.METADATA_COUNT_IGNORE = config.METADATA_COUNT_IGNORE
     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
-    fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
     fu.COMPLEX_OVERRIDE = config.COMPLEX_OVERRIDE
     fu.ANNOTATION_OVERRIDE = config.ANNOTATION_OVERRIDE
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
@@ -584,6 +646,9 @@ def metadataMain(model, opts):
                 os.path.join(relpath, "DummyMetadata"),
                 model, opts)
 
+    if not opts.dryrun:
+        validateMetadataConverter()
+
 def docGenMain(model, opts):
     """
     Documentation main() that does not parse the command line and spits
@@ -641,6 +706,44 @@ def parentlist(model, name, pre):
                         print("%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name)
                         parentlist(model, prop.type, pre + prop.name + ":")
 
+def validateMetadataConverter():
+    relpath = os.path.join(*opts.lang.omexml_metadata_package.split(opts.lang.package_separator))
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    storeFilename = os.path.join(relpath, "MetadataStore")
+    retrieveFilename = os.path.join(relpath, "MetadataRetrieve")
+    convertFilename = os.path.join(os.path.join(root, opts.lang.getConverterDir()), opts.lang.getConverterName())
+    storeFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(storeFilename, opts.filetype)))
+    retrieveFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(retrieveFilename, opts.filetype)))
+    convertFile = file(os.path.join(opts.outdir, opts.lang.generatedFilename(convertFilename, opts.filetype)))
+    white_list = ['Root', 'Datasets', 'Count', 'ShapeType', 'LightSourceType']
+    regexp = re.compile(r'(?<=[\s\.:][gs]et)((?:(?!'+'|'.join(white_list)+r')\w)*)[\(,]')
+    grepper = grep(regexp, lambda line: regexp.search(line))
+    storeSet = set(grepper(storeFile))
+    retrieveSet = set(grepper(retrieveFile))
+    convertSet = set(grepper(convertFile))
+    retrieveDiff = storeSet.symmetric_difference(set(retrieveSet))
+    converterDiff = storeSet.symmetric_difference(set(convertSet))
+    for match in retrieveDiff:
+        if match in retrieveSet:
+            print("MetadataValidation: %s is present in MetadataRetrieve but missing from MetadataStore" % match)
+        else:
+            print("MetadataValidation: %s is present in MetadataStore but missing from MetadataRetrieve" % match)
+    for match in converterDiff:
+        if match in convertSet:
+            print("MetadataValidation: %s is present in %s but missing from MetadataStore" % (match, opts.lang.getConverterName()))
+        else:
+            print("MetadataValidation: %s is present in MetadataStore but missing from %s" % (match, opts.lang.getConverterName()))
+
+def grep(regexp, *matches):
+    def _do_grep_wrapper(*matches):
+        def _do_grep(lines):
+            for line in lines:
+                for match in matches:
+                    if match(line):
+                        yield re.findall(regexp, line)[0]
+                        break
+        return _do_grep
+    return _do_grep_wrapper(*matches)
 
 class options:
     def __init__(self, args):
@@ -765,6 +868,7 @@ if __name__ == '__main__':
         enumTypesMain(model, opts)
         if isinstance(opts.lang, language.CXX) and opts.filetype == language.TYPE_HEADER:
             enumTypesIncludeAll(model, opts)
+            quantityTypesMain(model, opts)
         if isinstance(opts.lang, language.Java):
             enumHandlersMain(model, opts)
     elif opts.command == "omexml_metadata_all":
@@ -777,6 +881,8 @@ if __name__ == '__main__':
     elif opts.command == "metadata":
         metadataMain(model, opts)
     elif opts.command == "omexml_model_enums":
+        enumTypesMain(model, opts)
+    elif opts.command == "omexml_model_quantities":
         enumTypesMain(model, opts)
     elif opts.command == "omexml_model_enum_includeall":
         enumTypesIncludeAll(model, opts)

@@ -1,3 +1,30 @@
+# Copyright (C) 2009 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 from util import odict
 import logging
 import re
@@ -25,7 +52,6 @@ class OMEModelObject(OMEModelEntity):
         self.type = element.getType()
         self.properties = odict()
         self.isAbstract = False
-        self.isAbstractProprietary = False
         self.isParentOrdered = False
         self.isChildOrdered = False
         self.isOrdered = False
@@ -50,8 +76,6 @@ class OMEModelObject(OMEModelEntity):
                 raise
             if root.find('abstract') is not None:
                 self.isAbstract = True
-            if root.find('abstractproprietary') is not None:    
-                self.isAbstractProprietary = True
             if root.find('unique') is not None:
                 self.isUnique = True
             if root.find('immutable') is not None:
@@ -249,10 +273,11 @@ class OMEModelObject(OMEModelEntity):
                 self.langBaseType, "value", None, "Element's text data",
                 False])
         for prop in self.properties.values():
-            props.append([
-                prop.instanceVariableType, prop.instanceVariableName,
-                prop.instanceVariableDefault, prop.instanceVariableComment,
-                prop.isUnitsEnumeration])
+            if not prop.isUnitsEnumeration:
+                props.append([
+                    prop.instanceVariableType, prop.instanceVariableName,
+                    prop.instanceVariableDefault, prop.instanceVariableComment,
+                    prop.isUnitsEnumeration])
         return props
     instanceVariables = property(
         _get_instanceVariables,
@@ -362,7 +387,7 @@ class OMEModelObject(OMEModelEntity):
         parent = self._get_parent()
         name = self.modelBaseType
 
-        if (parent is not None and parent.isAbstractProprietary and
+        if (parent is not None and parent.isAbstract and
                 self.name not in config.ANNOTATION_OVERRIDE):
             name = parent.name
 
@@ -370,20 +395,20 @@ class OMEModelObject(OMEModelEntity):
     parentName = property(
         _get_parentName, doc="""The parent class name for this object.""")
 
-    def _get_isParentAbstractProprietary(self):
+    def _get_isParentAbstract(self):
         parent = self._get_parent()
 
         abstract = False
 
-        if (parent is not None and parent.isAbstractProprietary and
+        if (parent is not None and parent.isAbstract and
                 self.name not in config.ANNOTATION_OVERRIDE):
             abstract = True
 
         return abstract
-    isParentAbstractProprietary = property(
-        _get_isParentAbstractProprietary,
+    isParentAbstract = property(
+        _get_isParentAbstract,
         doc="""Returns whether or not the model object has an abstract"""
-        """ proprietary parent.""")
+        """ parent.""")
 
     def __str__(self):
         return self.__repr__()

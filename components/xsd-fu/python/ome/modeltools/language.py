@@ -1,3 +1,30 @@
+# Copyright (C) 2009 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 import copy
 import os
 
@@ -41,6 +68,7 @@ class Language(object):
             'ENUM': 'OMEXMLModelEnum.template',
             'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
             'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'QUANTITY': 'OMEXMLModelQuantity.template',
             'CLASS': 'OMEXMLModelObject.template',
             'METADATA_STORE': 'MetadataStore.template',
             'METADATA_RETRIEVE': 'MetadataRetrieve.template',
@@ -94,9 +122,12 @@ class Language(object):
         self.template_dir = None
         self.source_suffix = None
         self.header_suffix = None
+        self.converter_dir = None
+        self.converter_name = None
 
         self.omexml_model_package = None
         self.omexml_model_enums_package = None
+        self.omexml_model_quantity_package = None
         self.omexml_model_omexml_model_enum_handlers_package = None
         self.metadata_package = None
         self.omexml_metadata_package = None
@@ -119,6 +150,12 @@ class Language(object):
         return os.path.join(self._templatepath, self.getTemplateDirectory(),
                             self.getTemplate(template))
 
+    def getConverterDir(self):
+        return self.converter_dir
+        
+    def getConverterName(self):
+        return self.converter_name
+        
     def generatedFilename(self, name, type):
         gen_name = None
         if type == TYPE_SOURCE and self.source_suffix is not None:
@@ -241,8 +278,9 @@ class Java(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
         self.primitive_type_map['base64Binary'] = 'byte[]'
+        self.primitive_type_map['Map'] = 'List<MapPair>'
 
-        self.model_type_map['MapPairs'] = None
+        self.model_type_map['Map'] = None
         self.model_type_map['M'] = None
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
@@ -272,6 +310,8 @@ class Java(Language):
         self.template_dir = "templates-java"
         self.source_suffix = ".java"
         self.header_suffix = None
+        self.converter_name = "MetadataConverter"
+        self.converter_dir = "components/formats-api/src/loci/formats/meta"
 
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"
@@ -289,11 +329,11 @@ class Java(Language):
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return self.model_unit_map[valueType]
+    def typeToUnitsType(self, unitType):
+        return self.model_unit_map[unitType]
 
-    def typeToDefault(self, valueType):
-        return self.model_unit_default[valueType]
+    def typeToDefault(self, unitType):
+        return self.model_unit_default[unitType]
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
@@ -346,8 +386,9 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
         self.primitive_type_map['base64Binary'] = 'std::vector<uint8_t>'
+        self.primitive_type_map['Map'] = 'OrderedMultimap'
 
-        self.model_type_map['MapPairs'] = None
+        self.model_type_map['Map'] = None
         self.model_type_map['M'] = None
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
@@ -360,9 +401,12 @@ class CXX(Language):
         self.template_dir = "templates-cpp"
         self.source_suffix = ".cpp"
         self.header_suffix = ".h"
+        self.converter_name = "Convert"
+        self.converter_dir = "cpp/lib/ome/xml/meta"
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
+        self.omexml_model_quantity_package = "ome::xml::model::primitives"
         self.omexml_model_omexml_model_enum_handlers_package = \
             "ome::xml::model::enums::handlers"
         self.metadata_package = "ome::xml::meta"
@@ -371,8 +415,11 @@ class CXX(Language):
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
 
-    def typeToUnitsType(self, valueType):
-        return "Unit<" + valueType + ">"
+    def typeToUnitsType(self, unitType, valueType=None):
+        if valueType is None:
+            return "%s::Quantity<%s > " % (self.omexml_model_quantity_package, unitType)
+        else:
+            return "%s::Quantity<%s, %s > " % (self.omexml_model_quantity_package, unitType, valueType)
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a C++ method signature dictionary from an index name."""

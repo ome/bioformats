@@ -1,68 +1,69 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#
-	# Copyright (C) 2012 - 2016 Open Microscopy Environment
-	#       Massachusetts Institute of Technology,
-	#       National Institutes of Health,
-	#       University of Dundee,
-	#       University of Wisconsin at Madison
-	#
-	#    This library is free software; you can redistribute it and/or
-	#    modify it under the terms of the GNU Lesser General Public
-	#    License as published by the Free Software Foundation; either
-	#    version 2.1 of the License, or (at your option) any later version.
-	#
-	#    This library is distributed in the hope that it will be useful,
-	#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-	#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	#    Lesser General Public License for more details.
-	#
-	#    You should have received a copy of the GNU Lesser General Public
-	#    License along with this library; if not, write to the Free Software
-	#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-	#
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
+  #%L
+  OME Data Model transforms
+  %%
+  Copyright (C) 2012 - 2016 Open Microscopy Environment:
+    - Massachusetts Institute of Technology
+    - National Institutes of Health
+    - University of Dundee
+    - Board of Regents of the University of Wisconsin-Madison
+  %%
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
-<!--
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew Patterson: ajpatterson at lifesci.dundee.ac.uk
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
 
-<ome-transforms current="2016-DEV0">
-	<source schema="2016-DEV0">
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+  #L%
+  -->
+
+<ome-transforms current="2016-06">
+	<source schema="2016-06">
 		<upgrades>
 		</upgrades>
 		<downgrades>
 			<target schema="2015-01" quality="good">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 			</target>
 			<target schema="2013-06" quality="good">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 			</target>
 			<target schema="2012-06" quality="good">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 			</target>
 			<target schema="2011-06" quality="good">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
 			</target>
 			<target schema="2010-06" quality="good">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2010-06.xsl"/>
 			</target>
 			<target schema="2010-04" quality="fair">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -73,7 +74,7 @@
 				<transform file="2009-09-to-2010-04.xsl"/>
 			</target>
 			<target schema="2009-09" quality="fair">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -83,7 +84,7 @@
 				<transform file="2008-09-to-2009-09.xsl"/>
 			</target>
 			<target schema="2008-09" quality="fair">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -92,7 +93,7 @@
 				<transform file="2008-02-to-2008-09.xsl"/>
 			</target>
 			<target schema="2008-02" quality="fair">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -100,7 +101,7 @@
 				<transform file="2010-06-to-2008-02.xsl"/>
 			</target>
 			<target schema="2007-06" quality="poor">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -109,7 +110,7 @@
 				<transform file="2003-FC-to-2007-06.xsl"/>
 			</target>
 			<target schema="2003-FC" quality="poor">
-				<transform file="2016-DEV0-to-2015-01.xsl"/>
+				<transform file="2016-06-to-2015-01.xsl"/>
 				<transform file="2015-01-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2011-06.xsl"/>
@@ -120,8 +121,8 @@
 	</source>
 	<source schema="2015-01">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+			<target schema="2016-06" quality="excellent">
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 		</upgrades>
 		<downgrades>
@@ -196,9 +197,9 @@
 	</source>
 	<source schema="2013-06">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2013-06-to-2015-01.xsl"/>
@@ -264,10 +265,10 @@
 	</source>
 	<source schema="2012-06">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2012-06-to-2013-06.xsl"/>
@@ -326,11 +327,11 @@
 	</source>
 	<source schema="2011-06">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2011-06-to-2012-06.xsl"/>
@@ -384,12 +385,12 @@
 	</source>
 	<source schema="2010-06">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2010-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2010-06-to-2011-06.xsl"/>
@@ -440,13 +441,13 @@
 	</source>
 	<source schema="2010-04">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2010-04-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2010-04-to-2010-06.xsl"/>
@@ -503,14 +504,14 @@
 	</source>
 	<source schema="2009-09">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2011-06.xsl"/>
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -573,7 +574,7 @@
 	</source>
 	<source schema="2008-09">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
 				<transform file="2010-04-to-2010-06.xsl"/>
@@ -581,7 +582,7 @@
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2008-09-to-2009-09.xsl"/>
@@ -650,7 +651,7 @@
 	</source>
 	<source schema="2008-02">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2008-02-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -659,7 +660,7 @@
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2008-02-to-2008-09.xsl"/>
@@ -734,7 +735,7 @@
 	</source>
 	<source schema="2007-06">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2007-06-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -743,7 +744,7 @@
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2007-06-to-2008-09.xsl"/>
@@ -813,7 +814,7 @@
 	</source>
 	<source schema="2003-FC">
 		<upgrades>
-			<target schema="2016-DEV0" quality="excellent">
+			<target schema="2016-06" quality="excellent">
 				<transform file="2003-FC-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
 				<transform file="2009-09-to-2010-04.xsl"/>
@@ -822,7 +823,7 @@
 				<transform file="2011-06-to-2012-06.xsl"/>
 				<transform file="2012-06-to-2013-06.xsl"/>
 				<transform file="2013-06-to-2015-01.xsl"/>
-				<transform file="2015-01-to-2016-DEV0.xsl"/>
+				<transform file="2015-01-to-2016-06.xsl"/>
 			</target>
 			<target schema="2015-01" quality="excellent">
 				<transform file="2003-FC-to-2008-09.xsl"/>

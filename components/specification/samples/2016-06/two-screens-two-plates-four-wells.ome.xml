@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06
+                         http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Plate ID="Plate:1">
+    <Description>Plate 1 description.</Description>
+    <Well ID="Well:1.1.1" Column="1" Row="1">
+      <WellSample ID="WellSample:1.1.1.1" Index="1">
+        <ImageRef ID="Image:0"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.1.1.2" Index="5">
+        <ImageRef ID="Image:1"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <Well ID="Well:1.2.1" Column="2" Row="1">
+      <WellSample ID="WellSample:1.2.1.1" Index="2">
+        <ImageRef ID="Image:2"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.2.1.2" Index="6">
+        <ImageRef ID="Image:3"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <Well ID="Well:1.1.2" Column="1" Row="2">
+      <WellSample ID="WellSample:1.1.2.1" Index="3">
+        <ImageRef ID="Image:4"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.1.2.2" Index="7">
+        <ImageRef ID="Image:5"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.1.2.3" Index="11">
+        <ImageRef ID="Image:6"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.1.2.4" Index="15">
+        <ImageRef ID="Image:7"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.1.2.5" Index="19">
+        <ImageRef ID="Image:8"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <Well ID="Well:1.2.2" Column="2" Row="2">
+      <WellSample ID="WellSample:1.2.2.1" Index="4">
+        <ImageRef ID="Image:9"/>
+      </WellSample>
+      <WellSample ID="WellSample:1.2.2.2" Index="8">
+        <ImageRef ID="Image:10"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <PlateAcquisition ID="PlateAcquisition:Plate:1:ScreenAcquisition:1"
+                          StartTime="2010-02-23T12:49:30" EndTime="2010-02-23T12:50:30">
+      <WellSampleRef ID="WellSample:1.1.1.1"/>
+      <WellSampleRef ID="WellSample:1.2.1.1"/>
+      <WellSampleRef ID="WellSample:1.1.2.1"/>
+      <WellSampleRef ID="WellSample:1.2.2.1"/>
+    </PlateAcquisition>
+    <PlateAcquisition ID="PlateAcquisition:Plate:1:ScreenAcquisition:2"
+                          StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+      <WellSampleRef ID="WellSample:1.1.1.2"/>
+      <WellSampleRef ID="WellSample:1.2.1.2"/>
+      <WellSampleRef ID="WellSample:1.1.2.2"/>
+      <WellSampleRef ID="WellSample:1.2.2.2"/>
+    </PlateAcquisition>
+  </Plate>
+  <Plate ID="Plate:2" Name="twoName">
+    <Description>Plate 2 description.</Description>
+    <Well ID="Well:2.1.1" Column="1" Row="1">
+      <WellSample ID="WellSample:2.1.1.1" Index="1">
+        <ImageRef ID="Image:11"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.1.1.2" Index="5">
+        <ImageRef ID="Image:12"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:2"/>
+    </Well>
+    <Well ID="Well:2.2.1" Column="2" Row="1">
+      <WellSample ID="WellSample:2.2.1.1" Index="2">
+        <ImageRef ID="Image:13"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.2.1.2" Index="6">
+        <ImageRef ID="Image:14"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <Well ID="Well:2.1.2" Column="1" Row="2">
+      <WellSample ID="WellSample:2.1.2.1" Index="3">
+        <ImageRef ID="Image:15"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.1.2.2" Index="7">
+        <ImageRef ID="Image:16"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.1.2.3" Index="11">
+        <ImageRef ID="Image:17"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.1.2.4" Index="15">
+        <ImageRef ID="Image:18"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.1.2.5" Index="19">
+        <ImageRef ID="Image:19"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <Well ID="Well:2.2.2" Column="2" Row="2">
+      <WellSample ID="WellSample:2.2.2.1" Index="4">
+        <ImageRef ID="Image:20"/>
+      </WellSample>
+      <WellSample ID="WellSample:2.2.2.2" Index="8">
+        <ImageRef ID="Image:21"/>
+      </WellSample>
+      <ReagentRef ID="Reagent:1"/>
+    </Well>
+    <PlateAcquisition ID="PlateAcquisition:Plate:2:ScreenAcquisition:5"
+                          StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+      <WellSampleRef ID="WellSample:2.1.1.2"/>
+      <WellSampleRef ID="WellSample:2.2.1.2"/>
+      <WellSampleRef ID="WellSample:2.1.2.2"/>
+      <WellSampleRef ID="WellSample:2.2.2.2"/>
+    </PlateAcquisition>
+  </Plate>
+  <Screen ID="Screen:1" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription=""
+              ReagentSetIdentifier="" Name="" Type="">
+    <Description/>
+    <Reagent ID="Reagent:1" Name="" ReagentIdentifier="">
+      <Description/>
+    </Reagent>
+    <PlateRef ID="Plate:1"/>
+    <PlateRef ID="Plate:2"/>
+  </Screen>
+  <Screen ID="Screen:2" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription=""
+              ReagentSetIdentifier="" Name="" Type="">
+    <Description>twoScreen</Description>
+    <Reagent ID="Reagent:2" Name="" ReagentIdentifier="">
+      <Description/>
+    </Reagent>
+    <PlateRef ID="Plate:1"/>
+  </Screen>
+  <Image ID="Image:0" Name="6x6x1x8-swatch.tif-0">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:0"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:1" Name="6x6x1x8-swatch.tif-1">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:1:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:1"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:2" Name="6x6x1x8-swatch.tif-2">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:2:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:2"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:3" Name="6x6x1x8-swatch.tif-3">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:3:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:3"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:4" Name="6x6x1x8-swatch.tif-4">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:4:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:4"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:5" Name="6x6x1x8-swatch.tif-5">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:5:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:5"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:6" Name="6x6x1x8-swatch.tif-6">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:6:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:6"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:7" Name="6x6x1x8-swatch.tif-7">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:7:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:7"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:8" Name="6x6x1x8-swatch.tif-8">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:8:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:8"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:9" Name="6x6x1x8-swatch.tif-9">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:9:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:9"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:10" Name="6x6x1x8-swatch.tif-10">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:10:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:10"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:11" Name="6x6x1x8-swatch.tif-11">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:11:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:11"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:12" Name="6x6x1x8-swatch.tif-12">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:12:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:12"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:13" Name="6x6x1x8-swatch.tif-13">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:13:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:13"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:14" Name="6x6x1x8-swatch.tif-14">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:14:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:14"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:15" Name="6x6x1x8-swatch.tif-15">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:15:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:15"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:16" Name="6x6x1x8-swatch.tif-16">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:16:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:16"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:17" Name="6x6x1x8-swatch.tif-17">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:17:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:17"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:18" Name="6x6x1x8-swatch.tif-18">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:18:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:18"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:19" Name="6x6x1x8-swatch.tif-19">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:19:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:19"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:20" Name="6x6x1x8-swatch.tif-20">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:20:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:20"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+  <Image ID="Image:21" Name="6x6x1x8-swatch.tif-21">
+    <AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
+    <Pixels DimensionOrder="XYCZT" ID="Pixels:21:0" PhysicalSizeX="10000.0"
+                PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+      <Channel Color="-2147483648" ID="Channel:21"/>
+      <BinData BigEndian="false" Length="32"
+                   >/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BinData>
+    </Pixels>
+  </Image>
+</OME>
