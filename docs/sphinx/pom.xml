@@ -68,7 +68,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>ExampleSuite</mainClass>
+          <mainClass>ReadPhysicalSize</mainClass>
           <arguments>
             <argument>${project.basedir}/developers/examples/test.fake</argument>
           </arguments>
