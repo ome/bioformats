@@ -1268,7 +1268,7 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i <getSeriesCount(); i++){
       setSeries(i);
       CoreMetadata seriesCore = core.get(i);
-      seriesCore.imageCount = getSizeZ() * getSizeC();
+      seriesCore.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
     }
     setSeries(oldSeries);
   }
