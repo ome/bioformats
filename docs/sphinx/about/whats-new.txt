@@ -1,6 +1,25 @@
 Version history
 ===============
 
+5.2.1 (2016 August 25)
+----------------------
+
+Java bug fixes:
+
+* Zeiss CZI
+   - fixed NumberFormatException when the position object is not null but the
+     values of child are null
+* SimplePCI
+   - made IniParser less stringent to allow reading of imperfectly formatted
+     TIFF description headers
+* fixed stitching of file patterns in ImageJ to remove duplication of
+  directory names in the file path
+* added an option to bfconvert to allow creation of OME-TIFF without lookup
+  tables
+* addition of MetadataOnly elements containing no BinData or TiffData now
+  handled via MetadataTools API in ImageInfo
+* example code in developer docs is now tested via a new Maven module
+
 5.2.0 (2016 August 18)
 ----------------------
 
