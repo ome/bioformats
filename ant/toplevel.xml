@@ -996,7 +996,7 @@ Type "ant -p" for a list of targets.
       <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
         prefix="bftools"/>
       <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
-        prefix="bftools" filemode="751"/>
+        prefix="bftools" filemode="755"/>
       <zipfileset file="${package.jar}" prefix="bftools"/>
     </zip>
 
