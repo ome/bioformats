@@ -51,6 +51,7 @@
         <directory>${project.basedir}/developers/examples</directory>
         <includes>
             <include>**/*.xml</include>
+            <include>**/*.fake*</include>
         </includes>
       </resource> 
     </resources>      
@@ -61,55 +62,14 @@
         <version>1.2.1</version>
         <executions>
           <execution>
-            <id>ReadPhysicalSize</id>
             <phase>test</phase>
             <goals>
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>ReadPhysicalSize</mainClass>
+              <mainClass>ExampleSuite</mainClass>
               <arguments>
                 <argument>${project.basedir}/developers/examples/test.fake</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>FileConvert</id>
-            <phase>test</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>FileConvert</mainClass>
-              <arguments>
-                <argument>${project.basedir}/developers/examples/test.fake</argument>
-                <argument>${project.build.directory}/converted.ome.tiff</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>FileExport</id>
-            <phase>test</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>FileExport</mainClass>
-              <arguments>
-                <argument>${project.build.directory}/export.ome.tiff</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>FileExportSPW</id>
-            <phase>test</phase>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>FileExportSPW</mainClass>
-              <arguments>
-                <argument>${project.build.directory}/exportSPW.ome.tiff</argument>
               </arguments>
             </configuration>
           </execution>
