@@ -9,7 +9,7 @@ version 4.2 and later.
 .. only:: html
 
    Working example code is provided in    
-   :download:`FileExport.java <FileExport.java>` - code from that class is
+   :download:`FileExport.java <examples/FileExport.java>` - code from that class is
    referenced here in part. You will need to have bioformats_package.jar in your Java
    CLASSPATH in order to compile FileExport.java.
 
