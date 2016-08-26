@@ -255,10 +255,10 @@ public class HarmonyReader extends FormatReader {
     for (String f : list) {
       Location path = new Location(parent, f);
       if (path.isDirectory()) {
-        String[] results = path.list();
-        for (String r : results) {
-          if (!f.equals("Images") || !checkSuffix(r, "tiff")) {
-            metadataFiles.add(new Location(path, r).getAbsolutePath());
+        String[] companionFolders = path.list();
+        for (String folder : companionFolders) {
+          if (!f.equals("Images") || !checkSuffix(folder, "tiff")) {
+            metadataFiles.add(new Location(path, folder).getAbsolutePath());
           }
         }
       }
