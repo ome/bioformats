@@ -179,7 +179,7 @@ public class HarmonyReader extends FormatReader {
 
     ArrayList<String> files = new ArrayList<String>();
     files.addAll(metadataFiles);
-    if (!noPixels) {
+    if (!noPixels && getSeries() < planes.length) {
       for (Plane p : planes[getSeries()]) {
         files.add(p.filename);
       }
