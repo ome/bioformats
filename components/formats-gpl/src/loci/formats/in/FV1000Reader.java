@@ -431,6 +431,7 @@ public class FV1000Reader extends FormatReader {
     pixelSize = new Double[NUM_DIMENSIONS];
 
     previewNames = new ArrayList<String>();
+    Map<Integer, String> previewFileNames = new HashMap<Integer, String>();
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -468,7 +469,8 @@ public class FV1000Reader extends FormatReader {
           RandomAccessInputStream s = getFile(path + value.trim());
           if (s != null) {
             s.close();
-            previewNames.add(path + value.trim());
+            previewFileNames.put(Integer.valueOf(key.substring(11)),
+              path + value.trim());
           }
         }
         catch (FormatException e) {
@@ -478,6 +480,11 @@ public class FV1000Reader extends FormatReader {
           LOGGER.debug("Preview file not found", e);
         }
       }
+    }
+
+    // Store sorted list of preview names
+    for (Integer key : previewFileNames.keySet()) {
+      previewNames.add(previewFileNames.get(key));
     }
 
     if (filenames.isEmpty()) addPtyFiles();
