@@ -81,6 +81,9 @@ public class FV1000Reader extends FormatReader {
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
 
+  public static final String[] PREVIEWNAME_PREFIXES = {
+    "IniFileName", "PtyFileNameReference"};
+
   public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   private static final int NUM_DIMENSIONS = 9;
@@ -432,6 +435,7 @@ public class FV1000Reader extends FormatReader {
 
     previewNames = new ArrayList<String>();
     Map<Integer, String> previewFileNames = new HashMap<Integer, String>();
+    Integer previewIndex;
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -469,8 +473,12 @@ public class FV1000Reader extends FormatReader {
           RandomAccessInputStream s = getFile(path + value.trim());
           if (s != null) {
             s.close();
-            previewFileNames.put(Integer.valueOf(key.substring(11)),
-              path + value.trim());
+            previewIndex = getPreviewNameIndex(key);
+            if (previewIndex != null) {
+              previewFileNames.put(previewIndex, path + value.trim());
+            } else {
+              previewNames.add(path + value.trim());
+            }
           }
         }
         catch (FormatException e) {
@@ -1657,6 +1665,16 @@ public class FV1000Reader extends FormatReader {
     catch (FormatException e) { }
     catch (IOException e) { }
     return plane;
+  }
+
+  /* Parse the index of the preview name file using a set of prefixes */
+  private Integer getPreviewNameIndex(String key) {
+    Integer previewIndex = null;
+    for (String prefix: PREVIEWNAME_PREFIXES) {
+      if (!key.startsWith(prefix)) continue;
+      return DataTools.parseInteger(key.substring(prefix.length()));
+    }
+    return previewIndex;
   }
 
   private boolean isPreviewName(String name) {
