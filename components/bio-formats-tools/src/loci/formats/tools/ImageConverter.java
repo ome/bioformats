@@ -106,6 +106,7 @@ public final class ImageConverter {
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
+  private boolean zeroPadding = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -144,6 +145,7 @@ public final class ImageConverter {
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
+        else if (args[i].equals("-padded")) zeroPadding = true;
         else if (args[i].equals("-overwrite")) {
           overwrite = true;
         }
@@ -528,7 +530,7 @@ public final class ImageConverter {
           continue;
         }
 
-        String outputName = FormatTools.getFilename(q, i, reader, out);
+        String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
         if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
           writer.setId(outputName);
           if (compression != null) writer.setCompression(compression);

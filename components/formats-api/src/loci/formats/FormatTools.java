@@ -1024,13 +1024,16 @@ public final class FormatTools {
    * @throws IOException Never actually thrown.
    */
   public static String getFilename(int series, int image, IFormatReader r,
-    String pattern) throws FormatException, IOException
+    String pattern, boolean padded) throws FormatException, IOException
   {
     MetadataStore store = r.getMetadataStore();
     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
       (MetadataRetrieve) store : new DummyMetadata();
-    
-    String sPlaces = "%0" + String.valueOf(r.getSeriesCount()).length() + "d";
+
+    String sPlaces = "%d";
+    if (padded) {
+      sPlaces = "%0" + String.valueOf(r.getSeriesCount()).length() + "d";
+    }
     String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
     String imageName = retrieve.getImageName(series);
@@ -1042,9 +1045,15 @@ public final class FormatTools {
 
     r.setSeries(series);
     int[] coordinates = r.getZCTCoords(image);
-    String zPlaces = "%0" + String.valueOf(r.getSizeZ()).length() + "d";
-    String tPlaces = "%0" + String.valueOf(r.getSizeT()).length() + "d";
-    String cPlaces = "%0" + String.valueOf(r.getSizeC()).length() + "d";
+
+    String zPlaces = "%d";
+    String tPlaces = "%d";
+    String cPlaces = "%d";
+    if (padded) {
+      zPlaces = "%0" + String.valueOf(r.getSizeZ()).length() + "d";
+      tPlaces = "%0" + String.valueOf(r.getSizeT()).length() + "d";
+      cPlaces = "%0" + String.valueOf(r.getSizeC()).length() + "d";
+    }
     filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
     filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));
     filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, coordinates[1]));
