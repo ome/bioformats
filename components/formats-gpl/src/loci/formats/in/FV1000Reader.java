@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -434,7 +436,7 @@ public class FV1000Reader extends FormatReader {
     pixelSize = new Double[NUM_DIMENSIONS];
 
     previewNames = new ArrayList<String>();
-    Map<Integer, String> previewFileNames = new HashMap<Integer, String>();
+    SortedMap<Integer, String> previewFileNames = new TreeMap<Integer, String>();
     Integer previewIndex;
     boolean laserEnabled = true;
 
