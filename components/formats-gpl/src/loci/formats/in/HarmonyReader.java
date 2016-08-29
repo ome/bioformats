@@ -143,17 +143,21 @@ public class HarmonyReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    String xml = stream.readString(1024);
+    if (xml.indexOf(MAGIC) > 0) {
+      return true;
+    }
+    stream.seek(0);
     TiffParser p = new TiffParser(stream);
     IFD ifd = p.getFirstIFD();
     if (ifd != null) {
       Object s = ifd.getIFDValue(XML_TAG);
       if (s == null) return false;
-      String xml = s instanceof String[] ? ((String[]) s)[0] : s.toString();
-      return xml.indexOf(MAGIC) < 1024;
+      xml = s instanceof String[] ? ((String[]) s)[0] : s.toString();
+      int index = xml.indexOf(MAGIC);
+      return index < 1024 && index >= 0;
     }
-    stream.seek(0);
-    String xml = stream.readString(1024);
-    return xml.indexOf(MAGIC) > 0;
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
