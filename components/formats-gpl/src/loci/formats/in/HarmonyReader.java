@@ -251,15 +251,22 @@ public class HarmonyReader extends FormatReader {
 
     // assemble list of other metadata/analysis results files
 
-    Location parent = new Location(currentId).getAbsoluteFile().getParentFile().getParentFile();
-    String[] list = parent.list();
+    Location currentFile = new Location(currentId).getAbsoluteFile();
+    metadataFiles.add(currentFile.getAbsolutePath());
+    Location parent = currentFile.getParentFile().getParentFile();
+    String[] list = parent.list(true);
+    Arrays.sort(list);
     for (String f : list) {
       Location path = new Location(parent, f);
       if (path.isDirectory()) {
-        String[] companionFolders = path.list();
+        String[] companionFolders = path.list(true);
+        Arrays.sort(companionFolders);
         for (String folder : companionFolders) {
           if (!f.equals("Images") || !checkSuffix(folder, "tiff")) {
-            metadataFiles.add(new Location(path, folder).getAbsolutePath());
+            String metadataFile = new Location(path, folder).getAbsolutePath();
+            if (!metadataFile.equals(currentFile.getAbsolutePath())) {
+              metadataFiles.add(metadataFile);
+            }
           }
         }
       }
