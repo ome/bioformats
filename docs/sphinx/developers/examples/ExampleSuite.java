@@ -36,6 +36,14 @@ import java.io.File;
 
 public class ExampleSuite {
 
+  public static void execute(String name, String[] args) throws Exception {
+    System.out.println("Executing " + name);
+    Class c = Class.forName(name);
+    Object passedArgs[] = {args};
+    c.getMethod("main", args.getClass()).invoke(null, passedArgs);
+    System.out.println("Success");
+  }
+
   /**
    * Execute a series of examples using the test files
    *
@@ -52,10 +60,10 @@ public class ExampleSuite {
     File exportSPWFile = new File(parentDir, "exportSPW.ome.tiff");
 
     // Execute examples
-    ReadPhysicalSize.main(new String[] {inputFile.getAbsolutePath()});
-    FileConvert.main(new String[] {
+    execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
+    execute("FileConvert", new String[] {
       inputFile.getAbsolutePath(), convertedFile.getAbsolutePath()});
-    FileExport.main(new String[] {exportFile.getAbsolutePath()});
-    FileExport.main(new String[] {exportSPWFile.getAbsolutePath()});
+    execute("FileExport", new String[] {exportFile.getAbsolutePath()});
+    execute("FileExportSPW", new String[] {exportSPWFile.getAbsolutePath()});
   }
 }
