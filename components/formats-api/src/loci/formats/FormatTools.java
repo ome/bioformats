@@ -1024,6 +1024,16 @@ public final class FormatTools {
    * @throws IOException Never actually thrown.
    */
   public static String getFilename(int series, int image, IFormatReader r,
+    String pattern) throws FormatException, IOException
+  {
+    return getFilename(series, image, r, pattern, false);
+  }
+
+  /**
+   * @throws FormatException Never actually thrown.
+   * @throws IOException Never actually thrown.
+   */
+  public static String getFilename(int series, int image, IFormatReader r,
     String pattern, boolean padded) throws FormatException, IOException
   {
     MetadataStore store = r.getMetadataStore();
