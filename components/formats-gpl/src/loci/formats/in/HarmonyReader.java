@@ -227,6 +227,12 @@ public class HarmonyReader extends FormatReader {
         reader.openBytes(0, buf, x, y, w, h);
         reader.close();
       }
+      else {
+        LOGGER.debug("Could not find file {}", p.filename);
+      }
+    }
+    else {
+      LOGGER.debug("Invalid series ({}) and plane ({})", getSeries(), no);
     }
 
     return buf;
@@ -240,6 +246,7 @@ public class HarmonyReader extends FormatReader {
     // make sure that we have the XML file and not a TIFF file
 
     if (!checkSuffix(id, "xml")) {
+      LOGGER.info("Checking for corresponding XML file");
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       Location xml = new Location(parent, XML_FILES[0]);
       if (!xml.exists()) {
@@ -255,6 +262,7 @@ public class HarmonyReader extends FormatReader {
 
     // assemble list of other metadata/analysis results files
 
+    LOGGER.info("Scanning for companion folders");
     Location currentFile = new Location(currentId).getAbsoluteFile();
     metadataFiles.add(currentFile.getAbsolutePath());
     Location parent = currentFile.getParentFile().getParentFile();
@@ -266,27 +274,32 @@ public class HarmonyReader extends FormatReader {
         String[] companionFolders = path.list(true);
         Arrays.sort(companionFolders);
         for (String folder : companionFolders) {
+          LOGGER.trace("Found folder {}", folder);
           if (!f.equals("Images") || !checkSuffix(folder, "tiff")) {
             String metadataFile = new Location(path, folder).getAbsolutePath();
             if (!metadataFile.equals(currentFile.getAbsolutePath())) {
               metadataFiles.add(metadataFile);
+              LOGGER.trace("Adding metadata file {}", metadataFile);
             }
           }
         }
       }
       else {
         metadataFiles.add(path.getAbsolutePath());
+        LOGGER.trace("Adding metadata file {}", path.getAbsolutePath());
       }
     }
 
     // parse plate layout and image dimensions from the XML file
 
+    LOGGER.info("Parsing XML metadata");
     String xmlData = DataTools.readFile(id);
     HarmonyHandler handler = new HarmonyHandler();
     XMLTools.parseXML(xmlData, handler);
 
     // sort the list of images by well and field indices
 
+    LOGGER.info("Assembling plate dimensions");
     ArrayList<Plane> planeList = handler.getPlanes();
 
     HashSet<Integer> uniqueRows = new HashSet<Integer>();
@@ -350,9 +363,14 @@ public class HarmonyReader extends FormatReader {
       }
     }
 
+    LOGGER.info("Populating core metadata");
     reader = new MinimalTiffReader();
 
     for (int i=0; i<seriesCount; i++) {
+      if (planes[i][0] == null) {
+        continue;
+      }
+      planes[i][0].image = core.size();
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
       ms.sizeX = planes[i][0].x;
@@ -382,6 +400,7 @@ public class HarmonyReader extends FormatReader {
 
     // populate the MetadataStore
 
+    LOGGER.info("Populating OME metadata");
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -409,7 +428,11 @@ public class HarmonyReader extends FormatReader {
         store.setWellColumn(new NonNegativeInteger(cols[col]), 0, well);
 
         for (int field=0; field<fields.length; field++) {
-          int imageIndex = well * fields.length + field;
+          int planesIndex = well * fields.length + field;
+          int imageIndex = planes[planesIndex][0].image;
+          if (imageIndex == -1) {
+            continue;
+          }
           String wellSampleID =
             MetadataTools.createLSID("WellSample", 0, well, field);
           store.setWellSampleID(wellSampleID, 0, well, field);
@@ -672,6 +695,7 @@ public class HarmonyReader extends FormatReader {
             activePlane.positionX = UnitsLength.create(x, ul);
           }
           catch (EnumerationException e) {
+            LOGGER.debug("Could not parse unit '{}'", currentUnit);
           }
         }
         else if ("PositionY".equals(currentName)) {
@@ -681,6 +705,7 @@ public class HarmonyReader extends FormatReader {
             activePlane.positionY = UnitsLength.create(y, ul);
           }
           catch (EnumerationException e) {
+            LOGGER.debug("Could not parse unit '{}'", currentUnit);
           }
         }
         else if ("PositionZ".equals(currentName)) {
@@ -690,6 +715,7 @@ public class HarmonyReader extends FormatReader {
             activePlane.positionZ = UnitsLength.create(z, ul);
           }
           catch (EnumerationException e) {
+            LOGGER.debug("Could not parse unit '{}'", currentUnit);
           }
         }
         else if ("MeasurementTimeOffset".equals(currentName)) {
@@ -742,6 +768,7 @@ public class HarmonyReader extends FormatReader {
     public int row;
     public int col;
     public int field;
+    public int image = -1;
     public int x;
     public int y;
     public int z;
