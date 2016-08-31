@@ -437,7 +437,6 @@ public class FV1000Reader extends FormatReader {
 
     previewNames = new ArrayList<String>();
     SortedMap<Integer, String> previewFileNames = new TreeMap<Integer, String>();
-    Integer previewIndex;
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -475,7 +474,7 @@ public class FV1000Reader extends FormatReader {
           RandomAccessInputStream s = getFile(path + value.trim());
           if (s != null) {
             s.close();
-            previewIndex = getPreviewNameIndex(key);
+            Integer previewIndex = getPreviewNameIndex(key);
             if (previewIndex != null) {
               previewFileNames.put(previewIndex, path + value.trim());
             } else {
@@ -493,9 +492,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     // Store sorted list of preview names
-    for (Integer key : previewFileNames.keySet()) {
-      previewNames.add(previewFileNames.get(key));
-    }
+    previewNames.addAll(previewFileNames.values());
 
     if (filenames.isEmpty()) addPtyFiles();
 
