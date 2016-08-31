@@ -58,8 +58,8 @@ public final class DataTools {
   // -- Static fields --
   private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
-  private static final ThreadLocal <NumberFormat> nf =
-      new ThreadLocal <NumberFormat>() {
+  private static final ThreadLocal<NumberFormat> nf =
+      new ThreadLocal<NumberFormat>() {
         @Override protected NumberFormat initialValue() {
             return DecimalFormat.getInstance(Locale.ENGLISH);
         }
