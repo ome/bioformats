@@ -53,8 +53,6 @@ import org.testng.annotations.Test;
  */
 public class IniParserTest {
   private IniParser parser = new IniParser();
-  private IniList list;
-  private IniTable table;
   final Charset utf8charset = Charset.forName("UTF-8");
 
   public BufferedReader stringToBufferedReader(String s) {
@@ -78,29 +76,32 @@ public class IniParserTest {
   public void testSimpleKeyValue(String s) throws IOException {
     BufferedReader reader = stringToBufferedReader(s);
     
-    list = parser.parseINI(reader);
-    assertEquals(list.size(), 1);
-    table = list.getTable(IniTable.DEFAULT_HEADER);
-    assertEquals(table.keySet().size(), 2);
-    assertEquals(table.get("key"), "value");
+    IniTable table = new IniTable();
+    table.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+    table.put("key", "value");
+    IniList list = new IniList();
+    list.add(table);
+
+    assertEquals(parser.parseINI(reader), list);
   }
 
   @Test
   public void testMultiValueINI() throws IOException {
-    String s = "{chapter}\n[header]\n" +
-      "key1=value1 # comment\n\n" +
+    String s = "key1=value1 # comment\n\n" +
       "key2=line1\\\nline2\n" +
       "ignored line\n" +
       "key3 = value3";
     BufferedReader reader = stringToBufferedReader(s);
 
-    list = parser.parseINI(reader);
-    assertEquals(list.size(), 1);
-    table = list.getTable("chapter: header");
-    assertEquals(table.keySet().size(), 4);
-    assertEquals(table.get("key1"), "value1");
-    assertEquals(table.get("key2"), "line1 line2");
-    assertEquals(table.get("key3"), "value3");
+    IniTable table = new IniTable();
+    table.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+    table.put("key1", "value1");
+    table.put("key2", "line1 line2");
+    table.put("key3", "value3");
+    IniList list = new IniList();
+    list.add(table);
+
+    assertEquals(parser.parseINI(reader), list);
   }
 
   @Test
@@ -111,19 +112,24 @@ public class IniParserTest {
       "[header3]\nkey3=value3\n";
     BufferedReader reader = stringToBufferedReader(s);
 
-    list = parser.parseINI(reader);
-    assertEquals(list.size(), 4);
-    table = list.getTable(IniTable.DEFAULT_HEADER);
-    assertEquals(table.keySet().size(), 2);
-    assertEquals(table.get("key0"), "value0");
-    table = list.getTable("header1");
-    assertEquals(table.keySet().size(), 2);
-    assertEquals(table.get("key1"), "value1");
-    table = list.getTable("chapter: header2");
-    assertEquals(table.keySet().size(), 2);
-    assertEquals(table.get("key2"), "value2");
-    table = list.getTable("chapter: header3");
-    assertEquals(table.keySet().size(), 2);
-    assertEquals(table.get("key3"), "value3");
+    IniTable table0 = new IniTable();
+    table0.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+    table0.put("key0", "value0");
+    IniTable table1 = new IniTable();
+    table1.put(IniTable.HEADER_KEY, "header1");
+    table1.put("key1", "value1");
+    IniTable table2 = new IniTable();
+    table2.put(IniTable.HEADER_KEY, "chapter: header2");
+    table2.put("key2", "value2");
+    IniTable table3 = new IniTable();
+    table3.put(IniTable.HEADER_KEY, "chapter: header3");
+    table3.put("key3", "value3");
+    IniList list = new IniList();
+    list.add(table0);
+    list.add(table1);
+    list.add(table2);
+    list.add(table3);
+
+    assertEquals(parser.parseINI(reader), list);
   }
 }
