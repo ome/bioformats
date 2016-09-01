@@ -110,4 +110,28 @@ public class IniParserTest {
     assertEquals(table.get("key2"), "line1 line2");
     assertEquals(table.get("key3"), "value3");
   }
+
+  @Test
+  public void testMultiHeaderINI() throws IOException {
+    String s = "key0=value0\n" +
+      "[header1]\nkey1=value1\n" +
+      "{chapter}\n[header2]\nkey2=value2\n" +
+      "[header3]\nkey3=value3\n";
+    BufferedReader reader = stringToBufferedReader(s);
+
+    list = parser.parseINI(reader);
+    assertEquals(list.size(), 4);
+    table = list.getTable(IniTable.DEFAULT_HEADER);
+    assertEquals(table.keySet().size(), 2);
+    assertEquals(table.get("key0"), "value0");
+    table = list.getTable("header1");
+    assertEquals(table.keySet().size(), 2);
+    assertEquals(table.get("key1"), "value1");
+    table = list.getTable("chapter: header2");
+    assertEquals(table.keySet().size(), 2);
+    assertEquals(table.get("key2"), "value2");
+    table = list.getTable("chapter: header3");
+    assertEquals(table.keySet().size(), 2);
+    assertEquals(table.get("key3"), "value3");
+  }
 }
