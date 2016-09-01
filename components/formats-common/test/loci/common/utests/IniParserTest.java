@@ -66,6 +66,7 @@ public class IniParserTest {
   public Object[][] createSimpleIni() {
     return new Object[][] {
       {"key=value", IniTable.DEFAULT_HEADER},
+      {"key = value", IniTable.DEFAULT_HEADER},
       {"\nkey=value\n", IniTable.DEFAULT_HEADER},
       {"key=value#comment", IniTable.DEFAULT_HEADER},
       {"key=value # comment", IniTable.DEFAULT_HEADER},
@@ -89,5 +90,24 @@ public class IniParserTest {
     assertFalse(table == null);
     assertEquals(table.keySet().size(), 2);
     assertEquals(table.get("key"), "value");
+  }
+
+  @Test
+  public void testMultiValueINI() throws IOException {
+    String s = "{chapter}\n[header]\n" +
+      "key1=value1 # comment\n\n" +
+      "key2=line1\\\nline2\n" +
+      "ignored line\n" +
+      "key3 = value3";
+    BufferedReader reader = stringToBufferedReader(s);
+
+    list = parser.parseINI(reader);
+    assertEquals(list.size(), 1);
+    table = list.getTable("chapter: header");
+    assertFalse(table == null);
+    assertEquals(table.keySet().size(), 4);
+    assertEquals(table.get("key1"), "value1");
+    assertEquals(table.get("key2"), "line1 line2");
+    assertEquals(table.get("key3"), "value3");
   }
 }
