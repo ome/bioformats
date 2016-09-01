@@ -62,32 +62,25 @@ public class IniParserTest {
     return new BufferedReader(new InputStreamReader(stream));
   }
 
-  @DataProvider(name = "simpleini")
-  public Object[][] createSimpleIni() {
+  @DataProvider(name = "simplekeyvalue")
+  public Object[][] createSimpleKeyValuePair() {
     return new Object[][] {
-      {"key=value", IniTable.DEFAULT_HEADER},
-      {"key = value", IniTable.DEFAULT_HEADER},
-      {"\nkey=value\n", IniTable.DEFAULT_HEADER},
-      {"key=value#comment", IniTable.DEFAULT_HEADER},
-      {"key=value # comment", IniTable.DEFAULT_HEADER},
-      {"key=value\nignored line", IniTable.DEFAULT_HEADER},
-      {"[header]\nkey=value", "header"},
-      {"\n[header]\n\nkey=value\n", "header"},
-      {"[header]\nkey=value#comment", "header"},
-      {"[header]\nkey=value # comment", "header"},
-      {"[header]\nkey=value\nignored line", "header"},
-      {"{chapter}\n[header]\nkey=value", "chapter: header"},
+      {"key=value"},
+      {"key = value"},         // whitespaces around equal sign
+      {"key=value  "},         // trailing whitespace
+      {"  key=value"},         // leading whitespace
+      {"key=value#comment"},   // comment without whitespaces
+      {"key=value # comment"}, // comment with whitespaces
     };
   }
   
-  @Test(dataProvider="simpleini")
-  public void testSimpleINI(String s, String header) throws IOException {
+  @Test(dataProvider="simplekeyvalue")
+  public void testSimpleKeyValue(String s) throws IOException {
     BufferedReader reader = stringToBufferedReader(s);
     
     list = parser.parseINI(reader);
     assertEquals(list.size(), 1);
-    table = list.getTable(header);
-    assertFalse(table == null);
+    table = list.getTable(IniTable.DEFAULT_HEADER);
     assertEquals(table.keySet().size(), 2);
     assertEquals(table.get("key"), "value");
   }
@@ -104,7 +97,6 @@ public class IniParserTest {
     list = parser.parseINI(reader);
     assertEquals(list.size(), 1);
     table = list.getTable("chapter: header");
-    assertFalse(table == null);
     assertEquals(table.keySet().size(), 4);
     assertEquals(table.get("key1"), "value1");
     assertEquals(table.get("key2"), "line1 line2");
