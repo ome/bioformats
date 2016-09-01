@@ -24,7 +24,7 @@
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             xmlns:xml="http://www.w3.org/XML/1998/namespace"
-            version="1"
+            version="2"
             elementFormDefault="qualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
