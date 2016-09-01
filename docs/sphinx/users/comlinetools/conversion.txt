@@ -126,6 +126,7 @@ name pattern, then the other must be included too.  The only exception is if
         bfconvert /path/to/input output.ome.btf
 
 .. option:: -padded
+
     This option is used alongside a pattern string when writing an image to multiple files.
     When set this will enforce zero padding on the filename indexes set in the provided pattern string::      
 
