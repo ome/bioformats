@@ -84,6 +84,33 @@ public class IniParserTest {
     assertEquals(parser.parseINI(reader), list);
   }
 
+  @DataProvider(name = "simpleheader")
+  public Object[][] createSimpleHeader() {
+    return new Object[][] {
+      {"key=value", IniTable.DEFAULT_HEADER},
+      {"{chapter}\nkey=value", IniTable.DEFAULT_HEADER},
+      {"[header]\nkey=value", "header"},
+      {"[ header ]\nkey=value", " header "},
+      {"[header\nkey=value", "header"},
+      {"[[header]]\nkey=value", "[header]"},
+      {"{chapter}\n[header]\nkey=value", "chapter: header"},
+      {"{chapter\n[header\nkey=value", "chapter: header"},
+    };
+  }
+
+  @Test(dataProvider="simpleheader")
+  public void testHeader(String s, String header) throws IOException {
+    BufferedReader reader = stringToBufferedReader(s);
+
+    IniTable table = new IniTable();
+    table.put(IniTable.HEADER_KEY, header);
+    table.put("key", "value");
+    IniList list = new IniList();
+    list.add(table);
+
+    assertEquals(parser.parseINI(reader), list);
+  }
+
   @Test
   public void testMultiValueINI() throws IOException {
     String s = "key1=value1 # comment\n\n" +
