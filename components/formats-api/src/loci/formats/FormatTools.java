@@ -52,6 +52,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
@@ -1034,15 +1035,20 @@ public final class FormatTools {
    * @throws IOException Never actually thrown.
    */
   public static String getFilename(int series, int image, IFormatReader r,
-    String pattern, boolean padded) throws FormatException, IOException
+      String pattern, boolean padded) throws FormatException, IOException
   {
-    MetadataStore store = r.getMetadataStore();
-    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
-      (MetadataRetrieve) store : new DummyMetadata();
+     MetadataStore store = r.getMetadataStore();
+     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
+       (MetadataRetrieve) store : new DummyMetadata();
+     return getFilename(series, image, retrieve, pattern, padded);
+  }
 
+  public static String getFilename(int series, int image, MetadataRetrieve retrieve,
+      String pattern, boolean padded) throws FormatException, IOException
+  {
     String sPlaces = "%d";
     if (padded) {
-      sPlaces = "%0" + String.valueOf(r.getSeriesCount()).length() + "d";
+      sPlaces = "%0" + String.valueOf(retrieve.getImageCount()).length() + "d";
     }
     String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
@@ -1053,16 +1059,19 @@ public final class FormatTools {
 
     filename = filename.replaceAll(SERIES_NAME, imageName);
 
-    r.setSeries(series);
-    int[] coordinates = r.getZCTCoords(image);
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = retrieve.getPixelsSizeC(series).getValue();
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, retrieve.getPlaneCount(series), image);
 
     String zPlaces = "%d";
     String tPlaces = "%d";
     String cPlaces = "%d";
     if (padded) {
-      zPlaces = "%0" + String.valueOf(r.getSizeZ()).length() + "d";
-      tPlaces = "%0" + String.valueOf(r.getSizeT()).length() + "d";
-      cPlaces = "%0" + String.valueOf(r.getSizeC()).length() + "d";
+      zPlaces = "%0" + String.valueOf(sizeZ).length() + "d";
+      tPlaces = "%0" + String.valueOf(sizeT).length() + "d";
+      cPlaces = "%0" + String.valueOf(sizeC).length() + "d";
     }
     filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
     filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));

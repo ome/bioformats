@@ -71,6 +71,7 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
 import loci.plugins.LociExporter;
@@ -551,22 +552,14 @@ public class Exporter {
                 int dot = outfile.indexOf(".", outfile.lastIndexOf(File.separator));
                 String base = outfile.substring(0, dot);
                 String ext = outfile.substring(dot);
-
-                String zPlaces = "%d";
-                String tPlaces = "%d";
-                String cPlaces = "%d";
-                if (padded) {
-                  zPlaces = "%0" + String.valueOf(sizeZ).length() + "d";
-                  tPlaces = "%0" + String.valueOf(sizeT).length() + "d";
-                  cPlaces = "%0" + String.valueOf(sizeC).length() + "d";
-                }
                 
                 int nextFile = 0;
                 for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
                     for (int c=0; c<(splitC ? sizeC : 1); c++) {
                         for (int t=0; t<(splitT ? sizeT : 1); t++) {
-                            outputFiles[nextFile++] = base + (splitZ ? "_Z" + String.format(zPlaces, z) : "") +
-                                    (splitC ? "_C" + String.format(cPlaces, c) : "") + (splitT ? "_T" + String.format(tPlaces, t) : "") + ext;
+                            int index = FormatTools.getIndex(ORDER, sizeZ, sizeC, sizeT, store.getPlaneCount(0), z, c, t);
+                            String pattern = base + (splitZ ? "_Z%z" : "") + (splitC ? "_C%c" : "") + (splitT ? "_T%t" : "") + ext;
+                            outputFiles[nextFile++] = FormatTools.getFilename(0, index, store, pattern, padded);
                         }
                     }
                 }
