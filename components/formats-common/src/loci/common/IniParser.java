@@ -143,23 +143,18 @@ public class IniParser {
       }
 
       // check for chapter header
-      if (line.startsWith("{")) {
-        // strip curly braces
-        int end = line.length();
-        if (line.endsWith("}")) end--;
-        chapter = line.substring(1, end);
+      if (isHeader(line, "{")) {
+        chapter = parseHeader(line, "{", "}");
         continue;
       }
 
       // check for section header
-      if (line.startsWith("[")) {
+      if (isHeader(line, "[")) {
         attrs = new IniTable();
         list.add(attrs);
 
         // strip brackets
-        int end = line.length();
-        if (line.endsWith("]")) end--;
-        String header = line.substring(1, end);
+        String header = parseHeader(line, "[", "]");
         if (chapter != null) header = chapter + ": " + header;
 
         attrs.put(IniTable.HEADER_KEY, header);
@@ -209,6 +204,19 @@ public class IniParser {
   }
 
   // -- Helper methods --
+
+  /** Checks whether the input line is a INI header **/
+  private boolean isHeader(String line, String start) {
+    return (line != null && line.length() > 1 && line.startsWith(start));
+  }
+
+  /** Parse a header line given input delimiters **/
+  private String parseHeader(String line, String start, String end) {
+    if (line == null || line.length() <= 1) return null;
+    if (!line.startsWith(start)) return null;
+    if (line.endsWith(end)) return line.substring(1, line.length() - 1);
+    return line.substring(1);
+  }
 
   /**
    * Reads (at least) one line from the given input stream
