@@ -27,7 +27,6 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -347,12 +346,6 @@ public class NativeND2Reader extends FormatReader {
     public long length;
 
     public String toString() {
-      String name;
-	  try {
-		name = URLEncoder.encode(this.name, "UTF-8");
-	  } catch (UnsupportedEncodingException e) {
-		name = "<unprintable>";
-	  }
       return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
     }
   }
@@ -596,9 +589,9 @@ public class NativeND2Reader extends FormatReader {
               if(entry.name.startsWith("ImageDataSeq")) {
                 lastImagePosition = entry.position;
                 imageOffsets.add(new Long(entry.position + 16));
-                imageLengths.add(new int[] {lenOne, (int)entry.length, getSizeX() * getSizeY()});
+                imageLengths.add(new int[] {nameLength, (int)entry.length, getSizeX() * getSizeY()});
                 imageNames.add(entry.name.substring(12));
-                // assumption lenOne is constant throughout the file for image blocks!
+                // assumption nameLength is constant throughout the file for image blocks!
               }
             }
             in.seek(allChunkPositions.higherKey(lastImagePosition));
