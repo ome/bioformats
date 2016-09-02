@@ -143,18 +143,18 @@ public class IniParser {
       }
 
       // check for chapter header
-      if (isHeader(line, "{")) {
-        chapter = parseHeader(line, "{", "}");
+      if (isHeader(line, '{')) {
+        chapter = parseHeader(line, '{', '}');
         continue;
       }
 
       // check for section header
-      if (isHeader(line, "[")) {
+      if (isHeader(line, '[')) {
         attrs = new IniTable();
         list.add(attrs);
 
         // strip brackets
-        String header = parseHeader(line, "[", "]");
+        String header = parseHeader(line, '[', ']');
         if (chapter != null) header = chapter + ": " + header;
 
         attrs.put(IniTable.HEADER_KEY, header);
@@ -206,15 +206,17 @@ public class IniParser {
   // -- Helper methods --
 
   /** Checks whether the input line is a INI header **/
-  private boolean isHeader(String line, String start) {
-    return (line != null && line.length() > 1 && line.startsWith(start));
+  private boolean isHeader(String line, char start) {
+    return (line != null && line.length() > 1 && line.charAt(0) == start);
   }
 
   /** Parse a header line given input delimiters **/
-  private String parseHeader(String line, String start, String end) {
+  private String parseHeader(String line, char start, char end) {
     if (line == null || line.length() <= 1) return null;
-    if (!line.startsWith(start)) return null;
-    if (line.endsWith(end)) return line.substring(1, line.length() - 1);
+    if (line.charAt(0) != start) return null;
+    if (line.charAt(line.length() - 1) == end) {
+      return line.substring(1, line.length() - 1);
+    }
     return line.substring(1);
   }
 
