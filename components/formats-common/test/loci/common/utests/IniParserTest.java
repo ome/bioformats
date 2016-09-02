@@ -43,8 +43,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -52,8 +51,8 @@ import org.testng.annotations.Test;
  * Unit tests for {@link loci.common.IniParser}.
  */
 public class IniParserTest {
-  private IniParser parser = new IniParser();
-  final Charset utf8charset = Charset.forName("UTF-8");
+  private final IniParser parser = new IniParser();
+  private final Charset utf8charset = Charset.forName("UTF-8");
 
   public BufferedReader stringToBufferedReader(String s) {
     InputStream stream = new ByteArrayInputStream(s.getBytes(utf8charset));
