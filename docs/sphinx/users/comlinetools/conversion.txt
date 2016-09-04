@@ -132,7 +132,6 @@ name pattern, then the other must be included too.  The only exception is if
     The :option:`-bigtiff` option is not necessary if a BigTiff extension is
     used for the output file, e.g.::
 
-<<<<<<< HEAD
         bfconvert /path/to/input output.ome.btf
 
 .. option:: -padded
@@ -143,6 +142,3 @@ name pattern, then the other must be included too.  The only exception is if
       bfconvert /path/to/input output_xy%sz%zc%ct%t.ome.tif -padded
    
     .. versionadded:: 5.2.2
-=======
-      bfconvert /path/to/input output.ome.btf
->>>>>>> openmicroscopy/develop

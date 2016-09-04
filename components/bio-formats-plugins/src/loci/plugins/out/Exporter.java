@@ -552,7 +552,7 @@ public class Exporter {
                 int dot = outfile.indexOf(".", outfile.lastIndexOf(File.separator));
                 String base = outfile.substring(0, dot);
                 String ext = outfile.substring(dot);
-                
+
                 int nextFile = 0;
                 for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
                     for (int c=0; c<(splitC ? sizeC : 1); c++) {

@@ -224,13 +224,8 @@ public final class ImageConverter {
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
       "    [-bigtiff] [-compression codec] [-series series] [-map id]",
       "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-<<<<<<< HEAD
-      "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
-      "    [-no-upgrade][-padded] in_file out_file",
-=======
       "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
-      "    [-version] [-no-upgrade] in_file out_file",
->>>>>>> openmicroscopy/develop
+      "    [-version] [-no-upgrade][-padded] in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
