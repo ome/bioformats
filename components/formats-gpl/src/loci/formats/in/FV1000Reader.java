@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -80,6 +82,9 @@ public class FV1000Reader extends FormatReader {
   public static final String[] OIB_SUFFIX = {"oib"};
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
+
+  public static final String[] PREVIEWNAME_PREFIXES = {
+    "IniFileName", "PtyFileNameReference"};
 
   public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
@@ -431,6 +436,7 @@ public class FV1000Reader extends FormatReader {
     pixelSize = new Double[NUM_DIMENSIONS];
 
     previewNames = new ArrayList<String>();
+    SortedMap<Integer, String> previewFileNames = new TreeMap<Integer, String>();
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -468,7 +474,12 @@ public class FV1000Reader extends FormatReader {
           RandomAccessInputStream s = getFile(path + value.trim());
           if (s != null) {
             s.close();
-            previewNames.add(path + value.trim());
+            Integer previewIndex = getPreviewNameIndex(key);
+            if (previewIndex != null) {
+              previewFileNames.put(previewIndex, path + value.trim());
+            } else {
+              previewNames.add(path + value.trim());
+            }
           }
         }
         catch (FormatException e) {
@@ -479,6 +490,9 @@ public class FV1000Reader extends FormatReader {
         }
       }
     }
+
+    // Store sorted list of preview names
+    previewNames.addAll(previewFileNames.values());
 
     if (filenames.isEmpty()) addPtyFiles();
 
@@ -1650,6 +1664,16 @@ public class FV1000Reader extends FormatReader {
     catch (FormatException e) { }
     catch (IOException e) { }
     return plane;
+  }
+
+  /* Parse the index of the preview name file using a set of prefixes */
+  private Integer getPreviewNameIndex(String key) {
+    Integer previewIndex = null;
+    for (String prefix: PREVIEWNAME_PREFIXES) {
+      if (!key.startsWith(prefix)) continue;
+      return DataTools.parseInteger(key.substring(prefix.length()));
+    }
+    return previewIndex;
   }
 
   private boolean isPreviewName(String name) {
