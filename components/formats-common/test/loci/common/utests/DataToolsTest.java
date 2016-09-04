@@ -229,4 +229,9 @@ public class DataToolsTest {
     assertEquals(DataTools.parseDouble("0,1"), 0.1d);
     assertEquals(DataTools.parseDouble("not a number"), null);
   }
+  
+  @Test(threadPoolSize = 10, invocationCount = 1000)
+    public void testThreadSafety() {
+      assertEquals(DataTools.parseDouble("1.0"), 1.0d);
+    }
 }

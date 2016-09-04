@@ -58,7 +58,12 @@ public final class DataTools {
   // -- Static fields --
   private static final Logger LOGGER = LoggerFactory.getLogger(DataTools.class);
 
-  private static NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
+  private static final ThreadLocal<NumberFormat> nf =
+      new ThreadLocal<NumberFormat>() {
+        @Override protected NumberFormat initialValue() {
+            return DecimalFormat.getInstance(Locale.ENGLISH);
+        }
+    };
   // -- Constructor --
 
   private DataTools() { }
@@ -476,7 +481,7 @@ public final class DataTools {
   public static Float parseFloat(String value) {
     if (value == null) return null;
     try {
-      return nf.parse(value.replaceAll(",", ".")).floatValue();
+      return nf.get().parse(value.replaceAll(",", ".")).floatValue();
     } catch (ParseException e) {
       LOGGER.debug("Could not parse float value", e);
     }
@@ -491,7 +496,7 @@ public final class DataTools {
   public static Double parseDouble(String value) {
     if (value == null) return null;
     try {
-      return nf.parse(value.replaceAll(",", ".")).doubleValue();
+      return nf.get().parse(value.replaceAll(",", ".")).doubleValue();
     } catch (ParseException e) {
       LOGGER.debug("Could not parse double value", e);
     }
