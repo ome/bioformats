@@ -68,14 +68,14 @@ public class SwapDialog extends ImporterDialog implements ItemListener {
     GenericDialog gd = new GenericDialog("Dimension swapping options");
 
     String[] labels = {"Z", "C", "T"};
-    String[] sizes = new String[] {
-      String.valueOf(reader.getSizeZ()), String.valueOf(reader.getSizeC()),
-      String.valueOf(reader.getSizeT())
-    };
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       reader.setSeries(s);
 
+      String[] sizes = new String[] {
+          String.valueOf(reader.getSizeZ()), String.valueOf(reader.getSizeC()),
+          String.valueOf(reader.getSizeT())
+        };
       gd.addMessage("Series " + (s + 1) + ":\n");
 
       for (int i=0; i<labels.length; i++) {
