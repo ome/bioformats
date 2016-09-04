@@ -26,7 +26,7 @@ Reader: SPCReader (:bfreader:`Source Code <SPCReader.java>`, :doc:`Supported Met
 We currently have:
 
 * an `SPC specification document <http://www.becker-hickl.com/handbookphp.htm>`_ 
-* an SPC dataset
+* `public sample images <http://downloads.openmicroscopy.org/images/SPC-FIFO/>`__
 
 We would like to have:
 
@@ -45,5 +45,8 @@ Presence: |Poor|
 
 Utility: |Fair|
 
+**Additional Information**
 
 
+* Only files containing frame, line and pixel clock information 
+  are currently supported

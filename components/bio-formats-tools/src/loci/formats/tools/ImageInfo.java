@@ -119,7 +119,7 @@ public class ImageInfo {
   private boolean ascii = false;
   private boolean usedFiles = true;
   private boolean omexmlOnly = false;
-  private boolean validate = false;
+  private boolean validate = true;
   private boolean flat = true;
   private String omexmlVersion = null;
   private int start = 0;
@@ -169,7 +169,7 @@ public class ImageInfo {
     preload = false;
     usedFiles = true;
     omexmlOnly = false;
-    validate = false;
+    validate = true;
     flat = true;
     omexmlVersion = null;
     xmlSpaces = 3;
@@ -941,9 +941,6 @@ public class ImageInfo {
     if (baseReader instanceof ImageReader) {
       baseReader = ((ImageReader) baseReader).getReader();
     }
-    if (baseReader instanceof OMETiffReader) {
-      ms = ((OMETiffReader) baseReader).getMetadataStoreForDisplay();
-    }
 
     OMEXMLService service;
     try {
@@ -959,16 +956,6 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
-      // adding MetadataOnly elements to an OME-TIFF's XML will cause
-      // validation errors
-      if (!(baseReader instanceof OMETiffReader)) {
-        service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          service.addMetadataOnly(
-            service.getOMEMetadata((MetadataRetrieve) ms), i);
-        }
-      }
-
       if (omexmlOnly) {
         DebugTools.setRootLevel("INFO");
       }

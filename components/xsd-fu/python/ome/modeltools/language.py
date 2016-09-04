@@ -1,3 +1,30 @@
+# Copyright (C) 2009 - 2016 Open Microscopy Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 import copy
 import os
 
@@ -95,6 +122,8 @@ class Language(object):
         self.template_dir = None
         self.source_suffix = None
         self.header_suffix = None
+        self.converter_dir = None
+        self.converter_name = None
 
         self.omexml_model_package = None
         self.omexml_model_enums_package = None
@@ -121,6 +150,12 @@ class Language(object):
         return os.path.join(self._templatepath, self.getTemplateDirectory(),
                             self.getTemplate(template))
 
+    def getConverterDir(self):
+        return self.converter_dir
+        
+    def getConverterName(self):
+        return self.converter_name
+        
     def generatedFilename(self, name, type):
         gen_name = None
         if type == TYPE_SOURCE and self.source_suffix is not None:
@@ -275,6 +310,8 @@ class Java(Language):
         self.template_dir = "templates-java"
         self.source_suffix = ".java"
         self.header_suffix = None
+        self.converter_name = "MetadataConverter"
+        self.converter_dir = "components/formats-api/src/loci/formats/meta"
 
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"
@@ -364,6 +401,8 @@ class CXX(Language):
         self.template_dir = "templates-cpp"
         self.source_suffix = ".cpp"
         self.header_suffix = ".h"
+        self.converter_name = "Convert"
+        self.converter_dir = "cpp/lib/ome/xml/meta"
 
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"

@@ -183,7 +183,7 @@ particular image:
     :align: center
     :alt: Histogram
 
-Notice that the histogram heavily skews right. Even though there are
+Notice that the histogram heavily skews left. Even though there are
 256 possible values, only 0 thorough 125 are being used.
 
 Autoscale adjusts the image so the smallest and largest number in that

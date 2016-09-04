@@ -621,29 +621,6 @@ namespace ome
 {% end header%}\
 
       }
-{% if klass.isUnitsEnumeration %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-
-      namespace primitives
-      {
-
-        /**
-         * Convert ${klass.langType} quantity to another unit.
-         *
-         * @param quantity the quantity to convert.
-         * @param unit the unit to which to convert the quantity.
-         * @returns the converted quantity.
-         * @throws std::logic error if the unit systems are
-         * incompatible making conversion impossible.
-         */
-        Quantity< ${klass.langTypeNS}>
-        convert(const Quantity< ${klass.langTypeNS}>&     quantity,
-                Quantity< ${klass.langTypeNS}>::unit_type unit);
-
-      }
-
-{% end header%}\
-{% end units enum %}\
     }
   }
 }
@@ -655,6 +632,10 @@ namespace ome
 #endif
 
 {% end %}\
+{% if klass.isUnitsEnumeration %}\
+#include <ome/xml/model/enums/${klass.langType}Convert.h>
+
+{% end units enum %}\
 #endif // ${fu.GUARD}
 
 /*

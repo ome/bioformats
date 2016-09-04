@@ -1,5 +1,8 @@
+.. _reading_files:
+
 Reading files
 =============
+
 
 Basic file reading
 ------------------
@@ -78,6 +81,15 @@ table below together with the appropriate accessor method:
     - :javadoc:`getPixelType() <loci/formats/IFormatReader.html#getPixelType()>`
 
 All file formats are guaranteed to accurately report core metadata.
+
+Bio-Formats also converts and stores additional information which can be stored and retrieved 
+from the OME-XML Metadata. These fields can be accessed in a similar way to the core metadata above.
+An example of such values would be the physical size of dimensions X, Y and Z. The accessor methods 
+for these properties return a :javadoc:`Length <ome/units/quantity/Length.html>` object which 
+contains both the value and unit of the dimension. These lengths can also be converted to other units using 
+:javadoc:`value(ome.units.unit.Unit) <ome/units/quantity/Length.html#value(ome.units.unit.Unit)>`
+An example of reading and converting these physical sizes values can be found in 
+:download:`ReadPhysicalSize.java <examples/ReadPhysicalSize.java>`
 
 Format-specific metadata refers to any other data specified in the file - this
 includes acquisition and hardware parameters, among other things. This data

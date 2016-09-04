@@ -15,6 +15,9 @@ loci.formats.in.ZipReader             # zip
 loci.formats.in.APNGReader            # png [javax.imageio]
 loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
+# external readers with unique file extensions
+loci.formats.in.SlideBook6Reader[type=external]      # sld
+
 # standalone readers with unique file extensions
 loci.formats.in.PGMReader             # pgm
 loci.formats.in.FitsReader            # fits
@@ -36,7 +39,6 @@ loci.formats.in.PictReader            # pict, pct
 loci.formats.in.SDTReader             # sdt
 loci.formats.in.SPCReader             # spc
 loci.formats.in.EPSReader             # eps, epsi
-loci.formats.in.SlideBook6Reader      # sld
 loci.formats.in.SlidebookReader       # sld
 loci.formats.in.AliconaReader         # al3d
 loci.formats.in.MNGReader             # mng
@@ -98,7 +100,7 @@ loci.formats.in.SPEReader             # spe
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
-loci.formats.in.NiftiReader           # hdr, img, nii
+loci.formats.in.NiftiReader           # hdr, img, nii, nii.gz
 loci.formats.in.AnalyzeReader         # hdr, img
 loci.formats.in.APLReader             # apl, mtb, tnb
 loci.formats.in.NRRDReader            # nrrd, nhdr, pic

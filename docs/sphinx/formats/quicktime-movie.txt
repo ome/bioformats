@@ -18,13 +18,16 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Reader: NativeQTReader (:bsd-reader:`Source Code <NativeQTReader.java>`, :doc:`Supported Metadata Fields </metadata/NativeQTReader>`)
+Readers:
+
+- NativeQTReader (:bsd-reader:`Source Code <NativeQTReader.java>`, :doc:`Supported Metadata Fields </metadata/NativeQTReader>`)
+- LegacyQTReader (:bsd-reader:`Source Code <LegacyQTReader.java>`, :doc:`Supported Metadata Fields </metadata/LegacyQTReader>`)
 
 Writer: QTWriter (:bsd-writer:`Source Code <QTWriter.java>`)
 
 Freely Available Software:
 
-- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+- `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
 
 
 We currently have:
@@ -58,15 +61,15 @@ Utility: |Poor|
 
 Bio-Formats has two modes of operation for QuickTime: 
 
-* QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be 
-  installed (32-bit JVM only, not supported with 64-bit). 
+* The legacy QTJava mode requires QuickTime for Java which will only run 
+  with a 32-bit JVM and is no longer available from Apple. 
 * Native mode works on systems with no QuickTime (e.g. Linux). 
 
 Bio-Formats can save image stacks as QuickTime movies. 
 The following table shows supported codecs: 
 
 ====== ================================== =================== ============ 
-Codec  Description                        Native              QTJava 
+Codec  Description                        Native              LegacyQTJava 
 ====== ================================== =================== ============ 
 raw    Full Frames (Uncompressed)         read & write        read & write 
 iraw   Intel YUV Uncompressed             read only           read & write 

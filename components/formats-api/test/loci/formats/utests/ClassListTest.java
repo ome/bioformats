@@ -48,6 +48,7 @@ import java.util.HashMap;
 import loci.formats.ClassList;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -270,5 +271,17 @@ public class ClassListTest {
   {
     c = new ClassList<Iterable>(null, Iterable.class);
     assertEquals(map, c.parseOptions(options));
+  }
+
+  @Test
+  public void testWhitelistedKeys() throws IOException
+  {
+    c = new ClassList<Iterable>(null, Iterable.class);
+    assertTrue(c.isWhitelistedKey("type"));
+    assertTrue(c.isWhitelistedKey("package.name.type"));
+    assertTrue(c.isWhitelistedKey("type"));
+    assertFalse(c.isWhitelistedKey("type.subtype"));
+    assertFalse(c.isWhitelistedKey(""));
+    assertFalse(c.isWhitelistedKey("."));
   }
 }

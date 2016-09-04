@@ -28,24 +28,29 @@ package ome.units.quantity;
 import ome.units.unit.Unit;
 
 /**
- * A wrapper for the Angle class from the units implementation.
+ * Angle quantity.
  *
- * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
- * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- * @version 1.0
- * <small>
- * (<b>Internal version:</b> $Revision: $Date: $)
- * </small>
  * @since 5.1
  */
 public class Angle extends Quantity implements Comparable<Angle>
 {
+  /** Seed for hashCode. */
   private static final int SEED1 = 12;
+  /** Seed for hashCode. */
   private static final int SEED2 = 23;
+  /** Value of this quantity. */
   Number value;
+  /** Unit type of this quantity. */
   Unit<ome.units.quantity.Angle> unit;
+  /** Cached value for hashCode. */
   private int hashCodeValue;
 
+  /**
+   * Create an Angle.
+   *
+   * @param inValue the value.
+   * @param inUnit the unit type.
+   */
   public Angle(Number inValue,
     Unit<ome.units.quantity.Angle> inUnit)
   {
@@ -65,7 +70,14 @@ public class Angle extends Quantity implements Comparable<Angle>
   {
     return value;
   }
-  
+
+  /**
+   * Perform a unit conversion.
+   *
+   * @param inUnit the unit to convert to.
+   * @return the current quantity value converted to the specified
+   * unit, or null if the conversion is not possible.
+   */
   public Number value(Unit<ome.units.quantity.Angle> inUnit)
   {
     if (unit.equals(inUnit))
@@ -79,6 +91,18 @@ public class Angle extends Quantity implements Comparable<Angle>
     return null;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public boolean equals(Object other)
   {
@@ -105,6 +129,18 @@ public class Angle extends Quantity implements Comparable<Angle>
     return false;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public int compareTo(Angle other)
   {

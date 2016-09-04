@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
+  <version>5.2.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -38,6 +38,7 @@
     <module>components/stubs/lwf-stubs</module>
     <module>components/stubs/mipav</module>
     <module>components/xsd-fu</module>
+    <module>docs/sphinx</module>
   </modules>
 
   <properties>
@@ -49,7 +50,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.2.0-SNAPSHOT</release.version>
+    <release.version>5.2.2-SNAPSHOT</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>

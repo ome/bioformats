@@ -974,7 +974,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/nifti`
-     - .img, .hdr
+     - .img, .hdr, .nii, .nii.gz
      - |Very good|
      - |Good|
      - |Very good|
@@ -1599,7 +1599,7 @@ Supported Formats
      - |no|
      - |no|
      - |yes|
-     - |no|
+     - |yes|
    * - :doc:`formats/zeiss-lsm`
      - .lsm, .mdb
      - |Outstanding|

@@ -28,24 +28,29 @@ package ome.units.quantity;
 import ome.units.unit.Unit;
 
 /**
- * A wrapper for the Temperature class from the units implementation.
+ * Temperature quantity.
  *
- * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
- * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
- * @version 1.0
- * <small>
- * (<b>Internal version:</b> $Revision: $Date: $)
- * </small>
  * @since 5.1
  */
 public class Temperature extends Quantity implements Comparable<Temperature>
 {
+  /** Seed for hashCode. */
   private static final int SEED1 = 12;
+  /** Seed for hashCode. */
   private static final int SEED2 = 23;
+  /** Value of this quantity. */
   Number value;
+  /** Unit type of this quantity. */
   Unit<ome.units.quantity.Temperature> unit;
+  /** Cached value for hashCode. */
   private int hashCodeValue;
 
+  /**
+   * Create an Temperature.
+   *
+   * @param inValue the value.
+   * @param inUnit the unit type.
+   */
   public Temperature(Number inValue,
     Unit<ome.units.quantity.Temperature> inUnit)
   {
@@ -65,7 +70,14 @@ public class Temperature extends Quantity implements Comparable<Temperature>
   {
     return value;
   }
-  
+
+  /**
+   * Perform a unit conversion.
+   *
+   * @param inUnit the unit to convert to.
+   * @return the current quantity value converted to the specified
+   * unit, or null if the conversion is not possible.
+   */
   public Number value(Unit<ome.units.quantity.Temperature> inUnit)
   {
     if (unit.equals(inUnit))
@@ -79,6 +91,18 @@ public class Temperature extends Quantity implements Comparable<Temperature>
     return null;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public boolean equals(Object other)
   {
@@ -105,6 +129,18 @@ public class Temperature extends Quantity implements Comparable<Temperature>
     return false;
   }
 
+  /**
+   * Check quantities for equality.
+   *
+   * Unit conversion will be performed when required to convert into
+   * the unit system of this quantity in order to perform the
+   * comparison.
+   *
+   * Note that floating point comparison is dangerous.  Do not use
+   * this method.
+   *
+   * @return true if equal, false if not equal.
+   */
   @Override
   public int compareTo(Temperature other)
   {
