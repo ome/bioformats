@@ -268,8 +268,8 @@ public class OMETiffWriter extends TiffWriter {
     }
 
     // insert warning comment
-    String prefix = xml.substring(0, xml.indexOf(">") + 1);
-    String suffix = xml.substring(xml.indexOf(">") + 1);
+    String prefix = xml.substring(0, xml.indexOf('>') + 1);
+    String suffix = xml.substring(xml.indexOf('>') + 1);
     return prefix + WARNING_COMMENT + suffix;
   }
 
