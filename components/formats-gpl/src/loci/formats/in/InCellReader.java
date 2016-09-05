@@ -92,6 +92,7 @@ public class InCellReader extends FormatReader {
   private int wellRows, wellCols;
   private Map<Integer, int[]> wellCoordinates;
   private Map<Integer, Length> posX, posY;
+  private int offsetPointCounter;
 
   private boolean[][] exclude;
 
@@ -256,6 +257,7 @@ public class InCellReader extends FormatReader {
       wellCoordinates = null;
       posX = null;
       posY = null;
+      offsetPointCounter = 0;
       creationDate = null;
       wellRows = wellCols = 0;
       fieldCount = 0;
@@ -362,6 +364,7 @@ public class InCellReader extends FormatReader {
     wellCoordinates = new HashMap<Integer, int[]>();
     posX = new HashMap<Integer, Length>();
     posY = new HashMap<Integer, Length>();
+    offsetPointCounter = 0;
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -1063,7 +1066,10 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("offset_point")) {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
-        int index = Integer.parseInt(attributes.getValue("index"));
+        Integer index = DataTools.parseInteger(attributes.getValue("index"));
+        if (null == index) {
+          index = offsetPointCounter++;
+        }
 
         posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
         posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
