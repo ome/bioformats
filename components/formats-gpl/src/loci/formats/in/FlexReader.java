@@ -1432,7 +1432,7 @@ public class FlexReader extends FormatReader {
 
     private String filterSet;
 
-    private StringBuffer charData = new StringBuffer();
+    private final StringBuilder charData = new StringBuilder();
 
     public FlexHandler(List<String> names, List<String> factors,
       MetadataStore store, boolean populateCore, int well, int thisField)
@@ -1454,7 +1454,7 @@ public class FlexReader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = charData.toString();
-      charData = new StringBuffer();
+      charData.setLength(0);
 
       if (qName.equals("XSize") && "Plate".equals(parentQName)) {
         wellRows = Integer.parseInt(value);
@@ -1957,7 +1957,7 @@ public class FlexReader extends FormatReader {
    * If other paths were mapped to 'alias', they will be overwritten.
    */
   public static void mapServer(String alias, String[] realNames) {
-    StringBuffer msg = new StringBuffer("mapServer(");
+    final StringBuilder msg = new StringBuilder("mapServer(");
     msg.append(alias);
     if (realNames != null) {
       msg.append(", [");

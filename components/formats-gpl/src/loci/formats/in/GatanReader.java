@@ -395,7 +395,7 @@ public class GatanReader extends FormatReader {
             skipPadding();
             skipPadding();
             int numFields = in.readInt();
-            StringBuffer s = new StringBuffer();
+            final StringBuilder s = new StringBuilder();
             in.skipBytes(4);
             skipPadding();
             long baseFP = in.getFilePointer() + 4;

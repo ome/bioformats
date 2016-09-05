@@ -1223,7 +1223,7 @@ public class MetamorphReader extends BaseTiffReader {
     String descr = ifds.get(0).getComment();
     if (descr != null) {
       String[] lines = descr.split("\n");
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       for (int i=0; i<lines.length; i++) {
         String line = lines[i].trim();
 

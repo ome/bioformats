@@ -371,7 +371,7 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<Boolean> validDimensions = new ArrayList<Boolean>();
 
       ByteArrayHandle xml = new ByteArrayHandle();
-      StringBuffer name = new StringBuffer();
+      final StringBuilder name = new StringBuilder();
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
@@ -512,7 +512,7 @@ public class NativeND2Reader extends FormatReader {
             b = (char) in.readByte();
           }
           imageNames.add(name.toString());
-          name = name.delete(0, name.length());
+          name.setLength(0);
         }
         else if (blockType.startsWith("ImageText")) {
           foundMetadata = true;
@@ -1477,7 +1477,7 @@ public class NativeND2Reader extends FormatReader {
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 4);
 
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       // stored XML doesn't have a root node - add one, so that we can parse
       // using SAX
 

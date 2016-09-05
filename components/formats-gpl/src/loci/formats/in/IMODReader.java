@@ -335,7 +335,7 @@ public class IMODReader extends FormatReader {
             int g = colors[obj][1] & 0xff;
             int b = colors[obj][2] & 0xff;
 
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             for (int i=0; i<nPoints; i++) {
               sb.append(points[obj][contour][i][0]);
               sb.append(",");

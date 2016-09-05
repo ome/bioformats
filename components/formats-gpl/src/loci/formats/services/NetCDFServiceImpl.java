@@ -284,7 +284,7 @@ public class NetCDFServiceImpl extends AbstractService
     Object v = values.copyTo1DJavaArray();
     if (v instanceof Object[]) {
       Object[] array = (Object[]) v;
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
         sb.append((String) array[i]);
       }

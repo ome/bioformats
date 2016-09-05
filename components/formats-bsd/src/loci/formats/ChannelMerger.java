@@ -101,7 +101,7 @@ public class ChannelMerger extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     String order = reader.getDimensionOrder();
     if (canMerge()) {
-      StringBuffer sb = new StringBuffer(order);
+      final StringBuilder sb = new StringBuilder(order);
       while (order.indexOf("C") != 2) {
         char pre = order.charAt(order.indexOf("C") - 1);
         sb.setCharAt(order.indexOf("C"), pre);

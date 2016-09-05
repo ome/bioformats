@@ -122,8 +122,6 @@ public class NikonTiffReader extends BaseTiffReader {
     metadata.remove("Comment");
     String[] lines = comment.split("\n");
 
-    StringBuffer k = null, v = null;
-
     String[] dimensionLabels = null, dimensionSizes = null;
 
     for (String line : lines) {
@@ -136,12 +134,12 @@ public class NikonTiffReader extends BaseTiffReader {
           break;
         }
       }
-      k = new StringBuffer();
+      final StringBuilder k = new StringBuilder();
       for (int i=0; i<nTokensInKey; i++) {
         k.append(tokens[i]);
         if (i < nTokensInKey - 1) k.append(" ");
       }
-      v = new StringBuffer();
+      final StringBuilder v = new StringBuilder();
       for (int i=nTokensInKey; i<tokens.length; i++) {
         v.append(tokens[i]);
         if (i < tokens.length - 1) v.append(" ");

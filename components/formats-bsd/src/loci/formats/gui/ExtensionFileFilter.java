@@ -62,7 +62,7 @@ public class ExtensionFileFilter extends FileFilter
   public ExtensionFileFilter(String[] extensions, String description) {
     exts = new String[extensions.length];
     System.arraycopy(extensions, 0, exts, 0, extensions.length);
-    StringBuffer sb = new StringBuffer(description);
+    final StringBuilder sb = new StringBuilder(description);
     boolean first = true;
     for (int i=0; i<exts.length; i++) {
       if (exts[i] == null) exts[i] = "";

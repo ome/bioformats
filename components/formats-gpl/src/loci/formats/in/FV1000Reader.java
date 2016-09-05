@@ -1372,7 +1372,7 @@ public class FV1000Reader extends FormatReader {
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
             shapeType == POLYLINE || shapeType == FREE_LINE)
           {
-            StringBuffer points = new StringBuffer();
+            final StringBuilder points = new StringBuilder();
             for (int point=0; point<xc.length; point++) {
               points.append(xc[point]);
               points.append(",");
@@ -1452,7 +1452,7 @@ public class FV1000Reader extends FormatReader {
 
       for (int file=0; file<totalFiles; file++) {
         int[] pos = FormatTools.rasterToPosition(lengths, file);
-        StringBuffer pty = new StringBuffer();
+        final StringBuilder pty = new StringBuilder();
         for (int block=0; block<prefixes.length; block++) {
           pty.append(prefixes[block]);
 

@@ -94,7 +94,7 @@ public class EPSWriter extends FormatWriter {
 
     int planeSize = w * h;
 
-    StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
 
     int offset = y * sizeX * nChannels * 2;
     out.seek(planeOffset + offset);
