@@ -98,7 +98,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     try {
       URL url = ShortcutPanel.class.getResource("ShortcutPanel.class");
       String path = url.toString();
-      path = path.substring(0, path.indexOf("!")) + "!/plugins.config";
+      path = path.substring(0, path.indexOf('!')) + "!/plugins.config";
       url = new URL(path);
       BufferedReader in = new BufferedReader(
         new InputStreamReader(url.openStream(), Constants.ENCODING));

@@ -198,7 +198,7 @@ public class ImportProcess implements StatusReporter {
     StringTokenizer st = new StringTokenizer(seriesList, ",");
     while (st.hasMoreTokens()) {
       final String token = st.nextToken();
-      int dash = token.indexOf("-");
+      int dash = token.indexOf('-');
       if (dash < 0) {
         // single number
         try {

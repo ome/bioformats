@@ -949,7 +949,7 @@ public class ROIHandler {
 
     for (int q=0; q<pointList.length; q++) {
       pointList[q] = pointList[q].trim();
-      int delim = pointList[q].indexOf(",");
+      int delim = pointList[q].indexOf(',');
       coordinates[0][q] =
           (int) Double.parseDouble(pointList[q].substring(0, delim));
       coordinates[1][q] =

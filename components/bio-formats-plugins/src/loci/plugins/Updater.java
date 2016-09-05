@@ -149,7 +149,7 @@ public class Updater implements PlugIn {
         }
       }
       else {
-        int dot = filename.indexOf(".");
+        int dot = filename.indexOf('.');
         if (f.startsWith(filename.substring(0, dot)) &&
           f.endsWith(filename.substring(dot)))
         {

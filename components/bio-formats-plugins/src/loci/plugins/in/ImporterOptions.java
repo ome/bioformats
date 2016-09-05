@@ -530,9 +530,9 @@ public class ImporterOptions extends OptionsList {
 
     // delete anything inside square brackets, for simplicity
     while (true) {
-      int lIndex = options.indexOf("[");
+      int lIndex = options.indexOf('[');
       if (lIndex < 0) break;
-      int rIndex = options.indexOf("]");
+      int rIndex = options.indexOf(']');
       if (rIndex < 0) rIndex = options.length() - 1;
       options = options.substring(0, lIndex) + options.substring(rIndex + 1);
     }
