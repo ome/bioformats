@@ -102,9 +102,9 @@ public class ChannelMerger extends ReaderWrapper {
     String order = reader.getDimensionOrder();
     if (canMerge()) {
       final StringBuilder sb = new StringBuilder(order);
-      while (order.indexOf("C") != 2) {
-        char pre = order.charAt(order.indexOf("C") - 1);
-        sb.setCharAt(order.indexOf("C"), pre);
+      while (order.indexOf('C') != 2) {
+        char pre = order.charAt(order.indexOf('C') - 1);
+        sb.setCharAt(order.indexOf('C'), pre);
         sb.setCharAt(order.indexOf(pre), 'C');
         order = sb.toString();
       }

@@ -1221,7 +1221,7 @@ public class FileStitcher extends ReaderWrapper {
       String newOrder = ((DimensionSwapper) reader).getInputOrder();
       if ((externals[external].getFiles().length > 1 || !r.isOrderCertain()) &&
         (r.getRGBChannelCount() == 1 ||
-        newOrder.indexOf("C") == r.getDimensionOrder().indexOf("C")))
+        newOrder.indexOf('C') == r.getDimensionOrder().indexOf("C")))
       {
         r.swapDimensions(newOrder);
       }

@@ -92,11 +92,11 @@ public class DimensionSwapper extends ReaderWrapper {
         order.length() + ")");
     }
 
-    int newX = order.indexOf("X");
-    int newY = order.indexOf("Y");
-    int newZ = order.indexOf("Z");
-    int newC = order.indexOf("C");
-    int newT = order.indexOf("T");
+    int newX = order.indexOf('X');
+    int newY = order.indexOf('Y');
+    int newZ = order.indexOf('Z');
+    int newC = order.indexOf('C');
+    int newT = order.indexOf('T');
 
     if (newX < 0) throw new IllegalArgumentException("X does not appear");
     if (newY < 0) throw new IllegalArgumentException("Y does not appear");
@@ -115,11 +115,11 @@ public class DimensionSwapper extends ReaderWrapper {
 
     int[] dims = new int[5];
 
-    int oldX = oldOrder.indexOf("X");
-    int oldY = oldOrder.indexOf("Y");
-    int oldZ = oldOrder.indexOf("Z");
-    int oldC = oldOrder.indexOf("C");
-    int oldT = oldOrder.indexOf("T");
+    int oldX = oldOrder.indexOf('X');
+    int oldY = oldOrder.indexOf('Y');
+    int oldZ = oldOrder.indexOf('Z');
+    int oldC = oldOrder.indexOf('C');
+    int oldT = oldOrder.indexOf('T');
 
     if (oldC != newC && reader.getRGBChannelCount() > 1) {
       throw new IllegalArgumentException(
