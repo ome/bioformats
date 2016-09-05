@@ -255,7 +255,7 @@ public class NetCDFServiceImpl extends AbstractService
    * @return Group or <code>root</code> if the group cannot be found.
    */
   private Group getGroup(String path) {
-    if (path.indexOf("/") == -1) {
+    if (path.indexOf('/') == -1) {
       return root;
     }
 

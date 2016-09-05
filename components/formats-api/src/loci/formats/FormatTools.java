@@ -394,9 +394,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
@@ -544,9 +544,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }

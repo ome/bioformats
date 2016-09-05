@@ -176,14 +176,14 @@ public class ClassList<T> {
   public void parseLine(String line)
    {
       // Ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
+      int ndx = line.indexOf('#');
       if (ndx >= 0) line = line.substring(0, ndx);
       line = line.trim();
       if (line.equals("")) return;
 
       Map<String, String> o = new HashMap<String, String>();
       if (line.endsWith("]")) {
-        ndx = line.indexOf("[");
+        ndx = line.indexOf('[');
         if (ndx >= 0) {
           o = parseOptions(line.substring(ndx + 1, line.length() - 1));
           line = line.substring(0, ndx).trim();
