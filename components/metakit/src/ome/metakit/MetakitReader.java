@@ -305,11 +305,11 @@ public class MetakitReader {
 
     for (int i=0; i<tables.length; i++) {
       String table = tables[i];
-      int openBracket = table.indexOf("[");
+      int openBracket = table.indexOf('[');
       tableNames[i] = table.substring(0, openBracket);
       String columnList = table.substring(openBracket + 1);
 
-      openBracket = columnList.indexOf("[");
+      openBracket = columnList.indexOf('[');
       hasSubviews[i] = openBracket >= 0;
 
       columnList = columnList.substring(openBracket + 1);

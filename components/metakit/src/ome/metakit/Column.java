@@ -46,7 +46,7 @@ public class Column {
    * "fieldID:I".
    */
   public Column(String definition) {
-    int separator = definition.indexOf(":");
+    int separator = definition.indexOf(':');
     name = definition.substring(0, separator);
     typeString = definition.substring(separator + 1);
   }
