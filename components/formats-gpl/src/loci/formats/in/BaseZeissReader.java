@@ -321,7 +321,8 @@ public abstract class BaseZeissReader extends FormatReader {
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
-      Integer[] channelKeys = channelName.keySet().toArray(new Integer[0]);
+      Integer[] channelKeys = channelName.keySet().toArray(
+          new Integer[channelName.size()]);
       Arrays.sort(channelKeys);
 
       // link DetectorSettings to an actual Detector

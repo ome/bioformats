@@ -27,10 +27,10 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DateTools;
 import loci.common.Location;
@@ -47,13 +47,14 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
+
+import org.apache.commons.lang.ArrayUtils;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
@@ -112,7 +113,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return noPixels ? new String[0] : files;
+    return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : files;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -152,7 +153,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     int fileIndex = FormatTools.positionToRaster(lengths, position);
-    RandomAccessInputStream s = null;
+    final RandomAccessInputStream s;
     if (fileIndex < files.length) {
       s = new RandomAccessInputStream(files[fileIndex]);
     }
@@ -184,10 +185,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    Vector<String> uniqueChannels = new Vector<String>();
-    Vector<Double> uniqueZs = new Vector<Double>();
-    Vector<Length> stageX = new Vector<Length>();
-    Vector<Length> stageY = new Vector<Length>();
+    final List<String> uniqueChannels = new ArrayList<String>();
+    final List<Double> uniqueZs = new ArrayList<Double>();
+    final List<Length> stageX = new ArrayList<Length>();
+    final List<Length> stageY = new ArrayList<Length>();
 
     CoreMetadata m = core.get(0);
 
@@ -226,7 +227,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
           uniqueChannels.add(handler.getChannelName());
         }
 
-        Vector<Double> zPositions = handler.getZPositions();
+        final List<Double> zPositions = handler.getZPositions();
         Double pos = Math.rint(zPositions.get(0));
 
         if (!uniqueZs.contains(pos)) {
@@ -263,8 +264,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
-    final Vector<Length> xPositions = new Vector<Length>();
-    final Vector<Length> yPositions = new Vector<Length>();
+    final List<Length> xPositions = new ArrayList<Length>();
+    final List<Length> yPositions = new ArrayList<Length>();
 
     for (IFD ifd : ifds) {
       String xml = XMLTools.sanitizeXML(ifd.getComment());
@@ -273,7 +274,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       final Length x = handler.getStagePositionX();
       final Length y = handler.getStagePositionY();
 
-      if (xPositions.size() == 0) {
+      if (xPositions.isEmpty()) {
         xPositions.add(x);
         yPositions.add(y);
       }
@@ -297,13 +298,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
       fieldRowCount = xPositions.size();
     }
 
-    Vector<Integer> wavelengths = handler.getWavelengths();
-    Vector<Double> zPositions = handler.getZPositions();
+    final List<Integer> wavelengths = handler.getWavelengths();
+    final List<Double> zPositions = handler.getZPositions();
     dualCamera = handler.hasDualCamera();
 
     // calculate axis sizes
 
-    Vector<Integer> uniqueC = new Vector<Integer>();
+    final List<Integer> uniqueC = new ArrayList<Integer>();
     for (Integer c : wavelengths) {
       if (!uniqueC.contains(c)) {
         uniqueC.add(c);
@@ -315,7 +316,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     int samples = ifds.get(0).getSamplesPerPixel();
     m.sizeC *= effectiveC * samples;
 
-    Vector<Double> uniqueZ = new Vector<Double>();
+    final List<Double> uniqueZ = new ArrayList<Double>();
     for (Double z : zPositions) {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
@@ -434,8 +435,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        Vector<String> timestamps = handler.getTimestamps();
-        Vector<Double> exposures = handler.getExposures();
+        final List<String> timestamps = handler.getTimestamps();
+        final List<Double> exposures = handler.getExposures();
 
         for (int i=0; i<timestamps.size(); i++) {
           long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
@@ -553,7 +554,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     NumericComparator comparator = new NumericComparator();
     Arrays.sort(tiffs, comparator);
 
-    Vector<String> validTIFFs = new Vector<String>();
+    final List<String> validTIFFs = new ArrayList<String>();
 
     for (String tiff : tiffs) {
       if (!new Location(tiff).exists()) {

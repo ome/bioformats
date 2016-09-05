@@ -26,10 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -48,7 +48,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -71,7 +70,7 @@ public class TCSReader extends FormatReader {
   // -- Fields --
 
   /** List of TIFF files. */
-  private Vector<String> tiffs;
+  private List<String> tiffs;
 
   /** Helper readers. */
   private TiffReader[] tiffReaders;
@@ -215,7 +214,7 @@ public class TCSReader extends FormatReader {
     if (noPixels) {
       return xmlFile == null ? null : new String[] {xmlFile};
     }
-    Vector<String> v = new Vector<String>();
+    final List<String> v = new ArrayList<String>();
     v.addAll(tiffs);
     if (xmlFile != null) v.add(xmlFile);
     return v.toArray(new String[v.size()]);
@@ -273,7 +272,7 @@ public class TCSReader extends FormatReader {
 
     in = new RandomAccessInputStream(id, 16);
     tiffParser = new TiffParser(in);
-    tiffs = new Vector<String>();
+    tiffs = new ArrayList<String>();
 
     IFDList ifds = tiffParser.getIFDs();
     String date = ifds.get(0).getIFDStringValue(IFD.DATE_TIME);

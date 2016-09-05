@@ -33,7 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
@@ -126,10 +127,10 @@ public class AVIReader extends FormatReader {
   // -- Fields --
 
   /** Offset to each plane. */
-  private Vector<Long> offsets;
+  private List<Long> offsets;
 
   /** Number of bytes in each plane. */
-  private Vector<Long> lengths;
+  private List<Long> lengths;
 
   private String listString;
   private String type = "error";
@@ -309,8 +310,8 @@ public class AVIReader extends FormatReader {
 
     LOGGER.info("Verifying AVI format");
 
-    offsets = new Vector<Long>();
-    lengths = new Vector<Long>();
+    offsets = new ArrayList<Long>();
+    lengths = new ArrayList<Long>();
     lastImageNo = -1;
 
     while (in.getFilePointer() < in.length() - 8) {

@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -35,9 +36,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
@@ -58,12 +56,12 @@ public class NikonTiffReader extends BaseTiffReader {
   // -- Fields --
 
   private double physicalSizeX, physicalSizeY, physicalSizeZ;
-  private Vector<String> filterModels, dichroicModels, laserIDs;
+  private List<String> filterModels, dichroicModels, laserIDs;
   private Double magnification;
   private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
-  private Vector<Double> gain;
-  private Vector<Double> wavelength, emWave, exWave;
+  private List<Double> gain;
+  private List<Double> wavelength, emWave, exWave;
 
   // -- Constructor --
 
@@ -111,13 +109,13 @@ public class NikonTiffReader extends BaseTiffReader {
       return;
     }
 
-    filterModels = new Vector<String>();
-    dichroicModels = new Vector<String>();
-    laserIDs = new Vector<String>();
-    gain = new Vector<Double>();
-    wavelength = new Vector<Double>();
-    emWave = new Vector<Double>();
-    exWave = new Vector<Double>();
+    filterModels = new ArrayList<String>();
+    dichroicModels = new ArrayList<String>();
+    laserIDs = new ArrayList<String>();
+    gain = new ArrayList<Double>();
+    wavelength = new ArrayList<Double>();
+    emWave = new ArrayList<Double>();
+    exWave = new ArrayList<Double>();
 
     // parse key/value pairs in the comment
     String comment = ifds.get(0).getComment();

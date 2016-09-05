@@ -27,7 +27,8 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -56,7 +57,7 @@ public class VisitechReader extends FormatReader {
   // -- Fields --
 
   /** Files in this dataset. */
-  private Vector<String> files;
+  private List<String> files;
 
   private long[] pixelOffsets;
 
@@ -143,7 +144,7 @@ public class VisitechReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    Vector<String> v = new Vector<String>();
+    final List<String> v = new ArrayList<String>();
     v.add(currentId);
     if (!noPixels && files != null) {
       int nFiles = getSizeC();
@@ -267,7 +268,7 @@ public class VisitechReader extends FormatReader {
 
     // find pixels files - we think there is one channel per file
 
-    files = new Vector<String>();
+    files = new ArrayList<String>();
 
     int ndx = currentId.lastIndexOf(File.separator) + 1;
     String base = currentId.substring(ndx, currentId.lastIndexOf(" "));

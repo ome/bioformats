@@ -33,7 +33,8 @@
 package loci.formats.out;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -106,7 +107,7 @@ public class QTWriter extends FormatWriter {
   protected int numBytes;
 
   /** Vector of plane offsets. */
-  protected Vector<Integer> offsets;
+  protected List<Integer> offsets;
 
   /** Time the file was created. */
   protected int created;
@@ -293,7 +294,7 @@ public class QTWriter extends FormatWriter {
       legacy.setCodec(codec);
       legacy.setMetadataRetrieve(r);
     }
-    offsets = new Vector<Integer>();
+    offsets = new ArrayList<Integer>();
     created = (int) System.currentTimeMillis();
     numBytes = 0;
 

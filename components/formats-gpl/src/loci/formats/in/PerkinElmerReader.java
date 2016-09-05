@@ -27,10 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -43,8 +42,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -86,7 +83,7 @@ public class PerkinElmerReader extends FormatReader {
   private boolean isTiff = true;
 
   /** List of all files to open */
-  private Vector<String> allFiles;
+  private List<String> allFiles;
 
   private int extCount;
 
@@ -224,7 +221,7 @@ public class PerkinElmerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector<String> files = new Vector<String>();
+      final List<String> files = new ArrayList<String>();
       if (isTiff) {
         for (String f : allFiles) {
           if (!checkSuffix(f, new String[] {"tif", "tiff"})) {
@@ -308,7 +305,7 @@ public class PerkinElmerReader extends FormatReader {
 
     super.initFile(id);
 
-    allFiles = new Vector<String>();
+    allFiles = new ArrayList<String>();
 
     // get the working directory
     Location tmpFile = new Location(id).getAbsoluteFile();
@@ -330,7 +327,7 @@ public class PerkinElmerReader extends FormatReader {
     String timFile = null, csvFile = null, zpoFile = null;
     String htmFile = null;
 
-    Vector<PixelsFile> tempFiles = new Vector<PixelsFile>();
+    final List<PixelsFile> tempFiles = new ArrayList<PixelsFile>();
 
     int dot = id.lastIndexOf(".");
     String check = dot < 0 ? id : id.substring(0, dot);
@@ -423,7 +420,7 @@ public class PerkinElmerReader extends FormatReader {
 
     LOGGER.info("Finding image files");
 
-    Vector<Integer> foundExts = new Vector<Integer>();
+    List<Integer> foundExts = new ArrayList<Integer>();
     for (PixelsFile f : files) {
       if (!foundExts.contains(f.extIndex)) {
         foundExts.add(f.extIndex);
@@ -470,10 +467,10 @@ public class PerkinElmerReader extends FormatReader {
     // be aggressive about parsing the HTML file, since it's the only one that
     // explicitly defines the number of wavelengths and timepoints
 
-    Vector<Double> exposureTimes = new Vector<Double>();
-    Vector<Double> zPositions = new Vector<Double>();
-    Vector<Double> emWaves = new Vector<Double>();
-    Vector<Double> exWaves = new Vector<Double>();
+    final List<Double> exposureTimes = new ArrayList<Double>();
+    final List<Double> zPositions = new ArrayList<Double>();
+    final List<Double> emWaves = new ArrayList<Double>();
+    final List<Double> exWaves = new ArrayList<Double>();
 
     if (htmFile != null) {
       String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
@@ -813,7 +810,7 @@ public class PerkinElmerReader extends FormatReader {
       return;
     }
     String[] tokens = DataTools.readFile(csvFile).split("\\s");
-    Vector<String> tmp = new Vector<String>();
+    final List<String> tmp = new ArrayList<String>();
     for (String token : tokens) {
       if (token.trim().length() > 0) tmp.add(token.trim());
     }
