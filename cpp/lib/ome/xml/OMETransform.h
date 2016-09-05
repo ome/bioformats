@@ -102,7 +102,18 @@ namespace ome
               ome::common::xml::EntityResolver& entity_resolver,
               OMETransformResolver&             transform_resolver)
     {
-      ome::common::xml::dom::Document inputdoc(ome::common::xml::dom::createDocument(input, entity_resolver));
+      ome::common::xml::dom::Document inputdoc;
+      try
+        {
+          inputdoc = ome::common::xml::dom::createDocument(input, entity_resolver);
+        }
+      catch (const std::runtime_error&) // retry without strict validation
+        {
+          ome::common::xml::dom::ParseParameters params;
+          params.doSchema = false;
+          params.validationSchemaFullChecking = false;
+          inputdoc = ome::common::xml::dom::createDocument(input, entity_resolver, params);
+        }
 
       const std::string source_schema(getModelVersion(inputdoc));
 
