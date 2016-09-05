@@ -586,17 +586,12 @@ public class NativeND2Reader extends FormatReader {
           if(useChunkMap) {
             long lastImagePosition = 0;
             for(ChunkMapEntry entry : allChunkPositions.values()) {
-              if(entry.position < in.getFilePointer()) {
-                continue;
-              }
               if(entry.name.startsWith("ImageDataSeq")) {
                 lastImagePosition = entry.position;
                 imageOffsets.add(new Long(entry.position + 16));
                 imageLengths.add(new int[] {nameLength, (int)entry.length, getSizeX() * getSizeY()});
                 imageNames.add(entry.name.substring(12));
                 // assumption nameLength is constant throughout the file for image blocks!
-              } else {
-                break;
               }
             }
             in.seek(allChunkPositions.higherKey(lastImagePosition));
