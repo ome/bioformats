@@ -630,7 +630,7 @@ public class FakeReader extends FormatReader {
         name = token;
         continue;
       }
-      int equals = token.indexOf("=");
+      int equals = token.indexOf('=');
       if (equals < 0) {
         LOGGER.warn("ignoring token: {}", token);
         continue;
@@ -707,7 +707,7 @@ public class FakeReader extends FormatReader {
         // 'color' and 'color_x' can be used together, but 'color_x' takes
         // precedence.  'color' will in that case be used for any missing
         // or invalid 'color_x' values.
-        int index = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+        int index = Integer.parseInt(key.substring(key.indexOf('_') + 1));
 
         while (index >= color.size()) {
           color.add(null);

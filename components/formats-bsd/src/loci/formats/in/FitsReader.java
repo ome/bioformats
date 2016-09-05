@@ -110,7 +110,7 @@ public class FitsReader extends FormatReader {
       line = in.readString(LINE_LENGTH);
 
       // parse key/value pair
-      int ndx = line.indexOf("=");
+      int ndx = line.indexOf('=');
       int comment = line.indexOf("/", ndx);
       if (comment < 0) comment = line.length();
 

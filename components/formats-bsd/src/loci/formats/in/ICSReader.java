@@ -976,7 +976,7 @@ public class ICSReader extends FormatReader {
           else if (key.equalsIgnoreCase("history date") ||
                    key.equalsIgnoreCase("history created on"))
           {
-            if (value.indexOf(" ") > 0) {
+            if (value.indexOf(' ') > 0) {
               date = value.substring(0, value.lastIndexOf(" "));
               date = DateTools.formatDate(date, DATE_FORMATS);
             }
@@ -1050,7 +1050,7 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history laser rep rate")) {
               String repRate = value;
-              if (repRate.indexOf(" ") != -1) {
+              if (repRate.indexOf(' ') != -1) {
                 repRate = repRate.substring(0, repRate.lastIndexOf(" "));
               }
               laserRepetitionRate = new Double(repRate);
@@ -1162,8 +1162,8 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history Exposure")) {
               String expTime = value;
-              if (expTime.indexOf(" ") != -1) {
-                expTime = expTime.substring(0, expTime.indexOf(" "));
+              if (expTime.indexOf(' ') != -1) {
+                expTime = expTime.substring(0, expTime.indexOf(' '));
               }
               Double expDouble = new Double(expTime);
               if (expDouble != null) {
@@ -1329,14 +1329,14 @@ public class ICSReader extends FormatReader {
       }
       else if (axes[i].equals("z")) {
         m.sizeZ = axisLengths[i];
-        if (getDimensionOrder().indexOf("Z") == -1) {
+        if (getDimensionOrder().indexOf('Z') == -1) {
           m.dimensionOrder += "Z";
         }
       }
       else if (axes[i].equals("t")) {
         if (getSizeT() == 0) m.sizeT = axisLengths[i];
         else m.sizeT *= axisLengths[i];
-        if (getDimensionOrder().indexOf("T") == -1) {
+        if (getDimensionOrder().indexOf('T') == -1) {
           m.dimensionOrder += "T";
         }
       }
@@ -1346,7 +1346,7 @@ public class ICSReader extends FormatReader {
         channelLengths.add(new Integer(axisLengths[i]));
         storedRGB = getSizeX() == 0;
         m.rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
-        if (getDimensionOrder().indexOf("C") == -1) {
+        if (getDimensionOrder().indexOf('C') == -1) {
           m.dimensionOrder += "C";
         }
 

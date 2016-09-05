@@ -453,7 +453,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
       if (artist != null) {
         String firstName = null, lastName = null;
-        int ndx = artist.indexOf(" ");
+        int ndx = artist.indexOf(' ');
         if (ndx < 0) lastName = artist;
         else {
           firstName = artist.substring(0, ndx);

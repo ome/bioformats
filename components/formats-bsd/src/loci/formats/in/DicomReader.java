@@ -850,7 +850,7 @@ public class DicomReader extends FormatReader {
         catch (NumberFormatException e) { }
       }
       else if (key.indexOf("Palette Color LUT Data") != -1) {
-        String color = key.substring(0, key.indexOf(" ")).trim();
+        String color = key.substring(0, key.indexOf(' ')).trim();
         int ndx = color.equals("Red") ? 0 : color.equals("Green") ? 1 : 2;
         long fp = in.getFilePointer();
         in.seek(in.getFilePointer() - elementLength + 1);
