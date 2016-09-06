@@ -1063,7 +1063,7 @@ public final class FormatTools {
     int sizeC = retrieve.getPixelsSizeC(series).getValue();
     int sizeT = retrieve.getPixelsSizeT(series).getValue();
     int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
-    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, retrieve.getPlaneCount(series), image);
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
 
     String zPlaces = "%d";
     String tPlaces = "%d";

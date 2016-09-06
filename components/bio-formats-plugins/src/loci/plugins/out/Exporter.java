@@ -557,7 +557,7 @@ public class Exporter {
                 for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
                     for (int c=0; c<(splitC ? sizeC : 1); c++) {
                         for (int t=0; t<(splitT ? sizeT : 1); t++) {
-                            int index = FormatTools.getIndex(ORDER, sizeZ, sizeC, sizeT, store.getPlaneCount(0), z, c, t);
+                            int index = FormatTools.getIndex(ORDER, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, z, c, t);
                             String pattern = base + (splitZ ? "_Z%z" : "") + (splitC ? "_C%c" : "") + (splitT ? "_T%t" : "") + ext;
                             outputFiles[nextFile++] = FormatTools.getFilename(0, index, store, pattern, padded);
                         }
