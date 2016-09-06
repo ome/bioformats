@@ -88,7 +88,11 @@ public class IniParserTest {
   public Object[][] createSimpleHeader() {
     return new Object[][] {
       {"key=value", IniTable.DEFAULT_HEADER},
+      {"[\nkey=value", IniTable.DEFAULT_HEADER},
+      {"{\nkey=value", IniTable.DEFAULT_HEADER},
       {"{chapter}\nkey=value", IniTable.DEFAULT_HEADER},
+      {"{}\nkey=value", IniTable.DEFAULT_HEADER},
+      {"[]\nkey=value", ""},
       {"[header]\nkey=value", "header"},
       {"[ header ]\nkey=value", " header "},
       {"[header\nkey=value", "header"},
@@ -109,6 +113,35 @@ public class IniParserTest {
     list.add(table);
 
     assertEquals(parser.parseINI(reader), list);
+  }
+
+  @DataProvider(name = "invalidheader")
+  public Object[][] createSingleString() {
+    return new Object[][] {
+      {"="}, {"["}, {"{"}
+    };
+  }
+
+  @Test(dataProvider="invalidheader")
+  public void testInvalidHeader(String s) throws IOException {
+    BufferedReader reader = stringToBufferedReader(s);
+
+    IniTable table = new IniTable();
+    table.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+    IniList list = new IniList();
+    list.add(table);
+
+    assertEquals(parser.parseINI(reader), list);
+  }
+
+  public void testEmptyString() throws IOException {
+    BufferedReader reader = stringToBufferedReader("");
+    assertEquals(parser.parseINI(reader), new IniTable());
+  }
+
+  public void testNull() throws IOException {
+    BufferedReader reader = stringToBufferedReader(null);
+    assertEquals(parser.parseINI(reader), new IniTable());
   }
 
   @Test
