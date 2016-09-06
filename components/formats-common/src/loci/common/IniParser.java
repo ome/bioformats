@@ -178,7 +178,7 @@ public class IniParser {
       }
       String key = line.substring(0, equals).trim();
       String value = line.substring(equals + 1).trim();
-      attrs.put(key, value);
+      if (!key.isEmpty() && !value.isEmpty()) attrs.put(key, value);
       no += num;
     }
     return list;
