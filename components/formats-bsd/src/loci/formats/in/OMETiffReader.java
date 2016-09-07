@@ -102,7 +102,8 @@ public class OMETiffReader extends FormatReader {
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "companion.ome"});
+    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "ome.tf2",
+                                    "ome.tf8", "ome.btf", "companion.ome"});
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
