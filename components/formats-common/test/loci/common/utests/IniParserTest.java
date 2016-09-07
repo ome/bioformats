@@ -118,7 +118,7 @@ public class IniParserTest {
   @DataProvider(name = "invalidheader")
   public Object[][] createSingleString() {
     return new Object[][] {
-      {"="}, {"["}, {"{"}
+      {"["}, {"{"}
     };
   }
 
@@ -142,6 +142,18 @@ public class IniParserTest {
   public void testNull() throws IOException {
     BufferedReader reader = stringToBufferedReader(null);
     assertEquals(parser.parseINI(reader), new IniTable());
+  }
+
+  public void testEmptyKeyValue() throws IOException {
+    BufferedReader reader = stringToBufferedReader("=");
+
+    IniTable table = new IniTable();
+    table.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+    table.put("", "");
+    IniList list = new IniList();
+    list.add(table);
+
+    assertEquals(parser.parseINI(reader), list);
   }
 
   @Test
