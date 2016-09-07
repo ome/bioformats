@@ -83,7 +83,17 @@ if(BUILD_TESTS)
   target_link_libraries(model OME::XML)
   target_link_libraries(model ome-test)
 
-  add_executable(quantity quantity.cpp)
+  add_executable(quantity
+                 quantity.h
+                 quantity.cpp
+                 quantity-electricpotential.cpp
+                 quantity-frequency.cpp
+                 quantity-length.cpp
+                 quantity-power.cpp
+                 quantity-pressure.cpp
+                 quantity-temperature.cpp
+                 quantity-time.cpp)
+
   target_link_libraries(quantity OME::XML)
   target_link_libraries(quantity OME::Test Boost::iostreams)
 

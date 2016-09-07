@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMMON C++ library for C++ compatibility/portability
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2015 Open Microscopy Environment:
+ * Copyright © 2015 - 2016 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,36 +36,7 @@
  * #L%
  */
 
-#include <cmath>
-#include <iomanip>
-#include <map>
-#include <string>
-
-#include <boost/algorithm/string.hpp>
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/math/constants/constants.hpp>
-#include <boost/range/size.hpp>
-#include <boost/units/io.hpp>
-#include <boost/units/systems/si/io.hpp>
-
-#include <ome/compat/regex.h>
-
-#include <ome/common/filesystem.h>
-
-#include <ome/test/test.h>
-
-// Include last due to side effect of MPL vector limit setting which can change the default
-#include <boost/lexical_cast.hpp>
-
-#include <ome/xml/model/enums/UnitsElectricPotential.h>
-#include <ome/xml/model/enums/UnitsFrequency.h>
-#include <ome/xml/model/enums/UnitsLength.h>
-#include <ome/xml/model/enums/UnitsPower.h>
-#include <ome/xml/model/enums/UnitsPressure.h>
-#include <ome/xml/model/enums/UnitsTemperature.h>
-#include <ome/xml/model/enums/UnitsTime.h>
-#include <ome/xml/model/primitives/Quantity.h>
+#include "quantity.h"
 
 using namespace ome::xml::model::enums;
 using ome::xml::model::primitives::Quantity;
@@ -73,21 +44,6 @@ using ome::xml::model::primitives::convert;
 
 namespace
 {
-
-  // Test data for a single test
-  struct test_op
-  {
-    double initial;
-    double expected;
-    std::string expected_output;
-    std::string from_symbol;
-    std::string to_symbol;
-    std::string expected_model_output;
-    double precision;
-  };
-
-  // From unit name, to unit name, test data
-  typedef std::map<std::pair<std::string, std::string>, std::vector<test_op> > test_map;
 
   test_map
   read_test_data()
@@ -152,7 +108,6 @@ namespace
                         std::cerr << "Parse fail [f8]: " << tokens[8] << '\n';
                         throw;
                       }
-                    
 
                     test_map::key_type k(from_symbol, to_symbol);
                     test_op v = { from_value, to_value, to_output, from_symbol, to_symbol, model_output, std::pow(10.0, precision) };
@@ -189,94 +144,6 @@ namespace
     return ret;
   }
 
-  test_map test_data(read_test_data());
 }
 
-template <typename T>
-class QuantityConv : public ::testing::Test
-{
-};
-
-TYPED_TEST_CASE_P(QuantityConv);
-
-TYPED_TEST_P(QuantityConv, DefaultConstruct)
-{
-  Quantity<TypeParam> q;
-}
-
-TYPED_TEST_P(QuantityConv, Conversion)
-{
-  for (test_map::const_iterator i = test_data.begin();
-       i != test_data.end();
-       ++i)
-    {
-      if (TypeParam::strings().find(i->first.first) == TypeParam::strings().end())
-        continue; // Wrong symbol for this unit.
-      
-      std::cout << "Testing unit conversion from " << i->first.first << " to " << i->first.second << " (" << i->second.size() << " tests)\n";
-
-      for (std::vector<test_op>::const_iterator j = i->second.begin();
-           j != i->second.end();
-           ++j)
-        {
-          Quantity<TypeParam> initial(j->initial, i->first.first);
-          Quantity<TypeParam> expected(j->expected, i->first.second);
-
-          Quantity<TypeParam> obs(convert(initial, i->first.second));
-
-
-          std::cout << "  " << initial << " to " << expected
-                    << " (observed " << obs << ")\n";
-          // Use EXPECT_NEAR rather than EXPECT_DOUBLE_EQUAL due to
-          // precision loss with angle conversions and pi, and unit
-          // conversions between imperial and metric, and the worst
-          // culprits are torr and mmHg conversion to Pa (in the mmHg
-          // case, the constant used is of low precision)
-          EXPECT_EQ(expected.getUnit(), obs.getUnit());
-          EXPECT_NEAR(expected.getValue(), obs.getValue(), j->precision);
-        }
-    }
-         
-}
-
-TYPED_TEST_P(QuantityConv, StreamOutput)
-{
-  // std::cerr << "Testing unit stream output from " << this->from_name << " to " << this->to_name << " (" << this->ops.size() << " tests)\n";
-
-      // typename TypeParam::to_type obs(TypeParam::from_type::from_value(i->initial));
-
-      // std::ostringstream os;
-      // os.imbue(std::locale::classic());
-      // Output with reduced precision (since floating point rounding
-      // errors lead to unpredicable output)
-      // os << std::setprecision(4) << obs;
-
-      // std::string obsstr(os.str());
-
-      // MSVC stream output uses a slightly different format than GCC
-      // and Clang; it outputs three digits for the exponent instead
-      // of two.  Drop the leading zero to make it compatible with the
-      // expected test output.
-      // ome::compat::regex repl("e([+-]?)0([0-9][0-9])", ome::compat::regex::extended);
-
-      // std::string obsstr_fixed(ome::compat::regex_replace(obsstr, repl, "e$1$2"));
-
-      // EXPECT_EQ(i->expected_output, obsstr_fixed);
-}
-
-REGISTER_TYPED_TEST_CASE_P(QuantityConv,
-                           DefaultConstruct,
-                           Conversion,
-                           StreamOutput);
-
-typedef ::testing::Types<
-  UnitsElectricPotential,
-  UnitsFrequency,
-  UnitsLength,
-  UnitsPower,
-  UnitsPressure,
-  UnitsTemperature,
-  UnitsTime
-  > QuantityTestTypes;
-
-INSTANTIATE_TYPED_TEST_CASE_P(QuantityTest, QuantityConv, QuantityTestTypes);
+test_map test_data(read_test_data());
