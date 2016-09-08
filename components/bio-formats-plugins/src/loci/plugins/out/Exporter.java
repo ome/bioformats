@@ -71,6 +71,7 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
 import loci.plugins.LociExporter;
@@ -137,6 +138,7 @@ public class Exporter {
         Boolean splitZ = null;
         Boolean splitC = null;
         Boolean splitT = null;
+        Boolean padded = null;
         Boolean saveRoi = null;
         String compression = null;
 
@@ -147,12 +149,14 @@ public class Exporter {
             String z = Macro.getValue(plugin.arg, "splitZ", null);
             String c = Macro.getValue(plugin.arg, "splitC", null);
             String t = Macro.getValue(plugin.arg, "splitT", null);
+            String zeroPad = Macro.getValue(plugin.arg, "padded", null);
             String sr = Macro.getValue(plugin.arg, "saveRoi", null);
             compression = Macro.getValue(plugin.arg, "compression", null);
             String id = Macro.getValue(plugin.arg, "imageid", null);
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
+            padded = zeroPad == null ? null : Boolean.valueOf(zeroPad);
             saveRoi = sr == null ? null : Boolean.valueOf(sr);
             if (id != null) {
                 try {
@@ -297,6 +301,7 @@ public class Exporter {
             if (splitZ == null) splitZ = Boolean.FALSE;
             if (splitC == null) splitC = Boolean.FALSE;
             if (splitT == null) splitT = Boolean.FALSE;
+            if (padded == null) padded = Boolean.FALSE;
         }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
@@ -306,11 +311,13 @@ public class Exporter {
             multiFile.addCheckbox("Write_each_Z_section to a separate file", false);
             multiFile.addCheckbox("Write_each_timepoint to a separate file", false);
             multiFile.addCheckbox("Write_each_channel to a separate file", false);
+            multiFile.addCheckbox("Use zero padding for filename indexes", false);
             multiFile.showDialog();
 
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
+            padded = multiFile.getNextBoolean();
             if (multiFile.wasCanceled()) return;
         }
 
@@ -550,8 +557,9 @@ public class Exporter {
                 for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
                     for (int c=0; c<(splitC ? sizeC : 1); c++) {
                         for (int t=0; t<(splitT ? sizeT : 1); t++) {
-                            outputFiles[nextFile++] = base + (splitZ ? "_Z" + z : "") +
-                                    (splitC ? "_C" + c : "") + (splitT ? "_T" + t : "") + ext;
+                            int index = FormatTools.getIndex(ORDER, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, z, c, t);
+                            String pattern = base + (splitZ ? "_Z%z" : "") + (splitC ? "_C%c" : "") + (splitT ? "_T%t" : "") + ext;
+                            outputFiles[nextFile++] = FormatTools.getFilename(0, index, store, pattern, padded);
                         }
                     }
                 }
