@@ -670,11 +670,9 @@
         <xsd:simpleType>
           <xsd:restriction base="xsd:string">
             <xsd:enumeration value="WideField"/>
-            <xsd:enumeration value="BrightField"/>
             <xsd:enumeration value="LaserScanningConfocalMicroscopy"/> <!-- CLSM or LSCM -->
             <xsd:enumeration value="SpinningDiskConfocal"/>
             <xsd:enumeration value="SlitScanConfocal"/>
-            <xsd:enumeration value="SweptFieldConfocal"/>
             <xsd:enumeration value="MultiPhotonMicroscopy"/><!-- laser scanning multiphoton microscopy (LSMM), two photon microscopy -->
             <xsd:enumeration value="StructuredIllumination"/>
             <xsd:enumeration value="SingleMoleculeImaging"/>
@@ -690,8 +688,10 @@
             <xsd:enumeration value="TIRF"/><!-- total internal reflection fluorescence (TIRFM) -->
             <xsd:enumeration value="FSM"/><!-- Fluorescence speckle microscopy -->
             <xsd:enumeration value="LCM"/><!-- Laser capture microdissection -->
-            <xsd:enumeration value="SPIM"/><!-- Selective or Single Plane Illumination Microscopy -->
             <xsd:enumeration value="Other"/>
+            <xsd:enumeration value="BrightField"/>
+            <xsd:enumeration value="SweptFieldConfocal"/>
+            <xsd:enumeration value="SPIM"/><!-- Selective or Single Plane Illumination Microscopy -->
           </xsd:restriction>
         </xsd:simpleType>
       </xsd:attribute>
