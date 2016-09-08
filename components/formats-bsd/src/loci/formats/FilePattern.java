@@ -646,7 +646,7 @@ public class FilePattern {
     String[] nameList)
   {
     String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
-    int dot = baseSuffix.indexOf(".");
+    int dot = baseSuffix.indexOf('.');
     if (dot < 0) baseSuffix = "";
     else baseSuffix = baseSuffix.substring(dot + 1);
 
@@ -660,7 +660,7 @@ public class FilePattern {
       int start = pattern.lastIndexOf(File.separator) + 1;
       if (start < 0) start = 0;
       String patternSuffix = pattern.substring(start);
-      dot = patternSuffix.indexOf(".");
+      dot = patternSuffix.indexOf('.');
       if (dot < 0) patternSuffix = "";
       else patternSuffix = patternSuffix.substring(dot + 1);
 

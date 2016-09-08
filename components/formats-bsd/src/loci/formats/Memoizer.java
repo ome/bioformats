@@ -561,7 +561,7 @@ public class Memoizer extends ReaderWrapper {
       }
 
       String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
+      int firstDot = minor.indexOf('.');
       if (firstDot >= 0) {
         int secondDot = minor.indexOf(".", firstDot + 1);
         if (secondDot >= 0) {
@@ -570,7 +570,7 @@ public class Memoizer extends ReaderWrapper {
       }
 
       String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf('.') + 1));
       if (!currentMinor.equals(minor)) {
         LOGGER.info("Different release version: {} not {}",
           releaseVersion, FormatTools.VERSION);

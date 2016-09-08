@@ -119,7 +119,7 @@ public class ChannelSeparator extends ReaderWrapper {
     String order = super.getDimensionOrder();
     if (reader.isRGB() && !reader.isIndexed()) {
       String newOrder = "XYC";
-      if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
+      if (order.indexOf('Z') > order.indexOf('T')) newOrder += "TZ";
       else newOrder += "ZT";
       return newOrder;
     }

@@ -161,7 +161,7 @@ public class TiffReader extends BaseTiffReader {
             String metadata =
               DataTools.stripString(new String(b, Constants.ENCODING));
             if (metadata.indexOf("xml") != -1) {
-              metadata = metadata.substring(metadata.indexOf("<"));
+              metadata = metadata.substring(metadata.indexOf('<'));
               metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
               try {
                 Hashtable<String, String> xmlMetadata =
@@ -206,8 +206,8 @@ public class TiffReader extends BaseTiffReader {
       if (files != null) {
         for (String file : files) {
           String name = file;
-          if (name.indexOf(".") != -1) {
-            name = name.substring(0, name.indexOf("."));
+          if (name.indexOf('.') != -1) {
+            name = name.substring(0, name.indexOf('.'));
           }
 
           if (currentName.startsWith(name) &&
@@ -269,7 +269,7 @@ public class TiffReader extends BaseTiffReader {
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
       String value = null;
-      int eq = token.indexOf("=");
+      int eq = token.indexOf('=');
       if (eq >= 0) value = token.substring(eq + 1);
 
       if (token.startsWith("channels=")) c = parseInt(value);
@@ -407,7 +407,7 @@ public class TiffReader extends BaseTiffReader {
     StringTokenizer st = new StringTokenizer(comment, "\n");
     while (st.hasMoreTokens()) {
       String line = st.nextToken();
-      int colon = line.indexOf(":");
+      int colon = line.indexOf(':');
       if (colon < 0) {
         addGlobalMeta("Comment", line);
         description = line;
@@ -425,7 +425,7 @@ public class TiffReader extends BaseTiffReader {
     if (lines.length > 1) {
       comment = "";
       for (String line : lines) {
-        int eq = line.indexOf("=");
+        int eq = line.indexOf('=');
         if (eq != -1) {
           String key = line.substring(0, eq).trim();
           String value = line.substring(eq + 1).trim();

@@ -243,7 +243,7 @@ public class JPEG2000Reader extends FormatReader {
     LOGGER.debug("Found {} comments", comments.size());
     for (int i=0; i<comments.size(); i++) {
       String comment = comments.get(i);
-      int equal = comment.indexOf("=");
+      int equal = comment.indexOf('=');
       if (equal >= 0) {
         String key = comment.substring(0, equal);
         String value = comment.substring(equal + 1);
