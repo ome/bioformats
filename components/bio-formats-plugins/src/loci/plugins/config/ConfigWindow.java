@@ -413,14 +413,14 @@ public class ConfigWindow extends JFrame
       if (line == null) break;
 
       // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
+      int ndx = line.indexOf('#');
       if (ndx >= 0) line = line.substring(0, ndx);
       boolean space = line.startsWith(" ");
       line = line.trim();
       if (line.equals("")) continue;
 
       // parse key/value pairs
-      int equals = line.indexOf("=");
+      int equals = line.indexOf('=');
       if (line.startsWith("[")) {
         // new entry
         if (props == null) props = new HashMap<String, String>();

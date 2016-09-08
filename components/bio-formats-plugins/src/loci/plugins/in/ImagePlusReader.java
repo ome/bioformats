@@ -550,7 +550,7 @@ public class ImagePlusReader implements StatusReporter {
       title = fp.getPattern();
       if (title == null) {
         title = file;
-        if (title.indexOf(".") != -1) {
+        if (title.indexOf('.') != -1) {
           title = title.substring(0, title.lastIndexOf("."));
         }
       }
