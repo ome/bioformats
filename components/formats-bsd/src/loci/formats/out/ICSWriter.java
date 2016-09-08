@@ -163,7 +163,7 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = no;
+    lastPlane = realIndex;
     if (lastPlane != getPlaneCount() - 1 || uniqueFiles.size() > 1) {
       overwriteDimensions(getMetadataRetrieve());
     }
