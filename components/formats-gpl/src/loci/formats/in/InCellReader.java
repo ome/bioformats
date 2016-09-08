@@ -91,7 +91,8 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Map<Integer, int[]> wellCoordinates;
-  private List<Length> posX, posY;
+  private Map<Integer, Length> posX, posY;
+  private int offsetPointCounter;
 
   private boolean[][] exclude;
 
@@ -106,6 +107,9 @@ public class InCellReader extends FormatReader {
   private Double gain;
   private Double temperature;
   private Double refractive;
+
+  private List<String> exFilters = new ArrayList<String>();
+  private List<String> emFilters = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -228,7 +232,7 @@ public class InCellReader extends FormatReader {
             if (new Location(plane.filename).exists()) {
               files.add(plane.filename);
             }
-            if (new Location(plane.thumbnailFile).exists()) {
+            if (plane.thumbnailFile != null && new Location(plane.thumbnailFile).exists()) {
               files.add(plane.thumbnailFile);
             }
           }
@@ -253,6 +257,7 @@ public class InCellReader extends FormatReader {
       wellCoordinates = null;
       posX = null;
       posY = null;
+      offsetPointCounter = 0;
       creationDate = null;
       wellRows = wellCols = 0;
       fieldCount = 0;
@@ -271,6 +276,8 @@ public class InCellReader extends FormatReader {
       gain = null;
       temperature = null;
       refractive = null;
+      emFilters.clear();
+      exFilters.clear();
     }
   }
 
@@ -355,8 +362,9 @@ public class InCellReader extends FormatReader {
     // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new HashMap<Integer, int[]>();
-    posX = new ArrayList<Length>();
-    posY = new ArrayList<Length>();
+    posX = new HashMap<Integer, Length>();
+    posY = new HashMap<Integer, Length>();
+    offsetPointCounter = 0;
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -372,6 +380,40 @@ public class InCellReader extends FormatReader {
     if (getSizeZ() == 0) ms0.sizeZ = 1;
     if (getSizeC() == 0) ms0.sizeC = 1;
     if (getSizeT() == 0) ms0.sizeT = 1;
+
+    if (totalImages == 0) {
+      ms0.imageCount = getSizeC() * getSizeZ() * getSizeT();
+      totalImages = getImageCount() * wellRows * wellCols * fieldCount;
+      Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+
+      for (int row=0; row<wellRows; row++) {
+        for (int col=0; col<wellCols; col++) {
+          plateMap[row][col] = true;
+          for (int field=0; field<fieldCount; field++) {
+            for (int t=0; t<getSizeT(); t++) {
+              for (int image=0; image<getSizeC() * getSizeZ(); image++) {
+                // this could be expanded to allow for timepoint indexes
+                // in the file name, as well as allowing the filter names to
+                // be omitted
+                int channel = getZCTCoords(image)[1];
+                Image plane = new Image();
+                String filename = (char) ('A' + row) + " - " + (col + 1) + "(fld " + (field + 1) +
+                  " wv " + exFilters.get(channel) + " - " + emFilters.get(channel) + ").tif";
+                Location path = new Location(parent, filename);
+                if (path.exists()) {
+                  plane.filename = path.getAbsolutePath();
+                }
+                else {
+                  LOGGER.debug("Missing file {}", filename);
+                }
+
+                imageFiles[row * wellCols + col][field][t][image] = plane;
+              }
+            }
+          }
+        }
+      }
+    }
 
     int seriesCount = 0;
 
@@ -573,11 +615,11 @@ public class InCellReader extends FormatReader {
       store.setWellSampleID(wellSampleID, 0, well, sampleIndex);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-      if (field < posX.size()) {
-        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
+      if (posX.containsKey(field - 1)) {
+        store.setWellSamplePositionX(posX.get(field - 1), 0, well, sampleIndex);
       }
-      if (field < posY.size()) {
-        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
+      if (posY.containsKey(field - 1)) {
+        store.setWellSamplePositionY(posY.get(field - 1), 0, well, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
@@ -833,6 +875,12 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("TimeSchedule")) {
         doT = Boolean.parseBoolean(attributes.getValue("enabled"));
       }
+      else if (qName.equals("ExcitationFilter")) {
+        exFilters.add(attributes.getValue("name"));
+      }
+      else if (qName.equals("EmissionFilter")) {
+        emFilters.add(attributes.getValue("name"));
+      }
     }
   }
 
@@ -1018,9 +1066,13 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("offset_point")) {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
+        Integer index = DataTools.parseInteger(attributes.getValue("index"));
+        if (null == index) {
+          index = offsetPointCounter++;
+        }
 
-        posX.add(new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
-        posY.add(new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
+        posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
+        posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));
 
         addGlobalMetaList("X position for position", x);
         addGlobalMetaList("Y position for position", y);
