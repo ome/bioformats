@@ -1084,7 +1084,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/ome-tiff`
-     - `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
+     - `.ome.tiff , .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|
@@ -1392,7 +1392,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/tiff`
-     - .tif
+     - .tiff, .tif, .tf2, .tf8, .btf
      - |Very good|
      - |Very good|
      - |Outstanding|

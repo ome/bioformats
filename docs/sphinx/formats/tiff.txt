@@ -1,10 +1,10 @@
 .. index:: TIFF (Tagged Image File Format)
-.. index:: .tif
+.. index:: .tiff, .tif, .tf2, .tf8, .btf
 
 TIFF (Tagged Image File Format)
 ===============================================================================
 
-Extensions: .tif
+Extensions: .tiff, .tif, .tf2, .tf8, .btf
 
 Developer: Aldus and Microsoft
 

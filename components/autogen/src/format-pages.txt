@@ -1682,8 +1682,8 @@ utilityRating = Good
 reader = SISReader
 
 [OME-TIFF]
-indexExtensions = .ome.tiff
-extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
+indexExtensions = .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf
+extensions = `.ome.tiff , .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
@@ -2142,7 +2142,7 @@ notes = Reads tabular pixel data produced by a variety of software.
 
 [TIFF (Tagged Image File Format)]
 pagename = tiff
-extensions = .tif
+extensions = .tiff, .tif, .tf2, .tf8, .btf
 owner = `Adobe <http://www.adobe.com>`_
 developer = Aldus and Microsoft
 bsd = yes
