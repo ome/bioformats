@@ -102,7 +102,7 @@ public class OMETiffReader extends FormatReader {
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "ome.tf2",
+    super("OME-TIFF", new String[] {"ome.tiff", "ome.tif", "ome.tf2",
                                     "ome.tf8", "ome.btf", "companion.ome"});
     suffixNecessary = false;
     suffixSufficient = false;
@@ -1087,7 +1087,11 @@ public class OMETiffReader extends FormatReader {
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */
   private String readMetadataFile() throws IOException {
-    if (checkSuffix(metadataFile, "tif") || checkSuffix(metadataFile, "tiff")) {
+    if (checkSuffix(metadataFile, "ome.tiff") ||
+        checkSuffix(metadataFile, "ome.tif") ||
+        checkSuffix(metadataFile, "ome.tf2") ||
+        checkSuffix(metadataFile, "ome.tf8") ||
+        checkSuffix(metadataFile, "ome.btf")) {
       // metadata file is an OME-TIFF file; extract OME-XML comment
       return new TiffParser(metadataFile).getComment();
     }
