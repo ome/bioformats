@@ -37,7 +37,7 @@ public class ExtractSDTData {
       System.exit(1);
     }
     String id = args[0];
-    String tid = id.substring(0, id.indexOf("."));
+    String tid = id.substring(0, id.indexOf('.'));
     SDTReader r = new SDTReader();
     r.setId(id);
     int bins = r.getTimeBinCount();
