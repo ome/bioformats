@@ -164,9 +164,7 @@ public class ICSWriter extends FormatWriter {
       }
     }
     lastPlane = realIndex;
-    if (lastPlane != getPlaneCount() - 1 || uniqueFiles.size() > 1) {
-      overwriteDimensions(getMetadataRetrieve());
-    }
+    overwriteDimensions(getMetadataRetrieve());
 
     pixels.close();
     pixels = null;
