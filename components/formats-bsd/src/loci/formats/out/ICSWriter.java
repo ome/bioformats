@@ -342,7 +342,7 @@ public class ICSWriter extends FormatWriter {
 
     if (rgbChannels > 1) {
       dimOrder.append("ch\t");
-      sizes[nextSize++] = pos[1] + 1;
+      sizes[nextSize++] = rgbChannels;
     }
 
     for (int i=0; i<outputOrder.length(); i++) {
