@@ -49,7 +49,7 @@ public class MakeDatasetStructureTable {
   private void printHeader() {
     out.println(".. Please don't even think about editing this file directly.");
     out.println(".. It is generated using the 'gen-structure-table' Ant");
-    out.println(".. target in components/bio-formats, which uses");
+    out.println(".. target in components/autogen, which uses");
     out.println(".. loci.formats.tools.MakeDatasetStructureTable, so please");
     out.println(".. update that instead.");
     out.println();

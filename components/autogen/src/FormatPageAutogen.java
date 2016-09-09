@@ -221,7 +221,7 @@ public class FormatPageAutogen {
       realPageName = realPageName.replaceAll(" ", "-");
       realPageName = realPageName.toLowerCase();
     }
-    realPageName = "formats" + File.separator + realPageName;
+    realPageName = "formats/" + realPageName;
 
     return realPageName;
   }

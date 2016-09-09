@@ -65,29 +65,29 @@ public class MakeTestOmeTiff {
   public boolean isModulo = false;
 
   public void makeSamples() throws FormatException, IOException {
-    makeOmeTiff("single-channel", "439", "167", "1", "1", "1", "XYZCT");
-    makeOmeTiff("multi-channel", "439", "167", "1", "3", "1", "XYZCT");
-    makeOmeTiff("z-series", "439", "167", "5", "1", "1", "XYZCT");
-    makeOmeTiff("multi-channel-z-series", "439", "167", "5", "3", "1", "XYZCT");
-    makeOmeTiff("time-series", "439", "167", "1", "1", "7", "XYZCT");
-    makeOmeTiff("multi-channel-time-series", "439", "167", "1", "3", "7",
+    makeOmeTiffExtensions("single-channel", "439", "167", "1", "1", "1", "XYZCT");
+    makeOmeTiffExtensions("multi-channel", "439", "167", "1", "3", "1", "XYZCT");
+    makeOmeTiffExtensions("z-series", "439", "167", "5", "1", "1", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-z-series", "439", "167", "5", "3", "1", "XYZCT");
+    makeOmeTiffExtensions("time-series", "439", "167", "1", "1", "7", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-time-series", "439", "167", "1", "3", "7",
       "XYZCT");
-    makeOmeTiff("4D-series", "439", "167", "5", "1", "7", "XYZCT");
-    makeOmeTiff("multi-channel-4D-series", "439", "167", "5", "3", "7",
+    makeOmeTiffExtensions("4D-series", "439", "167", "5", "1", "7", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-4D-series", "439", "167", "5", "3", "7",
       "XYZCT");
-    makeOmeTiff("modulo-6D-Z", "250", "200", "8", "3", "2",
+    makeOmeTiffExtensions("modulo-6D-Z", "250", "200", "8", "3", "2",
       "XYZCT", "4", "1", "1");
-    makeOmeTiff("modulo-6D-C", "250", "200", "4", "9", "2",
+    makeOmeTiffExtensions("modulo-6D-C", "250", "200", "4", "9", "2",
       "XYZCT", "1", "3", "1");
-    makeOmeTiff("modulo-6D-T", "250", "200", "4", "3", "6",
+    makeOmeTiffExtensions("modulo-6D-T", "250", "200", "4", "3", "6",
       "XYZCT", "1", "1", "2");
-    makeOmeTiff("modulo-7D-ZC", "250", "220", "8", "9", "2",
+    makeOmeTiffExtensions("modulo-7D-ZC", "250", "220", "8", "9", "2",
       "XYZCT", "4", "3", "1");
-    makeOmeTiff("modulo-7D-CT", "250", "220", "4", "9", "6",
+    makeOmeTiffExtensions("modulo-7D-CT", "250", "220", "4", "9", "6",
       "XYZCT", "1", "3", "2");
-    makeOmeTiff("modulo-7D-ZT", "250", "220", "8", "3", "6",
+    makeOmeTiffExtensions("modulo-7D-ZT", "250", "220", "8", "3", "6",
       "XYZCT", "4", "1", "2");
-    makeOmeTiff("modulo-8D", "200", "250", "8", "9", "6",
+    makeOmeTiffExtensions("modulo-8D", "200", "250", "8", "9", "6",
       "XYZCT", "4", "3", "2");
   }
 
@@ -127,6 +127,23 @@ public class MakeTestOmeTiff {
     
     makeOmeTiff(name, info);
     return 0;
+  }
+
+  public void makeOmeTiffExtensions(final String... args) throws FormatException,
+    IOException
+  {
+    final String name = args[0];
+
+    args[0] = name + ".ome.tif";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tiff";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tf2";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tf8";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.btf";
+    makeOmeTiff(args);
   }
 
   public void makeOmeTiff(final String name, final CoreMetadata info)
@@ -179,8 +196,15 @@ public class MakeTestOmeTiff {
 
   private String getId(final String name) {
     final String id;
-    if (name.toLowerCase().endsWith(".ome.tif")) id = name;
-    else id = name + ".ome.tif";
+    if (name.toLowerCase().endsWith(".ome.tiff") ||
+        name.toLowerCase().endsWith(".ome.tif") ||
+        name.toLowerCase().endsWith(".ome.tf2") ||
+        name.toLowerCase().endsWith(".ome.tf8") ||
+        name.toLowerCase().endsWith(".ome.btf")) {
+        id = name;
+    } else {
+        id = name + ".ome.tiff";
+    }
     return id;
   }
 

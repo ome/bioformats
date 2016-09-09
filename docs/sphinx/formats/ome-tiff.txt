@@ -1,10 +1,10 @@
 .. index:: OME-TIFF
-.. index:: .ome.tiff
+.. index:: .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf
 
 OME-TIFF
 ===============================================================================
 
-Extensions: `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
+Extensions: `.ome.tiff , .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 

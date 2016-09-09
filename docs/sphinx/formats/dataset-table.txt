@@ -1,6 +1,6 @@
 .. Please don't even think about editing this file directly.
 .. It is generated using the 'gen-structure-table' Ant
-.. target in components/bio-formats, which uses
+.. target in components/autogen, which uses
 .. loci.formats.tools.MakeDatasetStructureTable, so please
 .. update that instead.
 
@@ -312,7 +312,7 @@ to open/import a dataset in a particular format.
      - .obf, .msr
      - OBF file
    * - OME-TIFF
-     - .ome.tif, .ome.tiff, .companion.ome
+     - .ome.tif, .ome.tiff, .ome.tf2, .ome.tf8, .ome.btf, .companion.ome
      - One or more .ome.tiff files
    * - OME-XML
      - .ome, .ome.xml
