@@ -9,14 +9,14 @@ Java bug fixes and improvements:
 * fixed a regression in which the DataTools number parsing API would not be
   thread-safe anymore
 * InCell
-   - improve handling of Analyzer 2000 datasets to find TIFF files
+   - improved handling of Analyzer 2000 datasets to find TIFF files
 * FV1000
-   - fix preview name ordering
+   - fixed preview names ordering
 * OME-TIFF
-   - enable all BigTIFF extensions
+   - enabled all BigTIFF extensions
 * various code cleanup across the Java code
-* test all example codes in the developer documentations
-* add tests covering the semantics of the INI parser
+* added test coverage for all example codes in the developer documentations
+* added tests covering the semantics of the INI parser
 
 ImageJ bug fixes and improvements:
 
