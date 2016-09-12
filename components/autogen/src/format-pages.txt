@@ -1686,7 +1686,7 @@ indexExtensions = .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf
 extensions = `.ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01, 2016-06
 weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>`\n
 * many OME-TIFF datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/OME-TIFF/>`__\n
@@ -1714,7 +1714,7 @@ indexExtensions = .ome, .ome.xml
 extensions = `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
-versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06, 2015-01, 2016-06
 weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_\n
 * many OME-XML datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/OME-XML/>`__\n

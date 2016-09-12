@@ -312,7 +312,7 @@ to open/import a dataset in a particular format.
      - .obf, .msr
      - OBF file
    * - OME-TIFF
-     - .ome.tif, .ome.tiff, .ome.tf2, .ome.tf8, .ome.btf, .companion.ome
+     - .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf, .companion.ome
      - One or more .ome.tiff files
    * - OME-XML
      - .ome, .ome.xml
