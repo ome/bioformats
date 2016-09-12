@@ -32,6 +32,7 @@ Type "ant -p" for a list of targets.
 
   <!-- <artifact:dependencies filesetId="mydeps" pomRefId="pom.xml" /> -->
 
+   <artifact:pom file="pom.xml" id="maven.pom"/>
 
    <target name="mvn-init" unless="compile.classpath">
        <condition property="maven.repo.local" value="${maven.repo.local}" else="${user.home}/.m2/repository">
@@ -39,17 +40,16 @@ Type "ant -p" for a list of targets.
        </condition>
        <echo>maven.repo.local=${maven.repo.local}</echo>
        <artifact:localRepository id="local.repository" path="${maven.repo.local}"/>
-       <artifact:pom file="pom.xml" id="maven.project"/>
        <artifact:dependencies pathId="compile.classpath" filesetId="compile.fileset" useScope="compile">
-           <pom refid="maven.project"/>
+           <pom refid="maven.pom"/>
            <localRepository refid="local.repository"/>
        </artifact:dependencies>
        <artifact:dependencies pathId="test.classpath" filesetId="test.fileset" useScope="test">
-           <pom refid="maven.project"/>
+           <pom refid="maven.pom"/>
            <localRepository refid="local.repository"/>
        </artifact:dependencies>
        <artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime">
-           <pom refid="maven.project"/>
+           <pom refid="maven.pom"/>
            <localRepository refid="local.repository"/>
        </artifact:dependencies>
    </target>
@@ -168,6 +168,9 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Class-Path" value="${component.manifest-cp}"/>
       </manifest>
     </jar>
+    <artifact:install file="${artifact.dir}/${component.jar}">
+        <pom refid="maven.pom"/>
+    </artifact:install>
   </target>
 
   <target name="osgi" depends="jar"
