@@ -1,6 +1,34 @@
 Version history
 ===============
 
+5.2.2 (2016 September 13)
+-------------------------
+
+Java bug fixes and improvements:
+
+* fixed a regression in which the DataTools number parsing API would not be
+  thread-safe anymore
+* InCell
+   - improved handling of Analyzer 2000 datasets to find TIFF files
+* FV1000
+   - fixed preview names ordering
+* OME-TIFF
+   - enabled all BigTIFF extensions
+* various code cleanup across the Java code
+* added test coverage for all example codes in the developer documentations
+* added tests covering the semantics of the INI parser
+
+ImageJ bug fixes and improvements:
+
+* fixed a bug in ImageJ when swapping dimensions of an image with multiple
+  series of different dimensions
+* added an option to the exporter to pad filename indexes with zeros
+
+Command-line tools improvements:
+
+* allowed the binaries to be symlinked (thanks to Gerhard Burger)
+* added an option to bfconvert to pad filename indexes with zeros
+
 5.2.1 (2016 August 25)
 ----------------------
 
