@@ -236,13 +236,13 @@ public abstract class BaseZeissReader extends FormatReader {
       int deltaZ = zct2[0] - zct1[0];
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
-      if (deltaZ > 0 && getDimensionOrder().indexOf("Z") == -1) {
+      if (deltaZ > 0 && getDimensionOrder().indexOf('Z') == -1) {
         m.dimensionOrder += "Z";
       }
-      if (deltaC > 0 && getDimensionOrder().indexOf("C") == -1) {
+      if (deltaC > 0 && getDimensionOrder().indexOf('C') == -1) {
         m.dimensionOrder += "C";
       }
-      if (deltaT > 0 && getDimensionOrder().indexOf("T") == -1) {
+      if (deltaT > 0 && getDimensionOrder().indexOf('T') == -1) {
         m.dimensionOrder += "T";
       }
     }
@@ -925,7 +925,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Objective Name")) {
           String[] tokens = value.split(" ");
           for (int q=0; q<tokens.length; q++) {
-            int slash = tokens[q].indexOf("/");
+            int slash = tokens[q].indexOf('/');
             if (slash != -1 && slash - q > 0) {
               Double mag = 
                   Double.parseDouble(tokens[q].substring(0, slash - q));
