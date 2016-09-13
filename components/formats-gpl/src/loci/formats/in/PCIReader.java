@@ -323,15 +323,15 @@ public class PCIReader extends FormatReader {
           String comments = stream.readString((int) stream.length());
           String[] lines = comments.split("\n");
           for (String line : lines) {
-            int eq = line.indexOf("=");
+            int eq = line.indexOf('=');
             if (eq != -1) {
               String key = line.substring(0, eq).trim();
               String value = line.substring(eq + 1).trim();
               addGlobalMeta(key, value);
 
               if (key.equals("factor")) {
-                if (value.indexOf(";") != -1) {
-                  value = value.substring(0, value.indexOf(";"));
+                if (value.indexOf(';') != -1) {
+                  value = value.substring(0, value.indexOf(';'));
                 }
                 scaleFactor = Double.parseDouble(value.trim());
               }

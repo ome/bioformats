@@ -128,7 +128,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     String ext = name;
-    if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
+    if (ext.indexOf('.') != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
     boolean binFile = true;
     try {
       Integer.parseInt(ext, 16);
@@ -142,10 +142,10 @@ public class PerkinElmerReader extends FormatReader {
     String prefix = baseFile.getParent() + File.separator;
 
     String namePrefix = baseFile.getName();
-    if (namePrefix.indexOf(".") != -1) {
+    if (namePrefix.indexOf('.') != -1) {
       namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("."));
     }
-    if (namePrefix.indexOf("_") != -1 && binFile) {
+    if (namePrefix.indexOf('_') != -1 && binFile) {
       namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("_"));
     }
     prefix += namePrefix;
@@ -156,7 +156,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (!htmlFile.exists()) {
       htmlFile = new Location(prefix + ".HTM");
-      while (!htmlFile.exists() && prefix.indexOf("_") != -1) {
+      while (!htmlFile.exists() && prefix.indexOf('_') != -1) {
         prefix = prefix.substring(0, prefix.lastIndexOf("_"));
         htmlFile = new Location(prefix + ".htm");
         if (!htmlFile.exists()) htmlFile = new Location(prefix + ".HTM");
@@ -476,7 +476,7 @@ public class PerkinElmerReader extends FormatReader {
       String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
 
       for (int j=0; j<tokens.length; j++) {
-        if (tokens[j].indexOf("<") != -1) tokens[j] = "";
+        if (tokens[j].indexOf('<') != -1) tokens[j] = "";
       }
 
       for (int j=0; j<tokens.length-1; j+=2) {

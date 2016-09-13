@@ -195,7 +195,7 @@ public class PCORAWReader extends FormatReader {
       String[] lines = DataTools.readFile(paramFile).split("\n");
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int sep = line.indexOf(":");
+        int sep = line.indexOf(':');
         if (sep < 0) {
           continue;
         }
@@ -208,7 +208,7 @@ public class PCORAWReader extends FormatReader {
         if (key.equals("Exposure / Delay")) {
           // set the exposure time
 
-          String exp = value.substring(0, value.indexOf(" "));
+          String exp = value.substring(0, value.indexOf(' '));
           Double parsedExp = new Double(exp);
           Time exposure = null;
           if (parsedExp != null) {

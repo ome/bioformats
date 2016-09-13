@@ -719,13 +719,13 @@ public class MIASReader extends FormatReader {
       ms.falseColor = readers[0][0].isFalseColor();
       ms.dimensionOrder = order[i];
 
-      if (ms.dimensionOrder.indexOf("Z") == -1) {
+      if (ms.dimensionOrder.indexOf('Z') == -1) {
         ms.dimensionOrder += "Z";
       }
-      if (ms.dimensionOrder.indexOf("C") == -1) {
+      if (ms.dimensionOrder.indexOf('C') == -1) {
         ms.dimensionOrder += "C";
       }
-      if (ms.dimensionOrder.indexOf("T") == -1) {
+      if (ms.dimensionOrder.indexOf('T') == -1) {
         ms.dimensionOrder += "T";
       }
 
@@ -850,7 +850,7 @@ public class MIASReader extends FormatReader {
 
       parseTemplateFile(store);
 
-      plateName = plateName.substring(plateName.indexOf("-") + 1);
+      plateName = plateName.substring(plateName.indexOf('-') + 1);
       store.setPlateName(plateName, 0);
       store.setPlateExternalIdentifier(plateName, 0);
 
@@ -984,7 +984,7 @@ public class MIASReader extends FormatReader {
     int[] position = new int[4];
 
     file = file.substring(file.lastIndexOf(File.separator) + 1);
-    String wellIndex = file.substring(4, file.indexOf("_"));
+    String wellIndex = file.substring(4, file.indexOf('_'));
     position[0] = Integer.parseInt(wellIndex) - 1;
 
     int tIndex = file.indexOf("_t") + 2;
@@ -1059,7 +1059,7 @@ public class MIASReader extends FormatReader {
     String[] lines = data.split("\r\n");
 
     for (String line : lines) {
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq != -1) {
         String key = line.substring(0, eq);
         String value = line.substring(eq + 1);

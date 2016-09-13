@@ -299,7 +299,7 @@ public class PrairieMetadata {
       if (keyElement == null) continue;
       final String key = attr(keyElement, "key");
       final String value = attr(keyElement, "value");
-      final int underscore = key.indexOf("_");
+      final int underscore = key.indexOf('_');
       if (underscore < 0) {
         // single key/value pair
         table.put(key, new ValueItem(value, null));

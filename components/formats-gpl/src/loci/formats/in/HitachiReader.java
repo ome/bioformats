@@ -98,7 +98,7 @@ public class HitachiReader extends FormatReader {
     }
 
     String base = name;
-    if (base.indexOf(".") >= 0) {
+    if (base.indexOf('.') >= 0) {
       base = base.substring(0, base.lastIndexOf("."));
     }
 
@@ -183,7 +183,7 @@ public class HitachiReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "txt")) {
       String base = id;
-      if (base.indexOf(".") >= 0) {
+      if (base.indexOf('.') >= 0) {
         base = base.substring(0, base.lastIndexOf("."));
       }
 
@@ -293,7 +293,7 @@ public class HitachiReader extends FormatReader {
     }
 
     if (workingDistance != null) {
-      int end = workingDistance.indexOf(" ");
+      int end = workingDistance.indexOf(' ');
       if (end < 0) end = workingDistance.length();
 
       workingDistance = workingDistance.substring(0, end);

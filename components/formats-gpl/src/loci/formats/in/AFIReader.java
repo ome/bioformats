@@ -211,8 +211,8 @@ public class AFIReader extends FormatReader {
     for (int i=0; i<pixels.size(); i++) {
       String file = pixels.get(i);
 
-      int underscore = file.indexOf("_");
-      int fullStop = file.indexOf(".");
+      int underscore = file.indexOf('_');
+      int fullStop = file.indexOf('.');
       if (underscore >= 0 && fullStop > underscore) {
         channelNames[i] = file.substring(underscore + 1, fullStop);
       }
