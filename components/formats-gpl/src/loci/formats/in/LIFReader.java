@@ -1623,7 +1623,7 @@ public class LIFReader extends FormatReader {
         final StringBuilder model = new StringBuilder();
         while (!foundMag) {
           String token = tokens.nextToken();
-          int x = token.indexOf("x");
+          int x = token.indexOf('x');
           if (x != -1) {
             foundMag = true;
 
@@ -2039,13 +2039,13 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    if (ms.dimensionOrder.indexOf("Z") == -1) {
+    if (ms.dimensionOrder.indexOf('Z') == -1) {
       ms.dimensionOrder += "Z";
     }
-    if (ms.dimensionOrder.indexOf("C") == -1) {
+    if (ms.dimensionOrder.indexOf('C') == -1) {
       ms.dimensionOrder += "C";
     }
-    if (ms.dimensionOrder.indexOf("T") == -1) {
+    if (ms.dimensionOrder.indexOf('T') == -1) {
       ms.dimensionOrder += "T";
     }
   }

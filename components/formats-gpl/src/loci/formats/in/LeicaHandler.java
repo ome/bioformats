@@ -621,7 +621,7 @@ public class LeicaHandler extends BaseHandler {
         final StringBuilder model = new StringBuilder();
         while (!foundMag) {
           String token = tokens.nextToken();
-          int x = token.indexOf("x");
+          int x = token.indexOf('x');
           if (x != -1) {
             foundMag = true;
 
