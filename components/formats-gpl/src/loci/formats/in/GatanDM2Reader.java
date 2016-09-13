@@ -284,7 +284,7 @@ public class GatanDM2Reader extends FormatReader {
 
       if (label.equals("Acquisition Date")) {
         date = value.toString();
-        if (date != null && date.indexOf("/") != -1) {
+        if (date != null && date.indexOf('/') != -1) {
           // if the year is stored as a single digit, then it will be parsed
           // literally, e.g. '7' -> '0007', when we want '7' -> '2007'
           String year = date.substring(date.lastIndexOf("/") + 1);

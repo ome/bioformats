@@ -294,8 +294,8 @@ public class GatanReader extends FormatReader {
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
-          token = token.substring(token.indexOf(" ")).trim();
-          String mode = token.substring(0, token.indexOf(" ")).trim();
+          token = token.substring(token.indexOf(' ')).trim();
+          String mode = token.substring(0, token.indexOf(' ')).trim();
           if (mode.equals("TEM")) mode = "Other";
           store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
@@ -481,7 +481,7 @@ public class GatanReader extends FormatReader {
         addGlobalMeta(labelString, value);
 
         if (labelString.equals("Scale") && !parent.equals("Calibration")) {
-          if (value.indexOf(",") == -1) {
+          if (value.indexOf(',') == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
           }
         }
