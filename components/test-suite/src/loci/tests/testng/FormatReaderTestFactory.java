@@ -211,6 +211,7 @@ public class FormatReaderTestFactory {
             files.remove(usedFiles[q]);
           }
         }
+        files.set(index, reader.getCurrentFile());
       }
       catch (Exception e) { }
       finally {
