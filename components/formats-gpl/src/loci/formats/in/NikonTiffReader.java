@@ -130,7 +130,7 @@ public class NikonTiffReader extends BaseTiffReader {
       int nTokensInKey = 0;
       for (String key : TOP_LEVEL_KEYS) {
         if (line.startsWith(key)) {
-          nTokensInKey = key.indexOf(" ") != -1 ? 3 : 2;
+          nTokensInKey = key.indexOf(' ') != -1 ? 3 : 2;
           break;
         }
       }
@@ -182,7 +182,7 @@ public class NikonTiffReader extends BaseTiffReader {
         gain.add(new Double(value));
       }
       else if (key.equals("history pinhole")) {
-        pinholeSize = new Double(value.substring(0, value.indexOf(" ")));
+        pinholeSize = new Double(value.substring(0, value.indexOf(' ')));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
         wavelength.add(new Double(value.replaceAll("\\D", "")));
