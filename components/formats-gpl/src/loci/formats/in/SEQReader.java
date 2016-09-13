@@ -133,8 +133,8 @@ public class SEQReader extends BaseTiffReader {
       String[] lines = descr.split("\n");
       for (String token : lines) {
         token = token.trim();
-        int eq = token.indexOf("=");
-        if (eq == -1) eq = token.indexOf(":");
+        int eq = token.indexOf('=');
+        if (eq == -1) eq = token.indexOf(':');
         if (eq != -1) {
           String label = token.substring(0, eq);
           String data = token.substring(eq + 1);

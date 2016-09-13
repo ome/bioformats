@@ -707,19 +707,19 @@ public class FV1000Reader extends FormatReader {
         if (axis == null) break;
         boolean addAxis = Integer.parseInt(axis.get("Number")) > 1;
         if (dim == 2) {
-          if (addAxis && getDimensionOrder().indexOf("C") == -1) {
+          if (addAxis && getDimensionOrder().indexOf('C') == -1) {
             ms0.dimensionOrder += "C";
           }
         }
         else if (dim == 3) {
-          if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
+          if (addAxis && getDimensionOrder().indexOf('Z') == -1) {
             ms0.dimensionOrder += "Z";
           }
           final Double number = Double.valueOf(axis.get("AbsPositionValue"));
           plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
-          if (addAxis && getDimensionOrder().indexOf("T") == -1) {
+          if (addAxis && getDimensionOrder().indexOf('T') == -1) {
             ms0.dimensionOrder += "T";
           }
           // divide by 1000, as the position is in milliseconds
@@ -888,12 +888,12 @@ public class FV1000Reader extends FormatReader {
     }
 
     if (getSizeC() > 1 && getSizeZ() == 1 && getSizeT() == 1) {
-      if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
+      if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += "C";
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) ms0.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) ms0.dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += "C";
+    if (getDimensionOrder().indexOf('T') == -1) ms0.dimensionOrder += "T";
 
     ms0.pixelType =
       FormatTools.pixelTypeFromBytes(imageDepth, false, false);
@@ -1102,7 +1102,7 @@ public class FV1000Reader extends FormatReader {
         store.setFilterID(filterID, 0, channelIndex);
         store.setFilterModel(channel.barrierFilter, 0, channelIndex);
 
-        if (channel.barrierFilter.indexOf("-") != -1) {
+        if (channel.barrierFilter.indexOf('-') != -1) {
           String[] emValues = channel.barrierFilter.split("-");
           for (int i=0; i<emValues.length; i++) {
             emValues[i] = emValues[i].replaceAll("\\D", "");
@@ -1478,12 +1478,12 @@ public class FV1000Reader extends FormatReader {
     parent = tmp.getAbsolutePath();
 
     baseFile = current.getName();
-    if (baseFile == null || baseFile.indexOf("_") == -1) return null;
+    if (baseFile == null || baseFile.indexOf('_') == -1) return null;
     baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
     if (checkSuffix(current.getName(), new String[] {"roi", "lut"})) {
       if (!new Location(tmp, baseFile + ".oif").exists() &&
         !new Location(tmp, baseFile + ".OIF").exists() &&
-        baseFile.indexOf("_") >= 0)
+        baseFile.indexOf('_') >= 0)
       {
         // some metadata files have an extra underscore
         baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
@@ -1556,9 +1556,9 @@ public class FV1000Reader extends FormatReader {
     String directoryKey = null, directoryValue = null, key = null, value = null;
     for (String line : lines) {
       line = line.trim();
-      if (line.indexOf("=") != -1) {
-        key = line.substring(0, line.indexOf("="));
-        value = line.substring(line.indexOf("=") + 1);
+      if (line.indexOf('=') != -1) {
+        key = line.substring(0, line.indexOf('='));
+        value = line.substring(line.indexOf('=') + 1);
 
         if (directoryKey != null && directoryValue != null) {
           value = value.replaceAll(directoryKey, directoryValue);
@@ -1756,7 +1756,7 @@ public class FV1000Reader extends FormatReader {
     RandomAccessInputStream stream = getFile(filename);
     String data = stream.readString((int) stream.length());
     if (!data.startsWith("[")) {
-      data = data.substring(data.indexOf("["), data.length());
+      data = data.substring(data.indexOf('['), data.length());
     }
     data = DataTools.stripString(data);
     BufferedReader reader = new BufferedReader(new StringReader(data));

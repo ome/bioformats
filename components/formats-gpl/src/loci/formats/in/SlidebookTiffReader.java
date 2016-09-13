@@ -226,11 +226,11 @@ public class SlidebookTiffReader extends BaseTiffReader {
         if (c < channelNames.size()) {
           String name = channelNames.get(c);
           if (name != null) {
-            if (name.indexOf(":") > 0) {
-              name = name.substring(name.indexOf(":") + 1);
+            if (name.indexOf(':') > 0) {
+              name = name.substring(name.indexOf(':') + 1);
             }
-            if (name.indexOf(";") > 0) {
-              name = name.substring(0, name.indexOf(";"));
+            if (name.indexOf(';') > 0) {
+              name = name.substring(0, name.indexOf(';'));
             }
 
             store.setChannelName(name.trim(), 0, c);

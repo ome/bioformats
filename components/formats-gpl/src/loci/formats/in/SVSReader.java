@@ -281,13 +281,13 @@ public class SVSReader extends BaseTiffReader {
         for (String line : lines) {
           tokens = line.split("[|]");
           for (String t : tokens) {
-            if (t.indexOf("=") == -1) {
+            if (t.indexOf('=') == -1) {
               addGlobalMeta("Comment", t);
               comments[i] = t;
             }
             else {
-              key = t.substring(0, t.indexOf("=")).trim();
-              value = t.substring(t.indexOf("=") + 1).trim();
+              key = t.substring(0, t.indexOf('=')).trim();
+              value = t.substring(t.indexOf('=') + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
                 pixelSize[i] = FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));

@@ -490,9 +490,9 @@ public class SDTInfo {
     String key = null, value = null;
     for (int i=1; i<count-1; i++) {
       String token = st.nextToken().trim();
-      if (token.indexOf(":") == -1) continue;
-      key = token.substring(0, token.indexOf(":")).trim();
-      value = token.substring(token.indexOf(":") + 1).trim();
+      if (token.indexOf(':') == -1) continue;
+      key = token.substring(0, token.indexOf(':')).trim();
+      value = token.substring(token.indexOf(':') + 1).trim();
       meta.put(key, value);
     }
 
@@ -520,13 +520,13 @@ public class SDTInfo {
       if (token.startsWith("#SP") || token.startsWith("#DI") ||
         token.startsWith("#PR") || token.startsWith("#MP"))
       {
-        int open = token.indexOf("[");
+        int open = token.indexOf('[');
         key = token.substring(open + 1, token.indexOf(",", open));
         value = token.substring(token.lastIndexOf(",") + 1, token.length() - 1);
       }
       else if (token.startsWith("#TR") || token.startsWith("#WI")) {
-        key = token.substring(0, token.indexOf("[")).trim();
-        value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
+        key = token.substring(0, token.indexOf('[')).trim();
+        value = token.substring(token.indexOf('[') + 1, token.indexOf(']'));
       }
 
       if (key != null && value != null) meta.put(key, value);

@@ -272,7 +272,7 @@ public class BrukerReader extends FormatReader {
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int index = line.indexOf("=");
+        int index = line.indexOf('=');
         if (index >= 0) {
           String key = line.substring(0, index);
           String value = line.substring(index + 1);
@@ -330,7 +330,7 @@ public class BrukerReader extends FormatReader {
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int index = line.indexOf("=");
+        int index = line.indexOf('=');
         if (index >= 0) {
           String key = line.substring(0, index);
           String value = line.substring(index + 1);

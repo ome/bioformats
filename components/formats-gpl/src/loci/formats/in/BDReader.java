@@ -571,7 +571,7 @@ public class BDReader extends FormatReader {
           while (!line.endsWith(".adf\"")) {
             line = s.readLine().trim();
           }
-          plateName = line.substring(line.indexOf(":")).trim();
+          plateName = line.substring(line.indexOf(':')).trim();
           plateName = plateName.replace('/', File.separatorChar);
           plateName = plateName.replace('\\', File.separatorChar);
           for (int i=0; i<3; i++) {
@@ -691,12 +691,12 @@ public class BDReader extends FormatReader {
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");
-      em = em.substring(0, em.indexOf(" "));
+      em = em.substring(0, em.indexOf(' '));
       emWave[c] = Double.parseDouble(em);
 
       String ex = numerator.get("Excitation");
       ex = ex.substring(0, ex.lastIndexOf(" "));
-      if (ex.indexOf(" ") != -1) {
+      if (ex.indexOf(' ') != -1) {
         ex = ex.substring(ex.lastIndexOf(" ") + 1);
       }
       exWave[c] = Double.parseDouble(ex);

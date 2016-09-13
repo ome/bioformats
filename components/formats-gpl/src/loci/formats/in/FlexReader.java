@@ -2011,7 +2011,7 @@ public class FlexReader extends FormatReader {
     String[] lines = DataTools.readFile(configFile).split("[\r\n]");
     for (String line : lines) {
       LOGGER.trace(line);
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq == -1 || line.startsWith("#")) continue;
       String alias = line.substring(0, eq).trim();
       String[] servers = line.substring(eq + 1).trim().split(";");

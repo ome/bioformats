@@ -163,7 +163,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
     IniTable microscopeTable = ini.getTable(" MICROSCOPE ");
     if (microscopeTable != null) {
       String objective = microscopeTable.get("Objective");
-      int space = objective.indexOf(" ");
+      int space = objective.indexOf(' ');
       if (space != -1) {
         magnification = new Double(objective.substring(0, space - 1));
         immersion = objective.substring(space + 1);

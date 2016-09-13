@@ -310,7 +310,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("event")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
+        if (dimensionOrder.indexOf('Z') == -1) {
           dimensionOrder += "Z";
         }
         if (Double.compare(voxelZ, 1) == 0) {
@@ -319,7 +319,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("z")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
+        if (dimensionOrder.indexOf('Z') == -1) {
           dimensionOrder += "Z";
         }
         
@@ -350,7 +350,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
-        if (dimensionOrder.indexOf("C") == -1) {
+        if (dimensionOrder.indexOf('C') == -1) {
           dimensionOrder += "C";
         }
         voxelC = voxel;
@@ -359,14 +359,14 @@ public class FluoviewReader extends BaseTiffReader {
         name.equals("animation"))
       {
         m.sizeT *= size;
-        if (dimensionOrder.indexOf("T") == -1) {
+        if (dimensionOrder.indexOf('T') == -1) {
           dimensionOrder += "T";
         }
         voxelT = voxel;
         timeIndex = i - 2;
       }
       else {
-        if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+        if (dimensionOrder.indexOf('S') == -1) dimensionOrder += "S";
         seriesCount *= size;
 
         if (name.equals("montage")) montageIndex = i - 2;
@@ -374,10 +374,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (dimensionOrder.indexOf("Z") == -1) dimensionOrder += "Z";
-    if (dimensionOrder.indexOf("T") == -1) dimensionOrder += "T";
-    if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
-    if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+    if (dimensionOrder.indexOf('Z') == -1) dimensionOrder += "Z";
+    if (dimensionOrder.indexOf('T') == -1) dimensionOrder += "T";
+    if (dimensionOrder.indexOf('C') == -1) dimensionOrder += "C";
+    if (dimensionOrder.indexOf('S') == -1) dimensionOrder += "S";
 
     m.imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) m.sizeZ = getImageCount();
@@ -755,7 +755,7 @@ public class FluoviewReader extends BaseTiffReader {
       String[] lines = comment.split("\n");
       for (String token : lines) {
         token = token.trim();
-        int eq = token.indexOf("=");
+        int eq = token.indexOf('=');
         if (eq != -1) {
           String key = token.substring(0, eq);
           String value = token.substring(eq + 1);
@@ -829,9 +829,9 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else if (token.startsWith("Z") && token.indexOf(" um ") != -1) {
           // looking for "Z - x um in y planes"
-          String z = token.substring(token.indexOf("-") + 1);
+          String z = token.substring(token.indexOf('-') + 1);
           z = z.replaceAll("\\p{Alpha}", "").trim();
-          int firstSpace = z.indexOf(" ");
+          int firstSpace = z.indexOf(' ');
           double size = Double.parseDouble(z.substring(0, firstSpace));
           double nPlanes = Double.parseDouble(z.substring(firstSpace).trim());
           voxelZ = size / nPlanes;
@@ -859,7 +859,7 @@ public class FluoviewReader extends BaseTiffReader {
       int end = comment.indexOf("[Version Info End]");
       if (start != -1 && end != -1 && end > start) {
         comment = comment.substring(start + 14, end).trim();
-        start = comment.indexOf("=") + 1;
+        start = comment.indexOf('=') + 1;
         end = comment.indexOf("\n");
         if (end > start) comment = comment.substring(start, end).trim();
         else comment = comment.substring(start).trim();
