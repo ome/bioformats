@@ -171,7 +171,7 @@ public class IniParser {
       }
 
       // parse key/value pair
-      int equals = line.indexOf("=");
+      int equals = line.indexOf('=');
       if (equals < 0) {
         LOGGER.debug("Ignoring line {}", no);
         continue;
