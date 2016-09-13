@@ -446,7 +446,7 @@ public class NDPIReader extends BaseTiffReader {
     if (metadataTag != null) {
       String[] entries = metadataTag.split("\n");
       for (String entry : entries) {
-        int eq = entry.indexOf("=");
+        int eq = entry.indexOf('=');
         if (eq < 0) {
           continue;
         }
