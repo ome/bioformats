@@ -548,7 +548,7 @@ public class ImarisHDFReader extends FormatReader {
           }
         }
 
-        int underscore = attr.indexOf("_") + 1;
+        int underscore = attr.indexOf('_') + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
 

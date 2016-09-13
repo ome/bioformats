@@ -135,7 +135,7 @@ public class ImarisTiffReader extends BaseTiffReader {
         StringTokenizer st = new StringTokenizer(comment, "\n");
         while (st.hasMoreTokens()) {
           String line = st.nextToken();
-          int equals = line.indexOf("=");
+          int equals = line.indexOf('=');
           if (equals < 0) continue;
           String key = line.substring(0, equals).trim();
           String value = line.substring(equals + 1).trim();
@@ -156,7 +156,7 @@ public class ImarisTiffReader extends BaseTiffReader {
           }
           else if (key.equals("RecordingDate")) {
             value = value.replaceAll(" ", "T");
-            creationDate = value.substring(0, value.indexOf("."));
+            creationDate = value.substring(0, value.indexOf('.'));
           }
         }
         metadata.remove("Comment");
