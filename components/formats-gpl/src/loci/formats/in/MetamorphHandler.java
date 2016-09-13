@@ -167,7 +167,7 @@ public class MetamorphHandler extends BaseHandler {
               freeformDescription += "\n";
             }
             else {
-              int colon = line.indexOf(":");
+              int colon = line.indexOf(':');
               if (colon != -1) {
                 k = line.substring(0, colon).trim();
                 v = line.substring(colon + 1).trim();
@@ -184,7 +184,7 @@ public class MetamorphHandler extends BaseHandler {
           }
         }
         else {
-          int colon = value.indexOf(":");
+          int colon = value.indexOf(':');
           while (colon != -1) {
             k = value.substring(0, colon);
             int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
@@ -192,7 +192,7 @@ public class MetamorphHandler extends BaseHandler {
             v = value.substring(colon + 1, space).trim();
             if (metadata != null) metadata.put(k, v);
             value = value.substring(space).trim();
-            colon = value.indexOf(":");
+            colon = value.indexOf(':');
             checkKey(k, v);
           }
         }
@@ -252,7 +252,7 @@ public class MetamorphHandler extends BaseHandler {
       }
     }
     else if (key.equals("Speed")) {
-      int space = value.indexOf(" ");
+      int space = value.indexOf(' ');
       if (space > 0) {
         value = value.substring(0, space);
       }
@@ -262,8 +262,8 @@ public class MetamorphHandler extends BaseHandler {
       catch (NumberFormatException e) { }
     }
     else if (key.equals("Exposure")) {
-      if (value.indexOf(" ") != -1) {
-        value = value.substring(0, value.indexOf(" "));
+      if (value.indexOf(' ') != -1) {
+        value = value.substring(0, value.indexOf(' '));
       }
       // exposure times are stored in milliseconds, we want them in seconds
       try {
