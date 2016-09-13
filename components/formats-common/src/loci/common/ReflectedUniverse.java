@@ -172,7 +172,7 @@ public class ReflectedUniverse {
     }
 
     // get variable where results of command should be stored
-    int eqIndex = command.indexOf("=");
+    int eqIndex = command.indexOf('=');
     String target = null;
     if (eqIndex >= 0) {
       target = command.substring(0, eqIndex).trim();
@@ -182,7 +182,7 @@ public class ReflectedUniverse {
     Object result = null;
 
     // parse parentheses
-    int leftParen = command.indexOf("(");
+    int leftParen = command.indexOf('(');
     if (leftParen < 0) {
       // command is a simple assignment
       result = getVar(command);
@@ -190,7 +190,7 @@ public class ReflectedUniverse {
       return result;
     }
     else if (leftParen != command.lastIndexOf("(") ||
-      command.indexOf(")") != command.length() - 1)
+      command.indexOf(')') != command.length() - 1)
     {
       throw new ReflectException("Invalid parentheses");
     }
@@ -265,7 +265,7 @@ public class ReflectedUniverse {
     }
     else {
       // command is a method call
-      int dot = command.indexOf(".");
+      int dot = command.indexOf('.');
       if (dot < 0) throw new ReflectException("Syntax error");
       String varName = command.substring(0, dot).trim();
       String methodName = command.substring(dot + 1).trim();
@@ -406,7 +406,7 @@ public class ReflectedUniverse {
     catch (NumberFormatException exc) {
       throw new ReflectException("Invalid literal: " + varName, exc);
     }
-    int dot = varName.indexOf(".");
+    int dot = varName.indexOf('.');
     if (dot >= 0) {
       // get field value of variable
       String className = varName.substring(0, dot).trim();
