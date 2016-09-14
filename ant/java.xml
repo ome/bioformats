@@ -163,6 +163,7 @@ your FindBugs installation's lib directory. E.g.:
     description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+      <metainf dir="${basedir}" includes="lib/**/*"/>
       <manifest>
         <attribute name="Main-Class" value="${component.main-class}"/>
         <attribute name="Class-Path" value="${component.manifest-cp}"/>
