@@ -80,10 +80,8 @@ Type "ant -p" for a list of targets.
       encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
       includes="${component.source}">
-      <classpath>
-          <pathelement path="${test.fileset}"/>
-          <pathelement path="${classes.dir}"/>
-      </classpath>
+      <classpath refid="test.classpath"/>
+      <classpath path="${classes.dir}"/>
       </javac>
   </target>
 
@@ -99,6 +97,7 @@ Type "ant -p" for a list of targets.
       <isset property="testng.xml"/>
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
+          <classpath refid="test.classpath"/>
           <classpath>
             <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
             <pathelement path="${component.runtime-cp}"/>

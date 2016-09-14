@@ -17,6 +17,7 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml"
       file="${testng.xml.template}" overwrite="true"/>
     <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
