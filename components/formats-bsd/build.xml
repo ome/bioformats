@@ -148,13 +148,4 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="jar-formats-bsd-tests" depends="compile, compile-tests, copy-test-source"
-    description="generate jar of spec test classes" if="doTests">
-    <echo>About to compile tests</echo>
-    <mkdir dir="${artifact.dir}"/>
-    <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
-    <echo>After test to build *-test.jar</echo>
-  </target>
-
-
 </project>
