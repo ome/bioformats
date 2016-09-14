@@ -50,7 +50,6 @@ Type "ant -p" for a list of targets.
       jar-ome-poi,
       jar-formats-api,
       jar-formats-bsd,
-      jar-formats-bsd-tests,
       jar-bio-formats-tools,
       jar-specification,
       jar-tests,
@@ -628,11 +627,6 @@ Type "ant -p" for a list of targets.
   <target name="test-bio-formats-tools" depends="jar-bio-formats-tools, testing-deps"
     description="compile and run tests for Bio-Formats tools">
     <ant dir="components/bio-formats-tools" target="test"/>
-  </target>
-
-  <target name="jar-formats-bsd-tests"
-    description="generate JAR file of BSD format spec tests">
-      <ant dir="components/formats-bsd" target="jar-formats-bsd-tests"/>
   </target>
 
   <!-- Bio-Formats -->
