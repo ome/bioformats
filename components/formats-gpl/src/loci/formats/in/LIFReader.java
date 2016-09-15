@@ -1195,7 +1195,7 @@ public class LIFReader extends FormatReader {
     imageNames[image] = "";
     for (int i=names.size() - 2; i>=0; i--) {
       imageNames[image] += names.get(i);
-      if (i > 0) imageNames[image] += "/";
+      if (i > 0) imageNames[image] += '/';
     }
   }
 
@@ -2029,7 +2029,7 @@ public class LIFReader extends FormatReader {
     ms.dimensionOrder = "XY";
     if (getRGBChannelCount() == 1 || getRGBChannelCount() == getSizeC()) {
       if (getSizeC() > 1 && getSizeT() > 1) {
-        ms.dimensionOrder += "C";
+        ms.dimensionOrder += 'C';
       }
       for (Long nBytes : bytes) {
         String axis = bytesPerAxis.get(nBytes);
@@ -2040,13 +2040,13 @@ public class LIFReader extends FormatReader {
     }
 
     if (ms.dimensionOrder.indexOf('Z') == -1) {
-      ms.dimensionOrder += "Z";
+      ms.dimensionOrder += 'Z';
     }
     if (ms.dimensionOrder.indexOf('C') == -1) {
-      ms.dimensionOrder += "C";
+      ms.dimensionOrder += 'C';
     }
     if (ms.dimensionOrder.indexOf('T') == -1) {
-      ms.dimensionOrder += "T";
+      ms.dimensionOrder += 'T';
     }
   }
 

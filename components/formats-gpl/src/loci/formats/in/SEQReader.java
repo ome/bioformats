@@ -169,7 +169,7 @@ public class SEQReader extends BaseTiffReader {
 
     if (maxNdx != 1) {
       if (getSizeC() > 1) {
-        m.dimensionOrder += "C";
+        m.dimensionOrder += 'C';
         m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]);
       }
       else m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";

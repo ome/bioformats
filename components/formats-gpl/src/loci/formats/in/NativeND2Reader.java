@@ -1121,9 +1121,9 @@ public class NativeND2Reader extends FormatReader {
       }
 
       core.get(0).dimensionOrder = "XY" + getDimensionOrder();
-      if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += "Z";
-      if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += "C";
-      if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += "T";
+      if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += 'Z';
+      if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += 'C';
+      if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += 'T';
 
       if (getSizeZ() == 0) {
         core.get(0).sizeZ = 1;
@@ -1581,9 +1581,9 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex++;
     }
 
-    if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += "C";
-    if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += 'T';
     core.get(0).dimensionOrder = "XY" + getDimensionOrder();
 
     if (getImageCount() == 0) {

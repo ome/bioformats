@@ -3482,7 +3482,7 @@ public class ZeissCZIReader extends FormatReader {
             s += "; ";
           }
         }
-        s += "]";
+        s += ']';
       }
       return s;
     }

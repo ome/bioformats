@@ -311,7 +311,7 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("event")) {
         m.sizeZ *= size;
         if (dimensionOrder.indexOf('Z') == -1) {
-          dimensionOrder += "Z";
+          dimensionOrder += 'Z';
         }
         if (Double.compare(voxelZ, 1) == 0) {
           voxelZ = voxel;
@@ -320,7 +320,7 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("z")) {
         m.sizeZ *= size;
         if (dimensionOrder.indexOf('Z') == -1) {
-          dimensionOrder += "Z";
+          dimensionOrder += 'Z';
         }
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
@@ -351,7 +351,7 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
         if (dimensionOrder.indexOf('C') == -1) {
-          dimensionOrder += "C";
+          dimensionOrder += 'C';
         }
         voxelC = voxel;
       }
@@ -360,13 +360,13 @@ public class FluoviewReader extends BaseTiffReader {
       {
         m.sizeT *= size;
         if (dimensionOrder.indexOf('T') == -1) {
-          dimensionOrder += "T";
+          dimensionOrder += 'T';
         }
         voxelT = voxel;
         timeIndex = i - 2;
       }
       else {
-        if (dimensionOrder.indexOf('S') == -1) dimensionOrder += "S";
+        if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
         seriesCount *= size;
 
         if (name.equals("montage")) montageIndex = i - 2;
@@ -374,10 +374,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (dimensionOrder.indexOf('Z') == -1) dimensionOrder += "Z";
-    if (dimensionOrder.indexOf('T') == -1) dimensionOrder += "T";
-    if (dimensionOrder.indexOf('C') == -1) dimensionOrder += "C";
-    if (dimensionOrder.indexOf('S') == -1) dimensionOrder += "S";
+    if (dimensionOrder.indexOf('Z') == -1) dimensionOrder += 'Z';
+    if (dimensionOrder.indexOf('T') == -1) dimensionOrder += 'T';
+    if (dimensionOrder.indexOf('C') == -1) dimensionOrder += 'C';
+    if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
 
     m.imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) m.sizeZ = getImageCount();
