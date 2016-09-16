@@ -95,7 +95,7 @@ public class L2DReader extends FormatReader {
     Location parent = location.getAbsoluteFile().getParentFile();
 
     String scanName = location.getName();
-    if (scanName.indexOf("_") >= 0) {
+    if (scanName.indexOf('_') >= 0) {
       scanName = scanName.substring(0, scanName.lastIndexOf("_"));
     }
 
@@ -270,8 +270,8 @@ public class L2DReader extends FormatReader {
       String[] lines = scanData.split("\n");
       for (String line : lines) {
         if (!line.startsWith("#")) {
-          String key = line.substring(0, line.indexOf("="));
-          String value = line.substring(line.indexOf("=") + 1);
+          String key = line.substring(0, line.indexOf('='));
+          String value = line.substring(line.indexOf('=') + 1);
           addSeriesMeta(key, value);
 
           if (key.equals("ExperimentNames")) {
@@ -401,8 +401,8 @@ public class L2DReader extends FormatReader {
     String[] lines = data.split("\n");
     for (String line : lines) {
       if (!line.startsWith("#")) {
-        String key = line.substring(0, line.indexOf("=")).trim();
-        String value = line.substring(line.indexOf("=") + 1).trim();
+        String key = line.substring(0, line.indexOf('=')).trim();
+        String value = line.substring(line.indexOf('=') + 1).trim();
         addGlobalMeta(key, value);
 
         if (key.equals("ScanNames")) {

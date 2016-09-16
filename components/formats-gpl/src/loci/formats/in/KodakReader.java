@@ -181,7 +181,7 @@ public class KodakReader extends FormatReader {
     String[] lines = metadata.split("\n");
 
     for (String line : lines) {
-      int index = line.indexOf(":");
+      int index = line.indexOf(':');
       if (index < 0 || line.startsWith("#") || line.startsWith("-")) {
         continue;
       }
@@ -204,15 +204,15 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("Exposure Time")) {
-        Double exposureTime = new Double(value.substring(0, value.indexOf(" ")));
+        Double exposureTime = new Double(value.substring(0, value.indexOf(' ')));
         if (exposureTime != null) {
           store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), 0, 0);
         }
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch
-        if (value.indexOf(" ") > 0) {
-          value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(' ') > 0) {
+          value = value.substring(0, value.indexOf(' '));
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
@@ -224,8 +224,8 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
-        if (value.indexOf(" ") > 0) {
-          value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(' ') > 0) {
+          value = value.substring(0, value.indexOf(' '));
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
@@ -244,7 +244,7 @@ public class KodakReader extends FormatReader {
           LOGGER.debug("CCD temperature detected as {}; assumed to be invalid", temp);
         }
         else {
-          temp = new Double(value.substring(0, value.indexOf(" ")));
+          temp = new Double(value.substring(0, value.indexOf(' ')));
           store.setImagingEnvironmentTemperature(
                 new Temperature(temp, UNITS.CELSIUS), 0);
         }

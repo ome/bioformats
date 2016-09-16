@@ -75,7 +75,7 @@ public class UnisokuReader extends FormatReader {
       return super.isThisType(name, open);
     }
 
-    if (name.indexOf(".") < 0) {
+    if (name.indexOf('.') < 0) {
       return false;
     }
 
@@ -180,7 +180,7 @@ public class UnisokuReader extends FormatReader {
           date = DateTools.formatDate(value, "MM/dd/yy HH:mm:ss");
         }
         else if (key.startsWith(":ascii flag; data type")) {
-          value = value.substring(value.indexOf(" ") + 1);
+          value = value.substring(value.indexOf(' ') + 1);
           int type = Integer.parseInt(value);
           boolean signed = type % 2 == 1;
           int bytes = type / 2;

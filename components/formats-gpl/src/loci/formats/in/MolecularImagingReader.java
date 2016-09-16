@@ -112,7 +112,7 @@ public class MolecularImagingReader extends FormatReader {
     for (String line : lines) {
       line = line.trim();
 
-      int space = line.indexOf(" ");
+      int space = line.indexOf(' ');
       if (space != -1) {
         String key = line.substring(0, space).trim();
         String value = line.substring(space + 1).trim();
