@@ -186,7 +186,7 @@ public class ND2Handler extends BaseHandler {
 
         final StringBuilder sb = new StringBuilder();
         for (int i=0; i<points.length; i++) {
-          points[i] = points[i].substring(points[i].indexOf(":") + 1);
+          points[i] = points[i].substring(points[i].indexOf(':') + 1);
           sb.append(points[i]);
           if (i < points.length - 1) sb.append(" ");
         }
@@ -526,7 +526,7 @@ public class ND2Handler extends BaseHandler {
         metadata.put("Z position for position #" + posZ.size(), value);
       }
       else if (qName.startsWith("item_")) {
-        int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
+        int v = Integer.parseInt(qName.substring(qName.indexOf('_') + 1));
         if (v == numSeries) {
           numSeries++;
         }
@@ -677,7 +677,7 @@ public class ND2Handler extends BaseHandler {
         String[] tokens = value.split(" ");
         int magIndex = -1;
         for (int i=0; i<tokens.length; i++) {
-          if (tokens[i].indexOf("x") != -1) {
+          if (tokens[i].indexOf('x') != -1) {
             magIndex = i;
             break;
           }
@@ -689,7 +689,7 @@ public class ND2Handler extends BaseHandler {
         correction = s.toString();
         if (magIndex >= 0) {
           String m =
-            tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
+            tokens[magIndex].substring(0, tokens[magIndex].indexOf('x'));
           m = DataTools.sanitizeDouble(m);
           if (m.length() > 0) {
             mag = new Double(m);
@@ -715,7 +715,7 @@ public class ND2Handler extends BaseHandler {
           if (runtype.endsWith("ZStackLoop")) {
             if (ms0.sizeZ == 0) {
               ms0.sizeZ = Integer.parseInt(value);
-              if (ms0.dimensionOrder.indexOf("Z") == -1) {
+              if (ms0.dimensionOrder.indexOf('Z') == -1) {
                 ms0.dimensionOrder = "Z" + ms0.dimensionOrder;
               }
             }
@@ -723,7 +723,7 @@ public class ND2Handler extends BaseHandler {
           else if (runtype.endsWith("TimeLoop")) {
             if (ms0.sizeT == 0) {
               ms0.sizeT = Integer.parseInt(value);
-              if (ms0.dimensionOrder.indexOf("T") == -1) {
+              if (ms0.dimensionOrder.indexOf('T') == -1) {
                 ms0.dimensionOrder = "T" + ms0.dimensionOrder;
               }
             }
@@ -743,7 +743,7 @@ public class ND2Handler extends BaseHandler {
       else if (key.equals("VirtualComponents")) {
         if (ms0.sizeC == 0) {
           ms0.sizeC = Integer.parseInt(value);
-          if (ms0.dimensionOrder.indexOf("C") == -1) {
+          if (ms0.dimensionOrder.indexOf('C') == -1) {
             ms0.dimensionOrder += "C" + ms0.dimensionOrder;
           }
         }
@@ -766,7 +766,7 @@ public class ND2Handler extends BaseHandler {
             parseKeyAndValue(v[0].trim(), v[1].trim(), runtype);
           }
           else if (v[0].equals("Line")) {
-            parseKeyAndValue(v[0], t.substring(t.indexOf(":") + 1).trim(), runtype);
+            parseKeyAndValue(v[0], t.substring(t.indexOf(':') + 1).trim(), runtype);
           }
           else if (v.length > 1) {
             v[0] = v[0].replace('{', ' ');
@@ -888,7 +888,7 @@ public class ND2Handler extends BaseHandler {
       else if (key.equals("Line")) {
         String[] values = value.split(";");
         for (int q=0; q<values.length; q++) {
-          int colon = values[q].indexOf(":");
+          int colon = values[q].indexOf(':');
           if (colon < 0) continue;
           String nextKey = values[q].substring(0, colon).trim();
           String nextValue = values[q].substring(colon + 1).trim();

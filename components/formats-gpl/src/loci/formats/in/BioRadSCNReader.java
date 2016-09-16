@@ -136,7 +136,7 @@ public class BioRadSCNReader extends FormatReader {
     while (in.getFilePointer() < in.length() && line != null) {
       line = line.trim();
       if (line.startsWith("Content-Type")) {
-        currentType = line.substring(line.indexOf(" ") + 1);
+        currentType = line.substring(line.indexOf(' ') + 1);
 
         int boundary = currentType.indexOf("boundary");
         if (boundary > 0) {
@@ -144,15 +144,15 @@ public class BioRadSCNReader extends FormatReader {
             currentType.substring(boundary + 10, currentType.length() - 1);
         }
 
-        if (currentType.indexOf(";") > 0) {
-          currentType = currentType.substring(0, currentType.indexOf(";"));
+        if (currentType.indexOf(';') > 0) {
+          currentType = currentType.substring(0, currentType.indexOf(';'));
         }
       }
       else if (line.equals("--" + currentBoundary)) {
         currentLength = 0;
       }
       else if (line.startsWith("Content-Length")) {
-        currentLength = Integer.parseInt(line.substring(line.indexOf(" ") + 1));
+        currentLength = Integer.parseInt(line.substring(line.indexOf(' ') + 1));
       }
       else if (line.length() == 0) {
         if (currentType.equals("application/octet-stream")) {

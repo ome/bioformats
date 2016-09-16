@@ -574,7 +574,7 @@ public class NativeND2Reader extends FormatReader {
                 xmlString =
                   xmlString.substring(0, xmlString.lastIndexOf(">") + 1);
                 if (xmlString.startsWith("<?xml")) {
-                  xmlString = xmlString.substring(xmlString.indexOf(">") + 1);
+                  xmlString = xmlString.substring(xmlString.indexOf('>') + 1);
                 }
                 if (!xmlString.endsWith("</variant>")) {
                   xmlString += "</variant>";
@@ -1115,15 +1115,15 @@ public class NativeND2Reader extends FormatReader {
         fieldIndex--;
       }
 
-      if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
+      if (getSizeC() > 1 && getDimensionOrder().indexOf('C') == -1) {
         core.get(0).dimensionOrder = "C" + getDimensionOrder();
         fieldIndex++;
       }
 
       core.get(0).dimensionOrder = "XY" + getDimensionOrder();
-      if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
-      if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
-      if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
+      if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += "Z";
+      if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += "C";
+      if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += "T";
 
       if (getSizeZ() == 0) {
         core.get(0).sizeZ = 1;
@@ -1495,7 +1495,7 @@ public class NativeND2Reader extends FormatReader {
         }
         s = in.readString(blockLength);
         s = s.replaceAll("<!--.+?>", ""); // remove comments
-        int openBracket = s.indexOf("<");
+        int openBracket = s.indexOf('<');
         if (openBracket == -1) continue;
         int closedBracket = s.lastIndexOf(">") + 1;
         if (closedBracket < openBracket) continue;
@@ -1581,9 +1581,9 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex++;
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += "C";
+    if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += "T";
     core.get(0).dimensionOrder = "XY" + getDimensionOrder();
 
     if (getImageCount() == 0) {
@@ -2137,7 +2137,7 @@ public class NativeND2Reader extends FormatReader {
     try {
       ND2Handler handler = new ND2Handler(core, offsetCount);
       String xmlString = XMLTools.sanitizeXML(textString);
-      int start = xmlString.indexOf("<");
+      int start = xmlString.indexOf('<');
       int end = xmlString.lastIndexOf(">");
       if (start >= 0 && end >= 0 && end >= start) {
         xmlString = xmlString.substring(start, end + 1);
@@ -2164,7 +2164,7 @@ public class NativeND2Reader extends FormatReader {
       String[] lines = textString.split("\n");
       ND2Handler handler = new ND2Handler(core, offsetCount);
       for (String line : lines) {
-        int separator = line.indexOf(":");
+        int separator = line.indexOf(':');
         if (separator >= 0) {
           String key = line.substring(0, separator).trim();
           String value = line.substring(separator + 1).trim();
@@ -2193,7 +2193,7 @@ public class NativeND2Reader extends FormatReader {
       lines = textString.split(" ");
       for (int i=0; i<lines.length; i++) {
         String key = lines[i++];
-        while (!key.endsWith(":") && key.indexOf("_") < 0 && i < lines.length) {
+        while (!key.endsWith(":") && key.indexOf('_') < 0 && i < lines.length) {
           key += " " + lines[i++];
           if (i >= lines.length) {
             break;

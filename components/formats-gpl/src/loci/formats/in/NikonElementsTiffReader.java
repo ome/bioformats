@@ -104,7 +104,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     if (xml.length() == 0) {
       xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG_2).trim();
     }
-    int open = xml.indexOf("<");
+    int open = xml.indexOf('<');
     if (open >= 0) {
       xml = xml.substring(open);
     }

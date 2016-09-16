@@ -1639,7 +1639,7 @@ public class ZeissCZIReader extends FormatReader {
           Element detector = getFirstNode(detectorSettings, "Detector");
           if (detector != null) {
             String detectorID = detector.getAttribute("Id");
-            if (detectorID.indexOf(" ") != -1) {
+            if (detectorID.indexOf(' ') != -1) {
               detectorID =
                 detectorID.substring(detectorID.lastIndexOf(" ") + 1);
             }
@@ -1767,7 +1767,7 @@ public class ZeissCZIReader extends FormatReader {
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
           String detectorID = detector.getAttribute("Id");
-          if (detectorID.indexOf(" ") != -1) {
+          if (detectorID.indexOf(' ') != -1) {
             detectorID = detectorID.substring(detectorID.lastIndexOf(" ") + 1);
           }
           if (!detectorID.startsWith("Detector:")) {

@@ -809,8 +809,8 @@ public final class DataTools {
   /** Check if two filenames have the same prefix. */
   public static boolean samePrefix(String s1, String s2) {
     if (s1 == null || s2 == null) return false;
-    int n1 = s1.indexOf(".");
-    int n2 = s2.indexOf(".");
+    int n1 = s1.indexOf('.');
+    int n2 = s2.indexOf('.');
     if ((n1 == -1) || (n2 == -1)) return false;
 
     int slash1 = s1.lastIndexOf(File.pathSeparator);

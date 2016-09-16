@@ -172,10 +172,10 @@ public class BioRadGelReader extends FormatReader {
         in.skipBytes(8);
         String imageArea = in.readCString();
 
-        imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
-        int xIndex = imageArea.indexOf("x");
+        imageArea = imageArea.substring(imageArea.indexOf(':') + 1).trim();
+        int xIndex = imageArea.indexOf('x');
         if (xIndex > 0) {
-          int space = imageArea.indexOf(" ");
+          int space = imageArea.indexOf(' ');
           if (space >= 0) {
             String width = imageArea.substring(1, space);
             int nextSpace = imageArea.indexOf(" ", xIndex + 2);
