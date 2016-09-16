@@ -105,7 +105,7 @@ public class INRReader extends FormatReader {
     CoreMetadata m = core.get(0);
 
     for (String line : lines) {
-      int index = line.indexOf("=");
+      int index = line.indexOf('=');
       if (index >= 0) {
         String key = line.substring(0, index);
         String value = line.substring(index + 1);
@@ -128,7 +128,7 @@ public class INRReader extends FormatReader {
           isSigned = value.toLowerCase().startsWith("signed");
         }
         else if (key.equals("PIXSIZE")) {
-          String bits = value.substring(0, value.indexOf(" "));
+          String bits = value.substring(0, value.indexOf(' '));
           nBits = Integer.parseInt(bits);
         }
         else if (key.equals("VX")) {

@@ -150,7 +150,7 @@ public class ImaconReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String xml = firstIFD.getIFDTextValue(XML_TAG).trim();
-      xml = xml.substring(xml.indexOf("<"));
+      xml = xml.substring(xml.indexOf('<'));
       XMLTools.parseXML(xml, new ImaconHandler());
     }
 
@@ -198,7 +198,7 @@ public class ImaconReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (experimenterName == null) experimenterName = "";
 
-      int nameSpace = experimenterName.indexOf(" ");
+      int nameSpace = experimenterName.indexOf(' ');
       String firstName =
         nameSpace == -1 ? "" : experimenterName.substring(0, nameSpace);
       String lastName = nameSpace == -1 ? experimenterName :

@@ -487,8 +487,8 @@ public class ScreenReader extends FormatReader {
   private String getRow(String well) {
     String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
     char firstChar = Character.toUpperCase(wellName.charAt(0));
-    while (wellName.indexOf("_") > 0 && (firstChar < 'A' || firstChar > 'P')) {
-      wellName = wellName.substring(wellName.indexOf("_") + 1);
+    while (wellName.indexOf('_') > 0 && (firstChar < 'A' || firstChar > 'P')) {
+      wellName = wellName.substring(wellName.indexOf('_') + 1);
       firstChar = Character.toUpperCase(wellName.charAt(0));
     }
     return wellName.substring(0, 1).toUpperCase();
@@ -497,8 +497,8 @@ public class ScreenReader extends FormatReader {
   private String getColumn(String well) {
     String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
     char firstChar = Character.toUpperCase(wellName.charAt(0));
-    while (wellName.indexOf("_") > 0 && (firstChar < 'A' || firstChar > 'P')) {
-      wellName = wellName.substring(wellName.indexOf("_") + 1);
+    while (wellName.indexOf('_') > 0 && (firstChar < 'A' || firstChar > 'P')) {
+      wellName = wellName.substring(wellName.indexOf('_') + 1);
       firstChar = Character.toUpperCase(wellName.charAt(0));
     }
     int end = wellName.lastIndexOf("_");

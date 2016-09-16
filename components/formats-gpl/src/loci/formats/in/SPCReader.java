@@ -773,9 +773,9 @@ public class SPCReader extends FormatReader {
     
     int tagOffset = setup.indexOf(tag);
     String taggedString = setup.substring(tagOffset, tagOffset + 30);
-    tagOffset = taggedString.indexOf(",");
+    tagOffset = taggedString.indexOf(',');
     String tagType = taggedString.substring(tagOffset + 1, tagOffset + 2);
-    String valueTxt = taggedString.substring(tagOffset + 3, taggedString.indexOf("]"));
+    String valueTxt = taggedString.substring(tagOffset + 3, taggedString.indexOf(']'));
     double value = 0.0;
     if (tagType.matches("I")) {
       value = Integer.parseInt(valueTxt);
