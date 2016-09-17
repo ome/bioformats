@@ -874,56 +874,14 @@ Type "ant -p" for a list of targets.
 
   <!-- Tool collections -->
 
-  <target name="tools"
-    depends="copy-jars,
-      jar-jai,
-      jar-bio-formats-plugins,
-      jar-mdbtools,
-      jar-metakit,
-      jar-ome-jxr,
-      jar-ome-xml,
-      jar-ome-poi,
-      jar-formats-api,
-      jar-formats-bsd,
-      jar-bio-formats-tools,
-      jar-specification"
+  <target name="tools" depends="jars"
     description="generate JAR file bundles of Bio-Formats and dependencies">
 
     <echo>----------=========== bioformats_package ===========----------</echo>
-    <for list="${package.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${package.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${package.jar}" basedir="${package.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${package.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${package.dir}"/>
+    <ant dir="components/bundles/bioformats_package" target="jar"/>
 
     <echo>----------=========== loci_tools ===========----------</echo>
-    <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${loci-tools.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-            <exclude name="META-INF/maven/**"/>
-            <exclude name="META-INF/services/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${loci-tools.jar}" basedir="${loci-tools.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${loci-tools.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${loci-tools.dir}"/>
+    <ant dir="components/bundles/loci-tools" target="jar"/>
   </target>
 
   <target name="tools-ome"
