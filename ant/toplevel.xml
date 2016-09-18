@@ -878,10 +878,10 @@ Type "ant -p" for a list of targets.
     description="generate JAR file bundles of Bio-Formats and dependencies">
 
     <echo>----------=========== bioformats_package ===========----------</echo>
-    <ant dir="components/bundles/bioformats_package" target="jar"/>
+    <ant dir="components/bundles/bioformats_package" target="bundle"/>
 
     <echo>----------=========== loci_tools ===========----------</echo>
-    <ant dir="components/bundles/loci-tools" target="jar"/>
+    <ant dir="components/bundles/loci-tools" target="bundle"/>
   </target>
 
   <target name="tools-ome"

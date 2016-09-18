@@ -6,18 +6,9 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="bioformats_package" default="jar" basedir=".">
+<project name="bioformats_package" default="bundle" basedir=".">
   <description>Build file for Bio-Formats bundle</description>
   <property name="root.dir" location="../../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
-
-  <target name="jar" depends="mvn-init" description="create bundle JAR">
-    <jar destfile="${package.jar}" filesetmanifest="skip">
-      <zipgroupfileset refid="compile.fileset"/>
-      <manifest>
-        <attribute name="Main-Class" value="${package.main}"/>
-      </manifest>
-    </jar>        
-  </target>
 </project>
