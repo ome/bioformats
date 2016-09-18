@@ -158,8 +158,7 @@ your FindBugs installation's lib directory. E.g.:
     </checkstyle>
   </target>
 
-  <target name="jar" depends="compile"
-    description="generate JAR file">
+  <target name="jar" depends="compile" description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
       <metainf dir="${basedir}" includes="lib/**/*"/>
@@ -188,6 +187,19 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Class-Path" value="${component.manifest-cp}"/>
       </manifest>
     </bundle>
+  </target>
+
+  <target name="bundle" depends="mvn-init" description="create bundle JAR">
+    <mkdir dir="${artifact.dir}"/>
+    <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
+      <zipgroupfileset refid="compile.fileset"/>
+      <manifest>
+        <attribute name="Main-Class" value="${package.main}"/>
+      </manifest>
+    </jar>
+    <artifact:install file="${artifact.dir}/${bundle.jar}">
+        <pom refid="maven.pom"/>
+    </artifact:install>
   </target>
 
   <target name="utils" depends="jar"
