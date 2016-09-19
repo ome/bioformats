@@ -73,7 +73,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
           sb.append(" ");
           s = sb.toString();
         }
-        else s += " ";
+        else s += ' ';
       }
 
       // merge series metadata

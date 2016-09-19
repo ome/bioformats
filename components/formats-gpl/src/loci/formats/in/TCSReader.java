@@ -314,13 +314,13 @@ public class TCSReader extends FormatReader {
         for (int i=axisTypes.length-1; i>=0; i--) {
           if (axisTypes[i] == AxisGuesser.Z_AXIS) {
             if (getDimensionOrder().indexOf('Z') == -1) {
-              ms0.dimensionOrder += "Z";
+              ms0.dimensionOrder += 'Z';
             }
             ms0.sizeZ *= count[i];
           }
           else if (axisTypes[i] == AxisGuesser.C_AXIS) {
             if (getDimensionOrder().indexOf('C') == -1) {
-              ms0.dimensionOrder += "C";
+              ms0.dimensionOrder += 'C';
             }
             ms0.sizeC *= count[i];
           }
@@ -362,23 +362,23 @@ public class TCSReader extends FormatReader {
       if (unique) {
         ms0.sizeT++;
         if (getDimensionOrder().indexOf('T') < 0) {
-          ms0.dimensionOrder += "T";
+          ms0.dimensionOrder += 'T';
         }
       }
       else if (i > 0) {
         if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf('C') < 0) {
-          ms0.dimensionOrder += "C";
+          ms0.dimensionOrder += 'C';
         }
         else if (getDimensionOrder().indexOf('Z') < 0) {
-          ms0.dimensionOrder += "Z";
+          ms0.dimensionOrder += 'Z';
         }
       }
       unique = true;
     }
 
-    if (getDimensionOrder().indexOf('Z') < 0) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf('C') < 0) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf('T') < 0) ms0.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') < 0) ms0.dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') < 0) ms0.dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') < 0) ms0.dimensionOrder += 'T';
 
     if (getSizeC() == 0) ms0.sizeC = 1;
     if (getSizeT() == 0) ms0.sizeT = 1;

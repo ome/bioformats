@@ -535,7 +535,7 @@ public class MicromanagerReader extends FormatReader {
                 value = token;
 
                 while (q + 1 < tokens.length && tokens[q + 1].trim().length() > 0) {
-                  value += ":";
+                  value += ':';
                   value += tokens[q + 1];
                   q++;
                 }

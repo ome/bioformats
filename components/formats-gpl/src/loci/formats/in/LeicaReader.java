@@ -1114,21 +1114,21 @@ public class LeicaReader extends FormatReader {
         if (getSizeC() == 0) ms.sizeC = 1;
         ms.sizeC *= size;
         if (getDimensionOrder().indexOf('C') == -1) {
-          ms.dimensionOrder += "C";
+          ms.dimensionOrder += 'C';
         }
         physicalSizes[seriesIndex][3] = physical;
       }
       else if (dimType.equals("z")) {
         ms.sizeZ = size;
         if (getDimensionOrder().indexOf('Z') == -1) {
-          ms.dimensionOrder += "Z";
+          ms.dimensionOrder += 'Z';
         }
         physicalSizes[seriesIndex][2] = physical;
       }
       else {
         ms.sizeT = size;
         if (getDimensionOrder().indexOf('T') == -1) {
-          ms.dimensionOrder += "T";
+          ms.dimensionOrder += 'T';
         }
         physicalSizes[seriesIndex][4] = physical;
       }

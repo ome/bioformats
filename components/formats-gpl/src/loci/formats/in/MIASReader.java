@@ -637,15 +637,15 @@ public class MIASReader extends FormatReader {
 
         if (blocks[block].equals("z")) {
           zCount[j] = count[block];
-          order[j] += "Z";
+          order[j] += 'Z';
         }
         else if (blocks[block].equals("t")) {
           tCount[j] = count[block];
-          order[j] += "T";
+          order[j] += 'T';
         }
         else if (blocks[block].equals("mode")) {
           cCount[j] = count[block];
-          order[j] += "C";
+          order[j] += 'C';
         }
         else if (blocks[block].equals("im")) tileRows = count[block];
         else if (blocks[block].equals("")) tileCols = count[block];
@@ -654,11 +654,11 @@ public class MIASReader extends FormatReader {
           else if (block == 2) tileCols = count[block];
           else if (block == 0) {
             zCount[j] = count[block];
-            order[j] += "Z";
+            order[j] += 'Z';
           }
           else if (block == 1) {
             tCount[j] = count[block];
-            order[j] += "T";
+            order[j] += 'T';
           }
         }
         else {
@@ -720,13 +720,13 @@ public class MIASReader extends FormatReader {
       ms.dimensionOrder = order[i];
 
       if (ms.dimensionOrder.indexOf('Z') == -1) {
-        ms.dimensionOrder += "Z";
+        ms.dimensionOrder += 'Z';
       }
       if (ms.dimensionOrder.indexOf('C') == -1) {
-        ms.dimensionOrder += "C";
+        ms.dimensionOrder += 'C';
       }
       if (ms.dimensionOrder.indexOf('T') == -1) {
-        ms.dimensionOrder += "T";
+        ms.dimensionOrder += 'T';
       }
 
       ms.imageCount = ms.sizeZ * ms.sizeT * cCount[i];

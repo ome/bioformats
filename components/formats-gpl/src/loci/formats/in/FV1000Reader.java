@@ -708,19 +708,19 @@ public class FV1000Reader extends FormatReader {
         boolean addAxis = Integer.parseInt(axis.get("Number")) > 1;
         if (dim == 2) {
           if (addAxis && getDimensionOrder().indexOf('C') == -1) {
-            ms0.dimensionOrder += "C";
+            ms0.dimensionOrder += 'C';
           }
         }
         else if (dim == 3) {
           if (addAxis && getDimensionOrder().indexOf('Z') == -1) {
-            ms0.dimensionOrder += "Z";
+            ms0.dimensionOrder += 'Z';
           }
           final Double number = Double.valueOf(axis.get("AbsPositionValue"));
           plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf('T') == -1) {
-            ms0.dimensionOrder += "T";
+            ms0.dimensionOrder += 'T';
           }
           // divide by 1000, as the position is in milliseconds
           // and DeltaT is in seconds
@@ -888,12 +888,12 @@ public class FV1000Reader extends FormatReader {
     }
 
     if (getSizeC() > 1 && getSizeZ() == 1 && getSizeT() == 1) {
-      if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += "C";
+      if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += 'C';
     }
 
-    if (getDimensionOrder().indexOf('Z') == -1) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf('T') == -1) ms0.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) ms0.dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') == -1) ms0.dimensionOrder += 'T';
 
     ms0.pixelType =
       FormatTools.pixelTypeFromBytes(imageDepth, false, false);
