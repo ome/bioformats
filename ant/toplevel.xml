@@ -169,6 +169,7 @@ Type "ant -p" for a list of targets.
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
+      <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>

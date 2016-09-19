@@ -20,11 +20,11 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
     <testng haltonfailure="true" testname="${component.name}">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
@@ -74,7 +74,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-xml}"/>
+        <pathelement path="${component.cp.no-ome-xml}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -121,11 +121,11 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/spec/testng.xml"/>
     <testng haltonfailure="true" testname="${component.name}">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
     </testng>
@@ -136,11 +136,11 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-long-running.xml"/>
     <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>

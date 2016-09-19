@@ -87,7 +87,9 @@ Type "ant -p" for a list of targets.
 
   <target name="exec" depends="compile" description="execute package">
     <java fork="true" classname="${component.main-class}"
-      classpath="${classes.dir}:${component.runtime-cp}"/>
+      classpath="${classes.dir}">
+     <classpath refid="runtime.classpath"/>
+     </java>
   </target>
 
   <target name="test" depends="jar, compile-tests"
@@ -100,7 +102,6 @@ Type "ant -p" for a list of targets.
           <classpath refid="test.classpath"/>
           <classpath>
             <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-            <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
             <pathelement location="${test.dir}"/>
           </classpath>
@@ -121,7 +122,7 @@ Type "ant -p" for a list of targets.
           excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
-          <auxClasspath path="${component.runtime-cp}"/>
+          <auxClasspath refid="runtime.classpath"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
@@ -153,7 +154,8 @@ your FindBugs installation's lib directory. E.g.:
   <target name="style" depends="compile"
     description="check source code style">
     <checkstyle config="${root.dir}/checkstyle.xml" failOnViolation="false"
-      classpath="${classes.dir}:${component.classpath}">
+      classpath="${classes.dir}">
+      <classpath refid="compile.classpath"/>
       <fileset dir="${dest.dir}" includes="${component.source}"/>
     </checkstyle>
   </target>
@@ -220,13 +222,13 @@ your FindBugs installation's lib directory. E.g.:
   <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
-      classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
       <packageset dir="${dest.dir}"/>
+      <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
@@ -267,11 +269,6 @@ your FindBugs installation's lib directory. E.g.:
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->
-    <propertyregex property="component.manifest-cp-temp"
-      input="${component.runtime-cp}" replace=""
-      defaultValue="${component.runtime-cp}">
-      <regexp pattern="[^\:]*\/"/>
-    </propertyregex>
     <propertyregex property="component.manifest-cp"
       input="${component.manifest-cp-temp}" replace=" "
       defaultValue="${component.manifest-cp-temp}">

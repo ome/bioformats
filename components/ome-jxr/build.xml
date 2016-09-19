@@ -21,11 +21,11 @@ Type "ant -p"  for a list of targets.
       </filterset>
     </copy>
     <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
     </testng>
@@ -40,11 +40,11 @@ Type "ant -p"  for a list of targets.
       </filterset>
     </copy>
     <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <sysproperty key="filename" value="${filename}"/>
