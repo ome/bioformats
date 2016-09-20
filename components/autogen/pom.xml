@@ -30,12 +30,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>formats-api</artifactId>
+      <artifactId>formats-bsd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
+      <artifactId>formats-gpl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
