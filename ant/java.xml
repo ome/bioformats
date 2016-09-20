@@ -194,7 +194,7 @@ your FindBugs installation's lib directory. E.g.:
   <target name="bundle" depends="mvn-init" description="create bundle JAR">
     <mkdir dir="${artifact.dir}"/>
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
-      <zipgroupfileset refid="compile.fileset"/>
+      <zipgroupfileset refid="runtime.fileset"/>
       <manifest>
         <attribute name="Main-Class" value="${package.main}"/>
       </manifest>
