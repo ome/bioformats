@@ -6,7 +6,8 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="formats-gpl" default="jar" basedir=".">
+<project name="formats-gpl" default="jar" basedir="."
+    xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
   <description>Build file for Bio-Formats project</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
@@ -34,12 +35,20 @@ Type "ant -p" for a list of targets.
     description="run missing MDB tools JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-mdb.xml"/>
+    <path id="test-no-mdb.classpath">
+      <restrict>
+      <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="mdb*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-mdb.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-mdb}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -51,12 +60,20 @@ Type "ant -p" for a list of targets.
     description="run missing NetCDF JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-netcdf.xml"/>
+    <path id="test-no-netcdf.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="netcdf*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-netcdf.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-netcdf}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -68,12 +85,20 @@ Type "ant -p" for a list of targets.
     description="run missing POI JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>
+    <path id="test-no-poi.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="ome-poi*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-poi.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-poi}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -85,12 +110,20 @@ Type "ant -p" for a list of targets.
     description="run missing JHDF JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-jhdf.xml"/>
+    <path id="test-no-jhdf.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="jhdf*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-jhdf.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-jhdf}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
