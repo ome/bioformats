@@ -31,6 +31,18 @@
   <properties>
     <project.rootdir>${basedir}/../../..</project.rootdir>
   </properties>
+  <dependencies>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>2.0-rc2</version>
+    </dependency>
+    <dependency>
+      <groupId>xmlrpc</groupId>
+      <artifactId>xmlrpc</artifactId>
+      <version>1.2-b1</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>

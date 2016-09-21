@@ -889,23 +889,7 @@ Type "ant -p" for a list of targets.
     depends="copy-jars"
     description="generate JAR file encompassing several OME tools (deprecated)">
     <echo>----------=========== ome_tools ===========----------</echo>
-    <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${ome-tools.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-            <exclude name="META-INF/maven/**"/>
-            <exclude name="META-INF/services/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${ome-tools.jar}" basedir="${ome-tools.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${ome-tools.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${ome-tools.dir}"/>
+    <ant dir="components/bundles/ome-tools" target="bundle"/>
   </target>
 
   <!-- Xsd-Fu -->
