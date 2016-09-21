@@ -179,10 +179,11 @@ Type "ant -p" for a list of targets.
     </javadoc>
   </target>
 
-  <target name="docs-zip" depends="docs"
+  <target name="docs-zip" depends="docs, release-version"
     description="generate a zip bundle of the Javadocs">
-    <zip destfile="${artifact.dir}/bio-formats-javadocs.zip"
-      basedir="${merged-docs.dir}"/>
+    <zip destfile="${artifact.dir}/bio-formats-javadocs-${release.version}.zip">
+      <zipfileset dir="${merged-docs.dir}" prefix="bio-formats-javadocs-${release.version}"/>
+    </zip>
   </target>
 
   <target name="docs-sphinx"
@@ -982,32 +983,34 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix" description="generate a zip bundle of the command line tools">
+  <target name="dist-bftools" if="isUnix" description="generate a zip bundle of the command line tools"
+    depends="release-version">
     <echo>----------=========== bftools ===========----------</echo>
     <!--
-    <zip destfile="${artifact.dir}/bftools.zip"
+    <zip destfile="${artifact.dir}/bftools-${release.version}.zip"
       basedir="${bftools.dir}">
       <patternset>
         <exclude name="*.jar"/>
       </patternset>
     </zip>
     -->
-    <zip destfile="${artifact.dir}/bftools.zip">
+    <zip destfile="${artifact.dir}/bftools-${release.version}.zip">
       <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
-        prefix="bftools"/>
+        prefix="bftools-${release.version}"/>
       <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
-        prefix="bftools" filemode="755"/>
-      <zipfileset file="${package.jar}" prefix="bftools"/>
+        prefix="bftools-${release.version}" filemode="755"/>
+      <zipfileset file="${package.jar}" prefix="bftools-${release.version}"/>
     </zip>
 
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab" description="generate a zip bundle of the Matlab toolbox" depends="tools">
+  <target name="dist-matlab" description="generate a zip bundle of the Matlab toolbox"
+    depends="tools, release-version">
     <echo>----------=========== bfmatlab ===========----------</echo>
-    <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/formats-gpl/matlab" includes="**/*" prefix="bfmatlab"/>
-      <zipfileset file="${package.jar}" prefix="bfmatlab"/>
+    <zip destfile="${artifact.dir}/bfmatlab-${release.version}.zip">
+      <zipfileset dir="${root.dir}/components/formats-gpl/matlab" includes="**/*" prefix="bfmatlab-${release.version}"/>
+      <zipfileset file="${package.jar}" prefix="bfmatlab-${release.version}"/>
     </zip>
   </target>
 
