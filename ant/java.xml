@@ -25,33 +25,40 @@ Type "ant -p" for a list of targets.
     <available file="${tests.dir}"/>
   </condition>
 
-  <path id="maven-ant-tasks.classpath" path="${lib.dir}/maven-ant-tasks-2.1.3.jar" />
+  <path id="maven-ant-tasks.classpath"
+    path="${lib.dir}/maven-ant-tasks-2.1.3.jar"/>
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-               uri="antlib:org.apache.maven.artifact.ant"
-               classpathref="maven-ant-tasks.classpath" />
-
-  <!-- <artifact:dependencies filesetId="mydeps" pomRefId="pom.xml" /> -->
+    uri="antlib:org.apache.maven.artifact.ant"
+    classpathref="maven-ant-tasks.classpath"/>
 
    <artifact:pom file="pom.xml" id="maven.pom"/>
 
    <target name="mvn-init" unless="compile.classpath">
-       <condition property="maven.repo.local" value="${maven.repo.local}" else="${user.home}/.m2/repository">
-           <isset property="maven.repo.local"/>
-       </condition>
-       <echo>maven.repo.local=${maven.repo.local}</echo>
-       <artifact:localRepository id="local.repository" path="${maven.repo.local}"/>
-       <artifact:dependencies pathId="compile.classpath" filesetId="compile.fileset" useScope="compile">
-           <pom refid="maven.pom"/>
-           <localRepository refid="local.repository"/>
-       </artifact:dependencies>
-       <artifact:dependencies pathId="test.classpath" filesetId="test.fileset" useScope="test">
-           <pom refid="maven.pom"/>
-           <localRepository refid="local.repository"/>
-       </artifact:dependencies>
-       <artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime">
-           <pom refid="maven.pom"/>
-           <localRepository refid="local.repository"/>
-       </artifact:dependencies>
+     <condition property="maven.repo.local" value="${maven.repo.local}"
+         else="${user.home}/.m2/repository">
+       <isset property="maven.repo.local"/>
+     </condition>
+     <artifact:localRepository id="local.repository"
+       path="${maven.repo.local}"/>
+     <artifact:dependencies pathId="compile.classpath" useScope="compile"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/compile-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="test.classpath" useScope="test"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/test-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="runtime.classpath"
+         filesetId="runtime.fileset"
+         useScope="runtime" cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/runtime-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
    </target>
 
 
