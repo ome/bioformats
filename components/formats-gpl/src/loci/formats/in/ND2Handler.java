@@ -511,17 +511,17 @@ public class ND2Handler extends BaseHandler {
         }
       }
       else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        final Double number = DataTools.parseDouble(value);
         posX.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("X position for position #" + posX.size(), value);
       }
       else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        final Double number = DataTools.parseDouble(value);
         posY.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("Y position for position #" + posY.size(), value);
       }
       else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-        final Double number = Double.valueOf(DataTools.sanitizeDouble(value));
+        final Double number = DataTools.parseDouble(value);
         posZ.add(new Length(number, UNITS.REFERENCEFRAME));
         metadata.put("Z position for position #" + posZ.size(), value);
       }
@@ -563,7 +563,7 @@ public class ND2Handler extends BaseHandler {
         rois.add(roi);
       }
       else if (qName.equals("dPinholeRadius")) {
-        pinholeSize = new Double(DataTools.sanitizeDouble(value));
+        pinholeSize = DataTools.parseDouble(value);
         metadata.put("Pinhole size", value);
       }
       else if (qName.endsWith("ChannelColor")) {
@@ -647,29 +647,27 @@ public class ND2Handler extends BaseHandler {
 
     try {
       if (key.endsWith("dCalibration")) {
-        pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
+        pixelSizeX = DataTools.parseDouble(value);
         pixelSizeY = pixelSizeX;
       }
       else if (key.endsWith("dZStep")) {
-        pixelSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+        pixelSizeZ =  DataTools.parseDouble(value);
       }
       else if (key.endsWith("Gain")) {
-        value = DataTools.sanitizeDouble(value);
-        if (!value.equals("")) {
-          gain.add(new Double(value));
-        }
+        Double gainValue = DataTools.parseDouble(value);
+        if (gainValue != null) gain.add(gainValue);
       }
       else if (key.endsWith("dLampVoltage")) {
-        voltage = new Double(DataTools.sanitizeDouble(value));
+        voltage = DataTools.parseDouble(value);
       }
       else if (key.endsWith("dObjectiveMag") && mag == null) {
-        mag = new Double(DataTools.sanitizeDouble(value));
+        mag = DataTools.parseDouble(value);
       }
       else if (key.endsWith("dObjectiveNA")) {
-        na = new Double(DataTools.sanitizeDouble(value));
+        na = DataTools.parseDouble(value);
       }
       else if (key.endsWith("dRefractIndex1")) {
-        refractiveIndex = new Double(DataTools.sanitizeDouble(value));
+        refractiveIndex = DataTools.parseDouble(value);
       }
       else if (key.equals("sObjective") || key.equals("wsObjectiveName") ||
         key.equals("sOptics"))
@@ -690,25 +688,20 @@ public class ND2Handler extends BaseHandler {
         if (magIndex >= 0) {
           String m =
             tokens[magIndex].substring(0, tokens[magIndex].indexOf('x'));
-          m = DataTools.sanitizeDouble(m);
-          if (m.length() > 0) {
-            mag = new Double(m);
-          }
+          mag = DataTools.parseDouble(m);
         }
         if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
       }
       else if (key.endsWith("dTimeMSec")) {
-        long v = (long) Double.parseDouble(DataTools.sanitizeDouble(value));
-        if (!ts.contains(new Long(v))) {
-          ts.add(new Long(v));
+        Long v = DataTools.parseLong(value);;
+        if (!ts.contains(v)) {
+          ts.add(v);
           metadata.put("number of timepoints", ts.size());
         }
       }
       else if (key.endsWith("dZPos")) {
-        long v = (long) Double.parseDouble(DataTools.sanitizeDouble(value));
-        if (!zs.contains(new Long(v))) {
-          zs.add(new Long(v));
-        }
+        Long v = DataTools.parseLong(value);
+        if (!zs.contains(v)) zs.add(v);
       }
       else if (key.endsWith("uiCount")) {
         if (runtype != null) {
@@ -847,17 +840,16 @@ public class ND2Handler extends BaseHandler {
       else if (key.equals("Readout Speed")) {
         int last = value.lastIndexOf(" ");
         if (last != -1) value = value.substring(0, last);
-        speed.add(new Double(DataTools.sanitizeDouble(value)));
+        speed.add(DataTools.parseDouble(value));
       }
       else if (key.equals("Temperature")) {
         String temp = value.replaceAll("[\\D&&[^-.]]", "");
-        temperature.add(new Double(DataTools.sanitizeDouble(temp)));
+        temperature.add(DataTools.parseDouble(temp));
       }
       else if (key.equals("Exposure")) {
         String[] s = value.trim().split(" ");
-        s[0] = DataTools.sanitizeDouble(s[0]);
-        if (s[0].trim().length() > 0) {
-          double time = Double.parseDouble(s[0]);
+        Double time = DataTools.parseDouble(s[0]);
+        if (time != null) {
           // TODO: check for other units
           if (s.length > 1) {
             if (s[1].equals("ms")) time /= 1000;
@@ -866,24 +858,18 @@ public class ND2Handler extends BaseHandler {
             // assume time is in milliseconds
             time /= 1000;
           }
-          exposureTime.add(new Double(time));
+          exposureTime.add(time);
         }
       }
       else if (key.equals("{Pinhole Size}")) {
-        pinholeSize = new Double(DataTools.sanitizeDouble(value));
+        pinholeSize = DataTools.parseDouble(value);
         metadata.put("Pinhole size", value);
       }
       else if (key.startsWith("- Step")) {
         int space = key.indexOf(" ", key.indexOf("Step") + 1);
         int last = key.indexOf(" ", space + 1);
         if (last == -1) last = key.length();
-        try {
-          pixelSizeZ = Double.parseDouble(
-            DataTools.sanitizeDouble(key.substring(space, last)));
-        }
-        catch (Exception e) {
-          LOGGER.trace("Could not parse Z step '{}'", key, e);
-        }
+        pixelSizeZ = DataTools.parseDouble(key.substring(space, last));
       }
       else if (key.equals("Line")) {
         String[] values = value.split(";");
@@ -904,8 +890,7 @@ public class ND2Handler extends BaseHandler {
         exWave.add(new Double(v[0]));
       }
       else if (key.equals("Power")) {
-        value = DataTools.sanitizeDouble(value);
-        power.add(new Integer((int) Double.parseDouble(value)));
+        power.add(DataTools.parseInteger(value));
       }
       else if (key.equals("CameraUniqueName")) {
         cameraModel = value;
