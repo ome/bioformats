@@ -45,11 +45,6 @@ build path. You will also need :file:`common.jar` for common I/O functions,
 :file:`ome-xml.jar` for metadata standardization, and
 `SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
 
-See the list in the
-:source:`Bio-Formats toplevel build file <build.xml>`
-for a complete and up-to-date list of all optional libraries, which can
-all be found in our :sourcedir:`Git repository <jar>`.
-
 Dependencies
 ^^^^^^^^^^^^
 
@@ -325,10 +320,4 @@ with as many or as few optional libraries as you wish, to cut down on
 file size as needed. You are free to make whatever kind of "stripped
 down" version you require. You could even build a custom
 **formats-gpl.jar** that excludes certain classes, if you like.
-
-For an explicit enumeration of all the optional libraries included in
-**bioformats\_package.jar**, see the ``package.libraries`` variable of the
-:source:`ant/toplevel.properties <ant/toplevel.properties>`
-file of the distribution. You can also read our notes about each in the
-source distribution's Ant :source:`build.xml <build.xml#L240>` script.
 
