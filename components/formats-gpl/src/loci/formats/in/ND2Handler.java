@@ -867,9 +867,12 @@ public class ND2Handler extends BaseHandler {
       }
       else if (key.startsWith("- Step")) {
         int space = key.indexOf(" ", key.indexOf("Step") + 1);
-        int last = key.indexOf(" ", space + 1);
-        if (last == -1) last = key.length();
-        pixelSizeZ = DataTools.parseDouble(key.substring(space, last));
+        if (space != -1) {
+          int last = key.indexOf(" ", space + 1);
+          if (last == -1) last = key.length();
+          String pixelSizeZstring = key.substring(space, last);
+          pixelSizeZ = DataTools.parseDouble(pixelSizeZstring.trim());
+        }
       }
       else if (key.equals("Line")) {
         String[] values = value.split(";");
