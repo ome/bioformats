@@ -32,6 +32,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.in.ND2Handler;
 
 import static org.testng.Assert.assertEquals;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -39,13 +40,19 @@ import org.testng.annotations.Test;
  */
 public class ND2HandlerTest {
 
-  private List<CoreMetadata> core = new ArrayList<CoreMetadata>();
-  private ND2Handler handler = new ND2Handler(core, 1);
+  private List<CoreMetadata> coreList = new ArrayList<CoreMetadata>();
+  private ND2Handler handler;
+
+  @BeforeClass
+  public void setUp() {
+    coreList.add(new CoreMetadata());
+    handler = new ND2Handler(coreList, 1);
+  }
 
   @Test
-  public void testParsePhysicalSizeZ()
+  public void testParsePixelsSizeZ()
   {
     handler.parseKeyAndValue("- Step", "", "");
-    assertEquals(handler.getPixelSizeZ(), null);
+    assertEquals(handler.getPixelSizeZ(), 0.0);
   }
 }
