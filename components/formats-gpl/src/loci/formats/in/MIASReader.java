@@ -637,15 +637,15 @@ public class MIASReader extends FormatReader {
 
         if (blocks[block].equals("z")) {
           zCount[j] = count[block];
-          order[j] += "Z";
+          order[j] += 'Z';
         }
         else if (blocks[block].equals("t")) {
           tCount[j] = count[block];
-          order[j] += "T";
+          order[j] += 'T';
         }
         else if (blocks[block].equals("mode")) {
           cCount[j] = count[block];
-          order[j] += "C";
+          order[j] += 'C';
         }
         else if (blocks[block].equals("im")) tileRows = count[block];
         else if (blocks[block].equals("")) tileCols = count[block];
@@ -654,11 +654,11 @@ public class MIASReader extends FormatReader {
           else if (block == 2) tileCols = count[block];
           else if (block == 0) {
             zCount[j] = count[block];
-            order[j] += "Z";
+            order[j] += 'Z';
           }
           else if (block == 1) {
             tCount[j] = count[block];
-            order[j] += "T";
+            order[j] += 'T';
           }
         }
         else {
@@ -719,14 +719,14 @@ public class MIASReader extends FormatReader {
       ms.falseColor = readers[0][0].isFalseColor();
       ms.dimensionOrder = order[i];
 
-      if (ms.dimensionOrder.indexOf("Z") == -1) {
-        ms.dimensionOrder += "Z";
+      if (ms.dimensionOrder.indexOf('Z') == -1) {
+        ms.dimensionOrder += 'Z';
       }
-      if (ms.dimensionOrder.indexOf("C") == -1) {
-        ms.dimensionOrder += "C";
+      if (ms.dimensionOrder.indexOf('C') == -1) {
+        ms.dimensionOrder += 'C';
       }
-      if (ms.dimensionOrder.indexOf("T") == -1) {
-        ms.dimensionOrder += "T";
+      if (ms.dimensionOrder.indexOf('T') == -1) {
+        ms.dimensionOrder += 'T';
       }
 
       ms.imageCount = ms.sizeZ * ms.sizeT * cCount[i];
@@ -850,7 +850,7 @@ public class MIASReader extends FormatReader {
 
       parseTemplateFile(store);
 
-      plateName = plateName.substring(plateName.indexOf("-") + 1);
+      plateName = plateName.substring(plateName.indexOf('-') + 1);
       store.setPlateName(plateName, 0);
       store.setPlateExternalIdentifier(plateName, 0);
 
@@ -984,7 +984,7 @@ public class MIASReader extends FormatReader {
     int[] position = new int[4];
 
     file = file.substring(file.lastIndexOf(File.separator) + 1);
-    String wellIndex = file.substring(4, file.indexOf("_"));
+    String wellIndex = file.substring(4, file.indexOf('_'));
     position[0] = Integer.parseInt(wellIndex) - 1;
 
     int tIndex = file.indexOf("_t") + 2;
@@ -1059,7 +1059,7 @@ public class MIASReader extends FormatReader {
     String[] lines = data.split("\r\n");
 
     for (String line : lines) {
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq != -1) {
         String key = line.substring(0, eq);
         String value = line.substring(eq + 1);

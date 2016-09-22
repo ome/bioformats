@@ -193,7 +193,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     CoreMetadata m = core.get(0);
 
     String filename = id.substring(id.lastIndexOf(File.separator) + 1);
-    filename = filename.substring(0, filename.indexOf("."));
+    filename = filename.substring(0, filename.indexOf('.'));
     boolean integerFilename = true;
     try {
       Integer.parseInt(filename);
@@ -528,7 +528,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   private int getField(String stageLabel) {
     if (stageLabel.indexOf("Scan") < 0) return 0;
-    String index = stageLabel.substring(0, stageLabel.indexOf(":")).trim();
+    String index = stageLabel.substring(0, stageLabel.indexOf(':')).trim();
     return Integer.parseInt(index) - 1;
   }
 
@@ -559,7 +559,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     for (String tiff : tiffs) {
       if (!new Location(tiff).exists()) {
         String base = tiff.substring(tiff.lastIndexOf(File.separator) + 1);
-        base = base.substring(0, base.indexOf("."));
+        base = base.substring(0, base.indexOf('.'));
         String suffix = tiff.substring(tiff.lastIndexOf("."));
         while (base.length() < 3) {
           base = "0" + base;
@@ -626,8 +626,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
       String base1 = s1.substring(s1.lastIndexOf(File.separator) + 1);
       String base2 = s2.substring(s2.lastIndexOf(File.separator) + 1);
 
-      base1 = base1.substring(0, base1.indexOf("."));
-      base2 = base2.substring(0, base2.indexOf("."));
+      base1 = base1.substring(0, base1.indexOf('.'));
+      base2 = base2.substring(0, base2.indexOf('.'));
 
       try {
         int num1 = Integer.parseInt(base1);

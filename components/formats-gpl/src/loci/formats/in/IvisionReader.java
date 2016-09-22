@@ -94,7 +94,7 @@ public class IvisionReader extends FormatReader {
     String version = stream.readString(3);
     try {
       Double.parseDouble(version);
-      return version.indexOf(".") != -1 && version.indexOf("-") == -1;
+      return version.indexOf('.') != -1 && version.indexOf('-') == -1;
     }
     catch (NumberFormatException e) { }
     return false;
@@ -248,7 +248,7 @@ public class IvisionReader extends FormatReader {
         in.seek(in.getFilePointer() - 5);
 
         String xml = in.readString((int) (in.length() - in.getFilePointer()));
-        xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf("plist>") + 6);
+        xml = xml.substring(xml.indexOf('<'), xml.lastIndexOf("plist>") + 6);
         IvisionHandler handler = new IvisionHandler();
         try {
           XMLTools.parseXML(xml, handler);

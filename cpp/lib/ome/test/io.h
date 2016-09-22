@@ -42,7 +42,7 @@
 #include <istream>
 #include <string>
 
-#include <ome/common/filesystem.h>
+#include <boost/filesystem/path.hpp>
 
 /**
  * Read file into string.

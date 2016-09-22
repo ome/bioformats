@@ -911,6 +911,8 @@ Type "ant -p" for a list of targets.
       <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
         prefix="bftools" filemode="755"/>
       <zipfileset file="${package.jar}" prefix="bftools"/>
+      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
+        fullpath="bftools/NEWS.rst"/>
     </zip>
 
   </target>

@@ -111,7 +111,7 @@ public class TillVisionReader extends FormatReader {
       return true;
     }
     String pstFile = name;
-    if (name.indexOf(".") != -1) {
+    if (name.indexOf('.') != -1) {
       pstFile = pstFile.substring(0, pstFile.lastIndexOf("."));
     }
     pstFile += ".pst";
@@ -369,7 +369,7 @@ public class TillVisionReader extends FormatReader {
           String[] lines = description.split("[\r\n]");
           for (String line : lines) {
             line = line.trim();
-            int colon = line.indexOf(":");
+            int colon = line.indexOf(':');
             if (colon != -1 && !line.startsWith(";")) {
               String key = line.substring(0, colon).trim();
               String value = line.substring(colon + 1).trim();

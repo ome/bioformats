@@ -114,7 +114,7 @@ public class CellWorxReader extends FormatReader {
     Location parent = current.getParentFile();
 
     String htdName = current.getName();
-    while (htdName.indexOf("_") > 0) {
+    while (htdName.indexOf('_') > 0) {
       htdName = htdName.substring(0, htdName.lastIndexOf("_"));
       if (new Location(parent, htdName + ".htd").exists() ||
         new Location(parent, htdName + ".HTD").exists())
@@ -360,13 +360,13 @@ public class CellWorxReader extends FormatReader {
       String[] f = DataTools.readFile(plateLogFile).split("\n");
       for (String line : f) {
         if (line.trim().startsWith("Z Map File")) {
-          String file = line.substring(line.indexOf(":") + 1);
+          String file = line.substring(line.indexOf(':') + 1);
           file = file.substring(file.lastIndexOf("/") + 1).trim();
           String parent = new Location(id).getAbsoluteFile().getParent();
           zMapFile = new Location(parent, file).getAbsolutePath();
         }
         else if (line.trim().startsWith("Scanner SN")) {
-          serialNumber = line.substring(line.indexOf(":") + 1).trim();
+          serialNumber = line.substring(line.indexOf(':') + 1).trim();
         }
       }
     }
@@ -585,7 +585,7 @@ public class CellWorxReader extends FormatReader {
     String[] lines = data.split("\n");
     for (String line : lines) {
       line = line.trim();
-      int separator = line.indexOf(":");
+      int separator = line.indexOf(':');
       if (separator < 0) continue;
       String key = line.substring(0, separator).trim();
       String value = line.substring(separator + 1).trim();
@@ -623,7 +623,7 @@ public class CellWorxReader extends FormatReader {
         }
       }
       else if (key.equals("Scan Area")) {
-        int s = value.indexOf("x");
+        int s = value.indexOf('x');
         if (s > 0) {
           int end = value.indexOf(" ", s + 2);
           Double xSize = new Double(value.substring(0, s).trim());
@@ -644,7 +644,7 @@ public class CellWorxReader extends FormatReader {
         }
       }
       else if (key.startsWith("Channel")) {
-        int start = key.indexOf(" ") + 1;
+        int start = key.indexOf(' ') + 1;
         int end = key.indexOf(" ", start);
         if (end < 0) end = key.length();
         int index = Integer.parseInt(key.substring(start, end)) - 1;
@@ -668,16 +668,16 @@ public class CellWorxReader extends FormatReader {
             }
           }
           else if (token.startsWith("EX")) {
-            int slash = token.indexOf("/");
+            int slash = token.indexOf('/');
             if (slash > 0) {
               String ex = token.substring(0, slash).trim();
               String em = token.substring(slash + 1).trim();
 
-              if (ex.indexOf(" ") > 0) ex = ex.substring(ex.indexOf(" ") + 1);
-              if (em.indexOf(" ") > 0) {
-                em = em.substring(em.indexOf(" ") + 1);
-                if (em.indexOf(" ") > 0) {
-                  em = em.substring(0, em.indexOf(" "));
+              if (ex.indexOf(' ') > 0) ex = ex.substring(ex.indexOf(' ') + 1);
+              if (em.indexOf(' ') > 0) {
+                em = em.substring(em.indexOf(' ') + 1);
+                if (em.indexOf(' ') > 0) {
+                  em = em.substring(0, em.indexOf(' '));
                 }
               }
 

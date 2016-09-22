@@ -358,8 +358,8 @@ public class MetamorphReader extends BaseTiffReader {
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
       for (String f : dirList) {
-        int underscore = f.indexOf("_");
-        if (underscore < 0) underscore = f.indexOf(".");
+        int underscore = f.indexOf('_');
+        if (underscore < 0) underscore = f.indexOf('.');
         if (underscore < 0) underscore = f.length();
         String prefix = f.substring(0, underscore);
 
@@ -390,7 +390,7 @@ public class MetamorphReader extends BaseTiffReader {
       String stkName = stk.getName();
       String stkPrefix = stkName;
       if (stkPrefix.indexOf('_') >= 0) {
-        stkPrefix = stkPrefix.substring(0, stkPrefix.indexOf("_") + 1);
+        stkPrefix = stkPrefix.substring(0, stkPrefix.indexOf('_') + 1);
       }
       Location parent = stk.getParentFile();
       String[] list = parent.list(true);
@@ -399,7 +399,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
           if (prefix.indexOf('_') >= 0) {
-            prefix = prefix.substring(0, prefix.indexOf("_") + 1);
+            prefix = prefix.substring(0, prefix.indexOf('_') + 1);
           }
           if (stkName.startsWith(prefix) || prefix.equals(stkPrefix)) {
             int charCount = 0;
@@ -451,7 +451,7 @@ public class MetamorphReader extends BaseTiffReader {
       String key = "";
 
       for (String line : lines) {
-        int comma = line.indexOf(",");
+        int comma = line.indexOf(',');
         if (comma <= 0) {
           currentValue.append("\n");
           currentValue.append(line);
@@ -1232,7 +1232,7 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         }
 
-        int colon = line.indexOf(":");
+        int colon = line.indexOf(':');
 
         if (colon < 0) {
           // normal line (not a key/value pair)
@@ -1267,10 +1267,10 @@ public class MetamorphReader extends BaseTiffReader {
           addSeriesMeta(key, value);
           if (key.equals("Exposure")) {
             if (value.indexOf('=') != -1) {
-              value = value.substring(value.indexOf("=") + 1).trim();
+              value = value.substring(value.indexOf('=') + 1).trim();
             }
             if (value.indexOf(' ') != -1) {
-              value = value.substring(0, value.indexOf(" "));
+              value = value.substring(0, value.indexOf(' '));
             }
             try {
               value = value.replace(',', '.');
@@ -1281,7 +1281,7 @@ public class MetamorphReader extends BaseTiffReader {
           }
           else if (key.equals("Bit Depth")) {
             if (value.indexOf('-') != -1) {
-              value = value.substring(0, value.indexOf("-"));
+              value = value.substring(0, value.indexOf('-'));
             }
             try {
               ms0.bitsPerPixel = Integer.parseInt(value);
@@ -1289,7 +1289,7 @@ public class MetamorphReader extends BaseTiffReader {
             catch (NumberFormatException e) { }
           }
           else if (key.equals("Gain")) {
-            int space = value.indexOf(" ");
+            int space = value.indexOf(' ');
             if (space != -1) {
               int nextSpace = value.indexOf(" ", space + 1);
               if (nextSpace < 0) {
@@ -1354,13 +1354,13 @@ public class MetamorphReader extends BaseTiffReader {
     String name = l.getName();
     String parent = l.getParent();
 
-    if (name.indexOf("_") > 0) {
-      String prefix = name.substring(0, name.indexOf("_"));
-      String suffix = name.substring(name.indexOf("_"));
+    if (name.indexOf('_') > 0) {
+      String prefix = name.substring(0, name.indexOf('_'));
+      String suffix = name.substring(name.indexOf('_'));
 
       String basePrefix = new Location(currentId).getName();
-      int end = basePrefix.indexOf("_");
-      if (end < 0) end = basePrefix.indexOf(".");
+      int end = basePrefix.indexOf('_');
+      if (end < 0) end = basePrefix.indexOf('.');
       basePrefix = basePrefix.substring(0, end);
 
       if (!basePrefix.equals(prefix)) {

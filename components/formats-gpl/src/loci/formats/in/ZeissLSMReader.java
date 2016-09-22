@@ -726,7 +726,7 @@ public class ZeissLSMReader extends FormatReader {
     int instrument = getEffectiveSeries(series);
 
     String imageName = getLSMFileFromSeries(series);
-    if (imageName.indexOf(".") != -1) {
+    if (imageName.indexOf('.') != -1) {
       imageName = imageName.substring(0, imageName.lastIndexOf("."));
     }
     if (imageName.indexOf(File.separator) != -1) {
@@ -1437,7 +1437,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setFilterID(id, instrument, nextFilter);
         store.setFilterModel(channel.filter, instrument, nextFilter);
 
-        int space = channel.filter.indexOf(" ");
+        int space = channel.filter.indexOf(' ');
         if (space != -1) {
           String type = channel.filter.substring(0, space).trim();
           if (type.equals("BP")) type = "BandPass";
@@ -2339,7 +2339,7 @@ public class ZeissLSMReader extends FormatReader {
       description = getStringValue(RECORDING_DESCRIPTION);
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
-      if (binning != null && binning.indexOf("x") == -1) {
+      if (binning != null && binning.indexOf('x') == -1) {
         if (binning.equals("0")) binning = null;
         else binning += "x" + binning;
       }
@@ -2360,12 +2360,12 @@ public class ZeissLSMReader extends FormatReader {
       String[] tokens = objective.split(" ");
       int next = 0;
       for (; next<tokens.length; next++) {
-        if (tokens[next].indexOf("/") != -1) break;
+        if (tokens[next].indexOf('/') != -1) break;
         correction += tokens[next];
       }
       if (next < tokens.length) {
         String p = tokens[next++];
-        int slash = p.indexOf("/");
+        int slash = p.indexOf('/');
         if (slash > 0) {
           try {
             magnification = new Double(p.substring(0, slash - 1));

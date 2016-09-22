@@ -224,21 +224,21 @@ public class FilePatternDialog extends ImporterDialog {
         fileCount = fileCount.subtract(BigInteger.ONE).multiply(increment).add(first);
 
         pattern += fp.getPrefix(i);
-        pattern += "<";
+        pattern += '<';
         int firstPadding = paddingZeros[i] - first.toString().length() + 1;
         for (int zero=0; zero<firstPadding; zero++) {
-          pattern += "0";
+          pattern += '0';
         }
         pattern += first;
-        pattern += "-";
+        pattern += '-';
         int lastPadding = paddingZeros[i] - fileCount.toString().length() + 1;
         for (int zero=0; zero<lastPadding; zero++) {
-          pattern += "0";
+          pattern += '0';
         }
         pattern += fileCount;
-        pattern += ":";
+        pattern += ':';
         pattern += increment;
-        pattern += ">";
+        pattern += '>';
       }
       id = pattern + fp.getSuffix();
     }

@@ -715,7 +715,7 @@ public class ZeissCZIReader extends FormatReader {
       seriesCount *= mosaics;
     }
 
-    ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+    ms0.imageCount = getSizeZ() * (isRGB() ? getSizeC()/3 : getSizeC()) * getSizeT();
 
     LOGGER.trace("Size Z = {}", getSizeZ());
     LOGGER.trace("Size C = {}", getSizeC());
@@ -1639,7 +1639,7 @@ public class ZeissCZIReader extends FormatReader {
           Element detector = getFirstNode(detectorSettings, "Detector");
           if (detector != null) {
             String detectorID = detector.getAttribute("Id");
-            if (detectorID.indexOf(" ") != -1) {
+            if (detectorID.indexOf(' ') != -1) {
               detectorID =
                 detectorID.substring(detectorID.lastIndexOf(" ") + 1);
             }
@@ -1767,7 +1767,7 @@ public class ZeissCZIReader extends FormatReader {
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
           String detectorID = detector.getAttribute("Id");
-          if (detectorID.indexOf(" ") != -1) {
+          if (detectorID.indexOf(' ') != -1) {
             detectorID = detectorID.substring(detectorID.lastIndexOf(" ") + 1);
           }
           if (!detectorID.startsWith("Detector:")) {
@@ -3482,7 +3482,7 @@ public class ZeissCZIReader extends FormatReader {
             s += "; ";
           }
         }
-        s += "]";
+        s += ']';
       }
       return s;
     }

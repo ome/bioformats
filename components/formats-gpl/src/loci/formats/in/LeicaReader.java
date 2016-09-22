@@ -192,13 +192,13 @@ public class LeicaReader extends FormatReader {
 
     // check for that there is an .lei file in the same directory
     String prefix = name;
-    if (prefix.indexOf(".") != -1) {
+    if (prefix.indexOf('.') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
     Location lei = new Location(prefix + ".lei");
     if (!lei.exists()) {
       lei = new Location(prefix + ".LEI");
-      while (!lei.exists() && prefix.indexOf("_") != -1) {
+      while (!lei.exists() && prefix.indexOf('_') != -1) {
         prefix = prefix.substring(0, prefix.lastIndexOf("_"));
         lei = new Location(prefix + ".lei");
         if (!lei.exists()) lei = new Location(prefix + ".LEI");
@@ -804,9 +804,9 @@ public class LeicaReader extends FormatReader {
       String line = null, key = null, value = null;
       while (lines.hasMoreTokens()) {
         line = lines.nextToken();
-        if (line.indexOf("=") == -1) continue;
-        key = line.substring(0, line.indexOf("=")).trim();
-        value = line.substring(line.indexOf("=") + 1).trim();
+        if (line.indexOf('=') == -1) continue;
+        key = line.substring(0, line.indexOf('=')).trim();
+        value = line.substring(line.indexOf('=') + 1).trim();
         addGlobalMeta(key, value);
 
         if (key.startsWith("Series Name")) lei += value;
@@ -843,13 +843,13 @@ public class LeicaReader extends FormatReader {
     else if (checkSuffix(baseFile, "raw") && isGroupFiles()) {
       // check for that there is an .lei file in the same directory
       String prefix = baseFile;
-      if (prefix.indexOf(".") != -1) {
+      if (prefix.indexOf('.') != -1) {
         prefix = prefix.substring(0, prefix.lastIndexOf("."));
       }
       Location lei = new Location(prefix + ".lei");
       if (!lei.exists()) {
         lei = new Location(prefix + ".LEI");
-        while (!lei.exists() && prefix.indexOf("_") != -1) {
+        while (!lei.exists() && prefix.indexOf('_') != -1) {
           prefix = prefix.substring(0, prefix.lastIndexOf("_"));
           lei = new Location(prefix + ".lei");
           if (!lei.exists()) lei = new Location(prefix + ".LEI");
@@ -1035,7 +1035,7 @@ public class LeicaReader extends FormatReader {
 
     String name = getString(fileLength * 2);
 
-    if (name.indexOf(".") != -1) {
+    if (name.indexOf('.') != -1) {
       name = name.substring(0, name.lastIndexOf("."));
     }
 
@@ -1113,22 +1113,22 @@ public class LeicaReader extends FormatReader {
       else if (dimType.equals("channel")) {
         if (getSizeC() == 0) ms.sizeC = 1;
         ms.sizeC *= size;
-        if (getDimensionOrder().indexOf("C") == -1) {
-          ms.dimensionOrder += "C";
+        if (getDimensionOrder().indexOf('C') == -1) {
+          ms.dimensionOrder += 'C';
         }
         physicalSizes[seriesIndex][3] = physical;
       }
       else if (dimType.equals("z")) {
         ms.sizeZ = size;
-        if (getDimensionOrder().indexOf("Z") == -1) {
-          ms.dimensionOrder += "Z";
+        if (getDimensionOrder().indexOf('Z') == -1) {
+          ms.dimensionOrder += 'Z';
         }
         physicalSizes[seriesIndex][2] = physical;
       }
       else {
         ms.sizeT = size;
-        if (getDimensionOrder().indexOf("T") == -1) {
-          ms.dimensionOrder += "T";
+        if (getDimensionOrder().indexOf('T') == -1) {
+          ms.dimensionOrder += 'T';
         }
         physicalSizes[seriesIndex][4] = physical;
       }
@@ -1349,7 +1349,7 @@ public class LeicaReader extends FormatReader {
             else if (tokens[2].equals("State")) {
               detector.active = data.equals("Active");
 
-              String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
+              String index = tokens[1].substring(tokens[1].indexOf(' ') + 1);
               detector.index = -1;
               try {
                 detector.index = Integer.parseInt(index) - 1;
@@ -1379,10 +1379,10 @@ public class LeicaReader extends FormatReader {
           String mag = null, na = null;
           String immersion = null, correction = null;
           for (int i=0; i<objectiveData.length; i++) {
-            if (objectiveData[i].indexOf("x") != -1 && mag == null &&
+            if (objectiveData[i].indexOf('x') != -1 && mag == null &&
               na == null)
             {
-              int xIndex = objectiveData[i].indexOf("x");
+              int xIndex = objectiveData[i].indexOf('x');
               mag = objectiveData[i].substring(0, xIndex).trim();
               na = objectiveData[i].substring(xIndex + 1).trim();
             }

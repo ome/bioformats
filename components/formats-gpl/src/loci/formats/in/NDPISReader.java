@@ -156,7 +156,7 @@ public class NDPISReader extends FormatReader {
     String[] lines = DataTools.readFile(currentId).split("\r\n");
 
     for (String line : lines) {
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq < 0) {
         continue;
       }

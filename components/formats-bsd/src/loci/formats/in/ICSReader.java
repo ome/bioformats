@@ -1330,14 +1330,14 @@ public class ICSReader extends FormatReader {
       else if (axes[i].equals("z")) {
         m.sizeZ = axisLengths[i];
         if (getDimensionOrder().indexOf('Z') == -1) {
-          m.dimensionOrder += "Z";
+          m.dimensionOrder += 'Z';
         }
       }
       else if (axes[i].equals("t")) {
         if (getSizeT() == 0) m.sizeT = axisLengths[i];
         else m.sizeT *= axisLengths[i];
         if (getDimensionOrder().indexOf('T') == -1) {
-          m.dimensionOrder += "T";
+          m.dimensionOrder += 'T';
         }
       }
       else {
@@ -1347,7 +1347,7 @@ public class ICSReader extends FormatReader {
         storedRGB = getSizeX() == 0;
         m.rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
         if (getDimensionOrder().indexOf('C') == -1) {
-          m.dimensionOrder += "C";
+          m.dimensionOrder += 'C';
         }
 
         if (axes[i].startsWith("c")) {

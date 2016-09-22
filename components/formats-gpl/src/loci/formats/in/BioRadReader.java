@@ -646,9 +646,9 @@ public class BioRadReader extends FormatReader {
             addGlobalMetaList("Note", n.toString());
             break;
           case NOTE_TYPE_VARIABLE:
-            if (n.p.indexOf("=") >= 0) {
-              String key = n.p.substring(0, n.p.indexOf("=")).trim();
-              String value = n.p.substring(n.p.indexOf("=") + 1).trim();
+            if (n.p.indexOf('=') >= 0) {
+              String key = n.p.substring(0, n.p.indexOf('=')).trim();
+              String value = n.p.substring(n.p.indexOf('=') + 1).trim();
               addGlobalMeta(key, value);
 
               if (key.equals("INFO_OBJECTIVE_NAME")) {

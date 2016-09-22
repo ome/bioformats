@@ -168,7 +168,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     if (comment != null) {
       String[] lines = comment.split("\n");
       for (String line : lines) {
-        int equals = line.indexOf("=");
+        int equals = line.indexOf('=');
         if (equals < 0) continue;
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
@@ -222,7 +222,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       String channelName = null;
       String[] lines = comment.split("\n");
       for (String line : lines) {
-        int equals = line.indexOf("=");
+        int equals = line.indexOf('=');
         if (equals < 0) continue;
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
@@ -307,27 +307,27 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     // determine dimension order
 
     m.dimensionOrder = "XY";
-    if (isRGB()) m.dimensionOrder += "C";
+    if (isRGB()) m.dimensionOrder += 'C';
     for (int i=1; i<coords.length; i++) {
       int zDiff = coords[i][0] - coords[i - 1][0];
       int cDiff = coords[i][1] - coords[i - 1][1];
       int tDiff = coords[i][2] - coords[i - 1][2];
 
-      if (zDiff > 0 && getDimensionOrder().indexOf("Z") < 0) {
-        m.dimensionOrder += "Z";
+      if (zDiff > 0 && getDimensionOrder().indexOf('Z') < 0) {
+        m.dimensionOrder += 'Z';
       }
-      if (cDiff > 0 && getDimensionOrder().indexOf("C") < 0) {
-        m.dimensionOrder += "C";
+      if (cDiff > 0 && getDimensionOrder().indexOf('C') < 0) {
+        m.dimensionOrder += 'C';
       }
-      if (tDiff > 0 && getDimensionOrder().indexOf("T") < 0) {
-        m.dimensionOrder += "T";
+      if (tDiff > 0 && getDimensionOrder().indexOf('T') < 0) {
+        m.dimensionOrder += 'T';
       }
       if (m.dimensionOrder.length() == 5) break;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) m.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) m.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") < 0) m.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') < 0) m.dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') < 0) m.dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') < 0) m.dimensionOrder += 'T';
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
@@ -375,7 +375,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     for (String line : lines) {
       line = line.trim();
       if (line.startsWith("SampleUUID=")) {
-        return line.substring(line.indexOf("=") + 1).trim();
+        return line.substring(line.indexOf('=') + 1).trim();
       }
     }
     return "";

@@ -215,11 +215,11 @@ public class VarianFDFReader extends FormatReader {
       if (line.length() == 0) break;
       if (line.startsWith("#")) continue;
 
-      int space = line.indexOf(" ");
-      int eq = line.indexOf("=");
+      int space = line.indexOf(' ');
+      int eq = line.indexOf('=');
       String type = line.substring(0, space).trim();
       String var = line.substring(space, eq).trim();
-      String value = line.substring(eq + 1, line.indexOf(";")).trim();
+      String value = line.substring(eq + 1, line.indexOf(';')).trim();
 
       if (var.equals("*storage")) {
         storedFloats = value.equals("\"float\"");

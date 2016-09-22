@@ -148,9 +148,9 @@ public class OxfordInstrumentsReader extends FormatReader {
       for (int i=0; i<nMetadataStrings; i++) {
         int length = in.readInt();
         String s = in.readString(length);
-        if (s.indexOf(":") != -1) {
-          String key = s.substring(0, s.indexOf(":")).trim();
-          String value = s.substring(s.indexOf(":") + 1).trim();
+        if (s.indexOf(':') != -1) {
+          String key = s.substring(0, s.indexOf(':')).trim();
+          String value = s.substring(s.indexOf(':') + 1).trim();
           if (!value.equals("-")) {
             addGlobalMeta(key, value);
           }

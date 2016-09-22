@@ -399,8 +399,8 @@ public class ZeissZVIReader extends BaseZeissReader {
 
   private int getImageNumber(String dirName, int defaultNumber) {
     if (dirName.toUpperCase().indexOf("ITEM") != -1) {
-      int open = dirName.indexOf("(");
-      int close = dirName.indexOf(")");
+      int open = dirName.indexOf('(');
+      int close = dirName.indexOf(')');
       if (open < 0 || close < 0 || close < open) return defaultNumber;
       return Integer.parseInt(dirName.substring(open + 1, close));
     }

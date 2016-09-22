@@ -1535,7 +1535,7 @@ public class CellSensReader extends FormatReader {
                   }
                 }
                 if (nIntValues > 1) {
-                  value += ")";
+                  value += ')';
                 }
 
                 if (tag == IMAGE_BOUNDARY) {
@@ -1567,7 +1567,7 @@ public class CellSensReader extends FormatReader {
                   }
                 }
                 if (nDoubleValues > 1) {
-                  value += ")";
+                  value += ')';
                 }
 
                 if (tag == RWC_FRAME_SCALE) {

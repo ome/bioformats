@@ -229,21 +229,21 @@ public abstract class BaseZeissReader extends FormatReader {
     CoreMetadata m = core.get(0);
 
     m.dimensionOrder = "XY";
-    if (isRGB()) m.dimensionOrder += "C";
+    if (isRGB()) m.dimensionOrder += 'C';
     for (int i=0; i<coordinates.length-1; i++) {
       int[] zct1 = coordinates[i];
       int[] zct2 = coordinates[i + 1];
       int deltaZ = zct2[0] - zct1[0];
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
-      if (deltaZ > 0 && getDimensionOrder().indexOf("Z") == -1) {
-        m.dimensionOrder += "Z";
+      if (deltaZ > 0 && getDimensionOrder().indexOf('Z') == -1) {
+        m.dimensionOrder += 'Z';
       }
-      if (deltaC > 0 && getDimensionOrder().indexOf("C") == -1) {
-        m.dimensionOrder += "C";
+      if (deltaC > 0 && getDimensionOrder().indexOf('C') == -1) {
+        m.dimensionOrder += 'C';
       }
-      if (deltaT > 0 && getDimensionOrder().indexOf("T") == -1) {
-        m.dimensionOrder += "T";
+      if (deltaT > 0 && getDimensionOrder().indexOf('T') == -1) {
+        m.dimensionOrder += 'T';
       }
     }
     m.dimensionOrder =
@@ -925,7 +925,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Objective Name")) {
           String[] tokens = value.split(" ");
           for (int q=0; q<tokens.length; q++) {
-            int slash = tokens[q].indexOf("/");
+            int slash = tokens[q].indexOf('/');
             if (slash != -1 && slash - q > 0) {
               Double mag = 
                   Double.parseDouble(tokens[q].substring(0, slash - q));

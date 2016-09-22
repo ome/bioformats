@@ -187,7 +187,7 @@ public class HISReader extends FormatReader {
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         String[] data = comment.split(";");
         for (String token : data) {
-          int eq = token.indexOf("=");
+          int eq = token.indexOf('=');
           if (eq != -1) {
             String key = token.substring(0, eq);
             String value = token.substring(eq + 1);
