@@ -172,6 +172,10 @@ The complete list of current dependencies is as follows:
       - xml-apis:xml-apis:1.3.04
       - `Apache License v2.0`_
 
+As described in :ref:`versioning-policy`, the minor version number of a
+Bio-Formats release will always be increased if the version of a
+non-OME/external dependency is bumped.
+
 
 .. _Apache License v2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 .. _MIT License: http://opensource.org/licenses/MIT

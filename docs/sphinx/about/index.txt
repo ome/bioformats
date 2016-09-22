@@ -59,9 +59,42 @@ than being updated whenever a new version of :omerodoc:`OMERO <>` is released.
 We expect this to result in more frequent releases to get fixes out to the
 community faster.
 
-The version number is three numbers separated by dots e.g. 4.0.0. See the
-:doc:`version history <whats-new>` for a list of major changes in each
-release.
+See the :doc:`version history <whats-new>` for a list of major changes in
+each release.
+
+.. _versioning-policy:
+
+Versioning policy
+^^^^^^^^^^^^^^^^^
+
+Bio-Formats does not currently conform to `strict semantic versioning <http://semver.org>`_.
+The following set of rules describe the current policy (using
+`RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_):
+
+- The version number MUST take the form X.Y.Z where X, Y, and Z are
+  non-negative integers, and MUST NOT contain leading zeroes.
+- The patch version Z (x.y.Z | x > 0) MUST be incremented if only backwards
+  compatible bug fixes are introduced. A bug fix is defined as an internal
+  change that fixes incorrect behavior.
+- The minor version Y MUST be increased when backwards incompatible changes
+  (model breaking API) are introduced to the public API. It MAY include patch
+  level changes.
+- The minor version MUST be increased if the version of a non-OME/external
+  dependency is bumped.
+
+The exception to this policy is serialization. Serialization functionality was
+implemented as a ReaderWrapper called Memoizer in Bio-Formats 5.0.0 and is
+exposed to the community via a public API. Currently:
+
+- Major/minor/patch version bumps of Bio-Formats are not backwards-compatible
+  with regard to serialization.
+- Consumers with code relying on Bio-Formats caching stability should
+  not upgrade their Bio-Formats version for now.
+- Changes breaking the serialization should be grouped together as much as
+  possible in order to minimize the number of breakages per series.
+
+See `this GitHub issue <https://github.com/openmicroscopy/design/issues/55>`_
+for further details.
 
 Why Java?
 ---------
