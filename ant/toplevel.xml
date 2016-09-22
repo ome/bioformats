@@ -10,7 +10,6 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="${basedir}"/>
   <import file="${root.dir}/ant/global.xml"/>
   <import file="${root.dir}/ant/version.xml"/>
-  <property file="${root.dir}/ant/toplevel.properties"/>
 
   <!-- Global build targets -->
 
@@ -894,35 +893,17 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix" description="generate a zip bundle of the command line tools">
+  <target name="dist-bftools" if="isUnix"
+      description="generate a zip bundle of the command line tools">
     <echo>----------=========== bftools ===========----------</echo>
-    <!--
-    <zip destfile="${artifact.dir}/bftools.zip"
-      basedir="${bftools.dir}">
-      <patternset>
-        <exclude name="*.jar"/>
-      </patternset>
-    </zip>
-    -->
-    <zip destfile="${artifact.dir}/bftools.zip">
-      <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
-        prefix="bftools"/>
-      <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
-        prefix="bftools" filemode="755"/>
-      <zipfileset file="${package.jar}" prefix="bftools"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
-        fullpath="bftools/NEWS.rst"/>
-    </zip>
-
+    <ant dir="components/bundles/bioformats_package" target="bftools"/>
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab" description="generate a zip bundle of the Matlab toolbox" depends="tools">
+  <target name="dist-matlab"
+    description="generate a zip bundle of the Matlab toolbox">
     <echo>----------=========== bfmatlab ===========----------</echo>
-    <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/formats-gpl/matlab" includes="**/*" prefix="bfmatlab"/>
-      <zipfileset file="${package.jar}" prefix="bfmatlab"/>
-    </zip>
+    <ant dir="components/bundles/bioformats_package" target="bfmatlab"/>
   </target>
 
   <target name="test-matlab" description="run Matlab tests" depends="tools">

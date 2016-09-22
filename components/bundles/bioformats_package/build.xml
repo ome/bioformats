@@ -36,4 +36,26 @@ Type "ant -p" for a list of targets.
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
     </javadoc>
   </target>
+
+  <target name="bftools"
+    description="generate the a zip bundle of the command-line tools">
+    <zip destfile="${artifact.dir}/bftools.zip">
+      <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
+        prefix="bftools"/>
+      <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
+        prefix="bftools" filemode="755"/>
+      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
+        fullpath="bftools/NEWS.rst"/>
+      <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bftools"/>
+    </zip>
+  </target>
+
+  <target name="bfmatlab"
+    description="generate the a zip bundle of the MATLAB toolbox">
+    <zip destfile="${artifact.dir}/bfmatlab.zip">
+      <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
+        includes="**/*" prefix="bfmatlab"/>
+      <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
+    </zip>
+  </target>
 </project>
