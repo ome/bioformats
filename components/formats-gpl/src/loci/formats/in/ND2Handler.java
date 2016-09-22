@@ -933,6 +933,10 @@ public class ND2Handler extends BaseHandler {
      return key.startsWith("Dimensions") || key.startsWith("Abmessungen");
   }
 
+  /**
+   * Parses the physical size from a key.
+   * The expected format for the key is "- Step <value>".
+   */
   private Double parsePixelsSizeZFromKey(String key) {
     int space = key.indexOf(" ", key.indexOf("Step") + 1);
     if (space == -1) return null;
