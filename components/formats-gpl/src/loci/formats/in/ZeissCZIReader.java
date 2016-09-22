@@ -791,6 +791,33 @@ public class ZeissCZIReader extends FormatReader {
     ms0.dimensionOrder = "XYCZT";
 
     ArrayList<Integer> pixelTypes = new ArrayList<Integer>();
+    pixelTypes.add(planes.get(0).directoryEntry.pixelType);
+    if (maxResolution == 0) {
+      for (SubBlock plane : planes) {
+        if (!pixelTypes.contains(plane.directoryEntry.pixelType)) {
+          pixelTypes.add(plane.directoryEntry.pixelType);
+        }
+        plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
+      }
+
+      if (seriesCount * pixelTypes.size() > 1) {
+        core.clear();
+        for (int j=0; j<pixelTypes.size(); j++) {
+          for (int i=0; i<seriesCount; i++) {
+            CoreMetadata add = new CoreMetadata(ms0);
+            if (pixelTypes.size() > 1) {
+              int newC = originalC / pixelTypes.size();
+              add.sizeC = newC;
+              add.imageCount = add.sizeZ * add.sizeT;
+              add.rgb = false;
+              convertPixelType(add, pixelTypes.get(j));
+            }
+            core.add(add);
+          }
+        }
+      }
+    }
+
     if (seriesCount > 1 || maxResolution > 0) {
       core.clear();
       for (int i=0; i<seriesCount; i++) {
@@ -802,17 +829,6 @@ public class ZeissCZIReader extends FormatReader {
           resolution.resolutionCount = 1;
           core.add(resolution);
         }
-      }
-    }
-    else {
-      // check for case where each channel has a different pixel type
-
-      pixelTypes.add(planes.get(0).directoryEntry.pixelType);
-      for (SubBlock plane : planes) {
-        if (!pixelTypes.contains(plane.directoryEntry.pixelType)) {
-          pixelTypes.add(plane.directoryEntry.pixelType);
-        }
-        plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
       }
     }
 
