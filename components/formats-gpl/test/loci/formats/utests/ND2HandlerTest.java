@@ -54,17 +54,20 @@ public class ND2HandlerTest {
   @DataProvider(name = "pixelsSizeKey")
   public Object[][] createPixelsSizeKey() {
     return new Object[][] {
-      {"- Step .1 ", .1},
-      {"- Step .1", .1},
-      {"- Step ,1 ", .1},
-      {"- Step", 0.0},
+      {"dZStep", ".1", .1},
+      {"- Step .1 ", "", .1},
+      {"- Step .1", "", .1},
+      {"- Step ,1 ", "", .1},
+      {"- Step", "", 0.0},
+      {"- Step ", "", 0.0},
+      {"- Step d", "", 0.0},
     };
   }
   
   @Test(dataProvider="pixelsSizeKey")
-  public void testParsePixelsSizeZ(String key, double value)
+  public void testParsePixelsSizeZ(String key, String value, double pixelSizeZ)
   {
-    handler.parseKeyAndValue(key, "", "");
-    assertEquals(handler.getPixelSizeZ(), value);
+    handler.parseKeyAndValue(key, value, "");
+    assertEquals(handler.getPixelSizeZ(), pixelSizeZ);
   }
 }

@@ -866,13 +866,8 @@ public class ND2Handler extends BaseHandler {
         metadata.put("Pinhole size", value);
       }
       else if (key.startsWith("- Step")) {
-        int space = key.indexOf(" ", key.indexOf("Step") + 1);
-        if (space != -1) {
-          int last = key.indexOf(" ", space + 1);
-          if (last == -1) last = key.length();
-          String pixelSizeZstring = key.substring(space, last);
-          pixelSizeZ = DataTools.parseDouble(pixelSizeZstring.trim());
-        }
+        Double step = parsePixelsSizeZFromKey(key);
+        if (step != null) pixelSizeZ = step;
       }
       else if (key.equals("Line")) {
         String[] values = value.split(";");
@@ -938,4 +933,12 @@ public class ND2Handler extends BaseHandler {
      return key.startsWith("Dimensions") || key.startsWith("Abmessungen");
   }
 
+  private Double parsePixelsSizeZFromKey(String key) {
+    int space = key.indexOf(" ", key.indexOf("Step") + 1);
+    if (space == -1) return null;
+
+    int last = key.indexOf(" ", space + 1);
+    if (last == -1) last = key.length();
+    return DataTools.parseDouble(key.substring(space, last).trim());
+  }
 }
