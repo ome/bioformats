@@ -202,14 +202,17 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
+    Set<String> fileSet = new HashSet<String>(files);
     Set<String> minimalFiles = new HashSet<String>();
     FileStitcher reader = new FileStitcher();
-    for (String file: files) {
+    while (!fileSet.isEmpty()) {
+      String file = fileSet.iterator().next();
       try {
         reader.setId(file);
         Set<String> auxFiles = new HashSet<String>(
             Arrays.asList(reader.getUsedFiles())
         );
+        fileSet.removeAll(auxFiles);
         String masterFile = reader.getCurrentFile();
         auxFiles.remove(masterFile);
         minimalFiles.removeAll(auxFiles);
@@ -217,6 +220,7 @@ public class FormatReaderTestFactory {
       }
       catch (Exception e) { }
       finally {
+        fileSet.remove(file);
         try {
           reader.close();
         }
