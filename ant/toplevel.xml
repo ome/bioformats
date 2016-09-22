@@ -181,13 +181,7 @@ Type "ant -p" for a list of targets.
     <ant dir="docs/sphinx" target="clean"/>
   </target>
 
-  <target name="copy-jars">
-    <!-- copy third party JARs into artifacts folder -->
-    <!-- necessary for runtime classpath dependencies to function properly -->
-    <copy todir="${artifact.dir}" preservelastmodified="true">
-      <fileset dir="${lib.dir}" includes="*.jar"/>
-    </copy>
-  </target>
+  <target name="copy-jars" description="copy JARS (deprecated)"/>
 
   <target name="testing-deps" depends="copy-jars"/>
 
