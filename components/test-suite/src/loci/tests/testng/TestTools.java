@@ -300,7 +300,7 @@ public class TestTools {
     catch (IOException exc) {
       LOGGER.debug("", exc);
     }
-    catch (Exception e) { }
+    catch (Throwable e) { }
 
     Arrays.sort(subs, new Comparator() {
       @Override
