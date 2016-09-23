@@ -17,7 +17,7 @@ BSD-licensed: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: Up to 2.5.1
 
 Reader: ScanrReader (:bfreader:`Source Code <ScanrReader.java>`, :doc:`Supported Metadata Fields </metadata/ScanrReader>`)
 
