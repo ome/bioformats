@@ -80,7 +80,7 @@ The following set of rules describe the current policy (using
 - Either the minor version Y or the major version X MUST be incremented when
   backwards-incompatible changes (model-breaking API) are introduced to the
   public API. These version increases MAY also include patch level changes.
-- Either the minor version or the major version MUST be increased if the
+- Either the minor version or the major version MUST be incremented if the
   version of a non-OME/external dependency is updated.
 
 The exception to this policy is serialization. Serialization functionality was
