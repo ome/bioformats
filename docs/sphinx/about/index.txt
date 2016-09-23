@@ -77,8 +77,8 @@ The following set of rules describe the current policy (using
 - The patch version Z MUST be incremented if only backwards
   compatible bug fixes are introduced. A bug fix is defined as an internal
   change that fixes incorrect behavior.
-- Either the minor version Y or the major version X MUST be increased when
-  backwards incompatible changes (model breaking API) are introduced to the
+- Either the minor version Y or the major version X MUST be incremented when
+  backwards-incompatible changes (model-breaking API) are introduced to the
   public API. These version increases MAY also include patch level changes.
 - Either the minor version or the major version MUST be increased if the
   version of a non-OME/external dependency is updated.
@@ -90,7 +90,7 @@ exposed to the community via a public API. Currently:
 - Major/minor/patch version bumps of Bio-Formats are not backwards-compatible
   with regard to serialization in that cached memo files written with a
   previous version may not be readable by later versions and may need to be
-  remade.
+  rewritten.
 - Consumers with code relying on Bio-Formats caching stability should
   not upgrade their Bio-Formats version for now.
 - Changes breaking the serialization should be grouped together as much as
