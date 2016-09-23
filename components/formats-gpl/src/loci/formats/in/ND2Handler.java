@@ -693,7 +693,7 @@ public class ND2Handler extends BaseHandler {
         if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
       }
       else if (key.endsWith("dTimeMSec")) {
-        Long v = DataTools.parseLong(value);;
+        Long v = DataTools.parseLong(value);
         if (!ts.contains(v)) {
           ts.add(v);
           metadata.put("number of timepoints", ts.size());
@@ -938,10 +938,10 @@ public class ND2Handler extends BaseHandler {
    * The expected format for the key is "- Step <value>".
    */
   private Double parsePixelsSizeZFromKey(String key) {
-    int space = key.indexOf(" ", key.indexOf("Step") + 1);
+    int space = key.indexOf(' ', key.indexOf("Step") + 1);
     if (space == -1) return null;
 
-    int last = key.indexOf(" ", space + 1);
+    int last = key.indexOf(' ', space + 1);
     if (last == -1) last = key.length();
     return DataTools.parseDouble(key.substring(space, last).trim());
   }
