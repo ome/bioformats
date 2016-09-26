@@ -52,6 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.JPEGXRCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.meta.MetadataStore;
 
@@ -3303,8 +3304,8 @@ public class ZeissCZIReader extends FormatReader {
           data = new LZWCodec().decompress(data, options);
           break;
         case JPEGXR:
-          throw new UnsupportedCompressionException(
-            "JPEG-XR not yet supported");
+          data = new JPEGXRCodec().decompress(data, options);
+          break;
         case 104: // camera-specific packed pixels
           data = decode12BitCamera(data, options.maxBytes);
           // reverse column ordering
