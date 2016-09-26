@@ -16,7 +16,7 @@ BSD-licensed: |yes|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: Up to 1.4.22
 
 Reader: MicromanagerReader (:bsd-reader:`Source Code <MicromanagerReader.java>`, :doc:`Supported Metadata Fields </metadata/MicromanagerReader>`)
 

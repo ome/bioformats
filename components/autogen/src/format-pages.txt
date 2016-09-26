@@ -1376,6 +1376,7 @@ mif = true
 extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
+versions = Up to 1.4.22
 software = `Micro-Manager <http://micro-manager.org/>`_
 weHave = * many Micro-manager datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
@@ -1660,6 +1661,7 @@ extensions = .xml, .dat, .tif
 owner = `Olympus <http://www.olympus.com/>`_
 developer = `Olympus <http://www.olympus.com/>`_
 bsd = no
+versions = Up to 2.5.1
 weHave = * several ScanR datasets
 pixelsRating = Very good
 metadataRating = Good
