@@ -59,9 +59,45 @@ than being updated whenever a new version of :omerodoc:`OMERO <>` is released.
 We expect this to result in more frequent releases to get fixes out to the
 community faster.
 
-The version number is three numbers separated by dots e.g. 4.0.0. See the
-:doc:`version history <whats-new>` for a list of major changes in each
-release.
+See the :doc:`version history <whats-new>` for a list of major changes in
+each release.
+
+.. _versioning-policy:
+
+Versioning policy
+^^^^^^^^^^^^^^^^^
+
+Bio-Formats does not yet conform to `strict semantic versioning <http://semver.org>`_.
+The following set of rules describe the current policy (using
+`RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_):
+
+- The version number MUST take the form X.Y.Z where X, Y, and Z are
+  non-negative integers, and MUST NOT contain leading zeroes. X is the major
+  version, Y is the minor version and Z is the patch version.
+- The patch version Z MUST be incremented if only backwards
+  compatible bug fixes are introduced. A bug fix is defined as an internal
+  change that fixes incorrect behavior.
+- Either the minor version Y or the major version X MUST be incremented when
+  backwards-incompatible changes (model-breaking API) are introduced to the
+  public API. These version increases MAY also include patch level changes.
+- Either the minor version or the major version MUST be incremented if the
+  version of a non-OME/external dependency is updated.
+
+The exception to this policy is serialization. Serialization functionality was
+implemented as a ReaderWrapper called Memoizer in Bio-Formats 5.0.0 and is
+exposed to the community via a public API. Currently:
+
+- Major/minor/patch version bumps of Bio-Formats are not backwards-compatible
+  with regard to serialization in that cached memo files written with a
+  previous version may not be readable by later versions and may need to be
+  rewritten.
+- Consumers with code relying on Bio-Formats caching stability should
+  not upgrade their Bio-Formats version for now.
+- Changes breaking the serialization should be grouped together as much as
+  possible in order to minimize the number of breakages per series.
+
+See `this GitHub issue <https://github.com/openmicroscopy/design/issues/55>`_
+for further details.
 
 Why Java?
 ---------
