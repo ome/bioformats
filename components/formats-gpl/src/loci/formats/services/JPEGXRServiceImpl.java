@@ -25,6 +25,10 @@
 
 package loci.formats.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import loci.common.services.AbstractService;
 import loci.common.services.Service;
 import loci.formats.FormatException;
@@ -44,13 +48,24 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
    * @see JPEGXRServiceImpl#decompress(byte[])
    */
   public byte[] decompress(byte[] compressed) throws FormatException {
-    Decode decoder = new Decode(compressed);
+    String outFile = null;
+    try {
+      outFile = File.createTempFile(String.valueOf(System.currentTimeMillis()), ".jxr").getAbsolutePath();
+      FileOutputStream out = new FileOutputStream(outFile);
+      out.write(compressed);
+      out.close();
+    }
+    catch (IOException e) {
+      throw new FormatException("Could not write input bytes to temporary file", e);
+    }
+    Decode decoder = new Decode(new File(outFile));
     byte[] decompressed = null;
     try {
       decompressed = decoder.toBytes();
     }
     finally {
       decoder.close();
+      new File(outFile).delete();
     }
     return decompressed;
   }
