@@ -338,9 +338,15 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // the division by uniqueC.size is not a typo - it's meant to
     // account for the multiple actual Z sections
     if (effectiveC * getSizeZ() > totalPlanes &&
-      effectiveC * (getSizeZ() / uniqueC.size()) == totalPlanes)
+      (effectiveC * (getSizeZ() / uniqueC.size()) == totalPlanes ||
+      effectiveC == totalPlanes))
     {
-      m.sizeZ /= uniqueC.size();
+      if (getSizeZ() >= uniqueC.size()) {
+        m.sizeZ /= uniqueC.size();
+      }
+      else {
+        m.sizeZ = 1;
+      }
     }
 
     m.sizeT = totalPlanes /
