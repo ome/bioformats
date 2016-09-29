@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Arrays;
 
 import loci.common.DataTools;
@@ -202,14 +202,14 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
-    Set<String> fileSet = new HashSet<String>(files);
-    Set<String> minimalFiles = new HashSet<String>();
+    Set<String> fileSet = new LinkedHashSet<String>(files);
+    Set<String> minimalFiles = new LinkedHashSet<String>();
     FileStitcher reader = new FileStitcher();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        Set<String> auxFiles = new HashSet<String>(
+        Set<String> auxFiles = new LinkedHashSet<String>(
             Arrays.asList(reader.getUsedFiles())
         );
         fileSet.removeAll(auxFiles);
