@@ -163,10 +163,8 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = no;
-    if (lastPlane != getPlaneCount() - 1 || uniqueFiles.size() > 1) {
-      overwriteDimensions(getMetadataRetrieve());
-    }
+    lastPlane = realIndex;
+    overwriteDimensions(getMetadataRetrieve());
 
     pixels.close();
     pixels = null;
@@ -344,7 +342,7 @@ public class ICSWriter extends FormatWriter {
 
     if (rgbChannels > 1) {
       dimOrder.append("ch\t");
-      sizes[nextSize++] = pos[1] + 1;
+      sizes[nextSize++] = rgbChannels;
     }
 
     for (int i=0; i<outputOrder.length(); i++) {
