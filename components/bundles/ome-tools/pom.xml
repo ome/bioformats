@@ -16,7 +16,7 @@
   <packaging>pom</packaging>
 
   <name>OME Tools bundle</name>
-  <description>An all-in-one bundle of OME libraries.</description>
+  <description>An all-in-one bundle of OME libraries (deprecated).</description>
   <url>http://ome-xml.org/wiki/OmePlugins</url>
   <inceptionYear>2006</inceptionYear>
 

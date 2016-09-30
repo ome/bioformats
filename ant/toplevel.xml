@@ -934,7 +934,7 @@ Type "ant -p" for a list of targets.
 
   <target name="tools-ome"
     depends="copy-jars"
-    description="generate JAR file encompassing several OME tools">
+    description="generate JAR file encompassing several OME tools (deprecated)">
     <echo>----------=========== ome_tools ===========----------</echo>
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
