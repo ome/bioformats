@@ -608,13 +608,14 @@ public class ZeissCZIReader extends FormatReader {
     int fullResBlockCount = planes.size();
     for (int i=0; i<planes.size(); i++) {
       long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
-      if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
+      int compression = planes.get(i).directoryEntry.compression;
+      if (compression == UNCOMPRESSED || compression == JPEGXR) {
         long size = planes.get(i).dataSize;
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
           if (planes.get(i).directoryEntry.pyramidType == 2 &&
-            size == entries[0].storedSize * entries[1].storedSize * bpp &&
+            (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp) &&
             (planes.get(i).x % entries[0].storedSize) == 0 &&
             (planes.get(i).y % entries[1].storedSize) == 0)
           {
