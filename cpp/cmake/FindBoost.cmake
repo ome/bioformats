@@ -1,3 +1,6 @@
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
+
 #.rst:
 # FindBoost
 # ---------
@@ -201,25 +204,6 @@
 # the Boost CMake package configuration for details on what it provides.
 #
 # Set Boost_NO_BOOST_CMAKE to ON to disable the search for boost-cmake.
-
-#=============================================================================
-# Copyright 2006-2012 Kitware, Inc.
-# Copyright 2006-2008 Andreas Schneider <mail@cynapses.org>
-# Copyright 2007      Wengo
-# Copyright 2007      Mike Jackson
-# Copyright 2008      Andreas Pakulat <apaku@gmx.de>
-# Copyright 2008-2012 Philip Lowman <philip@yhbt.com>
-#
-# Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
-#
-# This software is distributed WITHOUT ANY WARRANTY; without even the
-# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
-#=============================================================================
-# (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
-
 
 #-------------------------------------------------------------------------------
 # Before we go searching, check whether boost-cmake is available, unless the
@@ -442,24 +426,26 @@ function(_Boost_GUESS_COMPILER_PREFIX _ret)
     endif()
   elseif (GHSMULTI)
     set(_boost_COMPILER "-ghs")
-  elseif (MSVC14)
-    set(_boost_COMPILER "-vc140")
-  elseif (MSVC12)
-    set(_boost_COMPILER "-vc120")
-  elseif (MSVC11)
-    set(_boost_COMPILER "-vc110")
-  elseif (MSVC10)
-    set(_boost_COMPILER "-vc100")
-  elseif (MSVC90)
-    set(_boost_COMPILER "-vc90")
-  elseif (MSVC80)
-    set(_boost_COMPILER "-vc80")
-  elseif (MSVC71)
-    set(_boost_COMPILER "-vc71")
-  elseif (MSVC70) # Good luck!
-    set(_boost_COMPILER "-vc7") # yes, this is correct
-  elseif (MSVC60) # Good luck!
-    set(_boost_COMPILER "-vc6") # yes, this is correct
+  elseif("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
+    if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
+      set(_boost_COMPILER "-vc140")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
+      set(_boost_COMPILER "-vc120")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
+      set(_boost_COMPILER "-vc110")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16)
+      set(_boost_COMPILER "-vc100")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15)
+      set(_boost_COMPILER "-vc90")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14)
+      set(_boost_COMPILER "-vc80")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13.10)
+      set(_boost_COMPILER "-vc71")
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13) # Good luck!
+      set(_boost_COMPILER "-vc7") # yes, this is correct
+    else() # MSVC60 Good luck!
+      set(_boost_COMPILER "-vc6") # yes, this is correct
+    endif()
   elseif (BORLAND)
     set(_boost_COMPILER "-bcb")
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "SunPro")
@@ -739,6 +725,21 @@ function(_Boost_COMPONENT_DEPENDENCIES component _ret)
     set(_Boost_THREAD_DEPENDENCIES chrono system date_time atomic)
     set(_Boost_WAVE_DEPENDENCIES filesystem system serialization thread chrono date_time atomic)
     set(_Boost_WSERIALIZATION_DEPENDENCIES serialization)
+  elseif(NOT Boost_VERSION VERSION_LESS 106200 AND Boost_VERSION VERSION_LESS 106300)
+    set(_Boost_CHRONO_DEPENDENCIES system)
+    set(_Boost_CONTEXT_DEPENDENCIES thread chrono system date_time)
+    set(_Boost_COROUTINE_DEPENDENCIES context system)
+    set(_Boost_FIBER_DEPENDENCIES context thread chrono system date_time)
+    set(_Boost_FILESYSTEM_DEPENDENCIES system)
+    set(_Boost_IOSTREAMS_DEPENDENCIES regex)
+    set(_Boost_LOG_DEPENDENCIES date_time log_setup system filesystem thread regex chrono atomic)
+    set(_Boost_MATH_DEPENDENCIES math_c99 math_c99f math_c99l math_tr1 math_tr1f math_tr1l atomic)
+    set(_Boost_MPI_DEPENDENCIES serialization)
+    set(_Boost_MPI_PYTHON_DEPENDENCIES python mpi serialization)
+    set(_Boost_RANDOM_DEPENDENCIES system)
+    set(_Boost_THREAD_DEPENDENCIES chrono system date_time atomic)
+    set(_Boost_WAVE_DEPENDENCIES filesystem system serialization thread chrono date_time atomic)
+    set(_Boost_WSERIALIZATION_DEPENDENCIES serialization)
   else()
     message(WARNING "Imported targets not available for Boost version ${Boost_VERSION}")
     set(_Boost_IMPORTED_TARGETS FALSE)
@@ -774,6 +775,7 @@ function(_Boost_COMPONENT_HEADERS component _hdrs)
   set(_Boost_COROUTINE_HEADERS           "boost/coroutine/all.hpp")
   set(_Boost_EXCEPTION_HEADERS           "boost/exception/exception.hpp")
   set(_Boost_DATE_TIME_HEADERS           "boost/date_time/date.hpp")
+  set(_Boost_FIBER_HEADERS               "boost/fiber/all.hpp")
   set(_Boost_FILESYSTEM_HEADERS          "boost/filesystem/path.hpp")
   set(_Boost_GRAPH_HEADERS               "boost/graph/adjacency_list.hpp")
   set(_Boost_GRAPH_PARALLEL_HEADERS      "boost/graph/adjacency_list.hpp")
@@ -805,6 +807,10 @@ function(_Boost_COMPONENT_HEADERS component _hdrs)
   set(_Boost_UNIT_TEST_FRAMEWORK_HEADERS "boost/test/framework.hpp")
   set(_Boost_WAVE_HEADERS                "boost/wave.hpp")
   set(_Boost_WSERIALIZATION_HEADERS      "boost/archive/text_wiarchive.hpp")
+  if(WIN32)
+    set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
+    set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
+  endif()
 
   string(TOUPPER ${component} uppercomponent)
   set(${_hdrs} ${_Boost_${uppercomponent}_HEADERS} PARENT_SCOPE)
@@ -862,6 +868,37 @@ function(_Boost_MISSING_DEPENDENCIES componentvar extravar)
 endfunction()
 
 #
+# Update library search directory hint variable with paths used by prebuilt boost binaries.
+#
+# Prebuilt windows binaries (https://sourceforge.net/projects/boost/files/boost-binaries/)
+# have library directories named using MSVC compiler version and architecture.
+# This function would append corresponding directories if MSVC is a current compiler,
+# so having `BOOST_ROOT` would be enough to specify to find everything.
+#
+macro(_Boost_UPDATE_LIBRARY_SEARCH_DIRS_WITH_PREBUILT_PATHS componentlibvar basedir)
+  if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(_arch_suffix 64)
+    else()
+      set(_arch_suffix 32)
+    endif()
+    if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-14.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-12.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-11.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-10.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-9.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14)
+      list(APPEND ${componentlibvar} ${${basedir}}/lib${_arch_suffix}-msvc-8.0)
+    endif()
+  endif()
+endmacro()
+
+#
 # End functions/macros
 #
 #-------------------------------------------------------------------------------
@@ -907,7 +944,7 @@ else()
   # _Boost_COMPONENT_HEADERS.  See the instructions at the top of
   # _Boost_COMPONENT_DEPENDENCIES.
   set(_Boost_KNOWN_VERSIONS ${Boost_ADDITIONAL_VERSIONS}
-    "1.61.0" "1.61" "1.60.0" "1.60"
+    "1.62.0" "1.62" "1.61.0" "1.61" "1.60.0" "1.60"
     "1.59.0" "1.59" "1.58.0" "1.58" "1.57.0" "1.57" "1.56.0" "1.56" "1.55.0" "1.55"
     "1.54.0" "1.54" "1.53.0" "1.53" "1.52.0" "1.52" "1.51.0" "1.51"
     "1.50.0" "1.50" "1.49.0" "1.49" "1.48.0" "1.48" "1.47.0" "1.47" "1.46.1"
@@ -1261,7 +1298,8 @@ endif()
 #  g        using debug versions of the standard and runtime
 #           support libraries
 if(WIN32 AND Boost_USE_DEBUG_RUNTIME)
-  if(MSVC OR "${CMAKE_CXX_COMPILER}" MATCHES "icl"
+  if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC"
+          OR "${CMAKE_CXX_COMPILER}" MATCHES "icl"
           OR "${CMAKE_CXX_COMPILER}" MATCHES "icpc")
     set(_boost_DEBUG_ABI_TAG "${_boost_DEBUG_ABI_TAG}g")
   endif()
@@ -1319,8 +1357,10 @@ foreach(c DEBUG RELEASE)
 
     if(BOOST_ROOT)
       list(APPEND _boost_LIBRARY_SEARCH_DIRS_${c} ${BOOST_ROOT}/lib ${BOOST_ROOT}/stage/lib)
+      _Boost_UPDATE_LIBRARY_SEARCH_DIRS_WITH_PREBUILT_PATHS(_boost_LIBRARY_SEARCH_DIRS_${c} BOOST_ROOT)
     elseif(_ENV_BOOST_ROOT)
       list(APPEND _boost_LIBRARY_SEARCH_DIRS_${c} ${_ENV_BOOST_ROOT}/lib ${_ENV_BOOST_ROOT}/stage/lib)
+      _Boost_UPDATE_LIBRARY_SEARCH_DIRS_WITH_PREBUILT_PATHS(_boost_LIBRARY_SEARCH_DIRS_${c} _ENV_BOOST_ROOT)
     endif()
 
     list(APPEND _boost_LIBRARY_SEARCH_DIRS_${c}
@@ -1697,19 +1737,19 @@ if(Boost_FOUND)
             IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
             IMPORTED_LOCATION "${Boost_${UPPERCOMPONENT}_LIBRARY}")
         endif()
-        if(EXISTS "${Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG}")
-          set_property(TARGET Boost::${COMPONENT} APPEND PROPERTY
-            IMPORTED_CONFIGURATIONS DEBUG)
-          set_target_properties(Boost::${COMPONENT} PROPERTIES
-            IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-            IMPORTED_LOCATION_DEBUG "${Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG}")
-        endif()
         if(EXISTS "${Boost_${UPPERCOMPONENT}_LIBRARY_RELEASE}")
           set_property(TARGET Boost::${COMPONENT} APPEND PROPERTY
             IMPORTED_CONFIGURATIONS RELEASE)
           set_target_properties(Boost::${COMPONENT} PROPERTIES
             IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
             IMPORTED_LOCATION_RELEASE "${Boost_${UPPERCOMPONENT}_LIBRARY_RELEASE}")
+        endif()
+        if(EXISTS "${Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG}")
+          set_property(TARGET Boost::${COMPONENT} APPEND PROPERTY
+            IMPORTED_CONFIGURATIONS DEBUG)
+          set_target_properties(Boost::${COMPONENT} PROPERTIES
+            IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+            IMPORTED_LOCATION_DEBUG "${Boost_${UPPERCOMPONENT}_LIBRARY_DEBUG}")
         endif()
         if(_Boost_${UPPERCOMPONENT}_DEPENDENCIES)
           unset(_Boost_${UPPERCOMPONENT}_TARGET_DEPENDENCIES)
