@@ -307,7 +307,7 @@ public class DeltavisionReader extends FormatReader {
     int filePixelType = in.readInt();
 
     in.seek(180);
-    int rawSizeT = in.readShort();
+    int rawSizeT = in.readUnsignedShort();
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
     int sequence = in.readShort();
