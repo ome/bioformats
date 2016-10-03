@@ -1,6 +1,42 @@
 Version history
 ===============
 
+5.2.3 (2016 October 5)
+----------------------
+
+Java bug fixes:
+
+* CZI
+   - fixed imageCount for RGB images
+* ICS writing
+   - fixed ordering of image dimensions
+* DeltaVision
+   - fixed reading of large time dimensions
+
+Command-line tools improvements:
+
+* bftools.zip now includes the version history as :file:`NEWS.rst` (thanks to
+  Gerhard Burger)
+
+Code clean-up/improvements:
+
+* switched to `String.indexOf(int)` in GPL-licensed reader code so that a
+  simpler library method can be used
+* strings now extended with characters where possible
+* completed deprecation of `DataTools.sanitizeDouble()`
+* deprecated unused OSGi and ome-tools bundle build targets
+
+OME-XML changes/improvements:
+
+* bumped schema version number to 2 (schema namespace left unchanged)
+* added acquisition modes `BrightField`, `SweptFieldConfocal` and `SPIM`
+* added parsing for Laser Scan Confocal and Swept Field Confocal
+
+Documentation improvements:
+
+* documented versioning policy
+* clarified supported versions for Micro-Manager and Olympus ScanR files
+
 5.2.2 (2016 September 13)
 -------------------------
 
