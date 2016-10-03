@@ -29,6 +29,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Arrays;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -70,7 +73,7 @@ public class FormatReaderTestFactory {
 
   @Factory
   public Object[] createInstances() {
-    List files = new ArrayList();
+    List<String> files = new ArrayList<String>();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
@@ -199,29 +202,32 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
-    int index = 0;
+    Set<String> fileSet = new LinkedHashSet<String>(files);
+    Set<String> minimalFiles = new LinkedHashSet<String>();
     FileStitcher reader = new FileStitcher();
-    while (index < files.size()) {
-      String file = (String) files.get(index);
+    while (!fileSet.isEmpty()) {
+      String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        String[] usedFiles = reader.getUsedFiles();
-        for (int q=0; q<usedFiles.length; q++) {
-          if (files.indexOf(usedFiles[q]) > index) {
-            files.remove(usedFiles[q]);
-          }
-        }
+        Set<String> auxFiles = new LinkedHashSet<String>(
+            Arrays.asList(reader.getUsedFiles())
+        );
+        fileSet.removeAll(auxFiles);
+        String masterFile = reader.getCurrentFile();
+        auxFiles.remove(masterFile);
+        minimalFiles.removeAll(auxFiles);
+        minimalFiles.add(masterFile);
       }
       catch (Exception e) { }
       finally {
+        fileSet.remove(file);
         try {
           reader.close();
         }
         catch (IOException e) { }
       }
-
-      index++;
     }
+    files = new ArrayList(minimalFiles);
 
     // create test class instances
     System.out.println("Building list of tests...");
