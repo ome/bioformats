@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.2.3-SNAPSHOT</version>
+  <version>5.2.3</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -50,7 +50,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.2.3-SNAPSHOT</release.version>
+    <release.version>5.2.3</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>
