@@ -493,7 +493,11 @@ public class ZeissCZIReader extends FormatReader {
   @Override
   public int getOptimalTileWidth() {
     if (tileWidth != null && getCoreIndex() < tileWidth.length) {
-      return tileWidth[getCoreIndex()];
+      int width = tileWidth[getCoreIndex()];
+      if (width == 0 && getCoreIndex() > 0) {
+        return tileWidth[getCoreIndex() - 1] / 2;
+      }
+      return width;
     }
     return super.getOptimalTileWidth();
   }
@@ -502,7 +506,11 @@ public class ZeissCZIReader extends FormatReader {
   @Override
   public int getOptimalTileHeight() {
     if (tileHeight != null && getCoreIndex() < tileHeight.length) {
-      return tileHeight[getCoreIndex()];
+      int height = tileHeight[getCoreIndex()];
+      if (height == 0 && getCoreIndex() > 0) {
+        return tileHeight[getCoreIndex() - 1] / 2;
+      }
+      return height;
     }
     return super.getOptimalTileHeight();
   }
@@ -614,7 +622,7 @@ public class ZeissCZIReader extends FormatReader {
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
-          if (planes.get(i).directoryEntry.pyramidType == 2 &&
+          if ((planes.get(i).directoryEntry.pyramidType == 2 || compression == JPEGXR) &&
             (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp) &&
             (planes.get(i).x % entries[0].storedSize) == 0 &&
             (planes.get(i).y % entries[1].storedSize) == 0)
@@ -622,7 +630,7 @@ public class ZeissCZIReader extends FormatReader {
             int scale = planes.get(i).x / entries[0].storedSize;
             // resolutions must be a power of 2 smaller than the full resolution
             // some files will contain power-of-3 resolutions, which need to be ignored
-            if ((scale % 2) == 0) {
+            if (scale == 1 || (scale % 2) == 0) {
               planes.get(i).coreIndex = 0;
               while (scale > 1) {
                 scale /= 2;
@@ -839,6 +847,11 @@ public class ZeissCZIReader extends FormatReader {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
+        if (s > 0) {
+          core.get(s).sizeX = 0;
+          core.get(s).sizeY = 0;
+          calculateDimensions(s, true);
+        }
         if (originalMosaicCount > 1) {
           // calculate total stitched size if the image was not fused
           int minRow = Integer.MAX_VALUE;
@@ -881,11 +894,24 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
         for (int r=0; r<core.get(s).resolutionCount; r++) {
-          int div = (int) Math.pow(2, r);
-          core.get(s + r).sizeX = core.get(s).sizeX / div;
-          core.get(s + r).sizeY = core.get(s).sizeY / div;
-          tileWidth[s + r] = tileWidth[s] / div;
-          tileHeight[s + r] = tileHeight[s] / div;
+          boolean hasValidPlane = false;
+          for (SubBlock plane : planes) {
+            if (plane.coreIndex == s + r) {
+              hasValidPlane = true;
+              break;
+            }
+          }
+          if (!hasValidPlane) {
+            core.remove(s + r);
+            core.get(s).resolutionCount--;
+          }
+          else {
+            int div = (int) Math.pow(2, r);
+            core.get(s + r).sizeX = core.get(s).sizeX / div;
+            core.get(s + r).sizeY = core.get(s).sizeY / div;
+            tileWidth[s + r] = tileWidth[s] / div;
+            tileHeight[s + r] = tileHeight[s] / div;
+          }
         }
         s += core.get(s).resolutionCount;
       }
@@ -1319,14 +1345,28 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private void calculateDimensions() {
+    calculateDimensions(0, false);
+  }
+
+  private void calculateDimensions(int coreIndex, boolean xyOnly) {
     // calculate the dimensions
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(coreIndex);
+    int previousCoreIndex = getCoreIndex();
+    setCoreIndex(coreIndex);
 
     ArrayList<Integer> uniqueT = new ArrayList<Integer>();
 
     for (SubBlock plane : planes) {
+      if (xyOnly && plane.coreIndex != coreIndex) {
+        continue;
+      }
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
+          continue;
+        }
+        if (xyOnly && dimension.dimension.charAt(0) != 'X' &&
+          dimension.dimension.charAt(0) != 'Y')
+        {
           continue;
         }
         switch (dimension.dimension.charAt(0)) {
@@ -1414,6 +1454,7 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+    setCoreIndex(previousCoreIndex);
   }
 
   private void assignPlaneIndices() {
