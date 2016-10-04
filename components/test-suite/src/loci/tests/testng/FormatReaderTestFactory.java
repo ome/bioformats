@@ -209,9 +209,11 @@ public class FormatReaderTestFactory {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        Set<String> auxFiles = new LinkedHashSet<String>(
-            Arrays.asList(reader.getUsedFiles())
-        );
+        String[] usedFiles = reader.getUsedFiles();
+        Set<String> auxFiles = new LinkedHashSet<String>();
+        for (String s: usedFiles) {
+          auxFiles.add((new File(s)).getCanonicalPath());
+        }
         fileSet.removeAll(auxFiles);
         String masterFile = reader.getCurrentFile();
         auxFiles.remove(masterFile);
