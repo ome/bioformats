@@ -1251,7 +1251,7 @@ public class ZeissCZIReader extends FormatReader {
           }
 
           String color = channels.get(c).color;
-          if (color != null) {
+          if (color != null && !isRGB()) {
             color = color.replaceAll("#", "");
             if (color.length() > 6) {
               color = color.substring(2, color.length());
