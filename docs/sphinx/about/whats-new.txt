@@ -15,8 +15,8 @@ Java bug fixes:
 
 Command-line tools improvements:
 
-* bftools.zip now includes the version history as :file:`NEWS.rst` (thanks to
-  Gerhard Burger)
+* :file:`bftools.zip` now includes the version history as :file:`NEWS.rst`
+  (thanks to Gerhard Burger)
 
 Code clean-up/improvements:
 
