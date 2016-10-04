@@ -696,7 +696,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats autogen -->
 
   <target name="deps-autogen"
-    depends="copy-jars, jar-formats-api,jar-formats-bsd"/>
+    depends="copy-jars, jar-formats-api,jar-formats-bsd,jar-formats-gpl"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for Bio-Formats autogen">
