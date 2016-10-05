@@ -110,6 +110,8 @@
  *-----------------------------------------------------------------------------
  */
 
+// Test diff generation (Java).
+
 package ${lang.metadata_package};
 
 import java.util.List;
