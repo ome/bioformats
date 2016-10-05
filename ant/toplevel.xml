@@ -159,11 +159,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bundles/bioformats_package" target="docs"/>
   </target>
 
-  <target name="docs-zip" depends="docs"
-    description="generate a zip bundle of the Javadocs">
-    <zip destfile="${artifact.dir}/bio-formats-javadocs.zip"
-      basedir="${merged-docs.dir}"/>
-  </target>
+  <target name="docs-zip" depends="docs"/>
 
   <target name="docs-sphinx"
     description="generate the Sphinx HTML and PDF documentation">
