@@ -125,6 +125,7 @@ Type "ant -p" for a list of targets.
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
+    <delete dir="generated-sources"/>
   </target>
 
   <target name="test"
@@ -959,6 +960,16 @@ Type "ant -p" for a list of targets.
   <target name="clean-xsd-fu"
     description="remove build files for xsd-fu">
     <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
+  </target>
+
+  <target name="generate-sources"
+    description="generate sources using xsd-fu"
+    depends="ome-xml-src, metadata-src">
+    <mkdir dir="generated-sources"/>
+	<copy todir="generated-sources">
+	    <fileset dir="components/ome-xml/target/generated-sources"/>
+	</copy>
+    <ant dir="components/ome-xml" target="generate-source"/>
   </target>
 
   <target name="ome-xml-src"
