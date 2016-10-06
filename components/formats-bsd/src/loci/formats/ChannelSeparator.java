@@ -237,7 +237,7 @@ public class ChannelSeparator extends ReaderWrapper {
     int channel = no % c;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
-    return ImageTools.splitChannels(thumb, channel, c, bpp, false, false);
+    return ImageTools.splitChannels(thumb, channel, c, bpp, false, reader.isInterleaved());
   }
 
   /* @see IFormatReader#close(boolean) */
