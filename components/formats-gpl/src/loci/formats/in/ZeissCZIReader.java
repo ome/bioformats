@@ -964,29 +964,22 @@ public class ZeissCZIReader extends FormatReader {
       indices.add(i);
       indexIntoPlanes.put(c, indices);
       //Add series metadata : populate position list
+      int nameWidth = String.valueOf(getSeriesCount()).length();
       for (DimensionEntry dimension : p.directoryEntry.dimensionEntries) {
-          if (dimension == null) {
-            continue;
-          }
-          switch (dimension.dimension.charAt(0)) {
-              case 'S':
-                  setSeries(p.coreIndex);
-                  String sIndex = "";
-                  int seriesId = p.coreIndex + 1;
-                  //add padding to make sure the original metadata table is organized properly in ImageJ
-                  if (seriesId < 10) {
-                      sIndex = "000" + String.valueOf(seriesId);
-                  }
-                  else if (seriesId >= 10 && seriesId < 100){
-                      sIndex = "00" + String.valueOf(seriesId);
-                  }
-                  else if (seriesId >= 100 && seriesId < 1000){
-                      sIndex = "0" + String.valueOf(seriesId);
-                  }
-                  addSeriesMetaList("Positions|" + "SeriesIndex|" + sIndex + "|", dimension.start);
-                  break;
-          }
-       }
+        if (dimension == null) {
+          continue;
+        }
+        switch (dimension.dimension.charAt(0)) {
+          case 'S':
+            setCoreIndex(p.coreIndex);
+            int seriesId = p.coreIndex + 1;
+            //add padding to make sure the original metadata table is organized properly in ImageJ
+            String sIndex = String.format("Positions|Series %0" + nameWidth + "d|", seriesId);
+            addSeriesMetaList(sIndex, dimension.start);
+            break;
+        }
+      }
+      setCoreIndex(0);
     }
 
     if (channels.size() > 0 && channels.get(0).color != null && !isRGB()) {
