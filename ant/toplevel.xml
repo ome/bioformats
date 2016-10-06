@@ -10,7 +10,6 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="${basedir}"/>
   <import file="${root.dir}/ant/global.xml"/>
   <import file="${root.dir}/ant/version.xml"/>
-  <property file="${root.dir}/ant/toplevel.properties"/>
 
   <!-- Global build targets -->
 
@@ -50,7 +49,6 @@ Type "ant -p" for a list of targets.
       jar-ome-poi,
       jar-formats-api,
       jar-formats-bsd,
-      jar-formats-bsd-tests,
       jar-bio-formats-tools,
       jar-specification,
       jar-tests,
@@ -155,35 +153,13 @@ Type "ant -p" for a list of targets.
       utils-formats-bsd"
     description="compile all extra utilities"/>
 
-  <target name="docs" depends="jars, javadoc-properties"
+  <target name="docs" depends="jars"
     description="generate the Javadocs for most components">
     <echo>----------=========== Javadocs ===========----------</echo>
-    <tstamp>
-      <format property="YEAR" pattern="yyyy"/>
-    </tstamp>
-    <javadoc sourcepath="${merged-docs.source}"
-      classpath="${merged-docs.classpath}"
-      destdir="${merged-docs.dir}/api"
-      maxmemory="${merged-docs.memory}"
-      encoding="UTF-8"
-      failonerror="true" author="true" version="true" use="true"
-      access="private"
-      nodeprecated="false" windowtitle="Bio-Formats API"
-      additionalparam="${javadoc.doclint}">
-      <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
-      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
-      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
-      <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
-      <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
-    </javadoc>
+    <ant dir="components/bundles/bioformats_package" target="docs"/>
   </target>
 
-  <target name="docs-zip" depends="docs"
-    description="generate a zip bundle of the Javadocs">
-    <zip destfile="${artifact.dir}/bio-formats-javadocs.zip"
-      basedir="${merged-docs.dir}"/>
-  </target>
+  <target name="docs-zip" depends="docs"/>
 
   <target name="docs-sphinx"
     description="generate the Sphinx HTML and PDF documentation">
@@ -200,13 +176,7 @@ Type "ant -p" for a list of targets.
     <ant dir="docs/sphinx" target="clean"/>
   </target>
 
-  <target name="copy-jars">
-    <!-- copy third party JARs into artifacts folder -->
-    <!-- necessary for runtime classpath dependencies to function properly -->
-    <copy todir="${artifact.dir}" preservelastmodified="true">
-      <fileset dir="${lib.dir}" includes="*.jar"/>
-    </copy>
-  </target>
+  <target name="copy-jars" description="copy JARS (deprecated)"/>
 
   <target name="testing-deps" depends="copy-jars"/>
 
@@ -630,11 +600,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats-tools" target="test"/>
   </target>
 
-  <target name="jar-formats-bsd-tests"
-    description="generate JAR file of BSD format spec tests">
-      <ant dir="components/formats-bsd" target="jar-formats-bsd-tests"/>
-  </target>
-
   <!-- Bio-Formats -->
 
   <target name="deps-formats-gpl"
@@ -727,7 +692,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats autogen -->
 
   <target name="deps-autogen"
-    depends="copy-jars, jar-formats-api,jar-formats-bsd"/>
+    depends="copy-jars, jar-formats-api,jar-formats-bsd,jar-formats-gpl"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for Bio-Formats autogen">
@@ -880,79 +845,21 @@ Type "ant -p" for a list of targets.
 
   <!-- Tool collections -->
 
-  <target name="tools"
-    depends="copy-jars,
-      jar-jai,
-      jar-bio-formats-plugins,
-      jar-mdbtools,
-      jar-metakit,
-      jar-ome-jxr,
-      jar-ome-xml,
-      jar-ome-poi,
-      jar-formats-api,
-      jar-formats-bsd,
-      jar-bio-formats-tools,
-      jar-specification"
+  <target name="tools" depends="jars"
     description="generate JAR file bundles of Bio-Formats and dependencies">
 
     <echo>----------=========== bioformats_package ===========----------</echo>
-    <for list="${package.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${package.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${package.jar}" basedir="${package.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${package.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${package.dir}"/>
+    <ant dir="components/bundles/bioformats_package" target="bundle"/>
 
     <echo>----------=========== loci_tools ===========----------</echo>
-    <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${loci-tools.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-            <exclude name="META-INF/maven/**"/>
-            <exclude name="META-INF/services/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${loci-tools.jar}" basedir="${loci-tools.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${loci-tools.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${loci-tools.dir}"/>
+    <ant dir="components/bundles/loci-tools" target="bundle"/>
   </target>
 
   <target name="tools-ome"
     depends="copy-jars"
     description="generate JAR file encompassing several OME tools (deprecated)">
     <echo>----------=========== ome_tools ===========----------</echo>
-    <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${ome-tools.dir}">
-          <patternset>
-            <exclude name="META-INF/*"/>
-            <exclude name="META-INF/maven/**"/>
-            <exclude name="META-INF/services/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${ome-tools.jar}" basedir="${ome-tools.dir}">
-      <manifest>
-        <attribute name="Main-Class" value="${ome-tools.main}"/>
-      </manifest>
-    </jar>
-    <delete dir="${ome-tools.dir}"/>
+    <ant dir="components/bundles/ome-tools" target="bundle"/>
   </target>
 
   <!-- Xsd-Fu -->
@@ -982,35 +889,17 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix" description="generate a zip bundle of the command line tools">
+  <target name="dist-bftools" if="isUnix"
+      description="generate a zip bundle of the command line tools">
     <echo>----------=========== bftools ===========----------</echo>
-    <!--
-    <zip destfile="${artifact.dir}/bftools.zip"
-      basedir="${bftools.dir}">
-      <patternset>
-        <exclude name="*.jar"/>
-      </patternset>
-    </zip>
-    -->
-    <zip destfile="${artifact.dir}/bftools.zip">
-      <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
-        prefix="bftools"/>
-      <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
-        prefix="bftools" filemode="755"/>
-      <zipfileset file="${package.jar}" prefix="bftools"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
-        fullpath="bftools/NEWS.rst"/>
-    </zip>
-
+    <ant dir="components/bundles/bioformats_package" target="bftools"/>
   </target>
 
   <!-- Matlab -->
-  <target name="dist-matlab" description="generate a zip bundle of the Matlab toolbox" depends="tools">
+  <target name="dist-matlab"
+    description="generate a zip bundle of the Matlab toolbox">
     <echo>----------=========== bfmatlab ===========----------</echo>
-    <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/formats-gpl/matlab" includes="**/*" prefix="bfmatlab"/>
-      <zipfileset file="${package.jar}" prefix="bfmatlab"/>
-    </zip>
+    <ant dir="components/bundles/bioformats_package" target="bfmatlab"/>
   </target>
 
   <target name="test-matlab" description="run Matlab tests" depends="tools">

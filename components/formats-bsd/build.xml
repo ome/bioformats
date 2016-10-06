@@ -6,7 +6,8 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="formats-bsd" default="jar" basedir=".">
+<project name="formats-bsd" default="jar" basedir="."
+    xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
   <description>Build file for BSD Bio-Formats readers and writers</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
@@ -20,11 +21,11 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
     <testng haltonfailure="true" testname="${component.name}">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
@@ -35,12 +36,20 @@ Type "ant -p" for a list of targets.
     description="run missing LuraWave JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
+    <path id="test-no-lurawave.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="lwf*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-lurawave.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-lurawave}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -52,12 +61,20 @@ Type "ant -p" for a list of targets.
     description="run missing JAI ImageIO JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
+    <path id="test-no-jai.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="jai*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-jai.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-jai}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -69,12 +86,20 @@ Type "ant -p" for a list of targets.
     description="run missing OME-XML JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
+    <path id="test-no-ome-xml.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="ome-xml*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-ome-xml.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-xml}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -86,12 +111,20 @@ Type "ant -p" for a list of targets.
     description="run missing EXIF JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-exif.xml"/>
+    <path id="test-no-exif.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="metadata*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-exif.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-exif}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -103,12 +136,20 @@ Type "ant -p" for a list of targets.
     description="run missing Xerces JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-xerces.xml"/>
+    <path id="test-no-xerces.classpath">
+      <restrict>
+        <path refid="test.classpath"/>
+        <rsel:not>
+          <rsel:name name="xerces*.jar"/>
+        </rsel:not>
+      </restrict>
+    </path>
     <testng failureProperty="failedTest">
+      <classpath refid="test-no-xerces.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.cp.no-xerces}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -121,11 +162,11 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/spec/testng.xml"/>
     <testng haltonfailure="true" testname="${component.name}">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
     </testng>
@@ -136,25 +177,16 @@ Type "ant -p" for a list of targets.
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-long-running.xml"/>
     <testng failureProperty="failedTest">
+      <classpath refid="test.classpath"/>
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
     <fail if="failedTest"/>
   </target>
-
-  <target name="jar-formats-bsd-tests" depends="compile, compile-tests, copy-test-source"
-    description="generate jar of spec test classes" if="doTests">
-    <echo>About to compile tests</echo>
-    <mkdir dir="${artifact.dir}"/>
-    <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
-    <echo>After test to build *-test.jar</echo>
-  </target>
-
 
 </project>
