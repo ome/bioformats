@@ -181,23 +181,6 @@ your FindBugs installation's lib directory. E.g.:
     </artifact:install>
   </target>
 
-  <target name="osgi" depends="jar"
-    description="inject OSGi bundle information">
-    <!-- NB: Add OSGi bundle metadata. -->
-    <bundle outputDir="${artifact.dir}"
-      bundleName="${component.name}"
-      bundleSymbolicName="${domain.prefix}.${component.name}"
-      bundleVersion="${component.version}.${vcs.revision}"
-      classpath="${classes.dir}"
-      exportPackage="*;version=&quot;${component.version}&quot;"
-      filename="${component.name}">
-      <manifest>
-        <attribute name="Main-Class" value="${component.main-class}"/>
-        <attribute name="Class-Path" value="${component.manifest-cp}"/>
-      </manifest>
-    </bundle>
-  </target>
-
   <target name="bundle" depends="mvn-init" description="create bundle JAR">
     <mkdir dir="${artifact.dir}"/>
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
