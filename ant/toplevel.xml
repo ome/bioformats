@@ -855,13 +855,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bundles/loci-tools" target="bundle"/>
   </target>
 
-  <target name="tools-ome"
-    depends="copy-jars"
-    description="generate JAR file encompassing several OME tools (deprecated)">
-    <echo>----------=========== ome_tools ===========----------</echo>
-    <ant dir="components/bundles/ome-tools" target="bundle"/>
-  </target>
-
   <!-- Xsd-Fu -->
   <target name="clean-xsd-fu"
     description="remove build files for xsd-fu">
