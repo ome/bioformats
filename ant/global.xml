@@ -80,14 +80,6 @@ Type "ant -p" for a list of targets.
   <!--<taskdef resource="proguard/ant/task.properties"
     classpath="${lib.dir}/proguard.jar"/>-->
 
-  <!--
-  OSGi Bundle Ant Task:
-  https://opensource.luminis.net/wiki/display/SITE/OSGi+Bundle+Ant+Task
-  https://opensource.luminis.net/wiki/display/SITE/Documentation
-  -->
-  <taskdef name="bundle" classname="net.luminis.build.plugin.bnd.BuildTask"
-    classpath="${lib.dir}/net.luminis.build.plugin-0.2.0.jar"/>
-
   <!-- Internal build targets -->
 
   <target name="info" depends="init">
