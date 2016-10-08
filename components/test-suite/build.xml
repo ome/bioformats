@@ -56,19 +56,6 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
-  <target name="test-minimal-convert" depends="compile"
-    description="run conversion tests with fixed input data">
-    <testng testname="Minimal conversion tests" failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-      </classpath>
-      <classpath refid="test.classpath"/>
-      <classfileset file="${classes.dir}/loci/tests/testng/ConversionTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
