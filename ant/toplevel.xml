@@ -23,7 +23,6 @@ Type "ant -p" for a list of targets.
       compile-mipav-stubs,
       compile-mdbtools,
       compile-metakit,
-      compile-ome-jxr,
       compile-ome-xml,
       compile-ome-poi,
       compile-formats-api,
@@ -44,7 +43,6 @@ Type "ant -p" for a list of targets.
       jar-mipav-stubs,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-jxr,
       jar-ome-xml,
       jar-ome-poi,
       jar-formats-api,
@@ -73,7 +71,6 @@ Type "ant -p" for a list of targets.
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
-      findbugs-ome-jxr,
       findbugs-tests"
     description="run findbugs on most components"/>
 
@@ -88,7 +85,6 @@ Type "ant -p" for a list of targets.
       clean-mipav-stubs,
       clean-mdbtools,
       clean-metakit,
-      clean-ome-jxr,
       clean-ome-xml,
       clean-ome-poi,
       clean-formats-api,
@@ -114,7 +110,6 @@ Type "ant -p" for a list of targets.
       test-mipav-stubs,
       test-mdbtools,
       test-metakit,
-      test-ome-jxr,
       test-ome-xml,
       test-ome-poi,
       test-formats-api,
@@ -277,37 +272,6 @@ Type "ant -p" for a list of targets.
   <target name="test-metakit" depends="jar-metakit, testing-deps"
     description="compile and run tests for Metakit Java library">
     <ant dir="components/metakit" target="test"/>
-  </target>
-
-  <!-- OME JPEG XR library -->
-
-  <target name="deps-ome-jxr"
-    depends="jar-formats-common, jar-formats-bsd"/>
-
-  <target name="compile-ome-jxr" depends="deps-ome-jxr"
-    description="compile classes for OME JPEG XR Java library (deprecated)">
-    <ant dir="components/ome-jxr" target="ome-jxr.compile"/>
-  </target>
-
-  <target name="jar-ome-jxr" depends="deps-ome-jxr"
-    description="generate JAR file for OME JPEG XR Java library (deprecated)">
-    <ant dir="components/ome-jxr" target="ome-jxr.jar"/>
-  </target>
-
-  <target name="findbugs-ome-jxr" depends="jar-ome-jxr"
-    description="run findbugs on OME JPEG XR Java library (deprecated)">
-    <ant dir="components/ome-jxr" target="ome-jxr.findbugs"/>
-  </target>
-
-  <target name="clean-ome-jxr"
-    depends="clean-formats-common"
-    description="remove build files for OME JPEG XR Java library (deprecated)">
-    <ant dir="components/ome-jxr" target="ome-jxr.clean"/>
-  </target>
-
-  <target name="test-ome-jxr" depends="jar-ome-jxr, testing-deps"
-    description="compile and run tests for OME JPEG XR Java library (deprecated)">
-    <ant dir="components/ome-jxr" target="test"/>
   </target>
 
   <!-- OME-XML Java library -->
@@ -530,7 +494,6 @@ Type "ant -p" for a list of targets.
     depends="copy-jars, jar-formats-common,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-jxr,
       jar-ome-xml,
       jar-ome-poi,
       jar-formats-api,
@@ -555,7 +518,6 @@ Type "ant -p" for a list of targets.
     depends="clean-formats-common,
       clean-mdbtools,
       clean-metakit,
-      clean-ome-jxr,
       clean-ome-xml,
       clean-ome-poi,
       clean-formats-api,
