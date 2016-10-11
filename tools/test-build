@@ -74,7 +74,6 @@ antbuild()
       ant clean compile-autogen
       ant clean compile-formats-api
       ant clean compile-jai
-      ant clean compile-formats-common
       ant clean compile-bio-formats-plugins
       ant clean compile-lwf-stubs
       ant clean compile-mipav-stubs

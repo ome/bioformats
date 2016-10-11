@@ -34,15 +34,6 @@ Bio-Formats
     Optional:      Xalan Serializer, Xalan
     License:       GPL
 
-Formats Common
-    A library containing common I/O and reflection classes
-    -=-
-    JAR file:      formats-common.jar
-    Path:          components/formats-common
-    Project deps:  (none)
-    Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      Logback
-    License:       GPL
 
 Plugins for ImageJ
     A collection of plugins for ImageJ, including the Bio-Formats Importer,
