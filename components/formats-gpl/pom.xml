@@ -60,7 +60,7 @@
     </dependency>
     <dependency>
       <groupId>ome</groupId>
-      <artifactId>jxrlib</artifactId>
+      <artifactId>jxrlib-all</artifactId>
       <version>${jxrlib.version}</version>
     </dependency>
     <dependency>

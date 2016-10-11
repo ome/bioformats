@@ -25,15 +25,15 @@
 
 package loci.formats.services;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import loci.common.services.AbstractService;
 import loci.common.services.Service;
 import loci.formats.FormatException;
 
 import ome.jxrlib.Decode;
+import ome.jxrlib.DecodeException;
 
 /**
  * Interface defining methods for working with JPEG-XR data
@@ -45,29 +45,21 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
   }
 
   /**
-   * @see JPEGXRServiceImpl#decompress(byte[])
+   * @see JPEGXRServiceImpl#decompress(byte[], int)
    */
-  public byte[] decompress(byte[] compressed) throws FormatException {
-    String outFile = null;
+  public byte[] decompress(byte[] compressed, int outputSize) throws FormatException {
     try {
-      outFile = File.createTempFile(String.valueOf(System.currentTimeMillis()), ".jxr").getAbsolutePath();
-      FileOutputStream out = new FileOutputStream(outFile);
-      out.write(compressed);
-      out.close();
+      Decode decoder = new Decode(compressed);
+      ByteBuffer output = ByteBuffer.allocateDirect(outputSize);
+      decoder.toBytes(output);
+      byte[] raw = new byte[outputSize];
+      output.get(raw);
+      output = null;
+      return raw;
     }
-    catch (IOException e) {
-      throw new FormatException("Could not write input bytes to temporary file", e);
+    catch (DecodeException e) {
+      throw new FormatException(e);
     }
-    Decode decoder = new Decode(new File(outFile));
-    byte[] decompressed = null;
-    try {
-      decompressed = decoder.toBytes();
-    }
-    finally {
-      decoder.close();
-      new File(outFile).delete();
-    }
-    return decompressed;
   }
 
 }

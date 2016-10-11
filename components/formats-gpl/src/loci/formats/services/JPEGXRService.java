@@ -38,9 +38,10 @@ public interface JPEGXRService extends Service {
    * Opening and closing of decoders and streams is handled internally.
    *
    * @param compressed the complete JPEG-XR compressed data
+   * @param outputSize the number of expected decompressed bytes
    * @return raw decompressed bytes
    * @throws FormatException if an error occurs during decompression
    */
-  byte[] decompress(byte[] compressed) throws FormatException;
+  byte[] decompress(byte[] compressed, int outputSize) throws FormatException;
 
 }
