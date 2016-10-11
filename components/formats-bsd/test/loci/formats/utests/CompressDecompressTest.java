@@ -32,15 +32,11 @@
 
 package loci.formats.utests;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import com.google.common.hash.Hashing;
 
 import static org.testng.AssertJUnit.fail;
 import org.testng.annotations.Test;
 
-import loci.common.DataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
