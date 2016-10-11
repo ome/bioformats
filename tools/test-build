@@ -48,24 +48,6 @@ flake()
     flake8 -v components cpp docs
 }
 
-# Test sphinx docs build
-sphinx()
-{
-    (
-        export SPHINXOPTS="-W"
-        ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx
-        ant -Dsphinx.warnopts=$SPHINXOPTS docs-sphinx
-    )
-}
-
-sphinx_html()
-{
-    (
-        cd docs/sphinx
-        ant -Dsphinx.warnopts=-W html
-     )
- }
-
 # Test Ant build targets
 antbuild()
 {
@@ -88,6 +70,7 @@ antbuild()
       ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
+      ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx docs-sphinx
     )
 }
 
@@ -104,10 +87,6 @@ do
             cpp ;;
         flake8)
             flake ;;
-        sphinx)
-            sphinx ;;
-        sphinx_html)
-            sphinx_html ;;
         ant)
             antbuild ;;
         all)

@@ -24,14 +24,13 @@ jdk:
 env:
   - BUILD=maven_findbugs
   - BUILD=maven
-  - BUILD=sphinx_html
   - BUILD=ant
 
 matrix:
   fast_finish: true
 
 before_install:
-  - if [[ $BUILD == 'sphinx_html' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
+  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
 
 install:
   - if [[ $BUILD != 'ant' ]] && [[ $BUILD != 'sphinx_html' ]]; then git fetch --tags; fi
