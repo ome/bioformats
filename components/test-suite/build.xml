@@ -42,20 +42,6 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="test-tiff-compress" depends="compile"
-    description="run tests for TIFF compression/decompression">
-    <testng testname="TIFF compression tests"
-      failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-      </classpath>
-      <classpath refid="test.classpath"/>
-      <classfileset file="${classes.dir}/loci/tests/testng/CompressDecompressTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
