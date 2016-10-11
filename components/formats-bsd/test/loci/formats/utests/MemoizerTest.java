@@ -263,7 +263,6 @@ public class MemoizerTest {
     memoizer.close();
   }
 
-  @Test
   public void testGetMemoFilePermissionsDirectory() throws Exception {
       String uuid = UUID.randomUUID().toString();
       File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
@@ -293,7 +292,6 @@ public class MemoizerTest {
                    memoFile.getAbsolutePath());
   }
 
-  @Test
   public void testGetMemoFilePermissionsInPlaceDirectory() throws Exception {
       String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
       memoizer = new Memoizer(reader, 0, new File(rootPath));
@@ -312,7 +310,6 @@ public class MemoizerTest {
         memoFile.getAbsolutePath());
   }
 
-  @Test
   public void testGetMemoFilePermissionsInPlace() throws Exception {
       memoizer = new Memoizer(reader);
 
