@@ -326,7 +326,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     Arrays.fill(buf, (byte) 0);
-    RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
+    boolean emptyTile = true;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
       for (SubBlock plane : planes) {
@@ -367,6 +367,7 @@ public class ZeissCZIReader extends FormatReader {
             }
 
             if (tile.intersects(image)) {
+              emptyTile = false;
               byte[] rawData = new SubBlock(plane).readPixelData();
               Region intersection = tile.intersection(image);
               int intersectionX = 0;
@@ -400,6 +401,7 @@ public class ZeissCZIReader extends FormatReader {
             RandomAccessInputStream s = new RandomAccessInputStream(rawData);
             try {
               readPlane(s, x, y, w, h, buf);
+              emptyTile = false;
             }
             finally {
               s.close();
@@ -409,15 +411,16 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     } finally {
-        stream.close();
     }
 
-    if (isRGB()) {
+    if (isRGB() && !emptyTile) {
       // channels are stored in BGR order; red and blue channels need switching
-      for (int i=0; i<buf.length/(getRGBChannelCount()*bpp); i++) {
+      int redOffset = bpp * 2;
+      for (int i=0; i<buf.length/pixel; i++) {
+        int index = i * pixel;
         for (int b=0; b<bpp; b++) {
-          int blueIndex = i * getRGBChannelCount() * bpp + b;
-          int redIndex = i * getRGBChannelCount() * bpp + bpp * 2 + b;
+          int blueIndex = index + b;
+          int redIndex = index + redOffset + b;
           byte red = buf[redIndex];
           buf[redIndex] = buf[blueIndex];
           buf[blueIndex] = red;
@@ -3274,7 +3277,7 @@ public class ZeissCZIReader extends FormatReader {
     // -- SubBlock API methods --
 
     public byte[] readPixelData() throws FormatException, IOException {
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = new RandomAccessInputStream(filename, (int) dataSize);
       try {
         return readPixelData(s);
       } finally {
