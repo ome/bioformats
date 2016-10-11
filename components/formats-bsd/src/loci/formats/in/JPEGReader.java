@@ -54,7 +54,12 @@ import java.util.HashMap;
 import org.joda.time.DateTime;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.unit.Unit;
 import ome.xml.model.primitives.Timestamp;
+
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 /**
  * JPEGReader is the file format reader for JPEG images.
@@ -207,8 +212,47 @@ public class JPEGReader extends DelegateReader {
         }
 
         HashMap<String, String> tags = exif.getTags();
-        for (String tagName : tags.keySet()) {
-          addGlobalMeta(tagName, tags.get(tagName));
+        String unitsTagName = exif.getTagName(ExifSubIFDDirectory.TAG_RESOLUTION_UNIT);
+        String unitsTag = tags.get(unitsTagName);
+        Unit<Length> units = UNITS.MICROMETER;
+        if (unitsTag != null) {
+          if (unitsTag.toLowerCase().contains("inch")) { 
+            units = UNITS.INCH;
+          }
+          else if (unitsTag.toLowerCase().contains("centimeter")) { 
+            units = UNITS.CENTIMETER;
+          }
+          else if (Integer.parseInt(unitsTag) == 2) { 
+            units = UNITS.INCH;
+          }
+          else if (Integer.parseInt(unitsTag) == 3) { 
+            units = UNITS.CENTIMETER;
+          }
+        }
+        for (String tagName : tags.keySet()) {  
+          if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_X_RESOLUTION))) {
+            try {
+              double resolutionX = Double.parseDouble(tags.get(tagName));
+              Length sizeX = FormatTools.getPhysicalSizeX((1/resolutionX),units);
+              store.setPixelsPhysicalSizeX(sizeX, 0);
+            }
+            catch(NumberFormatException e) {
+              LOGGER.warn("EXIF Tag - Resolution X not in correct format, expected double, found : " + tags.get(tagName));
+            }
+          }
+          else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_Y_RESOLUTION))) {
+            try {
+              double resolutionY = Double.parseDouble(tags.get(tagName));
+              Length sizeY = FormatTools.getPhysicalSizeY((1/resolutionY),units);
+              store.setPixelsPhysicalSizeY(sizeY, 0);
+            }
+            catch(NumberFormatException e) {
+              LOGGER.warn("EXIF Tag - Resolution Y not in correct format, expected double, found : " + tags.get(tagName));
+            }
+          }
+          else {
+            addGlobalMeta(tagName, tags.get(tagName));
+          }
         }
       }
       catch (ServiceException e) {
