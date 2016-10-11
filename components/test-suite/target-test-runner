@@ -4,7 +4,7 @@
 Generate TestNG XML files and run test cases.
 """
 
-#  
+#
 #  Copyright (C) 2009 - 2016 Open Microscopy Environment. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -28,10 +28,8 @@ Generate TestNG XML files and run test cases.
 #  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #  SUCH DAMAGE.
 
-import glob
 import sys
 import os
-import re
 
 from xml.sax.saxutils import escape
 from tempfile import NamedTemporaryFile
@@ -39,15 +37,16 @@ from getopt import getopt, GetoptError
 
 # Handle Python 2.5 built-in ElementTree
 try:
-        from xml.etree.ElementTree import XML, Element, SubElement, ElementTree, dump
+    from xml.etree.ElementTree import Element, ElementTree
 except ImportError:
-        from elementtree.ElementTree import XML, Element, SubElement, ElementTree, dump
+    from elementtree.ElementTree import Element, ElementTree
 
 
 # Configuration options
 JAVA_ARGS = "-Xmx2048M"
 START_CLASS = "org.testng.TestNG"
 DOCTYPE = '<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">'
+
 
 def usage(error):
     """Prints usage so that we don't have to. :)"""
@@ -69,17 +68,12 @@ Examples:
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
     sys.exit(2)
 
-def create_testng_xml_file(test_class, targets, revision, hudson, thread_count, in_memory):
+def create_testng_xml_file(test_class, targets, hudson, thread_count, in_memory):
     """Creates a temporary file with TestNG XML content for each target."""
     root = Element("suite")
     root.set("name", "targets")
     root.set("parallel", "tests")
     root.set("thread-count", str(thread_count))
-    if revision is not None:
-        parameter = Element("parameter")
-        parameter.set("name", "bioformats_revision")
-        parameter.set("value", revision)
-        root.append(parameter)
     # Add each target to the TestNG XML file
     for target in targets:
         target = target.strip().lstrip()
@@ -158,30 +152,6 @@ if __name__ == '__main__':
     program_dir = os.path.dirname(sys.argv[0])
     os.chdir(program_dir)
 
-    classpath = ""
-    try:
-        classpath = os.environ['CLASSPATH']
-    except KeyError:
-        pass
-    classpath = "%s:./build/classes" % classpath
-    for f in glob.glob("../../artifacts/*.jar"):
-        if not f.endswith("bioformats_package.jar") and not f.endswith("loci_tools.jar") and f.find("log4j") == -1:
-            classpath += ":%s" % f
-
-    revision = None
-    try:
-        revision = os.environ['SVN_REVISION']
-    except:
-        pass
-
-    xml_file = create_testng_xml_file(test_class, targets, revision,
+    xml_file = create_testng_xml_file(test_class, targets,
                                       hudson, thread_count, in_memory)
-    log_props = 'logback-target-test-runner.xml'
-    log_props = os.path.join(os.path.dirname(__file__), log_props)
-    log_props = os.path.abspath(log_props)
-    log_props = '-Dlogback.configurationFile=file:///%s' % log_props
-    cmd = 'java %s -cp "%s" %s %s %s' % (JAVA_ARGS, classpath, log_props, \
-                                         START_CLASS, xml_file.name)
-    print cmd
-    os.system(cmd)
     xml_file.close()

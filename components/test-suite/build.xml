@@ -11,6 +11,11 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+  <condition property="testng.threadCount" value="1">
+    <not>
+      <isset property="testng.threadCount"/>
+    </not>
+  </condition>
 
   <!-- overrides 'clean' target in common.xml -->
   <target name="clean" >
@@ -21,17 +26,37 @@ Type "ant -p" for a list of targets.
   <target name="test-file-handles" depends="compile"
     description="run tests for leaking file handles">
     <exec executable="${basedir}/target-test-runner">
+      <arg value="--hudson"/>
+      <arg value="-t${testng.threadCount}"/>
+      <arg value="-f${testng.filename}"/>
       <arg value="loci.tests.testng.FileHandleTest"/>
-      <arg value="${filename}"/>
     </exec>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <xmlfileset file="testng.xml"/>
+      <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
+    </testng>
   </target>
 
   <target name="test-open-bytes-performance" depends="compile"
     description="run tests for open bytes performance">
     <exec executable="${basedir}/target-test-runner">
-      <arg value="loci.tests.testng.OpenBytesPerformanceTest"/>
-      <arg value="${filename}"/>
+        <arg value="--hudson"/>
+        <arg value="-t${testng.threadCount}"/>
+        <arg value="-f${testng.filename}"/>
+        <arg value="loci.tests.testng.FileHandleTest"/>
     </exec>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <xmlfileset file="testng.xml"/>
+      <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
+    </testng>
   </target>
 
   <target name="test-tiff-writer" depends="compile"
@@ -126,12 +151,6 @@ Type "ant -p" for a list of targets.
 
   <target name="test-automated" depends="compile"
     description="run automated tests in group 'automated'">
-
-    <condition property="testng.threadCount" value="1">
-      <not>
-        <isset property="testng.threadCount"/>
-      </not>
-    </condition>
 
     <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.OrderingListener"
