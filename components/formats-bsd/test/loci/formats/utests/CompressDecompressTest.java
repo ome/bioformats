@@ -35,6 +35,8 @@ package loci.formats.utests;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.google.common.hash.Hashing;
+
 import static org.testng.AssertJUnit.fail;
 import org.testng.annotations.Test;
 
@@ -53,19 +55,6 @@ import loci.formats.tiff.TiffCompression;
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */
 public class CompressDecompressTest {
-
-  /** Calculate the MD5 of a byte array. */
-  public static String md5(byte[] b) {
-    try {
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      md.reset();
-      md.update(b);
-      byte[] digest = md.digest();
-      return DataTools.bytesToHex(digest);
-    }
-    catch (NoSuchAlgorithmException e) { }
-    return null;
-  }
 
   /**
    * Tests the writing of the tiles.
@@ -94,17 +83,17 @@ public class CompressDecompressTest {
     String beforeCompression, afterCompression, afterDecompression;
     CodecOptions options = compression.getCompressionCodecOptions(ifd);
     byte[] compressed;
-    beforeCompression = md5(plane);
+    beforeCompression = Hashing.md5().hashBytes(plane).toString();
     compressed = compression.compress(plane, options);
-    afterCompression = md5(compressed);
+    afterCompression = Hashing.md5().hashBytes(compressed).toString();
     if (compression.equals(TiffCompression.UNCOMPRESSED)) {
       if (!beforeCompression.equals(afterCompression)) {
         fail("Compression: "+compression.getCodecName()+" "+
             String.format("Compression MD5 %s != %s",
             beforeCompression, afterCompression));
       }
-      afterDecompression = md5(
-          compression.decompress(compressed, options));
+      afterDecompression = Hashing.md5().hashBytes(
+        compression.decompress(compressed, options)).toString();
       if (!beforeCompression.equals(afterDecompression)) {
         fail("Compression: "+compression.getCodecName()+" "+
             String.format("Decompression MD5 %s != %s",
@@ -116,8 +105,8 @@ public class CompressDecompressTest {
             String.format("Compression MD5 %s != %s",
             beforeCompression, afterCompression));
       }
-      afterDecompression = md5(
-          compression.decompress(compressed, options));
+      afterDecompression = Hashing.md5().hashBytes(
+        compression.decompress(compressed, options)).toString();
       if (!lossy && !beforeCompression.equals(afterDecompression)) {
         fail("Compression: "+compression.getCodecName()+" "+
             String.format("Decompression MD5 %s != %s",
