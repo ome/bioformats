@@ -35,10 +35,16 @@ import loci.formats.FormatException;
 import ome.jxrlib.Decode;
 import ome.jxrlib.DecodeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Interface defining methods for working with JPEG-XR data
  */
 public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService {
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(JPEGXRServiceImpl.class);
 
   public JPEGXRServiceImpl() {
     checkClassDependency(ome.jxrlib.Decode.class);
@@ -49,12 +55,17 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
    */
   public byte[] decompress(byte[] compressed, int outputSize) throws FormatException {
     try {
+      LOGGER.trace("begin tile decode; compressed size = {}, expected decompressed size = {}", compressed.length, outputSize);
       Decode decoder = new Decode(compressed);
+      LOGGER.trace("constructed Decode");
       ByteBuffer output = ByteBuffer.allocateDirect(outputSize);
+      LOGGER.trace("allocated output ByteBuffer");
       decoder.toBytes(output);
+      LOGGER.trace("retrieved decompressed bytes");
       byte[] raw = new byte[outputSize];
       output.get(raw);
       output = null;
+      LOGGER.trace("copied decompressed bytes");
       return raw;
     }
     catch (DecodeException e) {
