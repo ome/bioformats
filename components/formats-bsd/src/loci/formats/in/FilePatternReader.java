@@ -133,9 +133,13 @@ public class FilePatternReader extends FormatReader {
     int fileIndex = fileIndexes[getSeries()][no][0];
     int planeIndex = fileIndexes[getSeries()][no][1];
     helper.setId(files[fileIndex]);
-    helper.setSeries(getSeries());
-    byte[] plane = helper.openBytes(planeIndex, buf, x, y, w, h);
-    helper.close();
+    byte[] plane = null;
+    try {
+      helper.setSeries(getSeries());
+      plane = helper.openBytes(planeIndex, buf, x, y, w, h);
+    } finally {
+      helper.close();
+    }
     return plane;
   }
 
@@ -270,6 +274,11 @@ public class FilePatternReader extends FormatReader {
   /* @see loci.formats.IFormatReader#reopenFile() */
   @Override
   public void reopenFile() throws IOException {
+
+    if (helper != null) {
+      helper.close();
+    }
+
     if (files != null) {
       IFormatReader r = new ImageReader(newClasses);
       helper = Memoizer.wrap(getMetadataOptions(), r);
@@ -280,14 +289,20 @@ public class FilePatternReader extends FormatReader {
       IFormatReader r = new ImageReader(newClasses);
       helper = Memoizer.wrap(getMetadataOptions(), r);
     }
-    else {
-      helper.close();
-    }
+
+    // In the following sections, close is called immediately
+    // following setId. In the worst case, this wastes some
+    // time on a needless open but does verify that the file
+    // is re-openable. In the best case, this allows the
+    // configured wrappers to perform any setup.
+
     if (stitcher != null) {
       stitcher.setUsingPatternIds(true);
       stitcher.setCanChangePattern(false);
       try {
         helper.setId(pattern);
+        // see close comment above
+        helper.close();
       }
       catch (FormatException e) {
         throw new IOException("Could not reopen file", e);
@@ -296,6 +311,8 @@ public class FilePatternReader extends FormatReader {
     else {
       try {
         helper.setId(files[0]);
+        // see close comment above
+        helper.close();
       }
       catch (FormatException e) {
         throw new IOException("Could not reopen " + files[0], e);
