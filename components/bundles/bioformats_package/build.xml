@@ -12,7 +12,7 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <target name="docs" depends="javadoc-properties, mvn-init"
+  <target name="docs" depends="javadoc-properties, mvn-init, release-version"
     description="generate the Javadocs for most components">
     <echo>----------=========== Javadocs ===========----------</echo>
     <tstamp>
@@ -37,7 +37,7 @@ Type "ant -p" for a list of targets.
     </javadoc>
     <zip destfile="${artifact.dir}/bio-formats-javadocs-${release.version}.zip">
       <zipfileset dir="${merged-docs.dir}" prefix="bio-formats-javadocs-${release.version}"/>
-      </zip>
+    </zip>
   </target>
 
   <target name="bftools"
