@@ -223,9 +223,13 @@ public class HarmonyReader extends FormatReader {
         if (reader == null) {
           reader = new MinimalTiffReader();
         }
-        reader.setId(p.filename);
-        reader.openBytes(0, buf, x, y, w, h);
-        reader.close();
+        try {
+          reader.setId(p.filename);
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        finally {
+          reader.close();
+        }
       }
       else {
         LOGGER.debug("Could not find file {}", p.filename);
@@ -649,9 +653,14 @@ public class HarmonyReader extends FormatReader {
       }
       else if (activePlane != null && "Image".equals(parentName)) {
         if ("URL".equals(currentName)) {
-          Location parent =
-            new Location(currentId).getAbsoluteFile().getParentFile();
-          activePlane.filename = new Location(parent, value).getAbsolutePath();
+          if (value.startsWith("http")) {
+            activePlane.filename = value;
+          }
+          else {
+            Location parent =
+              new Location(currentId).getAbsoluteFile().getParentFile();
+            activePlane.filename = new Location(parent, value).getAbsolutePath();
+          }
         }
         else if ("Row".equals(currentName)) {
           activePlane.row = Integer.parseInt(value) - 1;
