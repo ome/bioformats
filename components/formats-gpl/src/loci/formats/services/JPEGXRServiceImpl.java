@@ -26,7 +26,6 @@
 package loci.formats.services;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import loci.common.services.AbstractService;
 import loci.common.services.Service;
@@ -54,23 +53,10 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
    * @see JPEGXRServiceImpl#decompress(byte[], int)
    */
   public byte[] decompress(byte[] compressed, int outputSize) throws FormatException {
-    try {
       LOGGER.trace("begin tile decode; compressed size = {}, expected decompressed size = {}", compressed.length, outputSize);
-      Decode decoder = new Decode(compressed);
-      LOGGER.trace("constructed Decode");
-      ByteBuffer output = ByteBuffer.allocateDirect(outputSize);
-      LOGGER.trace("allocated output ByteBuffer");
-      decoder.toBytes(output);
+      byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length, outputSize);
       LOGGER.trace("retrieved decompressed bytes");
-      byte[] raw = new byte[outputSize];
-      output.get(raw);
-      output = null;
-      LOGGER.trace("copied decompressed bytes");
       return raw;
-    }
-    catch (DecodeException e) {
-      throw new FormatException(e);
-    }
   }
 
 }
