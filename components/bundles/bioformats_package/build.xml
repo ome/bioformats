@@ -35,8 +35,9 @@ Type "ant -p" for a list of targets.
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
       <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
     </javadoc>
-    <zip destfile="${artifact.dir}/bio-formats-javadocs.zip"
-      basedir="${merged-docs.dir}"/>
+    <zip destfile="${artifact.dir}/bio-formats-javadocs-${release.version}.zip">
+      <zipfileset dir="${merged-docs.dir}" prefix="bio-formats-javadocs-${release.version}"/>
+      </zip>
   </target>
 
   <target name="bftools"

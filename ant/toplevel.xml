@@ -131,7 +131,7 @@ Type "ant -p" for a list of targets.
   <target name="docs-zip" depends="docs"/>
 
   <target name="docs-sphinx"
-    description="generate the Sphinx HTML and PDF documentation">
+    description="generate the Sphinx HTML documentation">
     <echo>----------=========== Sphinx HTML ===========----------</echo>
     <ant dir="docs/sphinx" target="html"/>
     <echo>----------=========== Sphinx MAN ===========----------</echo>
@@ -139,7 +139,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-docs-sphinx"
-	description="remove build files for the Sphinx HTML and PDF documentation">
+	description="remove build files for the Sphinx HTML documentation">
     <ant dir="docs/sphinx" target="clean"/>
   </target>
 
