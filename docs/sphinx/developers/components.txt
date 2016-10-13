@@ -11,12 +11,31 @@ can also be built with Maven by running :command:`mvn` in the component's
 subdirectory.  The Maven module name for each component (as it is shown in
 most IDEs) is also noted in parenthesis.
 
+External components
+-------------------
+
+.. _ome-common:
+
+ome-common (Common):
+
+Provides I/O classes that unify reading from files on disk, streams or files
+in memory, compressed streams, and non-file URLs.  The primary entry points
+are :javadoc:`Location <loci/common/Location.html>`,
+:javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
+(for reading), and :javadoc:`RandomAccessOutputStream
+<loci/common/RandomAccessOutputStream.html>` (for writing).
+
+In addition to I/O, there are several classes to assist in working with XML
+(:javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
+(:javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
+(:javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
+(:javadoc:`DataTools <loci/common/DataTools.html>`).
+
 Core components
 ---------------
 
 The most commonly used and actively modified components.
 
-- :ref:`formats-common <formats-common>`
 - :ref:`formats-api <formats-api>`
 - :ref:`formats-bsd <formats-bsd>`
 - :ref:`formats-gpl <formats-gpl>`
@@ -125,8 +144,8 @@ for large files.  There are no dependencies on other components.
 This is a fork of `Apache POI <http://poi.apache.org>`_, which allows reading
 of Microsoft OLE document files.  We have made substantial changes to support
 files larger than 2GB and reduce the amount of memory required to open a file.
-I/O is also handled by classes from :ref:`formats-common <formats-common>`,
-which allows OLE files to be read from memory.
+I/O is also handled by classes from :ref:`ome-common <ome-common>`, which
+allows OLE files to be read from memory.
 
 .. _forks-turbojpeg:
 
@@ -152,30 +171,8 @@ and writing files.  There are no file format readers or writers actually
 implemented in this component, but it does contain the majority of the API
 that defines Bio-Formats.  :ref:`formats-bsd <formats-bsd>` and
 :ref:`formats-gpl <formats-gpl>` implement this API to provide file format
-readers and writers. :ref:`formats-common <formats-common>` and
+readers and writers. :ref:`ome-common <ome-common>` and
 :ref:`ome-xml <ome-xml>` are both required as part of the interface definitions.
-
-.. _formats-common:
-
-:source:`formats-common (Common) <components/formats-common>`:
-
-`Ant: jar-formats-common`
-
-Provides I/O classes that unify reading from files on disk, streams or files
-in memory, compressed streams, and non-file URLs.  The primary entry points
-are :javadoc:`Location <loci/common/Location.html>`,
-:javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
-(for reading), and :javadoc:`RandomAccessOutputStream
-<loci/common/RandomAccessOutputStream.html>` (for writing).
-
-In addition to I/O, there are several classes to assist in working with XML
-(:javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
-(:javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
-(:javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
-(:javadoc:`DataTools <loci/common/DataTools.html>`).
-
-This does not depend on any other components, so can be used anywhere
-independent of the rest of the Bio-Formats API.
 
 .. _formats-bsd:
 
@@ -207,7 +204,7 @@ available specification.
 
 Java implementation of the `Metakit database specification
 <http://equi4.com/metakit/>`_.  This uses classes from
-:ref:`formats-common <formats-common>` and is used by
+:ref:`ome-common <ome-common>` and is used by
 :ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
 Bio-Formats API.
 

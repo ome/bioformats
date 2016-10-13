@@ -40,7 +40,7 @@ an earlier version using this guide if you need to.
 
    - jai_imageio.jar
    - formats-gpl.jar
-   - formats-common.jar
+   - ome-common.jar
    - turbojpeg.jar
    - ome-xml.jar
    - formats-bsd.jar
@@ -59,7 +59,7 @@ an earlier version using this guide if you need to.
 
    - jai_imageio.jar
    - formats-gpl.jar
-   - formats-common.jar
+   - ome-common.jar
    - turbojpeg.jar
    - ome-xml.jar
    - formats-bsd.jar

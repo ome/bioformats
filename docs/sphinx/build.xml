@@ -21,15 +21,33 @@ Type "ant -p" for a list of targets.
   <target name="init" depends="release-version">
     <property name="sphinx.release" value="${release.shortversion}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
-    <property name="sphinx.source.branch" value="develop"/>
-    <property name="sphinx.source.user" value="openmicroscopy"/>
+    <if>
+      <isset property="sphinx.source.branch"/>
+      <then>
+        <property name="sphinx.bioformats.source.branch" value="${sphinx.source.branch}"/>
+        <property name="sphinx.common_java.source.branch" value="${sphinx.source.branch}"/>
+      </then>
+    </if>
+    <property name="sphinx.bioformats.source.branch" value="develop"/>
+    <property name="sphinx.common_java.source.branch" value="master"/>
+    <if>
+      <isset property="sphinx.source.user"/>
+      <then>
+        <property name="sphinx.openmicroscopy_source.user" value="${sphinx.source.user}"/>
+        <property name="sphinx.ome_source.user" value="${sphinx.source.user}"/>
+      </then>
+    </if>
+    <property name="sphinx.openmicroscopy_source.user" value="openmicroscopy"/>
+    <property name="sphinx.ome_source.user" value="ome"/>
     <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
     <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
     <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
     <replace file="conf.py" token="@sphinx_builddir@" value="."/>
-    <replace file="conf.py" token="@sphinx_source_branch@" value="${sphinx.source.branch}"/>
-    <replace file="conf.py" token="@sphinx_source_user@" value="${sphinx.source.user}"/>
+    <replace file="conf.py" token="@bioformats_source_branch@" value="${sphinx.bioformats.source.branch}"/>
+    <replace file="conf.py" token="@common_java_source_branch@" value="${sphinx.common_java.source.branch}"/>
+    <replace file="conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
+    <replace file="conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
     <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
   </target>
 

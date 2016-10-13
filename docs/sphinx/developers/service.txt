@@ -108,10 +108,10 @@ Writing a service
        ...
 
 .. seealso::
-  :source:`loci.common.services.Service <components/formats-common/src/loci/common/services/Service.java>`.
+  :common_java_source:`loci.common.services.Service <src/main/java/loci/common/services/Service.java>`.
     Source code for ``loci.common.services.Service`` interface
 
-  :source:`loci.common.services.ServiceFactory <components/formats-common/src/loci/common/services/ServiceFactory.java>`
+  :common_java_source:`loci.common.services.ServiceFactory <src/main/java/loci/common/services/ServiceFactory.java>`
     Source code for ``loci.common.services.Service`` interface
 
 
