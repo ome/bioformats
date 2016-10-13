@@ -135,6 +135,7 @@ public class FilePatternReader extends FormatReader {
   {
     int fileIndex = fileIndexes[getSeries()][no][0];
     int planeIndex = fileIndexes[getSeries()][no][1];
+    helper.close();
     helper.setId(files[fileIndex]);
     byte[] plane = null;
     try {
@@ -293,19 +294,11 @@ public class FilePatternReader extends FormatReader {
       helper = Memoizer.wrap(getMetadataOptions(), r);
     }
 
-    // In the following sections, close is called immediately
-    // following setId. In the worst case, this wastes some
-    // time on a needless open but does verify that the file
-    // is re-openable. In the best case, this allows the
-    // configured wrappers to perform any setup.
-
     if (stitcher != null) {
       stitcher.setUsingPatternIds(true);
       stitcher.setCanChangePattern(false);
       try {
         helper.setId(pattern);
-        // see close comment above
-        helper.close();
       }
       catch (FormatException e) {
         throw new IOException("Could not reopen file", e);
@@ -314,8 +307,6 @@ public class FilePatternReader extends FormatReader {
     else {
       try {
         helper.setId(files[0]);
-        // see close comment above
-        helper.close();
       }
       catch (FormatException e) {
         throw new IOException("Could not reopen " + files[0], e);
