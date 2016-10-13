@@ -35,6 +35,8 @@ package loci.formats;
 import java.io.IOException;
 
 import loci.common.DataTools;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to automatically separate the channels in a file.
@@ -296,6 +298,23 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImageY = -1;
     lastImageWidth = -1;
     lastImageHeight = -1;
+
+    MetadataStore store = getMetadataStore();
+    MetadataTools.populatePixelsOnly(store, this);
+    if (store instanceof MetadataRetrieve) {
+      MetadataRetrieve retrieve = (MetadataRetrieve) store;
+      for (int s=0; s<getCoreMetadataList().size(); s++) {
+        setCoreIndex(s);
+        int rgbChannels = getSizeC() / reader.getEffectiveSizeC();
+        for (int c=0; c<reader.getEffectiveSizeC(); c++) {
+          String originalChannelName = retrieve.getChannelName(s, c * rgbChannels);
+          for (int i=1; i<rgbChannels; i++) {
+            store.setChannelName(originalChannelName, s, c * rgbChannels + i);
+          }
+        }
+      }
+      setCoreIndex(0);
+    }
   }
 
 }
