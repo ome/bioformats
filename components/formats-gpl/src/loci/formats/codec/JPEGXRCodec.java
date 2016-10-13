@@ -77,7 +77,7 @@ public class JPEGXRCodec extends BaseCodec {
   {
     initialize();
 
-    return service.decompress(buf, options.maxBytes);
+    return service.decompress(buf);
   }
 
   // -- Helper methods --

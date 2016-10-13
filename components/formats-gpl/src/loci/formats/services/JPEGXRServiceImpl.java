@@ -50,12 +50,12 @@ public class JPEGXRServiceImpl extends AbstractService implements JPEGXRService 
   }
 
   /**
-   * @see JPEGXRServiceImpl#decompress(byte[], int)
+   * @see JPEGXRServiceImpl#decompress(byte[])
    */
-  public byte[] decompress(byte[] compressed, int outputSize) throws FormatException {
-      LOGGER.trace("begin tile decode; compressed size = {}, expected decompressed size = {}", compressed.length, outputSize);
-      byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length, outputSize);
-      LOGGER.trace("retrieved decompressed bytes");
+  public byte[] decompress(byte[] compressed) throws FormatException {
+      LOGGER.trace("begin tile decode; compressed size = {}", compressed.length);
+      byte[] raw = Decode.decodeFirstFrame(compressed, 0, compressed.length);
+      LOGGER.trace("retrieved decompressed bytes size = {}", raw.length);
       return raw;
   }
 
