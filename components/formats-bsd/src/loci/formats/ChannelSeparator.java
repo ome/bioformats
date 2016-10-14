@@ -303,8 +303,8 @@ public class ChannelSeparator extends ReaderWrapper {
     MetadataTools.populatePixelsOnly(store, this);
     if (store instanceof MetadataRetrieve) {
       MetadataRetrieve retrieve = (MetadataRetrieve) store;
-      for (int s=0; s<getCoreMetadataList().size(); s++) {
-        setCoreIndex(s);
+      for (int s=0; s<getSeriesCount(); s++) {
+        setSeries(s);
         int rgbChannels = getSizeC() / reader.getEffectiveSizeC();
         for (int c=0; c<reader.getEffectiveSizeC(); c++) {
           String originalChannelName = retrieve.getChannelName(s, c * rgbChannels);
@@ -313,7 +313,7 @@ public class ChannelSeparator extends ReaderWrapper {
           }
         }
       }
-      setCoreIndex(0);
+      setSeries(0);
     }
   }
 
