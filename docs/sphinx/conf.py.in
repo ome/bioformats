@@ -15,10 +15,10 @@
 srcdir = '@sphinx_srcdir@'
 builddir = '@sphinx_builddir@'
 bioformats_source_branch = '@bioformats_source_branch@'
-common_java_source_branch = '@common_java_source_branch@'
 openmicroscopy_source_user = '@openmicroscopy_source_user@'
 ome_source_user = '@ome_source_user@'
 omerodoc_uri = '@sphinx_omerodoc_uri@'
+ome_common_version = '@ome_common_version@'
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
@@ -114,9 +114,6 @@ bf_github_blob = bf_github_root + 'blob/' + bioformats_source_branch + '/'
 gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
 bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 bf_cpp = bf_github_blob + 'cpp/'
-common_java_github_root = github_root + ome_source_user + '/ome-common-java/'
-common_java_github_tree = common_java_github_root + 'tree/' + common_java_source_branch + '/'
-common_java_github_blob = common_java_github_root + 'blob/' + common_java_source_branch + '/'
 
 # Variables used to define Jenkins extlinks
 jenkins_root = 'http://ci.openmicroscopy.org'
@@ -138,7 +135,6 @@ extlinks = {
     'report' : (trac_root + '/report/%s', ''),
     # Github links
     'source' : (bf_github_blob + '%s', ''),
-    'common_java_source' : (common_java_github_blob + '%s', ''),
     'sourcedir' : (bf_github_tree + '%s', ''),
     'bfreader' : (gpl_formats + 'in/%s', ''),
     'bsd-reader' : (bsd_formats + 'in/%s', ''),
@@ -165,6 +161,8 @@ extlinks = {
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.2/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5.2/api/%s', ''),
+    'common_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-common/' + ome_common_version + '/' + '%s', ''),
+
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

@@ -20,16 +20,16 @@ ome-common (Common):
 
 Provides I/O classes that unify reading from files on disk, streams or files
 in memory, compressed streams, and non-file URLs.  The primary entry points
-are :javadoc:`Location <loci/common/Location.html>`,
-:javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
-(for reading), and :javadoc:`RandomAccessOutputStream
+are :common_javadoc:`Location <loci/common/Location.html>`,
+:common_javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
+(for reading), and :common_javadoc:`RandomAccessOutputStream
 <loci/common/RandomAccessOutputStream.html>` (for writing).
 
 In addition to I/O, there are several classes to assist in working with XML
-(:javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
-(:javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
-(:javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
-(:javadoc:`DataTools <loci/common/DataTools.html>`).
+(:common_javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
+(:common_javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
+(:common_javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
+(:common_javadoc:`DataTools <loci/common/DataTools.html>`).
 
 Core components
 ---------------

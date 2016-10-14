@@ -49,6 +49,7 @@ Type "ant -p" for a list of targets.
     <replace file="conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
     <replace file="conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
     <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
+    <replace file="conf.py" token="@ome_common_version@" value="${ome_common.version}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">
