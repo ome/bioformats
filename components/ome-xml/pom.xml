@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-common</artifactId>
-      <version>5.3.0</version>
+      <version>${ome_common.version}</version>
     </dependency>
 
     <dependency>
