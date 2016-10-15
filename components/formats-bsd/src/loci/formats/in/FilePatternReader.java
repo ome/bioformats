@@ -132,10 +132,15 @@ public class FilePatternReader extends FormatReader {
   {
     int fileIndex = fileIndexes[getSeries()][no][0];
     int planeIndex = fileIndexes[getSeries()][no][1];
-    helper.setId(files[fileIndex]);
-    helper.setSeries(getSeries());
-    byte[] plane = helper.openBytes(planeIndex, buf, x, y, w, h);
     helper.close();
+    helper.setId(files[fileIndex]);
+    byte[] plane = null;
+    try {
+      helper.setSeries(getSeries());
+      plane = helper.openBytes(planeIndex, buf, x, y, w, h);
+    } finally {
+      helper.close();
+    }
     return plane;
   }
 
@@ -270,6 +275,11 @@ public class FilePatternReader extends FormatReader {
   /* @see loci.formats.IFormatReader#reopenFile() */
   @Override
   public void reopenFile() throws IOException {
+
+    if (helper != null) {
+      helper.close();
+    }
+
     if (files != null) {
       IFormatReader r = new ImageReader(newClasses);
       helper = Memoizer.wrap(getMetadataOptions(), r);
@@ -280,9 +290,7 @@ public class FilePatternReader extends FormatReader {
       IFormatReader r = new ImageReader(newClasses);
       helper = Memoizer.wrap(getMetadataOptions(), r);
     }
-    else {
-      helper.close();
-    }
+
     if (stitcher != null) {
       stitcher.setUsingPatternIds(true);
       stitcher.setCanChangePattern(false);
