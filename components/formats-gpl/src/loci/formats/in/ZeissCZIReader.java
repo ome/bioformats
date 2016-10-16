@@ -167,6 +167,7 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<Attachment> extraImages = new ArrayList<Attachment>();
   private int[] tileWidth;
   private int[] tileHeight;
+  private int scaleFactor;
 
   // -- Constructor --
 
@@ -333,7 +334,7 @@ public class ZeissCZIReader extends FormatReader {
         if ((plane.coreIndex == currentIndex && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          int res = (int) Math.pow(2, plane.resolutionIndex);
+          int res = (int) Math.pow(scaleFactor, plane.resolutionIndex);
           if ((plane.row / res) < minTileY) {
             minTileY = plane.row / res;
           }
@@ -346,7 +347,7 @@ public class ZeissCZIReader extends FormatReader {
         if ((plane.coreIndex == currentIndex && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          int res = (int) Math.pow(2, plane.resolutionIndex);
+          int res = (int) Math.pow(scaleFactor, plane.resolutionIndex);
           if ((prestitched != null && prestitched) || validScanDim) {
             int realX = plane.x / res;
             int realY = plane.y / res;
@@ -490,6 +491,7 @@ public class ZeissCZIReader extends FormatReader {
       maxResolution = 0;
       tileWidth = null;
       tileHeight = null;
+      scaleFactor = 0;
     }
   }
 
@@ -638,12 +640,13 @@ public class ZeissCZIReader extends FormatReader {
             (planes.get(i).y % entries[1].storedSize) == 0)
           {
             int scale = planes.get(i).x / entries[0].storedSize;
-            // resolutions must be a power of 2 smaller than the full resolution
-            // some files will contain power-of-3 resolutions, which need to be ignored
-            if (scale == 1 || (scale % 2) == 0) {
+            if (scale == 1 || (scale % 2) == 0 || (scale % 3) == 0) {
+              if (scale > 1 && scaleFactor == 0) {
+                scaleFactor = scale % 2 == 0 ? 2 : 3;
+              }
               planes.get(i).coreIndex = 0;
               while (scale > 1) {
-                scale /= 2;
+                scale /= scaleFactor;
                 planes.get(i).coreIndex++;
               }
               if (planes.get(i).coreIndex > maxResolution) {
@@ -916,7 +919,7 @@ public class ZeissCZIReader extends FormatReader {
             core.get(s).resolutionCount--;
           }
           else {
-            int div = (int) Math.pow(2, r);
+            int div = (int) Math.pow(scaleFactor, r);
             core.get(s + r).sizeX = core.get(s).sizeX / div;
             core.get(s + r).sizeY = core.get(s).sizeY / div;
             tileWidth[s + r] = tileWidth[s] / div;
