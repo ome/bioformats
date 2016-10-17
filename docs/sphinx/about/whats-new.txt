@@ -7,9 +7,9 @@ Version history
 Java bug fixes:
 
 * OME-TIFF
-   - fix regression when populating plane metadata
+   - fixed regression when populating plane metadata
 * CZI
-   - populate series metadata with the scene/position information
+   - populated series metadata with the scene/position information
 
 5.2.3 (2016 October 5)
 ----------------------
