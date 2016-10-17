@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import ncsa.hdf.hdf5lib.exceptions.HDF5JavaException;
 import loci.common.Constants;
 import loci.common.Location;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
-
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
@@ -179,14 +179,24 @@ public class JHDFServiceImpl extends AbstractService
      * @see loci.formats.JHDFService#readStringArray()
      */
     public String[] readStringArray(String path) {
-        return this.hdfReader.string().readArray(path);
+        try {
+            return this.hdfReader.string().readArray(path);
+        }
+        catch (HDF5JavaException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     /* (non-Javadoc)
      * @see loci.formats.JHDFService#readCompoundArrayDataMap()
      */
     public HDF5CompoundDataMap[] readCompoundArrayDataMap(String path) {
-        return this.hdfReader.readCompoundArray(path, HDF5CompoundDataMap.class);
+        try {
+            return this.hdfReader.readCompoundArray(path, HDF5CompoundDataMap.class);
+        }
+        catch (HDF5JavaException exc) {
+            throw new RuntimeException(exc);
+        }
     }
 
     /* (non-Javadoc)
