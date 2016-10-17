@@ -23,7 +23,7 @@ Reader: ZeissCZIReader (:bfreader:`Source Code <ZeissCZIReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss ZEN <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen.html>`_
+- `Zeiss ZEN <http://www.zeiss.com/microscopy/int/products/microscope-software/zen.html>`_
 
 
 We currently have:

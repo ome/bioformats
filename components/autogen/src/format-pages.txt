@@ -1764,7 +1764,7 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = PCXReader
-notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_.
+notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_.
 
 [PCORAW]
 extensions = .pcoraw, .rec
@@ -2396,7 +2396,7 @@ extensions = .xml, .tiff
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
-software = `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-lite.html>`_
+software = `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/int/products/microscope-software/zen-lite.html>`_
 weHave = * many example datasets
 weWant = * an official specification document
 pixelsRating = Very good
@@ -2411,10 +2411,10 @@ mif = true
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
-developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision.html>`_
+developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 bsd = no
 versions = 1.0, 2.0
-software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
+software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/downloads/axiovision.html>`_
 weHave = * a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
 * an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
 * an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
@@ -2441,7 +2441,7 @@ indexExtensions = .czi
 extensions = `.czi <http://www.zeiss.com/czi>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
-software = `Zeiss ZEN <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen.html>`_
+software = `Zeiss ZEN <http://www.zeiss.com/microscopy/int/products/microscope-software/zen.html>`_
 weHave = * many example datasets \n
 * official specification documents
 pixelsRating = Outstanding
@@ -2460,7 +2460,7 @@ pagename = zeiss-lsm
 extensions = .lsm, .mdb
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
-software = `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_ \n
+software = `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_ \n
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n
 `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ \n
 `DIMIN <http://www.dimin.net/>`_

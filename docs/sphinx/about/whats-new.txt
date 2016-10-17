@@ -1,6 +1,16 @@
 Version history
 ===============
 
+5.2.4 (2016 October 18)
+-----------------------
+
+Java bug fixes:
+
+* OME-TIFF
+   - fixed regression when populating plane metadata
+* CZI
+   - populated series metadata with the scene/position information
+
 5.2.3 (2016 October 5)
 ----------------------
 
