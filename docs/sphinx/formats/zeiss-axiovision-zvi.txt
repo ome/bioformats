@@ -6,7 +6,7 @@ Zeiss AxioVision ZVI (Zeiss Vision Image)
 
 Extensions: .zvi
 
-Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision.html>`_
+Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 
 Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 
@@ -24,7 +24,7 @@ Reader: ZeissZVIReader (:bfreader:`Source Code <ZeissZVIReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
+- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/downloads/axiovision.html>`_
 
 
 We currently have:
