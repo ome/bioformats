@@ -331,15 +331,15 @@ public class ZeissCZIReader extends FormatReader {
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
       for (SubBlock plane : planes) {
-        if ((plane.coreIndex == currentIndex && plane.planeIndex == no) ||
+        if ((plane.planeIndex == no && (plane.coreIndex == currentIndex ||
+          (maxResolution > 0 && plane.coreIndex == (currentIndex / maxResolution)))) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          int res = (int) Math.pow(scaleFactor, plane.resolutionIndex);
-          if ((plane.row / res) < minTileY) {
-            minTileY = plane.row / res;
+          if (plane.row < minTileY) {
+            minTileY = plane.row;
           }
-          if ((plane.col / res) < minTileX) {
-            minTileX = plane.col / res;
+          if (plane.col < minTileX) {
+            minTileX = plane.col;
           }
         }
       }
@@ -352,7 +352,7 @@ public class ZeissCZIReader extends FormatReader {
             int realX = plane.x / res;
             int realY = plane.y / res;
 
-            Region tile = new Region(plane.col / res, plane.row / res, realX, realY);
+            Region tile = new Region(plane.col, plane.row, realX, realY);
             if (validScanDim) {
               tile.y += (no / getSizeC());
               image.height = scanDim;
@@ -366,6 +366,8 @@ public class ZeissCZIReader extends FormatReader {
               tile.x -= minTileX;
               tile.y -= minTileY;
             }
+            tile.x /= res;
+            tile.y /= res;
 
             if (tile.intersects(image)) {
               emptyTile = false;
