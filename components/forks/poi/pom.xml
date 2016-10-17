@@ -29,9 +29,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
-      <version>5.2.3</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-common</artifactId>
+      <version>${ome_common.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
