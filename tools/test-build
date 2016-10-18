@@ -17,11 +17,6 @@ maven()
     mvn
 }
 
-maven_findbugs()
-{
-    mvn findbugs:findbugs -Dfindbugs.threshold=medium
-}
-
 cpp()
 {
     (
@@ -80,8 +75,6 @@ do
             clean ;;
         maven)
             maven ;;
-        maven_findbugs)
-            maven_findbugs ;;
         cpp)
             cpp ;;
         flake8)
