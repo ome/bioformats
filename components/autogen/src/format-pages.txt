@@ -2377,8 +2377,8 @@ writer = WlzWriter
 
 [Zeiss Axio CSM]
 extensions = .lms
-owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
-developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 bsd = no
 weHave = * one example dataset
 pixelsRating = Good
@@ -2393,8 +2393,8 @@ the only one which saves files in the .lms format. \n
 
 [Zeiss AxioVision TIFF]
 extensions = .xml, .tiff
-owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
-developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 bsd = no
 software = `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/int/products/microscope-software/zen-lite.html>`_
 weHave = * many example datasets
@@ -2410,7 +2410,7 @@ mif = true
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
-owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 bsd = no
 versions = 1.0, 2.0
@@ -2438,8 +2438,8 @@ Commercial applications that support ZVI include `Bitplane Imaris <http://www.bi
 
 [Zeiss CZI]
 indexExtensions = .czi
-extensions = `.czi <http://www.zeiss.com/czi>`_
-developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
+extensions = `.czi <http://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 bsd = no
 software = `Zeiss ZEN <http://www.zeiss.com/microscopy/int/products/microscope-software/zen.html>`_
 weHave = * many example datasets \n
@@ -2458,7 +2458,7 @@ notes = Bio-Formats does not support CZI files generated using JPEG-XR compressi
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm
 extensions = .lsm, .mdb
-owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 bsd = no
 software = `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_ \n
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n

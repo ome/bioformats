@@ -8,7 +8,7 @@ Extensions: .zvi
 
 Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 
-Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 
 **Support**
 
