@@ -24,7 +24,7 @@ Reader: ZeissTIFFReader (:bfreader:`Source Code <ZeissTIFFReader.java>`, :doc:`S
 
 Freely Available Software:
 
-- `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-lite.html>`_
+- `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/int/products/microscope-software/zen-lite.html>`_
 
 
 We currently have:

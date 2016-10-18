@@ -23,7 +23,7 @@ Reader: ZeissLSMReader (:bfreader:`Source Code <ZeissLSMReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_ 
+- `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_ 
 - `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ 
 - `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ 
 - `DIMIN <http://www.dimin.net/>`_
