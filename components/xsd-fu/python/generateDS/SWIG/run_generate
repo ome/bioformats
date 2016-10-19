@@ -1,2 +1,0 @@
-#!/bin/sh -v
-./generateDS.py $1 -o testsuper.py -s testsub.py swigxml15.xsd
