@@ -170,7 +170,9 @@ public class HarmonyReader extends FormatReader {
     if (!noPixels) {
       for (Plane[] well : planes) {
         for (Plane p : well) {
-          files.add(p.filename);
+          if (p != null && p.filename != null) {
+            files.add(p.filename);
+          }
         }
       }
     }
@@ -216,14 +218,18 @@ public class HarmonyReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getSeries() < planes.length && no < planes[getSeries()].length) {
-      Plane p = planes[getSeries()][no];
+    int seriesIndex = lookupSeriesIndex(getSeries());
+    LOGGER.trace("series = {}, seriesIndex = {}", getSeries(), seriesIndex);
+
+    if (seriesIndex < planes.length && no < planes[seriesIndex].length) {
+      Plane p = planes[seriesIndex][no];
 
       if (new Location(p.filename).exists()) {
         if (reader == null) {
           reader = new MinimalTiffReader();
         }
         try {
+          LOGGER.debug("reading series = {}, no = {} from {}", getSeries(), no, p.filename);
           reader.setId(p.filename);
           reader.openBytes(0, buf, x, y, w, h);
         }
@@ -427,12 +433,20 @@ public class HarmonyReader extends FormatReader {
     for (int row=0; row<rows.length; row++) {
       for (int col=0; col<cols.length; col++) {
         int well = row * cols.length + col;
+        LOGGER.debug("Populating well row = {}, col = {}, well = {}", row, col, well);
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
         store.setWellRow(new NonNegativeInteger(rows[row]), 0, well);
         store.setWellColumn(new NonNegativeInteger(cols[col]), 0, well);
 
         for (int field=0; field<fields.length; field++) {
           int planesIndex = well * fields.length + field;
+          LOGGER.debug("Populating field = {}, index = {}", field, planesIndex);
+
+          if (planes[planesIndex][0] == null) {
+            // variable number of fields; the field was not acquired in this well
+            continue;
+          }
+
           int imageIndex = planes[planesIndex][0].image;
           if (imageIndex == -1) {
             continue;
@@ -464,6 +478,9 @@ public class HarmonyReader extends FormatReader {
       store.setExperimenterLastName(handler.getExperimenterName(), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
+        if (planes[i][0] == null) {
+          continue;
+        }
         store.setImageExperimenterRef(experimenterID, i);
         if (planes[i][0].acqTime != null) {
           store.setImageAcquisitionDate(new Timestamp(planes[i][0].acqTime), i);
@@ -503,6 +520,20 @@ public class HarmonyReader extends FormatReader {
       }
 
     }
+  }
+
+  private int lookupSeriesIndex(int seriesIndex) {
+    int index = 0;
+    for (int i=0; i<planes.length; i++) {
+      if (planes[i][0] == null) {
+        continue;
+      }
+      if (index == seriesIndex) {
+        return i;
+      }
+      index++;
+    }
+    return -1;
   }
 
   // -- Helper classes --
