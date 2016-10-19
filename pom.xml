@@ -16,7 +16,6 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/specification</module>
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/turbojpeg</module>
@@ -28,12 +27,10 @@
     <module>components/bio-formats-plugins</module>
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
-    <module>components/ome-xml</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
     <module>components/stubs/mipav</module>
-    <module>components/xsd-fu</module>
     <module>docs/sphinx</module>
   </modules>
 
@@ -60,10 +57,6 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
     <ome_common.version>5.3.0</ome_common.version>
-
-    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
-    <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
-    <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
