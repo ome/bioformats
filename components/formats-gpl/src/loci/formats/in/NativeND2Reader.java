@@ -2226,12 +2226,7 @@ public class NativeND2Reader extends FormatReader {
             key = key.substring(0, 8);
           }
           if (trueSizeZ == null) {
-            try {
-              trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
-            }
-            catch (NumberFormatException nfe) {
-              LOGGER.trace("Could not parse step", nfe);
-            }
+            trueSizeZ = DataTools.parseDouble(value);
           }
         }
         else if (key.equals("Name")) {
@@ -2244,22 +2239,13 @@ public class NativeND2Reader extends FormatReader {
             if (last-first < 0){
                 last = first + key.substring(first).indexOf(' ');
             }
-            try {
-              textEmissionWavelengths.add(
-                new Double(key.substring(first, last).trim()) + 20);
-            }
-            catch (NumberFormatException nfe) {
-              LOGGER.trace("Could not parse emission wavelength", nfe);
-            }
+            Double wavelength = DataTools.parseDouble(key.substring(
+              first, last).trim()) + 20;
+            if (wavelength != null) textEmissionWavelengths.add(wavelength);
           }
         }
         else if (key.equals("Refractive Index")) {
-          try {
-            refractiveIndex = Double.parseDouble(DataTools.sanitizeDouble(value));
-          }
-          catch (NumberFormatException nfe) {
-            LOGGER.trace("Could not parse refractive index", nfe);
-          }
+          refractiveIndex = DataTools.parseDouble(value);
         }
 
         if (metadata.containsKey(key)) {

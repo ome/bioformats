@@ -528,7 +528,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   protected String getImageCreationDate() {
     Object o = ifds.get(0).getIFDValue(IFD.DATE_TIME);
     if (o instanceof String) return (String) o;
-    if (o instanceof String[]) return ((String[]) o)[0];
+    if (o instanceof String[] && ((String[]) o).length > 0) return ((String[]) o)[0];
     return null;
   }
 

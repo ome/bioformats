@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.2.3-SNAPSHOT</version>
+    <version>5.2.5-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
 
@@ -16,7 +16,7 @@
   <packaging>pom</packaging>
 
   <name>OME Tools bundle</name>
-  <description>An all-in-one bundle of OME libraries.</description>
+  <description>An all-in-one bundle of OME libraries (deprecated).</description>
   <url>http://ome-xml.org/wiki/OmePlugins</url>
   <inceptionYear>2006</inceptionYear>
 

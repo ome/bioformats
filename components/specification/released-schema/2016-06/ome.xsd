@@ -24,7 +24,7 @@
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2016-06"
             xmlns:xml="http://www.w3.org/XML/1998/namespace"
-            version="1"
+            version="2"
             elementFormDefault="qualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -689,6 +689,9 @@
             <xsd:enumeration value="FSM"/><!-- Fluorescence speckle microscopy -->
             <xsd:enumeration value="LCM"/><!-- Laser capture microdissection -->
             <xsd:enumeration value="Other"/>
+            <xsd:enumeration value="BrightField"/>
+            <xsd:enumeration value="SweptFieldConfocal"/>
+            <xsd:enumeration value="SPIM"/><!-- Selective or Single Plane Illumination Microscopy -->
           </xsd:restriction>
         </xsd:simpleType>
       </xsd:attribute>

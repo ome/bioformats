@@ -247,11 +247,7 @@ namespace ome
 {% end has parent %}\
         impl(ome::compat::make_shared<Impl>())
       {
-#ifdef OME_HAVE_BOOST_LOG
         logger.add_attribute("ClassName", logging::attributes::constant<std::string>("${klass.name}"));
-#else // ! OME_HAVE_BOOST_LOG
-        logger.className("${klass.name}");
-#endif // OME_HAVE_BOOST_LOG
       }
 
 {% end source %}\

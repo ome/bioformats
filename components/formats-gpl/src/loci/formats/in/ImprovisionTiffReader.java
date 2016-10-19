@@ -177,13 +177,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         else if (key.equals("TotalChannels")) tc = value;
         else if (key.equals("TotalTimepoints")) tt = value;
         else if (key.equals("XCalibrationMicrons")) {
-          pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
+          pixelSizeX = DataTools.parseDouble(value);
         }
         else if (key.equals("YCalibrationMicrons")) {
-          pixelSizeY = Double.parseDouble(DataTools.sanitizeDouble(value));
+          pixelSizeY = DataTools.parseDouble(value);
         }
         else if (key.equals("ZCalibrationMicrons")) {
-          pixelSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+          pixelSizeZ = DataTools.parseDouble(value);
         }
       }
       metadata.remove("Comment");

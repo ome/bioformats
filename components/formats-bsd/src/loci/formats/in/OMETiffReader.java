@@ -1020,7 +1020,31 @@ public class OMETiffReader extends FormatReader {
       }
     }
 
-    MetadataTools.populatePixels(metadataStore, this, true, false);
+    MetadataTools.populatePixels(metadataStore, this, false, false);
+    for (int i=0; i<meta.getImageCount(); i++) {
+      // make sure that TheZ, TheC, and TheT are all set on any
+      // existing Planes
+      // missing Planes are not added, and exising TheZ, TheC, and
+      // TheT values are not changed
+      for (int p=0; p<meta.getPlaneCount(i); p++) {
+        NonNegativeInteger z = meta.getPlaneTheZ(i, p);
+        NonNegativeInteger c = meta.getPlaneTheC(i, p);
+        NonNegativeInteger t = meta.getPlaneTheT(i, p);
+
+        if (z == null) {
+          z = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheZ(z, i, p);
+        }
+        if (c == null) {
+          c = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheC(c, i, p);
+        }
+        if (t == null) {
+          t = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheT(t, i, p);
+        }
+      }
+    }
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
         metadataStore.setImageAcquisitionDate(

@@ -128,6 +128,15 @@
   <xsl:template match="OME:Folder"/>
   <xsl:template match="OME:FolderRef"/>
 
+  <!-- Remove new enumeration values -->
+  <xsl:template match="OME:Channel/@AcquisitionMode[. = 'BrightField' or
+                                                    . = 'SweptFieldConfocal' or
+                                                    . = 'SPIM']">
+    <xsl:attribute name="AcquisitionMode">
+      <xsl:text>Other</xsl:text>
+    </xsl:attribute>
+  </xsl:template>
+
   <!-- Default processing -->
 
   <xsl:template match="@*|node()">
