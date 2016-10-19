@@ -7,7 +7,7 @@ Zeiss LSM (Laser Scanning Microscope) 510/710
 Extensions: .lsm, .mdb
 
 
-Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 
 **Support**
 

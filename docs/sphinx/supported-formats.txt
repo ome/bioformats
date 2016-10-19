@@ -1590,7 +1590,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/zeiss-czi`
-     - `.czi <http://www.zeiss.com/czi>`_
+     - `.czi <http://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Very good|
