@@ -57,7 +57,6 @@ antbuild()
       ant clean compile-mdbtools
       ant clean compile-metakit
       ant clean compile-ome-xml
-      ant clean compile-ome-poi
       ant clean compile-formats-bsd
       ant clean compile-formats-gpl
       ant clean compile-bio-formats-tools
