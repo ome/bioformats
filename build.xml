@@ -98,19 +98,6 @@ MDB Tools (Java port)
     Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
     Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
 
-Apache Jakarta POI
-    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
-    -=-
-    JAR file:      ome-poi.jar
-    Path:          components/forks/poi
-    Project deps:  Formats Common
-    Optional:      (none)
-    License:       Apache
-    Project URL:   http://jakarta.apache.org/poi/
-    Notes:         Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE
-                   v2 and memory efficiency improvements. Used by Bio-Formats
-                   for OLE support (cxd, ipw, oib, zvi).
-
 ===============================================================================
 The following components are stubs of third party projects:
 
