@@ -49,9 +49,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-poi</artifactId>
-      <version>${project.version}</version>
+      <version>5.3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -226,7 +226,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:ome-poi</classpathDependencyExclude>
+                <classpathDependencyExclude>org.openmicroscopy:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>
@@ -384,6 +384,10 @@
     <repository>
       <id>ome.snapshots</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+    <repository>
+      <id>ome.snapshots.test</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
     </repository>
   </repositories>
 
