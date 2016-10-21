@@ -157,4 +157,16 @@
         <class name="loci.formats.utests.MapAnnotationTest"/>
       </classes>
     </test>
+    <test name="ConversionTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ConversionTest"/>
+      </classes>
+    </test>
+    <test name="CompressDecompressTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.CompressDecompressTest"/>
+      </classes>
+    </test>
 </suite>

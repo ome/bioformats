@@ -15,7 +15,8 @@ Type "ant -p" for a list of targets.
   <target name="gen-format-pages" depends="compile"
     description="generate Sphinx pages for each supported format">
     <java classname="FormatPageAutogen"
-      classpath="${classes.dir}:${component.runtime-cp}" fork="true" failonerror="true">
+      classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath refid="runtime.classpath"/>
       <arg value="${filelist}"/>
     </java>
   </target>
@@ -23,7 +24,8 @@ Type "ant -p" for a list of targets.
   <target name="gen-structure-table" depends="compile"
     description="generate dataset structure table">
     <java classname="MakeDatasetStructureTable"
-      classpath="${classes.dir}:${component.runtime-cp}" fork="true" failonerror="true">
+      classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath refid="runtime.classpath"/>
        <arg value="../../docs/sphinx/formats/dataset-table.txt"/>
     </java>
   </target>
@@ -31,7 +33,8 @@ Type "ant -p" for a list of targets.
   <target name="gen-original-meta-support" depends="compile"
     description="generate docs for Bio-Formats original metadata support">
     <java classname="OriginalMetadataAutogen"
-      classpath="${classes.dir}:${component.runtime-cp}" fork="true" failonerror="true">
+      classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath refid="runtime.classpath"/>
       <arg value="${filelist}"/>
     </java>
   </target>
@@ -45,8 +48,9 @@ Type "ant -p" for a list of targets.
       <isset property="omexml.version"/>
       <then>
         <java classname="${component.main-class}"
-          classpath="${classes.dir}:${component.runtime-cp}"
+          classpath="${classes.dir}"
           fork="true" dir="${component.meta-support-dir}" failonerror="true">
+            <classpath refid="runtime.classpath"/>
             <arg value="${omexml.version}"/>
         </java>
       </then>

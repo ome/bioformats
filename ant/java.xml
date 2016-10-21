@@ -7,7 +7,7 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project>
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
   <import file="${root.dir}/ant/version.xml"/>
@@ -25,22 +25,60 @@ Type "ant -p" for a list of targets.
     <available file="${tests.dir}"/>
   </condition>
 
+  <path id="maven-ant-tasks.classpath"
+    path="${lib.dir}/maven-ant-tasks-2.1.3.jar"/>
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+    uri="antlib:org.apache.maven.artifact.ant"
+    classpathref="maven-ant-tasks.classpath"/>
+
+   <artifact:pom file="pom.xml" id="maven.pom"/>
+
+   <target name="mvn-init" unless="compile.classpath">
+     <condition property="maven.repo.local" value="${maven.repo.local}"
+         else="${user.home}/.m2/repository">
+       <isset property="maven.repo.local"/>
+     </condition>
+     <artifact:localRepository id="local.repository"
+       path="${maven.repo.local}"/>
+     <artifact:dependencies pathId="compile.classpath" useScope="compile"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/compile-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="test.classpath" useScope="test"
+         cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/test-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+     <artifact:dependencies pathId="runtime.classpath"
+         filesetId="runtime.fileset"
+         useScope="runtime" cacheDependencyRefs="true"
+         dependencyRefsBuildFile="${build.dir}/runtime-dependencies.xml">
+       <pom refid="maven.pom"/>
+       <localRepository refid="local.repository"/>
+     </artifact:dependencies>
+   </target>
+
+
   <!-- Main build targets -->
 
-  <target name="compile" depends="copy-source,copy-generated-source" description="compile classes">
+  <target name="compile" depends="copy-source,copy-generated-source,mvn-init" description="compile classes">
+
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       encoding="UTF-8"
       srcdir="${dest.dir}" destdir="${classes.dir}"
-      classpath="${component.classpath}"
       includes="${component.source}">
+      <classpath refid="compile.classpath" />
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, copy-test-source"
+  <target name="compile-tests" depends="compile, copy-test-source, mvn-init"
     description="compile test classes" if="doTests">
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
@@ -48,13 +86,17 @@ Type "ant -p" for a list of targets.
       target="${component.java-version}"
       encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
-      classpath="${classes.dir}:${component.classpath}"
-      includes="${component.source}"/>
+      includes="${component.source}">
+      <classpath refid="test.classpath"/>
+      <classpath path="${classes.dir}"/>
+      </javac>
   </target>
 
   <target name="exec" depends="compile" description="execute package">
     <java fork="true" classname="${component.main-class}"
-      classpath="${classes.dir}:${component.runtime-cp}"/>
+      classpath="${classes.dir}">
+     <classpath refid="runtime.classpath"/>
+     </java>
   </target>
 
   <target name="test" depends="jar, compile-tests"
@@ -64,11 +106,11 @@ Type "ant -p" for a list of targets.
       <isset property="testng.xml"/>
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
+          <classpath refid="test.classpath"/>
           <classpath>
             <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-            <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
-            <pathelement location="${classes.dir}"/>
+            <pathelement location="${test.dir}"/>
           </classpath>
           <xmlfileset file="${testng.xml}"/>
           <jvmarg value="-mx${testng.memory}"/>
@@ -87,7 +129,7 @@ Type "ant -p" for a list of targets.
           excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
-          <auxClasspath path="${component.runtime-cp}"/>
+          <auxClasspath refid="runtime.classpath"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
@@ -119,37 +161,37 @@ your FindBugs installation's lib directory. E.g.:
   <target name="style" depends="compile"
     description="check source code style">
     <checkstyle config="${root.dir}/checkstyle.xml" failOnViolation="false"
-      classpath="${classes.dir}:${component.classpath}">
+      classpath="${classes.dir}">
+      <classpath refid="compile.classpath"/>
       <fileset dir="${dest.dir}" includes="${component.source}"/>
     </checkstyle>
   </target>
 
-  <target name="jar" depends="compile"
-    description="generate JAR file">
+  <target name="jar" depends="compile" description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+      <metainf dir="${basedir}" includes="lib/**/*"/>
       <manifest>
         <attribute name="Main-Class" value="${component.main-class}"/>
         <attribute name="Class-Path" value="${component.manifest-cp}"/>
       </manifest>
     </jar>
+    <artifact:install file="${artifact.dir}/${component.jar}">
+        <pom refid="maven.pom"/>
+    </artifact:install>
   </target>
 
-  <target name="osgi" depends="jar"
-    description="inject OSGi bundle information">
-    <!-- NB: Add OSGi bundle metadata. -->
-    <bundle outputDir="${artifact.dir}"
-      bundleName="${component.name}"
-      bundleSymbolicName="${domain.prefix}.${component.name}"
-      bundleVersion="${component.version}.${vcs.revision}"
-      classpath="${classes.dir}"
-      exportPackage="*;version=&quot;${component.version}&quot;"
-      filename="${component.name}">
+  <target name="bundle" depends="mvn-init" description="create bundle JAR">
+    <mkdir dir="${artifact.dir}"/>
+    <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
+      <zipgroupfileset refid="runtime.fileset"/>
       <manifest>
-        <attribute name="Main-Class" value="${component.main-class}"/>
-        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+        <attribute name="Main-Class" value="${package.main}"/>
       </manifest>
-    </bundle>
+    </jar>
+    <artifact:install file="${artifact.dir}/${bundle.jar}">
+        <pom refid="maven.pom"/>
+    </artifact:install>
   </target>
 
   <target name="utils" depends="jar"
@@ -161,7 +203,8 @@ your FindBugs installation's lib directory. E.g.:
       deprecation="true" source="1.7" target="1.7"
       encoding="UTF-8"
       srcdir="${utils.dir}" includes="**/*.java"
-      classpath="${component.classpath}:${artifact.dir}/${component.jar}">
+      classpath="${artifact.dir}/${component.jar}">
+      <classpath refid="compile.classpath" />
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
@@ -169,13 +212,13 @@ your FindBugs installation's lib directory. E.g.:
   <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
-      classpath="${component.classpath}:${classes.dir}"
       encoding="UTF-8"
       author="true" version="true" use="true"
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
       <packageset dir="${dest.dir}"/>
+      <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://docs.oracle.com/javase/7/docs/api/"/>
@@ -216,11 +259,6 @@ your FindBugs installation's lib directory. E.g.:
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->
-    <propertyregex property="component.manifest-cp-temp"
-      input="${component.runtime-cp}" replace=""
-      defaultValue="${component.runtime-cp}">
-      <regexp pattern="[^\:]*\/"/>
-    </propertyregex>
     <propertyregex property="component.manifest-cp"
       input="${component.manifest-cp-temp}" replace=" "
       defaultValue="${component.manifest-cp-temp}">

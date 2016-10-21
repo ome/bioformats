@@ -42,10 +42,8 @@ Type "ant -p" for a list of targets.
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-        <pathelement path="${lib.dir}/logback-core-${logback.version}.jar"/>
-        <pathelement path="${lib.dir}/logback-classic-${logback.version}.jar"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
