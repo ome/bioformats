@@ -330,9 +330,10 @@ public class ZeissCZIReader extends FormatReader {
     boolean emptyTile = true;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
+      int baseResolution = (maxResolution + 1) * (currentIndex / (maxResolution + 1));
       for (SubBlock plane : planes) {
-        if ((plane.planeIndex == no && (plane.coreIndex == currentIndex ||
-          (maxResolution > 0 && plane.coreIndex == (currentIndex / maxResolution)))) ||
+        if ((plane.planeIndex == no && ((maxResolution == 0 && plane.coreIndex == currentIndex) ||
+          (maxResolution > 0 && plane.coreIndex == baseResolution))) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
           if (plane.row < minTileY) {
