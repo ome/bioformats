@@ -686,6 +686,10 @@
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
     </repository>
+    <repository>
+      <id>ome.snapshots.test</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
