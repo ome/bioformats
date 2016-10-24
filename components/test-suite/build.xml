@@ -42,33 +42,6 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="test-tiff-compress" depends="compile"
-    description="run tests for TIFF compression/decompression">
-    <testng testname="TIFF compression tests"
-      failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-      </classpath>
-      <classfileset file="${classes.dir}/loci/tests/testng/CompressDecompressTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
-  <target name="test-minimal-convert" depends="compile"
-    description="run conversion tests with fixed input data">
-    <testng testname="Minimal conversion tests" failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${basedir}"/><!-- logback.xml -->
-        <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-      </classpath>
-      <classfileset file="${classes.dir}/loci/tests/testng/ConversionTest.class"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
@@ -78,8 +51,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -100,8 +73,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -130,8 +103,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -168,8 +141,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -199,8 +172,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -229,8 +202,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -259,8 +232,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -289,8 +262,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -319,8 +292,8 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>

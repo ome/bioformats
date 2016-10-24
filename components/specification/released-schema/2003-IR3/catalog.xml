@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-  <uri name="http://www.openmicroscopy.org/XMLschemas/AnalysisModule/IR3/AnalysisModule.xsd" uri="AnalysisModule.xsd"/>
-  <uri name="http://www.openmicroscopy.org/XMLschemas/DataHistory/IR3/DataHistory.xsd" uri="DataHistory.xsd"/>
-</catalog>

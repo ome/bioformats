@@ -1,0 +1,64 @@
+<!--
+build.xml
+
+Ant build file for Bio-Formats bundle.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="bioformats_package" default="bundle" basedir=".">
+  <description>Build file for Bio-Formats bundle</description>
+  <property name="root.dir" location="../../.."/>
+  <import file="${root.dir}/ant/java.xml"/>
+  <property file="build.properties"/>
+
+  <target name="docs" depends="javadoc-properties, mvn-init, release-version"
+    description="generate the Javadocs for most components">
+    <echo>----------=========== Javadocs ===========----------</echo>
+    <tstamp>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+    <javadoc sourcepath="${merged-docs.source}"
+      classpath="${merged-docs.classpath}"
+      destdir="${merged-docs.dir}/api"
+      maxmemory="${merged-docs.memory}"
+      encoding="UTF-8"
+      failonerror="true" author="true" version="true" use="true"
+      access="private"
+      nodeprecated="false" windowtitle="Bio-Formats API"
+      additionalparam="${javadoc.doclint}">
+      <classpath refid="runtime.classpath"/>
+      <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
+      <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
+      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
+      <!--<link href="http://www.jdocs.com/looks/1.2.2/api/"/>-->
+    </javadoc>
+    <zip destfile="${artifact.dir}/bio-formats-javadocs-${release.version}.zip">
+      <zipfileset dir="${merged-docs.dir}" prefix="bio-formats-javadocs-${release.version}"/>
+    </zip>
+  </target>
+
+  <target name="bftools"
+    description="generate the a zip bundle of the command-line tools">
+    <zip destfile="${artifact.dir}/bftools.zip">
+      <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
+        prefix="bftools"/>
+      <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
+        prefix="bftools" filemode="755"/>
+      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
+        fullpath="bftools/NEWS.rst"/>
+      <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bftools"/>
+    </zip>
+  </target>
+
+  <target name="bfmatlab"
+    description="generate the a zip bundle of the MATLAB toolbox">
+    <zip destfile="${artifact.dir}/bfmatlab.zip">
+      <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
+        includes="**/*" prefix="bfmatlab"/>
+      <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
+    </zip>
+  </target>
+</project>
