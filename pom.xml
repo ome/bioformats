@@ -17,7 +17,6 @@
 
   <modules>
     <module>components/forks/jai</module>
-    <module>components/forks/mdbtools</module>
     <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
     <module>components/formats-api</module>
