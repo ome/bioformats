@@ -87,17 +87,6 @@ JAI Image I/O Tools
                    This component will be removed once our changes have been
                    added to the official JAI CVS repository.
 
-MDB Tools (Java port)
-    Java API to handle Microsoft MDB format (Access)
-    -=-
-    JAR file:      mdbtools-java.jar
-    Path:          components/forks/mdbtools
-    Project deps:  (none)
-    Optional:      (none)
-    License:       LGPL
-    Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
-    Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
-
 ===============================================================================
 The following components are stubs of third party projects:
 

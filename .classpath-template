@@ -9,10 +9,6 @@
         <classpathentry kind="src" path="components/formats-gpl/src"/>
         <classpathentry kind="src" path="components/forks/jai/build/src"/>
         <classpathentry kind="src" path="components/forks/jai/src"/>
-        <classpathentry kind="src" path="components/forks/mdbtools/build/src"/>
-        <classpathentry kind="src" path="components/forks/mdbtools/src"/>
-        <classpathentry kind="src" path="components/forks/poi/build/src"/>
-        <classpathentry kind="src" path="components/forks/poi/src"/>
         <classpathentry kind="src" path="components/legacy/ome-editor/src"/>
         <classpathentry kind="src" path="components/legacy/ome-notes/src"/>
         <classpathentry kind="src" path="components/loci-plugins/build/src"/>

@@ -20,7 +20,6 @@ Type "ant -p" for a list of targets.
       compile-bio-formats-plugins,
       compile-lwf-stubs,
       compile-mipav-stubs,
-      compile-mdbtools,
       compile-metakit,
       compile-formats-api,
       compile-formats-bsd,
@@ -37,7 +36,6 @@ Type "ant -p" for a list of targets.
       jar-bio-formats-plugins,
       jar-lwf-stubs,
       jar-mipav-stubs,
-      jar-mdbtools,
       jar-metakit,
       jar-formats-api,
       jar-formats-bsd,
@@ -51,7 +49,6 @@ Type "ant -p" for a list of targets.
     findbugs-jai
     findbugs-lwf-stubs
     findbugs-mipav-stubs
-    findbugs-mdbtools
   -->
   <target name="findbugs"
     depends="findbugs-autogen,
@@ -72,7 +69,6 @@ Type "ant -p" for a list of targets.
       clean-bio-formats-plugins,
       clean-lwf-stubs,
       clean-mipav-stubs,
-      clean-mdbtools,
       clean-metakit,
       clean-formats-api,
       clean-formats-bsd,
@@ -92,7 +88,6 @@ Type "ant -p" for a list of targets.
       test-bio-formats-plugins,
       test-lwf-stubs,
       test-mipav-stubs,
-      test-mdbtools,
       test-metakit,
       test-formats-api,
       test-formats-bsd,
@@ -161,35 +156,6 @@ Type "ant -p" for a list of targets.
   <target name="test-jai" depends="jar-jai, testing-deps"
     description="compile and run tests for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="test"/>
-  </target>
-
-  <!-- MDB Tools Java library -->
-
-  <target name="deps-mdbtools" depends="copy-jars" />
-
-  <target name="compile-mdbtools" depends="deps-mdbtools"
-    description="compile classes for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.compile"/>
-  </target>
-
-  <target name="jar-mdbtools" depends="deps-mdbtools"
-    description="generate JAR file for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.jar"/>
-  </target>
-
-  <target name="findbugs-mdbtools" depends="jar-mdbtools"
-    description="run findbugs on MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.findbugs"/>
-  </target>
-
-  <target name="clean-mdbtools"
-    description="remove build files for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.clean"/>
-  </target>
-
-  <target name="test-mdbtools" depends="jar-mdbtools, testing-deps"
-    description="compile and run tests for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="test"/>
   </target>
 
   <!-- Metakit library -->
@@ -400,7 +366,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-formats-gpl"
     depends="copy-jars,
-      jar-mdbtools,
       jar-metakit,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -421,8 +386,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-gpl"
-    depends="clean-mdbtools,
-      clean-metakit,
+    depends="clean-metakit,
       clean-formats-api,
       clean-formats-bsd"
     description="remove build files for GPL format implementations">
