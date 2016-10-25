@@ -56,7 +56,10 @@
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-    <ome_common.version>5.3.0</ome_common.version>
+    <ome-common.version>5.3.0</ome-common.version>
+    <specification.version>5.3.0</specification.version>
+    <ome-xml.version>5.3.0</ome-xml.version>
+    <ome-poi.version>5.3.0</ome-poi.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
