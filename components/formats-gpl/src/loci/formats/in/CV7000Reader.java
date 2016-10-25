@@ -486,7 +486,9 @@ public class CV7000Reader extends FormatReader {
               int index = -1;
               for (int ref=0; ref<channel.lightSourceRefs.size(); ref++) {
                 int lightSource = channel.lightSourceRefs.get(ref);
-                if (lightSources.get(lightSource).wavelength < channel.excitation) {
+                if ("Laser".equals(lightSources.get(lightSource).type) &&
+                  lightSources.get(lightSource).wavelength < channel.excitation)
+                {
                   index = lightSource;
                 }
               }
