@@ -11,7 +11,6 @@ Type "ant -p" for a list of targets.
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
   <import file="${root.dir}/ant/version.xml"/>
-  <import file="${root.dir}/ant/xsd-fu.xml"/>
 
   <taskdef name="testng" classpath="${lib.dir}/testng-${testng.version}.jar"
     classname="org.testng.TestNGAntTask"/>
@@ -291,7 +290,6 @@ your FindBugs installation's lib directory. E.g.:
     <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
     <replace dir="${dest.dir}" token="$${vcs.date}_unix" value="${vcs.date_unix}"/>
     <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
-    <replace dir="${dest.dir}" token="$${xsdfu.schemaver}" value="${xsdfu.schemaver}"/>
 
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">

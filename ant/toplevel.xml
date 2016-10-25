@@ -22,7 +22,6 @@ Type "ant -p" for a list of targets.
       compile-mipav-stubs,
       compile-mdbtools,
       compile-metakit,
-      compile-ome-xml,
       compile-formats-api,
       compile-formats-bsd,
       compile-bio-formats-tools,
@@ -40,11 +39,9 @@ Type "ant -p" for a list of targets.
       jar-mipav-stubs,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd,
       jar-bio-formats-tools,
-      jar-specification,
       jar-tests,
       jar-turbojpeg"
     description="generate JAR files for software packages"/>
@@ -55,7 +52,6 @@ Type "ant -p" for a list of targets.
     findbugs-lwf-stubs
     findbugs-mipav-stubs
     findbugs-mdbtools
-    findbugs-ome-xml
   -->
   <target name="findbugs"
     depends="findbugs-autogen,
@@ -78,14 +74,11 @@ Type "ant -p" for a list of targets.
       clean-mipav-stubs,
       clean-mdbtools,
       clean-metakit,
-      clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd,
       clean-bio-formats-tools,
-      clean-specification,
       clean-tests,
       clean-turbojpeg,
-      clean-xsd-fu,
       clean-docs-sphinx"
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
@@ -101,7 +94,6 @@ Type "ant -p" for a list of targets.
       test-mipav-stubs,
       test-mdbtools,
       test-metakit,
-      test-ome-xml,
       test-formats-api,
       test-formats-bsd,
       test-bio-formats-tools,
@@ -230,35 +222,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/metakit" target="test"/>
   </target>
 
-  <!-- OME-XML Java library -->
-
-  <target name="deps-ome-xml" depends="copy-jars" />
-
-  <target name="compile-ome-xml" depends="deps-ome-xml"
-    description="compile classes for OME-XML Java library">
-    <ant dir="components/ome-xml" target="ome-xml.compile"/>
-  </target>
-
-  <target name="jar-ome-xml" depends="deps-ome-xml"
-    description="generate JAR file for OME-XML Java library">
-    <ant dir="components/ome-xml" target="ome-xml.jar"/>
-  </target>
-
-  <target name="findbugs-ome-xml" depends="jar-ome-xml"
-    description="run findbugs on OME-XML Java library">
-    <ant dir="components/ome-xml" target="ome-xml.findbugs"/>
-  </target>
-
-  <target name="clean-ome-xml"
-    description="remove build files for OME-XML Java library">
-    <ant dir="components/ome-xml" target="ome-xml.clean"/>
-  </target>
-
-  <target name="test-ome-xml" depends="jar-ome-xml, testing-deps"
-    description="compile and run tests for OME-XML Java library">
-    <ant dir="components/ome-xml" target="test"/>
-  </target>
-
   <!-- LWF stubs -->
 
   <target name="deps-lwf-stubs" depends="copy-jars" />
@@ -320,9 +283,7 @@ Type "ant -p" for a list of targets.
   <!-- API -->
 
   <target name="deps-formats-api"
-    depends="copy-jars,
-      jar-ome-xml,
-      jar-specification"/>
+    depends="copy-jars"/>
 
   <target name="compile-formats-api" depends="deps-formats-api"
     description="compile classes for reader and writer APIs">
@@ -340,7 +301,6 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-api"
-    depends="clean-ome-xml"
     description="remove build files for reader and writer APIs">
     <ant dir="components/formats-api" target="formats-api.clean"/>
   </target>
@@ -362,8 +322,6 @@ Type "ant -p" for a list of targets.
       jar-formats-api,
       jar-lwf-stubs,
       jar-mipav-stubs,
-      jar-ome-xml,
-      jar-specification,
       jar-turbojpeg"/>
 
   <target name="compile-formats-bsd" depends="deps-formats-bsd"
@@ -384,8 +342,7 @@ Type "ant -p" for a list of targets.
   <target name="clean-formats-bsd"
     depends="clean-jai,
       clean-lwf-stubs,
-      clean-mipav-stubs,
-      clean-ome-xml"
+      clean-mipav-stubs"
     description="remove build files for BSD format implementations">
     <ant dir="components/formats-bsd" target="formats-bsd.clean"/>
   </target>
@@ -405,7 +362,6 @@ Type "ant -p" for a list of targets.
   <target name="deps-bio-formats-tools"
     depends="copy-jars, jar-jai,
       jar-lwf-stubs,
-      jar-ome-xml,
       jar-formats-api,
       jar-formats-gpl,
       jar-formats-bsd"/>
@@ -428,7 +384,6 @@ Type "ant -p" for a list of targets.
   <target name="clean-bio-formats-tools"
     depends="clean-jai,
       clean-lwf-stubs,
-      clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd,
       clean-formats-gpl"
@@ -447,7 +402,6 @@ Type "ant -p" for a list of targets.
     depends="copy-jars,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
 
@@ -469,7 +423,6 @@ Type "ant -p" for a list of targets.
   <target name="clean-formats-gpl"
     depends="clean-mdbtools,
       clean-metakit,
-      clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
     description="remove build files for GPL format implementations">
@@ -521,7 +474,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-bio-formats-plugins"
     depends="copy-jars, jar-formats-gpl,
-      jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
 
@@ -542,7 +494,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-bio-formats-plugins"
     depends="clean-formats-gpl,
-      clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
     description="remove build files for Bio-Formats Plugins for ImageJ">
@@ -563,7 +514,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-tests"
     depends="copy-jars, jar-formats-gpl,
-      jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
 
@@ -584,7 +534,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-tests"
     depends="clean-formats-gpl,
-      clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
     description="remove build files for Bio-Formats testing framework">
@@ -630,32 +579,6 @@ Type "ant -p" for a list of targets.
 
     <echo>----------=========== loci_tools ===========----------</echo>
     <ant dir="components/bundles/loci-tools" target="bundle"/>
-  </target>
-
-  <!-- Xsd-Fu -->
-  <target name="clean-xsd-fu"
-    description="remove build files for xsd-fu">
-    <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
-  </target>
-
-  <target name="ome-xml-src"
-    description="generate sources using xsd-fu">
-    <ant dir="components/ome-xml" target="generate-source"/>
-  </target>
-
-  <!-- Specification -->
-  <target name="jar-specification"
-    description="generate JAR file for OME-XML specification"
-    depends="jar-ome-xml">
-    <ant dir="components/specification" target="jar"/>
-  </target>
-  <target name="test-specification"
-    description="compile and run tests for OME-XML specification">
-    <ant dir="components/specification" target="test"/>
-  </target>
-  <target name="clean-specification"
-    description="remove build files for OME-XML specification">
-    <ant dir="components/specification" target="clean"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
