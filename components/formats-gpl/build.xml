@@ -39,7 +39,7 @@ Type "ant -p" for a list of targets.
       <restrict>
       <path refid="test.classpath"/>
         <rsel:not>
-          <rsel:name name="mdb*.jar"/>
+          <rsel:name name="ome-mdbtools*.jar"/>
         </rsel:not>
       </restrict>
     </path>
