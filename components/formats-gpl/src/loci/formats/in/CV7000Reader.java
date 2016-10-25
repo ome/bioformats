@@ -253,7 +253,10 @@ public class CV7000Reader extends FormatReader {
     if (settingsPath != null && new Location(settingsPath).exists()) {
       lightSources = new ArrayList<LightSource>();
       MeasurementSettingsHandler settingsHandler = new MeasurementSettingsHandler();
-      XMLTools.parseXML(DataTools.readFile(settingsPath), settingsHandler);
+      String xml = DataTools.readFile(settingsPath).trim();
+      if (xml.length() > 0) {
+        XMLTools.parseXML(xml, settingsHandler);
+      }
     }
 
     String firstFile = null;
