@@ -14,7 +14,7 @@ Type "ant -p" for a list of targets.
   <property file="build.properties"/>
 
   <target name="test" depends="jar,compile-tests,test-no-mdb,test-no-netcdf,
-    test-no-jhdf"
+    test-no-poi,test-no-jhdf"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
@@ -79,6 +79,31 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
     <fail if="failedTest"/>
+  </target>
+
+<target name="test-no-poi" depends="compile-tests"    
+    description="run missing POI JAR tests" if="doTests">   
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"   
+      file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>   
+    <path id="test-no-poi.classpath">   
+      <restrict>    
+        <path refid="test.classpath"/>    
+        <rsel:not>    
+          <rsel:name name="ome-poi*.jar"/>    
+        </rsel:not>   
+      </restrict>   
+    </path>   
+    <testng failureProperty="failedTest">   
+      <classpath refid="test-no-poi.classpath"/>    
+      <classpath>   
+        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->    
+        <pathelement location="${test-classes.dir}"/>   
+        <pathelement location="${classes.dir}"/>    
+      </classpath>    
+      <xmlfileset file="${build.dir}/testng.xml"/>    
+      <jvmarg value="-mx${testng.memory}"/>   
+    </testng>   
+    <fail if="failedTest"/>   
   </target>
 
   <target name="test-no-jhdf" depends="compile-tests"
