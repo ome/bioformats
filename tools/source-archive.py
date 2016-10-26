@@ -21,24 +21,6 @@ import platform
 # polluting the release with version control files.
 
 
-GITVERSION_XML = """<?xml version="1.0" encoding="utf-8"?>
-<project name="gitversion" basedir=".">
-    <property name="release.version" value="%s"/>
-    <property name="release.shortversion" value="%s"/>
-    <property name="vcs.shortrevision" value="%s"/>
-    <property name="vcs.revision" value="%s"/>
-    <property name="vcs.date" value="%s"/>
-</project>
-"""
-
-GITVERSION_CMAKE = """set(OME_VERSION "%s")
-set(OME_VERSION_SHORT "%s")
-set(OME_VCS_SHORTREVISION "%s")
-set(OME_VCS_REVISION "%s")
-set(OME_VCS_DATE %s)
-set(OME_VCS_DATE_S "%s")
-"""
-
 if __name__ == "__main__":
 
     parser = OptionParser()
@@ -131,22 +113,6 @@ if __name__ == "__main__":
         # Remove repacked zip
         os.remove(name)
 
-    # Embed release number
-    basezip.writestr(
-        "%s/ant/gitversion.xml" % (prefix),
-        GITVERSION_XML % (
-            options.bioformats_version, options.bioformats_shortversion,
-            options.bioformats_vcsshortrevision,
-            options.bioformats_vcsrevision,
-            options.bioformats_vcsdate))
-    basezip.writestr(
-        "%s/cpp/cmake/GitVersion.cmake" % (prefix),
-        GITVERSION_CMAKE % (
-            options.bioformats_version, options.bioformats_shortversion,
-            options.bioformats_vcsshortrevision,
-            options.bioformats_vcsrevision,
-            options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
-
     # Repeat for tar archive
     base_archive_status = call([
         'git', 'archive', '--format', 'tar',
@@ -195,25 +161,6 @@ if __name__ == "__main__":
         os.remove(name)
 
     # Embed release number
-    antversionbuf = StringIO.StringIO(GITVERSION_XML % (
-        options.bioformats_version, options.bioformats_shortversion,
-        options.bioformats_vcsshortrevision,
-        options.bioformats_vcsrevision,
-        options.bioformats_vcsdate))
-    antversion = tarfile.TarInfo("%s/ant/gitversion.xml" % (prefix))
-    antversion.size = antversionbuf.len
-    antversion.mtime = time.time()
-    basetar.addfile(antversion, antversionbuf)
-
-    cmakeversionbuf = StringIO.StringIO(GITVERSION_CMAKE % (
-        options.bioformats_version, options.bioformats_shortversion,
-        options.bioformats_vcsshortrevision,
-        options.bioformats_vcsrevision,
-        options.bioformats_vcsdate_unix, options.bioformats_vcsdate))
-    cmakeversion = tarfile.TarInfo("%s/cpp/cmake/GitVersion.cmake" % (prefix))
-    cmakeversion.size = cmakeversionbuf.len
-    cmakeversion.mtime = time.time()
-    basetar.addfile(cmakeversion, cmakeversionbuf)
     basetar.close()
     try:
         call(['xz', "%s/%s.tar" % (options.target, prefix)])
