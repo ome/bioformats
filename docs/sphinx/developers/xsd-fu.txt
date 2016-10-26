@@ -204,7 +204,7 @@ Working with Enumerations and Enumeration Handlers
 --------------------------------------------------
 
 XsdFu code generates enumeration regular expressions using a flexible
-:source:`configuration file <components/xsd-fu/cfg/enum_handler.cfg>`.
+`configuration file <https://github.com/ome/ome-model/blob/master/xsd-fu/cfg/enum_handler.cfg>`_.
 
 Each enumeration has a key-value listing of regular expression to exact enumeration value matches. For example:
 

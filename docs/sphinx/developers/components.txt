@@ -80,7 +80,7 @@ target (which is the Ant equivalent of :ref:`bundles <bundles>`).
 
 .. _bundles:
 
-:source:`bundles (bioformats_package bundle, LOCI Tools bundle, OME Tools bundle) <components/bundles>`:
+:source:`bundles (bioformats_package bundle, LOCI Tools bundle) <components/bundles>`:
 
 `Ant: tools`
 
