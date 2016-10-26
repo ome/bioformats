@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-common</artifactId>
-      <version>${ome_common.version}</version>
+      <version>${ome-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>

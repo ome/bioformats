@@ -10,6 +10,7 @@ Type "ant -p" for a list of targets.
 <project>
   <property file="${user.home}/.ant-global.properties"/>
   <property file="${root.dir}/ant/global.properties"/>
+  <xmlproperty file="${root.dir}/pom.xml" prefix="maven" keepRoot="false"/>
 
   <!-- Convenient JDK version properties -->
 
@@ -79,6 +80,14 @@ Type "ant -p" for a list of targets.
   <!-- ProGuard: http://proguard.sourceforge.net/ -->
   <!--<taskdef resource="proguard/ant/task.properties"
     classpath="${lib.dir}/proguard.jar"/>-->
+
+  <!-- Version properties from maven -->
+  <propertyselector property="mavenproperties" match="maven\.properties\.(.*\.version)" select="\1"/>
+  <for list="${mavenproperties}" param="mavenproperty">
+    <sequential>
+      <property name="@{mavenproperty}" value="${maven.properties.@{mavenproperty}}"/>
+    </sequential>
+  </for>
 
   <!-- Internal build targets -->
 
