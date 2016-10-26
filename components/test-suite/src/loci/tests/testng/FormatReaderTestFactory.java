@@ -245,6 +245,11 @@ public class FormatReaderTestFactory {
     }
     files = new ArrayList<String>();
     for (String s: minimalFiles) {
+      if (!originalPath.containsKey(s)) {
+        String msg = "No match found for " + s;
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
       files.add(originalPath.get(s));
     }
 
