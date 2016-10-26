@@ -11,26 +11,6 @@ can also be built with Maven by running :command:`mvn` in the component's
 subdirectory.  The Maven module name for each component (as it is shown in
 most IDEs) is also noted in parenthesis.
 
-External components
--------------------
-
-.. _ome-common:
-
-ome-common (Common):
-
-Provides I/O classes that unify reading from files on disk, streams or files
-in memory, compressed streams, and non-file URLs.  The primary entry points
-are :common_javadoc:`Location <loci/common/Location.html>`,
-:common_javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
-(for reading), and :common_javadoc:`RandomAccessOutputStream
-<loci/common/RandomAccessOutputStream.html>` (for writing).
-
-In addition to I/O, there are several classes to assist in working with XML
-(:common_javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
-(:common_javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
-(:common_javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
-(:common_javadoc:`DataTools <loci/common/DataTools.html>`).
-
 Core components
 ---------------
 
@@ -39,8 +19,6 @@ The most commonly used and actively modified components.
 - :ref:`formats-api <formats-api>`
 - :ref:`formats-bsd <formats-bsd>`
 - :ref:`formats-gpl <formats-gpl>`
-- :ref:`specification <specification>`
-- :ref:`ome-xml <ome-xml>`
 
 Internal testing components
 ---------------------------
@@ -54,10 +32,8 @@ but are less relevant for active development work.
 Forks of existing projects
 --------------------------
 
-- :ref:`mdbtools <forks-mdbtools>`
 - :ref:`jai <forks-jai>`
 - :ref:`turbojpeg <forks-turbojpeg>`
-- :ref:`poi <forks-poi>`
 
 All components
 --------------
@@ -124,29 +100,6 @@ needed for reading images from histology/pathology formats in
 :ref:`formats-gpl <formats-gpl>`.  There are no dependencies on other
 components.
 
-.. _forks-mdbtools:
-
-:source:`forks/mdbtools (MDB Tools (Java port)) <components/forks/mdbtools>`:
-
-`Ant: jar-mdbtools`
-
-This is a fork of the `mdbtools-java
-<http://mdbtools.cvs.sourceforge.net/viewvc/mdbtools/mdbtools-java>`_ project.
-There are numerous bug fixes, as well as changes to reduce the memory required
-for large files.  There are no dependencies on other components.
-
-.. _forks-poi:
-
-:source:`forks/poi (Apache Jakarta POI) <components/forks/poi>`:
-
-`Ant: jar-ome-poi`
-
-This is a fork of `Apache POI <http://poi.apache.org>`_, which allows reading
-of Microsoft OLE document files.  We have made substantial changes to support
-files larger than 2GB and reduce the amount of memory required to open a file.
-I/O is also handled by classes from :ref:`ome-common <ome-common>`, which
-allows OLE files to be read from memory.
-
 .. _forks-turbojpeg:
 
 :source:`forks/turbojpeg (libjpeg-turbo Java bindings) <components/forks/turbojpeg>`:
@@ -208,30 +161,6 @@ Java implementation of the `Metakit database specification
 :ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
 Bio-Formats API.
 
-.. _ome-xml:
-
-:source:`ome-xml (OME-XML Java library) <components/ome-xml>`:
-
-`Ant: jar-ome-xml`
-
-This component contains classes that represent the OME-XML schema.  Some
-classes are committed to the Git repository, but the majority are generated at
-build time by using :ref:`xsd-fu <xsd-fu>` to parse the
-:ref:`OME-XML schema files <specification>`.  Classes from this component are
-used by Bio-Formats to read and write OME-XML, but they can also be used
-independently.
-
-.. _specification:
-
-:source:`specification (Specification) <components/specification>`:
-
-`Ant: jar-specification`
-
-All released and in-progress OME-XML schema files are contained in this
-component.  The specification component is also the location of all XSLT
-stylesheets for converting between OME-XML schema versions, as well as example
-OME-XML files in each of the released schema versions.
-
 .. _stubs:
 
 :source:`stubs (Luratech LuraWave stubs, MIPAV stubs) <components/stubs>`:
@@ -255,11 +184,82 @@ tests) are included in this component.  These tests are primarily run by the
 :devs_doc:`continuous integration jobs <ci-bio-formats.html>`, and verify that
 there are no regressions in reading images or metadata.
 
+External components
+-------------------
+
+The following have been decoupled from the Bio-Formats code repository and are
+now available as separate build dependencies:
+
+- :ref:`OME Common <ome-common>`
+- :ref:`OME MDB Tools (Java) <forks-mdbtools>`
+- :ref:`OME Apache Jakarta POI <forks-poi>`
+
+Decoupled OME data model components:
+
+- :ref:`OME-XML <ome-xml>`
+- :ref:`Specification <specification>`
+- :ref:`XSD-FU <xsd-fu>`
+
+.. _ome-common:
+
+OME Common (`Java <https://github.com/ome/ome-common-java>`_ /
+`C++ <https://github.com/ome/ome-files-cpp>`_):
+
+Provides I/O classes that unify reading from files on disk, streams or files
+in memory, compressed streams, and non-file URLs.  The primary entry points
+are :common_javadoc:`Location <loci/common/Location.html>`,
+:common_javadoc:`RandomAccessInputStream <loci/common/RandomAccessInputStream.html>`
+(for reading), and :common_javadoc:`RandomAccessOutputStream
+<loci/common/RandomAccessOutputStream.html>` (for writing).
+
+In addition to I/O, there are several classes to assist in working with XML
+(:common_javadoc:`XMLTools <loci/common/xml/XMLTools.html>`), date/timestamps
+(:common_javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
+(:common_javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
+(:common_javadoc:`DataTools <loci/common/DataTools.html>`).
+
+.. _forks-mdbtools:
+
+`OME MDB Tools (Java port) <https://github.com/ome/ome-mdbtools>`_:
+
+This is a fork of the `mdbtools-java
+<http://mdbtools.cvs.sourceforge.net/viewvc/mdbtools/mdbtools-java>`_ project.
+There are numerous bug fixes, as well as changes to reduce the memory required
+for large files.  There are no dependencies on other components.
+
+.. _forks-poi:
+
+`OME Apache Jakarta POI <https://github.com/ome/ome-poi>`_:
+
+This is a fork of `Apache POI <http://poi.apache.org>`_, which allows reading
+of Microsoft OLE document files.  We have made substantial changes to support
+files larger than 2GB and reduce the amount of memory required to open a file.
+I/O is also handled by classes from :ref:`ome-common <ome-common>`, which
+allows OLE files to be read from memory.
+
+.. _ome-xml:
+
+`OME-XML Java library <https://github.com/ome/ome-model/tree/master/ome-xml>`_:
+
+This component contains classes that represent the OME-XML schema.  Some
+classes are committed to the Git repository, but the majority are generated at
+build time by using :ref:`xsd-fu <xsd-fu>` to parse the
+:ref:`OME-XML schema files <specification>`.  Classes from this component are
+used by Bio-Formats to read and write OME-XML, but they can also be used
+independently.
+
+.. _specification:
+
+`Model specification <https://github.com/ome/ome-model/tree/master/specification>`_:
+
+All released and in-progress OME-XML schema files are contained in this
+component.  The specification component is also the location of all XSLT
+stylesheets for converting between OME-XML schema versions, as well as example
+OME-XML files in each of the released schema versions.
+
 .. _xsd-fu:
 
-:source:`xsd-fu (XSD-FU) <components/xsd-fu>`:
-
-`Ant: no target`
+`XSD-FU component <https://github.com/ome/ome-model/tree/master/xsd-fu>`_:
 
 xsd-fu is a Python framework for turning the schema files in the
 :ref:`specification <specification>` component into the classes that represent
