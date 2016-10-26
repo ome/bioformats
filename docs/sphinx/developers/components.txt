@@ -198,7 +198,6 @@ Decoupled OME data model components:
 
 - :ref:`OME-XML <ome-xml>`
 - :ref:`Specification <specification>`
-- :ref:`XSD-FU <xsd-fu>`
 
 .. _ome-common:
 
@@ -243,8 +242,8 @@ allows OLE files to be read from memory.
 
 This component contains classes that represent the OME-XML schema.  Some
 classes are committed to the Git repository, but the majority are generated at
-build time by using :ref:`xsd-fu <xsd-fu>` to parse the
-:ref:`OME-XML schema files <specification>`.  Classes from this component are
+build time by using XSD-FU to parse the
+:ref:`OME-XML schema files <specification>`. Classes from this component are
 used by Bio-Formats to read and write OME-XML, but they can also be used
 independently.
 
@@ -256,11 +255,3 @@ All released and in-progress OME-XML schema files are contained in this
 component.  The specification component is also the location of all XSLT
 stylesheets for converting between OME-XML schema versions, as well as example
 OME-XML files in each of the released schema versions.
-
-.. _xsd-fu:
-
-`XSD-FU component <https://github.com/ome/ome-model/tree/master/xsd-fu>`_:
-
-xsd-fu is a Python framework for turning the schema files in the
-:ref:`specification <specification>` component into the classes that represent
-the OME-XML schema in the :ref:`ome-xml <ome-xml>` component.

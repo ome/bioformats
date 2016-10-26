@@ -62,7 +62,6 @@ Contributing to Bio-Formats
     reader-guide
     format-documentation
     service
-    xsd-fu
     useful-scripts
 
 See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org/ome/report/44>`_
