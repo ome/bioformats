@@ -5,7 +5,7 @@ ANT_SPHINXOPTS := -Dsphinx.opts="$(SPHINXOPTS)"
 endif
 
 ifdef BF_RELEASE
-ANT_BF_RELEASE := -Drelease.version="$(BF_RELEASE)" -Drelease.shortversion="$(BF_RELEASE)"
+ANT_BF_RELEASE := -Drelease.version="$(BF_RELEASE)"
 endif
 
 ifdef RELEASE

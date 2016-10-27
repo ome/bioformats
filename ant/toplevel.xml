@@ -606,14 +606,12 @@ Type "ant -p" for a list of targets.
     <exec executable="python" failonerror="true">
       <arg value="${root.dir}/tools/source-archive.py"/>
       <arg value="--release=bioformats"/>
-      <arg value="--bioformats-shortversion=${release.shortversion}"/>
       <arg value="--bioformats-version=${release.version}"/>
       <arg value="--target=${artifact.dir}"/>
     </exec>
     <exec executable="python" failonerror="true">
       <arg value="${root.dir}/tools/source-archive.py"/>
       <arg value="--release=bioformats-dfsg"/>
-      <arg value="--bioformats-shortversion=${release.shortversion}"/>
       <arg value="--bioformats-version=${release.version}"/>
       <arg value="--target=${artifact.dir}"/>
     </exec>
@@ -623,7 +621,6 @@ Type "ant -p" for a list of targets.
     <mkdir dir="${artifact.dir}"/>
     <delete file="${artifact.dir}/bioformats.properties"/>
     <propertyfile file="${artifact.dir}/bioformats.properties">
-      <entry key="release.shortversion" value="${release.shortversion}"/>
       <entry key="release.version" value="${release.version}"/>
     </propertyfile>
   </target>

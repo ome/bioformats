@@ -18,7 +18,11 @@ Type "ant -p" for a list of targets.
   <property name="latex.opts" value=""/>
 
   <target name="init">
-    <property name="sphinx.release" value="${release.shortversion}"/>
+    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
+    <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
+    <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
+
+    <property name="sphinx.release" value="${release.version}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
     <if>
       <isset property="sphinx.source.branch"/>
