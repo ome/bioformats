@@ -53,7 +53,6 @@ public final class CommandLineTools {
 
   public static void printVersion() {
     System.out.println("Version: " + FormatTools.VERSION);
-    System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
     System.out.println("Build date: " + FormatTools.DATE);
   }
 

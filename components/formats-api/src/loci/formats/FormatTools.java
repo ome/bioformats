@@ -203,13 +203,15 @@ public final class FormatTools {
 
   public static final Properties VERSION_PROPERTIES = loadProperties();
 
-  /** Current VCS revision. */
-  public static final String VCS_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.revision");
+  /** Current VCS revision.
+   * @deprecated Use the general {@link #VERSION} field.
+   */
+  public static final String VCS_REVISION = "unknown";
 
-  /** Current VCS revision (short form). */
-  public static final String VCS_SHORT_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.shortrevision");
+  /** Current VCS revision (short form).
+   * @deprecated Use the general {@link #VERSION} field.
+   */
+  public static final String VCS_SHORT_REVISION = "unknown";
 
   /** Date on which this release was built. */
   public static final String DATE = VERSION_PROPERTIES.getProperty("date");
