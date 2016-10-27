@@ -84,8 +84,8 @@ The complete list of current dependencies is as follows:
     * - `Commons Logging v1.1.1 <http://commons.apache.org/logging/>`_
       - commons-logging:commons-logging:1.1.1
       - `Apache License v2.0`_
-    * - `NetCDF-Java Library v4.3.19 <http://www.unidata.ucar.edu/software/netcdf-java/documentation.htm>`_
-      - edu.ucar:netcdf:4.3.19
+    * - `NetCDF-Java Library v4.3.22 <http://www.unidata.ucar.edu/software/netcdf-java/documentation.htm>`_
+      - edu.ucar:netcdf:4.3.22
       - `MIT-Style License`_
     * - `Joda time v2.2 <http://github.com/JodaOrg/joda-time>`_
       - joda-time:joda-time:2.2
@@ -161,7 +161,7 @@ non-OME/external dependency is bumped.
 .. _BSD 3-Clause: https://spdx.org/licenses/BSD-3-Clause.html
 .. _Sun Public License / LGPL: http://www.beanshell.org/license.html
 .. _Common Public License v1.0: https://spdx.org/licenses/CPL-1.0.html
-.. _MIT-Style License: https://github.com/Unidata/thredds/blob/v4.3.19/cdm/license.txt
+.. _MIT-Style License: https://github.com/Unidata/thredds/blob/v4.3.22/cdm/license.txt
 .. _BSD License: https://spdx.org/licenses/BSD-2-Clause.html
 .. _Eclipse Public License v1.0: https://spdx.org/licenses/EPL-1.0.html
 .. _GPL v2: https://spdx.org/licenses/GPL-2.0.html
