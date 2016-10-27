@@ -9,7 +9,6 @@ Type "ant -p" for a list of targets.
 <project name="sphinx" default="html" basedir=".">
   <description>Build file for sphinx documentation</description>
   <property name="root.dir" location="../.."/>
-  <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
@@ -18,7 +17,7 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
 
-  <target name="init" depends="release-version">
+  <target name="init">
     <property name="sphinx.release" value="${release.shortversion}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
     <if>

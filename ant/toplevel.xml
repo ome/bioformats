@@ -9,7 +9,6 @@ Type "ant -p" for a list of targets.
 <project>
   <property name="root.dir" location="${basedir}"/>
   <import file="${root.dir}/ant/global.xml"/>
-  <import file="${root.dir}/ant/version.xml"/>
 
   <!-- Global build targets -->
 
@@ -571,8 +570,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Octave -->
-  <target name="dist-octave" description="generate an Octave package"
-          depends="release-version">
+  <target name="dist-octave" description="generate an Octave package">
     <echo>-------=========== Octave package ===========-------</echo>
 
     <tempfile property="temp.file" destDir="${java.io.tmpdir}"/>
@@ -580,7 +578,7 @@ Type "ant -p" for a list of targets.
           toFile="${temp.file}">
       <filterset begintoken="$${" endtoken ="}" >
         <filter token="release.version" value="${release.version}"/>
-        <filter token="DATE" value="${vcs.date}"/>
+        <filter token="DATE" value="${date}"/>
       </filterset>
     </copy>
 
@@ -603,7 +601,7 @@ Type "ant -p" for a list of targets.
   <target name="init"/>
 
   <!-- Source release -->
-  <target name="release" description="zip the git release as bioformats-[dfsg-]${release.version}.zip" depends="release-version">
+  <target name="release" description="zip the git release as bioformats-[dfsg-]${release.version}.zip">
     <mkdir dir="${artifact.dir}"/>
     <exec executable="python" failonerror="true">
       <arg value="${root.dir}/tools/source-archive.py"/>
@@ -621,25 +619,17 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="store-version" description="store version information in a property file" depends="release-version">
+  <target name="store-version" description="store version information in a property file">
     <mkdir dir="${artifact.dir}"/>
     <delete file="${artifact.dir}/bioformats.properties"/>
     <propertyfile file="${artifact.dir}/bioformats.properties">
       <entry key="release.shortversion" value="${release.shortversion}"/>
       <entry key="release.version" value="${release.version}"/>
-      <entry key="vcs.date" value="${vcs.date}"/>
-      <entry key="vcs.shortrevision" value="${vcs.shortrevision}"/>
-      <entry key="vcs.revision" value="${vcs.revision}"/>
-      <entry key="vcs.date_unix" value="${vcs.date_unix}"/>
     </propertyfile>
   </target>
 
-  <target name="version" description="print version information" depends="release-version">
+  <target name="version" description="print version information">
     <echo>VERSION=${release.version}
-SHORTVERSION=${release.shortversion}
-VCS_DATE=${vcs.date}
-VCS_SHORTREVISION=${vcs.shortrevision}
-VCS_REVISION=${vcs.revision}
 </echo>
   </target>
 
