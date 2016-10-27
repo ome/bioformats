@@ -6,7 +6,7 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="loci-tools" default="bundle" basedir=".">
+<project name="loci_tools" default="bundle" basedir=".">
   <description>Build file for LOCI Tools bundle</description>
   <property name="root.dir" location="../../.."/>
   <import file="${root.dir}/ant/java.xml"/>

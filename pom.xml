@@ -24,7 +24,7 @@
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
     <module>components/bio-formats-plugins</module>
-    <module>components/bundles/loci-tools</module>
+    <module>components/bundles/loci_tools</module>
     <module>components/metakit</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
