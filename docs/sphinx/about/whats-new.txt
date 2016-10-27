@@ -1,6 +1,39 @@
 Version history
 ===============
 
+5.3.0-m1 (2016 October 27)
+--------------------------
+
+Updated build system:
+
+* dropped embedded JARs and now use the Maven Ant Tasks plugin to unify the
+  dependencies using the pom.xml
+* dropped deprecated osgi targets, OME Tools bundle and ome-jxr component
+* removed PDF generation from the docs-sphinx target
+* added version number to Javadoc zip bundle name
+* migrated unit tests out of test-suite into formats-bsd
+* simplified Travis build
+* now storing all versions in the top-level pom.xml
+
+Component architecture changes/decoupling:
+
+* removed formats-common component - now decoupled to the new
+  `ome/ome-common-java GitHub repository <https://github.com/ome/ome-common-java>`_
+  and consumed as 'org.openmicroscopy:ome-common' artifact from Maven
+  Central
+* removed ome-poi component - now decoupled to the new
+  `ome/ome-poi GitHub repository <https://github.com/ome/ome-poi>`_
+  and consumed as 'org.openmicroscopy:ome-poi' artifact from Maven Central
+* removed specification, xsd-fu and ome-xml components - now decoupled to the
+  new `ome/ome-model Github repository <https://github.com/ome/ome-model>`_
+  and consumed as 'org.openmicroscopy:{specification,xsd-fu,ome-xml}'
+  artifacts from Maven Central
+* removed mdbtools component - now decoupled to the new
+  `ome/ome-mdbtools GitHub repository <https://github.com/ome/ome-mdbtools>`_
+  and consumed as 'org.openmicroscopy:ome-mdbtools' artifact from Maven
+  Central
+* updated developer documentation for the decoupled components
+
 5.2.4 (2016 October 18)
 -----------------------
 
