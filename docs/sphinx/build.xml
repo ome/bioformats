@@ -54,6 +54,7 @@ Type "ant -p" for a list of targets.
     <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
     <replace file="conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
     <replace file="conf.py" token="@ome_xml_version@" value="${ome-xml.version}"/>
+    <replace file="conf.py" token="@specification_version@" value="${specification.version}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">
