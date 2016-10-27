@@ -14,9 +14,13 @@
 # Substitutions from external build system.
 srcdir = '@sphinx_srcdir@'
 builddir = '@sphinx_builddir@'
-ext_source_branch = '@sphinx_source_branch@'
-ext_source_user = '@sphinx_source_user@'
-ext_omerodoc_uri = '@sphinx_omerodoc_uri@'
+bioformats_source_branch = '@bioformats_source_branch@'
+openmicroscopy_source_user = '@openmicroscopy_source_user@'
+ome_source_user = '@ome_source_user@'
+omerodoc_uri = '@sphinx_omerodoc_uri@'
+ome_common_version = '@ome_common_version@'
+ome_xml_version = '@ome_xml_version@'
+ome_specification_version = '@ome_specification_version@'
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
@@ -105,20 +109,10 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-# Variables used to define Github extlinks
-source_branch = 'develop'
-if (ext_source_branch is not None and len(ext_source_branch) > 0 and
-    ext_source_branch != "@%s@" % ('sphinx_source_branch')):
-    source_branch = ext_source_branch
-source_user = 'openmicroscopy'
-if (ext_source_user is not None and len(ext_source_user) > 0 and
-    ext_source_user != "@%s@" % ('sphinx_source_user}')):
-    source_user = ext_source_user
-
 github_root = 'https://github.com/'
-bf_github_root = github_root + source_user + '/bioformats/'
-bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
-bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
+bf_github_root = github_root + openmicroscopy_source_user + '/bioformats/'
+bf_github_tree = bf_github_root + 'tree/' + bioformats_source_branch + '/'
+bf_github_blob = bf_github_root + 'blob/' + bioformats_source_branch + '/'
 gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
 bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 bf_cpp = bf_github_blob + 'cpp/'
@@ -135,10 +129,6 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-omerodoc_uri = oo_site_root + '/support/omero5.1'
-if (ext_omerodoc_uri is not None and len(ext_omerodoc_uri) > 0 and
-    ext_omerodoc_uri != "@%s@" % ('sphinx_omerodoc_uri}')):
-    omerodoc_uri = ext_omerodoc_uri
 
 extlinks = {
     # Trac links
@@ -173,6 +163,10 @@ extlinks = {
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.2/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5.2/api/%s', ''),
+    'common_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-common/' + ome_common_version + '/' + '%s', ''),
+    'xml_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-xml/' + ome_xml_version + '/' + '%s', ''),
+    'specification_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-specification/' + ome_specification_version + '/' + '%s', ''),
+
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.2.5-SNAPSHOT</version>
+    <version>5.3.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -34,14 +34,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mdbtools-java</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-mdbtools</artifactId>
+      <version>${ome-mdbtools.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -49,14 +44,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-xml</artifactId>
-      <version>${project.version}</version>
+      <version>${ome-xml.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-poi</artifactId>
-      <version>${project.version}</version>
+      <version>${ome-poi.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -213,7 +208,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:mdbtools-java</classpathDependencyExclude>
+                <classpathDependencyExclude>org.openmicroscopy:ome-mdbtools</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>
@@ -231,7 +226,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:ome-poi</classpathDependencyExclude>
+                <classpathDependencyExclude>org.openmicroscopy:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>

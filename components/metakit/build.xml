@@ -21,8 +21,8 @@ Type "ant -p"  for a list of targets.
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
     </testng>
     <fail if="failedTest"/>
@@ -36,8 +36,8 @@ Type "ant -p"  for a list of targets.
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
       </classpath>
+      <classpath refid="test.classpath"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <sysproperty key="filename" value="${filename}"/>
       <jvmarg value="-mx${testng.memory}"/>

@@ -5,16 +5,10 @@
         <classpathentry kind="src" path="components/formats-api/src"/>
         <classpathentry kind="src" path="components/formats-bsd/build/src"/>
         <classpathentry kind="src" path="components/formats-bsd/src"/>
-        <classpathentry kind="src" path="components/formats-common/build/src"/>
-        <classpathentry kind="src" path="components/formats-common/src"/>
         <classpathentry kind="src" path="components/formats-gpl/build/src"/>
         <classpathentry kind="src" path="components/formats-gpl/src"/>
         <classpathentry kind="src" path="components/forks/jai/build/src"/>
         <classpathentry kind="src" path="components/forks/jai/src"/>
-        <classpathentry kind="src" path="components/forks/mdbtools/build/src"/>
-        <classpathentry kind="src" path="components/forks/mdbtools/src"/>
-        <classpathentry kind="src" path="components/forks/poi/build/src"/>
-        <classpathentry kind="src" path="components/forks/poi/src"/>
         <classpathentry kind="src" path="components/legacy/ome-editor/src"/>
         <classpathentry kind="src" path="components/legacy/ome-notes/src"/>
         <classpathentry kind="src" path="components/loci-plugins/build/src"/>
@@ -31,7 +25,6 @@
         <classpathentry kind="src" path="components/test-suite/src"/>
         <classpathentry kind="src" path="components/formats-api/test"/>
         <classpathentry kind="src" path="components/formats-bsd/test"/>
-        <classpathentry kind="src" path="components/formats-common/test"/>
         <classpathentry kind="src" path="components/formats-gpl/test"/>
         <classpathentry kind="src" path="components/loci-plugins/test"/>
         <classpathentry kind="src" path="components/metakit/test"/>

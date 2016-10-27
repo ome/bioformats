@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.2.5-SNAPSHOT</version>
+  <version>5.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -16,28 +16,20 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/specification</module>
     <module>components/forks/jai</module>
-    <module>components/forks/mdbtools</module>
-    <module>components/forks/poi</module>
     <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
-    <module>components/formats-common</module>
     <module>components/bio-formats-plugins</module>
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
-    <module>components/bundles/ome-tools</module>
-    <module>components/ome-jxr</module>
-    <module>components/ome-xml</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
     <module>components/stubs/mipav</module>
-    <module>components/xsd-fu</module>
     <module>docs/sphinx</module>
   </modules>
 
@@ -50,7 +42,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.2.5-SNAPSHOT</release.version>
+    <release.version>5.3.0-SNAPSHOT</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>
@@ -63,10 +55,11 @@
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-
-    <xsdfu.schemaver>2016-06</xsdfu.schemaver>
-    <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
-    <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
+    <ome-common.version>5.3.0</ome-common.version>
+    <specification.version>5.3.0</specification.version>
+    <ome-xml.version>5.3.0</ome-xml.version>
+    <ome-poi.version>5.3.0</ome-poi.version>
+    <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -695,6 +688,10 @@
     <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+    </repository>
+    <repository>
+      <id>ome.snapshots.test</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
     </repository>
   </repositories>
 

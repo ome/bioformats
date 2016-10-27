@@ -118,10 +118,6 @@ if __name__ == "__main__":
                  os.path.splitext(info.filename)[1] == ".dylib" or
                  os.path.splitext(info.filename)[1] == ".so")):
                 continue
-            if (options.release.endswith("-dfsg") and
-                info.filename.startswith(
-                    "%s/components/xsd-fu/python/genshi" % (prefix))):
-                continue
             print("File: %s" % (info.filename))
             # Repack a single zip object; preserve the metadata
             # directly via the ZipInfo object and rewrite the content
@@ -186,10 +182,6 @@ if __name__ == "__main__":
                  os.path.splitext(info.name)[1] == ".dll" or
                  os.path.splitext(info.name)[1] == ".dylib" or
                  os.path.splitext(info.name)[1] == ".so")):
-                continue
-            if (options.release.endswith("-dfsg") and
-                info.name.startswith(
-                    "%s/components/xsd-fu/python/genshi" % (prefix))):
                 continue
             print("File: %s" % (info.name))
             # Repack a single tar object; preserve the metadata
