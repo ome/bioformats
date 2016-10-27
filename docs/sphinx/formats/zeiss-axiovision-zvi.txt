@@ -24,7 +24,7 @@ Reader: ZeissZVIReader (:bfreader:`Source Code <ZeissZVIReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/downloads/axiovision.html>`_
+- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 
 
 We currently have:

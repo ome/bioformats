@@ -2414,7 +2414,7 @@ owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.ht
 developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 bsd = no
 versions = 1.0, 2.0
-software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/downloads/axiovision.html>`_
+software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 weHave = * a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
 * an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
 * an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
