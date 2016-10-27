@@ -160,7 +160,6 @@ if __name__ == "__main__":
         # Remove repacked tar
         os.remove(name)
 
-    # Embed release number
     basetar.close()
     try:
         call(['xz', "%s/%s.tar" % (options.target, prefix)])
