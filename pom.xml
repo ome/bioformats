@@ -145,8 +145,6 @@
             <canUpdateCopyright>false</canUpdateCopyright>
           <roots>
             <root>src</root>
-            <root>target/generated-sources</root>
-            <root>target/processed-sources</root>
             <root>test</root>
             <root>utils</root>
             <root>doc</root>

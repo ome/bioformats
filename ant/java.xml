@@ -62,7 +62,7 @@ Type "ant -p" for a list of targets.
 
   <!-- Main build targets -->
 
-  <target name="compile" depends="copy-source,copy-generated-source,mvn-init" description="compile classes">
+  <target name="compile" depends="copy-source,mvn-init" description="compile classes">
 
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
@@ -303,36 +303,6 @@ your FindBugs installation's lib directory. E.g.:
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="${component.source}"/>
     </copy>
-  </target>
-
-  <target name="generate-source" depends="init-title"/>
-
-  <target name="copy-generated-source" depends="init,generate-source">
-    <if>
-      <available file="${gensrc.dir}" type="dir"/>
-      <then>
-	<!-- copy binary resources -->
-	<copy todir="${dest.dir}" preservelastmodified="true">
-	  <!--
-	      include (none) to prevent problems if component.resources-bin is empty
-	  -->
-	  <fileset dir="${gensrc.dir}" includes="(none) ${component.resources-bin}"/>
-	</copy>
-	<!-- copy source files and text resources with filtering -->
-	<copy todir="${dest.dir}" preservelastmodified="true">
-	  <fileset dir="${gensrc.dir}"
-		   includes="${component.source} ${component.resources-text}"/>
-        </copy>
-
-        <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
-        <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
-        <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
-	<!-- copy resources to classes folder -->
-	<copy todir="${classes.dir}" preservelastmodified="true">
-	  <fileset dir="${dest.dir}" excludes="${component.source}"/>
-	</copy>
-      </then>
-    </if>
   </target>
 
   <target name="copy-test-source" depends="init" if="doTests">
