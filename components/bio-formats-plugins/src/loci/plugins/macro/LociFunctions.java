@@ -116,11 +116,8 @@ public class LociFunctions extends MacroFunctions {
 
   // -- LociFunctions API methods - version numbers --
 
-  /**
-   * @deprecated Use the general {@link #getVersionNumber(String[])} method.
-   */
   public void getRevision(String[] revision) {
-    revision[0] = FormatTools.VERSION;
+    revision[0] = FormatTools.VCS_REVISION;
   }
 
   public void getBuildDate(String[] date) {
@@ -606,6 +603,9 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("Ext.getVersionNumber(version)");
       IJ.log("-- Returns the version number of the currently installed");
       IJ.log("-- version of Bio-Formats.");
+      IJ.log("Ext.getRevision(revision)");
+      IJ.log("-- Returns the revision number of the currently");
+      IJ.log("-- installed version of Bio-Formats.");
       IJ.log("Ext.getBuildDate(date)");
       IJ.log("-- Returns the build date of the currently installed");
       IJ.log("-- version of Bio-Formats.");

@@ -34,8 +34,12 @@ package loci.formats;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -201,47 +205,95 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
-  public static final Properties VERSION_PROPERTIES = loadProperties();
+  public static final Properties VERSION_PROPERTIES = null;
+
+  private static final Manifest MANIFEST = loadManifest();
 
   /** Current VCS revision.
-   * @deprecated Use the general {@link #VERSION} field.
    */
-  public static final String VCS_REVISION = "unknown";
+  public static final String VCS_REVISION;
 
   /** Current VCS revision (short form).
-   * @deprecated Use the general {@link #VERSION} field.
+   * @deprecated Use the general {@link #VCS_REVISION} field.
    */
-  public static final String VCS_SHORT_REVISION = "unknown";
+  public static final String VCS_SHORT_REVISION;
 
   /** Date on which this release was built. */
-  public static final String DATE = VERSION_PROPERTIES.getProperty("date");
+  public static final String DATE;
 
   /** Year in which this release was built. */
-  public static final String YEAR = VERSION_PROPERTIES.getProperty("year");
+  public static final String YEAR;
 
   /** Version number of this release. */
-  public static final String VERSION =
-    VERSION_PROPERTIES.getProperty("release.version");
+  public static final String VERSION;
 
   /** Value to use when setting creator/software fields in exported files. */
-  public static final String CREATOR = "OME Bio-Formats " + VERSION;
+  public static final String CREATOR;
 
-  public static final String PROPERTY_FILE = "version.properties";
+  /**
+   * @deprecated The property file is no longer used.
+   */
+  public static final String PROPERTY_FILE = null;
 
+  /**
+   * @deprecated This method should no longer be used.  The properties
+   * are now obtained from the jar manifest.
+   */
   static Properties loadProperties() {
     Properties properties = new Properties();
-    try {
-      InputStream propertyFile = Class.forName(
-        "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
-      properties.load(propertyFile);
-    }
-    catch (ClassNotFoundException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
-    catch (IOException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
+    LOGGER.debug("loadProperties() is deprecated");
     return properties;
+  }
+
+  private static Manifest loadManifest() {
+    String className = FormatTools.class.getSimpleName() + ".class";
+    String classPath = FormatTools.class.getResource(className).toString();
+    if (!classPath.startsWith("jar")) {
+      return null;
+    }
+
+    String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) +
+      "/META-INF/MANIFEST.MF";
+
+    try{
+      Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+      return manifest;
+    }
+    catch (MalformedURLException exc) {
+    }
+    catch (IOException exc) {
+    }
+
+    return null;
+  }
+
+  static
+  {
+    Manifest manifest = loadManifest();
+    Attributes attr;
+
+    if(manifest != null)
+      attr = manifest.getMainAttributes();
+    else
+      attr = new Attributes();
+
+    if (attr.getValue("Implementation-Version") != null)
+      VERSION = attr.getValue("Implementation-Version");
+    else
+      VERSION = "(unknown version)";
+    CREATOR = "OME Bio-Formats " + VERSION;
+    if (attr.getValue("Implementation-Build") != null)
+      VCS_REVISION = attr.getValue("Implementation-Build");
+    else
+      VCS_REVISION = "(unknown revision)";
+    VCS_SHORT_REVISION = VCS_REVISION;
+    if (attr.getValue("Implementation-Date") != null) {
+      DATE = attr.getValue("Implementation-Date");
+      YEAR = DATE.substring(DATE.lastIndexOf(' ') + 1);
+    } else {
+      DATE = "(unknown date)";
+      YEAR = "(unknown year)";
+    }
   }
 
   // -- Constants - domains --

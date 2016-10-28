@@ -54,6 +54,7 @@ public final class CommandLineTools {
   public static void printVersion() {
     System.out.println("Version: " + FormatTools.VERSION);
     System.out.println("Build date: " + FormatTools.DATE);
+    System.out.println("VCS revision: " + FormatTools.VCS_REVISION);
   }
 
   public static void runUpgradeCheck(String[] args) {

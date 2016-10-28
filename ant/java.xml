@@ -165,13 +165,29 @@ your FindBugs installation's lib directory. E.g.:
     </checkstyle>
   </target>
 
-  <target name="jar" depends="compile" description="generate JAR file">
+  <target name="jar" depends="compile,init-timestamp" description="generate JAR file">
     <mkdir dir="${artifact.dir}"/>
+    <pathconvert property="manifest.classpath" pathsep=" ">
+      <path refid="runtime.classpath"/>
+      <mapper>
+        <chainedmapper>
+          <flattenmapper/>
+          <globmapper from="*.jar" to="*.jar"/>
+        </chainedmapper>
+      </mapper>
+    </pathconvert>
     <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
       <metainf dir="${basedir}" includes="lib/**/*"/>
       <manifest>
         <attribute name="Main-Class" value="${component.main-class}"/>
-        <attribute name="Class-Path" value="${component.manifest-cp}"/>
+        <attribute name="Class-Path" value="${manifest.classpath}"/>
+        <attribute name="Implementation-Title" value="${component.name}"/>
+        <attribute name="Implementation-Version" value="${release.version}"/>
+        <attribute name="Implementation-Vendor-Id" value="ome"/>
+        <attribute name="Implementation-Date" value="${DATE}"/>
+        <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
+        <attribute name="Implementation-Build" value="${build.version}"/>
+        <attribute name="Implementation-URL" value="http://www.openmicroscopy.org/site/products/bio-formats/"/>
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${component.jar}">
@@ -179,12 +195,19 @@ your FindBugs installation's lib directory. E.g.:
     </artifact:install>
   </target>
 
-  <target name="bundle" depends="mvn-init" description="create bundle JAR">
+  <target name="bundle" depends="init-timestamp,mvn-init" description="create bundle JAR">
     <mkdir dir="${artifact.dir}"/>
     <jar destfile="${artifact.dir}/${bundle.jar}" filesetmanifest="skip">
       <zipgroupfileset refid="runtime.fileset"/>
       <manifest>
-        <attribute name="Main-Class" value="${package.main}"/>
+        <attribute name="Main-Class" value="${bundle.main-class}"/>
+        <attribute name="Implementation-Title" value="${bundle.name}"/>
+        <attribute name="Implementation-Version" value="${bundle.version}"/>
+        <attribute name="Implementation-Vendor-Id" value="ome"/>
+        <attribute name="Implementation-Date" value="${DATE}"/>
+        <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
+        <attribute name="Implementation-Build" value="${build.version}"/>
+        <attribute name="Implementation-URL" value="http://www.openmicroscopy.org/site/products/bio-formats/"/>
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${bundle.jar}">
@@ -253,17 +276,7 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-title, init-timestamp, init-manifest-cp"/>
-
-  <target name="init-manifest-cp">
-    <!-- construct manifest classpath -->
-    <propertyregex property="component.manifest-cp"
-      input="${component.manifest-cp-temp}" replace=" "
-      defaultValue="${component.manifest-cp-temp}">
-      <regexp pattern=":"/>
-    </propertyregex>
-    <!--<echo>Manifest-Classpath: ${component.manifest-cp}</echo>-->
-  </target>
+    depends="init-title, init-timestamp"/>
 
   <target name="copy-source" depends="init">
     <!-- copy binary resources -->

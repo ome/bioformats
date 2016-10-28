@@ -68,6 +68,7 @@ public final class About implements PlugIn {
       "Bio-Formats Plugins for ImageJ" +
       "<br>Release: " + FormatTools.VERSION +
       "<br>Build date: " + FormatTools.DATE +
+      "<br>VCS revision: " + FormatTools.VCS_REVISION +
       "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
       " Open Microscopy Environment:" +
       "<ul>" +
