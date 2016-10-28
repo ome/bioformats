@@ -627,6 +627,7 @@ Type "ant -p" for a list of targets.
 
   <target name="version" description="print version information">
     <echo>VERSION=${release.version}
+BUILD_VERSION=${build.version}
 </echo>
   </target>
 
