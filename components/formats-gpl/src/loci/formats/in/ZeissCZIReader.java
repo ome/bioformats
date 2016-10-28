@@ -305,7 +305,15 @@ public class ZeissCZIReader extends FormatReader {
       // thumbnail, label, or preview image stored as an attachment
 
       int index = getCoreIndex() - (core.size() - extraImages.size());
-      return extraImages.get(index).attachmentData;
+      byte[] fullPlane = extraImages.get(index).attachmentData;
+      RandomAccessInputStream s = new RandomAccessInputStream(fullPlane);
+      try {
+        readPlane(s, x, y, w, h, buf);
+      }
+      finally {
+        s.close();
+      }
+      return buf;
     }
 
     previousChannel = getZCTCoords(no)[1];
