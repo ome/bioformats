@@ -207,8 +207,6 @@ public final class FormatTools {
 
   public static final Properties VERSION_PROPERTIES = null;
 
-  private static final Manifest MANIFEST = loadManifest();
-
   /** Current VCS revision.
    */
   public static final String VCS_REVISION;
