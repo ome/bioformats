@@ -542,7 +542,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bundles/bioformats_package" target="bundle"/>
 
     <echo>----------=========== loci_tools ===========----------</echo>
-    <ant dir="components/bundles/loci-tools" target="bundle"/>
+    <ant dir="components/bundles/loci_tools" target="bundle"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
