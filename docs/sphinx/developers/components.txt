@@ -131,7 +131,7 @@ readers and writers. :ref:`ome-common <ome-common>` and
 
 :source:`formats-bsd (BSD Bio-Formats readers and writers) <components/formats-bsd>`:
 
-`Ant: jar-formats-bsd, jar-formats-bsd-tests`
+`Ant: jar-formats-bsd`
 
 This contains readers and writers for formats which have a publicly available
 specification, e.g. TIFF.  Everything in the component is BSD-licensed.
