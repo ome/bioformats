@@ -270,10 +270,11 @@ public final class FormatTools {
     Manifest manifest = loadManifest();
     Attributes attr;
 
-    if(manifest != null)
+    if(manifest != null) {
       attr = manifest.getMainAttributes();
-    else
+    } else {
       attr = new Attributes();
+    }
 
     if (attr.getValue("Implementation-Version") != null) {
       VERSION = attr.getValue("Implementation-Version");
