@@ -170,7 +170,6 @@ Type "ant -p" for a list of targets.
                 YEAR = ${YEAR}
              src.dir = ${src.dir}
            build.dir = ${build.dir}
-            dest.dir = ${dest.dir}
          classes.dir = ${classes.dir}
             docs.dir = ${docs.dir}
             dist.dir = ${dist.dir}

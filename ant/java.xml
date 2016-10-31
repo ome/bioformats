@@ -32,6 +32,7 @@ Type "ant -p" for a list of targets.
    <artifact:pom file="pom.xml" id="maven.pom"/>
 
    <target name="mvn-init" unless="compile.classpath">
+     <mkdir dir="${build.dir}"/>
      <condition property="maven.repo.local" value="${maven.repo.local}"
          else="${user.home}/.m2/repository">
        <isset property="maven.repo.local"/>
@@ -62,22 +63,23 @@ Type "ant -p" for a list of targets.
 
   <!-- Main build targets -->
 
-  <target name="compile" depends="copy-source,mvn-init" description="compile classes">
-
+  <target name="compile" depends="mvn-init, copy-resources" description="compile classes">
+    <mkdir dir="${classes.dir}"/>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       encoding="UTF-8"
-      srcdir="${dest.dir}" destdir="${classes.dir}"
+      srcdir="${src.dir}" destdir="${classes.dir}"
       includes="${component.source}">
       <classpath refid="compile.classpath" />
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, copy-test-source, mvn-init"
+  <target name="compile-tests" depends="compile, mvn-init, copy-test-resources"
     description="compile test classes" if="doTests">
+    <mkdir dir="${test-classes.dir}"/>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
@@ -119,6 +121,7 @@ Type "ant -p" for a list of targets.
 
   <target name="findbugs" depends="jar"
     description="check source code for bugs">
+    <mkdir dir="${build.dir}"/>
     <if>
       <isset property="findbugs.home"/>
       <then>
@@ -128,7 +131,7 @@ Type "ant -p" for a list of targets.
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
           <auxClasspath refid="runtime.classpath"/>
-          <sourcePath path="${dest.dir}"/>
+          <sourcePath path="${src.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
 
@@ -161,7 +164,7 @@ your FindBugs installation's lib directory. E.g.:
     <checkstyle config="${root.dir}/checkstyle.xml" failOnViolation="false"
       classpath="${classes.dir}">
       <classpath refid="compile.classpath"/>
-      <fileset dir="${dest.dir}" includes="${component.source}"/>
+      <fileset dir="${src.dir}" includes="${component.source}"/>
     </checkstyle>
   </target>
 
@@ -232,13 +235,13 @@ your FindBugs installation's lib directory. E.g.:
 
   <target name="docs" depends="compile, javadoc-properties"
     description="generate javadocs">
-    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
+    <javadoc sourcepath="${src.dir}" destdir="${docs.dir}/api"
       encoding="UTF-8"
       author="true" version="true" use="true"
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
-      <packageset dir="${dest.dir}"/>
+      <packageset dir="${src.dir}"/>
       <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
@@ -263,10 +266,6 @@ your FindBugs installation's lib directory. E.g.:
     <delete dir="${docs.dir}"/>
   </target>
 
-  <target name="clean-src" description="remove source files from build folder">
-    <delete dir="${dest.dir}"/>
-  </target>
-
   <target name="clean-jar" description="remove JAR file from artifacts folder">
     <delete>
       <fileset dir="${artifact.dir}" includes="${component.jar}"/>
@@ -278,46 +277,30 @@ your FindBugs installation's lib directory. E.g.:
   <target name="init"
     depends="init-title, init-timestamp"/>
 
-  <target name="copy-source" depends="init">
+  <target name="copy-resources" depends="init">
     <!-- copy binary resources -->
-    <copy todir="${dest.dir}" preservelastmodified="true">
+    <mkdir dir="${classes.dir}"/>
+    <copy todir="${classes.dir}" preservelastmodified="true">
       <!--
         include (none) to prevent problems if component.resources-bin is empty
       -->
       <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
-    </copy>
-    <copy todir="${dest.dir}/META-INF" preservelastmodified="true">
-      <fileset dir="${src.dir}/.." includes="(non) ${component.resources-bin}"/>
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-text}"/>
     </copy>
     <!-- copy source files and text resources with filtering -->
-    <copy todir="${dest.dir}" preservelastmodified="true">
-      <fileset dir="${src.dir}"
-        includes="${component.source} ${component.resources-text}"/>
-    </copy>
-
-    <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
-    <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
-    <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
-
-    <!-- copy resources to classes folder -->
-    <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${dest.dir}" excludes="${component.source}"/>
-    </copy>
   </target>
 
-  <target name="copy-test-source" depends="init" if="doTests">
+  <target name="copy-test-resources" depends="init" if="doTests">
+    <!-- copy binary resources -->
+    <mkdir dir="${test.dir}"/>
     <copy todir="${test.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" includes="(none) ${component.resources-bin}"/>
+      <!--
+        include (none) to prevent problems if component.resources-bin is empty
+      -->
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-bin}"/>
+      <fileset dir="${src.dir}" includes="(none) ${component.resources-text}"/>
     </copy>
-
-    <copy todir="${test.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" includes="${component.source} ${component.resources-text}"/>
-    </copy>
-
-    <mkdir dir="${test-classes.dir}"/>
-    <copy todir="${test-classes.dir}" preservelastmodified="true">
-      <fileset dir="${tests.dir}" excludes="${component.source}"/>
-    </copy>
+    <!-- copy source files and text resources with filtering -->
   </target>
 
 </project>
