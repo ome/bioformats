@@ -275,15 +275,17 @@ public final class FormatTools {
     else
       attr = new Attributes();
 
-    if (attr.getValue("Implementation-Version") != null)
+    if (attr.getValue("Implementation-Version") != null) {
       VERSION = attr.getValue("Implementation-Version");
-    else
+    } else {
       VERSION = "(unknown version)";
+    }
     CREATOR = "OME Bio-Formats " + VERSION;
-    if (attr.getValue("Implementation-Build") != null)
+    if (attr.getValue("Implementation-Build") != null) {
       VCS_REVISION = attr.getValue("Implementation-Build");
-    else
+    } else {
       VCS_REVISION = "(unknown revision)";
+    }
     VCS_SHORT_REVISION = VCS_REVISION;
     if (attr.getValue("Implementation-Date") != null) {
       DATE = attr.getValue("Implementation-Date");
