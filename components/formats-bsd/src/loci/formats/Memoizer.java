@@ -578,7 +578,7 @@ public class Memoizer extends ReaderWrapper {
       // REVISION NUMBER
       if (!versionChecking &&
           FormatTools.VERSION.endsWith("-SNAPSHOT")) {
-        LOGGER.info("Development version: {} not {}",
+        LOGGER.info("Development version: {}",
           FormatTools.VERSION);
         return true;
       }
