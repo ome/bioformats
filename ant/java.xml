@@ -176,7 +176,9 @@ your FindBugs installation's lib directory. E.g.:
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${component.jar}">
-        <pom refid="maven.pom"/>
+      <artifact:localRepository id="local.repository"
+        path="${maven.repo.local}"/>
+      <pom refid="maven.pom"/>
     </artifact:install>
   </target>
 
@@ -189,7 +191,9 @@ your FindBugs installation's lib directory. E.g.:
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${bundle.jar}">
-        <pom refid="maven.pom"/>
+      <pom refid="maven.pom"/>
+      <artifact:localRepository id="local.repository"
+        path="${maven.repo.local}"/>
     </artifact:install>
   </target>
 
