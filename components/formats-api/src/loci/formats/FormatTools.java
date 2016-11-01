@@ -214,6 +214,7 @@ public final class FormatTools {
   /** Current VCS revision (short form).
    * @deprecated Use the general {@link #VCS_REVISION} field.
    */
+  @Deprecated
   public static final String VCS_SHORT_REVISION;
 
   /** Date on which this release was built. */
@@ -231,12 +232,14 @@ public final class FormatTools {
   /**
    * @deprecated The property file is no longer used.
    */
+  @Deprecated
   public static final String PROPERTY_FILE = null;
 
   /**
    * @deprecated This method should no longer be used.  The properties
    * are now obtained from the jar manifest.
    */
+  @Deprecated
   static Properties loadProperties() {
     Properties properties = new Properties();
     LOGGER.debug("loadProperties() is deprecated");
