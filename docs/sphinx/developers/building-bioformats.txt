@@ -62,26 +62,6 @@ If you are interested in working on the Bio-Formats source code itself,
 you can load it into your favorite IDE, or develop with your favorite
 text editor.
 
-Prerequisites
-^^^^^^^^^^^^^
-
-In addition to the Bio-Formats source code, the following programs and
-packages are also required:
-
-- `Python 2 <http://python.org>`_, version 2.6 or later (note: not
-  version 3)
-- `Genshi <http://genshi.edgewall.org>`_ 0.5 or later (0.7 recommended)
-
-.. note::
-
-    Genshi may be installed (in order of decreasing preference) with
-    some Linux distributions' package managers, :program:`pip` (``pip
-    install genshi``), by downloading a compatible :file:`.egg` for
-    your system from the `Genshi download page
-    <http://genshi.edgewall.org/wiki/Download>`_, or from source.  If
-    using a :file:`.egg`, make sure it is added to your
-    :envvar:`PYTHONPATH` environment variable.
-
 NetBeans
 ^^^^^^^^
 
@@ -123,14 +103,7 @@ You can import the Bio-Formats source by choosing
 and browsing to the top-level folder of your Bio-Formats working copy.
 Alternatively, run the Eclipse Maven target with :command:`mvn
 eclipse:eclipse` to create the Eclipse project files, then use
-:menuselection:`File --> Import --> Existing Projects into Workspace`.
-
-To remove post-import errors, either close the ``ome-xml`` project or run::
-
-  ant jars && mvn generate-sources
-
-.. seealso::
-   `[ome-devel] Importing source into eclipse <http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2014-March/002719.html>`_
+:menuselection:`File --> Import --> Existing Maven Projects`.
 
 Command line
 ^^^^^^^^^^^^

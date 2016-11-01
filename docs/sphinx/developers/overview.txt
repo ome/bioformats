@@ -40,8 +40,8 @@ OME data model.
 Implementation
 --------------
 
-Bio-Formats is primarily a Java project. It can be used from MATLAB, and
-there are C++ bindings and an ongoing C++ implementation effort. The
+Bio-Formats is primarily a Java project. It can be used from MATLAB and
+there is also a separate C++ implementation (OME Files C++). The
 source code is available for download and sometimes the user community
 contributes code back into Bio-Formats by opening a pull request on
 GitHub. Bio-Formats is built from source with Ant or Maven and some of
