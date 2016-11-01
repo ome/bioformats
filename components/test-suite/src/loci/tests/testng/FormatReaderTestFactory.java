@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -202,16 +204,30 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
-    Set<String> fileSet = new LinkedHashSet<String>(files);
+    Set<String> fileSet = new LinkedHashSet<String>();
+    Map<String, String> originalPath = new HashMap<String, String>();
+    for (String s: files) {
+      String canonicalPath;
+      try {
+        canonicalPath = (new File(s)).getCanonicalPath();
+      } catch (IOException e) {
+        LOGGER.warn("Could not get canonical path for {}", s);
+        canonicalPath = s;
+      }
+      fileSet.add(canonicalPath);
+      originalPath.put(canonicalPath, s);
+    }
     Set<String> minimalFiles = new LinkedHashSet<String>();
     FileStitcher reader = new FileStitcher();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        Set<String> auxFiles = new LinkedHashSet<String>(
-            Arrays.asList(reader.getUsedFiles())
-        );
+        String[] usedFiles = reader.getUsedFiles();
+        Set<String> auxFiles = new LinkedHashSet<String>();
+        for (String s: usedFiles) {
+          auxFiles.add((new File(s)).getCanonicalPath());
+        }
         fileSet.removeAll(auxFiles);
         String masterFile = reader.getCurrentFile();
         auxFiles.remove(masterFile);
@@ -227,7 +243,15 @@ public class FormatReaderTestFactory {
         catch (IOException e) { }
       }
     }
-    files = new ArrayList(minimalFiles);
+    files = new ArrayList<String>();
+    for (String s: minimalFiles) {
+      if (!originalPath.containsKey(s)) {
+        String msg = "No match found for " + s;
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      files.add(originalPath.get(s));
+    }
 
     // create test class instances
     System.out.println("Building list of tests...");
