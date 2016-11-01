@@ -89,7 +89,6 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<LightSource> lightSources;
   private ArrayList<Channel> channels;
   private int fields;
-  private int realRows, realCols;
   private String startTime, endTime;
 
   // -- Constructor --
@@ -179,8 +178,6 @@ public class CV7000Reader extends FormatReader {
       settingsPath = null;
       planeData = null;
       fields = 0;
-      realRows = 0;
-      realCols = 0;
       lightSources = null;
       channels = null;
       startTime = null;
@@ -264,8 +261,7 @@ public class CV7000Reader extends FormatReader {
     int minSizeC = Integer.MAX_VALUE, maxSizeC = 0;
     int minSizeT = Integer.MAX_VALUE, maxSizeT = 0;
     fields = 0;
-    int minRows = Integer.MAX_VALUE, maxRows = 0;
-    int minCols = Integer.MAX_VALUE, maxCols = 0;
+    HashSet<Integer> uniqueWells = new HashSet<Integer>();
 
     for (Plane p : planeData) {
       if (p != null) {
@@ -295,18 +291,7 @@ public class CV7000Reader extends FormatReader {
         if (p.field >= fields) {
           fields = p.field + 1;
         }
-        if (p.row > maxRows) {
-          maxRows = p.row;
-        }
-        if (p.row < minRows) {
-          minRows = p.row;
-        }
-        if (p.column > maxCols) {
-          maxCols = p.column;
-        }
-        if (p.column < minCols) {
-          minCols = p.column;
-        }
+        uniqueWells.add(p.row * plate.getPlateColumns() + p.column);
       }
     }
 
@@ -321,20 +306,22 @@ public class CV7000Reader extends FormatReader {
     core.get(0).sizeC *= (maxSizeC - minSizeC) + 1;
     core.get(0).imageCount = getSizeZ() * getSizeT() * (getSizeC() / reader.getSizeC());
 
-    realRows = maxRows - minRows + 1;
-    realCols = maxCols - minCols + 1;
+    int realWells = uniqueWells.size();
+    Integer[] wells = uniqueWells.toArray(new Integer[realWells]);
+    Arrays.sort(wells);
 
-    for (int i=1; i<realRows * realCols * fields; i++) {
+    for (int i=1; i<realWells * fields; i++) {
       core.add(new CoreMetadata(core.get(0)));
     }
 
-    int[] seriesLengths = new int[] {fields, realCols, realRows};
+    int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
     reversePlaneLookup = new int[getSeriesCount()][getImageCount()];
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
+      int wellIndex = Arrays.binarySearch(wells, p.row * plate.getPlateColumns() + p.column);
       p.series = FormatTools.positionToRaster(seriesLengths,
-        new int[] {p.field, p.column - minCols, p.row - minRows});
+        new int[] {p.field, wellIndex});
       p.no = FormatTools.positionToRaster(planeLengths,
         new int[] {p.channel - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
       reversePlaneLookup[p.series][p.no] = i;
