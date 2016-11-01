@@ -195,6 +195,48 @@ public class TestTools {
     getFiles(root, files, config, toplevelConfig, subdirs, "");
   }
 
+  /**
+   * Retrieve an external configuration file given a root directory and test
+   * configuration.
+   * @deprecated No replacement.
+   */
+  @Deprecated
+  public static String getExternalConfigFile(String root,
+    final ConfigurationTree config)
+  {
+    // Look for a configuration file under the configuration directory
+    String configRoot = config.relocateToConfig(root);
+    Location configFile = new Location(configRoot, baseConfigName);
+    if (configFile.exists()) {
+      return configFile.getAbsolutePath();
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Retrieve an external symlinked configuration file given a root directory
+   * and a test configuration.
+   * @deprecated No replacement.
+   */
+  @Deprecated
+  public static String getExternalSymlinkConfigFile(String root,
+    final ConfigurationTree config)
+  {
+    // Look for a configuration file under the configuration directory
+    try {
+      String canonicalRoot = new Location(root).getCanonicalPath();
+      if (!root.equals(canonicalRoot)) {
+        String configCanonicalRoot = config.relocateToConfig(canonicalRoot);
+        Location configFile = new Location(configCanonicalRoot, baseConfigName);
+        if (configFile.exists()) {
+          return configFile.getAbsolutePath();
+        }
+      }
+    } catch (IOException e) {};
+    return null;
+  }
+
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs,
