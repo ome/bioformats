@@ -103,7 +103,7 @@ You can import the Bio-Formats source by choosing
 and browsing to the top-level folder of your Bio-Formats working copy.
 Alternatively, run the Eclipse Maven target with :command:`mvn
 eclipse:eclipse` to create the Eclipse project files, then use
-:menuselection:`File --> Import --> Existing Projects into Workspace`.
+:menuselection:`File --> Import --> Existing Maven Projects`.
 
 Command line
 ^^^^^^^^^^^^
