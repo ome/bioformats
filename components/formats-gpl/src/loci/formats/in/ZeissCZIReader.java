@@ -805,6 +805,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     assignPlaneIndices();
+    calculateSeriesDimensions();
 
     if (maxResolution > 0) {
       tileWidth = new int[core.size()];
@@ -1272,101 +1273,121 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
+  private void calculateSeriesDimensions() {
+    int oldSeries = getSeries();
+    for (int i=0; i <getSeriesCount(); i++){
+      CoreMetadata seriesCore = core.get(i);
+      seriesCore.sizeZ = 1;
+    }
+    for (SubBlock plane : planes) {
+      setSeries(plane.coreIndex);
+      calculateDimensions(plane, plane.coreIndex);
+    }
+    for (int i=0; i <getSeriesCount(); i++){
+      setSeries(i);
+      CoreMetadata seriesCore = core.get(i);
+      seriesCore.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+    }
+    setSeries(oldSeries);
+  }
+  
+  private void calculateDimensions(SubBlock plane, int index) {
+    ArrayList<Integer> uniqueT = new ArrayList<Integer>();
+    CoreMetadata ms0 = core.get(index);
+    for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+      if (dimension == null) {
+        continue;
+      }
+      switch (dimension.dimension.charAt(0)) {
+        case 'X':
+          plane.x = dimension.size;
+          plane.col = dimension.start;
+          if ((prestitched == null || prestitched) &&
+            getSizeX() > 0 && dimension.size != getSizeX())
+          {
+            prestitched = true;
+            continue;
+          }
+          ms0.sizeX = dimension.size;
+          break;
+        case 'Y':
+          plane.y = dimension.size;
+          plane.row = dimension.start;
+          if ((prestitched == null || prestitched) &&
+            getSizeY() > 0 && dimension.size != getSizeY())
+          {
+            prestitched = true;
+            continue;
+          }
+          ms0.sizeY = dimension.size;
+          break;
+        case 'C':
+          if (dimension.start >= getSizeC()) {
+            ms0.sizeC = dimension.start + 1;
+          }
+          break;
+        case 'Z':
+          if (dimension.start >= getSizeZ()) {
+            ms0.sizeZ = dimension.start + 1;
+          }
+          else if (dimension.size > getSizeZ()) {
+            ms0.sizeZ = dimension.size;
+          }
+          break;
+        case 'T':
+          if (!uniqueT.contains(dimension.start)) {
+            uniqueT.add(dimension.start);
+            ms0.sizeT = uniqueT.size();
+          }
+          if (dimension.size > getSizeT()) {
+            ms0.sizeT = dimension.size;
+          }
+          break;
+        case 'R':
+          if (dimension.start >= rotations) {
+            rotations = dimension.start + 1;
+          }
+          break;
+        case 'S':
+          if (dimension.start >= positions) {
+            positions = dimension.start + 1;
+          }
+          break;
+        case 'I':
+          if (dimension.start >= illuminations) {
+            illuminations = dimension.start + 1;
+          }
+          break;
+        case 'B':
+          if (dimension.start >= acquisitions) {
+            acquisitions = dimension.start + 1;
+          }
+          break;
+        case 'M':
+          if (dimension.start >= mosaics) {
+            mosaics = dimension.start + 1;
+          }
+          break;
+        case 'H':
+          if (dimension.start >= phases) {
+            phases = dimension.start + 1;
+          }
+          break;
+        case 'V':
+          if (dimension.start >= angles) {
+            angles = dimension.start + 1;
+          }
+          break;
+        default:
+          LOGGER.warn("Unknown dimension '{}'", dimension.dimension);
+      }
+    }
+  }
+  
   private void calculateDimensions() {
     // calculate the dimensions
-    CoreMetadata ms0 = core.get(0);
-
-    ArrayList<Integer> uniqueT = new ArrayList<Integer>();
-
     for (SubBlock plane : planes) {
-      for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
-        if (dimension == null) {
-          continue;
-        }
-        switch (dimension.dimension.charAt(0)) {
-          case 'X':
-            plane.x = dimension.size;
-            plane.col = dimension.start;
-            if ((prestitched == null || prestitched) &&
-              getSizeX() > 0 && dimension.size != getSizeX())
-            {
-              prestitched = true;
-              continue;
-            }
-            ms0.sizeX = dimension.size;
-            break;
-          case 'Y':
-            plane.y = dimension.size;
-            plane.row = dimension.start;
-            if ((prestitched == null || prestitched) &&
-              getSizeY() > 0 && dimension.size != getSizeY())
-            {
-              prestitched = true;
-              continue;
-            }
-            ms0.sizeY = dimension.size;
-            break;
-          case 'C':
-            if (dimension.start >= getSizeC()) {
-              ms0.sizeC = dimension.start + 1;
-            }
-            break;
-          case 'Z':
-            if (dimension.start >= getSizeZ()) {
-              ms0.sizeZ = dimension.start + 1;
-            }
-            else if (dimension.size > getSizeZ()) {
-              ms0.sizeZ = dimension.size;
-            }
-            break;
-          case 'T':
-            if (!uniqueT.contains(dimension.start)) {
-              uniqueT.add(dimension.start);
-              ms0.sizeT = uniqueT.size();
-            }
-            if (dimension.size > getSizeT()) {
-              ms0.sizeT = dimension.size;
-            }
-            break;
-          case 'R':
-            if (dimension.start >= rotations) {
-              rotations = dimension.start + 1;
-            }
-            break;
-          case 'S':
-            if (dimension.start >= positions) {
-              positions = dimension.start + 1;
-            }
-            break;
-          case 'I':
-            if (dimension.start >= illuminations) {
-              illuminations = dimension.start + 1;
-            }
-            break;
-          case 'B':
-            if (dimension.start >= acquisitions) {
-              acquisitions = dimension.start + 1;
-            }
-            break;
-          case 'M':
-            if (dimension.start >= mosaics) {
-              mosaics = dimension.start + 1;
-            }
-            break;
-          case 'H':
-            if (dimension.start >= phases) {
-              phases = dimension.start + 1;
-            }
-            break;
-          case 'V':
-            if (dimension.start >= angles) {
-              angles = dimension.start + 1;
-            }
-            break;
-          default:
-            LOGGER.warn("Unknown dimension '{}'", dimension.dimension);
-        }
-      }
+      calculateDimensions(plane, 0);
     }
   }
 
