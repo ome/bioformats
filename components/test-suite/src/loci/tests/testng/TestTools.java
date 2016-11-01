@@ -197,8 +197,10 @@ public class TestTools {
 
   /**
    * Retrieve an external configuration file given a root directory and test
-   * configuration
+   * configuration.
+   * @deprecated No replacement.
    */
+  @Deprecated
   public static String getExternalConfigFile(String root,
     final ConfigurationTree config)
   {
@@ -213,9 +215,11 @@ public class TestTools {
   }
 
   /**
-   * Retrieve an external symlinkedconfiguration file given a root directory 
-   * and a test configuration
+   * Retrieve an external symlinked configuration file given a root directory
+   * and a test configuration.
+   * @deprecated No replacement.
    */
+  @Deprecated
   public static String getExternalSymlinkConfigFile(String root,
     final ConfigurationTree config)
   {
@@ -248,22 +252,16 @@ public class TestTools {
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
     Arrays.sort(subs);
-    boolean isSymlinkConfig = false;
 
     List<String> subsList = new ArrayList<String>();
 
     if (config.getConfigDirectory() != null) {
-      String configFile = getExternalConfigFile(root, config);
-      if (configFile != null) {
-        LOGGER.debug("found config file: {}", configFile);
-        subsList.add(configFile);
-      } else {
-        configFile = getExternalSymlinkConfigFile(root, config);
-        if (configFile != null) {
-          LOGGER.debug("found symlinked config file: {}", configFile);
-          subsList.add(configFile);
-          isSymlinkConfig = true;
-        }
+      // Look for a configuration file under the configuration directory
+      String configRoot = config.relocateToConfig(root);
+      Location configFile = new Location(configRoot, baseConfigName);
+      if (configFile.exists()) {
+        LOGGER.debug("found config file: {}", configFile.getAbsolutePath());
+        subsList.add(configFile.getAbsolutePath());
       }
     }
 
@@ -274,20 +272,12 @@ public class TestTools {
       if ((!isToplevel && isConfigFile(file, configFileSuffix)) ||
           (isToplevel && subs[i].equals(toplevelConfig)))
       {
-        if (config.getConfigDirectory() == null) {
+        if (config.getConfigDirectory() != null) {
           LOGGER.debug("adding config file: {}", file.getAbsolutePath());
           subsList.add(0, file.getAbsolutePath());
         }
       } else {
-        if (isSymlinkConfig) {
-          try {
-            subsList.add(file.getCanonicalPath());
-          } catch (IOException e) {
-            subsList.add(file.getAbsolutePath());
-          }
-        } else {
-          subsList.add(file.getAbsolutePath());
-        }
+        subsList.add(file.getAbsolutePath());
       }
     }
 
