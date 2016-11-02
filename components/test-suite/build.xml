@@ -27,7 +27,7 @@ Type "ant -p" for a list of targets.
     description="run tests for leaking file handles">
     <exec executable="${basedir}/target-test-runner">
       <arg value="--hudson"/>
-      <arg value="-t${testng.threadCount}"/>
+      <arg value="-t1"/>
       <arg value="-f${testng.filename}"/>
       <arg value="loci.tests.testng.FileHandleTest"/>
     </exec>
