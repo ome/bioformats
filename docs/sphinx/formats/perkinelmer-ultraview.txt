@@ -55,4 +55,4 @@ Commercial applications that support this format include:
 * `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
 .. seealso:: 
-  `PerkinElmer UltraVIEW system overview <http://www.perkinelmer.com/product/ultraview-vox-3d-live-cell-imaging-system-l7267000>`_
+  `PerkinElmer UltraVIEW system overview (pdf) <http://www.perkinelmer.com/lab-solutions/resources/docs/BRO_UltraVIEW-VoX-Product-Brochure.pdf>`_
