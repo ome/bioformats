@@ -887,6 +887,7 @@ public class ZeissCZIReader extends FormatReader {
           int minCol = Integer.MAX_VALUE;
           int maxCol = Integer.MIN_VALUE;
           int x = 0, y = 0;
+          int lastX = 0, lastY = 0;
           for (SubBlock plane : planes) {
             if (plane.coreIndex != s) {
               continue;
@@ -913,12 +914,16 @@ public class ZeissCZIReader extends FormatReader {
             if (plane.y > tileHeight[s]) {
               tileHeight[s] = plane.y;
             }
+            if (plane.row == maxRow && plane.col == maxCol) {
+              lastX = plane.x;
+              lastY = plane.y;
+            }
           }
 
           // don't overwrite the dimensions if stitching already occurred
           if (core.get(s).sizeX == x && core.get(s).sizeY == y) {
-            core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
-            core.get(s).sizeY = (core.get(s).sizeY + maxRow) - minRow;
+            core.get(s).sizeX = (lastX + maxCol) - minCol;
+            core.get(s).sizeY = (lastY + maxRow) - minRow;
           }
         }
         for (int r=0; r<core.get(s).resolutionCount; r++) {
