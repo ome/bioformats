@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.utests.in;
+package loci.formats.utests;
 
 import java.util.List;
 import java.util.ArrayList;
