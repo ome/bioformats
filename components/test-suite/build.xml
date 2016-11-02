@@ -47,7 +47,7 @@ Type "ant -p" for a list of targets.
         <arg value="--hudson"/>
         <arg value="-t${testng.threadCount}"/>
         <arg value="-f${testng.filename}"/>
-        <arg value="loci.tests.testng.FileHandleTest"/>
+        <arg value="loci.tests.testng.OpenBytesPerformanceTest"/>
     </exec>
     <testng failureProperty="failedTest">
       <classpath>
