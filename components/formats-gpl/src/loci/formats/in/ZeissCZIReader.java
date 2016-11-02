@@ -357,10 +357,11 @@ public class ZeissCZIReader extends FormatReader {
           (plane.planeIndex == previousChannel && validScanDim))
         {
           int res = (int) Math.pow(scaleFactor, plane.resolutionIndex);
-          if ((prestitched != null && prestitched) || validScanDim) {
-            int realX = plane.x / res;
-            int realY = plane.y / res;
 
+          int realX = plane.x / res;
+          int realY = plane.y / res;
+
+          if ((prestitched != null && prestitched) || validScanDim) {
             Region tile = new Region(plane.col, plane.row, realX, realY);
             if (validScanDim) {
               tile.y += (no / getSizeC());
@@ -412,7 +413,7 @@ public class ZeissCZIReader extends FormatReader {
             byte[] rawData = new SubBlock(plane).readPixelData();
             RandomAccessInputStream s = new RandomAccessInputStream(rawData);
             try {
-              readPlane(s, x, y, w, h, buf);
+              readPlane(s, x, y, w, h, realX - getSizeX(), buf);
               emptyTile = false;
             }
             finally {
