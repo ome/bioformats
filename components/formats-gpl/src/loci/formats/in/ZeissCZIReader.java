@@ -972,23 +972,6 @@ public class ZeissCZIReader extends FormatReader {
       segment.close();
     }
 
-    if (seriesCount * pixelTypes.size() > 1) {
-      core.clear();
-      for (int j=0; j<pixelTypes.size(); j++) {
-        for (int i=0; i<seriesCount; i++) {
-          CoreMetadata add = new CoreMetadata(ms0);
-          if (pixelTypes.size() > 1) {
-            int newC = originalC / pixelTypes.size();
-            add.sizeC = newC;
-            add.imageCount = add.sizeZ * add.sizeT;
-            add.rgb = false;
-            convertPixelType(add, pixelTypes.get(j));
-          }
-          core.add(add);
-        }
-      }
-    }
-
     // populate the OME metadata
 
     store = makeFilterMetadata();
