@@ -509,7 +509,7 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
-    if (maxResolution > 0 && getCoreIndex() < core.size() - 2) {
+    if (maxResolution > 0 && getCoreIndex() < core.size() - extraImages.size()) {
       return (int) Math.min(1024, getSizeX());
     }
     if (tileWidth != null && getCoreIndex() < tileWidth.length) {
@@ -525,7 +525,7 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
-    if (maxResolution > 0 && getCoreIndex() < core.size() - 2) {
+    if (maxResolution > 0 && getCoreIndex() < core.size() - extraImages.size()) {
       return (int) Math.min(1024, getSizeY());
     }
     if (tileHeight != null && getCoreIndex() < tileHeight.length) {
