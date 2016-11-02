@@ -772,7 +772,10 @@ public class ZeissCZIReader extends FormatReader {
           break;
         }
       }
-      if (getSizeX() > planes.get(0).x && !equalTiles) {
+      if ((getSizeX() > planes.get(0).x ||
+        (getSizeX() == planes.get(0).x &&
+        calculatedSeries == seriesCount * mosaics * positions)) && !equalTiles)
+      {
         // image was fused; treat the mosaics as a single image
         seriesCount = 1;
         positions = 1;
