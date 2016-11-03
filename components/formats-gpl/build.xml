@@ -133,7 +133,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-metadata" depends="compile-tests"
     description="test metadata level support for a single file" if="doTests">
-    <testng sourcedir="${test.dir}" testname="Metadata tests" failureProperty="failedTest">
+    <testng testname="Metadata tests" failureProperty="failedTest">
       <classpath>
         <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
