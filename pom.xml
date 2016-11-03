@@ -55,10 +55,10 @@
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
-    <ome-common.version>5.3.1-SNAPSHOT</ome-common.version>
-    <specification.version>5.3.1-SNAPSHOT</specification.version>
-    <ome-xml.version>5.3.1-SNAPSHOT</ome-xml.version>
-    <ome-poi.version>5.3.1-SNAPSHOT</ome-poi.version>
+    <ome-common.version>5.3.1</ome-common.version>
+    <specification.version>5.3.1</specification.version>
+    <ome-xml.version>5.3.1</ome-xml.version>
+    <ome-poi.version>5.3.1</ome-poi.version>
     <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
     <jxrlib.version>0.2.0-SNAPSHOT</jxrlib.version>
 
