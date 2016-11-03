@@ -9,16 +9,8 @@
         <classpathentry kind="src" path="components/formats-gpl/src"/>
         <classpathentry kind="src" path="components/forks/jai/build/src"/>
         <classpathentry kind="src" path="components/forks/jai/src"/>
-        <classpathentry kind="src" path="components/legacy/ome-editor/src"/>
-        <classpathentry kind="src" path="components/legacy/ome-notes/src"/>
-        <classpathentry kind="src" path="components/loci-plugins/build/src"/>
-        <classpathentry kind="src" path="components/loci-plugins/src"/>
         <classpathentry kind="src" path="components/metakit/build/src"/>
         <classpathentry kind="src" path="components/metakit/src"/>
-        <classpathentry kind="src" path="components/ome-xml/build/src"/>
-        <classpathentry kind="src" path="components/ome-xml/src"/>
-        <classpathentry kind="src" path="components/impl-bsd/build/src"/>
-        <classpathentry kind="src" path="components/impl-bsd/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/build/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/src"/>
         <classpathentry kind="src" path="components/test-suite/build/src"/>
@@ -26,11 +18,8 @@
         <classpathentry kind="src" path="components/formats-api/test"/>
         <classpathentry kind="src" path="components/formats-bsd/test"/>
         <classpathentry kind="src" path="components/formats-gpl/test"/>
-        <classpathentry kind="src" path="components/loci-plugins/test"/>
         <classpathentry kind="src" path="components/metakit/test"/>
         <classpathentry kind="src" path="components/ome-xml/test"/>
-        <classpathentry kind="src" path="components/impl-bsd/test"/>
-        <classpathentry kind="src" path="target/generated/src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/eclipse-bin"/>
 </classpath>
