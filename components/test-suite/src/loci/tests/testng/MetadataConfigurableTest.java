@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.utests;
+package loci.tests.testng;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
