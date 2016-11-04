@@ -97,34 +97,22 @@ Type "ant -p" for a list of targets.
     <isset property="isSnapshot"/>
     <then>
       <echo>isSnapshot = ${isSnapshot}</echo>
-        <!-- Check git describe twice: first to see if this is an exact
-             match and once to get the full string for parsing major,
-             minor, and patch values -->
-        <trycatch>
-          <try>
-            <exec executable="git" outputproperty="build.version.exact"
-              failifexecutionfails="true" failonerror="true">
-              <arg value="describe"/>
-              <arg value="--match=v[0-9]*"/>
-              <arg value="--exact"/>
-            </exec>
-            <property name="build.version" value="${build.version.exact}"/>
-          </try>
-          <catch>
-            <exec executable="git" outputproperty="build.version.inexact"
-              failifexecutionfails="false">
-              <arg value="describe"/>
-              <arg value="--match=v[0-9]*"/>
-            </exec>
-            <property name="build.version" value="${build.version.inexact}"/>
-          </catch>
-        </trycatch>
-      <property name="build.version" value="snapshot"/>
+      <trycatch>
+        <try>
+          <exec executable="git" outputproperty="build.revision"
+                failifexecutionfails="true" failonerror="true">
+            <arg value="rev-parse"/>
+            <arg value="--verify"/>
+            <arg value="HEAD"/>
+          </exec>
+          <property name="build.version" value="${build.revision}"/>
+        </try>
+        <catch>
+        </catch>
+      </trycatch>
     </then>
-    <else>
-      <property name="build.version" value="${release.version}"/>
-    </else>
   </if>
+  <property name="build.version" value="${release.version}"/>
 
   <!-- Internal build targets -->
 
