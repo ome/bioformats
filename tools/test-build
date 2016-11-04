@@ -49,7 +49,7 @@ do
         ant)
             antbuild ;;
         all)
-            clean && maven_findbugs && antbuild;;
+            clean && maven && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1
