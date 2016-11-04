@@ -38,6 +38,63 @@ package loci.formats.in;
 public interface MetadataOptions {
 
   /**
+   * Set property {@code name} to {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void set(String name, String value);
+
+  /**
+   * Get the value of property {@code name}.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value, or {@code defaultValue} if the property
+   * does not exist.
+   */
+  public String get(String name, String defaultValue);
+
+  /**
+   * Set property {@code name} to enumerated type {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public <T extends Enum<T>> void setEnum(String name, T value);
+
+  /**
+   * Get the value of property {@code name} as an enumerated type.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as an enumerated type, or {@code
+   * defaultValue} if the property does not exist.
+   * @throws IllegalArgumentException if mapping is illegal for the type
+   * provided
+   */
+  public <T extends Enum<T>> T getEnum(String name, T defaultValue);
+
+  /**
+   * Set property {@code name} to boolean {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setBoolean(String name, boolean value);
+
+  /**
+   * Get the value of property {@code name} as a boolean.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a boolean, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws IllegalArgumentException if value does not represent a boolean.
+   */
+  public boolean getBoolean(String name, boolean defaultValue);
+
+  /**
    * Set the metadata level.
    *
    * @param level a {@link loci.formats.in.MetadataLevel}.

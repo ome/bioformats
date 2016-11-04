@@ -32,13 +32,20 @@
 
 package loci.formats.in;
 
+import java.util.Properties;
+
 /**
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
 public class DefaultMetadataOptions implements MetadataOptions {
 
-  private MetadataLevel level;
-  private boolean validate;
+  public static final String METADATA_LEVEL_KEY = "metadata.level";
+  public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
+
+  public static final String READER_VALIDATE_KEY = "reader.validate.input";
+  public static final boolean READER_VALIDATE_DEFAULT = false;
+
+  private Properties props;
 
   /**
    * Construct a new {@code DefaultMetadataOptions}. Set the metadata
@@ -46,8 +53,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
    * file validation.
    */
   public DefaultMetadataOptions() {
-    this.level = MetadataLevel.ALL;
-    this.validate = false;
+    this(METADATA_LEVEL_DEFAULT);
   }
 
   /**
@@ -56,27 +62,70 @@ public class DefaultMetadataOptions implements MetadataOptions {
    * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
-    this.level = level;
+    props = new Properties();
+    setEnum(METADATA_LEVEL_KEY, level);
+    setBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
+  }
+
+  public void set(String name, String value) {
+    if (null == name) {
+      throw new IllegalArgumentException("name cannot be null");
+    }
+    props.setProperty(name, value);
+  }
+
+  public String get(String name, String defaultValue) {
+    return props.getProperty(name, defaultValue);
+  }
+
+  public <T extends Enum<T>> void setEnum(String name, T value) {
+    set(name, value.toString());
+  }
+
+  public <T extends Enum<T>> T getEnum(String name, T defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Enum.valueOf(defaultValue.getDeclaringClass(), val);
+  }
+
+  public void setBoolean(String name, boolean value) {
+    set(name, Boolean.toString(value));
+  }
+
+  public boolean getBoolean(String name, boolean defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    if (val.equalsIgnoreCase("true")) {
+      return true;
+    }
+    if (val.equalsIgnoreCase("false")) {
+      return false;
+    }
+    throw new IllegalArgumentException(val + "does not represent a boolean");
   }
 
   @Override
   public MetadataLevel getMetadataLevel() {
-    return level;
+    return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);
   }
 
   @Override
   public void setMetadataLevel(MetadataLevel level) {
-    this.level = level;
+    setEnum(METADATA_LEVEL_KEY, level);
   }
 
   @Override
   public boolean isValidate() {
-    return validate;
+    return getBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
   }
 
   @Override
   public void setValidate(boolean validateMetadata) {
-    this.validate = validateMetadata;
+    setBoolean(READER_VALIDATE_KEY, validateMetadata);
   }
 
 }
