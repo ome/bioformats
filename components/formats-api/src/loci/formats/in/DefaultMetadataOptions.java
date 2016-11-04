@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,8 +33,7 @@
 package loci.formats.in;
 
 /**
- *
- * @author callan
+ * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
 public class DefaultMetadataOptions implements MetadataOptions {
 
@@ -42,8 +41,9 @@ public class DefaultMetadataOptions implements MetadataOptions {
   private boolean validate;
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * The underlying MetadataLevel will be set to {@link loci.formats.in.MetadataLevel#ALL}.
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata
+   * level to {@link loci.formats.in.MetadataLevel#ALL} and disable
+   * file validation.
    */
   public DefaultMetadataOptions() {
     this.level = MetadataLevel.ALL;
@@ -51,40 +51,29 @@ public class DefaultMetadataOptions implements MetadataOptions {
   }
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * @param level the MetadataLevel to use
+   * Construct a new {@code DefaultMetadataOptions}.
+   *
+   * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
     this.level = level;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#getMetadataLevel()
-   */
   @Override
   public MetadataLevel getMetadataLevel() {
     return level;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#setMetadataLevel(loci.formats.in.MetadataLevel)
-   */
   @Override
   public void setMetadataLevel(MetadataLevel level) {
     this.level = level;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#isValidate()
-   */
   @Override
   public boolean isValidate() {
     return validate;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#setValidate(boolean)
-   */
   @Override
   public void setValidate(boolean validateMetadata) {
     this.validate = validateMetadata;
