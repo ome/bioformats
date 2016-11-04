@@ -602,7 +602,8 @@ public class ImageViewer extends JFrame implements ActionListener,
         "<li>University of Dundee</li>" +
         "</ul>" +
         "<i>" + FormatTools.URL_BIO_FORMATS + "</i>" +
-        "<br>Revision " + FormatTools.VCS_REVISION + ", built " +
+        "<br>Version " + FormatTools.VERSION + " (VCS revision " +
+        FormatTools.VCS_REVISION + "), built on " +
         FormatTools.DATE + "<br><br>See <a href=\"" +
         "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html\">" +
         "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html</a>" +

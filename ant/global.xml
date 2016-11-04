@@ -89,6 +89,31 @@ Type "ant -p" for a list of targets.
     </sequential>
   </for>
 
+  <!-- Build version -->
+  <condition property="isSnapshot">
+    <matches pattern="-SNAPSHOT$" string="${release.version}"/>
+  </condition>
+  <if>
+    <isset property="isSnapshot"/>
+    <then>
+      <echo>isSnapshot = ${isSnapshot}</echo>
+      <trycatch>
+        <try>
+          <exec executable="git" outputproperty="build.revision"
+                failifexecutionfails="true" failonerror="true">
+            <arg value="rev-parse"/>
+            <arg value="--verify"/>
+            <arg value="HEAD"/>
+          </exec>
+          <property name="build.version" value="${build.revision}"/>
+        </try>
+        <catch>
+        </catch>
+      </trycatch>
+    </then>
+  </if>
+  <property name="build.version" value="${release.version}"/>
+
   <!-- Internal build targets -->
 
   <target name="info" depends="init">
@@ -122,13 +147,6 @@ Type "ant -p" for a list of targets.
         <echo>
 =========== VERSIONING PROPERTIES ===========
          release.version = ${release.version}</echo>
-        <if>
-          <isset property="vcs.revision"/>
-          <then>
-            <echo>            vcs.revision = ${vcs.revision}
-                vcs.date = ${vcs.date}</echo>
-          </then>
-        </if>
       </then>
     </if>
     <if>
@@ -140,7 +158,6 @@ Type "ant -p" for a list of targets.
                 YEAR = ${YEAR}
              src.dir = ${src.dir}
            build.dir = ${build.dir}
-            dest.dir = ${dest.dir}
          classes.dir = ${classes.dir}
             docs.dir = ${docs.dir}
             dist.dir = ${dist.dir}

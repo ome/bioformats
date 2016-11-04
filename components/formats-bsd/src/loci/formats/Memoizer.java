@@ -548,13 +548,11 @@ public class Memoizer extends ReaderWrapper {
   /**
    * Returns {@code true} if the version of the memo file as returned by
    * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
-   * do not match the current version as specified by {@link FormatTools#VERSION}
-   * and {@link FormatTools#VCS_REVISION}, respectively.
+   * do not match the current version as specified by {@link FormatTools#VERSION}.
    */
   public boolean versionMismatch() throws IOException {
 
       final String releaseVersion = ser.loadReleaseVersion();
-      final String revision = ser.loadRevision();
 
       if (!isVersionChecking()) {
         return false;
@@ -578,9 +576,10 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // REVISION NUMBER
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
+      if (!versionChecking &&
+          FormatTools.VERSION.endsWith("-SNAPSHOT")) {
+        LOGGER.info("Development version: {}",
+          FormatTools.VERSION);
         return true;
       }
 
@@ -944,7 +943,6 @@ public class Memoizer extends ReaderWrapper {
       // Save to temporary location.
       ser.saveVersion(VERSION);
       ser.saveReleaseVersion(FormatTools.VERSION);
-      ser.saveRevision(FormatTools.VCS_REVISION);
       ser.saveReader(reader);
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);

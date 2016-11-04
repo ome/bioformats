@@ -28,8 +28,5 @@ matrix:
 before_install:
   - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
 
-install:
-  - if [[ $BUILD != 'ant' ]]; then git fetch --tags; fi
-
 script:
   - ./tools/test-build $BUILD

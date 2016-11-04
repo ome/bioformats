@@ -9,7 +9,6 @@ Type "ant -p" for a list of targets.
 <project name="sphinx" default="html" basedir=".">
   <description>Build file for sphinx documentation</description>
   <property name="root.dir" location="../.."/>
-  <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
@@ -18,8 +17,12 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
 
-  <target name="init" depends="release-version">
-    <property name="sphinx.release" value="${release.shortversion}"/>
+  <target name="init">
+    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
+    <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
+    <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
+
+    <property name="sphinx.release" value="${release.version}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
     <if>
       <isset property="sphinx.source.branch"/>
@@ -51,6 +54,7 @@ Type "ant -p" for a list of targets.
     <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
     <replace file="conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
     <replace file="conf.py" token="@ome_xml_version@" value="${ome-xml.version}"/>
+    <replace file="conf.py" token="@specification_version@" value="${specification.version}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">
