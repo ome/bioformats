@@ -149,18 +149,6 @@ Everything in the component is GPL-licensed (in contrast with
 Most file formats represented in this component do not have a publicly
 available specification.
 
-.. _metakit:
-
-:source:`metakit (Metakit) <components/metakit>`:
-
-`Ant: jar-metakit`
-
-Java implementation of the `Metakit database specification
-<http://equi4.com/metakit/>`_.  This uses classes from
-:ref:`ome-common <ome-common>` and is used by
-:ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
-Bio-Formats API.
-
 .. _test-suite:
 
 :source:`test-suite (Bio-Formats testing framework) <components/test-suite>`:
@@ -178,6 +166,7 @@ External components
 The following have been decoupled from the Bio-Formats code repository and are
 now available as separate build dependencies:
 
+- :ref:`Metakit <metakit>`
 - :ref:`OME Common <ome-common>`
 - :ref:`OME MDB Tools (Java) <forks-mdbtools>`
 - :ref:`OME Apache Jakarta POI <forks-poi>`
@@ -223,6 +212,16 @@ of Microsoft OLE document files.  We have made substantial changes to support
 files larger than 2GB and reduce the amount of memory required to open a file.
 I/O is also handled by classes from :ref:`ome-common <ome-common>`, which
 allows OLE files to be read from memory.
+
+.. _metakit:
+
+`Metakit Java library <https://github.com/ome/metakit/tree/master>`_:
+
+Java implementation of the `Metakit database specification
+<http://equi4.com/metakit/>`_.  This uses classes from
+:ref:`ome-common <ome-common>` and is used by
+:ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
+Bio-Formats API.
 
 .. _ome-xml:
 

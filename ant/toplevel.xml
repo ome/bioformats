@@ -17,7 +17,6 @@ Type "ant -p" for a list of targets.
       compile-formats-gpl,
       compile-jai,
       compile-bio-formats-plugins,
-      compile-metakit,
       compile-formats-api,
       compile-formats-bsd,
       compile-bio-formats-tools,
@@ -31,7 +30,6 @@ Type "ant -p" for a list of targets.
       jar-formats-gpl,
       jar-jai,
       jar-bio-formats-plugins,
-      jar-metakit,
       jar-formats-api,
       jar-formats-bsd,
       jar-bio-formats-tools,
@@ -47,7 +45,6 @@ Type "ant -p" for a list of targets.
     depends="findbugs-autogen,
       findbugs-formats-gpl,
       findbugs-bio-formats-plugins,
-      findbugs-metakit,
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
@@ -60,7 +57,6 @@ Type "ant -p" for a list of targets.
       clean-formats-gpl,
       clean-jai,
       clean-bio-formats-plugins,
-      clean-metakit,
       clean-formats-api,
       clean-formats-bsd,
       clean-bio-formats-tools,
@@ -77,7 +73,6 @@ Type "ant -p" for a list of targets.
       test-formats-gpl,
       test-jai,
       test-bio-formats-plugins,
-      test-metakit,
       test-formats-api,
       test-formats-bsd,
       test-bio-formats-tools,
@@ -145,36 +140,6 @@ Type "ant -p" for a list of targets.
   <target name="test-jai" depends="jar-jai, testing-deps"
     description="compile and run tests for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="test"/>
-  </target>
-
-  <!-- Metakit library -->
-
-  <target name="deps-metakit"
-    depends="copy-jars"/>
-
-  <target name="compile-metakit" depends="deps-metakit"
-    description="compile classes for Metakit Java library">
-    <ant dir="components/metakit" target="metakit.compile"/>
-  </target>
-
-  <target name="jar-metakit" depends="deps-metakit"
-    description="generate JAR file for Metakit Java library">
-    <ant dir="components/metakit" target="metakit.jar"/>
-  </target>
-
-  <target name="findbugs-metakit" depends="jar-metakit"
-    description="run findbugs on Metakit Java library">
-    <ant dir="components/metakit" target="metakit.findbugs"/>
-  </target>
-
-  <target name="clean-metakit"
-    description="remove build files for Metakit Java library">
-    <ant dir="components/metakit" target="metakit.clean"/>
-  </target>
-
-  <target name="test-metakit" depends="jar-metakit, testing-deps"
-    description="compile and run tests for Metakit Java library">
-    <ant dir="components/metakit" target="test"/>
   </target>
 
   <!-- API -->
@@ -291,7 +256,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-formats-gpl"
     depends="copy-jars,
-      jar-metakit,
       jar-formats-api,
       jar-formats-bsd"/>
 
@@ -311,8 +275,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-gpl"
-    depends="clean-metakit,
-      clean-formats-api,
+    depends="clean-formats-api,
       clean-formats-bsd"
     description="remove build files for GPL format implementations">
     <ant dir="components/formats-gpl" target="formats-gpl.clean"/>

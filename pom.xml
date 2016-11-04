@@ -25,7 +25,6 @@
     <module>components/bundles/bioformats_package</module>
     <module>components/bio-formats-plugins</module>
     <module>components/bundles/loci_tools</module>
-    <module>components/metakit</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>docs/sphinx</module>
@@ -49,6 +48,7 @@
     <logback.version>1.1.1</logback.version>
     <lwf-stubs.version>5.3.0</lwf-stubs.version>
     <mipav-stubs.version>5.3.0</mipav-stubs.version>
+    <metakit.version>5.3.0</metakit.version>
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
