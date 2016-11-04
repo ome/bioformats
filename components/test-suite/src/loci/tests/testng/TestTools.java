@@ -67,6 +67,17 @@ public class TestTools {
 
   public static final String baseConfigName = ".bioformats";
 
+  /**
+   * Safely return a system property by key excluding default Ant values
+   */
+  public static String getProperty(String key) {
+    String value = System.getProperty(key);
+    if (value == null || value.equals("${" + key + "}")) {
+      return null;
+    }
+    return value;
+  }
+
   /** Calculate the SHA-1 of a byte array. */
   public static String sha1(byte[] b, int offset, int len) {
     try {

@@ -42,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Factory;
 
+import static loci.tests.testng.TestTools.getProperty;
+
 /**
  * Factory for scanning a directory structure and generating instances of
  * {@link FormatReaderTest} based on the image files found.
@@ -61,17 +63,6 @@ public class FormatReaderTestFactory {
     LoggerFactory.getLogger(FormatReaderTestFactory.class);
 
   // -- TestNG factory methods --
-
-  /**
-   * Safely return a system property by key excluding default Ant values
-   */
-  public String getProperty(String key) {
-    String value = System.getProperty(key);
-    if (value == null || value.equals("${" + key + "}")) {
-      return null;
-    }
-    return value;
-  }
 
   @Factory
   public Object[] createInstances() {

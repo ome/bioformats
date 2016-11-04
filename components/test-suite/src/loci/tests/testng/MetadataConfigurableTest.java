@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.formats.utests;
+package loci.tests.testng;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
@@ -45,12 +45,21 @@ import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.testng.SkipException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static loci.tests.testng.TestTools.getProperty;
 
 /**
  */
 public class MetadataConfigurableTest {
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(MetadataConfigurableTest.class);
   private static final String FILENAME_PROPERTY = "testng.filename";
+  private static final String SKIP_MESSAGE = "No image file specified";
 
   private ImageReader pixelsOnly;
   private ImageReader all;
@@ -67,7 +76,11 @@ public class MetadataConfigurableTest {
     noOverlays = new ImageReader();
     noOverlays.setMetadataOptions(
       new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
-    id = System.getProperty(FILENAME_PROPERTY);
+    id = getProperty(FILENAME_PROPERTY);
+    if (null == id) {
+      LOGGER.error(SKIP_MESSAGE);
+      throw new SkipException(SKIP_MESSAGE);
+    }
   }
 
   @Test

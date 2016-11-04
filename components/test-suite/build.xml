@@ -312,4 +312,19 @@ Type "ant -p" for a list of targets.
   </target>
   <target name="test-config-xml" depends="gen-config-xml"/>
 
+  <target name="test-metadata" depends="compile"
+    description="test metadata level support for a single file">
+    <testng testname="Metadata tests" failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${basedir}"/><!-- logback.xml -->
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <classfileset file="${classes.dir}/loci/tests/testng/MetadataConfigurableTest.class"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
 </project>
