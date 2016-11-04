@@ -26,8 +26,6 @@ antbuild()
       ant clean compile-formats-api
       ant clean compile-jai
       ant clean compile-bio-formats-plugins
-      ant clean compile-lwf-stubs
-      ant clean compile-mipav-stubs
       ant clean compile-metakit
       ant clean compile-formats-bsd
       ant clean compile-formats-gpl

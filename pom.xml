@@ -28,8 +28,6 @@
     <module>components/metakit</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
-    <module>components/stubs/lwf-stubs</module>
-    <module>components/stubs/mipav</module>
     <module>docs/sphinx</module>
   </modules>
 
@@ -49,6 +47,8 @@
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
+    <lwf-stubs.version>5.3.0</lwf-stubs.version>
+    <mipav-stubs.version>5.3.0</mipav-stubs.version>
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>

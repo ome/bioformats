@@ -85,16 +85,16 @@
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>lwf-stubs</artifactId>
-      <version>${project.version}</version>
+      <version>${lwf-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>mipav-stubs</artifactId>
-      <version>${project.version}</version>
+      <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
 

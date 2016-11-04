@@ -161,18 +161,6 @@ Java implementation of the `Metakit database specification
 :ref:`formats-gpl <formats-gpl>`, but is otherwise independent of the main
 Bio-Formats API.
 
-.. _stubs:
-
-:source:`stubs (Luratech LuraWave stubs, MIPAV stubs) <components/stubs>`:
-
-`Ant: jar-lwf-stubs, jar-mipav-stubs`
-
-This component provides empty classes that mirror third-party dependencies
-which are required at compile time but cannot be included in the build system
-(usually due to licensing issues).  The build succeeds since required class
-names are present with the correct method signatures; the end user is then
-expected to replace the stub .jar files at runtime.
-
 .. _test-suite:
 
 :source:`test-suite (Bio-Formats testing framework) <components/test-suite>`:
@@ -255,3 +243,15 @@ All released and in-progress OME-XML schema files are contained in this
 component.  The specification component is also the location of all XSLT
 stylesheets for converting between OME-XML schema versions, as well as example
 OME-XML files in each of the released schema versions.
+
+.. _stubs:
+
+`Stubs <https://github.com/ome/ome-stubs/tree/master>`_:
+
+Luratech LuraWave stubs and MIPAV stubs.
+
+This component provides empty classes that mirror third-party dependencies
+which are required at compile time but cannot be included in the build system
+(usually due to licensing issues).  The build succeeds since required class
+names are present with the correct method signatures; the end user is then
+expected to replace the stub .jar files at runtime.
