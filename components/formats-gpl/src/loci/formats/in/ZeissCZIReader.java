@@ -952,12 +952,22 @@ public class ZeissCZIReader extends FormatReader {
 
     // find and add attached label/overview images
 
+    boolean foundLabel = false;
+    boolean foundPreview = false;
     for (Segment segment : segments) {
       if (segment instanceof Attachment) {
         AttachmentEntry entry = ((Attachment) segment).attachment;
         String name = entry.name.trim();
 
-        if (name.equals("Label") || name.equals("SlidePreview")) {
+        if ((name.equals("Label") && !foundLabel) ||
+          (name.equals("SlidePreview") && !foundPreview))
+        {
+          if (!foundLabel) {
+            foundLabel = name.equals("Label");
+          }
+          if (!foundPreview) {
+            foundPreview = name.equals("SlidePreview");
+          }
           segment.fillInData();
 
           // label and preview are CZI files embedded as attachments
@@ -968,6 +978,11 @@ public class ZeissCZIReader extends FormatReader {
           thumbReader.setId("image.czi");
 
           CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
+
+          if (c.sizeZ > 1 || c.sizeT > 1) {
+            continue;
+          }
+
           core.add(new CoreMetadata(c));
           core.get(core.size() - 1).thumbnail = true;
           ((Attachment) segment).attachmentData = thumbReader.openBytes(0);
