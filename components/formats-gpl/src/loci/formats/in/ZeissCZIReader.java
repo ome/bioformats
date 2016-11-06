@@ -395,6 +395,10 @@ public class ZeissCZIReader extends FormatReader {
                 outputRow -= tile.y;
               }
 
+              if (rawData.length < realX * realY * pixel) {
+                realX = rawData.length / (realY * pixel);
+              }
+
               int rowLen = pixel * (int) Math.min(intersection.width, realX);
               int outputOffset = outputRow * outputRowLen + outputCol;
               for (int trow=0; trow<intersection.height; trow++) {
@@ -647,9 +651,7 @@ public class ZeissCZIReader extends FormatReader {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
           if ((planes.get(i).directoryEntry.pyramidType == 2 || compression == JPEGXR) &&
-            (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp) &&
-            (planes.get(i).x % entries[0].storedSize) == 0 &&
-            (planes.get(i).y % entries[1].storedSize) == 0)
+            (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp))
           {
             int scale = planes.get(i).x / entries[0].storedSize;
             if (scale == 1 || (scale % 2) == 0 || (scale % 3) == 0) {
