@@ -5,9 +5,9 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ome</groupId>
+  <groupId>idr</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.1.11-SNAPSHOT</version>
+  <version>0.3.0</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -49,7 +49,7 @@
          properties for your dependencies rather than hardcoding them. -->
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.1.11-SNAPSHOT</release.version>
+    <release.version>0.3.0</release.version>
     <vcs.shortrevision>${shortrevision}</vcs.shortrevision>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>
@@ -746,12 +746,12 @@
         <repository>
           <id>ome.staging</id>
           <name>OME Staging Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+          <url>https://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
         </repository>
         <snapshotRepository>
           <id>ome.snapshots</id>
           <name>OME Snapshots Repository</name>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+          <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
         </snapshotRepository>
       </distributionManagement>
     </profile>
