@@ -794,7 +794,7 @@ public class ZeissCZIReader extends FormatReader {
           mosaics = 1;
         }
         else {
-          prestitched = false;
+          prestitched = maxResolution > 0;
         }
         ms0.sizeX = newX;
         ms0.sizeY = newY;
@@ -1534,7 +1534,9 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'M':
             if (dimension.start > prevM) {
-              if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount()) {
+              if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount() &&
+                (prestitched == null || !prestitched))
+              {
                 extraLengths[extraDimOrder.size()] = mosaics;
                 extraDimOrder.add('M');
               }
