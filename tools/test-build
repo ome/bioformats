@@ -17,32 +17,6 @@ maven()
     mvn
 }
 
-cpp()
-{
-    (
-        cd cpp
-        mkdir build
-        cd build
-        (
-            mkdir gtest
-            cd gtest
-            cmake /usr/src/gtest
-            make
-        )
-        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF -Dextended-tests=OFF ../.. || cat CMakeFiles/CMakeError.log
-        make
-        make test
-        make DESTDIR=../install install
-        make doc
-    )
-}
-
-# Check python sources with flake8
-flake()
-{
-    flake8 -v components cpp docs
-}
-
 # Test Ant build targets
 antbuild()
 {
@@ -72,14 +46,10 @@ do
             clean ;;
         maven)
             maven ;;
-        cpp)
-            cpp ;;
-        flake8)
-            flake ;;
         ant)
             antbuild ;;
         all)
-            clean && maven_findbugs && sphinx && antbuild;;
+            clean && maven && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1
