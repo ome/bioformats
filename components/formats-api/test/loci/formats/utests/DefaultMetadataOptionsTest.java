@@ -33,6 +33,8 @@
 package loci.formats.utests;
 
 import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
@@ -47,9 +49,73 @@ import loci.formats.in.MetadataLevel;
  */
 public class DefaultMetadataOptionsTest {
 
+  private static final String KEY = "test.key";
+
+  private MetadataOptions opt;
+  private enum One { FOO, BAR };
+  private enum Two { TAR, FOO };
+
+  @DataProvider(name = "booleanStrings")
+  public Object[][] mkBools() {
+    return new Object[][] {{"FALSE", "TRUE"},
+                           {"False", "True"},
+                           {"false", "true"}};
+  }
+
+  @BeforeMethod
+  public void setUp() {
+    opt = new DefaultMetadataOptions();
+  }
+
+  @Test
+  public void testString() {
+    assertEquals(opt.get(KEY, "default"), "default");
+    opt.set(KEY, "v");
+    assertEquals(opt.get(KEY, "default"), "v");
+  }
+
+  @Test
+  public void testEnum() {
+    assertEquals(opt.getEnum(KEY, One.BAR), One.BAR);
+    opt.setEnum(KEY, One.FOO);
+    assertEquals(opt.getEnum(KEY, One.BAR), One.FOO);
+    assertEquals(opt.getEnum(KEY, Two.TAR), Two.FOO);
+    opt.set(KEY, "TAR");
+    assertEquals(opt.getEnum(KEY, Two.FOO), Two.TAR);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testBadEnum() {
+    opt.setEnum(KEY, One.BAR);
+    Two t = opt.getEnum(KEY, Two.FOO);
+  }
+
+  @Test
+  public void testBoolean() {
+    assertFalse(opt.getBoolean(KEY, false));
+    assertTrue(opt.getBoolean(KEY, true));
+    opt.setBoolean(KEY, false);
+    assertFalse(opt.getBoolean(KEY, true));
+    opt.setBoolean(KEY, true);
+    assertTrue(opt.getBoolean(KEY, false));
+  }
+
+  @Test(dataProvider = "booleanStrings")
+  public void testBooleanFromString(String falseString, String trueString) {
+    opt.set(KEY, falseString);
+    assertFalse(opt.getBoolean(KEY, true));
+    opt.set(KEY, trueString);
+    assertTrue(opt.getBoolean(KEY, false));
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testBadBoolean() {
+    opt.set(KEY, "foo");
+    boolean b = opt.getBoolean(KEY, true);
+  }
+
   @Test
   public void testMetadataLevel() {
-    MetadataOptions opt = new DefaultMetadataOptions();
     assertEquals(opt.getMetadataLevel(), MetadataLevel.ALL);
     for (MetadataLevel level: MetadataLevel.values()) {
       opt.setMetadataLevel(level);
@@ -62,7 +128,6 @@ public class DefaultMetadataOptionsTest {
 
   @Test
   public void testIsValidate() {
-    MetadataOptions opt = new DefaultMetadataOptions();
     assertFalse(opt.isValidate());
     opt.setValidate(true);
     assertTrue(opt.isValidate());
