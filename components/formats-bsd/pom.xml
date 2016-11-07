@@ -6,9 +6,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>ome</groupId>
+    <groupId>idr</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.1.11-SNAPSHOT</version>
+    <version>0.3.0</version>
     <relativePath>../..</relativePath>
   </parent>
 
