@@ -180,7 +180,8 @@ public class DeltavisionReader extends FormatReader {
     int x = stream.readInt();
     int y = stream.readInt();
     int count = stream.readInt();
-    return x > 0 && y > 0 && count > 0 && (x * y * count > stream.length());
+    return x > 0 && y > 0 && count > 0 &&
+      ((long) x * (long) y * (long) count < stream.length());
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
