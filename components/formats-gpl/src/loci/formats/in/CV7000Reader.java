@@ -150,7 +150,9 @@ public class CV7000Reader extends FormatReader {
     }
     if (!noPixels && channels != null) {
       for (Channel c : channels) {
-        if (c != null && c.correctionFile != null) {
+        if (c != null && c.correctionFile != null &&
+          new Location(c.correctionFile).exists())
+        {
           files.add(c.correctionFile);
         }
       }
@@ -253,6 +255,12 @@ public class CV7000Reader extends FormatReader {
       String xml = DataTools.readFile(settingsPath).trim();
       if (xml.length() > 0) {
         XMLTools.parseXML(xml, settingsHandler);
+      }
+    }
+
+    for (Channel ch : channels) {
+      if (ch.correctionFile != null) {
+        ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
       }
     }
 
@@ -430,12 +438,6 @@ public class CV7000Reader extends FormatReader {
             }
             Channel channel = null;
             for (Channel ch : channels) {
-              if (i == 0 && ch.correctionFile != null) {
-                if (new Location(ch.correctionFile).getParent() == null) {
-                  ch.correctionFile = new Location(parent, ch.correctionFile).getAbsolutePath();
-                }
-              }
-
               if (ch.index == p.channel) {
                 channel = ch;
                 break;
