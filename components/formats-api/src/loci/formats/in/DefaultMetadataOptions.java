@@ -108,6 +108,93 @@ public class DefaultMetadataOptions implements MetadataOptions {
     throw new IllegalArgumentException(val + "does not represent a boolean");
   }
 
+  public void setChar(String name, char value) {
+    set(name, Character.toString(value));
+  }
+
+  public char getChar(String name, char defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    if (val.length() != 1) {
+      throw new IllegalArgumentException("string length is not 1");
+    }
+    return val.charAt(0);
+  }
+
+  public void setByte(String name, byte value) {
+    set(name, Byte.toString(value));
+  }
+
+  public byte getByte(String name, byte defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Byte.parseByte(val);
+  }
+
+  public void setShort(String name, short value) {
+    set(name, Short.toString(value));
+  }
+
+  public short getShort(String name, short defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Short.parseShort(val);
+  }
+
+  public void setInt(String name, int value) {
+    set(name, Integer.toString(value));
+  }
+
+  public int getInt(String name, int defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Integer.parseInt(val);
+  }
+
+  public void setLong(String name, long value) {
+    set(name, Long.toString(value));
+  }
+
+  public long getLong(String name, long defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Long.parseLong(val);
+  }
+
+  public void setFloat(String name, float value) {
+    set(name, Float.toString(value));
+  }
+
+  public float getFloat(String name, float defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Float.parseFloat(val);
+  }
+
+  public void setDouble(String name, double value) {
+    set(name, Double.toString(value));
+  }
+
+  public double getDouble(String name, double defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Double.parseDouble(val);
+  }
+
   @Override
   public MetadataLevel getMetadataLevel() {
     return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);

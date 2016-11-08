@@ -95,6 +95,139 @@ public interface MetadataOptions {
   public boolean getBoolean(String name, boolean defaultValue);
 
   /**
+   * Set property {@code name} to char {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setChar(String name, char value);
+
+  /**
+   * Get the value of property {@code name} as a char.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a char, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws IllegalArgumentException if value's length is not 1.
+   */
+  public char getChar(String name, char defaultValue);
+
+  /**
+   * Set property {@code name} to byte {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setByte(String name, byte value);
+
+  /**
+   * Get the value of property {@code name} as a byte.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a byte, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent a byte.
+   */
+  public byte getByte(String name, byte defaultValue);
+
+  /**
+   * Set property {@code name} to short {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setShort(String name, short value);
+
+  /**
+   * Get the value of property {@code name} as a short.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a short, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent a short.
+   */
+  public short getShort(String name, short defaultValue);
+
+  /**
+   * Set property {@code name} to int {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setInt(String name, int value);
+
+  /**
+   * Get the value of property {@code name} as an int.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as an int, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent an int.
+   */
+  public int getInt(String name, int defaultValue);
+
+  /**
+   * Set property {@code name} to long {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setLong(String name, long value);
+
+  /**
+   * Get the value of property {@code name} as a long.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a long, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent a long.
+   */
+  public long getLong(String name, long defaultValue);
+
+  /**
+   * Set property {@code name} to float {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setFloat(String name, float value);
+
+  /**
+   * Get the value of property {@code name} as a float.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a float, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent a float.
+   */
+  public float getFloat(String name, float defaultValue);
+
+  /**
+   * Set property {@code name} to double {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setDouble(String name, double value);
+
+  /**
+   * Get the value of property {@code name} as a double.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a double, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws NumberFormatException if value does not represent a double.
+   */
+  public double getDouble(String name, double defaultValue);
+
+  /**
    * Set the metadata level.
    *
    * @param level a {@link loci.formats.in.MetadataLevel}.
