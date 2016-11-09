@@ -215,7 +215,7 @@ allows OLE files to be read from memory.
 
 .. _metakit:
 
-`Metakit Java library <https://github.com/ome/metakit/tree/master>`_:
+`Metakit Java library <https://github.com/ome/ome-metakit/tree/master>`_:
 
 Java implementation of the `Metakit database specification
 <http://equi4.com/metakit/>`_.  This uses classes from
