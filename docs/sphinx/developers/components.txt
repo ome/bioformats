@@ -245,7 +245,7 @@ OME-XML files in each of the released schema versions.
 
 .. _stubs:
 
-`Stubs <https://github.com/ome/ome-stubs/tree/master>`_:
+`Stubs <https://github.com/ome/ome-stubs/tree/master>`__:
 
 Luratech LuraWave stubs and MIPAV stubs.
 
