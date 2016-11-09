@@ -19,7 +19,6 @@ Type "ant -p" for a list of targets.
       <format property="YEAR" pattern="yyyy"/>
     </tstamp>
     <javadoc sourcepath="${merged-docs.source}"
-      classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
       maxmemory="${merged-docs.memory}"
       encoding="UTF-8"
@@ -27,6 +26,7 @@ Type "ant -p" for a list of targets.
       access="private"
       nodeprecated="false" windowtitle="Bio-Formats API"
       additionalparam="${javadoc.doclint}">
+      <classpath refid="compile.classpath"/>
       <classpath refid="runtime.classpath"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
