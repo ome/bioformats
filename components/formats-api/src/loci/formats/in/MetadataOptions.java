@@ -39,9 +39,11 @@ public interface MetadataOptions {
 
   /**
    * Set property {@code name} to {@code value}.
+   * If {@code value} is {@code null} the property will be removed.
    *
    * @param name property name.
    * @param value property value.
+   * @throws IllegalArgumentException if {@code name} is {@code null}.
    */
   public void set(String name, String value);
 

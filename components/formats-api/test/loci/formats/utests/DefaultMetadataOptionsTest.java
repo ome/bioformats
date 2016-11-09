@@ -132,6 +132,8 @@ public class DefaultMetadataOptionsTest {
     assertEquals(opt.get(KEY, "default"), "default");
     opt.set(KEY, "v");
     assertEquals(opt.get(KEY, "default"), "v");
+    opt.set(KEY, null);
+    assertEquals(opt.get(KEY, "default"), "default");
   }
 
   @Test

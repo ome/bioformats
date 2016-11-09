@@ -71,7 +71,11 @@ public class DefaultMetadataOptions implements MetadataOptions {
     if (null == name) {
       throw new IllegalArgumentException("name cannot be null");
     }
-    props.setProperty(name, value);
+    try {
+      props.setProperty(name, value);
+    } catch (NullPointerException e) {
+      props.remove(name);
+    }
   }
 
   public String get(String name, String defaultValue) {
