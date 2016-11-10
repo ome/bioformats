@@ -199,6 +199,19 @@ public class DefaultMetadataOptions implements MetadataOptions {
     return Double.parseDouble(val);
   }
 
+  public void setClass(String name, Class<?> value) {
+    set(name, value.getName());
+  }
+
+  public Class<?> getClass(String name, Class<?> defaultValue)
+      throws ClassNotFoundException {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return Class.forName(val);
+  }
+
   @Override
   public MetadataLevel getMetadataLevel() {
     return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);

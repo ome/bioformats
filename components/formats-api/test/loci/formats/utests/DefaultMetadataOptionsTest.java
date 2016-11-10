@@ -329,6 +329,23 @@ public class DefaultMetadataOptionsTest {
   }
 
   @Test
+  public void testClass() throws ClassNotFoundException {
+    final Class<?> c1 = Thread.class;
+    final Class<?> c2 = loci.formats.in.DefaultMetadataOptions.class;
+    assertEquals(opt.getClass(KEY, c1), c1);
+    opt.setClass(KEY, c2);
+    assertEquals(opt.getClass(KEY, c1), c2);
+    opt.set(KEY, "java.lang.Thread");
+    assertEquals(opt.getClass(KEY, c2), c1);
+  }
+
+  @Test(expectedExceptions = ClassNotFoundException.class)
+  public void testBadClass() throws ClassNotFoundException {
+    opt.set(KEY, "org.foo.Bar");
+    opt.getClass(KEY, Thread.class);
+  }
+
+  @Test
   public void testMetadataLevel() {
     assertEquals(opt.getMetadataLevel(), MetadataLevel.ALL);
     for (MetadataLevel level: MetadataLevel.values()) {

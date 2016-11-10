@@ -230,6 +230,26 @@ public interface MetadataOptions {
   public double getDouble(String name, double defaultValue);
 
   /**
+   * Set property {@code name} to Class {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setClass(String name, Class<?> value);
+
+  /**
+   * Get the value of property {@code name} as a class.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a class, or {@code defaultValue} if
+   * the property does not exist.
+   * @throws ClassNotFoundException if value does not map to an existing class.
+   */
+  public Class<?> getClass(String name, Class<?> defaultValue)
+      throws ClassNotFoundException;
+
+  /**
    * Set the metadata level.
    *
    * @param level a {@link loci.formats.in.MetadataLevel}.
