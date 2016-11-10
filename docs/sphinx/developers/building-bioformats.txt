@@ -42,9 +42,9 @@ Source code structure
 The Bio-Formats code is divided into several projects. Core components
 are located in subfolders of the :sourcedir:`components <components/>` folder,
 with some components further classified into :sourcedir:`components/forks
-<components/forks/>` or :sourcedir:`components/stubs <components/stubs/>`,
-depending on the nature of the project. See the :doc:`components` for more
-information, including associated build targets for each component.
+<components/forks/>`, depending on the nature of the project. See the
+:doc:`components` for more information, including associated build targets
+for each component.
 
 Each project has a corresponding Maven POM file, which can be used to
 work with the project in your favorite IDE, or from the command line,

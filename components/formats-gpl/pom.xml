@@ -39,9 +39,9 @@
       <version>${ome-mdbtools.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>metakit</artifactId>
-      <version>${project.version}</version>
+      <version>${metakit.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
