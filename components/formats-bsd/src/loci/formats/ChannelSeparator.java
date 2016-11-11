@@ -310,6 +310,9 @@ public class ChannelSeparator extends ReaderWrapper {
           continue;
         }
         for (int c=0; c<reader.getEffectiveSizeC(); c++) {
+          if (c * rgbChannels >= retrieve.getChannelCount(s)) {
+            break;
+          }
           String originalChannelName = retrieve.getChannelName(s, c * rgbChannels);
           if (originalChannelName == null) {
             continue;
