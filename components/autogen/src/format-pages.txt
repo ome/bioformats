@@ -2298,7 +2298,7 @@ mif = true
 
 [Volocity Library Clipping]
 extensions = .acff
-developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/>`_
 bsd = no
 weHave = * several Volocity library clipping datasets
 weWant = * any datasets that do not open correctly \n
@@ -2313,7 +2313,7 @@ notes = RGB .acff files are not yet supported.  See :ticket:`6413`.
 
 [Volocity]
 extensions = .mvd2
-developer = `PerkinElmer <http://www.perkinelmer.com/cellular-imaging/>`_
+developer = `PerkinElmer <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/>`_
 bsd = no
 samples = `PerkinElmer Downloads <http://cellularimaging.perkinelmer.com/downloads/>`_
 weHave = * many example Volocity datasets
