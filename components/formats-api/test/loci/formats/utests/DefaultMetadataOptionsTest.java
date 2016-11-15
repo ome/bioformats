@@ -32,6 +32,8 @@
 
 package loci.formats.utests;
 
+import java.io.File;
+
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -343,6 +345,17 @@ public class DefaultMetadataOptionsTest {
   public void testBadClass() throws ClassNotFoundException {
     opt.set(KEY, "org.foo.Bar");
     opt.getClass(KEY, Thread.class);
+  }
+
+  @Test
+  public void testFile() {
+    final File f1 = new File("/foo/f1");
+    final File f2 = new File("/foo/f2");
+    assertEquals(opt.getFile(KEY, f1), f1);
+    opt.setFile(KEY, f2);
+    assertEquals(opt.getFile(KEY, f1), f2);
+    opt.set(KEY, "/foo/f1");
+    assertEquals(opt.getFile(KEY, f2), f1);
   }
 
   @Test

@@ -33,6 +33,8 @@
 package loci.formats.in;
 
 import java.util.Properties;
+import java.io.File;
+
 
 /**
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
@@ -210,6 +212,18 @@ public class DefaultMetadataOptions implements MetadataOptions {
       return defaultValue;
     }
     return Class.forName(val);
+  }
+
+  public void setFile(String name, File value) {
+    set(name, value.toString());
+  }
+
+  public File getFile(String name, File defaultValue) {
+    final String val = get(name, null);
+    if (null == val) {
+      return defaultValue;
+    }
+    return new File(val);
   }
 
   @Override

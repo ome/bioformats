@@ -32,6 +32,9 @@
 
 package loci.formats.in;
 
+import java.io.File;
+
+
 /**
  * Configuration object for readers and writers.
  */
@@ -248,6 +251,24 @@ public interface MetadataOptions {
    */
   public Class<?> getClass(String name, Class<?> defaultValue)
       throws ClassNotFoundException;
+
+  /**
+   * Set property {@code name} to file object {@code value}.
+   *
+   * @param name property name.
+   * @param value property value.
+   */
+  public void setFile(String name, File value);
+
+  /**
+   * Get the value of property {@code name} as a file object.
+   *
+   * @param name property name.
+   * @param defaultValue default value.
+   * @return property value as a {@code File}, or {@code defaultValue} if
+   * the property does not exist.
+   */
+  public File getFile(String name, File defaultValue);
 
   /**
    * Set the metadata level.
