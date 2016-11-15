@@ -146,6 +146,8 @@ public class DefaultMetadataOptionsTest {
     assertEquals(opt.getEnum(KEY, Two.TAR), Two.FOO);
     opt.set(KEY, "TAR");
     assertEquals(opt.getEnum(KEY, Two.FOO), Two.TAR);
+    opt.setEnum(KEY, null);
+    assertEquals(opt.getEnum(KEY, Two.FOO), Two.FOO);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -339,6 +341,8 @@ public class DefaultMetadataOptionsTest {
     assertEquals(opt.getClass(KEY, c1), c2);
     opt.set(KEY, "java.lang.Thread");
     assertEquals(opt.getClass(KEY, c2), c1);
+    opt.setClass(KEY, null);
+    assertEquals(opt.getClass(KEY, c2), c2);
   }
 
   @Test(expectedExceptions = ClassNotFoundException.class)
@@ -356,6 +360,8 @@ public class DefaultMetadataOptionsTest {
     assertEquals(opt.getFile(KEY, f1), f2);
     opt.set(KEY, "/foo/f1");
     assertEquals(opt.getFile(KEY, f2), f1);
+    opt.setFile(KEY, null);
+    assertEquals(opt.getFile(KEY, f2), f2);
   }
 
   @Test

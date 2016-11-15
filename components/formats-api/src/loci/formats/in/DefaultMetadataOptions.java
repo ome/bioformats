@@ -85,7 +85,11 @@ public class DefaultMetadataOptions implements MetadataOptions {
   }
 
   public <T extends Enum<T>> void setEnum(String name, T value) {
-    set(name, value.toString());
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, value.toString());
+    }
   }
 
   public <T extends Enum<T>> T getEnum(String name, T defaultValue) {
@@ -202,7 +206,11 @@ public class DefaultMetadataOptions implements MetadataOptions {
   }
 
   public void setClass(String name, Class<?> value) {
-    set(name, value.getName());
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, value.getName());
+    }
   }
 
   public Class<?> getClass(String name, Class<?> defaultValue)
@@ -215,7 +223,11 @@ public class DefaultMetadataOptions implements MetadataOptions {
   }
 
   public void setFile(String name, File value) {
-    set(name, value.toString());
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, value.toString());
+    }
   }
 
   public File getFile(String name, File defaultValue) {
