@@ -39,6 +39,7 @@ Type "ant -p" for a list of targets.
       <xmlfileset file="testng.xml"/>
       <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
     </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="test-open-bytes-performance" depends="compile"
@@ -57,6 +58,7 @@ Type "ant -p" for a list of targets.
       <xmlfileset file="testng.xml"/>
       <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
     </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="test-tiff-writer" depends="compile"
