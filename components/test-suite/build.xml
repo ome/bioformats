@@ -26,6 +26,7 @@ Type "ant -p" for a list of targets.
   <target name="test-file-handles" depends="compile"
     description="run tests for leaking file handles">
     <exec executable="${basedir}/target-test-runner">
+      <!-- FileHandleTest is single-threaded -->
       <arg value="-t1"/>
       <arg value="-f${testng.filename}"/>
       <arg value="loci.tests.testng.FileHandleTest"/>
