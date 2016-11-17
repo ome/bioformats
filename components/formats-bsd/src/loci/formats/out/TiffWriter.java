@@ -226,10 +226,13 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    if (tileSizeX < w || tileSizeY < h) {
+    int imageWidth = retrieve.getPixelsSizeX(series).getValue().intValue();
+    int imageHeight = retrieve.getPixelsSizeY(series).getValue().intValue();
+    if (tileSizeX < imageWidth || tileSizeY < imageHeight) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(tileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
-
+    }
+    if (tileSizeX < w || tileSizeY < h) {
       int nXTiles = w / tileSizeX;
       int nYTiles = h / tileSizeY;
    
