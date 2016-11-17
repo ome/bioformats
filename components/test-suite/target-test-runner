@@ -107,12 +107,13 @@ def create_testng_xml_file(test_class, targets, thread_count, in_memory):
         root.append(test)
 
     # Write TestNG file to disk
-    xml_file = open('testng.xml', 'w')
-    xml_file.write(DOCTYPE)
-    ElementTree(root).write(xml_file)
-    xml_file.write("\n")
-    xml_file.flush()
-    return xml_file
+    program_dir = os.path.dirname(sys.argv[0])
+    testng_file = os.path.join(program_dir, 'testng.xml')
+    with open(testng_file, 'w') as xml_file:
+        xml_file.write(DOCTYPE)
+        ElementTree(root).write(xml_file)
+        xml_file.write("\n")
+        xml_file.flush()
 
 if __name__ == '__main__':
     try:
@@ -144,9 +145,4 @@ if __name__ == '__main__':
     if len(targets) == 0:
         usage("Expecting at least one target from file or argument")
 
-    program_dir = os.path.dirname(sys.argv[0])
-    os.chdir(program_dir)
-
-    xml_file = create_testng_xml_file(
-        test_class, targets, thread_count, in_memory)
-    xml_file.close()
+    create_testng_xml_file(test_class, targets, thread_count, in_memory)
