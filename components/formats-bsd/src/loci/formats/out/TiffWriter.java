@@ -82,6 +82,9 @@ public class TiffWriter extends FormatWriter {
    */
   private static final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
 
+  /** TIFF tiles must be of a height and width divisible by 16. */
+  private static final int TILE_GRANULARITY = 16;
+
   // -- Fields --
 
   /** Whether or not the output file is a BigTIFF file. */
@@ -95,6 +98,12 @@ public class TiffWriter extends FormatWriter {
 
   /** Whether or not to check the parameters passed to saveBytes. */
   protected boolean checkParams = true;
+
+  /** The tile width which will be used for writing. */
+  protected int tileSizeX;
+
+  /** The tile height which will be used for writing. */
+  protected int tileSizeY;
 
   /**
    * Sets the compression code for the specified IFD.
@@ -179,6 +188,9 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
+    tileSizeX = super.getTileSizeX();
+    tileSizeY = super.getTileSizeY();
+
     synchronized (this) {
       setupTiffSaver();
     }
@@ -214,19 +226,50 @@ public class TiffWriter extends FormatWriter {
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
-    // This operation is synchronized
-    synchronized (this) {
-      // This operation is synchronized against the TIFF saver.
-      synchronized (tiffSaver) {
-        index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
-        if (index == -1) {
-          return;
+    if (tileSizeX < w || tileSizeY < h) {
+      ifd.put(new Integer(IFD.TILE_WIDTH), new Long(tileSizeX));
+      ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
+
+      int nXTiles = w / tileSizeX;
+      int nYTiles = h / tileSizeY;
+   
+      for (int yTileIndex=0; yTileIndex<nYTiles; yTileIndex++) {
+        for (int xTileIndex=0; xTileIndex<nXTiles; xTileIndex++) {
+          byte [] tileBuf = getTile(buf, xTileIndex, yTileIndex, x, y, w, h);
+          int tileX = x + (xTileIndex * tileSizeX);
+          int tileY = y + (yTileIndex * tileSizeY);
+         
+          // This operation is synchronized
+          synchronized (this) {
+            // This operation is synchronized against the TIFF saver.
+            synchronized (tiffSaver) {
+              index = prepareToWriteImage(no++, tileBuf, ifd, tileX, tileY, tileSizeX, tileSizeY);
+              if (index == -1) {
+                return;
+              }
+            }
+          }     
+  
+          tiffSaver.writeImage(tileBuf, ifd, index, type, tileX, tileY, tileSizeX, tileSizeY,
+          no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
         }
       }
     }
+    else {
+      // This operation is synchronized
+      synchronized (this) {
+        // This operation is synchronized against the TIFF saver.
+        synchronized (tiffSaver) {
+          index = prepareToWriteImage(no++, buf, ifd, x, y, w, h);
+          if (index == -1) {
+            return;
+          }
+        }
+      }     
 
-    tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
+      tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
       no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
+    }
   }
 
   /**
@@ -497,6 +540,68 @@ public class TiffWriter extends FormatWriter {
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
     tiffSaver.setCodecOptions(options);
+  }
+
+  @Override
+  public int getTileSizeX() {
+    if (tileSizeX == 0) {
+      tileSizeX = super.getTileSizeX();
+    }
+    return tileSizeX;
+  }
+
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    tileSizeX = super.setTileSizeX(tileSize);
+    tileSizeX = Math.round(tileSize/TILE_GRANULARITY) * TILE_GRANULARITY;
+    return tileSizeX;
+  }
+
+  @Override
+  public int getTileSizeY() {
+    if (tileSizeY == 0) {
+      tileSizeY = super.getTileSizeY();
+    }
+    return tileSizeY;
+  }
+
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    tileSizeY = super.setTileSizeY(tileSize);
+    tileSizeY = Math.round(tileSize/TILE_GRANULARITY) * TILE_GRANULARITY;
+    return tileSizeY;
+  }
+
+  private byte[] getTile(byte[] buf, int xTileIndex, int yTileIndex, int x, int y, int w, int h) {
+    int nXTiles = w / tileSizeX;
+    int nYTiles = h / tileSizeY;
+    int tileX = x + (xTileIndex * tileSizeX);
+    int tileY = y + (yTileIndex * tileSizeY);
+    int effTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX : w - (tileSizeX * xTileIndex);
+    int effTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY : h - (tileSizeY * yTileIndex);
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    int type = FormatTools.pixelTypeFromString(retrieve.getPixelsType(series).toString());
+    int channel_count = getSamplesPerPixel();
+    int bytesPerPixel = FormatTools.getBytesPerPixel(type);
+    int tileSize = effTileSizeX * effTileSizeY * bytesPerPixel * channel_count;
+    byte [] returnBuf = new byte[tileSize];
+   
+    for (int row = tileY; row != tileY + effTileSizeY; row++) {
+      for (int sampleoffset = 0; sampleoffset < (effTileSizeX * channel_count); sampleoffset++) {
+        int channel_index = sampleoffset / effTileSizeX;
+        int channel_offset = (sampleoffset - (effTileSizeX * channel_index)) * bytesPerPixel;
+        int full_row_width = w * bytesPerPixel;
+        int full_plane_size = full_row_width * h;
+        int xoffset = (tileX - x) * bytesPerPixel;
+        int yoffset = (row - y) * full_row_width;
+        int src_index = yoffset + xoffset + channel_offset + (channel_index * full_plane_size);
+        int dest_index = (effTileSizeY * effTileSizeX * channel_index) + ((row - tileY) * effTileSizeX);
+        for (int pixelByte = 0; pixelByte < bytesPerPixel; pixelByte++) {
+          returnBuf[dest_index + channel_offset + pixelByte] = buf[src_index + pixelByte];
+        }
+      }
+    }
+    return returnBuf;
   }
 
 }
