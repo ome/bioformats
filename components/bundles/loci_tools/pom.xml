@@ -67,7 +67,14 @@
           <archive>
             <manifest>
               <mainClass>loci.formats.gui.ImageViewer</mainClass>
+              <addClasspath>true</addClasspath>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-URL>${project.url}</Implementation-URL>
+            </manifestEntries>
           </archive>
         </configuration>
         <executions>
