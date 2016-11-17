@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Generate TestNG XML files and run test cases.
+Generate TestNG XML files
 """
 
 #
@@ -53,13 +53,12 @@ def usage(error):
     cmd = sys.argv[0]
     print """%s
 Usage: %s [-f file] <test_class> [target...]
-Runs a test on a given set of targets.
+Generates a TestNG XML file against a given set of targets.
 
 Options:
   -f            Reads targets from a file ("-" reads from STDIN)
   -t            Number of parallel threads for TestNG to use (default 2)
   -m            Memory-map files whenever possible
-  --hudson      Prepares the TestNG XML for use by Hudson
 
 Examples:
   %s -f ~/regular_test_files loci.tests.testng.OpenBytesPerformanceTest ~/testimages/foo.tiff
@@ -68,7 +67,7 @@ Examples:
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
     sys.exit(2)
 
-def create_testng_xml_file(test_class, targets, hudson, thread_count, in_memory):
+def create_testng_xml_file(test_class, targets, thread_count, in_memory):
     """Creates a temporary file with TestNG XML content for each target."""
     root = Element("suite")
     root.set("name", "targets")
@@ -106,10 +105,9 @@ def create_testng_xml_file(test_class, targets, hudson, thread_count, in_memory)
         test.append(groups)
         test.append(klasses)
         root.append(test)
-    if hudson:
-        xml_file = open('testng.xml', 'w')
-    else:
-        xml_file = NamedTemporaryFile(suffix=".xml")
+
+    # Write TestNG file to disk
+    xml_file = open('testng.xml', 'w')
     xml_file.write(DOCTYPE)
     ElementTree(root).write(xml_file)
     xml_file.write("\n")
@@ -118,12 +116,11 @@ def create_testng_xml_file(test_class, targets, hudson, thread_count, in_memory)
 
 if __name__ == '__main__':
     try:
-        options, args = getopt(sys.argv[1:], "mf:t:", ['hudson'])
+        options, args = getopt(sys.argv[1:], "mf:t:", [])
     except GetoptError, (msg, opt):
         usage(msg)
 
     targets = list()
-    hudson = False
     thread_count = 1
     test_class = None
     in_memory = False
@@ -136,8 +133,6 @@ if __name__ == '__main__':
             targets += f.readlines()
         if option == "-t":
             thread_count = int(argument)
-        if option == "--hudson":
-            hudson = True
         if option == "-m":
             in_memory = True
 
@@ -152,6 +147,6 @@ if __name__ == '__main__':
     program_dir = os.path.dirname(sys.argv[0])
     os.chdir(program_dir)
 
-    xml_file = create_testng_xml_file(test_class, targets,
-                                      hudson, thread_count, in_memory)
+    xml_file = create_testng_xml_file(
+        test_class, targets, thread_count, in_memory)
     xml_file.close()
