@@ -571,7 +571,7 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     tileSizeY = super.setTileSizeY(tileSize);
-    tileSizeY = Math.round(tileSize/TILE_GRANULARITY) * TILE_GRANULARITY;
+    tileSizeY = Math.round((float)tileSize/TILE_GRANULARITY) * TILE_GRANULARITY;
     return tileSizeY;
   }
 
