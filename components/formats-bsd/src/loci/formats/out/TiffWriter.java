@@ -178,7 +178,7 @@ public class TiffWriter extends FormatWriter {
           int type = FormatTools.pixelTypeFromString(
             retrieve.getPixelsType(i).toString());
           long bpp = FormatTools.getBytesPerPixel(type);
-          totalBytes += sizeX * sizeY * sizeZ * sizeC * sizeT * bpp;
+          totalBytes += (long)sizeX * (long)sizeY * (long)sizeZ * (long)sizeC * (long)sizeT * bpp;
         }
 
         if (totalBytes >= BIG_TIFF_CUTOFF) {
