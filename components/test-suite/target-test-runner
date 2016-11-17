@@ -32,7 +32,6 @@ import sys
 import os
 
 from xml.sax.saxutils import escape
-from tempfile import NamedTemporaryFile
 from getopt import getopt, GetoptError
 
 # Handle Python 2.5 built-in ElementTree
@@ -66,6 +65,7 @@ Examples:
 
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
     sys.exit(2)
+
 
 def create_testng_xml_file(test_class, targets, thread_count, in_memory):
     """Creates a temporary file with TestNG XML content for each target."""
