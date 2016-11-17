@@ -777,7 +777,7 @@ public class Memoizer extends ReaderWrapper {
     File origFile = new File(id);
     File memoDir = getDirectory();
     if (null == memoDir) {
-      memoDir = origFile.getParentFile();
+      memoDir = origFile.getAbsoluteFile().getParentFile();
     }
     if (!memoDir.exists() && !memoDir.mkdirs()) {
       LOGGER.warn("skipping memo: can't create {}", memoDir);

@@ -284,6 +284,20 @@ public class MemoizerTest {
   }
 
   @Test
+  public void testGetMemoFileBasenameInPlace() {
+    memoizer = new Memoizer(0);
+    String basename = "foo";
+    File expMemoDir = new File(basename).getAbsoluteFile().getParentFile();
+    File memoFile = memoizer.getMemoFile(basename);
+    if (expMemoDir.canWrite()) {
+      File expMemoFile = new File(expMemoDir, "." + basename + ".bfmemo");
+      assertEquals(memoFile.getAbsolutePath(), expMemoFile.getAbsolutePath());
+    } else {
+      assertNull(memoFile);
+    }
+  }
+
+  @Test
   public void testRelocate() throws Exception {
     // Create an in-place memo file
     memoizer = new Memoizer(reader, 0);
