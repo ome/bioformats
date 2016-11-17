@@ -343,7 +343,7 @@ public abstract class FormatWriter extends FormatHandler
     if (out != null) {
       out.close();
     }
-    out = new RandomAccessOutputStream(currentId);
+    out = createOutputStream();
 
     MetadataRetrieve r = getMetadataRetrieve();
     initialized = new boolean[r.getImageCount()][];
@@ -485,6 +485,10 @@ public abstract class FormatWriter extends FormatHandler
     int c = r.getPixelsSizeC(series).getValue().intValue();
     c /= r.getChannelSamplesPerPixel(series, 0).getValue().intValue();
     return z * c * t;
+  }
+
+  protected RandomAccessOutputStream createOutputStream() throws IOException {
+    return new RandomAccessOutputStream(currentId);
   }
 
 }

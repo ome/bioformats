@@ -298,7 +298,7 @@ public class TiffWriter extends FormatWriter {
       if (no < initialized[series].length && !initialized[series][no]) {
         initialized[series][no] = true;
 
-        RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
+        RandomAccessInputStream tmp = createInputStream();
         if (tmp.length() == 0) {
           synchronized (this) {
             // write TIFF header
@@ -527,8 +527,8 @@ public class TiffWriter extends FormatWriter {
 
   protected void setupTiffSaver() throws IOException {
     out.close();
-    out = new RandomAccessOutputStream(currentId);
-    tiffSaver = new TiffSaver(out, currentId);
+    out = createOutputStream();
+    tiffSaver = createTiffSaver();
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
     boolean littleEndian = false;
@@ -605,6 +605,14 @@ public class TiffWriter extends FormatWriter {
       }
     }
     return returnBuf;
+  }
+  
+  protected RandomAccessInputStream createInputStream() throws IOException {
+    return new RandomAccessInputStream(currentId);
+  }
+  
+  protected TiffSaver createTiffSaver() {
+    return new TiffSaver(out, currentId);
   }
 
 }
