@@ -22,7 +22,6 @@ public class ByteArrayHandleMock extends ByteArrayHandle {
   
   @Override
   public long length() {
-    System.out.println("Getting length " + mockCapacity);
     return mockCapacity;
   }
   
