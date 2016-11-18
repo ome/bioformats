@@ -223,6 +223,11 @@ public class FormatReaderTestFactory {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
+      } catch (Exception e) {
+        LOGGER.error("setId({}) failed", file, e);
+        throw new RuntimeException(e);
+      }
+      try {
         String[] usedFiles = reader.getUsedFiles();
         Set<String> auxFiles = new LinkedHashSet<String>();
         for (String s: usedFiles) {
@@ -234,7 +239,10 @@ public class FormatReaderTestFactory {
         minimalFiles.removeAll(auxFiles);
         minimalFiles.add(masterFile);
       }
-      catch (Exception e) { }
+      catch (Exception e) {
+        LOGGER.warn("Could not determine duplicate status for {}", file, e);
+        minimalFiles.add(file);
+      }
       finally {
         fileSet.remove(file);
         try {
