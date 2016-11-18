@@ -35,11 +35,9 @@ package loci.formats.utests.out;
 import static org.testng.AssertJUnit.assertEquals;
 import java.io.IOException;
 import org.junit.Assert;
-import loci.common.ByteArrayHandle;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.ImageReader;
 import loci.formats.codec.CompressionType;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
@@ -55,7 +53,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Tests the functionality of BaseTiffReader
+ * Tests the functionality of TiffWriter
  */
 public class TiffWriterTest {
 
