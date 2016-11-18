@@ -295,32 +295,38 @@ public abstract class FormatWriter extends FormatHandler
 
   /* @see IFormatWriter#getTileSizeX() */
   @Override
-  public int getTileSizeX() {
-    return metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+  public int getTileSizeX() throws FormatException {
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to get tile size.");
+    return width.getValue();
   }
 
   /* @see IFormatWriter#setTileSizeX(int) */
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
-    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to set tile size.");
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    if (tileSize > width) throw new FormatException("Tile width must be <= image width (" + width + ")");
-    return width;
+    if (tileSize > width.getValue()) throw new FormatException("Tile width must be <= image width (" + width.getValue() + ")");
+    return width.getValue();
   }
 
   /* @see IFormatWriter#getTileSizeY() */
   @Override
-  public int getTileSizeY() {
-    return metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
+  public int getTileSizeY() throws FormatException {
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to get tile size.");
+    return height.getValue();
   }
 
   /* @see IFormatWriter#setTileSizeY(int) */
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
-    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to set tile size.");
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    if (tileSize > height) throw new FormatException("Tile height must be <= image height (" + height + ")");
-    return height;
+    if (tileSize > height.getValue()) throw new FormatException("Tile height must be <= image height (" + height.getValue() + ")");
+    return height.getValue();
   }
 
   // -- IFormatHandler API methods --

@@ -546,7 +546,7 @@ public class TiffWriter extends FormatWriter {
   }
 
   @Override
-  public int getTileSizeX() {
+  public int getTileSizeX() throws FormatException {
     if (tileSizeX == 0) {
       tileSizeX = super.getTileSizeX();
     }
@@ -561,7 +561,7 @@ public class TiffWriter extends FormatWriter {
   }
 
   @Override
-  public int getTileSizeY() {
+  public int getTileSizeY() throws FormatException {
     if (tileSizeY == 0) {
       tileSizeY = super.getTileSizeY();
     }
