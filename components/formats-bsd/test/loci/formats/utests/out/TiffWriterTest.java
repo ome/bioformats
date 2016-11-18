@@ -136,7 +136,6 @@ public class TiffWriterTest {
       writer.saveBytes(1, buf, ifd);
     }
     catch(FormatException e) {
-      System.out.println("Caught Exception " + e);
       if (e.getMessage().contains("File is too large; call setBigTiff(true)")) {
         thrown = true;
       }
@@ -208,7 +207,7 @@ public class TiffWriterTest {
   }
 
   @Test
-  public void testGetTileSizeX() throws IOException {
+  public void testGetTileSizeX() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
     assertEquals(SIZE_X, writer.getTileSizeX());
     writer.close();
@@ -222,18 +221,12 @@ public class TiffWriterTest {
   public void testSetTileSizeX() {
     writer.setMetadataRetrieve(metadata);
     try {
-      writer.setTileSizeX(0);
-      assertEquals(SIZE_X, writer.getTileSizeX());
       for (int i = 16; i < SIZE_X; i+=16) {
         writer.setTileSizeX(i);
         assertEquals(i, writer.getTileSizeX());
       }
       writer.setTileSizeX(SIZE_X);
       assertEquals(SIZE_X, writer.getTileSizeX());
-      for (int i = 0; i < 8; i++) {
-        writer.setTileSizeX(i);
-        assertEquals(SIZE_X, writer.getTileSizeX());
-      }
       for (int i = 8; i < 24; i++) {
         writer.setTileSizeX(i);
         assertEquals(16, writer.getTileSizeX());
@@ -249,7 +242,7 @@ public class TiffWriterTest {
   }
 
   @Test
-  public void testGetTileSizeY() throws IOException {
+  public void testGetTileSizeY() throws IOException, FormatException {
     writer.setMetadataRetrieve(metadata);
     assertEquals(SIZE_Y, writer.getTileSizeY());
     writer.close();
@@ -263,18 +256,12 @@ public class TiffWriterTest {
   public void testSetTileSizeY() {
     writer.setMetadataRetrieve(metadata);
     try {
-      writer.setTileSizeY(0);
-      assertEquals(SIZE_Y, writer.getTileSizeY());
       for (int i = 16; i < SIZE_Y; i+=16) {
         writer.setTileSizeY(i);
         assertEquals(i, writer.getTileSizeY());
       }
       writer.setTileSizeY(SIZE_Y);
       assertEquals(SIZE_Y, writer.getTileSizeY());
-      for (int i = 0; i < 8; i++) {
-        writer.setTileSizeY(i);
-        assertEquals(SIZE_Y, writer.getTileSizeY());
-      }
       for (int i = 8; i < 24; i++) {
         writer.setTileSizeY(i);
         assertEquals(16, writer.getTileSizeY());
@@ -287,6 +274,108 @@ public class TiffWriterTest {
     catch(FormatException fe) {
       assert(false);
     }
+  }
+  
+  @Test
+  public void testTileFormatExceptions() {
+    boolean thrown = false;
+    int tile_size = 16;
+    try {
+      writer.setTileSizeY(tile_size);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Pixels Size Y must not be null when attempting to set tile size")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeX(tile_size);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Pixels Size X must not be null when attempting to set tile size")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.getTileSizeX();
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Pixels Size X must not be null when attempting to get tile size")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.getTileSizeY();
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Pixels Size Y must not be null when attempting to get tile size")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    writer.setMetadataRetrieve(metadata);
+    thrown = false;
+    try {
+      writer.setTileSizeX(0);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Tile size must be > 0")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeY(0);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Tile size must be > 0")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeX(SIZE_X);
+    }
+    catch(FormatException e) {
+        thrown = true;
+    }
+    assert(!thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeY(SIZE_Y);
+    }
+    catch(FormatException e) {
+        thrown = true;
+    }
+    assert(!thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeX(SIZE_X + 16);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Tile width must be <= image width")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
+    thrown = false;
+    try {
+      writer.setTileSizeY(SIZE_Y + 16);
+    }
+    catch(FormatException e) {
+      if (e.getMessage().contains("Tile height must be <= image height")) {
+        thrown = true;
+      }
+    }
+    assert(thrown);
   }
 
 }
