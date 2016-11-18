@@ -219,13 +219,16 @@ public class FormatReaderTestFactory {
     }
     Set<String> minimalFiles = new LinkedHashSet<String>();
     FileStitcher reader = new FileStitcher();
+    Set<String> failingIds = new LinkedHashSet<String>();
     while (!fileSet.isEmpty()) {
       String file = fileSet.iterator().next();
       try {
         reader.setId(file);
       } catch (Exception e) {
-        LOGGER.error("setId({}) failed", file, e);
-        throw new RuntimeException(e);
+        LOGGER.error("setId(\"{}\") failed", file, e);
+        failingIds.add(file);
+        fileSet.remove(file);
+        continue;
       }
       try {
         String[] usedFiles = reader.getUsedFiles();
@@ -250,6 +253,11 @@ public class FormatReaderTestFactory {
         }
         catch (IOException e) { }
       }
+    }
+    if (!failingIds.isEmpty()) {
+      String msg = String.format("setId failed on %s", failingIds);
+      LOGGER.error(msg);
+      throw new RuntimeException(msg);
     }
     files = new ArrayList<String>();
     for (String s: minimalFiles) {
