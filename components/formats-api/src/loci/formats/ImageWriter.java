@@ -187,43 +187,21 @@ public class ImageWriter implements IFormatWriter {
     return w;
   }
   
-  /**
-   * Retrieves the current tile width
-   * Defaults to full image width if not supported
-   * @return The current tile width being used
-   */
   @Override
   public int getTileSizeX() {
     return getWriter().getTileSizeX();
   }
 
-  /**
-   * Will attempt to set the tile width to the desired value and return the actual value which will be used
-   * @param tileSize - The tile width you wish to use
-   * @return The tile width which will actually be used, this may differ from the value attempted to set
-   * @throws FormatException - Tile size must be greater than 0 and less than the image width
-   */
   @Override
   public int setTileSizeX(int tileSize) throws FormatException {
     return getWriter().setTileSizeX(tileSize);
   }
 
-  /**
-   * Retrieves the current tile height
-   * Defaults to full image height if not supported
-   * @return The current tile height being used
-   */
   @Override
   public int getTileSizeY() {
     return getWriter().getTileSizeY();
   }
 
-  /**
-   * Will attempt to set the tile height to the desired value and return the actual value which will be used
-   * @param tileSize - The tile height you wish to use
-   * @return The tile height which will actually be used, this may differ from the value attempted to set
-   * @throws FormatException - Tile size must be greater than 0 and less than the image width
-   */
   @Override
   public int setTileSizeY(int tileSize) throws FormatException {
     return getWriter().setTileSizeY(tileSize);
