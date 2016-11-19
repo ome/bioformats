@@ -398,6 +398,10 @@ public class ZeissCZIReader extends FormatReader {
               if (rawData.length < realX * realY * pixel) {
                 realX = rawData.length / (realY * pixel);
               }
+              else if (rawData.length == (realX + 1) * (realY + 1) * pixel) {
+                realX++;
+                realY++;
+              }
 
               int rowLen = pixel * (int) Math.min(intersection.width, realX);
               int outputOffset = outputRow * outputRowLen + outputCol;
@@ -650,7 +654,8 @@ public class ZeissCZIReader extends FormatReader {
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
-          if ((planes.get(i).directoryEntry.pyramidType == 2 || compression == JPEGXR) &&
+          int pyramidType = planes.get(i).directoryEntry.pyramidType;
+          if ((pyramidType == 1 || pyramidType == 2 || compression == JPEGXR) &&
             (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp))
           {
             int scale = planes.get(i).x / entries[0].storedSize;
@@ -749,6 +754,9 @@ public class ZeissCZIReader extends FormatReader {
     int originalMosaicCount = mosaics;
     if (maxResolution == 0) {
       seriesCount *= mosaics;
+    }
+    else {
+      prestitched = true;
     }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? getSizeC()/3 : getSizeC()) * getSizeT();
