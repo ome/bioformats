@@ -212,7 +212,8 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Will attempt to set the tile width to the desired value and return the actual value which will be used
    * @param tileSize The tile width you wish to use
-   * @return The tile width which will actually be used, this may differ from the value attempted to set
+   * @return The tile width which will actually be used, this may differ from the value requested.
+   *         If the requested value is not supported the writer will return and use the closest appropriate value.
    * @throws FormatException Tile size must be greater than 0 and less than the image width
    */
   int setTileSizeX(int tileSize) throws FormatException;
@@ -228,7 +229,8 @@ public interface IFormatWriter extends IFormatHandler {
   /**
    * Will attempt to set the tile height to the desired value and return the actual value which will be used
    * @param tileSize The tile height you wish to use
-   * @return The tile height which will actually be used, this may differ from the value attempted to set
+   * @return The tile height which will actually be used, this may differ from the value requested.
+   *         If the requested value is not supported the writer will return and use the closest appropriate value.
    * @throws FormatException Tile size must be greater than 0 and less than the image height
    */
   int setTileSizeY(int tileSize) throws FormatException;
