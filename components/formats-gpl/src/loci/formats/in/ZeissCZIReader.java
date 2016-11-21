@@ -52,6 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.JPEGXRCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.meta.MetadataStore;
 
@@ -166,6 +167,7 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<Attachment> extraImages = new ArrayList<Attachment>();
   private int[] tileWidth;
   private int[] tileHeight;
+  private int scaleFactor;
 
   // -- Constructor --
 
@@ -303,7 +305,15 @@ public class ZeissCZIReader extends FormatReader {
       // thumbnail, label, or preview image stored as an attachment
 
       int index = getCoreIndex() - (core.size() - extraImages.size());
-      return extraImages.get(index).attachmentData;
+      byte[] fullPlane = extraImages.get(index).attachmentData;
+      RandomAccessInputStream s = new RandomAccessInputStream(fullPlane);
+      try {
+        readPlane(s, x, y, w, h, buf);
+      }
+      finally {
+        s.close();
+      }
+      return buf;
     }
 
     previousChannel = getZCTCoords(no)[1];
@@ -325,19 +335,20 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     Arrays.fill(buf, (byte) 0);
-    RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
+    boolean emptyTile = true;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
+      int baseResolution = (maxResolution + 1) * (currentIndex / (maxResolution + 1));
       for (SubBlock plane : planes) {
-        if ((plane.coreIndex == currentIndex && plane.planeIndex == no) ||
+        if ((plane.planeIndex == no && ((maxResolution == 0 && plane.coreIndex == currentIndex) ||
+          (maxResolution > 0 && plane.coreIndex == baseResolution))) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          int res = (int) Math.pow(2, plane.resolutionIndex);
-          if ((plane.row / res) < minTileY) {
-            minTileY = plane.row / res;
+          if (plane.row < minTileY) {
+            minTileY = plane.row;
           }
-          if ((plane.col / res) < minTileX) {
-            minTileX = plane.col / res;
+          if (plane.col < minTileX) {
+            minTileX = plane.col;
           }
         }
       }
@@ -345,12 +356,13 @@ public class ZeissCZIReader extends FormatReader {
         if ((plane.coreIndex == currentIndex && plane.planeIndex == no) ||
           (plane.planeIndex == previousChannel && validScanDim))
         {
-          int res = (int) Math.pow(2, plane.resolutionIndex);
-          if ((prestitched != null && prestitched) || validScanDim) {
-            int realX = plane.x / res;
-            int realY = plane.y / res;
+          int res = (int) Math.pow(scaleFactor, plane.resolutionIndex);
 
-            Region tile = new Region(plane.col / res, plane.row / res, realX, realY);
+          int realX = plane.x / res;
+          int realY = plane.y / res;
+
+          if ((prestitched != null && prestitched) || validScanDim) {
+            Region tile = new Region(plane.col, plane.row, realX, realY);
             if (validScanDim) {
               tile.y += (no / getSizeC());
               image.height = scanDim;
@@ -364,8 +376,11 @@ public class ZeissCZIReader extends FormatReader {
               tile.x -= minTileX;
               tile.y -= minTileY;
             }
+            tile.x /= res;
+            tile.y /= res;
 
             if (tile.intersects(image)) {
+              emptyTile = false;
               byte[] rawData = new SubBlock(plane).readPixelData();
               Region intersection = tile.intersection(image);
               int intersectionX = 0;
@@ -378,6 +393,14 @@ public class ZeissCZIReader extends FormatReader {
               outputRow = intersection.y - y;
               if (validScanDim) {
                 outputRow -= tile.y;
+              }
+
+              if (rawData.length < realX * realY * pixel) {
+                realX = rawData.length / (realY * pixel);
+              }
+              else if (rawData.length == (realX + 1) * (realY + 1) * pixel) {
+                realX++;
+                realY++;
               }
 
               int rowLen = pixel * (int) Math.min(intersection.width, realX);
@@ -398,7 +421,8 @@ public class ZeissCZIReader extends FormatReader {
             byte[] rawData = new SubBlock(plane).readPixelData();
             RandomAccessInputStream s = new RandomAccessInputStream(rawData);
             try {
-              readPlane(s, x, y, w, h, buf);
+              readPlane(s, x, y, w, h, realX - getSizeX(), buf);
+              emptyTile = false;
             }
             finally {
               s.close();
@@ -408,15 +432,16 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     } finally {
-        stream.close();
     }
 
-    if (isRGB()) {
+    if (isRGB() && !emptyTile) {
       // channels are stored in BGR order; red and blue channels need switching
-      for (int i=0; i<buf.length/(getRGBChannelCount()*bpp); i++) {
+      int redOffset = bpp * 2;
+      for (int i=0; i<buf.length/pixel; i++) {
+        int index = i * pixel;
         for (int b=0; b<bpp; b++) {
-          int blueIndex = i * getRGBChannelCount() * bpp + b;
-          int redIndex = i * getRGBChannelCount() * bpp + bpp * 2 + b;
+          int blueIndex = index + b;
+          int redIndex = index + redOffset + b;
           byte red = buf[redIndex];
           buf[redIndex] = buf[blueIndex];
           buf[blueIndex] = red;
@@ -486,14 +511,22 @@ public class ZeissCZIReader extends FormatReader {
       maxResolution = 0;
       tileWidth = null;
       tileHeight = null;
+      scaleFactor = 0;
     }
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   @Override
   public int getOptimalTileWidth() {
+    if (maxResolution > 0 && getCoreIndex() < core.size() - extraImages.size()) {
+      return (int) Math.min(1024, getSizeX());
+    }
     if (tileWidth != null && getCoreIndex() < tileWidth.length) {
-      return tileWidth[getCoreIndex()];
+      int width = tileWidth[getCoreIndex()];
+      if (width == 0 && getCoreIndex() > 0) {
+        return tileWidth[getCoreIndex() - 1] / 2;
+      }
+      return width;
     }
     return super.getOptimalTileWidth();
   }
@@ -501,8 +534,15 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
+    if (maxResolution > 0 && getCoreIndex() < core.size() - extraImages.size()) {
+      return (int) Math.min(1024, getSizeY());
+    }
     if (tileHeight != null && getCoreIndex() < tileHeight.length) {
-      return tileHeight[getCoreIndex()];
+      int height = tileHeight[getCoreIndex()];
+      if (height == 0 && getCoreIndex() > 0) {
+        return tileHeight[getCoreIndex() - 1] / 2;
+      }
+      return height;
     }
     return super.getOptimalTileHeight();
   }
@@ -608,23 +648,24 @@ public class ZeissCZIReader extends FormatReader {
     int fullResBlockCount = planes.size();
     for (int i=0; i<planes.size(); i++) {
       long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
-      if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
+      int compression = planes.get(i).directoryEntry.compression;
+      if (compression == UNCOMPRESSED || compression == JPEGXR) {
         long size = planes.get(i).dataSize;
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           // check for reduced resolution in the pyramid
           DimensionEntry[] entries = planes.get(i).directoryEntry.dimensionEntries;
-          if (planes.get(i).directoryEntry.pyramidType == 2 &&
-            size == entries[0].storedSize * entries[1].storedSize * bpp &&
-            (planes.get(i).x % entries[0].storedSize) == 0 &&
-            (planes.get(i).y % entries[1].storedSize) == 0)
+          int pyramidType = planes.get(i).directoryEntry.pyramidType;
+          if ((pyramidType == 1 || pyramidType == 2 || compression == JPEGXR) &&
+            (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp))
           {
             int scale = planes.get(i).x / entries[0].storedSize;
-            // resolutions must be a power of 2 smaller than the full resolution
-            // some files will contain power-of-3 resolutions, which need to be ignored
-            if ((scale % 2) == 0) {
+            if (scale == 1 || (scale % 2) == 0 || (scale % 3) == 0) {
+              if (scale > 1 && scaleFactor == 0) {
+                scaleFactor = scale % 2 == 0 ? 2 : 3;
+              }
               planes.get(i).coreIndex = 0;
               while (scale > 1) {
-                scale /= 2;
+                scale /= scaleFactor;
                 planes.get(i).coreIndex++;
               }
               if (planes.get(i).coreIndex > maxResolution) {
@@ -714,6 +755,9 @@ public class ZeissCZIReader extends FormatReader {
     if (maxResolution == 0) {
       seriesCount *= mosaics;
     }
+    else {
+      prestitched = true;
+    }
 
     ms0.imageCount = getSizeZ() * (isRGB() ? getSizeC()/3 : getSizeC()) * getSizeT();
 
@@ -739,7 +783,10 @@ public class ZeissCZIReader extends FormatReader {
           break;
         }
       }
-      if (getSizeX() > planes.get(0).x && !equalTiles) {
+      if ((getSizeX() > planes.get(0).x ||
+        (getSizeX() == planes.get(0).x &&
+        calculatedSeries == seriesCount * mosaics * positions)) && !equalTiles)
+      {
         // image was fused; treat the mosaics as a single image
         seriesCount = 1;
         positions = 1;
@@ -755,7 +802,7 @@ public class ZeissCZIReader extends FormatReader {
           mosaics = 1;
         }
         else {
-          prestitched = false;
+          prestitched = maxResolution > 0;
         }
         ms0.sizeX = newX;
         ms0.sizeY = newY;
@@ -790,6 +837,34 @@ public class ZeissCZIReader extends FormatReader {
 
     ms0.dimensionOrder = "XYCZT";
 
+    ArrayList<Integer> pixelTypes = new ArrayList<Integer>();
+    pixelTypes.add(planes.get(0).directoryEntry.pixelType);
+    if (maxResolution == 0) {
+      for (SubBlock plane : planes) {
+        if (!pixelTypes.contains(plane.directoryEntry.pixelType)) {
+          pixelTypes.add(plane.directoryEntry.pixelType);
+        }
+        plane.pixelTypeIndex = pixelTypes.indexOf(plane.directoryEntry.pixelType);
+      }
+
+      if (seriesCount * pixelTypes.size() > 1) {
+        core.clear();
+        for (int j=0; j<pixelTypes.size(); j++) {
+          for (int i=0; i<seriesCount; i++) {
+            CoreMetadata add = new CoreMetadata(ms0);
+            if (pixelTypes.size() > 1) {
+              int newC = originalC / pixelTypes.size();
+              add.sizeC = newC;
+              add.imageCount = add.sizeZ * add.sizeT;
+              add.rgb = false;
+              convertPixelType(add, pixelTypes.get(j));
+            }
+            core.add(add);
+          }
+        }
+      }
+    }
+
     if (seriesCount > 1 || maxResolution > 0) {
       core.clear();
       for (int i=0; i<seriesCount; i++) {
@@ -810,6 +885,11 @@ public class ZeissCZIReader extends FormatReader {
       tileWidth = new int[core.size()];
       tileHeight = new int[core.size()];
       for (int s=0; s<core.size();) {
+        if (s > 0) {
+          core.get(s).sizeX = 0;
+          core.get(s).sizeY = 0;
+          calculateDimensions(s, true);
+        }
         if (originalMosaicCount > 1) {
           // calculate total stitched size if the image was not fused
           int minRow = Integer.MAX_VALUE;
@@ -817,6 +897,7 @@ public class ZeissCZIReader extends FormatReader {
           int minCol = Integer.MAX_VALUE;
           int maxCol = Integer.MIN_VALUE;
           int x = 0, y = 0;
+          int lastX = 0, lastY = 0;
           for (SubBlock plane : planes) {
             if (plane.coreIndex != s) {
               continue;
@@ -843,20 +924,37 @@ public class ZeissCZIReader extends FormatReader {
             if (plane.y > tileHeight[s]) {
               tileHeight[s] = plane.y;
             }
+            if (plane.row == maxRow && plane.col == maxCol) {
+              lastX = plane.x;
+              lastY = plane.y;
+            }
           }
 
           // don't overwrite the dimensions if stitching already occurred
           if (core.get(s).sizeX == x && core.get(s).sizeY == y) {
-            core.get(s).sizeX = (core.get(s).sizeX + maxCol) - minCol;
-            core.get(s).sizeY = (core.get(s).sizeY + maxRow) - minRow;
+            core.get(s).sizeX = (lastX + maxCol) - minCol;
+            core.get(s).sizeY = (lastY + maxRow) - minRow;
           }
         }
         for (int r=0; r<core.get(s).resolutionCount; r++) {
-          int div = (int) Math.pow(2, r);
-          core.get(s + r).sizeX = core.get(s).sizeX / div;
-          core.get(s + r).sizeY = core.get(s).sizeY / div;
-          tileWidth[s + r] = tileWidth[s] / div;
-          tileHeight[s + r] = tileHeight[s] / div;
+          boolean hasValidPlane = false;
+          for (SubBlock plane : planes) {
+            if (plane.coreIndex == s + r) {
+              hasValidPlane = true;
+              break;
+            }
+          }
+          if (!hasValidPlane) {
+            core.remove(s + r);
+            core.get(s).resolutionCount--;
+          }
+          else {
+            int div = (int) Math.pow(scaleFactor, r);
+            core.get(s + r).sizeX = core.get(s).sizeX / div;
+            core.get(s + r).sizeY = core.get(s).sizeY / div;
+            tileWidth[s + r] = tileWidth[s] / div;
+            tileHeight[s + r] = tileHeight[s] / div;
+          }
         }
         s += core.get(s).resolutionCount;
       }
@@ -864,12 +962,22 @@ public class ZeissCZIReader extends FormatReader {
 
     // find and add attached label/overview images
 
+    boolean foundLabel = false;
+    boolean foundPreview = false;
     for (Segment segment : segments) {
       if (segment instanceof Attachment) {
         AttachmentEntry entry = ((Attachment) segment).attachment;
         String name = entry.name.trim();
 
-        if (name.equals("Label") || name.equals("SlidePreview")) {
+        if ((name.equals("Label") && !foundLabel) ||
+          (name.equals("SlidePreview") && !foundPreview))
+        {
+          if (!foundLabel) {
+            foundLabel = name.equals("Label");
+          }
+          if (!foundPreview) {
+            foundPreview = name.equals("SlidePreview");
+          }
           segment.fillInData();
 
           // label and preview are CZI files embedded as attachments
@@ -880,6 +988,11 @@ public class ZeissCZIReader extends FormatReader {
           thumbReader.setId("image.czi");
 
           CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
+
+          if (c.sizeZ > 1 || c.sizeT > 1) {
+            continue;
+          }
+
           core.add(new CoreMetadata(c));
           core.get(core.size() - 1).thumbnail = true;
           ((Attachment) segment).attachmentData = thumbReader.openBytes(0);
@@ -1178,7 +1291,7 @@ public class ZeissCZIReader extends FormatReader {
           }
 
           String color = channels.get(c).color;
-          if (color != null) {
+          if (color != null && !isRGB()) {
             color = color.replaceAll("#", "");
             if (color.length() > 6) {
               color = color.substring(2, color.length());
@@ -1273,14 +1386,28 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private void calculateDimensions() {
+    calculateDimensions(0, false);
+  }
+
+  private void calculateDimensions(int coreIndex, boolean xyOnly) {
     // calculate the dimensions
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(coreIndex);
+    int previousCoreIndex = getCoreIndex();
+    setCoreIndex(coreIndex);
 
     ArrayList<Integer> uniqueT = new ArrayList<Integer>();
 
     for (SubBlock plane : planes) {
+      if (xyOnly && plane.coreIndex != coreIndex) {
+        continue;
+      }
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         if (dimension == null) {
+          continue;
+        }
+        if (xyOnly && dimension.dimension.charAt(0) != 'X' &&
+          dimension.dimension.charAt(0) != 'Y')
+        {
           continue;
         }
         switch (dimension.dimension.charAt(0)) {
@@ -1368,6 +1495,7 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+    setCoreIndex(previousCoreIndex);
   }
 
   private void assignPlaneIndices() {
@@ -1414,7 +1542,9 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'M':
             if (dimension.start > prevM) {
-              if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount()) {
+              if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount() &&
+                (prestitched == null || !prestitched))
+              {
                 extraLengths[extraDimOrder.size()] = mosaics;
                 extraDimOrder.add('M');
               }
@@ -1431,6 +1561,12 @@ public class ZeissCZIReader extends FormatReader {
             prevV = dimension.start;
             break;
         }
+      }
+    }
+    int allLengths = 1;
+    for (int len : extraLengths) {
+      if (len > 0) {
+        allLengths *= len;
       }
     }
 
@@ -1456,7 +1592,7 @@ public class ZeissCZIReader extends FormatReader {
         int extraIndex = extraDimOrder.indexOf(dimension.dimension.charAt(0));
         switch (dimension.dimension.charAt(0)) {
           case 'C':
-            c = dimension.start;
+            c = dimension.start - plane.pixelTypeIndex;
             break;
           case 'Z':
             z = dimension.start;
@@ -2833,6 +2969,10 @@ public class ZeissCZIReader extends FormatReader {
 
   private void convertPixelType(int pixelType) throws FormatException {
     CoreMetadata ms0 = core.get(0);
+    convertPixelType(ms0, pixelType);
+  }
+
+  private void convertPixelType(CoreMetadata ms0, int pixelType) throws FormatException {
     switch (pixelType) {
       case GRAY8:
         ms0.pixelType = FormatTools.UINT8;
@@ -3102,6 +3242,7 @@ public class ZeissCZIReader extends FormatReader {
     public int coreIndex;
     public int resolutionIndex;
     public int planeIndex;
+    public int pixelTypeIndex;
 
     private long dataOffset;
 
@@ -3175,7 +3316,7 @@ public class ZeissCZIReader extends FormatReader {
     // -- SubBlock API methods --
 
     public byte[] readPixelData() throws FormatException, IOException {
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = new RandomAccessInputStream(filename, (int) dataSize);
       try {
         return readPixelData(s);
       } finally {
@@ -3205,8 +3346,11 @@ public class ZeissCZIReader extends FormatReader {
           data = new LZWCodec().decompress(data, options);
           break;
         case JPEGXR:
-          throw new UnsupportedCompressionException(
-            "JPEG-XR not yet supported");
+          options.maxBytes = directoryEntry.dimensionEntries[0].storedSize *
+            directoryEntry.dimensionEntries[1].storedSize *
+            getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+          data = new JPEGXRCodec().decompress(data, options);
+          break;
         case 104: // camera-specific packed pixels
           data = decode12BitCamera(data, options.maxBytes);
           // reverse column ordering
