@@ -328,7 +328,7 @@ public abstract class WriterWrapper implements IFormatWriter {
   
   /* @see IFormatWriter#getTileSizeX() */
   @Override
-  public int getTileSizeX() {
+  public int getTileSizeX() throws FormatException {
     return writer.getTileSizeX();
   }
 
@@ -340,7 +340,7 @@ public abstract class WriterWrapper implements IFormatWriter {
 
   /* @see IFormatWriter#getTileSizeY() */
   @Override
-  public int getTileSizeY() {
+  public int getTileSizeY() throws FormatException {
     return writer.getTileSizeY();
   }
 
