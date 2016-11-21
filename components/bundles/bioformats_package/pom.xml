@@ -53,6 +53,13 @@
       <version>${mipav-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>${imagej1.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <properties>

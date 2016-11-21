@@ -57,7 +57,6 @@
       <groupId>net.imagej</groupId>
       <artifactId>ij</artifactId>
       <version>${imagej1.version}</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
