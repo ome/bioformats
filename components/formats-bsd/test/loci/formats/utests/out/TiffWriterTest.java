@@ -361,21 +361,17 @@ public class TiffWriterTest {
       writer.setTileSizeX(SIZE_X + 16);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile width must be <= image width")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
     thrown = false;
     try {
       writer.setTileSizeY(SIZE_Y + 16);
     }
     catch(FormatException e) {
-      if (e.getMessage().contains("Tile height must be <= image height")) {
-        thrown = true;
-      }
+      thrown = true;
     }
-    assert(thrown);
+    assert(!thrown);
   }
 
 }
