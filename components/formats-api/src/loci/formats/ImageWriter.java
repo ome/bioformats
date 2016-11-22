@@ -188,7 +188,7 @@ public class ImageWriter implements IFormatWriter {
   }
   
   @Override
-  public int getTileSizeX() {
+  public int getTileSizeX() throws FormatException {
     return getWriter().getTileSizeX();
   }
 
@@ -198,7 +198,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   @Override
-  public int getTileSizeY() {
+  public int getTileSizeY() throws FormatException {
     return getWriter().getTileSizeY();
   }
 
