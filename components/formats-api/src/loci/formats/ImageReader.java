@@ -830,6 +830,7 @@ public class ImageReader implements IFormatReader {
   @Override
   public void setId(String id) throws FormatException, IOException {
     IFormatReader currentReader = getReader(id);
+    currentReader.setMetadataOptions(getMetadataOptions());
     LOGGER.info("{} initializing {}",
       currentReader.getClass().getSimpleName(), id);
     currentReader.setId(id);

@@ -51,6 +51,7 @@ import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
+import loci.formats.Memoizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -918,7 +919,8 @@ public class FileStitcher extends ReaderWrapper {
     externals = new ExternalSeries[patterns.length];
 
     for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
+      externals[i] = new ExternalSeries(new FilePattern(patterns[i]),
+                                        getMetadataOptions());
     }
     fp = new FilePattern(patterns[0]);
 
@@ -1246,7 +1248,7 @@ public class FileStitcher extends ReaderWrapper {
     private AxisGuesser ag;
     private int imagesPerFile;
 
-    public ExternalSeries(FilePattern pattern)
+    public ExternalSeries(FilePattern pattern, MetadataOptions opt)
       throws FormatException, IOException
     {
       this.pattern = pattern;
@@ -1254,11 +1256,22 @@ public class FileStitcher extends ReaderWrapper {
 
       int nReaders = files.length > MAX_READERS ? 1 : files.length;
       readers = new DimensionSwapper[nReaders];
+      boolean memoize = opt.getBoolean(Memoizer.PROPAGATE_KEY, false);
       for (int i=0; i<readers.length; i++) {
         if (classList != null) {
-          readers[i] = new DimensionSwapper(new ImageReader(classList));
+          IFormatReader subReader = new ImageReader(classList);
+          if (memoize) {
+            subReader = new Memoizer(subReader);
+          }
+          readers[i] = new DimensionSwapper(subReader);
+        } else {
+          if (memoize) {
+            readers[i] = new DimensionSwapper(new Memoizer());
+          } else {
+            readers[i] = new DimensionSwapper();
+          }
         }
-        else readers[i] = new DimensionSwapper();
+        readers[i].setMetadataOptions(getMetadataOptions());
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);

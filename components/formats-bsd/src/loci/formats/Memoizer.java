@@ -355,6 +355,17 @@ public class Memoizer extends ReaderWrapper {
   public static final String DIRECTORY_KEY = "memoizer.directory";
 
   /**
+   * Whether memoization should be propagated to underlying readers.
+   * Defaults to {@link #DEFAULT_PROPAGATE}.
+   */
+  public static final String PROPAGATE_KEY = "memoizer.propagate";
+
+  /**
+   * Default value for {@link #PROPAGATE_KEY}.
+   */
+  public static final boolean DEFAULT_PROPAGATE = true;
+
+  /**
    * Default {@link org.slf4j.Logger} for the memoizer class
    */
   private static final Logger LOGGER =
@@ -454,6 +465,7 @@ public class Memoizer extends ReaderWrapper {
     super();
     this.getMetadataOptions().setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
     this.getMetadataOptions().setFile(DIRECTORY_KEY, directory);
+    this.getMetadataOptions().setBoolean(PROPAGATE_KEY, true);
   }
 
   /**
@@ -500,6 +512,7 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.getMetadataOptions().setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
     this.getMetadataOptions().setFile(DIRECTORY_KEY, directory);
+    this.getMetadataOptions().setBoolean(PROPAGATE_KEY, true);
   }
 
   /**

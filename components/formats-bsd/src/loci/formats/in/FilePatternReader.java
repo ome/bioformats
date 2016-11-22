@@ -521,6 +521,7 @@ public class FilePatternReader extends FormatReader {
 
     helper.setUsingPatternIds(true);
     helper.setCanChangePattern(false);
+    helper.setMetadataOptions(getMetadataOptions());
     helper.setId(pattern);
     core = helper.getCoreMetadataList();
   }
