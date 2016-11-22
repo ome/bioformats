@@ -307,7 +307,6 @@ public abstract class FormatWriter extends FormatHandler
     PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
     if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to set tile size.");
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    if (tileSize > width.getValue()) throw new FormatException("Tile width must be <= image width (" + width.getValue() + ")");
     return width.getValue();
   }
 
@@ -325,7 +324,6 @@ public abstract class FormatWriter extends FormatHandler
     PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
     if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to set tile size.");
     if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
-    if (tileSize > height.getValue()) throw new FormatException("Tile height must be <= image height (" + height.getValue() + ")");
     return height.getValue();
   }
 
