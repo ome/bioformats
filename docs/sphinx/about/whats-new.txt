@@ -1,6 +1,25 @@
 Version history
 ===============
 
+5.3.0-m2 (2016 November 23)
+---------------------------
+
+Fixes and clean up:
+
+* clean up of bundles, packages and build targets to reflect decoupling work
+* POM repositories clean up
+* updated developer documentation on building Bio-Formats
+* updated testing packages
+* updated build versioning from Maven
+
+Further decoupling:
+
+* removed stubs and metakit and replaced them with jars from Maven Central
+
+File format support:
+
+* added support for JPEG-XR compressed CZI data
+
 5.3.0-m1 (2016 October 27)
 --------------------------
 
