@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.3.0-SNAPSHOT</version>
+    <version>5.3.0-m2</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>ome</groupId>
       <artifactId>jxrlib-all</artifactId>
-      <version>${jxrlib.version}</version>
+      <version>5.3.0-m2</version>
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
