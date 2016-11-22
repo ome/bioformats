@@ -366,12 +366,14 @@ public class CV7000Reader extends FormatReader {
     int nextImage = 0;
     for (int row=0; row<plate.getPlateRows(); row++) {
       for (int col=0; col<plate.getPlateColumns(); col++) {
-        if (!isWellAcquired(row, col)) {
-          continue;
-        }
         store.setWellID(MetadataTools.createLSID("Well", 0, nextWell), 0, nextWell);
         store.setWellRow(new NonNegativeInteger(row), 0, nextWell);
         store.setWellColumn(new NonNegativeInteger(col), 0, nextWell);
+
+        if (!isWellAcquired(row, col)) {
+          nextWell++;
+          continue;
+        }
 
         for (int field=0; field<fields; field++) {
           String wellSampleID =
