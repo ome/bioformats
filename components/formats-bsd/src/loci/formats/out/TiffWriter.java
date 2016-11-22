@@ -233,15 +233,15 @@ public class TiffWriter extends FormatWriter {
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
     }
     if (tileSizeX < w || tileSizeY < h) {
-      int nXTiles = (w + tileSizeX - 1) / tileSizeX;
-      int nYTiles = (h + tileSizeY - 1)  / tileSizeY;
+      int nXTiles = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
+      int nYTiles = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
       for (int yTileIndex=0; yTileIndex<nYTiles; yTileIndex++) {
         for (int xTileIndex=0; xTileIndex<nXTiles; xTileIndex++) {
-          int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX : w - (tileSizeX * xTileIndex);
-          int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY : h - (tileSizeY * yTileIndex);
+          int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
+          int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
           byte [] tileBuf = getTile(buf, xTileIndex, yTileIndex, x, y, w, h);
-          int tileX = x + (xTileIndex * tileSizeX);
-          int tileY = y + (yTileIndex * tileSizeY);
+          int tileX = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
+          int tileY = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
 
           // This operation is synchronized
           synchronized (this) {
@@ -577,12 +577,12 @@ public class TiffWriter extends FormatWriter {
   }
 
   private byte[] getTile(byte[] buf, int xTileIndex, int yTileIndex, int x, int y, int w, int h) {
-    int nXTiles = (w + tileSizeX - 1) / tileSizeX;
-    int nYTiles = (h + tileSizeY - 1)  / tileSizeY;
-    int tileX = x + (xTileIndex * tileSizeX);
-    int tileY = y + (yTileIndex * tileSizeY);
-    int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX : w - (tileSizeX * xTileIndex);
-    int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY : h - (tileSizeY * yTileIndex);
+    int nXTiles = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
+    int nYTiles = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
+    int tileX = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
+    int tileY = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
+    int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
+    int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int type = FormatTools.pixelTypeFromString(retrieve.getPixelsType(series).toString());
     int channel_count = getSamplesPerPixel();
