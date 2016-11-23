@@ -32,9 +32,9 @@
 
 package loci.formats.out;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -231,12 +231,12 @@ public class TiffWriter extends FormatWriter {
       int numTilesY = (h + (y % tileSizeY) + tileSizeY - 1) / tileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
         for (int xTileIndex = 0; xTileIndex < numTilesX; xTileIndex++) {
-          Rectangle tileParams = new Rectangle();
+          Region tileParams = new Region();
           tileParams.width = xTileIndex < numTilesX - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
           tileParams.height = yTileIndex < numTilesY - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
           tileParams.x = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
           tileParams.y = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
-          byte [] tileBuf = getTile(buf, tileParams, new Rectangle(x, y, w, h));
+          byte [] tileBuf = getTile(buf, tileParams, new Region(x, y, w, h));
 
           // This operation is synchronized
           synchronized (this) {
@@ -581,7 +581,7 @@ public class TiffWriter extends FormatWriter {
     return tileSizeY;
   }
 
-  private byte[] getTile(byte[] buf, Rectangle tileParams, Rectangle srcParams) {
+  private byte[] getTile(byte[] buf, Region tileParams, Region srcParams) {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int type = FormatTools.pixelTypeFromString(retrieve.getPixelsType(series).toString());
     int channel_count = getSamplesPerPixel();
