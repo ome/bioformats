@@ -222,7 +222,7 @@ public class TiffWriter extends FormatWriter {
     int imageHeight = retrieve.getPixelsSizeY(series).getValue().intValue();
     tileSizeX = getTileSizeX();
     tileSizeY = getTileSizeY();
-    if (tileSizeX < imageWidth || tileSizeY < imageHeight) {
+    if (tileSizeX != imageWidth || tileSizeY != imageHeight) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(tileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
     }
