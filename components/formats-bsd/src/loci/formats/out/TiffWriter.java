@@ -32,10 +32,9 @@
 
 package loci.formats.out;
 
+import java.awt.Rectangle;
 import java.io.IOException;
-
 import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -48,10 +47,6 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 import loci.formats.tiff.TiffSaver;
-
-import ome.xml.model.primitives.PositiveFloat;
-
-import ome.units.quantity.Time;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
@@ -233,28 +228,29 @@ public class TiffWriter extends FormatWriter {
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
     }
     if (tileSizeX < w || tileSizeY < h) {
-      int nXTiles = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
-      int nYTiles = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
-      for (int yTileIndex=0; yTileIndex<nYTiles; yTileIndex++) {
-        for (int xTileIndex=0; xTileIndex<nXTiles; xTileIndex++) {
-          int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
-          int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
-          byte [] tileBuf = getTile(buf, xTileIndex, yTileIndex, x, y, w, h);
-          int tileX = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
-          int tileY = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
+      int numTilesX = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
+      int numTilesY = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
+      for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
+        for (int xTileIndex = 0; xTileIndex < numTilesX; xTileIndex++) {
+          Rectangle tileParams = new Rectangle();
+          tileParams.width = xTileIndex < numTilesX - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
+          tileParams.height = yTileIndex < numTilesY - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
+          tileParams.x = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
+          tileParams.y = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
+          byte [] tileBuf = getTile(buf, tileParams, new Rectangle(x, y, w, h));
 
           // This operation is synchronized
           synchronized (this) {
             // This operation is synchronized against the TIFF saver.
             synchronized (tiffSaver) {
-              index = prepareToWriteImage(no+1, tileBuf, ifd, tileX, tileY, effectiveTileSizeX, effectiveTileSizeY);
+              index = prepareToWriteImage(no+1, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
               if (index == -1) {
                 return;
               }
             }
           }     
   
-          tiffSaver.writeImage(tileBuf, ifd, index, type, tileX, tileY, effectiveTileSizeX, effectiveTileSizeY,
+          tiffSaver.writeImage(tileBuf, ifd, index, type, tileParams.x, tileParams.y, tileParams.width, tileParams.height,
           no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
         }
       }
@@ -576,31 +572,25 @@ public class TiffWriter extends FormatWriter {
     return tileSizeY;
   }
 
-  private byte[] getTile(byte[] buf, int xTileIndex, int yTileIndex, int x, int y, int w, int h) {
-    int nXTiles = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
-    int nYTiles = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
-    int tileX = x + (xTileIndex * tileSizeX) - (xTileIndex > 0 ? (x % tileSizeX) : 0);
-    int tileY = y + (yTileIndex * tileSizeY) - (yTileIndex > 0 ? (y % tileSizeY) : 0);
-    int effectiveTileSizeX = xTileIndex < nXTiles - 1 ? tileSizeX - (x % tileSizeX) : w - (tileSizeX * xTileIndex);
-    int effectiveTileSizeY = yTileIndex < nYTiles - 1 ? tileSizeY - (y % tileSizeY) : h - (tileSizeY * yTileIndex);
+  private byte[] getTile(byte[] buf, Rectangle tileParams, Rectangle srcParams) {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     int type = FormatTools.pixelTypeFromString(retrieve.getPixelsType(series).toString());
     int channel_count = getSamplesPerPixel();
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
-    int tileSize = effectiveTileSizeX * effectiveTileSizeY * bytesPerPixel * channel_count;
+    int tileSize = tileParams.width * tileParams.height * bytesPerPixel * channel_count;
     byte [] returnBuf = new byte[tileSize];
-   
-    for (int row = tileY; row != tileY + effectiveTileSizeY; row++) {
-      for (int sampleoffset = 0; sampleoffset < (effectiveTileSizeX * channel_count); sampleoffset++) {
-        int channel_index = sampleoffset / effectiveTileSizeX;
-        int channel_offset = (sampleoffset - (effectiveTileSizeX * channel_index)) * bytesPerPixel;
-        int full_row_width = w * bytesPerPixel;
-        int full_plane_size = full_row_width * h;
-        int xoffset = (tileX - x) * bytesPerPixel;
-        int yoffset = (row - y) * full_row_width;
-        int row_offset = (row - tileY) * effectiveTileSizeX * bytesPerPixel;
+
+    for (int row = tileParams.y; row != tileParams.y + tileParams.height; row++) {
+      for (int sampleoffset = 0; sampleoffset < (tileParams.width * channel_count); sampleoffset++) {
+        int channel_index = sampleoffset / tileParams.width;
+        int channel_offset = (sampleoffset - (tileParams.width * channel_index)) * bytesPerPixel;
+        int full_row_width = srcParams.width * bytesPerPixel;
+        int full_plane_size = full_row_width * srcParams.height;
+        int xoffset = (tileParams.x - srcParams.x) * bytesPerPixel;
+        int yoffset = (row - srcParams.y) * full_row_width;
+        int row_offset = (row - tileParams.y) * tileParams.width * bytesPerPixel;
         int src_index = yoffset + xoffset + channel_offset + (channel_index * full_plane_size);
-        int dest_index = (effectiveTileSizeY * effectiveTileSizeX * channel_index * bytesPerPixel) + row_offset;
+        int dest_index = (tileParams.height * tileParams.width * channel_index * bytesPerPixel) + row_offset;
         for (int pixelByte = 0; pixelByte < bytesPerPixel; pixelByte++) {
           returnBuf[dest_index + channel_offset + pixelByte] = buf[src_index + pixelByte];
         }
