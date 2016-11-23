@@ -1,19 +1,32 @@
 Version history
 ===============
 
-5.3.0-m1 (2016 October 27)
---------------------------
+5.3.0-m2 (2016 November 23)
+---------------------------
 
 Updated build system:
 
 * dropped embedded JARs and now use the Maven Ant Tasks plugin to unify the
   dependencies using the pom.xml
+* improved Ant JAR and bundle target
 * dropped deprecated osgi targets, OME Tools bundle and ome-jxr component
 * removed PDF generation from the docs-sphinx target
 * added version number to Javadoc zip bundle name
 * migrated unit tests out of test-suite into formats-bsd
+* fixed test-suite targets, paths and symlink handling
+* fixed test-metadata and migrated it into test-suite
+* fixed mismatch between ``ND2HandlerTest`` package and location
+* cleaned up test-build to remove obsolete and decoupled components
+  and folders
 * simplified Travis build
+* POM repositories clean up to reduce complexity and use Maven Central as the
+  first location to look for dependencies
 * now storing all versions in the top-level pom.xml
+* updated build versioning from Maven by unified versioning strategy,
+  reviewing meta information stored in the manifests of each JAR and
+  introspecting this information in the ``FormatTools`` API to retrieve
+  version and revision numbers
+* updated developer documentation on updated build system
 
 Component architecture changes/decoupling:
 
@@ -26,13 +39,27 @@ Component architecture changes/decoupling:
   and consumed as 'org.openmicroscopy:ome-poi' artifact from Maven Central
 * removed specification, xsd-fu and ome-xml components - now decoupled to the
   new `ome/ome-model Github repository <https://github.com/ome/ome-model>`_
-  and consumed as 'org.openmicroscopy:{specification,xsd-fu,ome-xml}'
+  and consumed as 'org.openmicroscopy:{specification,ome-xml}'
   artifacts from Maven Central
 * removed mdbtools component - now decoupled to the new
   `ome/ome-mdbtools GitHub repository <https://github.com/ome/ome-mdbtools>`_
   and consumed as 'org.openmicroscopy:ome-mdbtools' artifact from Maven
   Central
+* removed stubs components - now decoupled to the new
+  `ome/ome-stubs GitHub repository <https://github.com/ome/ome-stubs>`_ and
+  consumed as 'org.openmicroscopy:{lwf-stubs,mipav-stubs}' artifacts from
+  Maven Central
+* removed metakit component - now decoupled to the new
+  `ome/ome-metakit GitHub repository <https://github.com/ome/ome-metakit>`_
+  and consumed as 'org.openmicroscopy:metakit' artifacts from
+  Maven Central
 * updated developer documentation for the decoupled components
+
+New features/API:
+
+* added support for JPEG-XR compressed CZI data (funded by a
+  `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
+  of Bio-Formats
 
 5.2.4 (2016 October 18)
 -----------------------
