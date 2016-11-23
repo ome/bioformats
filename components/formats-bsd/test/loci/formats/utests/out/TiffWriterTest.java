@@ -227,7 +227,7 @@ public class TiffWriterTest {
       }
       writer.setTileSizeX(SIZE_X);
       assertEquals(SIZE_X, writer.getTileSizeX());
-      for (int i = 8; i < 24; i++) {
+      for (int i = 1; i < 24; i++) {
         writer.setTileSizeX(i);
         assertEquals(16, writer.getTileSizeX());
       }
@@ -262,7 +262,7 @@ public class TiffWriterTest {
       }
       writer.setTileSizeY(SIZE_Y);
       assertEquals(SIZE_Y, writer.getTileSizeY());
-      for (int i = 8; i < 24; i++) {
+      for (int i = 1; i < 24; i++) {
         writer.setTileSizeY(i);
         assertEquals(16, writer.getTileSizeY());
       }
