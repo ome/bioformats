@@ -39,7 +39,7 @@ Component architecture changes/decoupling:
   and consumed as 'org.openmicroscopy:ome-poi' artifact from Maven Central
 * removed specification, xsd-fu and ome-xml components - now decoupled to the
   new `ome/ome-model Github repository <https://github.com/ome/ome-model>`_
-  and consumed as 'org.openmicroscopy:{specification,xsd-fu,ome-xml}'
+  and consumed as 'org.openmicroscopy:{specification,ome-xml}'
   artifacts from Maven Central
 * removed mdbtools component - now decoupled to the new
   `ome/ome-mdbtools GitHub repository <https://github.com/ome/ome-mdbtools>`_
