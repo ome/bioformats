@@ -183,9 +183,6 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
-    tileSizeX = super.getTileSizeX();
-    tileSizeY = super.getTileSizeY();
-
     synchronized (this) {
       setupTiffSaver();
     }
@@ -223,13 +220,15 @@ public class TiffWriter extends FormatWriter {
     int index = no;
     int imageWidth = retrieve.getPixelsSizeX(series).getValue().intValue();
     int imageHeight = retrieve.getPixelsSizeY(series).getValue().intValue();
+    tileSizeX = getTileSizeX();
+    tileSizeY = getTileSizeY();
     if (tileSizeX < imageWidth || tileSizeY < imageHeight) {
       ifd.put(new Integer(IFD.TILE_WIDTH), new Long(tileSizeX));
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
     }
     if (tileSizeX < w || tileSizeY < h) {
       int numTilesX = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
-      int numTilesY = (h + (y % tileSizeY) + tileSizeY - 1)  / tileSizeY;
+      int numTilesY = (h + (y % tileSizeY) + tileSizeY - 1) / tileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
         for (int xTileIndex = 0; xTileIndex < numTilesX; xTileIndex++) {
           Rectangle tileParams = new Rectangle();
@@ -249,7 +248,7 @@ public class TiffWriter extends FormatWriter {
               }
             }
           }     
-  
+
           tiffSaver.writeImage(tileBuf, ifd, index, type, tileParams.x, tileParams.y, tileParams.width, tileParams.height,
           no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
         }
