@@ -58,7 +58,7 @@ Component architecture changes/decoupling:
 New features/API:
 
 * added support for JPEG-XR compressed CZI data (funded by a
-  `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding ``ome:jxrlib`` as a new dependency
+  `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
   of Bio-Formats
 
 5.2.4 (2016 October 18)
