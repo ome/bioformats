@@ -49,7 +49,6 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.Memoizer;
 
@@ -918,9 +917,9 @@ public class FileStitcher extends ReaderWrapper {
     if (patterns.length == 0) patterns = new String[] {id};
     externals = new ExternalSeries[patterns.length];
 
+    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
     for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]),
-                                        getMetadataOptions());
+      externals[i] = new ExternalSeries(new FilePattern(patterns[i]), opt);
     }
     fp = new FilePattern(patterns[0]);
 
@@ -1248,7 +1247,7 @@ public class FileStitcher extends ReaderWrapper {
     private AxisGuesser ag;
     private int imagesPerFile;
 
-    public ExternalSeries(FilePattern pattern, MetadataOptions opt)
+    public ExternalSeries(FilePattern pattern, DefaultMetadataOptions opt)
       throws FormatException, IOException
     {
       this.pattern = pattern;

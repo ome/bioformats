@@ -50,6 +50,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+import loci.formats.in.DefaultMetadataOptions;
 
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -463,9 +464,10 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(long minimumElapsed, File directory) {
     super();
-    this.getMetadataOptions().setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
-    this.getMetadataOptions().setFile(DIRECTORY_KEY, directory);
-    this.getMetadataOptions().setBoolean(PROPAGATE_KEY, true);
+    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
+    opt.setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
+    opt.setFile(DIRECTORY_KEY, directory);
+    opt.setBoolean(PROPAGATE_KEY, true);
   }
 
   /**
@@ -510,16 +512,17 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
-    this.getMetadataOptions().setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
-    this.getMetadataOptions().setFile(DIRECTORY_KEY, directory);
-    this.getMetadataOptions().setBoolean(PROPAGATE_KEY, true);
+    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
+    opt.setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
+    opt.setFile(DIRECTORY_KEY, directory);
+    opt.setBoolean(PROPAGATE_KEY, true);
   }
 
   /**
    * Returns the current value of {@link #MINIMUM_ELAPSED_KEY}.
    */
   public long getMinimumElapsed() {
-    return getMetadataOptions().getLong(
+    return ((DefaultMetadataOptions) getMetadataOptions()).getLong(
         MINIMUM_ELAPSED_KEY, DEFAULT_MINIMUM_ELAPSED
     );
   }
@@ -529,7 +532,9 @@ public class Memoizer extends ReaderWrapper {
    * the option is not set.
    */
   public File getDirectory() {
-    return getMetadataOptions().getFile(DIRECTORY_KEY, null);
+    return ((DefaultMetadataOptions) getMetadataOptions()).getFile(
+        DIRECTORY_KEY, null
+    );
   }
 
   /**
