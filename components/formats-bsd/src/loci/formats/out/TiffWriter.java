@@ -227,6 +227,7 @@ public class TiffWriter extends FormatWriter {
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(tileSizeY));
     }
     if (tileSizeX < w || tileSizeY < h) {
+      int tileNo = no;
       int numTilesX = (w + (x % tileSizeX) + tileSizeX - 1) / tileSizeX;
       int numTilesY = (h + (y % tileSizeY) + tileSizeY - 1) / tileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
@@ -242,12 +243,12 @@ public class TiffWriter extends FormatWriter {
           synchronized (this) {
             // This operation is synchronized against the TIFF saver.
             synchronized (tiffSaver) {
-              index = prepareToWriteImage(no+1, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
+              index = prepareToWriteImage(tileNo++, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
               if (index == -1) {
                 return;
               }
             }
-          }     
+          }
 
           tiffSaver.writeImage(tileBuf, ifd, index, type, tileParams.x, tileParams.y, tileParams.width, tileParams.height,
           no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
@@ -264,10 +265,10 @@ public class TiffWriter extends FormatWriter {
             return;
           }
         }
-      }     
+      }
 
       tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
-      no == getPlaneCount() && getSeries() == retrieve.getImageCount() - 1);
+      no == getPlaneCount() -1 && getSeries() == retrieve.getImageCount() - 1);
     }
   }
 
