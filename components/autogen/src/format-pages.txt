@@ -666,7 +666,7 @@ owner = `Gatan <http://www.gatan.com/>`_
 bsd = no
 versions = 3, 4
 software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
-`EMAN <http://blake.bcm.edu/EMAN/>`_
+`EMAN <http://blake.bcm.edu/emanwiki/EMAN2>`_
 weHave = * Gatan's ImageReader2003 code (from 2003, in C++) \n
 * numerous DM3 datasets
 weWant = * a DM3 specification document
