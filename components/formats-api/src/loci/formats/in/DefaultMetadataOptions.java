@@ -32,14 +32,11 @@
 
 package loci.formats.in;
 
-import java.util.Properties;
-import java.io.File;
-
-
 /**
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
-public class DefaultMetadataOptions implements MetadataOptions {
+public class DefaultMetadataOptions
+    extends FormatsOptions implements MetadataOptions {
 
   public static final String METADATA_LEVEL_KEY = "metadata.level";
   public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
@@ -47,195 +44,23 @@ public class DefaultMetadataOptions implements MetadataOptions {
   public static final String READER_VALIDATE_KEY = "reader.validate.input";
   public static final boolean READER_VALIDATE_DEFAULT = false;
 
-  private Properties props;
-
   /**
-   * Construct a new {@code DefaultMetadataOptions}. Set the metadata
-   * level to {@link loci.formats.in.MetadataLevel#ALL} and disable
-   * file validation.
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to {@link #METADATA_LEVEL_DEFAULT} and disable file validation.
    */
   public DefaultMetadataOptions() {
     this(METADATA_LEVEL_DEFAULT);
   }
 
   /**
-   * Construct a new {@code DefaultMetadataOptions}.
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to the specified value and disable file validation.
    *
    * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
-    props = new Properties();
     setEnum(METADATA_LEVEL_KEY, level);
     setBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
-  }
-
-  public void set(String name, String value) {
-    if (null == name) {
-      throw new IllegalArgumentException("name cannot be null");
-    }
-    try {
-      props.setProperty(name, value);
-    } catch (NullPointerException e) {
-      props.remove(name);
-    }
-  }
-
-  public String get(String name, String defaultValue) {
-    return props.getProperty(name, defaultValue);
-  }
-
-  public <T extends Enum<T>> void setEnum(String name, T value) {
-    if (null == value) {
-      set(name, null);
-    } else {
-      set(name, value.toString());
-    }
-  }
-
-  public <T extends Enum<T>> T getEnum(String name, T defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Enum.valueOf(defaultValue.getDeclaringClass(), val);
-  }
-
-  public void setBoolean(String name, boolean value) {
-    set(name, Boolean.toString(value));
-  }
-
-  public boolean getBoolean(String name, boolean defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    if (val.equalsIgnoreCase("true")) {
-      return true;
-    }
-    if (val.equalsIgnoreCase("false")) {
-      return false;
-    }
-    throw new IllegalArgumentException(val + "does not represent a boolean");
-  }
-
-  public void setChar(String name, char value) {
-    set(name, Character.toString(value));
-  }
-
-  public char getChar(String name, char defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    if (val.length() != 1) {
-      throw new IllegalArgumentException("string length is not 1");
-    }
-    return val.charAt(0);
-  }
-
-  public void setByte(String name, byte value) {
-    set(name, Byte.toString(value));
-  }
-
-  public byte getByte(String name, byte defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Byte.parseByte(val);
-  }
-
-  public void setShort(String name, short value) {
-    set(name, Short.toString(value));
-  }
-
-  public short getShort(String name, short defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Short.parseShort(val);
-  }
-
-  public void setInt(String name, int value) {
-    set(name, Integer.toString(value));
-  }
-
-  public int getInt(String name, int defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Integer.parseInt(val);
-  }
-
-  public void setLong(String name, long value) {
-    set(name, Long.toString(value));
-  }
-
-  public long getLong(String name, long defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Long.parseLong(val);
-  }
-
-  public void setFloat(String name, float value) {
-    set(name, Float.toString(value));
-  }
-
-  public float getFloat(String name, float defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Float.parseFloat(val);
-  }
-
-  public void setDouble(String name, double value) {
-    set(name, Double.toString(value));
-  }
-
-  public double getDouble(String name, double defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Double.parseDouble(val);
-  }
-
-  public void setClass(String name, Class<?> value) {
-    if (null == value) {
-      set(name, null);
-    } else {
-      set(name, value.getName());
-    }
-  }
-
-  public Class<?> getClass(String name, Class<?> defaultValue)
-      throws ClassNotFoundException {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return Class.forName(val);
-  }
-
-  public void setFile(String name, File value) {
-    if (null == value) {
-      set(name, null);
-    } else {
-      set(name, value.toString());
-    }
-  }
-
-  public File getFile(String name, File defaultValue) {
-    final String val = get(name, null);
-    if (null == val) {
-      return defaultValue;
-    }
-    return new File(val);
   }
 
   @Override

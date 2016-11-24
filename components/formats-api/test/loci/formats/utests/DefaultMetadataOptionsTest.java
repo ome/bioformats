@@ -41,7 +41,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 
-import loci.formats.in.MetadataOptions;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 
@@ -55,7 +54,7 @@ public class DefaultMetadataOptionsTest {
   private static final double DDELTA = 1e-7;
   private static final float FDELTA = 1e-7f;
 
-  private MetadataOptions opt;
+  private DefaultMetadataOptions opt;
   private enum One { FOO, BAR };
   private enum Two { TAR, FOO };
 
