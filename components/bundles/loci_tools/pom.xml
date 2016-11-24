@@ -49,6 +49,12 @@
       <artifactId>slf4j-log4j12</artifactId>
       <version>${slf4j.version}</version>
      </dependency>
+     <dependency>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>${imagej1.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <properties>
@@ -67,7 +73,14 @@
           <archive>
             <manifest>
               <mainClass>loci.formats.gui.ImageViewer</mainClass>
+              <addClasspath>true</addClasspath>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-URL>${project.url}</Implementation-URL>
+            </manifestEntries>
           </archive>
         </configuration>
         <executions>
