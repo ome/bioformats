@@ -65,7 +65,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
- * delegate (including and other {@link ReaderWrapper} instances)
+ * delegate (including other {@link ReaderWrapper} instances)
  * after {@link #setId(String)} has been called.
  *
  * Initializing a Bio-Formats reader can consume substantial time and memory.
@@ -74,7 +74,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
  * size, the amount of metadata in the image and also the file format itself.
  *
  * With the {@link Memoizer} reader wrapper, if the time required to call the
- * {@link #setId(String)} method is larger than {@link #minimumElapsed}, the
+ * {@link #setId(String)} method is larger than a configurable minimum, the
  * initialized reader including all reader wrappers will be cached in a memo
  * file via {@link #saveMemo()}.
  * Any subsequent call to {@link #setId(String)} with a reader decorated by
@@ -516,7 +516,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Returns the current value of {@link MINIMUM_ELAPSED_KEY}.
+   * Returns the current value of {@link #MINIMUM_ELAPSED_KEY}.
    */
   public long getMinimumElapsed() {
     return getMetadataOptions().getLong(
@@ -525,7 +525,7 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
-   * Returns the current value of {@link DIRECTORY_KEY}, or {@null} if
+   * Returns the current value of {@link #DIRECTORY_KEY}, or {@code null} if
    * the option is not set.
    */
   public File getDirectory() {
