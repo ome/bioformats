@@ -63,18 +63,12 @@ public class MemoizerTest {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    reader = new FakeReader();
-    try {
-      String uuid = UUID.randomUUID().toString();
-      idDir = new File(System.getProperty("java.io.tmpdir"), uuid);
-      idDir.mkdirs();
-      File tempFile = new File(idDir, TEST_FILE);
-      tempFile.createNewFile();
-      id = tempFile.getAbsolutePath();
-      reader.setId(id);
-    } finally {
-      reader.close();
-    }
+    String uuid = UUID.randomUUID().toString();
+    idDir = new File(System.getProperty("java.io.tmpdir"), uuid);
+    idDir.mkdirs();
+    File tempFile = new File(idDir, TEST_FILE);
+    tempFile.createNewFile();
+    id = tempFile.getAbsolutePath();
     reader = new FakeReader(); // No setId !
   }
 
