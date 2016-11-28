@@ -726,20 +726,20 @@ public class MetamorphReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
+
+    int nextObjective = 0;
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+
+    store.setInstrumentID(instrumentID, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorType(getDetectorType("Other"), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       handler = new MetamorphHandler(getSeriesMetadata());
 
-      String instrumentID = MetadataTools.createLSID("Instrument", i);
-      store.setInstrumentID(instrumentID, i);
       store.setImageInstrumentRef(instrumentID, i);
-
-      if (i == 0) {
-        store.setDetectorID(detectorID, 0, 0);
-        store.setDetectorType(getDetectorType("Other"), 0, 0);
-      }
 
       String comment = getFirstComment(i);
       if (comment != null && comment.startsWith("<MetaData>")) {
@@ -783,7 +783,7 @@ public class MetamorphReader extends BaseTiffReader {
       else {
         List<Double> zPositions = new ArrayList<Double>();
         final List<Double> uniqueZ = new ArrayList<Double>();
-    	  
+
         for (IFD ifd : ifds) {
           MetamorphHandler zPlaneHandler = new MetamorphHandler();
 
@@ -802,7 +802,7 @@ public class MetamorphReader extends BaseTiffReader {
           for (Double z : zPositions) {
             if (!uniqueZ.contains(z)) uniqueZ.add(z);
           }
-        } 
+        }
         if (uniqueZ.size() > 1 && uniqueZ.size() == getSizeZ()) {
           BigDecimal lastZ = BigDecimal.valueOf(uniqueZ.get(uniqueZ.size() - 1));
           BigDecimal firstZ = BigDecimal.valueOf(uniqueZ.get(0));
@@ -812,21 +812,24 @@ public class MetamorphReader extends BaseTiffReader {
           stepSize = zRange.divide(zSize, mc).doubleValue();
         }
       }
-      
+
       Length physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
       if (physicalSizeZ != null) {
         store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
-      String objectiveID = MetadataTools.createLSID("Objective", i, 0);
-      store.setObjectiveID(objectiveID, i, 0);
-      if (handler.getLensNA() != 0) {
-          store.setObjectiveLensNA(handler.getLensNA(), i, 0);
+      if (handler.getLensNA() != 0 || handler.getLensRI() != 0) {
+        String objectiveID = MetadataTools.createLSID("Objective", 0, nextObjective);
+        store.setObjectiveID(objectiveID, 0, nextObjective);
+        if (handler.getLensNA() != 0) {
+          store.setObjectiveLensNA(handler.getLensNA(), 0, nextObjective);
+        }
+        store.setObjectiveSettingsID(objectiveID, i);
+        if (handler.getLensRI() != 0) {
+          store.setObjectiveSettingsRefractiveIndex(handler.getLensRI(), i);
+        }
+        nextObjective++;
       }
-      if (handler.getLensRI() != 0) {
-        store.setObjectiveSettingsRefractiveIndex(handler.getLensRI(), 0);
-      }
-      store.setObjectiveSettingsID(objectiveID, i);
 
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -871,12 +874,13 @@ public class MetamorphReader extends BaseTiffReader {
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
+            int laserIndex = i * getEffectiveSizeC() + c;
             String lightSourceID =
-              MetadataTools.createLSID("LightSource", i, c);
-            store.setLaserID(lightSourceID, i, c);
+              MetadataTools.createLSID("LightSource", 0, laserIndex);
+            store.setLaserID(lightSourceID, 0, laserIndex);
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-            store.setLaserType(getLaserType("Other"), i, c);
-            store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+            store.setLaserType(getLaserType("Other"), 0, laserIndex);
+            store.setLaserLaserMedium(getLaserMedium("Other"), 0, laserIndex);
 
             if (wavelength != null) {
               store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
