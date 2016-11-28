@@ -39,7 +39,6 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.util.UUID;
 
-import loci.formats.FormatTools;
 import loci.formats.Memoizer;
 import loci.formats.in.FakeReader;
 
@@ -62,21 +61,8 @@ public class MemoizerTest {
 
   private Memoizer memoizer;
 
-  private static int fullPlaneCallIndex;
-
-  private int sizeX;
-
-  private int sizeY;
-
-  private int bpp;
-
-  private int planeSize;
-
   @BeforeMethod
   public void setUp() throws Exception {
-    fullPlaneCallIndex = 1;
-    // No mapping.
-    // Location.mapId(TEST_FILE, TEST_FILE);
     reader = new FakeReader();
     try {
       String uuid = UUID.randomUUID().toString();
@@ -86,10 +72,6 @@ public class MemoizerTest {
       tempFile.createNewFile();
       id = tempFile.getAbsolutePath();
       reader.setId(id);
-      sizeX = reader.getSizeX();
-      sizeY = reader.getSizeY();
-      bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
-      planeSize = sizeY * sizeY * bpp;
     } finally {
       reader.close();
     }
@@ -352,13 +334,4 @@ public class MemoizerTest {
     assertFalse(memoizer.isSavedToMemo());
   }
 
-  public static void main(String[] args) throws Exception {
-    MemoizerTest t = new MemoizerTest();
-    t.setUp();
-    try {
-      t.testSimple();
-    } finally {
-      t.tearDown();
-    }
-  }
 }
