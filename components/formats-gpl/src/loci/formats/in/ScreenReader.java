@@ -346,6 +346,7 @@ public class ScreenReader extends FormatReader {
       root.addImage(img);
     }
     ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.setModel(root);
     omexmlMeta.setRoot(root);
 
     // populate HCS metadata

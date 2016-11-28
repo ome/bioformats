@@ -343,6 +343,7 @@ public class InOutCurrentTest {
   @Test
   public void testValidMetadataRoot() {
     metadata = new OMEXMLMetadataImpl();
+    metadata.setModel(ome);
     metadata.setRoot(ome);
     assertEquals(ome, metadata.getRoot());
   }

@@ -58,6 +58,7 @@ public class GetLightSourceTypeTest {
     instrument.addLightSource(new Laser());
     instrument.addLightSource(new LightEmittingDiode());
     ome.addInstrument(instrument);
+    metadata.setModel(ome);
     metadata.setRoot(ome);
   }
 

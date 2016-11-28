@@ -54,7 +54,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
     <ome-common.version>5.3.1</ome-common.version>
-    <ome-model.version>5.3.1</ome-model.version>
+    <ome-model.version>5.3.2-SNAPSHOT</ome-model.version>
     <ome-poi.version>5.3.1</ome-poi.version>
     <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
     <jxrlib.version>0.2.1</jxrlib.version>

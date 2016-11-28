@@ -1185,7 +1185,9 @@ public class FakeReader extends FormatReader {
       ome = xml.createPopulatedScreen(screens, plates, rows, cols, fields, acqs, withMicrobeam);
     }
     if (withMicrobeam) roiCount = roiCount + plates;;
-    getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
+    OMEXMLMetadataRoot newRoot = new OMEXMLMetadataRoot(ome);
+    getOmeXmlMetadata().setModel(newRoot);
+    getOmeXmlMetadata().setRoot(newRoot);
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
     domains = new String[] {FormatTools.HCS_DOMAIN};
