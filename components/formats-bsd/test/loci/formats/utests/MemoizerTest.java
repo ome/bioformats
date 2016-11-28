@@ -78,22 +78,6 @@ public class MemoizerTest {
     reader.close();
   }
 
-  @Test
-  public void testSimple() throws Exception {
-      memoizer = new Memoizer(reader);
-      File f = memoizer.getMemoFile(id);
-      if (f != null && f.exists()) {
-        f.delete();
-      }
-      // At this point we're sure that there's no memo file.
-      reader.setId(id);
-      reader.close();
-      memoizer.setId(id);
-      memoizer.close();
-      memoizer.setId(id);
-      memoizer.close();
-  }
-
   public void testDefaultConstructor() throws Exception {
       memoizer = new Memoizer();
       File f = memoizer.getMemoFile(id);
