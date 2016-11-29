@@ -32,9 +32,10 @@
 
 package loci.formats.utests;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -151,7 +152,7 @@ public class MemoizerTest {
     Memoizer memoizer = new Memoizer(0, directory);
 
     // Check non-existing memo directory returns null
-    assertEquals(memoizer.getMemoFile(id), null);
+    assertNull(memoizer.getMemoFile(id));
 
     // Create memoizer directory and memoizer reader
     directory.mkdirs();
@@ -168,7 +169,7 @@ public class MemoizerTest {
     Memoizer memoizer = new Memoizer(0, null);
 
     // Check null memo directory returns null
-    assertEquals(memoizer.getMemoFile(id), null);
+    assertNull(memoizer.getMemoFile(id));
     checkNoMemo(memoizer, id);
   }
 
@@ -179,7 +180,7 @@ public class MemoizerTest {
     Memoizer memoizer = new Memoizer(reader, 0, directory);
 
     // Check non-existing memo directory returns null
-    assertEquals(memoizer.getMemoFile(id), null);
+    assertNull(memoizer.getMemoFile(id));
 
     // Create memoizer directory and memoizer reader
     directory.mkdirs();
@@ -196,7 +197,7 @@ public class MemoizerTest {
     Memoizer memoizer = new Memoizer(reader, 0, null);
 
     // Check null memo directory returns null
-    assertEquals(memoizer.getMemoFile(id), null);
+    assertNull(memoizer.getMemoFile(id));
     checkNoMemo(memoizer, id);
   }
 
@@ -207,7 +208,7 @@ public class MemoizerTest {
     Memoizer memoizer = new Memoizer(reader, 0, directory);
 
     // Check non-existing memo directory returns null
-    assertEquals(memoizer.getMemoFile(id), null);
+    assertNull(memoizer.getMemoFile(id));
 
     // Create memoizer directory and memoizer reader
     directory.mkdirs();
@@ -217,7 +218,7 @@ public class MemoizerTest {
     if (File.separator.equals("/")) {
       // File.setWritable() does not work properly on Windows
       directory.setWritable(false);
-      assertEquals(memoizer.getMemoFile(id), null);
+      assertNull(memoizer.getMemoFile(id));
     }
 
     // Check existing writeable memo diretory returns a memo file
@@ -237,7 +238,7 @@ public class MemoizerTest {
     if (File.separator.equals("/")) {
       // File.setWritable() does not work properly on Windows
       idDir.setWritable(false);
-      assertEquals(memoizer.getMemoFile(id), null);
+      assertNull(memoizer.getMemoFile(id));
     }
 
     // Check writeable file directory returns memo file beside file
@@ -253,7 +254,7 @@ public class MemoizerTest {
     if (File.separator.equals("/")) {
       // File.setWritable() does not work properly on Windows
       idDir.setWritable(false);
-      assertEquals(memoizer.getMemoFile(id), null);
+      assertNull(memoizer.getMemoFile(id));
     }
     // Check writeable file directory returns memo file beside file
     idDir.setWritable(true);
