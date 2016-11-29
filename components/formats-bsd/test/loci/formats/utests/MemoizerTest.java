@@ -204,15 +204,7 @@ public class MemoizerTest {
   @Test
   public void testGetMemoFilePermissionsDirectory() throws Exception {
     File directory = createTempDir();
-    directory.delete();
     Memoizer memoizer = new Memoizer(reader, 0, directory);
-
-    // Check non-existing memo directory returns null
-    assertNull(memoizer.getMemoFile(id));
-
-    // Create memoizer directory and memoizer reader
-    directory.mkdirs();
-    memoizer = new Memoizer(reader, 0, directory);
 
     // Check existing non-writeable memo directory returns null
     if (File.separator.equals("/")) {
@@ -220,13 +212,6 @@ public class MemoizerTest {
       directory.setWritable(false);
       assertNull(memoizer.getMemoFile(id));
     }
-
-    // Check existing writeable memo diretory returns a memo file
-    directory.setWritable(true);
-    String memoDir = idDir.getAbsolutePath();
-    memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
-    recursiveDeleteOnExit(directory);
   }
 
   @Test
