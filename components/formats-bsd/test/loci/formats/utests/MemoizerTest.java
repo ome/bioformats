@@ -37,7 +37,7 @@ import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
-import java.util.UUID;
+import java.nio.file.Files;
 
 import loci.formats.Memoizer;
 import loci.formats.in.FakeReader;
@@ -51,10 +51,29 @@ public class MemoizerTest {
 
   private static final String TEST_FILE =
     "test&pixelType=int8&sizeX=20&sizeY=20&sizeC=1&sizeZ=1&sizeT=1.fake";
+  private static final String TMP_PREFIX = MemoizerTest.class.getName() + ".";
 
   private File idDir;
   private String id;
   private FakeReader reader;
+
+  private static File createTempDir() throws Exception {
+    return Files.createTempDirectory(TMP_PREFIX).toFile();
+  }
+
+  private static void recursiveDeleteOnExit(File rootDir) {
+    rootDir.deleteOnExit();
+    File[] children = rootDir.listFiles();
+    if (null != children) {
+      for (File child: children) {
+        if (child.isDirectory()) {
+          recursiveDeleteOnExit(child);
+        } else {
+          child.deleteOnExit();
+        }
+      }
+    }
+  }
 
   private static void checkMemo(Memoizer memoizer, String id)
       throws Exception {
@@ -87,9 +106,7 @@ public class MemoizerTest {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    String uuid = UUID.randomUUID().toString();
-    idDir = new File(System.getProperty("java.io.tmpdir"), uuid);
-    idDir.mkdirs();
+    idDir = createTempDir();
     File tempFile = new File(idDir, TEST_FILE);
     tempFile.createNewFile();
     id = tempFile.getAbsolutePath();
@@ -99,6 +116,7 @@ public class MemoizerTest {
   @AfterMethod
   public void tearDown() throws Exception {
     reader.close();
+    recursiveDeleteOnExit(idDir);
   }
 
   public void testDefaultConstructor() throws Exception {
@@ -128,8 +146,8 @@ public class MemoizerTest {
 
   @Test
   public void testConstructorTimeElapsedDirectory() throws Exception {
-    String uuid = UUID.randomUUID().toString();
-    File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+    File directory = createTempDir();
+    directory.delete();
     Memoizer memoizer = new Memoizer(0, directory);
 
     // Check non-existing memo directory returns null
@@ -142,6 +160,7 @@ public class MemoizerTest {
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
     checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
     checkMemo(memoizer, id);
+    recursiveDeleteOnExit(directory);
   }
 
   @Test
@@ -155,8 +174,8 @@ public class MemoizerTest {
 
   @Test
   public void testConstructorReaderTimeElapsedDirectory() throws Exception {
-    String uuid = UUID.randomUUID().toString();
-    File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+    File directory = createTempDir();
+    directory.delete();
     Memoizer memoizer = new Memoizer(reader, 0, directory);
 
     // Check non-existing memo directory returns null
@@ -169,6 +188,7 @@ public class MemoizerTest {
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
     checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
     checkMemo(memoizer, id);
+    recursiveDeleteOnExit(directory);
   }
 
   @Test
@@ -182,8 +202,8 @@ public class MemoizerTest {
 
   @Test
   public void testGetMemoFilePermissionsDirectory() throws Exception {
-    String uuid = UUID.randomUUID().toString();
-    File directory = new File(System.getProperty("java.io.tmpdir"), uuid);
+    File directory = createTempDir();
+    directory.delete();
     Memoizer memoizer = new Memoizer(reader, 0, directory);
 
     // Check non-existing memo directory returns null
@@ -205,6 +225,7 @@ public class MemoizerTest {
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
     checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
+    recursiveDeleteOnExit(directory);
   }
 
   @Test
@@ -249,8 +270,7 @@ public class MemoizerTest {
     assertTrue(memoizer.isSavedToMemo());
 
     // Rename the directory (including the file and the memo file)
-    String uuid = UUID.randomUUID().toString();
-    File newidDir = new File(System.getProperty("java.io.tmpdir"), uuid);
+    File newidDir = new File(idDir.getAbsolutePath() + ".new");
     idDir.renameTo(newidDir);
     File newtempFile = new File(newidDir, TEST_FILE);
     String newid = newtempFile.getAbsolutePath();
@@ -260,6 +280,7 @@ public class MemoizerTest {
     memoizer.close();
     assertTrue(memoizer.isLoadedFromMemo());
     assertFalse(memoizer.isSavedToMemo());
+    recursiveDeleteOnExit(newidDir);
   }
 
 }
