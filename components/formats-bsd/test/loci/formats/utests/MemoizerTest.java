@@ -76,6 +76,15 @@ public class MemoizerTest {
     memoizer.close();
   }
 
+  private void checkMemoFile(File memoFile) {
+    checkMemoFile(memoFile, idDir);
+  }
+
+  private void checkMemoFile(File memoFile, File memoDir) {
+    File expMemoFile = new File(memoDir, "." + TEST_FILE + ".bfmemo");
+    assertEquals(memoFile.getAbsolutePath(), expMemoFile.getAbsolutePath());
+  }
+
   @BeforeMethod
   public void setUp() throws Exception {
     String uuid = UUID.randomUUID().toString();
@@ -94,34 +103,26 @@ public class MemoizerTest {
 
   public void testDefaultConstructor() throws Exception {
     Memoizer memoizer = new Memoizer();
-    File f = memoizer.getMemoFile(id);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
   public void testConstructorTimeElapsed() throws Exception {
     Memoizer memoizer = new Memoizer(0);
-    File f = memoizer.getMemoFile(id);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
     checkMemo(memoizer, id);
   }
 
   @Test
   public void testConstructorReader() throws Exception {
     Memoizer memoizer = new Memoizer(reader);
-    File f = memoizer.getMemoFile(id);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
   public void testConstructorReaderTimeElapsed() throws Exception {
     Memoizer memoizer = new Memoizer(reader, 0);
-    File f = memoizer.getMemoFile(id);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
     checkMemo(memoizer, id);
   }
 
@@ -139,10 +140,7 @@ public class MemoizerTest {
 
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    File memoFile = new File(directory, memoDir);
-    memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
-    File f = memoizer.getMemoFile(id);
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
     checkMemo(memoizer, id);
   }
 
@@ -169,10 +167,7 @@ public class MemoizerTest {
 
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    File memoFile = new File(directory, memoDir);
-    memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
-    File f = memoizer.getMemoFile(id);
-    assertEquals(f.getAbsolutePath(), memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
     checkMemo(memoizer, id);
   }
 
@@ -209,10 +204,7 @@ public class MemoizerTest {
     directory.setWritable(true);
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
-    File memoFile = new File(directory, memoDir);
-    memoFile = new File(memoFile, "." + TEST_FILE + ".bfmemo");
-    assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
-                 memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
   }
 
   @Test
@@ -229,9 +221,7 @@ public class MemoizerTest {
 
     // Check writeable file directory returns memo file beside file
     idDir.setWritable(true);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
-                 memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
@@ -246,9 +236,7 @@ public class MemoizerTest {
     }
     // Check writeable file directory returns memo file beside file
     idDir.setWritable(true);
-    File memoFile = new File(idDir, "." + TEST_FILE + ".bfmemo");
-    assertEquals(memoizer.getMemoFile(id).getAbsolutePath(),
-                 memoFile.getAbsolutePath());
+    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
