@@ -205,45 +205,25 @@ public class MemoizerTest {
   public void testGetMemoFilePermissionsDirectory() throws Exception {
     File directory = createTempDir();
     Memoizer memoizer = new Memoizer(reader, 0, directory);
-
-    // Check existing non-writeable memo directory returns null
-    if (File.separator.equals("/")) {
-      // File.setWritable() does not work properly on Windows
-      directory.setWritable(false);
+    if (directory.setWritable(false)) {
       assertNull(memoizer.getMemoFile(id));
     }
   }
 
   @Test
   public void testGetMemoFilePermissionsInPlaceDirectory() throws Exception {
-    String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
-    Memoizer memoizer = new Memoizer(reader, 0, new File(rootPath));
-
-    // Check non-writeable file directory returns null for in-place caching
-    if (File.separator.equals("/")) {
-      // File.setWritable() does not work properly on Windows
-      idDir.setWritable(false);
+    Memoizer memoizer = new Memoizer(reader, 0, idDir);
+    if (idDir.setWritable(false)) {
       assertNull(memoizer.getMemoFile(id));
     }
-
-    // Check writeable file directory returns memo file beside file
-    idDir.setWritable(true);
-    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
   public void testGetMemoFilePermissionsInPlace() throws Exception {
     Memoizer memoizer = new Memoizer(reader);
-
-    // Check non-writeable file directory returns null for in-place caching
-    if (File.separator.equals("/")) {
-      // File.setWritable() does not work properly on Windows
-      idDir.setWritable(false);
+    if (idDir.setWritable(false)) {
       assertNull(memoizer.getMemoFile(id));
     }
-    // Check writeable file directory returns memo file beside file
-    idDir.setWritable(true);
-    checkMemoFile(memoizer.getMemoFile(id));
   }
 
   @Test
