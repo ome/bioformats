@@ -150,13 +150,9 @@ public class MemoizerTest {
     File directory = createTempDir();
     directory.delete();
     Memoizer memoizer = new Memoizer(0, directory);
-
     // Check non-existing memo directory returns null
     assertNull(memoizer.getMemoFile(id));
-
-    // Create memoizer directory and memoizer reader
     directory.mkdirs();
-
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
     checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
@@ -167,7 +163,6 @@ public class MemoizerTest {
   @Test
   public void testConstructorTimeElapsedNull() throws Exception {
     Memoizer memoizer = new Memoizer(0, null);
-
     // Check null memo directory returns null
     assertNull(memoizer.getMemoFile(id));
     checkNoMemo(memoizer, id);
@@ -178,13 +173,9 @@ public class MemoizerTest {
     File directory = createTempDir();
     directory.delete();
     Memoizer memoizer = new Memoizer(reader, 0, directory);
-
     // Check non-existing memo directory returns null
     assertNull(memoizer.getMemoFile(id));
-
-    // Create memoizer directory and memoizer reader
     directory.mkdirs();
-
     String memoDir = idDir.getAbsolutePath();
     memoDir = memoDir.substring(memoDir.indexOf(File.separator) + 1);
     checkMemoFile(memoizer.getMemoFile(id), new File(directory, memoDir));
@@ -195,7 +186,6 @@ public class MemoizerTest {
   @Test
   public void testConstructorReaderTimeElapsedNull() throws Exception {
     Memoizer memoizer = new Memoizer(reader, 0, null);
-
     // Check null memo directory returns null
     assertNull(memoizer.getMemoFile(id));
     checkNoMemo(memoizer, id);
