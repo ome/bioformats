@@ -36,7 +36,7 @@ package loci.formats.in;
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
 public class DefaultMetadataOptions
-    extends FormatsOptions implements MetadataOptions {
+    extends FormatOptions implements MetadataOptions {
 
   public static final String METADATA_LEVEL_KEY = "metadata.level";
   public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;

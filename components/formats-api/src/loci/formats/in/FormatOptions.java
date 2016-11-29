@@ -39,14 +39,14 @@ import java.io.File;
 /**
  * Generic configuration object for readers and writers.
  */
-public class FormatsOptions {
+public class FormatOptions {
 
   private Properties props;
 
   /**
    * Creates an empty options object.
    */
-  public FormatsOptions() {
+  public FormatOptions() {
     props = new Properties();
   }
 

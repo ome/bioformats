@@ -41,19 +41,19 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 
-import loci.formats.in.FormatsOptions;
+import loci.formats.in.FormatOptions;
 
 
 /**
- * Unit tests for {@link loci.formats.in.FormatsOptions}.
+ * Unit tests for {@link loci.formats.in.FormatOptions}.
  */
-public class FormatsOptionsTest {
+public class FormatOptionsTest {
 
   private static final String KEY = "test.key";
   private static final double DDELTA = 1e-7;
   private static final float FDELTA = 1e-7f;
 
-  private FormatsOptions opt;
+  private FormatOptions opt;
   private enum One { FOO, BAR };
   private enum Two { TAR, FOO };
 
@@ -124,7 +124,7 @@ public class FormatsOptionsTest {
 
   @BeforeMethod
   public void setUp() {
-    opt = new FormatsOptions();
+    opt = new FormatOptions();
   }
 
   @Test
@@ -333,7 +333,7 @@ public class FormatsOptionsTest {
   @Test
   public void testClass() throws ClassNotFoundException {
     final Class<?> c1 = Thread.class;
-    final Class<?> c2 = loci.formats.in.FormatsOptions.class;
+    final Class<?> c2 = loci.formats.in.FormatOptions.class;
     assertEquals(opt.getClass(KEY, c1), c1);
     opt.setClass(KEY, c2);
     assertEquals(opt.getClass(KEY, c1), c2);
