@@ -144,6 +144,18 @@ public class FormatOptions {
    * Get the value of property {@code name} as a Boolean.
    *
    * @param name property name.
+   * @return property value as a Boolean, or {@code null} if the
+   * property does not exist.
+   * @throws IllegalArgumentException if value does not represent a Boolean.
+   */
+  public Boolean getBoolean(String name) {
+    return getBoolean(name, null);
+  }
+
+  /**
+   * Get the value of property {@code name} as a Boolean.
+   *
+   * @param name property name.
    * @param defaultValue default value.
    * @return property value as a Boolean, or {@code defaultValue} if
    * the property does not exist.
@@ -181,6 +193,18 @@ public class FormatOptions {
    * Get the value of property {@code name} as an Integer.
    *
    * @param name property name.
+   * @return property value as an Integer, or {@code null} if the
+   * property does not exist.
+   * @throws NumberFormatException if value does not represent an Integer.
+   */
+  public Integer getInteger(String name) {
+    return getInteger(name, null);
+  }
+
+  /**
+   * Get the value of property {@code name} as an Integer.
+   *
+   * @param name property name.
    * @param defaultValue default value.
    * @return property value as an Integer, or {@code defaultValue} if
    * the property does not exist.
@@ -206,6 +230,18 @@ public class FormatOptions {
     } else {
       set(name, Long.toString(value));
     }
+  }
+
+  /**
+   * Get the value of property {@code name} as a Long.
+   *
+   * @param name property name.
+   * @return property value as a Long, or {@code null} if the property
+   * does not exist.
+   * @throws NumberFormatException if value does not represent a Long.
+   */
+  public Long getLong(String name) {
+    return getLong(name, null);
   }
 
   /**
@@ -243,6 +279,18 @@ public class FormatOptions {
    * Get the value of property {@code name} as a Float.
    *
    * @param name property name.
+   * @return property value as a Float, or {@code null} if the
+   * property does not exist.
+   * @throws NumberFormatException if value does not represent a Float.
+   */
+  public Float getFloat(String name) {
+    return getFloat(name, null);
+  }
+
+  /**
+   * Get the value of property {@code name} as a Float.
+   *
+   * @param name property name.
    * @param defaultValue default value.
    * @return property value as a Float, or {@code defaultValue} if
    * the property does not exist.
@@ -268,6 +316,18 @@ public class FormatOptions {
     } else {
       set(name, Double.toString(value));
     }
+  }
+
+  /**
+   * Get the value of property {@code name} as a Double.
+   *
+   * @param name property name.
+   * @return property value as a Double, or {@code null} if the
+   * property does not exist.
+   * @throws NumberFormatException if value does not represent a Double.
+   */
+  public Double getDouble(String name) {
+    return getDouble(name, null);
   }
 
   /**
@@ -305,6 +365,18 @@ public class FormatOptions {
    * Get the value of property {@code name} as a class.
    *
    * @param name property name.
+   * @return property value as a class, or {@code null} if the
+   * property does not exist.
+   * @throws ClassNotFoundException if value does not map to an existing class.
+   */
+  public Class<?> getClass(String name) throws ClassNotFoundException {
+    return getClass(name, null);
+  }
+
+  /**
+   * Get the value of property {@code name} as a class.
+   *
+   * @param name property name.
    * @param defaultValue default value.
    * @return property value as a class, or {@code defaultValue} if
    * the property does not exist.
@@ -331,6 +403,17 @@ public class FormatOptions {
     } else {
       set(name, value.toString());
     }
+  }
+
+  /**
+   * Get the value of property {@code name} as a file object.
+   *
+   * @param name property name.
+   * @return property value as a {@code File}, or {@code null} if the
+   * property does not exist.
+   */
+  public File getFile(String name) {
+    return getFile(name, null);
   }
 
   /**
