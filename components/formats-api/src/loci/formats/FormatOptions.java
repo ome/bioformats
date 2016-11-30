@@ -116,6 +116,9 @@ public class FormatOptions {
    * provided
    */
   public <T extends Enum<T>> T getEnum(String name, T defaultValue) {
+    if (null == defaultValue) {
+      throw new IllegalArgumentException("default value can't be null");
+    }
     final String val = get(name);
     if (null == val) {
       return defaultValue;

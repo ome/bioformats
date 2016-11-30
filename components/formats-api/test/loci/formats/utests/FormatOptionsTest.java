@@ -107,11 +107,14 @@ public class FormatOptionsTest {
   @Test
   public void testString() {
     assertNull(opt.get(KEY));
+    assertNull(opt.get(KEY), null);
     assertEquals(opt.get(KEY, "default"), "default");
     opt.set(KEY, "v");
     assertEquals(opt.get(KEY, "default"), "v");
+    assertEquals(opt.get(KEY, null), "v");
     opt.set(KEY, null);
     assertNull(opt.get(KEY));
+    assertNull(opt.get(KEY), null);
     assertEquals(opt.get(KEY, "default"), "default");
   }
 
@@ -131,6 +134,11 @@ public class FormatOptionsTest {
   public void testBadEnum() {
     opt.setEnum(KEY, One.BAR);
     Two t = opt.getEnum(KEY, Two.FOO);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testEnumNullDefault() {
+    opt.getEnum(KEY, null);
   }
 
   @Test
@@ -246,12 +254,15 @@ public class FormatOptionsTest {
     final Class<?> c1 = Thread.class;
     final Class<?> c2 = Number.class;
     assertEquals(opt.getClass(KEY, c1), c1);
+    assertNull(opt.getClass(KEY, null));
     opt.setClass(KEY, c2);
+    assertEquals(opt.getClass(KEY, null), c2);
     assertEquals(opt.getClass(KEY, c1), c2);
     opt.set(KEY, "java.lang.Thread");
     assertEquals(opt.getClass(KEY, c2), c1);
     opt.setClass(KEY, null);
     assertEquals(opt.getClass(KEY, c2), c2);
+    assertNull(opt.getClass(KEY, null));
   }
 
   @Test(expectedExceptions = ClassNotFoundException.class)
@@ -265,12 +276,15 @@ public class FormatOptionsTest {
     final File f1 = new File("/foo/f1");
     final File f2 = new File("/foo/f2");
     assertEquals(opt.getFile(KEY, f1), f1);
+    assertNull(opt.getFile(KEY, null));
     opt.setFile(KEY, f2);
     assertEquals(opt.getFile(KEY, f1), f2);
+    assertEquals(opt.getFile(KEY, null), f2);
     opt.set(KEY, "/foo/f1");
     assertEquals(opt.getFile(KEY, f2), f1);
     opt.setFile(KEY, null);
     assertEquals(opt.getFile(KEY, f2), f2);
+    assertNull(opt.getFile(KEY, null));
   }
 
 }
