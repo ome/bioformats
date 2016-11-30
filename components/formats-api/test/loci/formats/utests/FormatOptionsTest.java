@@ -72,30 +72,6 @@ public class FormatOptionsTest {
                            {"false", "true"}};
   }
 
-  @DataProvider(name = "charCases")
-  public Object[][] mkChars() {
-    return new Object[][] {{"A", 'A'},
-                           {"b", 'b'},
-                           {"1", '1'}};
-  }
-
-  @DataProvider(name = "badCharStrings")
-  public Object[][] mkBadChars() {
-    return new Object[][] {{""}, {"foo"}};
-  }
-
-  @DataProvider(name = "byteCases")
-  public Object[][] mkBytes() {
-    return new Object[][] {{"30", (byte) 30},
-                           {"-30", (byte) -30}};
-  }
-
-  @DataProvider(name = "shortCases")
-  public Object[][] mkShorts() {
-    return new Object[][] {{"30", (short) 30},
-                           {"-30", (short) -30}};
-  }
-
   @DataProvider(name = "intCases")
   public Object[][] mkInts() {
     return new Object[][] {{"30", 30},
@@ -176,74 +152,6 @@ public class FormatOptionsTest {
   public void testBadBoolean() {
     opt.set(KEY, "foo");
     boolean b = opt.getBoolean(KEY, true);
-  }
-
-  @Test
-  public void testChar() {
-    assertEquals(opt.getChar(KEY, 'y'), 'y');
-    opt.setChar(KEY, 'z');
-    assertEquals(opt.getChar(KEY, 'y'), 'z');
-    opt.set(KEY, "y");
-    assertEquals(opt.getChar(KEY, 'z'), 'y');
-  }
-
-  @Test(dataProvider = "charCases")
-  public void testCharFromString(String charString, char expected) {
-    opt.set(KEY, charString);
-    assertEquals(opt.getChar(KEY, '_'), expected);
-  }
-
-  @Test(dataProvider = "badCharStrings",
-        expectedExceptions = IllegalArgumentException.class)
-  public void testBadChar(String bad) {
-    opt.set(KEY, bad);
-    char f = opt.getChar(KEY, '_');
-  }
-
-  @Test
-  public void testByte() {
-    byte one = 1;
-    byte two = 2;
-    assertEquals(opt.getByte(KEY, one), one);
-    opt.setByte(KEY, two);
-    assertEquals(opt.getByte(KEY, one), two);
-    opt.set(KEY, "1");
-    assertEquals(opt.getByte(KEY, two), one);
-  }
-
-  @Test(dataProvider = "byteCases")
-  public void testByteFromString(String byteString, byte expected) {
-    opt.set(KEY, byteString);
-    assertEquals(opt.getByte(KEY, (byte) 0), expected);
-  }
-
-  @Test(expectedExceptions = NumberFormatException.class)
-  public void testBadByte() {
-    opt.set(KEY, "128");
-    byte f = opt.getByte(KEY, (byte) 0);
-  }
-
-  @Test
-  public void testShort() {
-    short one = 1;
-    short two = 2;
-    assertEquals(opt.getShort(KEY, one), one);
-    opt.setShort(KEY, two);
-    assertEquals(opt.getShort(KEY, one), two);
-    opt.set(KEY, "1");
-    assertEquals(opt.getShort(KEY, two), one);
-  }
-
-  @Test(dataProvider = "shortCases")
-  public void testShortFromString(String shortString, short expected) {
-    opt.set(KEY, shortString);
-    assertEquals(opt.getShort(KEY, (short) 0), expected);
-  }
-
-  @Test(expectedExceptions = NumberFormatException.class)
-  public void testBadShort() {
-    opt.set(KEY, "32768");
-    short f = opt.getShort(KEY, (short) 0);
   }
 
   @Test
