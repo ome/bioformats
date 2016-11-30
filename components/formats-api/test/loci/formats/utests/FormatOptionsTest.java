@@ -73,30 +73,30 @@ public class FormatOptionsTest {
                            {"false", "true"}};
   }
 
-  @DataProvider(name = "intCases")
+  @DataProvider(name = "integerCases")
   public Object[][] mkInts() {
-    return new Object[][] {{"30", 30},
-                           {"-30", -30}};
+    return new Object[][] {{"30", new Integer(30)},
+                           {"-30", new Integer(-30)}};
   }
 
   @DataProvider(name = "longCases")
   public Object[][] mkLongs() {
-    return new Object[][] {{"30", 30L},
-                           {"-30", -30L}};
+    return new Object[][] {{"30", new Long(30L)},
+                           {"-30", new Long(-30L)}};
   }
 
   @DataProvider(name = "floatCases")
   public Object[][] mkFloats() {
-    return new Object[][] {{"3.14", 3.14f},
-                           {"03.14", 3.14f},
-                           {"-3.14", -3.14f}};
+    return new Object[][] {{"3.14", new Float(3.14f)},
+                           {"03.14", new Float(3.14f)},
+                           {"-3.14", new Float(-3.14f)}};
   }
 
   @DataProvider(name = "doubleCases")
   public Object[][] mkDoubles() {
-    return new Object[][] {{"3.14", 3.14},
-                           {"03.14", 3.14},
-                           {"-3.14", -3.14}};
+    return new Object[][] {{"3.14", new Double(3.14)},
+                           {"03.14", new Double(3.14)},
+                           {"-3.14", new Double(-3.14)}};
   }
 
   @BeforeMethod
@@ -145,10 +145,17 @@ public class FormatOptionsTest {
   public void testBoolean() {
     assertFalse(opt.getBoolean(KEY, false));
     assertTrue(opt.getBoolean(KEY, true));
+    assertNull(opt.getBoolean(KEY, null));
     opt.setBoolean(KEY, false);
     assertFalse(opt.getBoolean(KEY, true));
+    assertFalse(opt.getBoolean(KEY, null));
     opt.setBoolean(KEY, true);
     assertTrue(opt.getBoolean(KEY, false));
+    assertTrue(opt.getBoolean(KEY, null));
+    opt.setBoolean(KEY, null);
+    assertFalse(opt.getBoolean(KEY, false));
+    assertTrue(opt.getBoolean(KEY, true));
+    assertNull(opt.getBoolean(KEY, null));
   }
 
   @Test(dataProvider = "booleanStrings")
@@ -166,37 +173,51 @@ public class FormatOptionsTest {
   }
 
   @Test
-  public void testInt() {
-    assertEquals(opt.getInt(KEY, 1), 1);
-    opt.setInt(KEY, 2);
-    assertEquals(opt.getInt(KEY, 1), 2);
+  public void testInteger() {
+    Integer one = 1;
+    Integer two = 2;
+    assertEquals(opt.getInteger(KEY, one), one);
+    assertNull(opt.getInteger(KEY, null));
+    opt.setInteger(KEY, two);
+    assertEquals(opt.getInteger(KEY, one), two);
+    assertEquals(opt.getInteger(KEY, null), two);
     opt.set(KEY, "1");
-    assertEquals(opt.getInt(KEY, 2), 1);
+    assertEquals(opt.getInteger(KEY, two), one);
+    opt.setInteger(KEY, null);
+    assertEquals(opt.getInteger(KEY, one), one);
+    assertNull(opt.getInteger(KEY, null));
   }
 
-  @Test(dataProvider = "intCases")
-  public void testIntFromString(String intString, int expected) {
+  @Test(dataProvider = "integerCases")
+  public void testIntFromString(String intString, Integer expected) {
     opt.set(KEY, intString);
-    assertEquals(opt.getInt(KEY, 0), expected);
+    assertEquals(opt.getInteger(KEY, 0), expected);
   }
 
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadInt() {
     opt.set(KEY, "2147483648");
-    int f = opt.getInt(KEY, 0);
+    Integer f = opt.getInteger(KEY, 0);
   }
 
   @Test
   public void testLong() {
-    assertEquals(opt.getLong(KEY, 1L), 1L);
-    opt.setLong(KEY, 2L);
-    assertEquals(opt.getLong(KEY, 1L), 2L);
+    Long one = 1L;
+    Long two = 2L;
+    assertEquals(opt.getLong(KEY, one), one);
+    assertNull(opt.getLong(KEY, null));
+    opt.setLong(KEY, two);
+    assertEquals(opt.getLong(KEY, one), two);
+    assertEquals(opt.getLong(KEY, null), two);
     opt.set(KEY, "1");
-    assertEquals(opt.getLong(KEY, 2L), 1L);
+    assertEquals(opt.getLong(KEY, two), one);
+    opt.setLong(KEY, null);
+    assertEquals(opt.getLong(KEY, one), one);
+    assertNull(opt.getLong(KEY, null));
   }
 
   @Test(dataProvider = "longCases")
-  public void testLongFromString(String longString, long expected) {
+  public void testLongFromString(String longString, Long expected) {
     opt.set(KEY, longString);
     assertEquals(opt.getLong(KEY, 0L), expected);
   }
@@ -204,20 +225,27 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadLong() {
     opt.set(KEY, "9223372036854775808");
-    long f = opt.getLong(KEY, 0L);
+    Long f = opt.getLong(KEY, 0L);
   }
 
   @Test
   public void testFloat() {
-    assertAlmostEquals(opt.getFloat(KEY, 2.72f), 2.72f);
-    opt.setFloat(KEY, 3.14f);
-    assertAlmostEquals(opt.getFloat(KEY, 2.72f), 3.14f);
+    Float e = 2.72f;
+    Float pi = 3.14f;
+    assertAlmostEquals(opt.getFloat(KEY, e), e);
+    assertNull(opt.getFloat(KEY, null));
+    opt.setFloat(KEY, pi);
+    assertAlmostEquals(opt.getFloat(KEY, e), pi);
+    assertAlmostEquals(opt.getFloat(KEY, null), pi);
     opt.set(KEY, "2.72");
-    assertAlmostEquals(opt.getFloat(KEY, 3.14f), 2.72f);
+    assertAlmostEquals(opt.getFloat(KEY, pi), e);
+    opt.setFloat(KEY, null);
+    assertAlmostEquals(opt.getFloat(KEY, e), e);
+    assertNull(opt.getFloat(KEY, null));
   }
 
   @Test(dataProvider = "floatCases")
-  public void testFloatFromString(String floatString, float expected) {
+  public void testFloatFromString(String floatString, Float expected) {
     opt.set(KEY, floatString);
     assertAlmostEquals(opt.getFloat(KEY, 0f), expected);
   }
@@ -225,28 +253,35 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadFloat() {
     opt.set(KEY, "foo");
-    float f = opt.getFloat(KEY, 0f);
+    Float f = opt.getFloat(KEY, 0f);
   }
 
   @Test
   public void testDouble() {
-    assertAlmostEquals(opt.getDouble(KEY, 2.72), 2.72);
-    opt.setDouble(KEY, 3.14);
-    assertAlmostEquals(opt.getDouble(KEY, 2.72), 3.14);
+    Double e = 2.72;
+    Double pi = 3.14;
+    assertAlmostEquals(opt.getDouble(KEY, e), e);
+    assertNull(opt.getDouble(KEY, null));
+    opt.setDouble(KEY, pi);
+    assertAlmostEquals(opt.getDouble(KEY, e), pi);
+    assertAlmostEquals(opt.getDouble(KEY, null), pi);
     opt.set(KEY, "2.72");
-    assertAlmostEquals(opt.getDouble(KEY, 3.14), 2.72);
+    assertAlmostEquals(opt.getDouble(KEY, pi), e);
+    opt.setDouble(KEY, null);
+    assertAlmostEquals(opt.getDouble(KEY, e), e);
+    assertNull(opt.getDouble(KEY, null));
   }
 
   @Test(dataProvider = "doubleCases")
-  public void testDoubleFromString(String doubleString, double expected) {
+  public void testDoubleFromString(String doubleString, Double expected) {
     opt.set(KEY, doubleString);
-    assertAlmostEquals(opt.getDouble(KEY, 0), expected);
+    assertAlmostEquals(opt.getDouble(KEY, 0.), expected);
   }
 
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadDouble() {
     opt.set(KEY, "foo");
-    double f = opt.getDouble(KEY, 0);
+    double f = opt.getDouble(KEY, 0.);
   }
 
   @Test

@@ -127,25 +127,29 @@ public class FormatOptions {
   }
 
   /**
-   * Set property {@code name} to boolean {@code value}.
+   * Set property {@code name} to Boolean {@code value}.
    *
    * @param name property name.
    * @param value property value.
    */
-  public void setBoolean(String name, boolean value) {
-    set(name, Boolean.toString(value));
+  public void setBoolean(String name, Boolean value) {
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, Boolean.toString(value));
+    }
   }
 
   /**
-   * Get the value of property {@code name} as a boolean.
+   * Get the value of property {@code name} as a Boolean.
    *
    * @param name property name.
    * @param defaultValue default value.
-   * @return property value as a boolean, or {@code defaultValue} if
+   * @return property value as a Boolean, or {@code defaultValue} if
    * the property does not exist.
-   * @throws IllegalArgumentException if value does not represent a boolean.
+   * @throws IllegalArgumentException if value does not represent a Boolean.
    */
-  public boolean getBoolean(String name, boolean defaultValue) {
+  public Boolean getBoolean(String name, Boolean defaultValue) {
     final String val = get(name);
     if (null == val) {
       return defaultValue;
@@ -160,25 +164,29 @@ public class FormatOptions {
   }
 
   /**
-   * Set property {@code name} to int {@code value}.
+   * Set property {@code name} to Integer {@code value}.
    *
    * @param name property name.
    * @param value property value.
    */
-  public void setInt(String name, int value) {
-    set(name, Integer.toString(value));
+  public void setInteger(String name, Integer value) {
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, Integer.toString(value));
+    }
   }
 
   /**
-   * Get the value of property {@code name} as an int.
+   * Get the value of property {@code name} as an Integer.
    *
    * @param name property name.
    * @param defaultValue default value.
-   * @return property value as an int, or {@code defaultValue} if
+   * @return property value as an Integer, or {@code defaultValue} if
    * the property does not exist.
-   * @throws NumberFormatException if value does not represent an int.
+   * @throws NumberFormatException if value does not represent an Integer.
    */
-  public int getInt(String name, int defaultValue) {
+  public Integer getInteger(String name, Integer defaultValue) {
     final String val = get(name);
     if (null == val) {
       return defaultValue;
@@ -187,25 +195,29 @@ public class FormatOptions {
   }
 
   /**
-   * Set property {@code name} to long {@code value}.
+   * Set property {@code name} to Long {@code value}.
    *
    * @param name property name.
    * @param value property value.
    */
-  public void setLong(String name, long value) {
-    set(name, Long.toString(value));
+  public void setLong(String name, Long value) {
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, Long.toString(value));
+    }
   }
 
   /**
-   * Get the value of property {@code name} as a long.
+   * Get the value of property {@code name} as a Long.
    *
    * @param name property name.
    * @param defaultValue default value.
-   * @return property value as a long, or {@code defaultValue} if
+   * @return property value as a Long, or {@code defaultValue} if
    * the property does not exist.
-   * @throws NumberFormatException if value does not represent a long.
+   * @throws NumberFormatException if value does not represent a Long.
    */
-  public long getLong(String name, long defaultValue) {
+  public Long getLong(String name, Long defaultValue) {
     final String val = get(name);
     if (null == val) {
       return defaultValue;
@@ -214,25 +226,29 @@ public class FormatOptions {
   }
 
   /**
-   * Set property {@code name} to float {@code value}.
+   * Set property {@code name} to Float {@code value}.
    *
    * @param name property name.
    * @param value property value.
    */
-  public void setFloat(String name, float value) {
-    set(name, Float.toString(value));
+  public void setFloat(String name, Float value) {
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, Float.toString(value));
+    }
   }
 
   /**
-   * Get the value of property {@code name} as a float.
+   * Get the value of property {@code name} as a Float.
    *
    * @param name property name.
    * @param defaultValue default value.
-   * @return property value as a float, or {@code defaultValue} if
+   * @return property value as a Float, or {@code defaultValue} if
    * the property does not exist.
-   * @throws NumberFormatException if value does not represent a float.
+   * @throws NumberFormatException if value does not represent a Float.
    */
-  public float getFloat(String name, float defaultValue) {
+  public Float getFloat(String name, Float defaultValue) {
     final String val = get(name);
     if (null == val) {
       return defaultValue;
@@ -241,25 +257,29 @@ public class FormatOptions {
   }
 
   /**
-   * Set property {@code name} to double {@code value}.
+   * Set property {@code name} to Double {@code value}.
    *
    * @param name property name.
    * @param value property value.
    */
-  public void setDouble(String name, double value) {
-    set(name, Double.toString(value));
+  public void setDouble(String name, Double value) {
+    if (null == value) {
+      set(name, null);
+    } else {
+      set(name, Double.toString(value));
+    }
   }
 
   /**
-   * Get the value of property {@code name} as a double.
+   * Get the value of property {@code name} as a Double.
    *
    * @param name property name.
    * @param defaultValue default value.
-   * @return property value as a double, or {@code defaultValue} if
+   * @return property value as a Double, or {@code defaultValue} if
    * the property does not exist.
-   * @throws NumberFormatException if value does not represent a double.
+   * @throws NumberFormatException if value does not represent a Double.
    */
-  public double getDouble(String name, double defaultValue) {
+  public Double getDouble(String name, Double defaultValue) {
     final String val = get(name);
     if (null == val) {
       return defaultValue;
