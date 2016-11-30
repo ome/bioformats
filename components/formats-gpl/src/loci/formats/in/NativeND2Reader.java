@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -460,6 +459,40 @@ public class NativeND2Reader extends FormatReader {
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
       byte[] buf = new byte[BUFFER_SIZE];
+
+      if(useChunkMap) {
+
+        long checkEvery = in.length() / 10;
+        long nextCheck = 0;
+
+        // chunk map sanity checks
+
+        for (ChunkMapEntry entry : allChunkPositions.values()) {
+          if (!entry.name.startsWith("ImageDataSeq")) {
+            continue;
+          }
+
+          if(entry.position > nextCheck) {
+
+            in.seek(entry.position);
+            in.read(buf, 0, sigBytes.length);
+
+            if (!(buf[0] == sigBytes[0] && buf[1] == sigBytes[1] && buf[2] == sigBytes[2] && buf[3] == sigBytes[3])) {
+              LOGGER.warn("Broken ND2 File detected! Disabling chunk map processing.");
+
+              useChunkMap = false;
+              break;
+            }
+
+            nextCheck = entry.position + checkEvery;
+          }
+        }
+      }
+
+      int chunkmapSkips = 0;
+
+      in.seek(0);
+
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
         int foundIndex = -1;
@@ -583,19 +616,48 @@ public class NativeND2Reader extends FormatReader {
             useLastText = true;
           }
 
-          if(useChunkMap) {
-            long lastImagePosition = 0;
+          if(useChunkMap && chunkmapSkips == 0) {
+            ChunkMapEntry lastImage = null;
+
             for(ChunkMapEntry entry : allChunkPositions.values()) {
-              if(entry.name.startsWith("ImageDataSeq")) {
-                lastImagePosition = entry.position;
-                imageOffsets.add(new Long(entry.position + 16));
-                imageLengths.add(new int[] {nameLength, (int)entry.length, getSizeX() * getSizeY()});
-                imageNames.add(entry.name.substring(12));
-                // assumption nameLength is constant throughout the file for image blocks!
+              if(!entry.name.startsWith("ImageDataSeq")) {
+                continue;
               }
+
+              if((entry.position + 28) < in.getFilePointer()) {
+                continue;
+              }
+
+              if(lastImage!=null) {
+                chunkmapSkips = (int)(((entry.position - lastImage.position) / entry.length) - 1);
+                if(chunkmapSkips > 0) {
+                  break;
+                }
+              }
+
+              lastImage = entry;
+
+              // assumption nameLength is constant throughout the file for image blocks!
+              imageOffsets.add(new Long(entry.position + 16));
+              imageLengths.add(new int[] {nameLength, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
+              imageNames.add(entry.name.substring(12));
+
+              blockCount ++;
+
+              percent = (int) (100 * entry.position / in.length());
+              LOGGER.info("Parsing block '{}' {}%", "ImageDataSeq", percent);
             }
-            in.seek(allChunkPositions.higherKey(lastImagePosition));
+
+            blockCount --; // one was already added by the outer blockCount ++;
+
+            in.seek(lastImage.position + 16);
+
             continue;
+
+          }
+
+          if(chunkmapSkips > 0) {
+            chunkmapSkips -= 1;
           }
 
           imageOffsets.add(fp);
