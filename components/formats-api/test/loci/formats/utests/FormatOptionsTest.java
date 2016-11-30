@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 
-import loci.formats.in.FormatOptions;
+import loci.formats.FormatOptions;
 
 
 /**
@@ -333,7 +333,7 @@ public class FormatOptionsTest {
   @Test
   public void testClass() throws ClassNotFoundException {
     final Class<?> c1 = Thread.class;
-    final Class<?> c2 = loci.formats.in.FormatOptions.class;
+    final Class<?> c2 = Number.class;
     assertEquals(opt.getClass(KEY, c1), c1);
     opt.setClass(KEY, c2);
     assertEquals(opt.getClass(KEY, c1), c2);

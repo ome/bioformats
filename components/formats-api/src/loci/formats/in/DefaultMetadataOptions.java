@@ -32,6 +32,9 @@
 
 package loci.formats.in;
 
+import loci.formats.FormatOptions;
+
+
 /**
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */

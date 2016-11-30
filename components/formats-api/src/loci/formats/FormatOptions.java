@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats;
 
 import java.util.Properties;
 import java.io.File;
