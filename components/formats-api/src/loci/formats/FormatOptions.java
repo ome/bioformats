@@ -73,6 +73,16 @@ public class FormatOptions {
    * Get the value of property {@code name}.
    *
    * @param name property name.
+   * @return property value, or {@code null} if the property does not exist.
+   */
+  public String get(String name) {
+    return props.getProperty(name);
+  }
+
+  /**
+   * Get the value of property {@code name}.
+   *
+   * @param name property name.
    * @param defaultValue default value.
    * @return property value, or {@code defaultValue} if the property
    * does not exist.
@@ -106,7 +116,7 @@ public class FormatOptions {
    * provided
    */
   public <T extends Enum<T>> T getEnum(String name, T defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -133,7 +143,7 @@ public class FormatOptions {
    * @throws IllegalArgumentException if value does not represent a boolean.
    */
   public boolean getBoolean(String name, boolean defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -166,7 +176,7 @@ public class FormatOptions {
    * @throws NumberFormatException if value does not represent an int.
    */
   public int getInt(String name, int defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -193,7 +203,7 @@ public class FormatOptions {
    * @throws NumberFormatException if value does not represent a long.
    */
   public long getLong(String name, long defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -220,7 +230,7 @@ public class FormatOptions {
    * @throws NumberFormatException if value does not represent a float.
    */
   public float getFloat(String name, float defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -247,7 +257,7 @@ public class FormatOptions {
    * @throws NumberFormatException if value does not represent a double.
    */
   public double getDouble(String name, double defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -279,7 +289,7 @@ public class FormatOptions {
    */
   public Class<?> getClass(String name, Class<?> defaultValue)
       throws ClassNotFoundException {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }
@@ -309,7 +319,7 @@ public class FormatOptions {
    * the property does not exist.
    */
   public File getFile(String name, File defaultValue) {
-    final String val = get(name, null);
+    final String val = get(name);
     if (null == val) {
       return defaultValue;
     }

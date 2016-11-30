@@ -40,6 +40,7 @@ import org.testng.annotations.DataProvider;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import loci.formats.FormatOptions;
 
@@ -105,10 +106,12 @@ public class FormatOptionsTest {
 
   @Test
   public void testString() {
+    assertNull(opt.get(KEY));
     assertEquals(opt.get(KEY, "default"), "default");
     opt.set(KEY, "v");
     assertEquals(opt.get(KEY, "default"), "v");
     opt.set(KEY, null);
+    assertNull(opt.get(KEY));
     assertEquals(opt.get(KEY, "default"), "default");
   }
 
