@@ -133,7 +133,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testBadEnum() {
     opt.setEnum(KEY, One.BAR);
-    Two t = opt.getEnum(KEY, Two.FOO);
+    opt.getEnum(KEY, Two.FOO);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
@@ -169,7 +169,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testBadBoolean() {
     opt.set(KEY, "foo");
-    boolean b = opt.getBoolean(KEY, true);
+    opt.getBoolean(KEY, true);
   }
 
   @Test
@@ -181,8 +181,6 @@ public class FormatOptionsTest {
     opt.setInteger(KEY, two);
     assertEquals(opt.getInteger(KEY, one), two);
     assertEquals(opt.getInteger(KEY, null), two);
-    opt.set(KEY, "1");
-    assertEquals(opt.getInteger(KEY, two), one);
     opt.setInteger(KEY, null);
     assertEquals(opt.getInteger(KEY, one), one);
     assertNull(opt.getInteger(KEY, null));
@@ -197,7 +195,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadInt() {
     opt.set(KEY, "2147483648");
-    Integer f = opt.getInteger(KEY, 0);
+    opt.getInteger(KEY, 0);
   }
 
   @Test
@@ -209,8 +207,6 @@ public class FormatOptionsTest {
     opt.setLong(KEY, two);
     assertEquals(opt.getLong(KEY, one), two);
     assertEquals(opt.getLong(KEY, null), two);
-    opt.set(KEY, "1");
-    assertEquals(opt.getLong(KEY, two), one);
     opt.setLong(KEY, null);
     assertEquals(opt.getLong(KEY, one), one);
     assertNull(opt.getLong(KEY, null));
@@ -225,7 +221,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadLong() {
     opt.set(KEY, "9223372036854775808");
-    Long f = opt.getLong(KEY, 0L);
+    opt.getLong(KEY, 0L);
   }
 
   @Test
@@ -237,8 +233,6 @@ public class FormatOptionsTest {
     opt.setFloat(KEY, pi);
     assertAlmostEquals(opt.getFloat(KEY, e), pi);
     assertAlmostEquals(opt.getFloat(KEY, null), pi);
-    opt.set(KEY, "2.72");
-    assertAlmostEquals(opt.getFloat(KEY, pi), e);
     opt.setFloat(KEY, null);
     assertAlmostEquals(opt.getFloat(KEY, e), e);
     assertNull(opt.getFloat(KEY, null));
@@ -253,7 +247,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadFloat() {
     opt.set(KEY, "foo");
-    Float f = opt.getFloat(KEY, 0f);
+    opt.getFloat(KEY, 0f);
   }
 
   @Test
@@ -265,8 +259,6 @@ public class FormatOptionsTest {
     opt.setDouble(KEY, pi);
     assertAlmostEquals(opt.getDouble(KEY, e), pi);
     assertAlmostEquals(opt.getDouble(KEY, null), pi);
-    opt.set(KEY, "2.72");
-    assertAlmostEquals(opt.getDouble(KEY, pi), e);
     opt.setDouble(KEY, null);
     assertAlmostEquals(opt.getDouble(KEY, e), e);
     assertNull(opt.getDouble(KEY, null));
@@ -281,7 +273,7 @@ public class FormatOptionsTest {
   @Test(expectedExceptions = NumberFormatException.class)
   public void testBadDouble() {
     opt.set(KEY, "foo");
-    double f = opt.getDouble(KEY, 0.);
+    opt.getDouble(KEY, 0.);
   }
 
   @Test
