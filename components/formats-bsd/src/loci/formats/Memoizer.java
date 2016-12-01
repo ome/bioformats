@@ -50,6 +50,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+import loci.formats.in.DefaultMetadataOptions;
 
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -65,7 +66,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
- * delegate (including and other {@link ReaderWrapper} instances)
+ * delegate (including other {@link ReaderWrapper} instances)
  * after {@link #setId(String)} has been called.
  *
  * Initializing a Bio-Formats reader can consume substantial time and memory.
@@ -74,7 +75,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
  * size, the amount of metadata in the image and also the file format itself.
  *
  * With the {@link Memoizer} reader wrapper, if the time required to call the
- * {@link #setId(String)} method is larger than {@link #minimumElapsed}, the
+ * {@link #setId(String)} method is larger than a configurable minimum, the
  * initialized reader including all reader wrappers will be cached in a memo
  * file via {@link #saveMemo()}.
  * Any subsequent call to {@link #setId(String)} with a reader decorated by
@@ -336,10 +337,34 @@ public class Memoizer extends ReaderWrapper {
   public static final Integer VERSION = 3;
 
   /**
-   * Default value for {@link #minimumElapsed} if none is provided in the
-   * constructor.
+   * Minimum number of milliseconds which must elapse during the call to
+   * {@link #setId} before a memo file will be created. Defaults to
+   * {@link #DEFAULT_MINIMUM_ELAPSED}.
+   */
+  public static final String MINIMUM_ELAPSED_KEY = "memoizer.minimum.elapsed";
+
+  /**
+   * Default value for {@link #MINIMUM_ELAPSED_KEY}.
    */
   public static final long DEFAULT_MINIMUM_ELAPSED = 100;
+
+  /**
+   * Directory where all memo files should be created. If this option
+   * is not set, each memo file will be created in the same directory as
+   * the corresponding original file.
+   */
+  public static final String DIRECTORY_KEY = "memoizer.directory";
+
+  /**
+   * Whether memoization should be propagated to underlying readers.
+   * Defaults to {@link #DEFAULT_PROPAGATE}.
+   */
+  public static final String PROPAGATE_KEY = "memoizer.propagate";
+
+  /**
+   * Default value for {@link #PROPAGATE_KEY}.
+   */
+  public static final boolean DEFAULT_PROPAGATE = true;
 
   /**
    * Default {@link org.slf4j.Logger} for the memoizer class
@@ -348,26 +373,6 @@ public class Memoizer extends ReaderWrapper {
     LoggerFactory.getLogger(Memoizer.class);
 
   // -- Fields --
-
-  /**
-   * Minimum number of milliseconds which must elapse during the call to
-   * {@link #setId} before a memo file will be created. Default to
-   * {@link #DEFAULT_MINIMUM_ELAPSED} if not specified via the constructor.
-   */
-  private final long minimumElapsed;
-
-  /**
-   * Directory where all memo files should be created. If this value is
-   * non-null, then all memo files will be created under it. Can be
-   * overriden by {@link #doInPlaceCaching}.
-   */
-  private final File directory;
-
-  /**
-   * If {@code true}, then all memo files will be created in the same
-   * directory as the original file.
-   */
-  private boolean doInPlaceCaching = false;
 
   protected transient Deser ser;
 
@@ -443,11 +448,10 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
-    this.doInPlaceCaching = true;
   }
 
   /**
-   *  Constructs a memoizer around a new {@link ImageReader} creating memo file
+   *  Constructs a memoizer around a new {@link ImageReader} creating memo
    *  files under the {@code directory} argument including the full path of the
    *  original file only if the call to {@link #setId} takes longer than
    *  {@code minimumElapsed} in milliseconds.
@@ -460,8 +464,10 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(long minimumElapsed, File directory) {
     super();
-    this.minimumElapsed = minimumElapsed;
-    this.directory = directory;
+    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
+    opt.setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
+    opt.setFile(DIRECTORY_KEY, directory);
+    opt.setBoolean(PROPAGATE_KEY, true);
   }
 
   /**
@@ -489,7 +495,6 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
-    this.doInPlaceCaching = true;
   }
 
   /**
@@ -507,10 +512,30 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
-    this.minimumElapsed = minimumElapsed;
-    this.directory = directory;
+    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
+    opt.setLong(MINIMUM_ELAPSED_KEY, minimumElapsed);
+    opt.setFile(DIRECTORY_KEY, directory);
+    opt.setBoolean(PROPAGATE_KEY, true);
   }
 
+  /**
+   * Returns the current value of {@link #MINIMUM_ELAPSED_KEY}.
+   */
+  public long getMinimumElapsed() {
+    return ((DefaultMetadataOptions) getMetadataOptions()).getLong(
+        MINIMUM_ELAPSED_KEY, DEFAULT_MINIMUM_ELAPSED
+    );
+  }
+
+  /**
+   * Returns the current value of {@link #DIRECTORY_KEY}, or {@code null} if
+   * the option is not set.
+   */
+  public File getDirectory() {
+    return ((DefaultMetadataOptions) getMetadataOptions()).getFile(
+        DIRECTORY_KEY, null
+    );
+  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
@@ -677,7 +702,7 @@ public class Memoizer extends ReaderWrapper {
         super.setId(id);
         long elapsed = System.currentTimeMillis() - start;
         handleMetadataStore(null); // Between setId and saveMemo
-        if (elapsed < minimumElapsed) {
+        if (elapsed < getMinimumElapsed()) {
           LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
           return; // EARLY EXIT!
         }
@@ -767,47 +792,20 @@ public class Memoizer extends ReaderWrapper {
    * @return a {@link File} object pointing at the location of the memo file
    */
   public File getMemoFile(String id) {
-    File f = null;
-    File writeDirectory = null;
-    if (directory == null && !doInPlaceCaching) {
-      // Disabling memoization unless specific directory is provided.
-      // This prevents random cache files from being unknowingly written.
-      LOGGER.debug("skipping memo: no directory given");
-      return null;
-    } else {
-
-      // If the memoizer directory is set to be the root folder, the memo file
-      // will be saved in the same folder as the file specified by id. Since
-      // the root folder will likely not be writeable by the user, we want to
-      // exclude this special case from the test below
-      id = new File(id).getAbsolutePath();
-      String rootPath = id.substring(0, id.indexOf(File.separator) + 1);
-
-      if (doInPlaceCaching || directory.getAbsolutePath().equals(rootPath)) {
-        f = new File(id);
-        writeDirectory = new File(f.getParent());
-      } else {
-        // this serves to strip off the drive letter on Windows
-        // since we're using the absolute path, 'id' will either start with
-        // File.separator (as on UNIX), or a drive letter (as on Windows)
-        id = id.substring(id.indexOf(File.separator) + 1);
-        f = new File(directory, id);
-        writeDirectory = directory;
-      }
-
-      // Check either the in-place folder or the main memoizer directory
-      // exists and is writeable
-      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
-        LOGGER.warn("skipping memo: directory not writeable - {}",
-          writeDirectory);
-        return null;
-      }
-
-      f.getParentFile().mkdirs();
+    File origFile = new File(id);
+    File memoDir = getDirectory();
+    if (null == memoDir) {
+      memoDir = origFile.getAbsoluteFile().getParentFile();
     }
-    String p = f.getParent();
-    String n = f.getName();
-    return new File(p, "." + n + ".bfmemo");
+    if (!memoDir.exists() && !memoDir.mkdirs()) {
+      LOGGER.warn("skipping memo: can't create {}", memoDir);
+      return null;
+    }
+    if (!memoDir.canWrite()) {
+      LOGGER.warn("skipping memo: directory {} not writeable", memoDir);
+      return null;
+    }
+    return new File(memoDir, "." + origFile.getName() + ".bfmemo");
   }
 
   /**
