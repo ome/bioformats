@@ -37,9 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
 import org.junit.Assert;
 import loci.common.Constants;
 import loci.common.services.DependencyException;
@@ -106,7 +104,10 @@ public class TiffWriterTest {
   
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
-    
+    String tilingProp = System.getProperty("testng.runWriterTilingTests");
+    if (tilingProp == null|| !Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"))) {
+      return new Object[][] {{0, false, false, 0, 0, null, 0}};
+    }
     int[] tileSize = {1, 32, 43, 64};
     boolean[] booleanValue = {true, false};
     int[] channelCount = {1, 3};
@@ -149,6 +150,18 @@ public class TiffWriterTest {
           }
         }
       }
+    }
+    String tilingSubsetProp = System.getProperty("testng.runSubsetTilingTests");
+    if (tilingSubsetProp != null) {
+      int percentageOfTests = Integer.parseInt(tilingSubsetProp);
+      int numTests = (paramSize / 100) * percentageOfTests;
+      Object[][] returnSubset = new Object[numTests][];
+      for (int i = 0; i < numTests; i++) {
+        Random rand = new Random();
+        int randIndex = rand.nextInt(paramSize);
+        returnSubset[i] = data[randIndex];
+      }
+      return returnSubset;
     }
     return data;
   }
@@ -440,6 +453,13 @@ public class TiffWriterTest {
   @Test(dataProvider = "tiling")
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
       int seriesCount, String compression, int pixelType) throws Exception {
+    String tilingProp = System.getProperty("testng.runWriterTilingTests");
+    if (tilingProp == null || !Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"))) {
+      return;
+    }
+    boolean runTilingTests = Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"));
+    org.junit.Assume.assumeTrue(runTilingTests);
+
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
     TiffWriter writer = new TiffWriter();
