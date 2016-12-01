@@ -479,6 +479,7 @@ public class ImageInfo {
     reader.setGroupFiles(group);
     MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
       MetadataLevel.ALL : MetadataLevel.MINIMUM);
+    metaOptions.setValidate(validate);
     for (String optionKey : options.keySet()) {
       ((FormatOptions) metaOptions).set(optionKey, options.get(optionKey));
     }
@@ -1025,9 +1026,6 @@ public class ImageInfo {
     // initialize reader
     long s = System.currentTimeMillis();
     try {
-      MetadataOptions options= new DefaultMetadataOptions();
-      options.setValidate(validate);
-      reader.setMetadataOptions(options);
       reader.setId(id);
     } catch (FormatException exc) {
       reader.close();
