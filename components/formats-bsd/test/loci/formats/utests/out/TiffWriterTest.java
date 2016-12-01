@@ -32,13 +32,24 @@
 
 package loci.formats.utests.out;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
+import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
+import loci.common.Constants;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.CompressionType;
+import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
@@ -60,7 +71,7 @@ public class TiffWriterTest {
   private IFD ifd;
   private TiffWriter writer;
   private IMetadata metadata;
-  
+
   final long BIG_TIFF_CUTOFF = (long) 1024 * 1024 * 3990;
   private static final int SIZE_X = 1024;
   private static final int SIZE_Y = 1024;
@@ -78,6 +89,9 @@ public class TiffWriterTest {
       FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
   private static final int[] pixelTypesOther = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT, FormatTools.DOUBLE};
+  private static final int PLANE_WIDTH = 160;
+  private static final int PLANE_HEIGHT = 160;
+  private static final int TILE_GRANULARITY = 16;
 
   @DataProvider(name = "bigTiffSuffixes")
   public Object[][] createSuffixes() {
@@ -88,6 +102,55 @@ public class TiffWriterTest {
   public Object[][] createCodecs() {
     return new Object[][] {{null, pixelTypesOther}, {COMPRESSION_UNCOMPRESSED, pixelTypesOther}, {COMPRESSION_LZW, pixelTypesOther}, 
       {COMPRESSION_J2K, pixelTypesJ2K}, {COMPRESSION_J2K_LOSSY, pixelTypesOther}, {COMPRESSION_JPEG, pixelTypesJPEG}};
+  }
+  
+  @DataProvider(name = "tiling")
+  public Object[][] createTiling() {
+    
+    int[] tileSize = {1, 32, 43, 64};
+    boolean[] booleanValue = {true, false};
+    int[] channelCount = {1, 3};
+    int[] seriesCount = {1, 5};
+    String[] compression = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
+    int compressionPixelTypeSize = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
+    int paramSize = tileSize.length * compressionPixelTypeSize * 4 * channelCount.length * seriesCount.length;
+    Object[][] data = new Object[paramSize][];
+    int index = 0;
+    for (int i = 0; i < tileSize.length; i++) {
+      for (int j = 0; j < booleanValue.length; j++) {
+        for (int k = 0; k < booleanValue.length; k++) {
+          for (int l = 0; l < channelCount.length; l++) {
+            for (int m = 0; m < seriesCount.length; m++) {
+              for (int n = 0; n < compression.length; n++) {
+                int[] pixelType = pixelTypesOther;
+                if (compression[n].equals(COMPRESSION_J2K)) {
+                  pixelType = pixelTypesJ2K;
+                }
+                if (compression[n].equals(COMPRESSION_J2K_LOSSY)) {
+                  // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
+                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+                      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
+                }
+                else if (compression[n].equals(COMPRESSION_JPEG)) {
+                  // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
+                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8};
+                }
+                for (int o = 0; o < pixelType.length; o++) {
+                  boolean interleaved = booleanValue[k];
+                  if (FormatTools.getBytesPerPixel(pixelType[o]) > 2 && 
+                      (compression[n].equals(COMPRESSION_J2K) || compression[n].equals(COMPRESSION_J2K_LOSSY))) {
+                    interleaved = false;
+                  }
+                  data[index] = new Object[] {tileSize[i], booleanValue[j], interleaved, channelCount[l], seriesCount[m], compression[n], pixelType[o]};
+                  index ++;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return data;
   }
 
   @BeforeMethod
@@ -374,4 +437,229 @@ public class TiffWriterTest {
     assert(!thrown);
   }
 
+  @Test(dataProvider = "tiling")
+  public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+      int seriesCount, String compression, int pixelType) throws Exception {
+    File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
+    tmp.deleteOnExit();
+    TiffWriter writer = new TiffWriter();
+    String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian));
+    writer.setCompression(compression);
+    writer.setInterleaved(interleaved);
+    writer.setTileSizeX(tileSize);
+    writer.setTileSizeY(tileSize);
+    writer.setId(tmp.getAbsolutePath());
+
+    int bytes = FormatTools.getBytesPerPixel(pixelType);
+    byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
+    Plane originalPlane = new Plane(plane, littleEndian,
+      !writer.isInterleaved(), rgbChannels, FormatTools.getPixelTypeString(pixelType));
+
+    for (int s=0; s<seriesCount; s++) {
+      writer.setSeries(s);
+      writer.saveBytes(0, plane);
+    }
+
+    writer.close();
+
+    TiffReader reader = new TiffReader();
+    reader.setId(tmp.getAbsolutePath());
+
+    int expectedTileSize = tileSize;
+    if (tileSize < TILE_GRANULARITY) {
+      expectedTileSize = TILE_GRANULARITY;
+    }
+    else {
+      expectedTileSize = Math.round((float)tileSize/TILE_GRANULARITY) * TILE_GRANULARITY;
+    }
+
+    IFD tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), expectedTileSize);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), expectedTileSize);
+
+    assertEquals(reader.getImageCount(), reader.isRGB() ? seriesCount : rgbChannels * seriesCount );
+    assertEquals(reader.getSizeC(), rgbChannels);
+
+    for (int s=0; s<reader.getSeriesCount(); s++) {
+      reader.setSeries(s);
+      byte[] readPlane = reader.openBytes(0);
+      boolean lossy = compression.equals(COMPRESSION_JPEG) || compression.equals(COMPRESSION_J2K_LOSSY);
+      boolean interleavedDiffs = interleaved || 
+          ((compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY)) && !interleaved);
+      if (!(lossy || interleavedDiffs)) {
+        Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
+          !reader.isInterleaved(), reader.getRGBChannelCount(),
+          FormatTools.getPixelTypeString(reader.getPixelType()));
+
+        assert(originalPlane.equals(newPlane));
+      }
+    }
+
+    tmp.delete();
+    reader.close();
+  }
+
+  private byte[] getPlane(int width, int height, int bytes) {
+    byte[] plane = new byte[width * height * bytes];
+    for (int i=0; i<plane.length; i++) {
+      plane[i] = (byte) i;
+    }
+    return plane;
+  }
+
+  private IMetadata createMetadata(String pixelType, int rgbChannels,
+      int seriesCount, boolean littleEndian) throws Exception {
+    IMetadata metadata;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
+    for (int i=0; i<seriesCount; i++) {
+      MetadataTools.populateMetadata(metadata, i, "image #" + i, littleEndian,
+        "XYCZT", pixelType, 160, 160, 1, rgbChannels, 1, rgbChannels);
+    }
+
+    return metadata;
+  }
+
+  class Plane {
+    public ByteBuffer backingBuffer;
+    public boolean rgbPlanar;
+    public int rgbChannels;
+    public String pixelType;
+
+    public Plane(byte[] buffer, boolean littleEndian, boolean planar,
+      int rgbChannels, String pixelType)
+    {
+      backingBuffer = ByteBuffer.wrap(buffer);
+      backingBuffer.order(
+        littleEndian ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+      this.rgbPlanar = planar;
+      this.pixelType = pixelType;
+      this.rgbChannels = rgbChannels;
+    }
+
+    public boolean equals(Plane other) {
+      backingBuffer.position(0);
+      other.backingBuffer.position(0);
+
+      int bytes = FormatTools.getBytesPerPixel(pixelType);
+      boolean fp =
+        FormatTools.isFloatingPoint(FormatTools.pixelTypeFromString(pixelType));
+
+      while (backingBuffer.position() < backingBuffer.capacity()) {
+        int otherPos = backingBuffer.position();
+        if (rgbPlanar != other.rgbPlanar) {
+          int channel = -1;
+          int pixel = -1;
+
+          int pos = backingBuffer.position() / bytes;
+          int capacity = backingBuffer.capacity();
+
+          if (rgbPlanar) {
+            pixel = pos % (capacity / (rgbChannels * bytes));
+            channel = pos / (capacity / (rgbChannels * bytes));
+          }
+          else {
+            channel = pos % rgbChannels;
+            pixel = pos / rgbChannels;
+          }
+
+          if (other.rgbPlanar) {
+            otherPos = channel * (capacity / rgbChannels) + pixel * bytes;
+          }
+          else {
+            otherPos = (pixel * rgbChannels + channel) * bytes;
+          }
+        }
+
+        if (otherPos >= other.backingBuffer.capacity()) {
+          break;
+        }
+
+        other.backingBuffer.position(otherPos);
+
+        switch (bytes) {
+          case 1:
+            byte thisB = backingBuffer.get();
+            byte otherB = other.backingBuffer.get();
+
+            if (thisB != otherB) {
+              if (!pixelType.equals(other.pixelType)) {
+                if ((byte) (thisB - 128) != otherB) {
+                  return false;
+                }
+              }
+              else {
+                return false;
+              }
+            }
+            break;
+          case 2:
+            short thisS = backingBuffer.getShort();
+            short otherS = other.backingBuffer.getShort();
+
+            if (thisS != otherS) {
+              if (!pixelType.equals(other.pixelType)) {
+                if ((short) (thisS - 32768) != otherS) {
+                  return false;
+                }
+              }
+              else {
+                return false;
+              }
+            }
+            break;
+          case 4:
+            if (fp) {
+              float thisF = backingBuffer.getFloat();
+              float otherF = other.backingBuffer.getFloat();
+
+              if (Math.abs(thisF - otherF) > Constants.EPSILON) {
+                return false;
+              }
+            }
+            else {
+              int thisI = backingBuffer.getInt();
+              int otherI = other.backingBuffer.getInt();
+
+              if (thisI != otherI) {
+                return false;
+              }
+            }
+            break;
+          case 8:
+            if (fp) {
+              double thisD = backingBuffer.getDouble();
+              double otherD = other.backingBuffer.getDouble();
+
+              if (Math.abs(thisD - otherD) > Constants.EPSILON) {
+                return false;
+              }
+            }
+            else {
+              long thisL = backingBuffer.getLong();
+              long otherL = other.backingBuffer.getLong();
+
+              if (thisL != otherL) {
+                return false;
+              }
+            }
+            break;
+        }
+      }
+
+      return true;
+    }
+  }
 }
