@@ -239,4 +239,15 @@ public class MemoizerTest {
     recursiveDeleteOnExit(newidDir);
   }
 
+  @Test
+  public void testWrappedReader() throws Exception {
+    Memoizer memoizer = new Memoizer(reader, 0);
+    File memoFile = memoizer.getMemoFile(id);
+    assertFalse(memoFile.exists());
+    reader.setId(id);
+    assertFalse(memoFile.exists());
+    reader.close();
+    checkMemo(memoizer, id);
+  }
+
 }
