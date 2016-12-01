@@ -36,4 +36,14 @@
         <class name="loci.formats.utests.FormatToolsTest"/>
       </classes>
     </test>
+    <test name="FormatOptions">
+      <classes>
+        <class name="loci.formats.utests.FormatOptionsTest"/>
+      </classes>
+    </test>
+    <test name="DefaultMetadataOptions">
+      <classes>
+        <class name="loci.formats.utests.DefaultMetadataOptionsTest"/>
+      </classes>
+    </test>
 </suite>

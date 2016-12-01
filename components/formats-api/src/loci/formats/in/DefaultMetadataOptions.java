@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,62 +32,58 @@
 
 package loci.formats.in;
 
-/**
- *
- * @author callan
- */
-public class DefaultMetadataOptions implements MetadataOptions {
+import loci.formats.FormatOptions;
 
-  private MetadataLevel level;
-  private boolean validate;
+
+/**
+ * Default implementation of {@link loci.formats.in.MetadataOptions}.
+ */
+public class DefaultMetadataOptions
+    extends FormatOptions implements MetadataOptions {
+
+  public static final String METADATA_LEVEL_KEY = "metadata.level";
+  public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
+
+  public static final String READER_VALIDATE_KEY = "reader.validate.input";
+  public static final boolean READER_VALIDATE_DEFAULT = false;
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * The underlying MetadataLevel will be set to {@link loci.formats.in.MetadataLevel#ALL}.
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to {@link #METADATA_LEVEL_DEFAULT} and disable file validation.
    */
   public DefaultMetadataOptions() {
-    this.level = MetadataLevel.ALL;
-    this.validate = false;
+    this(METADATA_LEVEL_DEFAULT);
   }
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * @param level the MetadataLevel to use
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to the specified value and disable file validation.
+   *
+   * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
-    this.level = level;
+    setEnum(METADATA_LEVEL_KEY, level);
+    setBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#getMetadataLevel()
-   */
   @Override
   public MetadataLevel getMetadataLevel() {
-    return level;
+    return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#setMetadataLevel(loci.formats.in.MetadataLevel)
-   */
   @Override
   public void setMetadataLevel(MetadataLevel level) {
-    this.level = level;
+    setEnum(METADATA_LEVEL_KEY, level);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#isValidate()
-   */
   @Override
   public boolean isValidate() {
-    return validate;
+    return getBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#setValidate(boolean)
-   */
   @Override
   public void setValidate(boolean validateMetadata) {
-    this.validate = validateMetadata;
+    setBoolean(READER_VALIDATE_KEY, validateMetadata);
   }
 
 }

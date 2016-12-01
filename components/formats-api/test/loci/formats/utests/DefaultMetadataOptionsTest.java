@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,42 +30,50 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.utests;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertEquals;
+
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataLevel;
 
 
 /**
- * Holds metadata-related options.
+ * Unit tests for {@link loci.formats.in.DefaultMetadataOptions}.
  */
-public interface MetadataOptions {
+public class DefaultMetadataOptionsTest {
 
-  /**
-   * Set the metadata level.
-   *
-   * @param level a {@link loci.formats.in.MetadataLevel}.
-   */
-  void setMetadataLevel(MetadataLevel level);
+  private MetadataOptions opt;
 
-  /**
-   * Get the configured metadata level.
-   *
-   * @return the configured {@link loci.formats.in.MetadataLevel}.
-   */
-  MetadataLevel getMetadataLevel();
+  @BeforeMethod
+  public void setUp() {
+    opt = new DefaultMetadataOptions();
+  }
 
-  /**
-   * Specifies whether or not to validate files when reading.
-   *
-   * @param validate {@code true} if files should be validated, {@code
-   * false} otherwise.
-   */
-  void setValidate(boolean validate);
+  @Test
+  public void testMetadataLevel() {
+    assertEquals(opt.getMetadataLevel(), MetadataLevel.ALL);
+    for (MetadataLevel level: MetadataLevel.values()) {
+      opt.setMetadataLevel(level);
+      assertEquals(opt.getMetadataLevel(), level);
+      assertEquals(
+          (new DefaultMetadataOptions(level)).getMetadataLevel(), level
+      );
+    }
+  }
 
-  /**
-   * Checks whether file validation has been set.
-   *
-   * @return {@code true} if files are validated when read, {@code
-   * false} otherwise.
-   */
-  boolean isValidate();
+  @Test
+  public void testIsValidate() {
+    assertFalse(opt.isValidate());
+    opt.setValidate(true);
+    assertTrue(opt.isValidate());
+    opt.setValidate(false);
+    assertFalse(opt.isValidate());
+  }
 
 }
