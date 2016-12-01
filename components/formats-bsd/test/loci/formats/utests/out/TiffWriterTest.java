@@ -105,7 +105,7 @@ public class TiffWriterTest {
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
     String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null|| !Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"))) {
+    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
       return new Object[][] {{0, false, false, 0, 0, null, 0}};
     }
     int[] tileSize = {1, 32, 43, 64};
@@ -151,9 +151,8 @@ public class TiffWriterTest {
         }
       }
     }
-    String tilingSubsetProp = System.getProperty("testng.runSubsetTilingTests");
-    if (tilingSubsetProp != null) {
-      int percentageOfTests = Integer.parseInt(tilingSubsetProp);
+    if (tilingProp != null && Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) < 100) {
+      int percentageOfTests = Integer.parseInt(tilingProp);
       int numTests = (paramSize / 100) * percentageOfTests;
       Object[][] returnSubset = new Object[numTests][];
       for (int i = 0; i < numTests; i++) {
@@ -454,7 +453,7 @@ public class TiffWriterTest {
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
       int seriesCount, String compression, int pixelType) throws Exception {
     String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null || !Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"))) {
+    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
       return;
     }
     boolean runTilingTests = Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"));
