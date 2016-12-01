@@ -41,11 +41,12 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
+
+import ome.xml.meta.MetadataConverter;
 
 /**
  * Tests writing of tiles in a tiff.
