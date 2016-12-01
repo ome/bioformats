@@ -456,8 +456,6 @@ public class TiffWriterTest {
     if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
       return;
     }
-    boolean runTilingTests = Boolean.valueOf(System.getProperty("testng.runWriterTilingTests"));
-    org.junit.Assume.assumeTrue(runTilingTests);
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
