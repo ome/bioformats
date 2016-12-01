@@ -840,7 +840,7 @@ public class ZeissCZIReader extends FormatReader {
         angles = 1;
         seriesCount = 1;
       }
-      else if (seriesCount > mosaics && mosaics > 1 && prestitched) {
+      else if (seriesCount > mosaics && mosaics > 1 && prestitched != null && prestitched) {
         seriesCount /= mosaics;
         mosaics = 1;
       }
@@ -1431,7 +1431,9 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            ms0.sizeX = dimension.size;
+            if (allowAutostitching || ms0.sizeX == 0 || dimension.size == dimension.storedSize) {
+              ms0.sizeX = dimension.size;
+            }
             break;
           case 'Y':
             plane.y = dimension.size;
@@ -1442,7 +1444,9 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            ms0.sizeY = dimension.size;
+            if (allowAutostitching || ms0.sizeY == 0 || dimension.size == dimension.storedSize) {
+              ms0.sizeY = dimension.size;
+            }
             break;
           case 'C':
             if (dimension.start >= getSizeC()) {
