@@ -1567,7 +1567,7 @@ public class ZeissCZIReader extends FormatReader {
           case 'M':
             if (dimension.start > prevM) {
               if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount() &&
-                (prestitched == null || !prestitched))
+                (prestitched == null || !prestitched || !allowAutostitching))
               {
                 extraLengths[extraDimOrder.size()] = mosaics;
                 extraDimOrder.add('M');
