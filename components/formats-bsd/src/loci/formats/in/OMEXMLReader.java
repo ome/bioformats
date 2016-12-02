@@ -338,32 +338,61 @@ public class OMEXMLReader extends FormatReader {
     private final StringBuilder xmlBuffer;
     private String currentQName;
     private Locator locator;
+    private boolean inPixels;
 
     public OMEXMLHandler() {
       xmlBuffer = new StringBuilder();
+      inPixels = false;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) {
-      if (currentQName.indexOf("BinData") < 0) {
+      if (currentQName.indexOf("BinData") < 0 || inPixels == false) {
         xmlBuffer.append(new String(ch, start, length));
       }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) {
+      if (qName.indexOf("Pixels") != -1) {
+        inPixels = false;
+      }
+
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
       xmlBuffer.append(">");
     }
 
     @Override
-    public void startElement(String ur, String localName, String qName,
+    public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       currentQName = qName;
 
-      if (qName.indexOf("BinData") == -1) {
+      if (qName.indexOf("Pixels") != -1) {
+        inPixels = true;
+      }
+
+      if (qName.indexOf("BinData") != -1 && inPixels == true) {
+        binData.add(
+          new BinData(locator.getLineNumber(), locator.getColumnNumber()));
+        String compress = attributes.getValue("Compression");
+        compression.add(compress == null ? "" : compress);
+
+        xmlBuffer.append("<");
+        xmlBuffer.append(qName);
+        for (int i=0; i<attributes.getLength(); i++) {
+          String key = XMLTools.escapeXML(attributes.getQName(i));
+          String value = XMLTools.escapeXML(attributes.getValue(i));
+          if (key.equals("Length")) value = "0";
+          xmlBuffer.append(" ");
+          xmlBuffer.append(key);
+          xmlBuffer.append("=\"");
+          xmlBuffer.append(value);
+          xmlBuffer.append("\"");
+        }
+        xmlBuffer.append(">");
+      } else {
         xmlBuffer.append("<");
         xmlBuffer.append(qName);
         for (int i=0; i<attributes.getLength(); i++) {
@@ -379,26 +408,6 @@ public class OMEXMLReader extends FormatReader {
             }
             value = endian;
           }
-          xmlBuffer.append(" ");
-          xmlBuffer.append(key);
-          xmlBuffer.append("=\"");
-          xmlBuffer.append(value);
-          xmlBuffer.append("\"");
-        }
-        xmlBuffer.append(">");
-      }
-      else {
-        binData.add(
-          new BinData(locator.getLineNumber(), locator.getColumnNumber()));
-        String compress = attributes.getValue("Compression");
-        compression.add(compress == null ? "" : compress);
-
-        xmlBuffer.append("<");
-        xmlBuffer.append(qName);
-        for (int i=0; i<attributes.getLength(); i++) {
-          String key = XMLTools.escapeXML(attributes.getQName(i));
-          String value = XMLTools.escapeXML(attributes.getValue(i));
-          if (key.equals("Length")) value = "0";
           xmlBuffer.append(" ");
           xmlBuffer.append(key);
           xmlBuffer.append("=\"");
