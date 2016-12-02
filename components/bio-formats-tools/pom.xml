@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-xml</artifactId>
-      <version>${ome-xml.version}</version>
+      <version>${ome-model.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
