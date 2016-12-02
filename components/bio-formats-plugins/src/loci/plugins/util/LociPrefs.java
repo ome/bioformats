@@ -30,8 +30,10 @@ package loci.plugins.util;
 import ij.Prefs;
 
 import loci.formats.ClassList;
+import loci.formats.FormatOptions;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.MetadataOptions;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
@@ -53,6 +55,8 @@ public final class LociPrefs {
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
   public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
+  public static final String PREF_CZI_AUTOSTITCH = "bioformats.zeissczi.allow.autostitch";
+  public static final String PREF_CZI_ATTACHMENT = "bioformats.zeissczi.include.attachments";
 
   // -- Constructor --
 
@@ -78,6 +82,15 @@ public final class LociPrefs {
       if (on) enabledClasses.addClass(c[i]);
     }
     ImageReader reader = new ImageReader(enabledClasses);
+
+    MetadataOptions options = reader.getMetadataOptions();
+
+    // set options that are passed through MetadataOptions
+    if (options instanceof FormatOptions) {
+      ((FormatOptions) options).setBoolean(getOptionName(PREF_CZI_AUTOSTITCH), Prefs.get(PREF_CZI_AUTOSTITCH, true));
+      ((FormatOptions) options).setBoolean(getOptionName(PREF_CZI_ATTACHMENT), Prefs.get(PREF_CZI_ATTACHMENT, true));
+      reader.setMetadataOptions(options);
+    }
 
     // toggle reader-specific options
     boolean nd2Nikon = LociPrefs.isND2Nikon();
@@ -153,6 +166,10 @@ public final class LociPrefs {
     String readerName = n.substring(n.lastIndexOf(".") + 1, n.length() - 6);
     String key = pref + "." + readerName;
     return Prefs.get(key, defaultValue);
+  }
+
+  private static String getOptionName(String name) {
+    return name.substring(name.indexOf(".") + 1);
   }
 
 }
