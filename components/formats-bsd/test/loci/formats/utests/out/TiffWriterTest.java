@@ -114,41 +114,41 @@ public class TiffWriterTest {
       return new Object[][] {{0, false, false, 0, 0, null, 0}};
     }
 
-    int[] tileSize = {1, 32, 43, 64};
-    boolean[] booleanValue = {true, false};
-    int[] channelCount = {1, 3};
-    int[] seriesCount = {1, 5};
-    String[] compression = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
-    int compressionPixelTypeSize = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
-    int paramSize = tileSize.length * compressionPixelTypeSize * 4 * channelCount.length * seriesCount.length;
+    int[] tileSizes = {1, 32, 43, 64};
+    boolean[] booleanValues = {true, false};
+    int[] channelCounts = {1, 3};
+    int[] seriesCounts = {1, 5};
+    String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
+    int compressionPixelTypeSizes = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
+    int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length;
     Object[][] data = new Object[paramSize][];
     int index = 0;
-    for (int i = 0; i < tileSize.length; i++) {
-      for (int j = 0; j < booleanValue.length; j++) {
-        for (int k = 0; k < booleanValue.length; k++) {
-          for (int l = 0; l < channelCount.length; l++) {
-            for (int m = 0; m < seriesCount.length; m++) {
-              for (int n = 0; n < compression.length; n++) {
-                int[] pixelType = pixelTypesOther;
-                if (compression[n].equals(COMPRESSION_J2K)) {
-                  pixelType = pixelTypesJ2K;
+    for (int tileSize : tileSizes) {
+      for (boolean endianness : booleanValues) {
+        for (boolean interleaved : booleanValues) {
+          for (int channelCount : channelCounts) {
+            for (int seriesCount : seriesCounts) {
+              for (String compression : compressions) {
+                int[] pixelTypes = pixelTypesOther;
+                if (compression.equals(COMPRESSION_J2K)) {
+                  pixelTypes = pixelTypesJ2K;
                 }
-                if (compression[n].equals(COMPRESSION_J2K_LOSSY)) {
+                if (compression.equals(COMPRESSION_J2K_LOSSY)) {
                   // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
-                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
                       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
                 }
-                else if (compression[n].equals(COMPRESSION_JPEG)) {
+                else if (compression.equals(COMPRESSION_JPEG)) {
                   // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
-                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8};
+                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
                 }
-                for (int o = 0; o < pixelType.length; o++) {
-                  boolean interleaved = booleanValue[k];
-                  if (FormatTools.getBytesPerPixel(pixelType[o]) > 2 && 
-                      (compression[n].equals(COMPRESSION_J2K) || compression[n].equals(COMPRESSION_J2K_LOSSY))) {
-                    interleaved = false;
+                for (int pixelType : pixelTypes) {
+                  if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
+                      (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
+                    data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, compression, pixelType};
+                  } else {
+                    data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, compression, pixelType};
                   }
-                  data[index] = new Object[] {tileSize[i], booleanValue[j], interleaved, channelCount[l], seriesCount[m], compression[n], pixelType[o]};
                   index ++;
                 }
               }
