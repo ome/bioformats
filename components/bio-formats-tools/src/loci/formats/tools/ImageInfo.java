@@ -35,7 +35,6 @@ package loci.formats.tools;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -55,7 +54,6 @@ import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
-import loci.formats.FormatOptions;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
@@ -134,7 +132,7 @@ public class ImageInfo {
   private String format = null;
   private String cachedir = null;
   private int xmlSpaces = 3;
-  private HashMap<String, String> options = new HashMap<String, String>();
+  private DefaultMetadataOptions options = new DefaultMetadataOptions();
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -275,7 +273,7 @@ public class ImageInfo {
             cachedir = args[++i];
         }
         else if (args[i].equals("-option")) {
-          options.put(args[++i], args[++i]);
+          options.set(args[++i], args[++i]);
         }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
@@ -477,13 +475,10 @@ public class ImageInfo {
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
     reader.setGroupFiles(group);
-    MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
-      MetadataLevel.ALL : MetadataLevel.MINIMUM);
-    metaOptions.setValidate(validate);
-    for (String optionKey : options.keySet()) {
-      ((FormatOptions) metaOptions).set(optionKey, options.get(optionKey));
-    }
-    reader.setMetadataOptions(metaOptions);
+    options.setMetadataLevel(
+        doMeta ? MetadataLevel.ALL : MetadataLevel.MINIMUM);
+    options.setValidate(validate);
+    reader.setMetadataOptions(options);
     reader.setFlattenedResolutions(flat);
   }
 
