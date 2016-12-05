@@ -347,7 +347,7 @@ public class OMEXMLReader extends FormatReader {
 
     @Override
     public void characters(char[] ch, int start, int length) {
-      if (currentQName.indexOf("BinData") < 0 || inPixels == false) {
+      if (!inPixels || currentQName.indexOf("BinData") < 0) {
         xmlBuffer.append(new String(ch, start, length));
       }
     }
@@ -373,7 +373,7 @@ public class OMEXMLReader extends FormatReader {
         inPixels = true;
       }
 
-      if (qName.indexOf("BinData") != -1 && inPixels == true) {
+      if (inPixels && qName.indexOf("BinData") != -1) {
         binData.add(
           new BinData(locator.getLineNumber(), locator.getColumnNumber()));
         String compress = attributes.getValue("Compression");
