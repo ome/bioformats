@@ -46,7 +46,6 @@ import loci.common.Region;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.FormatOptions;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -176,8 +175,6 @@ public class ZeissCZIReader extends FormatReader {
   private int[] tileWidth;
   private int[] tileHeight;
   private int scaleFactor;
-
-  private boolean allowAutostitching;
 
   // -- Constructor --
 
@@ -564,11 +561,6 @@ public class ZeissCZIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    MetadataOptions options = getMetadataOptions();
-    if (options instanceof FormatOptions) {
-      allowAutostitching = ((FormatOptions) options).getBoolean(ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
-    }
-
     parser = XMLTools.createBuilder();
 
     // switch to the master file if this is part of a multi-file dataset
@@ -674,7 +666,7 @@ public class ZeissCZIReader extends FormatReader {
             (compression == JPEGXR || size == entries[0].storedSize * entries[1].storedSize * bpp))
           {
             int scale = planes.get(i).x / entries[0].storedSize;
-            if (scale == 1 || (((scale % 2) == 0 || (scale % 3) == 0) && allowAutostitching)) {
+            if (scale == 1 || (((scale % 2) == 0 || (scale % 3) == 0) && allowAutostitching())) {
               if (scale > 1 && scaleFactor == 0) {
                 scaleFactor = scale % 2 == 0 ? 2 : 3;
               }
@@ -800,7 +792,7 @@ public class ZeissCZIReader extends FormatReader {
       }
       if ((getSizeX() > planes.get(0).x ||
         (getSizeX() == planes.get(0).x &&
-        calculatedSeries == seriesCount * mosaics * positions)) && !equalTiles && allowAutostitching)
+        calculatedSeries == seriesCount * mosaics * positions)) && !equalTiles && allowAutostitching())
       {
         // image was fused; treat the mosaics as a single image
         seriesCount = 1;
@@ -812,7 +804,7 @@ public class ZeissCZIReader extends FormatReader {
       else {
         int newX = planes.get(planes.size() - 1).x;
         int newY = planes.get(planes.size() - 1).y;
-        if (allowAutostitching && (ms0.sizeX < newX || ms0.sizeY < newY)) {
+        if (allowAutostitching() && (ms0.sizeX < newX || ms0.sizeY < newY)) {
           prestitched = true;
           mosaics = 1;
         }
@@ -977,13 +969,9 @@ public class ZeissCZIReader extends FormatReader {
 
     // find and add attached label/overview images
 
-    boolean readAttachments = INCLUDE_ATTACHMENTS_DEFAULT;
-    if (options instanceof FormatOptions) {
-      readAttachments = ((FormatOptions) options).getBoolean(INCLUDE_ATTACHMENTS_KEY, INCLUDE_ATTACHMENTS_DEFAULT);
-    }
     boolean foundLabel = false;
     boolean foundPreview = false;
-    if (readAttachments) {
+    if (readAttachments()) {
       for (Segment segment : segments) {
         if (segment instanceof Attachment) {
           AttachmentEntry entry = ((Attachment) segment).attachment;
@@ -1385,6 +1373,18 @@ public class ZeissCZIReader extends FormatReader {
     segments = null;
   }
 
+  // -- ZeissCZI-specific methods --
+
+  public boolean allowAutostitching() {
+    return ((DefaultMetadataOptions) getMetadataOptions()).getBoolean(
+        ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
+  }
+
+  public boolean readAttachments() {
+    return ((DefaultMetadataOptions) getMetadataOptions()).getBoolean(
+        INCLUDE_ATTACHMENTS_KEY, INCLUDE_ATTACHMENTS_DEFAULT);
+  }
+
   // -- Helper methods --
 
   private void readSegments(String id) throws IOException {
@@ -1442,7 +1442,7 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            if (allowAutostitching || ms0.sizeX == 0 || dimension.size == dimension.storedSize) {
+            if (allowAutostitching() || ms0.sizeX == 0 || dimension.size == dimension.storedSize) {
               ms0.sizeX = dimension.size;
             }
             break;
@@ -1455,7 +1455,7 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            if (allowAutostitching || ms0.sizeY == 0 || dimension.size == dimension.storedSize) {
+            if (allowAutostitching() || ms0.sizeY == 0 || dimension.size == dimension.storedSize) {
               ms0.sizeY = dimension.size;
             }
             break;
@@ -1569,7 +1569,7 @@ public class ZeissCZIReader extends FormatReader {
           case 'M':
             if (dimension.start > prevM) {
               if (!extraDimOrder.contains('M') && mosaics <= getSeriesCount() &&
-                (prestitched == null || !prestitched || !allowAutostitching))
+                (prestitched == null || !prestitched || !allowAutostitching()))
               {
                 extraLengths[extraDimOrder.size()] = mosaics;
                 extraDimOrder.add('M');
