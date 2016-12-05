@@ -917,9 +917,8 @@ public class FileStitcher extends ReaderWrapper {
     if (patterns.length == 0) patterns = new String[] {id};
     externals = new ExternalSeries[patterns.length];
 
-    DefaultMetadataOptions opt = (DefaultMetadataOptions) getMetadataOptions();
     for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]), opt);
+      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
     }
     fp = new FilePattern(patterns[0]);
 
@@ -1247,7 +1246,7 @@ public class FileStitcher extends ReaderWrapper {
     private AxisGuesser ag;
     private int imagesPerFile;
 
-    public ExternalSeries(FilePattern pattern, DefaultMetadataOptions opt)
+    public ExternalSeries(FilePattern pattern)
       throws FormatException, IOException
     {
       this.pattern = pattern;
@@ -1255,6 +1254,8 @@ public class FileStitcher extends ReaderWrapper {
 
       int nReaders = files.length > MAX_READERS ? 1 : files.length;
       readers = new DimensionSwapper[nReaders];
+      DefaultMetadataOptions opt =
+        (DefaultMetadataOptions) getMetadataOptions();
       boolean memoize = opt.getBoolean(Memoizer.PROPAGATE_KEY, false);
       for (int i=0; i<readers.length; i++) {
         if (classList != null) {
@@ -1270,7 +1271,7 @@ public class FileStitcher extends ReaderWrapper {
             readers[i] = new DimensionSwapper();
           }
         }
-        readers[i].setMetadataOptions(getMetadataOptions());
+        readers[i].setMetadataOptions(opt);
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);
