@@ -36,11 +36,13 @@ import java.io.IOException;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.formats.FormatException;
+import loci.formats.FormatOptions;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
 import loci.formats.codec.CompressionType;
 import loci.formats.gui.AWTImageTools;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
@@ -80,6 +82,11 @@ public class TiffWriter extends FormatWriter {
   /** TIFF tiles must be of a height and width divisible by 16. */
   private static final int TILE_GRANULARITY = 16;
 
+  /** Automatic tile writing off by default unless set in MetadataOptions using DEFAULT_TILE_WRITING_KEY */
+  public static final String DEFAULT_TILE_WRITING_KEY = "bioformats.tiff.defaultTileWriting";
+  private static final boolean TILE_WRITING_DEFAULT = false;
+  private static final int DEFAULT_TILE_SIZE = 256;
+  
   // -- Fields --
 
   /** Whether or not the output file is a BigTIFF file. */
@@ -545,7 +552,17 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int getTileSizeX() throws FormatException {
     if (tileSizeX == 0) {
-      tileSizeX = super.getTileSizeX();
+      MetadataOptions options = getMetadataOptions();
+      boolean defaultTileWriting = TILE_WRITING_DEFAULT;
+      if (options instanceof FormatOptions) {
+        defaultTileWriting = ((FormatOptions) options).getBoolean(DEFAULT_TILE_WRITING_KEY, TILE_WRITING_DEFAULT); 
+      }
+      if (defaultTileWriting && DEFAULT_TILE_SIZE < super.getTileSizeX()) {
+        tileSizeX = DEFAULT_TILE_SIZE;
+      }
+      else {
+        tileSizeX = super.getTileSizeX();
+      }
     }
     return tileSizeX;
   }
@@ -565,7 +582,17 @@ public class TiffWriter extends FormatWriter {
   @Override
   public int getTileSizeY() throws FormatException {
     if (tileSizeY == 0) {
-      tileSizeY = super.getTileSizeY();
+      MetadataOptions options = getMetadataOptions();
+      boolean defaultTileWriting = TILE_WRITING_DEFAULT;
+      if (options instanceof FormatOptions) {
+        defaultTileWriting = ((FormatOptions) options).getBoolean(DEFAULT_TILE_WRITING_KEY, TILE_WRITING_DEFAULT); 
+      }
+      if (defaultTileWriting && DEFAULT_TILE_SIZE < super.getTileSizeY()) {
+        tileSizeY = DEFAULT_TILE_SIZE;
+      }
+      else {
+        tileSizeY = super.getTileSizeY();
+      }
     }
     return tileSizeY;
   }

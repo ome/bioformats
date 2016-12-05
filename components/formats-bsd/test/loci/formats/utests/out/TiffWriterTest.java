@@ -44,9 +44,12 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.FormatOptions;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CompressionType;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
@@ -90,6 +93,7 @@ public class TiffWriterTest {
   private static final int PLANE_WIDTH = 160;
   private static final int PLANE_HEIGHT = 160;
   private static final int TILE_GRANULARITY = 16;
+  private static final int DEFAULT_TILE_SIZE = 256;
 
   @DataProvider(name = "bigTiffSuffixes")
   public Object[][] createSuffixes() {
@@ -461,7 +465,7 @@ public class TiffWriterTest {
     tmp.deleteOnExit();
     TiffWriter writer = new TiffWriter();
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
-    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian));
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, PLANE_WIDTH, PLANE_HEIGHT));
     writer.setCompression(compression);
     writer.setInterleaved(interleaved);
     writer.setTileSizeX(tileSize);
@@ -517,6 +521,112 @@ public class TiffWriterTest {
     reader.close();
   }
 
+  @Test
+  public void testTilingOptions() throws Exception {
+    MetadataOptions options = new DefaultMetadataOptions();
+    File tmp = File.createTempFile("tiffWriterTest_TilingNoOptions", ".tiff");
+    tmp.deleteOnExit();
+    File tmp2 = File.createTempFile("tiffWriterTest_TilingOptionsTrue", ".tiff");
+    tmp2.deleteOnExit();
+    File tmp3 = File.createTempFile("tiffWriterTest_TilingOptionsFalse", ".tiff");
+    tmp3.deleteOnExit();
+    File tmp4 = File.createTempFile("tiffWriterTest_TilingOptionsOverridden", ".tiff");
+    tmp4.deleteOnExit();
+    File tmp5 = File.createTempFile("tiffWriterTest_TilingOptionsInvalid", ".tiff");
+    tmp5.deleteOnExit();
+
+    byte[] plane = getPlane(SIZE_X, SIZE_Y, 1);
+    String pixelTypeString = FormatTools.getPixelTypeString(FormatTools.UINT8);
+
+    // With no options set, tile size should equal image height and width
+    TiffWriter writer = new TiffWriter();
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, 1, 1, true, SIZE_X, SIZE_Y));
+    assertEquals(writer.getTileSizeX(), SIZE_X);
+    assertEquals(writer.getTileSizeY(), SIZE_Y);
+    writer.setId(tmp.getAbsolutePath());
+    writer.setSeries(0);
+    writer.saveBytes(0, plane);
+    writer.close();
+
+    // With default tiling option set, tile size should equal 256
+    writer = new TiffWriter();
+    ((FormatOptions) options).setBoolean(TiffWriter.DEFAULT_TILE_WRITING_KEY, true);
+    writer.setMetadataOptions(options);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, 1, 1, true, SIZE_X, SIZE_Y));
+    assertEquals(writer.getTileSizeX(), DEFAULT_TILE_SIZE);
+    assertEquals(writer.getTileSizeY(), DEFAULT_TILE_SIZE);
+    writer.setId(tmp2.getAbsolutePath());
+    writer.setSeries(0);
+    writer.saveBytes(0, plane);
+    writer.close();
+
+    // With default tiling option set to false, tile size should equal image height and width
+    writer = new TiffWriter();
+    ((FormatOptions) options).setBoolean(TiffWriter.DEFAULT_TILE_WRITING_KEY, false);
+    writer.setMetadataOptions(options);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, 1, 1, true, SIZE_X, SIZE_Y));
+    assertEquals(writer.getTileSizeX(), SIZE_X);
+    assertEquals(writer.getTileSizeY(), SIZE_Y);
+    writer.setId(tmp3.getAbsolutePath());
+    writer.setSeries(0);
+    writer.saveBytes(0, plane);
+    writer.close();
+
+    // With default tiling option set, calling setTileSizeX and Y should override the default values
+    writer = new TiffWriter();
+    ((FormatOptions) options).setBoolean(TiffWriter.DEFAULT_TILE_WRITING_KEY, true);
+    writer.setMetadataOptions(options);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, 1, 1, true, SIZE_X, SIZE_Y));
+    writer.setTileSizeX(64);
+    writer.setTileSizeY(128);
+    assertEquals(writer.getTileSizeX(), 64);
+    assertEquals(writer.getTileSizeY(), 128);
+    writer.setId(tmp4.getAbsolutePath());
+    writer.setSeries(0);
+    writer.saveBytes(0, plane);
+    writer.close();
+
+    // With default tiling option set and a height and width < 256, tile size should be height and width
+    plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, 1);
+    writer = new TiffWriter();
+    writer.setMetadataOptions(options);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, 1, 1, true, PLANE_WIDTH, PLANE_HEIGHT));
+    assertEquals(writer.getTileSizeX(), PLANE_WIDTH);
+    assertEquals(writer.getTileSizeY(), PLANE_HEIGHT);
+    writer.setId(tmp5.getAbsolutePath());
+    writer.setSeries(0);
+    writer.saveBytes(0, plane);
+    writer.close();
+
+    TiffReader reader = new TiffReader();
+    reader.setId(tmp.getAbsolutePath());
+    IFD tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), -1);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), -1);
+
+    reader.setId(tmp2.getAbsolutePath());
+    tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), DEFAULT_TILE_SIZE);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), DEFAULT_TILE_SIZE);
+    
+    reader.setId(tmp3.getAbsolutePath());
+    tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), -1);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), -1);
+    
+    reader.setId(tmp4.getAbsolutePath());
+    tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), 128);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), 64);
+    
+    reader.setId(tmp5.getAbsolutePath());
+    tileIFd = reader.getIFDs().get(0);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), -1);
+    assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), -1);
+    
+    reader.close();
+  }
+
   private byte[] getPlane(int width, int height, int bytes) {
     byte[] plane = new byte[width * height * bytes];
     for (int i=0; i<plane.length; i++) {
@@ -526,7 +636,7 @@ public class TiffWriterTest {
   }
 
   private IMetadata createMetadata(String pixelType, int rgbChannels,
-      int seriesCount, boolean littleEndian) throws Exception {
+      int seriesCount, boolean littleEndian, int sizeX, int sizeY) throws Exception {
     IMetadata metadata;
 
     try {
@@ -543,7 +653,7 @@ public class TiffWriterTest {
 
     for (int i=0; i<seriesCount; i++) {
       MetadataTools.populateMetadata(metadata, i, "image #" + i, littleEndian,
-        "XYCZT", pixelType, 160, 160, 1, rgbChannels, 1, rgbChannels);
+        "XYCZT", pixelType, sizeX, sizeY, 1, rgbChannels, 1, rgbChannels);
     }
 
     return metadata;
