@@ -39,7 +39,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Random;
 import org.junit.Assert;
+
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -57,6 +59,7 @@ import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -91,6 +94,9 @@ public class TiffWriterTest {
   private static final int PLANE_HEIGHT = 160;
   private static final int TILE_GRANULARITY = 16;
 
+  /* Percentage of tiling tests to be executed */
+  private static int percentageOfTilingTests = 0;
+
   @DataProvider(name = "bigTiffSuffixes")
   public Object[][] createSuffixes() {
     return new Object[][] {{"tf2"}, {"tf8"}, {"btf"}, {"tif"}, {"tiff"}};
@@ -104,10 +110,10 @@ public class TiffWriterTest {
   
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
-    String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
+    if (percentageOfTilingTests == 0) {
       return new Object[][] {{0, false, false, 0, 0, null, 0}};
     }
+
     int[] tileSize = {1, 32, 43, 64};
     boolean[] booleanValue = {true, false};
     int[] channelCount = {1, 3};
@@ -151,9 +157,10 @@ public class TiffWriterTest {
         }
       }
     }
-    if (tilingProp != null && Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) < 100) {
-      int percentageOfTests = Integer.parseInt(tilingProp);
-      int numTests = (paramSize / 100) * percentageOfTests;
+
+    // Return a subset of tests if a percentage is selected
+    if (percentageOfTilingTests > 0 && percentageOfTilingTests < 100) {
+      int numTests = (paramSize / 100) * percentageOfTilingTests;
       Object[][] returnSubset = new Object[numTests][];
       for (int i = 0; i < numTests; i++) {
         Random rand = new Random();
@@ -163,6 +170,17 @@ public class TiffWriterTest {
       return returnSubset;
     }
     return data;
+  }
+
+  @BeforeClass
+  public void readProperty() throws Exception {
+      String tilingProp = System.getProperty("testng.runWriterTilingTests");
+      if (tilingProp == null ||
+          tilingProp.equals("${testng.runWriterTilingTests}")) return;
+      if (DataTools.parseInteger(tilingProp) == null) return;
+      percentageOfTilingTests = DataTools.parseInteger(tilingProp);
+      if (percentageOfTilingTests < 0) percentageOfTilingTests = 0;
+      if (percentageOfTilingTests > 100) percentageOfTilingTests = 100;
   }
 
   @BeforeMethod
@@ -452,10 +470,7 @@ public class TiffWriterTest {
   @Test(dataProvider = "tiling")
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
       int seriesCount, String compression, int pixelType) throws Exception {
-    String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
-      return;
-    }
+    if (percentageOfTilingTests == 0) return;
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
