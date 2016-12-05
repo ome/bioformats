@@ -89,7 +89,7 @@ public final class LociPrefs {
     DefaultMetadataOptions options =
       (DefaultMetadataOptions) reader.getMetadataOptions();
     options.setBoolean(ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY,
-                       allowCZIAutostich());
+                       allowCZIAutostitch());
     options.setBoolean(ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY,
                        includeCZIAttachments());
 
@@ -158,7 +158,7 @@ public final class LociPrefs {
     return Prefs.get(PREF_TIFF_IMAGEIO, false);
   }
 
-  public static boolean allowCZIAutostich() {
+  public static boolean allowCZIAutostitch() {
     return Prefs.get(PREF_CZI_AUTOSTITCH,
                      ZeissCZIReader.ALLOW_AUTOSTITCHING_DEFAULT);
   }
