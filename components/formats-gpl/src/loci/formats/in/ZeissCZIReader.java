@@ -969,52 +969,7 @@ public class ZeissCZIReader extends FormatReader {
 
     // find and add attached label/overview images
 
-    boolean foundLabel = false;
-    boolean foundPreview = false;
-    if (readAttachments()) {
-      for (Segment segment : segments) {
-        if (segment instanceof Attachment) {
-          AttachmentEntry entry = ((Attachment) segment).attachment;
-          String name = entry.name.trim();
-
-          if ((name.equals("Label") && !foundLabel) ||
-            (name.equals("SlidePreview") && !foundPreview))
-          {
-            if (!foundLabel) {
-              foundLabel = name.equals("Label");
-            }
-            if (!foundPreview) {
-              foundPreview = name.equals("SlidePreview");
-            }
-            segment.fillInData();
-
-            // label and preview are CZI files embedded as attachments
-
-            ZeissCZIReader thumbReader = new ZeissCZIReader();
-            thumbReader.setMetadataOptions(getMetadataOptions());
-            ByteArrayHandle stream = new ByteArrayHandle(((Attachment) segment).attachmentData);
-            Location.mapFile("image.czi", stream);
-            thumbReader.setId("image.czi");
-
-            CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
-
-            if (c.sizeZ > 1 || c.sizeT > 1) {
-              continue;
-            }
-
-            core.add(new CoreMetadata(c));
-            core.get(core.size() - 1).thumbnail = true;
-            ((Attachment) segment).attachmentData = thumbReader.openBytes(0);
-            thumbReader.close();
-
-            stream.close();
-            Location.mapFile("image.czi", null);
-            extraImages.add((Attachment) segment);
-          }
-        }
-        segment.close();
-      }
-    }
+    readAttachments();
 
     // populate the OME metadata
 
@@ -1380,7 +1335,7 @@ public class ZeissCZIReader extends FormatReader {
         ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
   }
 
-  public boolean readAttachments() {
+  public boolean canReadAttachments() {
     return ((DefaultMetadataOptions) getMetadataOptions()).getBoolean(
         INCLUDE_ATTACHMENTS_KEY, INCLUDE_ATTACHMENTS_DEFAULT);
   }
@@ -1402,6 +1357,56 @@ public class ZeissCZIReader extends FormatReader {
 
       if (segment instanceof SubBlock) {
         planes.add((SubBlock) segment);
+      }
+      segment.close();
+    }
+  }
+
+  private void readAttachments() throws FormatException, IOException {
+    if (!canReadAttachments()) {
+      return;
+    }
+    boolean foundLabel = false;
+    boolean foundPreview = false;
+    for (Segment segment : segments) {
+      if (segment instanceof Attachment) {
+        AttachmentEntry entry = ((Attachment) segment).attachment;
+        String name = entry.name.trim();
+
+        if ((name.equals("Label") && !foundLabel) ||
+          (name.equals("SlidePreview") && !foundPreview))
+        {
+          if (!foundLabel) {
+            foundLabel = name.equals("Label");
+          }
+          if (!foundPreview) {
+            foundPreview = name.equals("SlidePreview");
+          }
+          segment.fillInData();
+
+          // label and preview are CZI files embedded as attachments
+
+          ZeissCZIReader thumbReader = new ZeissCZIReader();
+          thumbReader.setMetadataOptions(getMetadataOptions());
+          ByteArrayHandle stream = new ByteArrayHandle(((Attachment) segment).attachmentData);
+          Location.mapFile("image.czi", stream);
+          thumbReader.setId("image.czi");
+
+          CoreMetadata c = thumbReader.getCoreMetadataList().get(0);
+
+          if (c.sizeZ > 1 || c.sizeT > 1) {
+            continue;
+          }
+
+          core.add(new CoreMetadata(c));
+          core.get(core.size() - 1).thumbnail = true;
+          ((Attachment) segment).attachmentData = thumbReader.openBytes(0);
+          thumbReader.close();
+
+          stream.close();
+          Location.mapFile("image.czi", null);
+          extraImages.add((Attachment) segment);
+        }
       }
       segment.close();
     }
