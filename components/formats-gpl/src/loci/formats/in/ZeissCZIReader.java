@@ -89,10 +89,12 @@ public class ZeissCZIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String ALLOW_AUTOSTITCHING_KEY = "zeissczi.allow.autostitch";
-  private static final boolean ALLOW_AUTOSTITCHING_DEFAULT = true;
-  private static final String INCLUDE_ATTACHMENTS_KEY = "zeissczi.include.attachments";
-  private static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
+  public static final String ALLOW_AUTOSTITCHING_KEY =
+    "zeissczi.allow.autostitch";
+  public static final boolean ALLOW_AUTOSTITCHING_DEFAULT = true;
+  public static final String INCLUDE_ATTACHMENTS_KEY =
+    "zeissczi.include.attachments";
+  public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
 
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
