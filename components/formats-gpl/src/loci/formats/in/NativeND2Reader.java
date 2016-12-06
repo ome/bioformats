@@ -26,11 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -619,13 +615,26 @@ public class NativeND2Reader extends FormatReader {
           if(useChunkMap && chunkmapSkips == 0) {
             ChunkMapEntry lastImage = null;
 
+            // sanity check: see if the chunk we just found is actually in the chunkmap ...
+
+            long lookupPosition = in.getFilePointer() - 28;
+
+            Long lookupResult = allChunkPositions.floorKey(lookupPosition);
+
+            if(lookupResult == null || lookupResult != lookupPosition) {
+              // if not, deactivate chunkmap processing and try classic
+              useChunkMap = false;
+              in.seek(lookupPosition);
+              continue;
+            }
+
             for(ChunkMapEntry entry : allChunkPositions.values()) {
-              if(!entry.name.startsWith("ImageDataSeq")) {
+              if((entry.position + 28) < in.getFilePointer()) {
                 continue;
               }
 
-              if((entry.position + 28) < in.getFilePointer()) {
-                continue;
+              if(!entry.name.startsWith("ImageDataSeq")) {
+                break;
               }
 
               if(lastImage!=null) {
