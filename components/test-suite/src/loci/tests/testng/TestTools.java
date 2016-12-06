@@ -353,7 +353,11 @@ public class TestTools {
                !subsList.get(i).endsWith("test_setup.ini")) {
         if (typeTester.isThisType(subsList.get(i))) {
           LOGGER.debug("\tOK");
-          files.add(file.getAbsolutePath());
+          try {
+            files.add(file.getCanonicalPath());
+          } catch (IOException e) {
+            files.add(file.getAbsolutePath());
+          }
         }
         else LOGGER.debug("\tunknown type");
       }
