@@ -39,7 +39,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Random;
 import org.junit.Assert;
+
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -57,6 +59,7 @@ import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -91,6 +94,9 @@ public class TiffWriterTest {
   private static final int PLANE_HEIGHT = 160;
   private static final int TILE_GRANULARITY = 16;
 
+  /* Percentage of tiling tests to be executed */
+  private static int percentageOfTilingTests = 0;
+
   @DataProvider(name = "bigTiffSuffixes")
   public Object[][] createSuffixes() {
     return new Object[][] {{"tf2"}, {"tf8"}, {"btf"}, {"tif"}, {"tiff"}};
@@ -104,45 +110,45 @@ public class TiffWriterTest {
   
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
-    String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
+    if (percentageOfTilingTests == 0) {
       return new Object[][] {{0, false, false, 0, 0, null, 0}};
     }
-    int[] tileSize = {1, 32, 43, 64};
-    boolean[] booleanValue = {true, false};
-    int[] channelCount = {1, 3};
-    int[] seriesCount = {1, 5};
-    String[] compression = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
-    int compressionPixelTypeSize = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
-    int paramSize = tileSize.length * compressionPixelTypeSize * 4 * channelCount.length * seriesCount.length;
+
+    int[] tileSizes = {1, 32, 43, 64};
+    boolean[] booleanValues = {true, false};
+    int[] channelCounts = {1, 3};
+    int[] seriesCounts = {1, 5};
+    String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
+    int compressionPixelTypeSizes = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
+    int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length;
     Object[][] data = new Object[paramSize][];
     int index = 0;
-    for (int i = 0; i < tileSize.length; i++) {
-      for (int j = 0; j < booleanValue.length; j++) {
-        for (int k = 0; k < booleanValue.length; k++) {
-          for (int l = 0; l < channelCount.length; l++) {
-            for (int m = 0; m < seriesCount.length; m++) {
-              for (int n = 0; n < compression.length; n++) {
-                int[] pixelType = pixelTypesOther;
-                if (compression[n].equals(COMPRESSION_J2K)) {
-                  pixelType = pixelTypesJ2K;
+    for (int tileSize : tileSizes) {
+      for (boolean endianness : booleanValues) {
+        for (boolean interleaved : booleanValues) {
+          for (int channelCount : channelCounts) {
+            for (int seriesCount : seriesCounts) {
+              for (String compression : compressions) {
+                int[] pixelTypes = pixelTypesOther;
+                if (compression.equals(COMPRESSION_J2K)) {
+                  pixelTypes = pixelTypesJ2K;
                 }
-                if (compression[n].equals(COMPRESSION_J2K_LOSSY)) {
+                if (compression.equals(COMPRESSION_J2K_LOSSY)) {
                   // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
-                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
                       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
                 }
-                else if (compression[n].equals(COMPRESSION_JPEG)) {
+                else if (compression.equals(COMPRESSION_JPEG)) {
                   // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
-                  pixelType = new int[] {FormatTools.INT8, FormatTools.UINT8};
+                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
                 }
-                for (int o = 0; o < pixelType.length; o++) {
-                  boolean interleaved = booleanValue[k];
-                  if (FormatTools.getBytesPerPixel(pixelType[o]) > 2 && 
-                      (compression[n].equals(COMPRESSION_J2K) || compression[n].equals(COMPRESSION_J2K_LOSSY))) {
-                    interleaved = false;
+                for (int pixelType : pixelTypes) {
+                  if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
+                      (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
+                    data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, compression, pixelType};
+                  } else {
+                    data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, compression, pixelType};
                   }
-                  data[index] = new Object[] {tileSize[i], booleanValue[j], interleaved, channelCount[l], seriesCount[m], compression[n], pixelType[o]};
                   index ++;
                 }
               }
@@ -151,9 +157,10 @@ public class TiffWriterTest {
         }
       }
     }
-    if (tilingProp != null && Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) < 100) {
-      int percentageOfTests = Integer.parseInt(tilingProp);
-      int numTests = (paramSize / 100) * percentageOfTests;
+
+    // Return a subset of tests if a percentage is selected
+    if (percentageOfTilingTests > 0 && percentageOfTilingTests < 100) {
+      int numTests = (paramSize / 100) * percentageOfTilingTests;
       Object[][] returnSubset = new Object[numTests][];
       for (int i = 0; i < numTests; i++) {
         Random rand = new Random();
@@ -163,6 +170,17 @@ public class TiffWriterTest {
       return returnSubset;
     }
     return data;
+  }
+
+  @BeforeClass
+  public void readProperty() throws Exception {
+      String tilingProp = System.getProperty("testng.runWriterTilingTests");
+      if (tilingProp == null ||
+          tilingProp.equals("${testng.runWriterTilingTests}")) return;
+      if (DataTools.parseInteger(tilingProp) == null) return;
+      percentageOfTilingTests = DataTools.parseInteger(tilingProp);
+      if (percentageOfTilingTests < 0) percentageOfTilingTests = 0;
+      if (percentageOfTilingTests > 100) percentageOfTilingTests = 100;
   }
 
   @BeforeMethod
@@ -452,10 +470,7 @@ public class TiffWriterTest {
   @Test(dataProvider = "tiling")
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
       int seriesCount, String compression, int pixelType) throws Exception {
-    String tilingProp = System.getProperty("testng.runWriterTilingTests");
-    if (tilingProp == null || Integer.valueOf(System.getProperty("testng.runWriterTilingTests")) == 0) {
-      return;
-    }
+    if (percentageOfTilingTests == 0) return;
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
