@@ -93,6 +93,7 @@ public final class LociPrefs {
         ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
       ((DynamicMetadataOptions) options).setBoolean(
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+      reader.setMetadataOptions(options);
     }
 
     // toggle reader-specific options
