@@ -89,10 +89,10 @@ public class ZeissCZIReader extends FormatReader {
   // -- Constants --
 
   public static final String ALLOW_AUTOSTITCHING_KEY =
-    "zeissczi.allow.autostitch";
+    "zeissczi.autostitch";
   public static final boolean ALLOW_AUTOSTITCHING_DEFAULT = true;
   public static final String INCLUDE_ATTACHMENTS_KEY =
-    "zeissczi.include.attachments";
+    "zeissczi.attachments";
   public static final boolean INCLUDE_ATTACHMENTS_DEFAULT = true;
 
   private static final int ALIGNMENT = 32;
