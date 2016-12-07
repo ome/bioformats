@@ -43,7 +43,7 @@ public class DefaultMetadataOptions implements MetadataOptions {
 
   /**
    * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
-   * to {@link #METADATA_LEVEL_DEFAULT} and disable file validation.
+   * to {@link MetadataLevel#ALL} and disable file validation.
    */
   public DefaultMetadataOptions() {
     this(MetadataLevel.ALL);
