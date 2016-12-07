@@ -32,27 +32,21 @@
 
 package loci.formats.in;
 
-import loci.formats.FormatOptions;
-
 
 /**
  * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
-public class DefaultMetadataOptions
-    extends FormatOptions implements MetadataOptions {
+public class DefaultMetadataOptions implements MetadataOptions {
 
-  public static final String METADATA_LEVEL_KEY = "metadata.level";
-  public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
-
-  public static final String READER_VALIDATE_KEY = "reader.validate.input";
-  public static final boolean READER_VALIDATE_DEFAULT = false;
+  private MetadataLevel metadataLevel;
+  private boolean validate;
 
   /**
    * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
-   * to {@link #METADATA_LEVEL_DEFAULT} and disable file validation.
+   * to {@link MetadataLevel#ALL} and disable file validation.
    */
   public DefaultMetadataOptions() {
-    this(METADATA_LEVEL_DEFAULT);
+    this(MetadataLevel.ALL);
   }
 
   /**
@@ -62,28 +56,28 @@ public class DefaultMetadataOptions
    * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
-    setEnum(METADATA_LEVEL_KEY, level);
-    setBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
+    metadataLevel = level;
+    validate = false;
   }
 
   @Override
   public MetadataLevel getMetadataLevel() {
-    return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);
+    return metadataLevel;
   }
 
   @Override
   public void setMetadataLevel(MetadataLevel level) {
-    setEnum(METADATA_LEVEL_KEY, level);
+    metadataLevel = level;
   }
 
   @Override
   public boolean isValidate() {
-    return getBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
+    return validate;
   }
 
   @Override
   public void setValidate(boolean validateMetadata) {
-    setBoolean(READER_VALIDATE_KEY, validateMetadata);
+    validate = validateMetadata;
   }
 
 }

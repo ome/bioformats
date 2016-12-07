@@ -36,9 +36,9 @@
         <class name="loci.formats.utests.FormatToolsTest"/>
       </classes>
     </test>
-    <test name="FormatOptions">
+    <test name="DynamicMetadataOptions">
       <classes>
-        <class name="loci.formats.utests.FormatOptionsTest"/>
+        <class name="loci.formats.utests.DynamicMetadataOptionsTest"/>
       </classes>
     </test>
     <test name="DefaultMetadataOptions">
