@@ -38,7 +38,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 
@@ -67,7 +67,7 @@ public abstract class FormatHandler implements IFormatHandler {
   protected String currentId;
 
   /** Metadata parsing options. */
-  protected MetadataOptions metadataOptions = new DefaultMetadataOptions();
+  protected MetadataOptions metadataOptions = new DynamicMetadataOptions();
 
   // -- Constructors --
 

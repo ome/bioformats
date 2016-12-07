@@ -30,25 +30,70 @@
  * #L%
  */
 
-package loci.formats;
+package loci.formats.in;
 
 import java.util.Properties;
 import java.io.File;
 
 
 /**
- * Generic configuration object for readers and writers.
+ * Configuration object for readers and writers.
  */
-public class FormatOptions {
+public class DynamicMetadataOptions implements MetadataOptions {
+
+  public static final String METADATA_LEVEL_KEY = "metadata.level";
+  public static final MetadataLevel METADATA_LEVEL_DEFAULT = MetadataLevel.ALL;
+
+  public static final String READER_VALIDATE_KEY = "reader.validate.input";
+  public static final boolean READER_VALIDATE_DEFAULT = false;
 
   private Properties props;
 
   /**
-   * Creates an empty options object.
+   * Creates an options object with metadata level set to {@link
+   * #METADATA_LEVEL_DEFAULT} and file validation set to {@link
+   * #READER_VALIDATE_DEFAULT}.
    */
-  public FormatOptions() {
-    props = new Properties();
+  public DynamicMetadataOptions() {
+    this(METADATA_LEVEL_DEFAULT);
   }
+
+  /**
+   * Creates an options object with metadata level set to the
+   * specified value and file validation set to {@link
+   * #READER_VALIDATE_DEFAULT}
+   *
+   * @param level the {@link loci.formats.in.MetadataLevel} to use.
+   */
+  public DynamicMetadataOptions(MetadataLevel level) {
+    props = new Properties();
+    setEnum(METADATA_LEVEL_KEY, level);
+    setBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
+  }
+
+  // -- MetadataOptions API Methods --
+
+  @Override
+  public MetadataLevel getMetadataLevel() {
+    return getEnum(METADATA_LEVEL_KEY, METADATA_LEVEL_DEFAULT);
+  }
+
+  @Override
+  public void setMetadataLevel(MetadataLevel level) {
+    setEnum(METADATA_LEVEL_KEY, level);
+  }
+
+  @Override
+  public boolean isValidate() {
+    return getBoolean(READER_VALIDATE_KEY, READER_VALIDATE_DEFAULT);
+  }
+
+  @Override
+  public void setValidate(boolean validateMetadata) {
+    setBoolean(READER_VALIDATE_KEY, validateMetadata);
+  }
+
+  // -- key/value options --
 
   /**
    * Set property {@code name} to {@code value}.

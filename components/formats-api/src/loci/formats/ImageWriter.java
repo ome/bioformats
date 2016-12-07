@@ -187,6 +187,26 @@ public class ImageWriter implements IFormatWriter {
     return w;
   }
   
+  @Override
+  public int getTileSizeX() throws FormatException {
+    return getWriter().getTileSizeX();
+  }
+
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    return getWriter().setTileSizeX(tileSize);
+  }
+
+  @Override
+  public int getTileSizeY() throws FormatException {
+    return getWriter().getTileSizeY();
+  }
+
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    return getWriter().setTileSizeY(tileSize);
+  }
+
   // -- IMetadataConfigurable API methods --
 
   /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */

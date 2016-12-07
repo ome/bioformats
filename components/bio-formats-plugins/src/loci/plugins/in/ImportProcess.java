@@ -55,9 +55,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
 import loci.formats.TileStitcher;
-import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -494,13 +492,8 @@ public class ImportProcess implements StatusReporter {
     baseReader.setMetadataFiltered(true);
     baseReader.setGroupFiles(!options.isUngroupFiles() || options.isGroupFiles());
     if(options != null && !options.showROIs()){
-        MetadataOptions mo = baseReader.getMetadataOptions();
-        if(mo == null){
-            mo = new DefaultMetadataOptions();
-        }else{
-            mo.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
-        }
-        baseReader.setMetadataOptions(mo);
+      baseReader.getMetadataOptions().setMetadataLevel(
+          MetadataLevel.NO_OVERLAYS);
     }
     baseReader.setId(options.getId());
     
@@ -546,13 +539,8 @@ public class ImportProcess implements StatusReporter {
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
     if(options != null && !options.showROIs()){
-        MetadataOptions mo = reader.getMetadataOptions();
-        if(mo == null){
-            mo = new DefaultMetadataOptions();
-        }else{
-            mo.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
-        }
-        reader.setMetadataOptions(mo);
+      baseReader.getMetadataOptions().setMetadataLevel(
+          MetadataLevel.NO_OVERLAYS);
     }
     setId();
 

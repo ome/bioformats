@@ -42,19 +42,20 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
-import loci.formats.FormatOptions;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataLevel;
 
 
 /**
- * Unit tests for {@link loci.formats.in.FormatOptions}.
+ * Unit tests for {@link loci.formats.in.DynamicMetadataOptions}.
  */
-public class FormatOptionsTest {
+public class DynamicMetadataOptionsTest {
 
   private static final String KEY = "test.key";
   private static final double DDELTA = 1e-7;
   private static final float FDELTA = 1e-7f;
 
-  private FormatOptions opt;
+  private DynamicMetadataOptions opt;
   private enum One { FOO, BAR };
   private enum Two { TAR, FOO };
 
@@ -101,7 +102,7 @@ public class FormatOptionsTest {
 
   @BeforeMethod
   public void setUp() {
-    opt = new FormatOptions();
+    opt = new DynamicMetadataOptions();
   }
 
   @Test
@@ -335,6 +336,31 @@ public class FormatOptionsTest {
     assertEquals(opt.getFile(KEY, f2), f2);
     assertNull(opt.getFile(KEY, null));
     assertNull(opt.getFile(KEY));
+  }
+
+  // -- MetadataOptions tests --
+
+  @Test
+  public void testMetadataLevel() {
+    assertEquals(opt.getMetadataLevel(),
+                 DynamicMetadataOptions.METADATA_LEVEL_DEFAULT);
+    for (MetadataLevel level: MetadataLevel.values()) {
+      opt.setMetadataLevel(level);
+      assertEquals(opt.getMetadataLevel(), level);
+      assertEquals(
+          (new DynamicMetadataOptions(level)).getMetadataLevel(), level
+      );
+    }
+  }
+
+  @Test
+  public void testIsValidate() {
+    assertEquals(opt.isValidate(),
+                 DynamicMetadataOptions.READER_VALIDATE_DEFAULT);
+    opt.setValidate(true);
+    assertTrue(opt.isValidate());
+    opt.setValidate(false);
+    assertFalse(opt.isValidate());
   }
 
 }
