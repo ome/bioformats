@@ -47,9 +47,6 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
