@@ -1331,13 +1331,21 @@ public class ZeissCZIReader extends FormatReader {
   // -- ZeissCZI-specific methods --
 
   public boolean allowAutostitching() {
-    return ((DefaultMetadataOptions) getMetadataOptions()).getBoolean(
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
         ALLOW_AUTOSTITCHING_KEY, ALLOW_AUTOSTITCHING_DEFAULT);
+    }
+    return ALLOW_AUTOSTITCHING_DEFAULT;
   }
 
   public boolean canReadAttachments() {
-    return ((DefaultMetadataOptions) getMetadataOptions()).getBoolean(
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
         INCLUDE_ATTACHMENTS_KEY, INCLUDE_ATTACHMENTS_DEFAULT);
+    }
+    return INCLUDE_ATTACHMENTS_DEFAULT;
   }
 
   // -- Helper methods --

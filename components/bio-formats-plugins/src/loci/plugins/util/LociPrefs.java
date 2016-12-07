@@ -32,7 +32,8 @@ import ij.Prefs;
 import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
@@ -86,12 +87,13 @@ public final class LociPrefs {
     }
     ImageReader reader = new ImageReader(enabledClasses);
 
-    DefaultMetadataOptions options =
-      (DefaultMetadataOptions) reader.getMetadataOptions();
-    options.setBoolean(ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY,
-                       allowCZIAutostitch());
-    options.setBoolean(ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY,
-                       includeCZIAttachments());
+    MetadataOptions options = reader.getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+    }
 
     // toggle reader-specific options
     boolean nd2Nikon = LociPrefs.isND2Nikon();

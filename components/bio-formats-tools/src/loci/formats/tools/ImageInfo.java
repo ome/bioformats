@@ -66,7 +66,7 @@ import loci.formats.Modulo;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.OMETiffReader;
@@ -132,7 +132,7 @@ public class ImageInfo {
   private String format = null;
   private String cachedir = null;
   private int xmlSpaces = 3;
-  private DefaultMetadataOptions options = new DefaultMetadataOptions();
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   private IFormatReader reader;
   private IFormatReader baseReader;
