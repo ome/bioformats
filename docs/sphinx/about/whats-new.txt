@@ -9,7 +9,7 @@ New features/API:
 * added support for JPEG-XR compressed CZI data (funded by a
   `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
   of Bio-Formats
-* tiled based writing
+* tile-based image writing
     - added new methods to the ``loci.formats.IFormatWriter`` interface
       allowing to set and retrieve the tile along the X and Y dimensions
     - added default implementations to the ``loci.formats.FormatWriter``
@@ -70,7 +70,7 @@ Updated build system:
 * cleaned up test-build to remove obsolete and decoupled components
   and folders
 * simplified Travis build
-* POM repositories clean up to reduce complexity and use Maven Central as the
+* POM repositories clean-up to reduce complexity and use Maven Central as the
   first location to look for dependencies
 * now storing all versions in the top-level pom.xml
 * updated build versioning from Maven by unified versioning strategy,
