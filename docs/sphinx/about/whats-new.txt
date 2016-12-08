@@ -60,6 +60,24 @@ New features/API:
 * added support for JPEG-XR compressed CZI data (funded by a
   `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
   of Bio-Formats
+* tiled based writing
+    - added new methods to the ``loci.formats.IFormatWriter`` interface
+      allowing to set and retrieve the tile along the X and Y dimensions
+    - added default implementations to the ``loci.formats.FormatWriter``
+      abstract class defaulting to the entire image width/height
+    - added functionality to ``loci.formats.TiffWriter`` allowing to write 
+      TIFF and derived formats like OME-TIFF to write tiled data
+* added ``loci.formats.DynamicMetadataOptions` a new implementation of the
+  ``loci.formats.MetadataOptions`` interface allowing to define options using
+  key/value pairs
+
+Bug fixes/deprecations:
+
+* deprecated ``loci.formats.meta.MetadataConverter`` in favor of
+  ``ome.xml.meta.MetadataConverter``
+* updated method deprecated in Octave 4.2.0 (thanks to Carnë Draug)
+* OME-XML
+  - fixed handling of Mask BinData elements
 
 5.2.4 (2016 October 18)
 -----------------------
