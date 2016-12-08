@@ -14,8 +14,8 @@ New features/API:
       allowing to set and retrieve the tile along the X and Y dimensions
     - added default implementations to the ``loci.formats.FormatWriter``
       abstract class defaulting to the entire image width/height
-    - added functionality to ``loci.formats.TiffWriter`` allowing to write 
-      TIFF and derived formats like OME-TIFF to write tiled data
+    - added functionality to ``loci.formats.TiffWriter`` adding support for
+      tiled images writing for TIFF and derived formats like OME-TIFF
 * added a new ``MetadataOptions`` implementation supporting arbitrary key/value
   pairs
 
