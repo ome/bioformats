@@ -175,4 +175,10 @@
         <class name="loci.formats.utests.CompressDecompressTest"/>
       </classes>
     </test>
+    <test name="ImageReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ImageReaderTest"/>
+      </classes>
+    </test>
 </suite>
