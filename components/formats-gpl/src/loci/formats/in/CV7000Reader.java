@@ -142,6 +142,9 @@ public class CV7000Reader extends FormatReader {
     }
     if (!noPixels && planeData != null) {
       for (int index : reversePlaneLookup[getSeries()]) {
+        if (index < 0) {
+          continue;
+        }
         Plane p = planeData.get(index);
         if (p != null && p.file != null) {
           files.add(p.file);
@@ -197,6 +200,7 @@ public class CV7000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    Arrays.fill(buf, (byte) 0);
     Plane p = lookupPlane(getSeries(), no);
     LOGGER.trace("series = {}, no = {}, file = {}", series, no, p == null ? null : p.file);
     if (p != null && p.file != null) {
@@ -325,6 +329,10 @@ public class CV7000Reader extends FormatReader {
     int[] seriesLengths = new int[] {fields, realWells};
     int[] planeLengths = new int[] {getSizeC(), getSizeZ(), getSizeT()};
     reversePlaneLookup = new int[getSeriesCount()][getImageCount()];
+    for (int i=0; i<reversePlaneLookup.length; i++) {
+      // do this so that the index does not default to 0 for ERR planes
+      Arrays.fill(reversePlaneLookup[i], -1);
+    }
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
       int wellIndex = Arrays.binarySearch(wells, p.row * plate.getPlateColumns() + p.column);
