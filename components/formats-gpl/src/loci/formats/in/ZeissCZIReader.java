@@ -630,6 +630,9 @@ public class ZeissCZIReader extends FormatReader {
 
     calculateDimensions();
 
+    int firstX = planes.get(0).x;
+    int firstY = planes.get(0).y;
+
     if (getSizeC() == 0) {
       ms0.sizeC = 1;
     }
@@ -814,6 +817,11 @@ public class ZeissCZIReader extends FormatReader {
         ms0.sizeX = newX;
         ms0.sizeY = newY;
       }
+    }
+    else if (!allowAutostitching() && calculatedSeries > seriesCount) {
+      ms0.sizeX = firstX;
+      ms0.sizeY = firstY;
+      prestitched = true;
     }
 
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
@@ -1450,7 +1458,7 @@ public class ZeissCZIReader extends FormatReader {
             plane.x = dimension.size;
             plane.col = dimension.start;
             if ((prestitched == null || prestitched) &&
-              getSizeX() > 0 && dimension.size != getSizeX())
+              getSizeX() > 0 && dimension.size != getSizeX() && allowAutostitching())
             {
               prestitched = true;
               continue;
@@ -1463,7 +1471,7 @@ public class ZeissCZIReader extends FormatReader {
             plane.y = dimension.size;
             plane.row = dimension.start;
             if ((prestitched == null || prestitched) &&
-              getSizeY() > 0 && dimension.size != getSizeY())
+              getSizeY() > 0 && dimension.size != getSizeY() && allowAutostitching())
             {
               prestitched = true;
               continue;
