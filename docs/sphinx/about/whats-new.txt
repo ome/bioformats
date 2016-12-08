@@ -16,9 +16,8 @@ New features/API:
       abstract class defaulting to the entire image width/height
     - added functionality to ``loci.formats.TiffWriter`` allowing to write 
       TIFF and derived formats like OME-TIFF to write tiled data
-* added ``loci.formats.DynamicMetadataOptions` a new implementation of the
-  ``loci.formats.MetadataOptions`` interface allowing to define options using
-  key/value pairs
+* added a new MetadataOptions implementation supporting arbitrary key/value
+  pairs
 
 Bug fixes/deprecations:
 
