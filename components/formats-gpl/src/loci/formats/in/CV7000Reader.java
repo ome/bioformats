@@ -541,7 +541,11 @@ public class CV7000Reader extends FormatReader {
     if (index < 0 || index >= planeData.size()) {
       return null;
     }
-    return planeData.get(index);
+    Plane p = planeData.get(index);
+    if (p.series != series || p.no != no) {
+      return null;
+    }
+    return p;
   }
 
   // -- Helper classes --
