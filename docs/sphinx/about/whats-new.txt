@@ -18,6 +18,11 @@ New features/API:
       tiled images writing for TIFF and derived formats like OME-TIFF
 * added a new ``MetadataOptions`` implementation supporting arbitrary key/value
   pairs
+* updated the display command line utility to support passing key/value
+  options using :option:`showinf -option`
+* added two options to the CZI reader to disable autostitching and exclude
+  pyramid file attachments. Added new checkboxes to the CZI configuration
+  interface of the ImageJ plugin to activate these options
 
 Bug fixes/deprecations:
 
