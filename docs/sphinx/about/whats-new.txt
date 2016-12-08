@@ -9,14 +9,14 @@ New features/API:
 * added support for JPEG-XR compressed CZI data (funded by a
   `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
   of Bio-Formats
-* tile-based image writing
+* improved tile-based image writing
     - added new methods to the ``loci.formats.IFormatWriter`` interface
       allowing to set and retrieve the tile along the X and Y dimensions
     - added default implementations to the ``loci.formats.FormatWriter``
       abstract class defaulting to the entire image width/height
     - added functionality to ``loci.formats.TiffWriter`` allowing to write 
       TIFF and derived formats like OME-TIFF to write tiled data
-* added a new MetadataOptions implementation supporting arbitrary key/value
+* added a new ``MetadataOptions`` implementation supporting arbitrary key/value
   pairs
 
 Bug fixes/deprecations:
@@ -25,7 +25,7 @@ Bug fixes/deprecations:
   ``ome.xml.meta.MetadataConverter``
 * updated method deprecated in Octave 4.2.0 (thanks to Carnë Draug)
 * OME-XML
-  - fixed handling of Mask BinData elements
+    - fixed handling of Mask BinData elements
 
 Component architecture changes/decoupling:
 
@@ -57,7 +57,7 @@ Component architecture changes/decoupling:
 Updated build system:
 
 * dropped embedded JARs and now use the Maven Ant Tasks plugin to unify the
-  dependencies using the pom.xml
+  dependencies using the POM
 * improved Ant JAR and bundle target
 * dropped deprecated osgi targets, OME Tools bundle and ome-jxr component
 * removed PDF generation from the docs-sphinx target
@@ -71,7 +71,7 @@ Updated build system:
 * simplified Travis build
 * POM repositories clean-up to reduce complexity and use Maven Central as the
   first location to look for dependencies
-* now storing all versions in the top-level pom.xml
+* now storing all versions in the top-level POM
 * updated build versioning from Maven by unified versioning strategy,
   reviewing meta information stored in the manifests of each JAR and
   introspecting this information in the ``FormatTools`` API to retrieve
