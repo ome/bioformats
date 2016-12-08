@@ -170,6 +170,7 @@ now available as separate build dependencies:
 - :ref:`OME Common <ome-common>`
 - :ref:`OME MDB Tools (Java) <forks-mdbtools>`
 - :ref:`OME Apache Jakarta POI <forks-poi>`
+- :ref:`JXRlib <jxrlib>`
 
 Decoupled OME data model components:
 
@@ -254,3 +255,10 @@ which are required at compile time but cannot be included in the build system
 (usually due to licensing issues).  The build succeeds since required class
 names are present with the correct method signatures; the end user is then
 expected to replace the stub .jar files at runtime.
+
+.. _jxrlib:
+
+`JXRlib <https://github.com/glencoesoftware/jxrlib>`__:
+
+This component contains the Java bindings for jxrlib an open source
+implementation of the JPEG-XR image format standard.
