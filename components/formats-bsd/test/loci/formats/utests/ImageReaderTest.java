@@ -71,6 +71,7 @@ public class ImageReaderTest {
     String v = ((DynamicMetadataOptions) rOpt).get(KEY);
     assertNotNull(v);
     assertEquals(v, VALUE);
+    reader.close();
   }
 
   @Test(dataProvider = "levels")
@@ -81,6 +82,7 @@ public class ImageReaderTest {
     MetadataLevel rLevel =
       reader.getReader().getMetadataOptions().getMetadataLevel();
     assertEquals(rLevel, level);
+    reader.close();
   }
 
 }
