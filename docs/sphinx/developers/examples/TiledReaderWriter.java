@@ -126,6 +126,7 @@ public class TiledReaderWriter {
 
       // convert each image in the current series
       for (int image=0; image<reader.getImageCount(); image++) {
+        /* tiling-calculations-example-start */
         int width = reader.getSizeX();
         int height = reader.getSizeY();
 
@@ -134,7 +135,9 @@ public class TiledReaderWriter {
         int nYTiles = height / tileSizeY;
         if (nXTiles * tileSizeX != width) nXTiles++;
         if (nYTiles * tileSizeY != height) nYTiles++;
+        /* tiling-calculations-example-end */
 
+        /* tiling-example-start */
         for (int y=0; y<nYTiles; y++) {
           for (int x=0; x<nXTiles; x++) {
             // The x and y coordinates for the current tile
@@ -146,6 +149,7 @@ public class TiledReaderWriter {
             writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
           }
         }
+        /* tiling-example-end */
       }
     }
   }

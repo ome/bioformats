@@ -93,6 +93,7 @@ public class SimpleTiledWriter {
       reader.setMetadataStore(omexml);
       reader.setId(inputFile);
 
+      /* initialize-tiling-writer-example-start */
       // set up the writer and associate it with the output file
       writer = new OMETiffWriter();
       writer.setMetadataRetrieve(omexml);
@@ -103,6 +104,9 @@ public class SimpleTiledWriter {
       writer.setTileSizeY(tileSizeY);
 
       writer.setId(outputFile);
+
+      /* initialize-tiling-writer-example-end */
+      /* tiling-writer-example-start */
 
       byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
 
@@ -118,6 +122,7 @@ public class SimpleTiledWriter {
           writer.saveBytes(image, buf);
         }
       }
+      /* tiling-writer-example-end */
     }
     catch (Exception e) {
       System.err.println("Failed to read and write tiled files.");
