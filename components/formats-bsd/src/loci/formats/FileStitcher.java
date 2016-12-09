@@ -835,6 +835,9 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#getUnderlyingReaders() */
   @Override
   public IFormatReader[] getUnderlyingReaders() {
+    if (null == externals) {
+      return super.getUnderlyingReaders();
+    }
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     for (ExternalSeries s : externals) {
       for (DimensionSwapper r : s.getReaders()) {

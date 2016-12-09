@@ -213,6 +213,15 @@ public class FileStitcherTest {
   }
 
   @Test
+  public void testUnderlyingReaders() throws IOException, FormatException {
+    FakeReader reader = new FakeReader();
+    FileStitcher fs = new FileStitcher(reader);
+    assertNotNull(fs.getUnderlyingReaders());
+    fs.setId("test_z<0-2>.fake");
+    assertNotNull(fs.getUnderlyingReaders());
+  }
+
+  @Test
   public void testOptionsExplicit() throws IOException, FormatException {
     DynamicMetadataOptions opt = new DynamicMetadataOptions();
     opt.set(KEY, VALUE);
