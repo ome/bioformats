@@ -11,7 +11,7 @@ The reading of tiled images is straightforward and can be done in much the same 
 
     byte[] tile = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
 
-For "TIFF-based" readers, if the image has been written using tiles, then the tile width and height used can be found as below. These values can then be used with the above command to read the correct tiles individually.
+For TIFF-based readers, if the image has been written using tiles, then the tile width and height used can be found as below. These values can then be used with the above command to read the correct tiles individually.
 
 ::
 
@@ -22,7 +22,7 @@ For "TIFF-based" readers, if the image has been written using tiles, then the ti
 Introduction to tiled writing
 -----------------------------
 
-Tiled writing is currently supported for Tiff based formats.
+Tiled writing is currently supported for TIFF-based formats.
 To set up an image writer to use tiling the following 2 API functions are provided:
 
 ::
