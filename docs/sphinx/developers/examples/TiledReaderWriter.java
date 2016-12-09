@@ -145,6 +145,11 @@ public class TiledReaderWriter {
             int tileX = x * tileSizeX;
             int tileY = y * tileSizeY;
 
+            // If the last tile row or column overlaps the image size then only a partial tile
+            // is read or written. The tile size used is adjusted to account for any overlap.
+            int effTileSizeX = (tileX + tileSizeX) < width ? tileSizeX : width - tileX;
+            int effTileSizeY = (tileY + tileSizeY) < height ? tileSizeY : height - tileY;
+
             // Read tiles from the input file and write them to the output OME Tiff
             buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
             writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
