@@ -221,7 +221,7 @@ Individual planes can be queried using the
 To switch between series in a multi-image file, use the
 :javadoc:`setSeries(int) <loci/formats/IFormatReader.html#setSeries-int->` method. To retrieve a plane given a set of
 `(z, c, t)` coordinates, these coordinates must be linearized first using
-:javadoc:`getIndex(int, int, int) <loci/formats/IFormatReader.html#getIndex-int, int, int->`
+:javadoc:`getIndex(int, int, int) <loci/formats/IFormatReader.html#getIndex-int-int-int->`
 
 ::
 
