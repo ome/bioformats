@@ -47,7 +47,7 @@ Methods to override
   ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file
   name is non-null.
 
-- :javadoc:`openBytes(int, byte[], int, int, int, int) <loci/formats/IFormatReader.html#openBytes-int-byte:A-int-int-int-int>`
+- :javadoc:`openBytes(int, byte[], int, int, int, int) <loci/formats/IFormatReader.html#openBytes-int-byte:A-int-int-int-int->`
   Returns a byte array containing the pixel data for a specified subimage
   from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
