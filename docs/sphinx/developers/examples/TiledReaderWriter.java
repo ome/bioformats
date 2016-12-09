@@ -27,6 +27,7 @@ import java.io.IOException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
+import loci.formats.FormatTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
