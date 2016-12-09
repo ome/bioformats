@@ -131,6 +131,7 @@ public class FileStitcherTest {
     assertEquals(fs.getPixelType(), PIXEL_TYPE);
     assertEqualsNoOrder(mkBasenames(fs.getUsedFiles()), filenames);
     checkPlanes(fs, dims);
+    fs.close();
   }
 
   // FakeReader encodes 5 integers at the start of each image plane: s idx,
@@ -225,6 +226,7 @@ public class FileStitcherTest {
       assertNotNull(v);
       assertEquals(v, VALUE);
     }
+    fs.close();
   }
 
   @Test(dataProvider = "levels")
@@ -236,6 +238,7 @@ public class FileStitcherTest {
     for (IFormatReader r: fs.getUnderlyingReaders()) {
       assertEquals(r.getMetadataOptions().getMetadataLevel(), level);
     }
+    fs.close();
   }
 
 }
