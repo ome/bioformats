@@ -16,6 +16,7 @@ New features/API:
       abstract class defaulting to the entire image width/height
     - added functionality to ``loci.formats.TiffWriter`` adding support for
       tiled images writing for TIFF and derived formats like OME-TIFF
+    - added developer documentation and samples for tiled reading/writing
 * added a new ``MetadataOptions`` implementation supporting arbitrary key/value
   pairs
 * updated the display command line utility to support passing key/value
