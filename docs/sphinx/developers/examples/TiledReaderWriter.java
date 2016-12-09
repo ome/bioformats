@@ -58,7 +58,8 @@ public class TiledReaderWriter {
   private int tileSizeY;
 
   /**
-   * Construct a new TiledReaderWriter to read the specified input file and write the given output file using the tile sizes provided.
+   * Construct a new TiledReaderWriter to read the specified input file 
+   * and write the given output file using the tile sizes provided.
    *
    * @param inputFile the file to be read
    * @param outputFile the file to be written
@@ -150,10 +151,16 @@ public class TiledReaderWriter {
   private void cleanup() {
     try {
       reader.close();
+    }
+    catch (IOException e) {
+      System.err.println("Failed to close reader.");
+      e.printStackTrace();
+    }
+    try {
       writer.close();
     }
     catch (IOException e) {
-      System.err.println("Failed to cleanup reader and writer.");
+      System.err.println("Failed to close writer.");
       e.printStackTrace();
     }
   }
@@ -162,8 +169,8 @@ public class TiledReaderWriter {
    * To read an image file and write out an OME Tiff tiled image on the command line:
    *
    * $ java TiledReaderWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException 
-   * @throws FormatException 
+   * @throws IOException
+   * @throws FormatException
    */
   public static void main(String[] args) throws FormatException, IOException {
     int tileWidth = Integer.parseInt(args[2]);

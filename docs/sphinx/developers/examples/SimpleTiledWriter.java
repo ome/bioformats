@@ -32,7 +32,8 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading a full image and use an OME Tiff writer to automatically write out the image in a tiled format,
+ * Example class for reading a full image and use an OME Tiff writer to 
+ * automatically write out the image in a tiled format,
  * using Bio-Formats version 5.3 or later.
  *
  * @author David Gault dgault at dundee.ac.uk
@@ -58,7 +59,8 @@ public class SimpleTiledWriter {
   private int tileSizeY;
 
   /**
-   * Construct a new SimpleTiledWriter to read the specified input file and write the given output file using the tile sizes provided.
+   * Construct a new SimpleTiledWriter to read the specified input file 
+   * and write the given output file using the tile sizes provided.
    *
    * @param inputFile the file to be read
    * @param outputFile the file to be written
@@ -126,10 +128,16 @@ public class SimpleTiledWriter {
   private void cleanup() {
     try {
       reader.close();
+    }
+    catch (IOException e) {
+      System.err.println("Failed to close reader.");
+      e.printStackTrace();
+    }
+    try {
       writer.close();
     }
     catch (IOException e) {
-      System.err.println("Failed to cleanup reader and writer.");
+      System.err.println("Failed to close writer.");
       e.printStackTrace();
     }
   }
@@ -138,8 +146,8 @@ public class SimpleTiledWriter {
    * To read an image file and write out an OME Tiff tiled image on the command line:
    *
    * $ java SimpleTiledWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException 
-   * @throws FormatException 
+   * @throws IOException
+   * @throws FormatException
    */
   public static void main(String[] args) throws FormatException, IOException {
     int tileWidth = Integer.parseInt(args[2]);
