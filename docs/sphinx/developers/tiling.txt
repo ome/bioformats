@@ -1,0 +1,129 @@
+Tiled reading and writing in Bio-Formats
+========================================
+
+This guide pertains to version 5.3 and later.
+
+Reading tiled images
+--------------------
+
+The reading of tiled images is straightforward and can be done in much the same way as reading a full image. In this case, to read an individual tile, we pass to the reader parameters for the x and y co-ordinates of the tile to read and the height and width of tile desired.
+
+::
+
+    byte[] tile = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
+
+For Tiff based readers, if the image has specifically been written using tiles, then the tile width and height used can be found as below. These values can then be used with the above command to read the correct tiles individually.
+
+::
+
+    IFD tileIFd = reader.getIFDs().get(0);
+    int tileHeight = tileIFd.getIFDIntValue(IFD.TILE_LENGTH);
+    int tileWidth = tileIFd.getIFDIntValue(IFD.TILE_WIDTH);
+
+Introduction to tiled writing
+-----------------------------
+
+Tiled writing is currently supported for Tiff based formats.
+To setup an image writer to use tiling the following 2 API functions are provided:
+
+::
+
+	public int setTileSizeX(int tileSize) throws FormatException
+	public int setTileSizeY(int tileSize) throws FormatException
+
+Each function takes in an integer parameter for the desired tile size. As not all tile sizes are supported, the image writer will round the requested value to the nearest supported tile size. The return value will contain the actual tiling size which will be used by the writer.
+
+To find out the tiling size currently being used at any point there are 2 further API functions to get the current tile size for a writer. If tiling is not being used or is not supported then the full image height and width will be returned.
+
+::
+
+	public int getTileSizeX() throws FormatException
+	public int getTileSizeY() throws FormatException 
+
+The tiling parameters for writers must be set after the image metadata is set. An example of initializing a writer for tiling is show below
+
+::
+
+      // set up the writer and associate it with the output file
+      writer = new OMETiffWriter();
+      writer.setMetadataRetrieve(omexml);
+
+      // set the tile height and width for writing
+      writer.setTileSizeX(tileSizeX);
+      writer.setTileSizeY(tileSizeY);
+
+      // set the output file
+      writer.setId(outputFile);
+
+
+Simple tiled writing
+--------------------
+
+The simplest way to write a tiled image is to set the tiling parameters on your image writer as above and have the writer automatically handle the tiling. Once the tile sizes have been set you may simply read and write your image files as normal.
+
+::
+
+      for (int series=0; series<reader.getSeriesCount(); series++) {
+        reader.setSeries(series);
+        writer.setSeries(series);
+
+        // convert each image in the current series
+        for (int image=0; image<reader.getImageCount(); image++) {
+          // Read tiles from the input file and write them to the output OME Tiff
+          // The OME Tiff Writer will automatically write the images in a tiled format
+          byte[] buf = reader.openBytes(image);
+          writer.saveBytes(image, buf);
+        }
+      }
+
+Full working example code is provided in    
+   :download:`SimpleTiledWriter.java <examples/SimpleTiledWriter.java>` - code from that class is
+   referenced here in part. You will need to have **bioformats_package.jar** in your 
+   Java CLASSPATH in order to compile SimpleTiledWriter.java.
+
+Reading and writing using tiling
+--------------------------------
+
+For the most efficient reading and writing of tiles you may instead wish to read in and write out the individual image tiles one at a time. 
+
+To do this you can setup the reader and writer as in the previous example above. In this case, when setting the tile height and width used it is important to store the return values which will be the valid tile size used by the writer.
+
+::
+
+      // set the tile height and width and store the actual values used by the writer
+      int tileWidth = writer.setTileSizeX(tileSizeX);
+      int tileHeight = writer.setTileSizeY(tileSizeY) 
+
+This time for each image you must determined the number of tiles using the actual tile height and width being used.
+
+::
+
+        int width = reader.getSizeX();
+        int height = reader.getSizeY();
+
+        // Determined the number of tiles to read and write
+        int nXTiles = width / tileWidth;
+        int nYTiles = height / tileHeight;
+        if (nXTiles * tileWidth != width) nXTiles++;
+        if (nYTiles * tileHeight != height) nYTiles++;
+
+Now each tile can be read and written individually
+
+::
+
+        for (int y=0; y<nYTiles; y++) {
+          for (int x=0; x<nXTiles; x++) {
+            // The x and y coordinates for the current tile
+            int tileX = x * tileWidth;
+            int tileY = y * tileHeight;
+
+            // Read tiles from the input file and write them to the output OME Tiff
+            byte[] buf = reader.openBytes(image, tileX, tileY, tileWidth, tileHeight);
+            writer.saveBytes(image, buf, tileX, tileY, tileWidth, tileHeight);
+          }
+        }
+
+Full working example code is provided in    
+   :download:`TiledReaderWriter.java <examples/TiledReaderWriter.java>` - code from that class is
+   referenced here in part. You will need to have **bioformats_package.jar** in your 
+   Java CLASSPATH in order to compile TiledReaderWriter.java.
