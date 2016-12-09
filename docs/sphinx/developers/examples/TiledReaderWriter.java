@@ -116,6 +116,10 @@ public class TiledReaderWriter {
    * @throws IOException 
    * @throws FormatException */
   public void readWriteTiles() throws FormatException, IOException {
+    int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
+    int tilePlaneSize = tileSizeX * tileSizeY * reader.getRGBChannelCount() * bpp;
+    byte[] buf = new byte[tilePlaneSize];
+
     for (int series=0; series<reader.getSeriesCount(); series++) {
       reader.setSeries(series);
       writer.setSeries(series);
@@ -138,7 +142,7 @@ public class TiledReaderWriter {
             int tileY = y * tileSizeY;
 
             // Read tiles from the input file and write them to the output OME Tiff
-            byte[] buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
+            buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
             writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
           }
         }

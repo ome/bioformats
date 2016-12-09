@@ -104,6 +104,8 @@ public class SimpleTiledWriter {
 
       writer.setId(outputFile);
 
+      byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
+
       for (int series=0; series<reader.getSeriesCount(); series++) {
         reader.setSeries(series);
         writer.setSeries(series);
@@ -112,7 +114,7 @@ public class SimpleTiledWriter {
         for (int image=0; image<reader.getImageCount(); image++) {
           // Read tiles from the input file and write them to the output OME Tiff
           // The OME Tiff Writer will automatically write the images in a tiled format
-          byte[] buf = reader.openBytes(image);
+          buf = reader.openBytes(image);
           writer.saveBytes(image, buf);
         }
       }
