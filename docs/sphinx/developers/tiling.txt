@@ -1,7 +1,6 @@
 Tiled reading and writing in Bio-Formats
 ========================================
 
-This guide pertains to version 5.3 and later.
 
 Reading tiled images
 --------------------
