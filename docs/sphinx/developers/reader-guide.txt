@@ -124,8 +124,8 @@ Every reader also has an instance of :javadoc:`loci.formats.CoreMetadata
 CoreMetadata, which are essential to reading image planes.
 
 If you read from a file using something other than
-:javadoc:`loci.common.RandomAccessInputStream <loci/common/RandomAccessInputStream.html>` or
-:javadoc:`loci.common.Location <loci/common/Location.html>`,
+:common_javadoc:`loci.common.RandomAccessInputStream <loci/common/RandomAccessInputStream.html>` or
+:common_javadoc:`loci.common.Location <loci/common/Location.html>`,
 you *must* use the file name returned by ``Location.getMappedId(String)``, not
 the file name passed to the reader.
 Thus, a stub for ``initFile(String)`` might look like this:
@@ -144,8 +144,8 @@ Thus, a stub for ``initFile(String)`` might look like this:
 
 
 For more details, see
-:javadoc:`loci.common.Location.mapId(java.lang.String, java.lang.String) <loci/common/Location.html#mapId(java.lang.String, java.lang.String)>`
-and :javadoc:`loci.common.Location.getMappedId(java.lang.String) <loci/common/Location.html#getMappedId(java.lang.String)>`.
+:common_javadoc:`loci.common.Location.mapId(java.lang.String, java.lang.String) <loci/common/Location.html#mapId(java.lang.String, java.lang.String)>`
+and :common_javadoc:`loci.common.Location.getMappedId(java.lang.String) <loci/common/Location.html#getMappedId(java.lang.String)>`.
 
 Variables to populate
 ---------------------
@@ -179,19 +179,19 @@ These variables are:
 Other useful things
 -------------------
 
-- :javadoc:`loci.common.RandomAccessInputStream
+- :common_javadoc:`loci.common.RandomAccessInputStream
   <loci/common/RandomAccessInputStream.html>` is a
   hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
   InputStream, and implements the DataInput interface.  It is recommended that
   you use this for reading files.
 
-- :javadoc:`loci.common.Location <loci/common/Location.html>` provides an API
+- :common_javadoc:`loci.common.Location <loci/common/Location.html>` provides an API
   similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
   instead of File.  See the :javadoc:`Javadocs <>` for additional information.
 
-- :javadoc:`loci.common.DataTools <loci/common/DataTools.html>` provides a
+- :common_javadoc:`loci.common.DataTools <loci/common/DataTools.html>` provides a
   number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessInputStream (or other DataInput implementation).

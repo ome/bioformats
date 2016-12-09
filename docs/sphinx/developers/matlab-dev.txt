@@ -181,8 +181,8 @@ Changing the logging level
 
 By default, ``bfopen`` uses ``bfInitLogging`` to initialize the logging system
 at the `WARN` level. To change the root logging level, use the
-:javadoc:`DebugTools <loci/common/DebugTools.html>` methods as described in
-the :doc:`logging` section.
+:common_javadoc:`DebugTools <loci/common/DebugTools.html>` methods as
+described in the :doc:`logging` section.
 
 .. literalinclude:: examples/bftest.m
   :language: matlab
