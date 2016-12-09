@@ -9,18 +9,18 @@ All format readers should extend either :javadoc:`loci.formats.FormatReader
 Methods to override
 -------------------
 
-- :javadoc:`isSingleFile(java.lang.String) <loci/formats/IFormatReader.html#isSingleFile(java.lang.String)>`
+- :javadoc:`isSingleFile(java.lang.String) <loci/formats/IFormatReader.html#isSingleFile-java.lang.String->`
   Whether or not the named file is expected to be the only file in the
   dataset.  This only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-- :javadoc:`isThisType(loci.common.RandomAccessInputStream) <loci/formats/IFormatReader.html#isThisType(loci.common.RandomAccessInputStream)>`
+- :javadoc:`isThisType(loci.common.RandomAccessInputStream) <loci/formats/IFormatReader.html#isThisType-loci.common.RandomAccessInputStream->`
   Check the first few bytes of a file to determine if the file can be read by
   this reader.  You can assume that index 0 in the stream corresponds to
   the index 0 in the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-- :javadoc:`fileGroupOption(java.lang.String) <loci/formats/IFormatReader.html#fileGroupOption(java.lang.String)>`
+- :javadoc:`fileGroupOption(java.lang.String) <loci/formats/IFormatReader.html#fileGroupOption-java.lang.String->`
   Returns an indication of whether or not the files in a multi-file dataset
   can be handled individually.  The return value should be one of the
   following:
@@ -35,7 +35,7 @@ Methods to override
   This method only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-- :javadoc:`getSeriesUsedFiles(boolean) <loci/formats/IFormatReader.html#getSeriesUsedFiles(boolean)>`
+- :javadoc:`getSeriesUsedFiles(boolean) <loci/formats/IFormatReader.html#getSeriesUsedFiles-boolean->`
   You only need to override this if your format uses multiple files in a
   single dataset.  This method should return a list of all files
   associated with the given file name and the current series (i.e. every file
@@ -47,7 +47,7 @@ Methods to override
   ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file
   name is non-null.
 
-- :javadoc:`openBytes(int, byte[], int, int, int, int) <loci/formats/IFormatReader.html#openBytes(int, byte[], int, int, int, int)>`
+- :javadoc:`openBytes(int, byte[], int, int, int, int) <loci/formats/IFormatReader.html#openBytes-int, byte[], int, int, int, int->`
   Returns a byte array containing the pixel data for a specified subimage
   from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
@@ -55,16 +55,16 @@ Methods to override
   :javadoc:`FormatException <loci/formats/FormatException.html>` if the image
   number is invalid (less than 0 or >= the number of images).  The ordering of
   the array returned by openBytes should correspond to the values returned by
-  :javadoc:`isLittleEndian <loci/formats/IFormatReader.html#isLittleEndian()>`
+  :javadoc:`isLittleEndian <loci/formats/IFormatReader.html#isLittleEndian-->`
   and
-  :javadoc:`isInterleaved <loci/formats/IFormatReader.html#isInterleaved()>`.
+  :javadoc:`isInterleaved <loci/formats/IFormatReader.html#isInterleaved-->`.
   Also, the length of the byte array should be [image width * image height *
   bytes per pixel].  Extra bytes will generally be truncated. It is recommended
   that the first line of this method be
   ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h)`` -
   this ensures that all of the parameters are valid.
 
-- :javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile(java.lang.String)>`
+- :javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile-java.lang.String->`
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
   opened.  Generally, you will want to start by calling
@@ -83,9 +83,9 @@ Methods to override
 
   The most common way to set up the OME-XML metadata for the reader is to
   initialize the MetadataStore using the
-  :javadoc:`makeFilterMetadata() <loci/formats/FormatReader.html#makeFilterMetadata()>` method and populate the
+  :javadoc:`makeFilterMetadata() <loci/formats/FormatReader.html#makeFilterMetadata-->` method and populate the
   Pixels elements of the metadata store from the ``core`` variable using the
-  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader) <loci/formats/MetadataTools.html#populatePixels(loci.formats.meta.MetadataStore, loci.formats.IFormatReader)>` method::
+  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader) <loci/formats/MetadataTools.html#populatePixels-loci.formats.meta.MetadataStore, loci.formats.IFormatReader->` method::
 
     # Initialize the OME-XML metadata from the core variable
     MetadataStore store = makeFilterMetadata();
@@ -93,7 +93,7 @@ Methods to override
 
   If the reader includes metadata at the plane level, you can initialize the
   Plane elements under the Pixels using
-  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader, doPlane) <loci/formats/MetadataTools.html#populatePixels(loci.formats.meta.MetadataStore, loci.formats.IFormatReader, boolean)>`::
+  :javadoc:`MetadataTools.populatePixels(MetadataStore, FormatReader, doPlane) <loci/formats/MetadataTools.html#populatePixels-loci.formats.meta.MetadataStore, loci.formats.IFormatReader, boolean->`::
 
     MetadataTools.populatePixels(store, this, true);
 
@@ -107,7 +107,7 @@ Methods to override
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveImmersion(getImmersion("Oil"), 0, 0);
 
-- :javadoc:`close(boolean) <loci/formats/IFormatReader.html#close(boolean)>`
+- :javadoc:`close(boolean) <loci/formats/IFormatReader.html#close-boolean->`
   Cleans up any resources used by the reader.  Global variables should be
   reset to their initial state, and any open files or delegate readers should
   be closed.
@@ -117,7 +117,7 @@ Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing :javadoc:`loci.formats.FormatReader
 <loci/formats/FormatReader.html>`).  In this case, it is
 usually sufficient to override
-:javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile(java.lang.String)>` and :javadoc:`isThisType(byte[]) <loci/formats/FormatReader.html#isThisType(byte[])>`.
+:javadoc:`initFile(java.lang.String) <loci/formats/FormatReader.html#initFile-java.lang.String->` and :javadoc:`isThisType(byte[]) <loci/formats/FormatReader.html#isThisType-byte[]->`.
 
 Every reader also has an instance of :javadoc:`loci.formats.CoreMetadata
 <loci/formats/CoreMetadata.html>`.  All readers should populate the fields in
@@ -144,8 +144,8 @@ Thus, a stub for ``initFile(String)`` might look like this:
 
 
 For more details, see
-:common_javadoc:`loci.common.Location.mapId(java.lang.String, java.lang.String) <loci/common/Location.html#mapId(java.lang.String, java.lang.String)>`
-and :common_javadoc:`loci.common.Location.getMappedId(java.lang.String) <loci/common/Location.html#getMappedId(java.lang.String)>`.
+:common_javadoc:`loci.common.Location.mapId(java.lang.String, java.lang.String) <loci/common/Location.html#mapId-java.lang.String, java.lang.String->`
+and :common_javadoc:`loci.common.Location.getMappedId(java.lang.String) <loci/common/Location.html#getMappedId-java.lang.String->`.
 
 Variables to populate
 ---------------------

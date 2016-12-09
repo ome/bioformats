@@ -219,9 +219,9 @@ Individual planes can be queried using the
     series1_plane1 = bfGetPlane(reader, 1);
 
 To switch between series in a multi-image file, use the
-:javadoc:`setSeries(int) <loci/formats/IFormatReader.html#setSeries(int)>` method. To retrieve a plane given a set of
+:javadoc:`setSeries(int) <loci/formats/IFormatReader.html#setSeries-int->` method. To retrieve a plane given a set of
 `(z, c, t)` coordinates, these coordinates must be linearized first using
-:javadoc:`getIndex(int, int, int) <loci/formats/IFormatReader.html#getIndex(int, int, int)>`
+:javadoc:`getIndex(int, int, int) <loci/formats/IFormatReader.html#getIndex-int, int, int->`
 
 ::
 
@@ -275,7 +275,7 @@ Improving reading performance
 
 Initializing a Bio-Formats reader can consume substantial time and memory.
 Most of the initialization time is spend in the
-:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>`
+:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId-java.lang.String->`
 call. Various factors can impact the performance of this step including the
 file size, the amount of metadata in the image and also the file format itself.
 
@@ -293,7 +293,7 @@ illustrated by the following example:
   :start-after: memoizer-start
   :end-before: memoizer-end
 
-If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId(java.lang.String)>` method is larger
+If the time required to call :javadoc:`setId(java.lang.String) <loci/formats/Memoizer.html#setId-java.lang.String->` method is larger
 than :javadoc:`DEFAULT_MINIMUM_ELAPSED <loci/formats/Memoizer.html#DEFAULT_MINIMUM_ELAPSED>` or the minimum value
 passed in the constructor, the initialized reader will be cached in a memo
 file under the same folder as the input file. Any subsequent call to
