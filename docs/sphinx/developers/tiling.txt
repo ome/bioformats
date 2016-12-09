@@ -77,8 +77,8 @@ The simplest way to write a tiled image is to set the tiling parameters on your 
 
 Full working example code is provided in    
    :download:`SimpleTiledWriter.java <examples/SimpleTiledWriter.java>` - code from that class is
-   referenced here in part. You will need to have **bioformats_package.jar** in your 
-   Java CLASSPATH in order to compile SimpleTiledWriter.java.
+   referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
+   Java CLASSPATH in order to compile :file:`SimpleTiledWriter.java`.
 
 Reading and writing using tiling
 --------------------------------
@@ -124,5 +124,5 @@ Now each tile can be read and written individually.
 
 Full working example code is provided in    
    :download:`TiledReaderWriter.java <examples/TiledReaderWriter.java>` - code from that class is
-   referenced here in part. You will need to have **bioformats_package.jar** in your 
-   Java CLASSPATH in order to compile TiledReaderWriter.java.
+   referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
+   Java CLASSPATH in order to compile :file:`TiledReaderWriter.java`.
