@@ -43,18 +43,27 @@ import loci.common.Location;
 import loci.formats.FormatTools;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.in.FakeReader;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertEqualsNoOrder;
+import static org.testng.Assert.assertNotNull;
 import static loci.formats.FilePatternBlock.BLOCK_START;
 import static loci.formats.FilePatternBlock.BLOCK_END;
 
 
 public class FileStitcherTest {
+
+  public static final String KEY = "test.option";
+  public static final String VALUE = "foo";
 
   // expected core metadata for the final stitched image
   private static final int PIXEL_TYPE = FormatTools.UINT8;
@@ -168,6 +177,15 @@ public class FileStitcherTest {
     };
   }
 
+  @DataProvider(name = "levels")
+  public Object[][] createLevels() {
+    return new Object[][] {
+      {MetadataLevel.MINIMUM},
+      {MetadataLevel.NO_OVERLAYS},
+      {MetadataLevel.ALL}
+    };
+  }
+
   @Test(dataProvider = "dimZTC")
   public void testStitch(Integer[] dims) throws IOException, FormatException {
     // dims: ZCT dimensions for each individual file in the pattern
@@ -191,6 +209,33 @@ public class FileStitcherTest {
     String pattern = String.format(TEMPLATE, blocks.toString(), ptString,
                                    SIZE_X, SIZE_Y, dims[0], dims[1], dims[2]);
     check(pattern, filenames.toArray(new String[filenames.size()]), dims);
+  }
+
+  @Test
+  public void testOptionsExplicit() throws IOException, FormatException {
+    DynamicMetadataOptions opt = new DynamicMetadataOptions();
+    opt.set(KEY, VALUE);
+    FileStitcher fs = new FileStitcher();
+    fs.setMetadataOptions(opt);
+    fs.setId("test_z<0-2>.fake");
+    for (IFormatReader r: fs.getUnderlyingReaders()) {
+      MetadataOptions rOpt = r.getMetadataOptions();
+      assertTrue(rOpt instanceof DynamicMetadataOptions);
+      String v = ((DynamicMetadataOptions) rOpt).get(KEY);
+      assertNotNull(v);
+      assertEquals(v, VALUE);
+    }
+  }
+
+  @Test(dataProvider = "levels")
+  public void testOptionsImplicit(MetadataLevel level)
+      throws IOException, FormatException {
+    FileStitcher fs = new FileStitcher();
+    fs.getMetadataOptions().setMetadataLevel(level);
+    fs.setId("test_z<0-2>.fake");
+    for (IFormatReader r: fs.getUnderlyingReaders()) {
+      assertEquals(r.getMetadataOptions().getMetadataLevel(), level);
+    }
   }
 
 }

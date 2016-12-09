@@ -1256,6 +1256,7 @@ public class FileStitcher extends ReaderWrapper {
           readers[i] = new DimensionSwapper(new ImageReader(classList));
         }
         else readers[i] = new DimensionSwapper();
+        readers[i].setMetadataOptions(getMetadataOptions());
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);
