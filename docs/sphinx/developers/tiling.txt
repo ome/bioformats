@@ -5,13 +5,13 @@ Tiled reading and writing in Bio-Formats
 Reading tiled images
 --------------------
 
-The reading of tiled images is straightforward and can be done in much the same way as reading a full image. In this case, to read an individual tile, we pass to the reader parameters for the x and y co-ordinates of the tile to read and the height and width of tile desired.
+The reading of tiled images is straightforward and can be done in much the same way as reading a full image. In this case, to read an individual tile, we pass to the reader parameters for the x and y coordinates of the tile to read and the height and width of tile desired.
 
 ::
 
     byte[] tile = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
 
-For Tiff based readers, if the image has specifically been written using tiles, then the tile width and height used can be found as below. These values can then be used with the above command to read the correct tiles individually.
+For "TIFF-based" readers, if the image has been written using tiles, then the tile width and height used can be found as below. These values can then be used with the above command to read the correct tiles individually.
 
 ::
 
@@ -23,7 +23,7 @@ Introduction to tiled writing
 -----------------------------
 
 Tiled writing is currently supported for Tiff based formats.
-To setup an image writer to use tiling the following 2 API functions are provided:
+To set up an image writer to use tiling the following 2 API functions are provided:
 
 ::
 
@@ -39,7 +39,7 @@ To find out the tiling size currently being used at any point there are 2 furthe
 	public int getTileSizeX() throws FormatException
 	public int getTileSizeY() throws FormatException 
 
-The tiling parameters for writers must be set after the image metadata is set. An example of initializing a writer for tiling is show below
+The tiling parameters for writers must be set after the image metadata is set. An example of initializing a writer for tiling is shown below.
 
 ::
 
@@ -85,7 +85,7 @@ Reading and writing using tiling
 
 For the most efficient reading and writing of tiles you may instead wish to read in and write out the individual image tiles one at a time. 
 
-To do this you can setup the reader and writer as in the previous example above. In this case, when setting the tile height and width used it is important to store the return values which will be the valid tile size used by the writer.
+To do this you can set up the reader and writer as in the previous example above. In this case, when setting the tile height and width used it is important to store the return values which will be the valid tile size used by the writer.
 
 ::
 
@@ -106,7 +106,7 @@ This time for each image you must determined the number of tiles using the actua
         if (nXTiles * tileWidth != width) nXTiles++;
         if (nYTiles * tileHeight != height) nYTiles++;
 
-Now each tile can be read and written individually
+Now each tile can be read and written individually.
 
 ::
 
