@@ -260,5 +260,5 @@ expected to replace the stub .jar files at runtime.
 
 `JXRlib <https://github.com/glencoesoftware/jxrlib>`__:
 
-This component contains the Java bindings for jxrlib an open source
+This component contains the Java bindings for jxrlib, an open source
 implementation of the JPEG-XR image format standard.
