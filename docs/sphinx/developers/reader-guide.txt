@@ -296,8 +296,7 @@ Other useful things
 
 \* = may result in loss of precision
 
-- If you wish to test using TestNG,
-  :javadoc:`loci.tests.testng.FormatReaderTest <loci/tests/testng/FormatReaderTest.html>`
+- If you wish to test using TestNG, ``loci.tests.testng.FormatReaderTest``
   provides several basic tests that work with all Bio-Formats readers. See
   the FormatReaderTest source code for additional information.
 
