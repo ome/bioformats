@@ -52,4 +52,8 @@ Utility: |Good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-Bio-Formats does not support CZI files generated using JPEG-XR compression.
+JPEG-XR compressed CZI files are supported on the following 64-bit platforms:
+
+* Windows 7 and above with `Visual Studio 2015 C++ Redistributable <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_
+* CentOS 6 and above, Ubuntu 12.04 and above
+* OS X 10.10 and above
