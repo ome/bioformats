@@ -33,8 +33,7 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Example class for reading a full image and use an OME Tiff writer to 
- * automatically write out the image in a tiled format,
- * using Bio-Formats version 5.3 or later.
+ * automatically write out the image in a tiled format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
@@ -64,14 +63,14 @@ public class SimpleTiledWriter {
    *
    * @param inputFile the file to be read
    * @param outputFile the file to be written
-   * @param tileWidth the width of tile to attempt to use
-   * @param tileHeight the height of tile to attempt to use
+   * @param tileSizeX the width of tile to attempt to use
+   * @param tileSizeY the height of tile to attempt to use
    */
-  public SimpleTiledWriter(String inputFile, String outputFile, int tileWidth, int tileHeight) {
+  public SimpleTiledWriter(String inputFile, String outputFile, int tileSizeX, int tileSizeY) {
     this.inputFile = inputFile;
     this.outputFile = outputFile;
-    this.tileSizeX = tileWidth;
-    this.tileSizeY = tileHeight;
+    this.tileSizeX = tileSizeX;
+    this.tileSizeY = tileSizeY;
   }
 
   /**
@@ -150,9 +149,9 @@ public class SimpleTiledWriter {
    * @throws FormatException
    */
   public static void main(String[] args) throws FormatException, IOException {
-    int tileWidth = Integer.parseInt(args[2]);
-    int tileHeight = Integer.parseInt(args[3]);
-    SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileWidth, tileHeight);
+    int tileSizeX = Integer.parseInt(args[2]);
+    int tileSizeY = Integer.parseInt(args[3]);
+    SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
 
     // Read in images from the input and write them out automatically using tiling
     tiledWriter.readWriteTiles();

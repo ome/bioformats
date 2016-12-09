@@ -32,8 +32,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading and writing a file in a tiled OME Tiff format,
- * using Bio-Formats version 5.3 or later.
+ * Example class for reading and writing a file in a tiled OME Tiff format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
@@ -63,14 +62,14 @@ public class TiledReaderWriter {
    *
    * @param inputFile the file to be read
    * @param outputFile the file to be written
-   * @param tileWidth the width of tile to attempt to use
-   * @param tileHeight the height of tile to attempt to use
+   * @param tileSizeX the width of tile to attempt to use
+   * @param tileSizeY the height of tile to attempt to use
    */
-  public TiledReaderWriter(String inputFile, String outputFile, int tileWidth, int tileHeight) {
+  public TiledReaderWriter(String inputFile, String outputFile, int tileX, int tileY) {
     this.inputFile = inputFile;
     this.outputFile = outputFile;
-    this.tileSizeX = tileWidth;
-    this.tileSizeY = tileHeight;
+    this.tileSizeX = tileSizeX;
+    this.tileSizeY = tileSizeY;
   }
 
   /**
@@ -173,9 +172,9 @@ public class TiledReaderWriter {
    * @throws FormatException
    */
   public static void main(String[] args) throws FormatException, IOException {
-    int tileWidth = Integer.parseInt(args[2]);
-    int tileHeight = Integer.parseInt(args[3]);
-    TiledReaderWriter tiledReadWriter = new TiledReaderWriter(args[0], args[1], tileWidth, tileHeight);
+    int tileSizeX = Integer.parseInt(args[2]);
+    int tileSizeY = Integer.parseInt(args[3]);
+    TiledReaderWriter tiledReadWriter = new TiledReaderWriter(args[0], args[1], tileSizeX, tileSizeY);
     // initialize the files
     boolean initializationSuccess = tiledReadWriter.initialize();
 

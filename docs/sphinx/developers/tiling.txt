@@ -39,7 +39,8 @@ To find out the tiling size currently being used at any point there are 2 furthe
 	public int getTileSizeX() throws FormatException
 	public int getTileSizeY() throws FormatException 
 
-The tiling parameters for writers must be set after the image metadata is set. An example of initializing a writer for tiling is shown below.
+The tiling parameters for writers must be set after the image metadata is set. 
+An example of initializing a writer for tiling is shown below.
 
 ::
 
@@ -58,7 +59,9 @@ The tiling parameters for writers must be set after the image metadata is set. A
 Simple tiled writing
 --------------------
 
-The simplest way to write a tiled image is to set the tiling parameters on your image writer as above and have the writer automatically handle the tiling. Once the tile sizes have been set you may simply read and write your image files as normal.
+The simplest way to write a tiled image is to set the tiling parameters on your image writer as 
+above and have the writer automatically handle the tiling. Once the tile sizes have been set 
+you may simply read and write your image files as normal.
 
 ::
 
@@ -85,13 +88,14 @@ Reading and writing using tiling
 
 For the most efficient reading and writing of tiles you may instead wish to read in and write out the individual image tiles one at a time. 
 
-To do this you can set up the reader and writer as in the previous example above. In this case, when setting the tile height and width used it is important to store the return values which will be the valid tile size used by the writer.
+To do this you can set up the reader and writer as in the previous example above. In this case, 
+when setting the tile height and width used it is important to store the return values which will be the valid tile size used by the writer.
 
 ::
 
       // set the tile height and width and store the actual values used by the writer
-      int tileWidth = writer.setTileSizeX(tileSizeX);
-      int tileHeight = writer.setTileSizeY(tileSizeY) 
+      int tileSizeX = writer.setTileSizeX(tileSizeX);
+      int tileSizeY = writer.setTileSizeY(tileSizeY);
 
 This time for each image you must determined the number of tiles using the actual tile height and width being used.
 
@@ -101,10 +105,10 @@ This time for each image you must determined the number of tiles using the actua
         int height = reader.getSizeY();
 
         // Determined the number of tiles to read and write
-        int nXTiles = width / tileWidth;
-        int nYTiles = height / tileHeight;
-        if (nXTiles * tileWidth != width) nXTiles++;
-        if (nYTiles * tileHeight != height) nYTiles++;
+        int nXTiles = width / tileSizeX;
+        int nYTiles = height / tileSizeY;
+        if (nXTiles * tileSizeX != width) nXTiles++;
+        if (nYTiles * tileSizeY != height) nYTiles++;
 
 Now each tile can be read and written individually.
 
@@ -113,16 +117,16 @@ Now each tile can be read and written individually.
         for (int y=0; y<nYTiles; y++) {
           for (int x=0; x<nXTiles; x++) {
             // The x and y coordinates for the current tile
-            int tileX = x * tileWidth;
-            int tileY = y * tileHeight;
+            int tileX = x * tileSizeX;
+            int tileY = y * tileSizeY;
 
             // Read tiles from the input file and write them to the output OME Tiff
-            byte[] buf = reader.openBytes(image, tileX, tileY, tileWidth, tileHeight);
-            writer.saveBytes(image, buf, tileX, tileY, tileWidth, tileHeight);
+            byte[] buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSzieY);
+            writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
           }
         }
 
-Full working example code is provided in    
+Full working example code is provided in
    :download:`TiledReaderWriter.java <examples/TiledReaderWriter.java>` - code from that class is
    referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
    Java CLASSPATH in order to compile :file:`TiledReaderWriter.java`.
