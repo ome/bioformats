@@ -38,6 +38,7 @@ Using Bio-Formats as a Java library
     units
     export
     export2
+    tiling
     logging
     conversion
     matlab-dev
