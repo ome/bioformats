@@ -1,8 +1,8 @@
 Version history
 ===============
 
-5.3.0-m3 (2016 December 8)
---------------------------
+5.3.0 (2016 December 12)
+------------------------
 
 New features/API:
 
@@ -16,8 +16,14 @@ New features/API:
       abstract class defaulting to the entire image width/height
     - added functionality to ``loci.formats.TiffWriter`` adding support for
       tiled images writing for TIFF and derived formats like OME-TIFF
+    - added developer documentation and samples for tiled reading/writing
 * added a new ``MetadataOptions`` implementation supporting arbitrary key/value
   pairs
+* updated the display command line utility to support passing key/value
+  options using :option:`showinf -option`
+* added two options to the CZI reader to disable autostitching and exclude
+  pyramid file attachments. Added new checkboxes to the CZI configuration
+  interface of the ImageJ plugin to activate these options
 
 Bug fixes/deprecations:
 
@@ -37,7 +43,7 @@ Component architecture changes/decoupling:
   `ome/ome-poi GitHub repository <https://github.com/ome/ome-poi>`_
   and consumed as 'org.openmicroscopy:ome-poi' artifact from Maven Central
 * removed specification, xsd-fu and ome-xml components - now decoupled to the
-  new `ome/ome-model Github repository <https://github.com/ome/ome-model>`_
+  new `ome/ome-model GitHub repository <https://github.com/ome/ome-model>`_
   and consumed as 'org.openmicroscopy:{specification,ome-xml}'
   artifacts from Maven Central
 * removed mdbtools component - now decoupled to the new
