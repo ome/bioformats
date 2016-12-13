@@ -219,6 +219,7 @@ public class FileStitcherTest {
     assertNotNull(fs.getUnderlyingReaders());
     fs.setId("test_z<0-2>.fake");
     assertNotNull(fs.getUnderlyingReaders());
+    fs.close();
   }
 
   @Test
