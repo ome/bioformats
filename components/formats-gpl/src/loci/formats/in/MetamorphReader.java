@@ -823,6 +823,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (handler.getLensNA() != 0) {
           store.setObjectiveLensNA(handler.getLensNA(), i, 0);
       }
+      if (handler.getLensRI() != 0) {
+        store.setObjectiveSettingsRefractiveIndex(handler.getLensRI(), 0);
+      }
       store.setObjectiveSettingsID(objectiveID, i);
 
       int waveIndex = 0;
