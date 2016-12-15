@@ -112,7 +112,7 @@ public class TiffWriterTest {
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
     if (percentageOfTilingTests == 0) {
-      return new Object[][] {{0, false, false, 0, 0, null, 0}};
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
     }
 
     int[] tileSizes = {1, 32, 43, 64};
@@ -126,7 +126,7 @@ public class TiffWriterTest {
   @DataProvider(name = "nonTiling")
   public Object[][] createNonTiling() {
     if (percentageOfTilingTests == 0) {
-      return new Object[][] {{0, false, false, 0, 0, null, 0}};
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
     }
     int[] tileSizes = {PLANE_WIDTH};
     int[] channelCounts = {1, 3};
