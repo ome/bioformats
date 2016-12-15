@@ -423,6 +423,9 @@ public class NativeND2Reader extends FormatReader {
 
           long chunkMapEnd = chunkMapPosition + chunkMapLength;
 
+          int imageDataCount = 0;
+          int maxImageIndex = -1;
+
           while(in.getFilePointer() + 1 + 16 < chunkMapEnd) {
 
             char b = (char) in.readByte();
@@ -441,11 +444,30 @@ public class NativeND2Reader extends FormatReader {
             entry.position = in.readLong();
             entry.length = in.readLong();
 
+            if (entry.name.startsWith("ImageDataSeq|")) {
+              imageDataCount++;
+              int imageIndex = -1;
+              try {
+                imageIndex = Integer.parseInt(entry.name.substring("ImageDataSeq|".length()));
+                if (imageIndex > maxImageIndex) {
+                  maxImageIndex = imageIndex;
+                }
+              }
+              catch (NumberFormatException e) {
+                LOGGER.trace(entry.name, e);
+              }
+            }
+
             allChunkPositions.put(entry.position, entry);
 
             if (LOGGER.isDebugEnabled()) {
               LOGGER.debug("ND2 {}", entry.toString());
             }
+          }
+          if (imageDataCount != maxImageIndex + 1) {
+            LOGGER.warn("Discarding chunk map; image data count = {}, max index = {}",
+              imageDataCount, maxImageIndex);
+            useChunkMap = false;
           }
         }
 
