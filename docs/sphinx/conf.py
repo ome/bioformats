@@ -296,24 +296,24 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-target = project + '.tex'
-latex_documents = [
-  (master_doc, target, title, author, 'manual'),
-]
+#target = project + '.tex'
+#latex_documents = [
+#  (master_doc, target, title, author, 'manual'),
+#]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-latex_logo = os.path.join(srcdir, 'images/bio-formats-logo.pdf')
+#latex_logo = os.path.join(srcdir, 'images/bio-formats-logo.pdf')
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-latex_use_parts = True
+#latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = 'footnote'
+#latex_show_urls = 'footnote'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
