@@ -12,10 +12,10 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>formats-docs</artifactId>
+  <artifactId>formats-doc</artifactId>
 
-  <name>Bio-Formats Sphinx documentation</name>
-  <description>Sphinx-generated Bio-Formats documentation.</description>
+  <name>Bio-Formats documentation</name>
+  <description>Documentation for Bio-Formats</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
@@ -28,20 +28,42 @@
   </licenses>
 
   <dependencies>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>formats-gpl</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>formats-bsd</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-gpl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-bsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <properties>
-    <project.rootdir>${basedir}/../..</project.rootdir>
+    <!-- User-settable properties -->
+    <sphinx.bioformats.source.branch>develop</sphinx.bioformats.source.branch>
+    <sphinx.openmicroscopy_source.user>openmicroscopy</sphinx.openmicroscopy_source.user>
+    <sphinx.ome_source.user>ome</sphinx.ome_source.user>
+    <sphinx.omerodoc.uri>http://www.openmicroscopy.org/site/support/omero5.2</sphinx.omerodoc.uri>
+
+    <sphinx.builder>html</sphinx.builder>
+    <sphinx.html.theme>sphinxdoc</sphinx.html.theme>
+
+    <sphinx.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</sphinx.version>
+    <sphinx.release>${project.version}</sphinx.release>
+
+    <!-- Properties to pass through to conf.py -->
+    <sphinx_srcdir>${basedir}</sphinx_srcdir>
+    <sphinx_builddir>${project.build.directory}/sphinx</sphinx_builddir>
+
+    <bioformats_source_branch>${sphinx.bioformats.source.branch}</bioformats_source_branch>
+    <openmicroscopy_source_user>${sphinx.openmicroscopy_source.user}</openmicroscopy_source_user>
+    <ome_source_user>${sphinx.ome_source.user}</ome_source_user>
+    <sphinx_omerodoc_uri>${sphinx.omerodoc.uri}</sphinx_omerodoc_uri>
+
+    <ome_common_version>${ome-common.version}</ome_common_version>
+    <ome_model_version>${ome-model.version}</ome_model_version>
   </properties>
 
   <build>
@@ -50,11 +72,11 @@
       <resource>
         <directory>${project.basedir}/developers/examples</directory>
         <includes>
-            <include>**/*.xml</include>
-            <include>**/*.fake*</include>
+          <include>**/*.xml</include>
+          <include>**/*.fake*</include>
         </includes>
-      </resource> 
-    </resources>      
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -75,6 +97,56 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>copy-configuration</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${sphinx_builddir}</outputDirectory>
+              <includeEmptyDirs>true</includeEmptyDirs>
+              <resources>
+                <resource>
+                  <directory>${basedir}</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>conf.py</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${basedir}/</directory>
+                  <filtering>false</filtering>
+                  <includes>
+                    <include>_static/**</include>
+                  </includes>
+                  <excludes>
+                    <exclude>_static/.*</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.12</version>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -87,4 +159,139 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <!-- Build docs with sphinx -->
+      <id>build-sphinx</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>sphinx.builder</name>
+          <value>!linkcheck</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <executions>
+              <execution>
+                <id>sphinx-docs</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>sphinx-build</executable>
+                  <arguments>
+                    <argument>-D</argument>
+                    <argument>release=${sphinx.release}</argument>
+                    <argument>-D</argument>
+                    <argument>version=${sphinx.version}</argument>
+                    <argument>-D</argument>
+                    <argument>html_theme=${sphinx.html.theme}</argument>
+                    <argument>-W</argument>
+                    <argument>-b</argument>
+                    <argument>${sphinx.builder}</argument>
+                    <argument>-c</argument>
+                    <argument>${sphinx_builddir}</argument>
+                    <argument>-d</argument>
+                    <argument>${sphinx_builddir}/cache</argument>
+                    <argument>${basedir}</argument>
+                    <argument>${sphinx_builddir}/${sphinx.builder}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- As above, but don't fail on warnings when doing linkchecking -->
+      <id>build-sphinx-warnonerror</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>sphinx.builder</name>
+          <value>linkcheck</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.5.0</version>
+            <executions>
+              <execution>
+                <id>sphinx-docs</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>sphinx-build</executable>
+                  <arguments>
+                    <argument>-D</argument>
+                    <argument>release=${sphinx.release}</argument>
+                    <argument>-D</argument>
+                    <argument>version=${sphinx.version}</argument>
+                    <argument>-D</argument>
+                    <argument>html_theme=${sphinx.html.theme}</argument>
+                    <argument>-b</argument>
+                    <argument>${sphinx.builder}</argument>
+                    <argument>-c</argument>
+                    <argument>${sphinx_builddir}</argument>
+                    <argument>-d</argument>
+                    <argument>${sphinx_builddir}/cache</argument>
+                    <argument>${basedir}</argument>
+                    <argument>${sphinx_builddir}/${sphinx.builder}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- Build javadocs by default, but not when running tests -->
+      <id>package-html</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>sphinx.builder</name>
+          <value>html</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly.xml</descriptor>
+              </descriptors>
+              <tarLongFileMode>posix</tarLongFileMode>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-zip</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+   </profiles>
 </project>

@@ -65,7 +65,7 @@ The output file format is determined by the extension of the output file, e.g.
 
     Also note that the specified tile size will affect performance.  If large
     amounts of data are being processed, it is a good idea to try converting a
-    single tile with a few different tile sizes using the :option:`-crop`
+    single tile with a few different tile sizes using the ``-crop``
     option. This gives an idea of what the most performant size will be.
 
 Images can also be written to multiple files by specifying a pattern string

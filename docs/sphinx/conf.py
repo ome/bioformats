@@ -86,7 +86,8 @@ release = 'UNKNOWN'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'CMakeLists.txt']
+relbuildpath=os.path.relpath(builddir, srcdir)
+exclude_patterns = [relbuildpath, 'CMakeLists.txt']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None

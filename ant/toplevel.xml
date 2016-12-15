@@ -100,8 +100,6 @@ Type "ant -p" for a list of targets.
     description="generate the Sphinx HTML documentation">
     <echo>----------=========== Sphinx HTML ===========----------</echo>
     <ant dir="docs/sphinx" target="html"/>
-    <echo>----------=========== Sphinx MAN ===========----------</echo>
-    <ant dir="docs/sphinx" target="man"/>
   </target>
 
   <target name="clean-docs-sphinx"

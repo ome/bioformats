@@ -1,36 +1,39 @@
 # Delegate all make targets directly to ant
 
-ifdef SPHINXOPTS
-ANT_SPHINXOPTS := -Dsphinx.opts="$(SPHINXOPTS)"
-endif
-
 ifdef BF_RELEASE
-ANT_BF_RELEASE := -Drelease.version="$(BF_RELEASE)"
+MVN_BF_RELEASE := -Drelease.version="$(BF_RELEASE)"
 endif
 
 ifdef RELEASE
-ANT_RELEASE := -Dsphinx.release="$(RELEASE)"
+MVN_RELEASE := -Dsphinx.release="$(RELEASE)"
 endif
 
 ifdef VERSION
-ANT_VERSION := -Dsphinx.version="$(VERSION)"
+MVN_VERSION := -Dsphinx.version="$(VERSION)"
 endif
 
 ifdef SOURCE_BRANCH
-ANT_SOURCE_BRANCH := -Dsphinx.source.branch="$(SOURCE_BRANCH)"
+MVN_SOURCE_BRANCH := -Dsphinx.source.branch="$(SOURCE_BRANCH)"
 endif
 
 ifdef SOURCE_USER
-ANT_SOURCE_USER := -Dsphinx.source.user="$(SOURCE_USER)"
+MVN_SOURCE_USER := -Dsphinx.source.user="$(SOURCE_USER)"
 endif
 
 ifdef OMERODOC_URI_JOB
-ANT_OMERODOC_URI_JOB := -Dsphinx.omerodoc.uri="$(OMERODOC_URI_JOB)"
+MVN_OMERODOC_URI_JOB := -Dsphinx.omerodoc.uri="$(OMERODOC_URI_JOB)"
+endif
+
+ifdef SPHINX_THEME
+MVN_SPHINX_THEME := -Dsphinx.html.theme="$(SPHINX_THEME)"
 endif
 
 default: html
 
 %:
-	ant $@ $(ANT_SPHINXOPTS) $(ANT_BF_RELEASE) $(ANT_RELEASE) $(ANT_VERSION) $(ANT_SOURCE_BRANCH) $(ANT_SOURCE_USER) $(ANT_JENKINS_JOB) $(ANT_JENKINS_CPP_JOB) $(ANT_OMERODOC_URI_JOB)
+	mvn -Dsphinx.builder=$@ $(MVN_BF_RELEASE) $(MVN_RELEASE) $(MVN_VERSION) $(MVN_SOURCE_BRANCH) $(MVN_SOURCE_USER) $(MVN_OMERODOC_URI_JOB) $(MVN_SPHINX_THEME)
 
-.PHONY: default
+clean:
+	mvn clean
+
+.PHONY: default clean
