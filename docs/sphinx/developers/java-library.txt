@@ -50,8 +50,6 @@ Dependencies
 
 The complete list of current dependencies is as follows:
 
-.. tabularcolumns:: |l|l|l|
-
 .. list-table::
     :header-rows: 1
 

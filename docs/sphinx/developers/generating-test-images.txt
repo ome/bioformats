@@ -110,8 +110,6 @@ Key-value pairs
 There are several other keys that can be added, a complete list of these,
 with their default values, is shown below.
 
-.. tabularcolumns:: |p{3cm}|p{11cm}|p{2cm}|
-
 .. list-table::
     :header-rows: 1
     :widths: 30, 60, 10

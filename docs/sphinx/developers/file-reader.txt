@@ -33,8 +33,6 @@ Core metadata is the general term for anything that might be needed to work
 with the planes in a file. A list of core metadata fields is given in the
 table below together with the appropriate accessor method:
 
-.. tabularcolumns:: |l|c|
-
 .. list-table::
   :header-rows: 1
 
@@ -121,8 +119,6 @@ Bio-Formats provides a few extras to make file reading more flexible.
   by nesting the wrappers.
 
   The table below summarizes a few wrapper readers of interest:
-
-  .. tabularcolumns:: |l|c|
 
   .. list-table::
     :header-rows: 1
