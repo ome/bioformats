@@ -501,28 +501,7 @@ public class TiffWriterTest {
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
-    TiffWriter writer = new TiffWriter();
-    String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
-    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
-    writer.setCompression(compression);
-    writer.setInterleaved(interleaved);
-    writer.setTileSizeX(tileSize);
-    writer.setTileSizeY(tileSize);
-    writer.setId(tmp.getAbsolutePath());
-
-    int bytes = FormatTools.getBytesPerPixel(pixelType);
-    byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
-    Plane originalPlane = new Plane(plane, littleEndian,
-      !writer.isInterleaved(), rgbChannels, FormatTools.getPixelTypeString(pixelType));
-
-    for (int s=0; s<seriesCount; s++) {
-      writer.setSeries(s);
-      for (int t=0; t<sizeT; t++) {
-        writer.saveBytes(t, plane);
-      }
-    }
-
-    writer.close();
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
 
     TiffReader reader = new TiffReader();
     reader.setId(tmp.getAbsolutePath());
@@ -539,25 +518,7 @@ public class TiffWriterTest {
     assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), expectedTileSize);
     assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), expectedTileSize);
 
-    for (int s=0; s<reader.getSeriesCount(); s++) {
-      reader.setSeries(s);
-      assertEquals(reader.getSizeC(), rgbChannels);
-      int imageCount = reader.isRGB() ? seriesCount * sizeT : rgbChannels * sizeT * seriesCount;
-      assertEquals(reader.getImageCount(), imageCount);
-      for (int image=0; image<reader.getImageCount(); image++) {
-        byte[] readPlane = reader.openBytes(image);
-        boolean lossy = compression.equals(COMPRESSION_JPEG) || compression.equals(COMPRESSION_J2K_LOSSY);
-        boolean isJ2K = compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY);
-        boolean interleavedDiffs = interleaved || (isJ2K && !interleaved);
-        if (!(lossy || interleavedDiffs)) {
-          Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
-            !reader.isInterleaved(), reader.getRGBChannelCount(),
-            FormatTools.getPixelTypeString(reader.getPixelType()));
-
-          assert(originalPlane.equals(newPlane));
-        }
-      }
-    }
+    checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
     tmp.delete();
     reader.close();
@@ -570,12 +531,29 @@ public class TiffWriterTest {
 
     File tmp = File.createTempFile("tiffWriterTest", ".tiff");
     tmp.deleteOnExit();
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
+
+    TiffReader reader = new TiffReader();
+    reader.setId(tmp.getAbsolutePath());
+
+    checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
+
+    tmp.delete();
+    reader.close();
+  }
+
+  private Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
     TiffWriter writer = new TiffWriter();
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
     writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
     writer.setCompression(compression);
     writer.setInterleaved(interleaved);
-    writer.setId(tmp.getAbsolutePath());
+    if (tileSize != PLANE_WIDTH) {
+      writer.setTileSizeX(tileSize);
+      writer.setTileSizeY(tileSize);
+    }
+    writer.setId(file.getAbsolutePath());
 
     int bytes = FormatTools.getBytesPerPixel(pixelType);
     byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
@@ -590,10 +568,11 @@ public class TiffWriterTest {
     }
 
     writer.close();
+    return originalPlane;
+  }
 
-    TiffReader reader = new TiffReader();
-    reader.setId(tmp.getAbsolutePath());
-
+  private void checkImage(TiffReader reader, Plane originalPlane, boolean interleaved, int rgbChannels, 
+      int seriesCount, int sizeT, String compression) throws FormatException, IOException {
     for (int s=0; s<reader.getSeriesCount(); s++) {
       reader.setSeries(s);
       assertEquals(reader.getSizeC(), rgbChannels);
@@ -613,9 +592,6 @@ public class TiffWriterTest {
         }
       }
     }
-
-    tmp.delete();
-    reader.close();
   }
 
   private byte[] getPlane(int width, int height, int bytes) {
