@@ -260,7 +260,7 @@ public class TiffWriter extends FormatWriter {
       synchronized (this) {
         // This operation is synchronized against the TIFF saver.
         synchronized (tiffSaver) {
-          index = prepareToWriteImage(no++, buf, ifd, x, y, w, h);
+          index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
           if (index == -1) {
             return;
           }

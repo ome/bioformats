@@ -28,6 +28,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
       </classpath>
       <sysproperty key="testng.runWriterTilingTests" value="${testng.runWriterTilingTests}"/>
+    	<sysproperty key="testng.runWriterSaveBytesTests" value="${testng.runWriterSaveBytesTests}"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
     </testng>

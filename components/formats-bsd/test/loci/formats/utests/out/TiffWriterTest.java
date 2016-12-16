@@ -96,6 +96,7 @@ public class TiffWriterTest {
 
   /* Percentage of tiling tests to be executed */
   private static int percentageOfTilingTests = 0;
+  private static int percentageOfSaveBytesTests = 0;
 
   @DataProvider(name = "bigTiffSuffixes")
   public Object[][] createSuffixes() {
@@ -111,16 +112,34 @@ public class TiffWriterTest {
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
     if (percentageOfTilingTests == 0) {
-      return new Object[][] {{0, false, false, 0, 0, null, 0}};
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
     }
 
     int[] tileSizes = {1, 32, 43, 64};
-    boolean[] booleanValues = {true, false};
     int[] channelCounts = {1, 3};
     int[] seriesCounts = {1, 5};
+    int[] timeCounts = {1};
     String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
+    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions);
+  }
+  
+  @DataProvider(name = "nonTiling")
+  public Object[][] createNonTiling() {
+    if (percentageOfTilingTests == 0) {
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
+    }
+    int[] tileSizes = {PLANE_WIDTH};
+    int[] channelCounts = {1, 3};
+    int[] seriesCounts = {1};
+    int[] timeCounts = {1, 5};
+    String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
+    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions);
+  }
+
+  private Object[][] getData(int[] tileSizes, int[] channelCounts, int[] seriesCounts, int[] timeCounts, String[] compressions) {
+    boolean[] booleanValues = {true, false};
     int compressionPixelTypeSizes = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
-    int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length;
+    int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length * timeCounts.length;
     Object[][] data = new Object[paramSize][];
     int index = 0;
     for (int tileSize : tileSizes) {
@@ -128,28 +147,30 @@ public class TiffWriterTest {
         for (boolean interleaved : booleanValues) {
           for (int channelCount : channelCounts) {
             for (int seriesCount : seriesCounts) {
-              for (String compression : compressions) {
-                int[] pixelTypes = pixelTypesOther;
-                if (compression.equals(COMPRESSION_J2K)) {
-                  pixelTypes = pixelTypesJ2K;
-                }
-                if (compression.equals(COMPRESSION_J2K_LOSSY)) {
-                  // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
-                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-                      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
-                }
-                else if (compression.equals(COMPRESSION_JPEG)) {
-                  // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
-                  pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
-                }
-                for (int pixelType : pixelTypes) {
-                  if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
-                      (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
-                    data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, compression, pixelType};
-                  } else {
-                    data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, compression, pixelType};
+              for (int timeCount : timeCounts) {
+                for (String compression : compressions) {
+                  int[] pixelTypes = pixelTypesOther;
+                  if (compression.equals(COMPRESSION_J2K)) {
+                    pixelTypes = pixelTypesJ2K;
                   }
-                  index ++;
+                  if (compression.equals(COMPRESSION_J2K_LOSSY)) {
+                    // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
+                    pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+                        FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
+                  }
+                  else if (compression.equals(COMPRESSION_JPEG)) {
+                    // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
+                    pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
+                  }
+                  for (int pixelType : pixelTypes) {
+                    if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
+                        (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
+                      data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, timeCount, compression, pixelType};
+                    } else {
+                      data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, timeCount, compression, pixelType};
+                    }
+                    index ++;
+                  }
                 }
               }
             }
@@ -174,13 +195,19 @@ public class TiffWriterTest {
 
   @BeforeClass
   public void readProperty() throws Exception {
-      String tilingProp = System.getProperty("testng.runWriterTilingTests");
-      if (tilingProp == null ||
-          tilingProp.equals("${testng.runWriterTilingTests}")) return;
-      if (DataTools.parseInteger(tilingProp) == null) return;
-      percentageOfTilingTests = DataTools.parseInteger(tilingProp);
-      if (percentageOfTilingTests < 0) percentageOfTilingTests = 0;
-      if (percentageOfTilingTests > 100) percentageOfTilingTests = 100;
+    percentageOfTilingTests = getPropValue("testng.runWriterTilingTests");
+    percentageOfSaveBytesTests = getPropValue("testng.runWriterSaveBytesTests");
+  }
+  
+  private int getPropValue(String propertyName) {
+    String prop = System.getProperty(propertyName);
+    if (prop == null ||
+        prop.equals("${"+ propertyName + "}")) return 0;
+    if (DataTools.parseInteger(prop) == null) return 0;
+    int propertyValue = DataTools.parseInteger(prop);
+    if (propertyValue < 0) propertyValue = 0;
+    if (propertyValue > 100) propertyValue = 100;
+    return propertyValue;
   }
 
   @BeforeMethod
@@ -469,31 +496,12 @@ public class TiffWriterTest {
 
   @Test(dataProvider = "tiling")
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
-      int seriesCount, String compression, int pixelType) throws Exception {
+      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
     if (percentageOfTilingTests == 0) return;
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
-    TiffWriter writer = new TiffWriter();
-    String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
-    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian));
-    writer.setCompression(compression);
-    writer.setInterleaved(interleaved);
-    writer.setTileSizeX(tileSize);
-    writer.setTileSizeY(tileSize);
-    writer.setId(tmp.getAbsolutePath());
-
-    int bytes = FormatTools.getBytesPerPixel(pixelType);
-    byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
-    Plane originalPlane = new Plane(plane, littleEndian,
-      !writer.isInterleaved(), rgbChannels, FormatTools.getPixelTypeString(pixelType));
-
-    for (int s=0; s<seriesCount; s++) {
-      writer.setSeries(s);
-      writer.saveBytes(0, plane);
-    }
-
-    writer.close();
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
 
     TiffReader reader = new TiffReader();
     reader.setId(tmp.getAbsolutePath());
@@ -510,26 +518,80 @@ public class TiffWriterTest {
     assertEquals(tileIFd.getIFDIntValue(IFD.TILE_LENGTH), expectedTileSize);
     assertEquals(tileIFd.getIFDIntValue(IFD.TILE_WIDTH), expectedTileSize);
 
-    assertEquals(reader.getImageCount(), reader.isRGB() ? seriesCount : rgbChannels * seriesCount );
-    assertEquals(reader.getSizeC(), rgbChannels);
-
-    for (int s=0; s<reader.getSeriesCount(); s++) {
-      reader.setSeries(s);
-      byte[] readPlane = reader.openBytes(0);
-      boolean lossy = compression.equals(COMPRESSION_JPEG) || compression.equals(COMPRESSION_J2K_LOSSY);
-      boolean interleavedDiffs = interleaved || 
-          ((compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY)) && !interleaved);
-      if (!(lossy || interleavedDiffs)) {
-        Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
-          !reader.isInterleaved(), reader.getRGBChannelCount(),
-          FormatTools.getPixelTypeString(reader.getPixelType()));
-
-        assert(originalPlane.equals(newPlane));
-      }
-    }
+    checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
 
     tmp.delete();
     reader.close();
+  }
+
+  @Test(dataProvider = "nonTiling")
+  public void testSaveBytes(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
+    if (percentageOfSaveBytesTests == 0) return;
+
+    File tmp = File.createTempFile("tiffWriterTest", ".tiff");
+    tmp.deleteOnExit();
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
+
+    TiffReader reader = new TiffReader();
+    reader.setId(tmp.getAbsolutePath());
+
+    checkImage(reader, originalPlane, interleaved, rgbChannels, seriesCount, sizeT, compression);
+
+    tmp.delete();
+    reader.close();
+  }
+
+  private Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
+      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
+    TiffWriter writer = new TiffWriter();
+    String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
+    writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
+    writer.setCompression(compression);
+    writer.setInterleaved(interleaved);
+    if (tileSize != PLANE_WIDTH) {
+      writer.setTileSizeX(tileSize);
+      writer.setTileSizeY(tileSize);
+    }
+    writer.setId(file.getAbsolutePath());
+
+    int bytes = FormatTools.getBytesPerPixel(pixelType);
+    byte[] plane = getPlane(PLANE_WIDTH, PLANE_HEIGHT, bytes * rgbChannels);
+    Plane originalPlane = new Plane(plane, littleEndian,
+      !writer.isInterleaved(), rgbChannels, FormatTools.getPixelTypeString(pixelType));
+
+    for (int s=0; s<seriesCount; s++) {
+      writer.setSeries(s);
+      for (int t=0; t<sizeT; t++) {
+        writer.saveBytes(t, plane);
+      }
+    }
+
+    writer.close();
+    return originalPlane;
+  }
+
+  private void checkImage(TiffReader reader, Plane originalPlane, boolean interleaved, int rgbChannels, 
+      int seriesCount, int sizeT, String compression) throws FormatException, IOException {
+    for (int s=0; s<reader.getSeriesCount(); s++) {
+      reader.setSeries(s);
+      assertEquals(reader.getSizeC(), rgbChannels);
+      int imageCount = reader.isRGB() ? seriesCount * sizeT : rgbChannels * sizeT * seriesCount;
+      assertEquals(reader.getImageCount(), imageCount);
+      for (int image=0; image<reader.getImageCount(); image++) {
+        byte[] readPlane = reader.openBytes(image);
+        boolean lossy = compression.equals(COMPRESSION_JPEG) || compression.equals(COMPRESSION_J2K_LOSSY);
+        boolean isJ2K = compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY);
+        boolean interleavedDiffs = interleaved || (isJ2K && !interleaved);
+        if (!(lossy || interleavedDiffs)) {
+          Plane newPlane = new Plane(readPlane, reader.isLittleEndian(),
+            !reader.isInterleaved(), reader.getRGBChannelCount(),
+            FormatTools.getPixelTypeString(reader.getPixelType()));
+
+          assert(originalPlane.equals(newPlane));
+        }
+      }
+    }
   }
 
   private byte[] getPlane(int width, int height, int bytes) {
@@ -541,7 +603,7 @@ public class TiffWriterTest {
   }
 
   private IMetadata createMetadata(String pixelType, int rgbChannels,
-      int seriesCount, boolean littleEndian) throws Exception {
+      int seriesCount, boolean littleEndian, int sizeT) throws Exception {
     IMetadata metadata;
 
     try {
@@ -558,7 +620,7 @@ public class TiffWriterTest {
 
     for (int i=0; i<seriesCount; i++) {
       MetadataTools.populateMetadata(metadata, i, "image #" + i, littleEndian,
-        "XYCZT", pixelType, 160, 160, 1, rgbChannels, 1, rgbChannels);
+        "XYCZT", pixelType, 160, 160, 1, rgbChannels, sizeT, rgbChannels);
     }
 
     return metadata;
