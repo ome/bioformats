@@ -4,7 +4,7 @@ Version history
 5.3.1 (2016 December 19)
 ------------------------
 
-Java bug fixes:
+File format fixes:
 
 * TIFF
    - fixed invalid IFD values when writing TIFF or OME-TIFF files with 
