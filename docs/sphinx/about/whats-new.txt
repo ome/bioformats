@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.3.1 (2016 December 16)
+5.3.1 (2016 December 19)
 ------------------------
 
 Java bug fixes:
