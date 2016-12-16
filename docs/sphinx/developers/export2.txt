@@ -6,12 +6,10 @@ Further details on exporting raw pixel data to OME-TIFF files
 This document explains how to export pixel data to OME-TIFF using Bio-Formats
 version 4.2 and later.
 
-.. only:: html
-
-   Working example code is provided in    
-   :download:`FileExport.java <examples/FileExport.java>` - code from that class is
-   referenced here in part. You will need to have bioformats_package.jar in your Java
-   CLASSPATH in order to compile FileExport.java.
+Working example code is provided in
+:download:`FileExport.java <examples/FileExport.java>` - code from that class
+is referenced here in part. You will need to have bioformats_package.jar in
+your Java CLASSPATH in order to compile FileExport.java.
 
 The first thing that must happen is we must create the object that stores
 OME-XML metadata.  This is done as follows:
