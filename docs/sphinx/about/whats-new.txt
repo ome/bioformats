@@ -1,6 +1,18 @@
 Version history
 ===============
 
+5.3.1 (2016 December 19)
+------------------------
+
+File format fixes:
+
+* TIFF
+   - fixed invalid IFD values when writing TIFF or OME-TIFF files with 
+     Bio-Formats 5.3.0. This bug affected the writing of TIFF and OME-TIFF 
+     via client code using ``loci.formats.TiffWriter``, converting to a TIFF 
+     or OME-TIFF using 'bfconvert' command line tool or exporting to TIFF or 
+     OME-TIFF using ImageJ/FIJI Bio-Formats exporter.
+
 5.3.0 (2016 December 12)
 ------------------------
 
