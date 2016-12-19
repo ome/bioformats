@@ -185,7 +185,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    final List<String> uniqueChannels = new ArrayList<String>();
+    List<String> uniqueChannels = new ArrayList<String>();
     final List<Double> uniqueZs = new ArrayList<Double>();
     final List<Length> stageX = new ArrayList<Length>();
     final List<Length> stageY = new ArrayList<Length>();
