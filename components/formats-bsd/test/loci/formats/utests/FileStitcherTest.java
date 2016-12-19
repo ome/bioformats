@@ -65,6 +65,20 @@ public class FileStitcherTest {
   public static final String KEY = "test.option";
   public static final String VALUE = "foo";
 
+  public static void checkKV(IFormatReader r, String k, String expv) {
+    MetadataOptions rOpt = r.getMetadataOptions();
+    assertTrue(rOpt instanceof DynamicMetadataOptions);
+    String v = ((DynamicMetadataOptions) rOpt).get(k);
+    assertNotNull(v);
+    assertEquals(v, expv);
+  }
+
+  public static void checkKV(IFormatReader[] readers, String k, String expv) {  
+    for (IFormatReader r: readers) {
+      checkKV(r, k, expv);
+    }
+  }
+
   // expected core metadata for the final stitched image
   private static final int PIXEL_TYPE = FormatTools.UINT8;
   private static final int SIZE_X = 128;
@@ -229,13 +243,12 @@ public class FileStitcherTest {
     FileStitcher fs = new FileStitcher();
     fs.setMetadataOptions(opt);
     fs.setId("test_z<0-2>.fake");
-    for (IFormatReader r: fs.getUnderlyingReaders()) {
-      MetadataOptions rOpt = r.getMetadataOptions();
-      assertTrue(rOpt instanceof DynamicMetadataOptions);
-      String v = ((DynamicMetadataOptions) rOpt).get(KEY);
-      assertNotNull(v);
-      assertEquals(v, VALUE);
-    }
+    checkKV(fs.getUnderlyingReaders(), KEY, VALUE);
+    DynamicMetadataOptions newOpt = new DynamicMetadataOptions();
+    String newValue = VALUE + "_";
+    newOpt.set(KEY, newValue);
+    fs.setMetadataOptions(newOpt);
+    checkKV(fs.getUnderlyingReaders(), KEY, newValue);
     fs.close();
   }
 

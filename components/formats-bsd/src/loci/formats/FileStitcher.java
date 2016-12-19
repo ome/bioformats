@@ -47,6 +47,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -623,6 +624,19 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public boolean isGroupFiles() {
     return group;
+  }
+
+  /* @see IFormatReader#setMetadataOptions(MetadataOptions) */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    super.setMetadataOptions(options);
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          r.setMetadataOptions(options);
+        }
+      }
+    }
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
