@@ -10,11 +10,7 @@ Dataset Structure Table
 This table shows the extension of the file that you should choose if you want
 to open/import a dataset in a particular format.
 
-.. only:: html
-
-    You can sort this table by clicking on any of the headings.
-
-.. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|
+You can sort this table by clicking on any of the headings.
 
 .. list-table::
    :class: sortable
