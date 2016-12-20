@@ -45,6 +45,14 @@ dimensions, and other basic metadata will be printed to the console.
 
       showinf -nopix /path/to/file
 
+.. option:: -option KEY VALUE
+
+    Passes options expressed as key/value pairs::
+
+      showinf -option key value /path/to/file
+
+    .. versionadded:: 5.3.0
+
 .. option:: -range START END
 
     A subset of images can also be opened instead of the entire stack, by

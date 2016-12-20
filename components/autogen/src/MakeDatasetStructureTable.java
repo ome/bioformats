@@ -60,11 +60,7 @@ public class MakeDatasetStructureTable {
     out.println("choose if you want");
     out.println("to open/import a dataset in a particular format.");
     out.println();
-    out.println(".. only:: html");
-    out.println();
-    out.println("    You can sort this table by clicking on any of the headings.");
-    out.println();
-    out.println(".. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|");
+    out.println("You can sort this table by clicking on any of the headings.");
     out.println();
     out.println(".. list-table::");
     out.println("   :class: sortable");

@@ -19,11 +19,11 @@ contains additional logic to automatically detect the format of a file and
 delegate subsequent calls to the appropriate reader.
 
 Prior to retrieving pixels or metadata, it is necessary to call
-:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId(java.lang.String)>`
+:javadoc:`setId(java.lang.String) <loci/formats/IFormatHandler.html#setId-java.lang.String->`
 on the reader instance, passing in the name of the file to read. Some formats
 allow multiple series (5D image stacks) per file; in this case you may wish to
 call
-:javadoc:`setSeries(int)  <loci/formats/IFormatReader.html#setSeries(int)>` to
+:javadoc:`setSeries(int)  <loci/formats/IFormatReader.html#setSeries-int->` to
 change which series is being read.
 
 Raw pixels are always retrieved one plane at a time. Planes are returned
@@ -33,8 +33,6 @@ Core metadata is the general term for anything that might be needed to work
 with the planes in a file. A list of core metadata fields is given in the
 table below together with the appropriate accessor method:
 
-.. tabularcolumns:: |l|c|
-
 .. list-table::
   :header-rows: 1
 
@@ -42,52 +40,52 @@ table below together with the appropriate accessor method:
     - API method
 
   * - image width
-    - :javadoc:`getSizeX() <loci/formats/IFormatReader.html#getSizeX()>`
+    - :javadoc:`getSizeX() <loci/formats/IFormatReader.html#getSizeX-->`
 
   * - image height
-    - :javadoc:`getSizeY() <loci/formats/IFormatReader.html#getSizeY()>`
+    - :javadoc:`getSizeY() <loci/formats/IFormatReader.html#getSizeY-->`
 
   * - number of series per file
-    - :javadoc:`getSeriesCount() <loci/formats/IFormatReader.html#getSeriesCount()>`
+    - :javadoc:`getSeriesCount() <loci/formats/IFormatReader.html#getSeriesCount-->`
 
   * - total number of images per series
-    - :javadoc:`getImageCount() <loci/formats/IFormatReader.html#getImageCount()>`
+    - :javadoc:`getImageCount() <loci/formats/IFormatReader.html#getImageCount-->`
 
   * - number of slices in the current series
-    - :javadoc:`getSizeZ() <loci/formats/IFormatReader.html#getSizeZ()>`
+    - :javadoc:`getSizeZ() <loci/formats/IFormatReader.html#getSizeZ-->`
 
   * - number of timepoints in the current series
-    - :javadoc:`getSizeT() <loci/formats/IFormatReader.html#getSizeT()>`
+    - :javadoc:`getSizeT() <loci/formats/IFormatReader.html#getSizeT-->`
 
   * - number of actual channels in the current series
-    - :javadoc:`getSizeC() <loci/formats/IFormatReader.html#getSizeC()>`
+    - :javadoc:`getSizeC() <loci/formats/IFormatReader.html#getSizeC-->`
 
   * - number of channels per image
-    - :javadoc:`getRGBChannelCount() <loci/formats/IFormatReader.html#getRGBChannelCount()>`
+    - :javadoc:`getRGBChannelCount() <loci/formats/IFormatReader.html#getRGBChannelCount-->`
 
   * - the ordering of the images within the current series
-    - :javadoc:`getDimensionOrder() <loci/formats/IFormatReader.html#getDimensionOrder()>`
+    - :javadoc:`getDimensionOrder() <loci/formats/IFormatReader.html#getDimensionOrder-->`
 
   * - whether each image is RGB
-    - :javadoc:`isRGB() <loci/formats/IFormatReader.html#isRGB()>`
+    - :javadoc:`isRGB() <loci/formats/IFormatReader.html#isRGB-->`
 
   * - whether the pixel bytes are in little-endian order
-    - :javadoc:`isLittleEndian() <loci/formats/IFormatReader.html#isLittleEndian()>`
+    - :javadoc:`isLittleEndian() <loci/formats/IFormatReader.html#isLittleEndian-->`
 
   * - whether the channels in an image are interleaved
-    - :javadoc:`isInterleaved() <loci/formats/IFormatReader.html#isInterleaved()>`
+    - :javadoc:`isInterleaved() <loci/formats/IFormatReader.html#isInterleaved-->`
 
   * - the type of pixel data in this file
-    - :javadoc:`getPixelType() <loci/formats/IFormatReader.html#getPixelType()>`
+    - :javadoc:`getPixelType() <loci/formats/IFormatReader.html#getPixelType-->`
 
 All file formats are guaranteed to accurately report core metadata.
 
 Bio-Formats also converts and stores additional information which can be stored and retrieved 
 from the OME-XML Metadata. These fields can be accessed in a similar way to the core metadata above.
 An example of such values would be the physical size of dimensions X, Y and Z. The accessor methods 
-for these properties return a :javadoc:`Length <ome/units/quantity/Length.html>` object which 
+for these properties return a :xml_javadoc:`Length <ome/units/quantity/Length.html>` object which 
 contains both the value and unit of the dimension. These lengths can also be converted to other units using 
-:javadoc:`value(ome.units.unit.Unit) <ome/units/quantity/Length.html#value(ome.units.unit.Unit)>`
+:xml_javadoc:`value(ome.units.unit.Unit) <ome/units/quantity/Length.html#value-ome.units.unit.Unit->`
 An example of reading and converting these physical sizes values can be found in 
 :download:`ReadPhysicalSize.java <examples/ReadPhysicalSize.java>`
 
@@ -95,7 +93,7 @@ Format-specific metadata refers to any other data specified in the file - this
 includes acquisition and hardware parameters, among other things. This data
 is stored internally in a **java.util.Hashtable**, and can be accessed in one
 of two ways: individual values can be retrieved by calling
-:javadoc:`getMetadataValue(java.lang.String) <loci/formats/IFormatReader.html#getMetadataValue(java.lang.String)>`,
+:javadoc:`getMetadataValue(java.lang.String) <loci/formats/IFormatReader.html#getMetadataValue-java.lang.String->`,
 which gets the value of the specified key.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
@@ -121,8 +119,6 @@ Bio-Formats provides a few extras to make file reading more flexible.
   by nesting the wrappers.
 
   The table below summarizes a few wrapper readers of interest:
-
-  .. tabularcolumns:: |l|c|
 
   .. list-table::
     :header-rows: 1

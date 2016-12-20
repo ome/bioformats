@@ -66,6 +66,12 @@
             <class name="loci.formats.utests.tiff.TiffParserTest"/>
         </classes>
     </test>
+    <test name="TiffWriterTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.out.TiffWriterTest"/>
+      </classes>
+    </test>
     <test name="ReaderWrapper">
       <groups/>
       <classes>
@@ -167,6 +173,12 @@
       <groups/>
       <classes>
         <class name="loci.formats.utests.CompressDecompressTest"/>
+      </classes>
+    </test>
+    <test name="ImageReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ImageReaderTest"/>
       </classes>
     </test>
 </suite>

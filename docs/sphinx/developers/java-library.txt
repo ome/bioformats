@@ -15,7 +15,7 @@ Bio-Formats package, or individual components can be chosen as desired.
   <dependency>
     <groupId>ome</groupId>
     <artifactId>bioformats_package</artifactId>
-    <version>5.2.0</version>
+    <version>5.3.0</version>
   </dependency>
 
 In order to include this Bio-Formats dependency a custom repository
@@ -49,8 +49,6 @@ Dependencies
 ^^^^^^^^^^^^
 
 The complete list of current dependencies is as follows:
-
-.. tabularcolumns:: |l|l|l|
 
 .. list-table::
     :header-rows: 1

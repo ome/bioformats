@@ -17,12 +17,12 @@ underlying logging frameworks are currently supported by Bio-Formats:
 Initialization
 --------------
 
-The :javadoc:`DebugTools <loci/common/DebugTools.html>` class contains a 
+The :common_javadoc:`DebugTools <loci/common/DebugTools.html>` class contains a
 series of framework-agnostic methods for the initialization and control of the
 logging system. This class uses reflection to detect the underlying logging
 framework and delegate the method calls to either
-:javadoc:`Log4jTools <loci/common/Log4jTools.html>` or
-:javadoc:`LogbackTools <loci/common/LogbackTools.html>`.
+:common_javadoc:`Log4jTools <loci/common/Log4jTools.html>` or
+:common_javadoc:`LogbackTools <loci/common/LogbackTools.html>`.
 
 The main methods are described below:
 

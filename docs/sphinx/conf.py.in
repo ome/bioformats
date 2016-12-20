@@ -19,8 +19,7 @@ openmicroscopy_source_user = '@openmicroscopy_source_user@'
 ome_source_user = '@ome_source_user@'
 omerodoc_uri = '@sphinx_omerodoc_uri@'
 ome_common_version = '@ome_common_version@'
-ome_xml_version = '@ome_xml_version@'
-ome_specification_version = '@ome_specification_version@'
+ome_model_version = '@ome_model_version@'
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
@@ -161,11 +160,11 @@ extlinks = {
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
-    'downloads' : (downloads_root + '/latest/bio-formats5.2/%s', ''),
-    'javadoc' : (downloads_root + '/latest/bio-formats5.2/api/%s', ''),
+    'downloads' : (downloads_root + '/latest/bio-formats5.3/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5.3/api/%s', ''),
     'common_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-common/' + ome_common_version + '/' + '%s', ''),
-    'xml_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-xml/' + ome_xml_version + '/' + '%s', ''),
-    'specification_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-specification/' + ome_specification_version + '/' + '%s', ''),
+    'xml_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-xml/' + ome_model_version + '/' + '%s', ''),
+    'specification_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-specification/' + ome_model_version + '/' + '%s', ''),
 
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),

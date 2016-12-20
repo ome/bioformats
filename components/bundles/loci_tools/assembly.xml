@@ -11,6 +11,7 @@
     <dependencySet>
       <excludes>
         <exclude>gov.nih.imagej:imagej</exclude>
+        <exclude>net.imagej:ij</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
         <exclude>com.beust:jcommander</exclude>

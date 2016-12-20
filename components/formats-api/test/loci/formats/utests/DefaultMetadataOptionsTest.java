@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,54 +30,50 @@
  * #L%
  */
 
-package loci.formats.in;
+package loci.formats.utests;
+
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertEquals;
+
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.MetadataLevel;
 
 
 /**
- * Default implementation of {@link loci.formats.in.MetadataOptions}.
+ * Unit tests for {@link loci.formats.in.DefaultMetadataOptions}.
  */
-public class DefaultMetadataOptions implements MetadataOptions {
+public class DefaultMetadataOptionsTest {
 
-  private MetadataLevel metadataLevel;
-  private boolean validate;
+  private MetadataOptions opt;
 
-  /**
-   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
-   * to {@link MetadataLevel#ALL} and disable file validation.
-   */
-  public DefaultMetadataOptions() {
-    this(MetadataLevel.ALL);
+  @BeforeMethod
+  public void setUp() {
+    opt = new DefaultMetadataOptions();
   }
 
-  /**
-   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
-   * to the specified value and disable file validation.
-   *
-   * @param level the {@link loci.formats.in.MetadataLevel} to use.
-   */
-  public DefaultMetadataOptions(MetadataLevel level) {
-    metadataLevel = level;
-    validate = false;
+  @Test
+  public void testMetadataLevel() {
+    assertEquals(opt.getMetadataLevel(), MetadataLevel.ALL);
+    for (MetadataLevel level: MetadataLevel.values()) {
+      opt.setMetadataLevel(level);
+      assertEquals(opt.getMetadataLevel(), level);
+      assertEquals(
+          (new DefaultMetadataOptions(level)).getMetadataLevel(), level
+      );
+    }
   }
 
-  @Override
-  public MetadataLevel getMetadataLevel() {
-    return metadataLevel;
-  }
-
-  @Override
-  public void setMetadataLevel(MetadataLevel level) {
-    metadataLevel = level;
-  }
-
-  @Override
-  public boolean isValidate() {
-    return validate;
-  }
-
-  @Override
-  public void setValidate(boolean validateMetadata) {
-    validate = validateMetadata;
+  @Test
+  public void testIsValidate() {
+    assertFalse(opt.isValidate());
+    opt.setValidate(true);
+    assertTrue(opt.isValidate());
+    opt.setValidate(false);
+    assertFalse(opt.isValidate());
   }
 
 }

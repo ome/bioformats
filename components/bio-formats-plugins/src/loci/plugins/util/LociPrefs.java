@@ -32,11 +32,15 @@ import ij.Prefs;
 import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
+import loci.formats.in.ZeissCZIReader;
+
 
 /**
  * Utility methods for ImageJ preferences for Bio-Formats plugins.
@@ -53,6 +57,10 @@ public final class LociPrefs {
   public static final String PREF_QT_QTJAVA = "bioformats.qt.qtjava";
   public static final String PREF_SDT_INTENSITY = "bioformats.sdt.intensity";
   public static final String PREF_TIFF_IMAGEIO = "bioformats.tiff.imageio";
+  public static final String PREF_CZI_AUTOSTITCH =
+    "bioformats.zeissczi.allow.autostitch";
+  public static final String PREF_CZI_ATTACHMENT =
+    "bioformats.zeissczi.include.attachments";
 
   // -- Constructor --
 
@@ -78,6 +86,15 @@ public final class LociPrefs {
       if (on) enabledClasses.addClass(c[i]);
     }
     ImageReader reader = new ImageReader(enabledClasses);
+
+    MetadataOptions options = reader.getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
+      ((DynamicMetadataOptions) options).setBoolean(
+        ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+      reader.setMetadataOptions(options);
+    }
 
     // toggle reader-specific options
     boolean nd2Nikon = LociPrefs.isND2Nikon();
@@ -142,6 +159,16 @@ public final class LociPrefs {
 
   public static boolean isTiffImageIO() {
     return Prefs.get(PREF_TIFF_IMAGEIO, false);
+  }
+
+  public static boolean allowCZIAutostitch() {
+    return Prefs.get(PREF_CZI_AUTOSTITCH,
+                     ZeissCZIReader.ALLOW_AUTOSTITCHING_DEFAULT);
+  }
+
+  public static boolean includeCZIAttachments() {
+    return Prefs.get(PREF_CZI_ATTACHMENT,
+                     ZeissCZIReader.INCLUDE_ATTACHMENTS_DEFAULT);
   }
 
   // -- Helper methods --

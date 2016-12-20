@@ -666,7 +666,7 @@ owner = `Gatan <http://www.gatan.com/>`_
 bsd = no
 versions = 3, 4
 software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
-`EMAN <http://blake.bcm.edu/EMAN/>`_
+`EMAN <http://blake.bcm.edu/emanwiki/EMAN2>`_
 weHave = * Gatan's ImageReader2003 code (from 2003, in C++) \n
 * numerous DM3 datasets
 weWant = * a DM3 specification document
@@ -2453,7 +2453,11 @@ privateSpecification = true
 pyramid = yes
 reader = ZeissCZIReader
 mif = true
-notes = Bio-Formats does not support CZI files generated using JPEG-XR compression.
+notes = JPEG-XR compressed CZI files are supported on the following 64-bit platforms:\n
+\n
+* Windows 7 and above with `Visual Studio 2015 C++ Redistributable <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_\n
+* CentOS 6 and above, Ubuntu 12.04 and above\n
+* OS X 10.10 and above
 
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm

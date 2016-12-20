@@ -1,19 +1,49 @@
 Version history
 ===============
 
-5.3.0-m1 (2016 October 27)
---------------------------
+5.3.1 (2016 December 19)
+------------------------
 
-Updated build system:
+File format fixes:
 
-* dropped embedded JARs and now use the Maven Ant Tasks plugin to unify the
-  dependencies using the pom.xml
-* dropped deprecated osgi targets, OME Tools bundle and ome-jxr component
-* removed PDF generation from the docs-sphinx target
-* added version number to Javadoc zip bundle name
-* migrated unit tests out of test-suite into formats-bsd
-* simplified Travis build
-* now storing all versions in the top-level pom.xml
+* TIFF
+   - fixed invalid IFD values when writing TIFF or OME-TIFF files with 
+     Bio-Formats 5.3.0. This bug affected the writing of TIFF and OME-TIFF 
+     via client code using ``loci.formats.TiffWriter``, converting to a TIFF 
+     or OME-TIFF using 'bfconvert' command line tool or exporting to TIFF or 
+     OME-TIFF using ImageJ/FIJI Bio-Formats exporter.
+
+5.3.0 (2016 December 12)
+------------------------
+
+New features/API:
+
+* added support for JPEG-XR compressed CZI data (funded by a
+  `partnership between Glencoe Software and ZEISS <http://glencoesoftware.com/2016-08-30-glencoe-software-zeiss-partner-open-source-file-reader-whole-slide.html>`_), adding 'ome:jxrlib' as a new dependency
+  of Bio-Formats
+* improved tile-based image writing
+    - added new methods to the ``loci.formats.IFormatWriter`` interface
+      allowing to set and retrieve the tile along the X and Y dimensions
+    - added default implementations to the ``loci.formats.FormatWriter``
+      abstract class defaulting to the entire image width/height
+    - added functionality to ``loci.formats.TiffWriter`` adding support for
+      tiled images writing for TIFF and derived formats like OME-TIFF
+    - added developer documentation and samples for tiled reading/writing
+* added a new ``MetadataOptions`` implementation supporting arbitrary key/value
+  pairs
+* updated the display command line utility to support passing key/value
+  options using :option:`showinf -option`
+* added two options to the CZI reader to disable autostitching and exclude
+  pyramid file attachments. Added new checkboxes to the CZI configuration
+  interface of the ImageJ plugin to activate these options
+
+Bug fixes/deprecations:
+
+* deprecated ``loci.formats.meta.MetadataConverter`` in favor of
+  ``ome.xml.meta.MetadataConverter``
+* updated method deprecated in Octave 4.2.0 (thanks to Carnë Draug)
+* OME-XML
+    - fixed handling of Mask BinData elements
 
 Component architecture changes/decoupling:
 
@@ -25,14 +55,46 @@ Component architecture changes/decoupling:
   `ome/ome-poi GitHub repository <https://github.com/ome/ome-poi>`_
   and consumed as 'org.openmicroscopy:ome-poi' artifact from Maven Central
 * removed specification, xsd-fu and ome-xml components - now decoupled to the
-  new `ome/ome-model Github repository <https://github.com/ome/ome-model>`_
-  and consumed as 'org.openmicroscopy:{specification,xsd-fu,ome-xml}'
+  new `ome/ome-model GitHub repository <https://github.com/ome/ome-model>`_
+  and consumed as 'org.openmicroscopy:{specification,ome-xml}'
   artifacts from Maven Central
 * removed mdbtools component - now decoupled to the new
   `ome/ome-mdbtools GitHub repository <https://github.com/ome/ome-mdbtools>`_
   and consumed as 'org.openmicroscopy:ome-mdbtools' artifact from Maven
   Central
+* removed stubs components - now decoupled to the new
+  `ome/ome-stubs GitHub repository <https://github.com/ome/ome-stubs>`_ and
+  consumed as 'org.openmicroscopy:{lwf-stubs,mipav-stubs}' artifacts from
+  Maven Central
+* removed metakit component - now decoupled to the new
+  `ome/ome-metakit GitHub repository <https://github.com/ome/ome-metakit>`_
+  and consumed as 'org.openmicroscopy:metakit' artifacts from
+  Maven Central
 * updated developer documentation for the decoupled components
+
+Updated build system:
+
+* dropped embedded JARs and now use the Maven Ant Tasks plugin to unify the
+  dependencies using the POM
+* improved Ant JAR and bundle target
+* dropped deprecated osgi targets, OME Tools bundle and ome-jxr component
+* removed PDF generation from the docs-sphinx target
+* added version number to Javadoc zip bundle name
+* migrated unit tests out of test-suite into formats-bsd
+* fixed test-suite targets, paths and symlink handling
+* fixed test-metadata and migrated it into test-suite
+* fixed mismatch between ``ND2HandlerTest`` package and location
+* cleaned up test-build to remove obsolete and decoupled components
+  and folders
+* simplified Travis build
+* POM repositories clean-up to reduce complexity and use Maven Central as the
+  first location to look for dependencies
+* now storing all versions in the top-level POM
+* updated build versioning from Maven by unified versioning strategy,
+  reviewing meta information stored in the manifests of each JAR and
+  introspecting this information in the ``FormatTools`` API to retrieve
+  version and revision numbers
+* updated developer documentation on updated build system
 
 5.2.4 (2016 October 18)
 -----------------------

@@ -21,7 +21,7 @@ support for java::
     $ octave
     >> OCTAVE_VERSION
     ans = 4.0.0
-    >> octave_config_info ("features").JAVA
+    >> usejava ("jvm")
     ans =  1
 
 Installation

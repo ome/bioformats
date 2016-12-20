@@ -50,20 +50,8 @@ OMERO 5 uses Bio-Formats to read original files from over 140 file formats.
 Please refer to the :omerodoc:`OMERO documentation <>` for further
 information.
 
-.. only:: latex
-
-    |
-
-    .. image:: /images/bf_omero.png
-        :align: center
-
-
-|
-
-.. only:: html
-
-    Many other software packages can use Bio-Formats to read and write
-    microscopy formats (click on the package for further details):
+Many other software packages can use Bio-Formats to read and write
+microscopy formats (click on the package for further details):
 
 Image server applications
 =========================

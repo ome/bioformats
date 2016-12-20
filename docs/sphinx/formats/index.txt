@@ -9,10 +9,8 @@ Bio-Formats can write, as well as read, each format.  The
 :doc:`/metadata-summary` table shows an overview of the :doc:`OME data model
 </about/index>` fields populated for each format.
 
-.. only:: html
-
-    Further information on each individual format is also provided (click on
-    the entries in the supported formats table).
+Further information on each individual format is also provided (click on
+the entries in the supported formats table).
 
 **We are always looking for examples of files to help us provide better
 support for different formats.** If you would like to help, you can upload

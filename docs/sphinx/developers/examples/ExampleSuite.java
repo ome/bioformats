@@ -58,6 +58,8 @@ public class ExampleSuite {
     File convertedFile = new File(parentDir, "converted.ome.tiff");
     File exportFile = new File(parentDir, "export.ome.tiff");
     File exportSPWFile = new File(parentDir, "exportSPW.ome.tiff");
+    File simpleTiledFile = new File(parentDir, "simpleTiledFile.ome.tiff");
+    File tiledFile = new File(parentDir, "tiledFile.ome.tiff");
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
@@ -65,5 +67,9 @@ public class ExampleSuite {
       inputFile.getAbsolutePath(), convertedFile.getAbsolutePath()});
     execute("FileExport", new String[] {exportFile.getAbsolutePath()});
     execute("FileExportSPW", new String[] {exportSPWFile.getAbsolutePath()});
+    execute("SimpleTiledWriter", new String[] {
+        inputFile.getAbsolutePath(), simpleTiledFile.getAbsolutePath(), "256", "256"});
+    execute("TiledReaderWriter", new String[] {
+        inputFile.getAbsolutePath(), tiledFile.getAbsolutePath(), "256", "256"});
   }
 }
