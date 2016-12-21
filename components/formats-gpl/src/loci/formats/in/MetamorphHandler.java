@@ -56,6 +56,7 @@ public class MetamorphHandler extends BaseHandler {
   private double pixelSizeX, pixelSizeY;
   private double temperature;
   private double lensNA;
+  private double lensRI;
   private String binning;
   private double readOutRate, zoom;
   private Length positionX, positionY;
@@ -115,6 +116,8 @@ public class MetamorphHandler extends BaseHandler {
   public Length getStagePositionY() { return positionY; }
 
   public double getLensNA() { return lensNA; }
+  
+  public double getLensRI() { return lensRI; }
 
   public Vector<Double> getExposures() { return exposures; }
 
@@ -285,6 +288,9 @@ public class MetamorphHandler extends BaseHandler {
     }
     else if (key.equals("_MagNA_")) {
       lensNA = Double.parseDouble(value);
+    }
+    else if (key.equals("_MagRI_")) {
+      lensRI = Double.parseDouble(value);
     }
     else if (key.startsWith("Dual Camera")) {
       // Determine if image has been already split by Metamorph.
