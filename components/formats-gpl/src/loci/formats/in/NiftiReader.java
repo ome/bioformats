@@ -340,12 +340,13 @@ public class NiftiReader extends FormatReader {
   }
 
   private void populateExtendedMetadata() throws IOException {
-    in.seek(40);
-    char sliceOrdering = in.readChar();
+    in.seek(39);
+    byte sliceOrdering = in.readByte();
     in.skipBytes(8);
     short dim5 = in.readShort();
     short dim6 = in.readShort();
     short dim7 = in.readShort();
+    short dim8 = in.readShort();
 
     float intent1 = in.readFloat();
     float intent2 = in.readFloat();
@@ -368,8 +369,8 @@ public class NiftiReader extends FormatReader {
     float scaleSlope = in.readFloat();
     float scaleIntercept = in.readFloat();
     short sliceEnd = in.readShort();
-    char sliceCode = in.readChar();
-    char units = in.readChar();
+    byte sliceCode = in.readByte();
+    byte units = in.readByte();
 
     int spatialUnits = (units & 7);
     int timeUnits = (units & 0x38);
