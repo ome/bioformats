@@ -41,6 +41,7 @@ import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -76,6 +77,8 @@ public class NiftiReader extends FormatReader {
   private short nDimensions;
   private String description;
   private double voxelWidth, voxelHeight, sliceThickness, deltaT;
+  private Unit<Length> spatialUnit = UNITS.MICROMETER;
+  private Unit<Time> timeUnit = UNITS.SECOND;
 
   // -- Constructor --
 
@@ -184,6 +187,8 @@ public class NiftiReader extends FormatReader {
       nDimensions = 0;
       description = null;
       voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
+      spatialUnit = UNITS.MICROMETER;
+      timeUnit = UNITS.SECOND;
     }
   }
 
@@ -278,11 +283,11 @@ public class NiftiReader extends FormatReader {
       store.setImageDescription(description, 0);
 
       Length sizeX =
-        FormatTools.getPhysicalSizeX(new Double(voxelWidth));
+        FormatTools.getPhysicalSizeX(new Double(voxelWidth), spatialUnit);
       Length sizeY =
-        FormatTools.getPhysicalSizeY(new Double(voxelHeight));
+        FormatTools.getPhysicalSizeY(new Double(voxelHeight), spatialUnit);
       Length sizeZ =
-        FormatTools.getPhysicalSizeZ(new Double(sliceThickness));
+        FormatTools.getPhysicalSizeZ(new Double(sliceThickness), spatialUnit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -293,7 +298,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.SECOND), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT), timeUnit), 0);
     }
   }
 
@@ -377,33 +382,25 @@ public class NiftiReader extends FormatReader {
 
     // correct physical dimensions according to spatial and time units
 
-    int spatialCorrection = 1;
-
     switch (spatialUnits) {
       case UNITS_METER:
-        spatialCorrection = 1000000;
+        spatialUnit = UNITS.METER;
         break;
       case UNITS_MM:
-        spatialCorrection = 1000;
+        spatialUnit = UNITS.MILLIMETER;
         break;
     }
-
-    voxelWidth *= spatialCorrection;
-    voxelHeight *= spatialCorrection;
-    sliceThickness *= spatialCorrection;
 
     int timeCorrection = 1;
 
     switch (timeUnits) {
       case UNITS_MSEC:
-        timeCorrection = 1000;
+        timeUnit = UNITS.MILLISECOND;
         break;
       case UNITS_USEC:
-        timeCorrection = 1000000;
+        timeUnit = UNITS.MICROSECOND;
         break;
     }
-
-    deltaT /= timeCorrection;
 
     float calMax = in.readFloat();
     float calMin = in.readFloat();
