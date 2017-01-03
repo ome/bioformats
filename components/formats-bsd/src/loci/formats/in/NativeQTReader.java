@@ -260,7 +260,7 @@ public class NativeQTReader extends FormatReader {
         }
       }
       else {
-        System.arraycopy(t, row*srcRowLen + x*bpp*getSizeC(), buf,
+        System.arraycopy(t, (row + y)*srcRowLen + x*bpp*getSizeC(), buf,
           row*destRowLen, destRowLen);
       }
     }
