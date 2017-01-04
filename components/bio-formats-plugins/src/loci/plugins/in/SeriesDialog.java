@@ -155,7 +155,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   @Override
   protected boolean displayDialog(GenericDialog gd) {
     ThumbLoader loader = null;
-    if (thumbReader != null && !options.isForceThumbnails()) {
+    if (thumbReader != null && !options.isForceThumbnails() && Macro.getOptions() == null) {
       // spawn background thumbnail loader
       loader = new ThumbLoader(thumbReader, p, gd);
     }
