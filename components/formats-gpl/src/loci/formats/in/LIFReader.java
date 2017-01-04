@@ -323,7 +323,6 @@ public class LIFReader extends FormatReader {
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      // seek instead of skipBytes to prevent dangerous int cast
       in.skipBytes(bytesToSkip * getSizeY() * no);
       in.skipBytes(y * (getSizeX() * bpp + bytesToSkip));
       for (int row=0; row<h; row++) {
@@ -375,6 +374,7 @@ public class LIFReader extends FormatReader {
       posInFile = dataOffset + no * planeSize;
     }
     
+    // seek instead of skipBytes to prevent dangerous int cast
     in.seek(posInFile);
   }
 
@@ -1082,7 +1082,6 @@ public class LIFReader extends FormatReader {
     tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
     tileBytesInc = new long[imageNodes.size()];
-    Arrays.fill(tileBytesInc, 0);
     core = new ArrayList<CoreMetadata>(imageNodes.size());
     acquiredDate = new double[imageNodes.size()];
     descriptions = new String[imageNodes.size()];
