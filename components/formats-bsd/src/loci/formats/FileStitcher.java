@@ -47,6 +47,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -625,6 +626,19 @@ public class FileStitcher extends ReaderWrapper {
     return group;
   }
 
+  /* @see IFormatReader#setMetadataOptions(MetadataOptions) */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    super.setMetadataOptions(options);
+    if (externals != null) {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          r.setMetadataOptions(options);
+        }
+      }
+    }
+  }
+
   /* @see IFormatReader#setNormalized(boolean) */
   @Override
   public void setNormalized(boolean normalize) {
@@ -835,6 +849,9 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#getUnderlyingReaders() */
   @Override
   public IFormatReader[] getUnderlyingReaders() {
+    if (null == externals) {
+      return super.getUnderlyingReaders();
+    }
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     for (ExternalSeries s : externals) {
       for (DimensionSwapper r : s.getReaders()) {
@@ -1256,6 +1273,7 @@ public class FileStitcher extends ReaderWrapper {
           readers[i] = new DimensionSwapper(new ImageReader(classList));
         }
         else readers[i] = new DimensionSwapper();
+        readers[i].setMetadataOptions(getMetadataOptions());
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);
