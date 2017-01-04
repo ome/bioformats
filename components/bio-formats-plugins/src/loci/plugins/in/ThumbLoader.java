@@ -32,7 +32,6 @@ import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.nio.channels.ClosedByInterruptException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -81,8 +80,13 @@ public class ThumbLoader implements Runnable {
     if (loader == null) return;
     stop = true;
     BF.status(false, "Canceling thumbnail generation");
-    loader.interrupt();
-    loader = null;
+    try {
+      loader.join();
+      loader = null;
+    }
+    catch (InterruptedException exc) {
+      exc.printStackTrace();
+    }
     BF.status(false, "");
   }
 
@@ -134,7 +138,7 @@ public class ThumbLoader implements Runnable {
     }
     catch (FormatException e) { exc = e; }
     catch (IOException e) { exc = e; }
-    if (exc != null && !(exc instanceof ClosedByInterruptException)) {
+    if (exc != null) {
       BF.warn(quiet, "Error loading thumbnail for series #" + (series + 1));
       BF.debug(DebugTools.getStackTrace(exc));
     }
