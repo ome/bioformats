@@ -185,7 +185,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    final List<String> uniqueChannels = new ArrayList<String>();
+    List<String> uniqueChannels = new ArrayList<String>();
     final List<Double> uniqueZs = new ArrayList<Double>();
     final List<Length> stageX = new ArrayList<Length>();
     final List<Length> stageY = new ArrayList<Length>();
@@ -332,6 +332,23 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
+
+    // if the channel name and Z position are unique
+    // for each plane, then prefer unique channels over unique Zs
+    // the division by uniqueC.size is not a typo - it's meant to
+    // account for the multiple actual Z sections
+    if (effectiveC * getSizeZ() > totalPlanes &&
+      (effectiveC * (getSizeZ() / uniqueC.size()) == totalPlanes ||
+      effectiveC == totalPlanes))
+    {
+      if (getSizeZ() >= uniqueC.size()) {
+        m.sizeZ /= uniqueC.size();
+      }
+      else {
+        m.sizeZ = 1;
+      }
+    }
+
     m.sizeT = totalPlanes /
       (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
     if (getSizeT() == 0) m.sizeT = 1;
@@ -502,11 +519,19 @@ public class MetamorphTiffReader extends BaseTiffReader {
           store.setPixelsPhysicalSizeZ(sizeZ, s);
         }
 
+        if (uniqueChannels.size() == 0) {
+          uniqueChannels = handler.getChannelNames();
+        }
+
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {
             store.setChannelName(uniqueChannels.get(c), s, c);
           }
           else store.setChannelName(handler.getChannelName(), s, c);
+          if (c < wavelengths.size()) {
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(Double.valueOf(wavelengths.get(c))), s, c);
+          }
         }
       }
     }
