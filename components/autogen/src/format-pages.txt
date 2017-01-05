@@ -2392,7 +2392,7 @@ which has a similar extension.  As far as we know, the Axio CSM 700 system is \n
 the only one which saves files in the .lms format. \n
 
 [Zeiss AxioVision TIFF]
-extensions = .xml, .tiff
+extensions = .xml, .tif
 owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 bsd = no
