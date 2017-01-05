@@ -85,7 +85,7 @@ public class PyramidTiffReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int index = getCoreIndex();
+    int index = getCoreIndex() * getImageCount() + no;
     tiffParser.setAssumeEqualStrips(equalStrips);
     tiffParser.getSamples(ifds.get(index), buf, x, y, w, h);
     return buf;
@@ -96,7 +96,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getCoreIndex()).getTileWidth();
+      return (int) ifds.get(getCoreIndex() * getImageCount()).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -109,7 +109,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getCoreIndex()).getTileLength();
+      return (int) ifds.get(getCoreIndex() * getImageCount()).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -122,7 +122,23 @@ public class PyramidTiffReader extends BaseTiffReader {
   /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
   @Override
   protected void initStandardMetadata() throws FormatException, IOException {
-    int seriesCount = ifds.size();
+    // count number of consecutive planes with the same XY dimensions
+
+    int nPlanes = 1;
+    long baseWidth = ifds.get(0).getImageWidth();
+    long baseHeight = ifds.get(0).getImageLength();
+    for (int i=1; i<ifds.size(); i++) {
+      long width = ifds.get(i).getImageWidth();
+      long height = ifds.get(i).getImageLength();
+      if (width == baseWidth && height == baseHeight) {
+        nPlanes++;
+      }
+      else {
+        break;
+      }
+    }
+
+    int seriesCount = ifds.size() / nPlanes;
 
     // repopulate core metadata
     core.clear();
@@ -134,7 +150,7 @@ public class PyramidTiffReader extends BaseTiffReader {
         ms.resolutionCount = seriesCount;
       }
 
-      IFD ifd = ifds.get(s);
+      IFD ifd = ifds.get(s * nPlanes);
 
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
@@ -148,10 +164,13 @@ public class PyramidTiffReader extends BaseTiffReader {
       ms.sizeZ = 1;
       ms.sizeT = 1;
       ms.sizeC = ms.rgb ? samples : 1;
+      // assuming all planes are channels
+      // could also check for OME-XML comment and use ZCT dimensions therein
+      ms.sizeC *= nPlanes;
       ms.littleEndian = ifd.isLittleEndian();
       ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.imageCount = 1;
+      ms.imageCount = nPlanes;
       ms.pixelType = ifd.getPixelType();
       ms.metadataComplete = true;
       ms.interleaved = false;
