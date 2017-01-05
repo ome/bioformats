@@ -299,7 +299,9 @@ public class DimensionSwapper extends ReaderWrapper {
       List<CoreMetadata> oldcore = reader.getCoreMetadataList();
       core = new ArrayList<CoreMetadata>();
       for (int s=0; s<oldcore.size(); s++) {
-        core.add(new SwappableMetadata(reader, s));
+        SwappableMetadata swappable = new SwappableMetadata(reader, s);
+        swappable.resolutionCount = oldcore.get(s).resolutionCount;
+        core.add(swappable);
       }
     }
   }
