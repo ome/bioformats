@@ -14,7 +14,7 @@ Bug fixes:
 
 * Metamorph
    - updated to read the refractive index and set ``RefractiveIndex`` on
-     ``ObjectiveSettings`` in the generated OME-XML
+     ``ObjectiveSettings`` in the generated OME-XML (thanks to Marc Bruce)
 
 * Metamorph TIFF
    - fixed Z and channel dimension counts when each channel has a unique Z position
