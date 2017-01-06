@@ -26,18 +26,32 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MissingLibraryException;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Image;
+import ome.xml.model.Pixels;
+import ome.xml.model.TiffData;
 
 /**
  * PyramidTiffReader is the file format reader for pyramid TIFFs.
@@ -51,6 +65,8 @@ public class PyramidTiffReader extends BaseTiffReader {
     LoggerFactory.getLogger(PyramidTiffReader.class);
 
   // -- Fields --
+
+  private IMetadata omexml = null;;
 
   // -- Constructor --
 
@@ -75,6 +91,17 @@ public class PyramidTiffReader extends BaseTiffReader {
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     if (software == null) return false;
     return software.indexOf("Faas") >= 0;
+  }
+
+  /**
+   * @see loci.formats.IFormatReader#close(boolean)
+   */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      omexml = null;
+    }
   }
 
   /**
@@ -140,6 +167,21 @@ public class PyramidTiffReader extends BaseTiffReader {
 
     int seriesCount = ifds.size() / nPlanes;
 
+    String comment = ifds.get(0).getComment();
+    if (comment != null && comment.length() > 0) {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        omexml = service.createOMEXMLMetadata(comment);
+      }
+      catch (DependencyException de) {
+       throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+      }
+      catch (ServiceException e) {
+        LOGGER.debug("Could not parse comment as OME-XML", e);
+      }
+    }
+
     // repopulate core metadata
     core.clear();
     for (int s=0; s<seriesCount; s++) {
@@ -161,12 +203,20 @@ public class PyramidTiffReader extends BaseTiffReader {
 
       ms.sizeX = (int) ifd.getImageWidth();
       ms.sizeY = (int) ifd.getImageLength();
-      ms.sizeZ = 1;
-      ms.sizeT = 1;
-      ms.sizeC = ms.rgb ? samples : 1;
-      // assuming all planes are channels
-      // could also check for OME-XML comment and use ZCT dimensions therein
-      ms.sizeC *= nPlanes;
+      if (omexml != null) {
+        ms.sizeZ = omexml.getPixelsSizeZ(0).getValue();
+        ms.sizeT = omexml.getPixelsSizeT(0).getValue();
+        ms.sizeC = omexml.getPixelsSizeC(0).getValue();
+        ms.dimensionOrder = omexml.getPixelsDimensionOrder(0).getValue();
+      }
+      else {
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
+        ms.sizeC = ms.rgb ? samples : 1;
+        // assuming all planes are channels
+        ms.sizeC *= nPlanes;
+        ms.dimensionOrder = "XYCZT";
+      }
       ms.littleEndian = ifd.isLittleEndian();
       ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
@@ -175,7 +225,6 @@ public class PyramidTiffReader extends BaseTiffReader {
       ms.metadataComplete = true;
       ms.interleaved = false;
       ms.falseColor = false;
-      ms.dimensionOrder = "XYCZT";
       ms.thumbnail = s > 0;
     }
   }
@@ -183,12 +232,39 @@ public class PyramidTiffReader extends BaseTiffReader {
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
   @Override
   protected void initMetadataStore() throws FormatException {
-    super.initMetadataStore();
+    boolean setImageNames = true;
+    if (omexml == null) {
+      super.initMetadataStore();
+    }
+    else {
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexml.getRoot();
+      List<Image> images = root.copyImageList();
+      for (int i=0; i<images.size(); i++) {
+        Image img = images.get(i);
+        if (i > 0 && !hasFlattenedResolutions()) {
+          root.removeImage(img);
+          continue;
+        }
+        Pixels pix = img.getPixels();
+        List<TiffData> tiffData = pix.copyTiffDataList();
+        for (TiffData t : tiffData) {
+          pix.removeTiffData(t);
+        }
+        if (img.getName() != null) {
+          setImageNames = false;
+        }
+      }
+      omexml.setRoot(root);
 
-    MetadataStore store = makeFilterMetadata();
+      MetadataConverter.convertMetadata(omexml, makeFilterMetadata());
+    }
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + (i + 1), i);
+    if (setImageNames) {
+     MetadataStore store = makeFilterMetadata();
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageName("Series " + (i + 1), i);
+      }
     }
   }
 
