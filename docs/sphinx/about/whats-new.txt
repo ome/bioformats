@@ -1,6 +1,38 @@
 Version history
 ===============
 
+5.3.2 (2017 January 9)
+----------------------
+
+Bug fixes:
+
+* ImageJ
+   - fixed race condition when opening multiple series from a dataset, as
+     introduced by thumbnail loading changes in 5.3.0
+   - updated thumbnail generation to be faster for datasets containing an
+     image pyramid
+
+* Metamorph
+   - updated to read the refractive index and set ``RefractiveIndex`` on
+     ``ObjectiveSettings`` in the generated OME-XML
+
+* Metamorph TIFF
+   - fixed Z and channel dimension counts when each channel has a unique Z position
+   - updated to read the emission wavelength and set ``EmissionWavelength`` on
+     ``LightSourceSettings`` in the generated OME-XML
+
+* QuickTime
+   - fixed incorrect image data when reading of tiles from single channel files
+
+* file grouping
+   - fixed handling of ``loci.formats.in.MetadataOptions`` objects by the
+     ``loci.formats.FileStitcher`` reader
+
+Documentation improvements:
+
+* fixed extensions listed for Zeiss TIFF
+* simplified markdown for creating tables
+
 5.3.1 (2016 December 19)
 ------------------------
 
