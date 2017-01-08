@@ -12,6 +12,8 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+  <property name="testng.runWriterSaveBytesTests" value="50"/>
+  <property name="testng.runWriterTilingTests" value="2"/>
 
   <target name="test" depends="jar,compile-tests,test-long-running,
       test-no-ome-xml,test-no-lurawave,test-no-jai,test-no-exif,
@@ -28,7 +30,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
       </classpath>
       <sysproperty key="testng.runWriterTilingTests" value="${testng.runWriterTilingTests}"/>
-    	<sysproperty key="testng.runWriterSaveBytesTests" value="${testng.runWriterSaveBytesTests}"/>
+      <sysproperty key="testng.runWriterSaveBytesTests" value="${testng.runWriterSaveBytesTests}"/>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
     </testng>
