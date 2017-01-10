@@ -808,7 +808,7 @@ public class LIFReader extends FormatReader {
       if (acquiredDate[index] > 0) {
         store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
           (long) (acquiredDate[index] * 1000), DateTools.COBOL,
-          DateTools.ISO8601_FORMAT, true)), i);
+          DateTools.ISO8601_FORMAT, false)), i);
       }
       store.setImageName(imageNames[index].trim(), i);
 
@@ -1612,7 +1612,7 @@ public class LIFReader extends FormatReader {
   private double translateSingleTimestamp(String timestamp) {
     timestamp = timestamp.trim();
     int stampLowStart = Math.max(0, timestamp.length() - 8);
-    int stampHighEnd = Math.max(0, stampLowStart - 1);
+    int stampHighEnd = Math.max(0, stampLowStart);
     String stampHigh = timestamp.substring(0, stampHighEnd);
     String stampLow = timestamp.substring(stampLowStart, timestamp.length());
     long high
