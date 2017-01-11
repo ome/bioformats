@@ -194,6 +194,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           else if (key.equals("WhiteColour")) {
             String[] rgb = value.split(",");
             if (rgb.length < 3) {
+              channelColors.add(null);
               continue;
             }
             int red = 255;
@@ -386,7 +387,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           store.setChannelName(cNames[i], 0, i);
         }
         int index = getIndex(0, i, 0);
-        if (index < channelColors.size()) {
+        if (index < channelColors.size() && channelColors.get(index) != null) {
           store.setChannelColor(channelColors.get(index), 0, i);
         }
       }
