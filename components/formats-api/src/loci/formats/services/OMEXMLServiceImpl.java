@@ -66,6 +66,7 @@ import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.units.quantity.Length;
 
 import ome.xml.meta.MetadataConverter;
+import ome.xml.meta.OMEXMLMetadataModel;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -370,7 +371,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       xml == null ? null : createRoot(transformToLatestVersion(xml));
 
     OMEXMLMetadata meta = new OMEXMLMetadataImpl();
-    if (ome != null) meta.setRoot(ome);
+    if (ome != null) {
+      meta.setModel(ome);
+      meta.setRoot(ome);
+    }
     return meta;
   }
 
@@ -756,6 +760,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       return;
     }
 
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) omexmlMeta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -784,6 +789,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     root.setStructuredAnnotations(annotations);
+    omexmlMeta.setModel(model);
     omexmlMeta.setRoot(root);
   }
 
@@ -795,6 +801,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     String key, String value)
   {
     omexmlMeta.resolveReferences();
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) omexmlMeta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -820,6 +827,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     annotations.addXMLAnnotation(annotation);
 
     root.setStructuredAnnotations(annotations);
+    omexmlMeta.setModel(model);
     omexmlMeta.setRoot(root);
   }
 
@@ -839,6 +847,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         throw new IllegalArgumentException(
             "Expecting OMEXMLMetadata instance.");
       }
+      dest.setModel(ome);
       dest.setRoot(ome);
     }
     else {
@@ -880,6 +889,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void removeBinData(OMEXMLMetadata omexmlMeta) {
     omexmlMeta.resolveReferences();
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) omexmlMeta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     List<Image> images = root.copyImageList();
     for (Image img : images) {
@@ -890,6 +900,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       pix.setMetadataOnly(null);
     }
+    omexmlMeta.setModel(model);
     omexmlMeta.setRoot(root);
   }
 
@@ -897,6 +908,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void removeTiffData(OMEXMLMetadata omexmlMeta) {
     omexmlMeta.resolveReferences();
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) omexmlMeta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     List<Image> images = root.copyImageList();
     for (Image img : images) {
@@ -907,6 +919,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       pix.setMetadataOnly(null);
     }
+    omexmlMeta.setModel(model);
     omexmlMeta.setRoot(root);
   }
 
@@ -914,6 +927,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   @Override
   public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {
     omexmlMeta.resolveReferences();
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) omexmlMeta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     Pixels img = root.getImage(image).getPixels();
     List<Channel> channels = img.copyChannelList();
@@ -924,6 +938,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         img.removeChannel(channel);
       }
     }
+    omexmlMeta.setModel(model);
     omexmlMeta.setRoot(root);
   }
 
@@ -984,6 +999,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       return;
     }
 
+    OMEXMLMetadataModel model = (OMEXMLMetadataModel) meta.getModel();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
     Image image;
     try {
@@ -1075,6 +1091,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     root.setStructuredAnnotations(annotations);
+    meta.setModel(model);
     meta.setRoot(root);
   }
 

@@ -422,6 +422,7 @@ public final class ImageConverter {
           }
 
           newRoot.addImage(exportImage);
+          meta.setModel(newRoot);
           meta.setRoot(newRoot);
 
           meta.setPixelsSizeX(new PositiveInteger(width), 0);

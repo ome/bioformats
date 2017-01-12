@@ -430,6 +430,7 @@ public class CellWorxReader extends FormatReader {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
 
+    convertMetadata.setModel(convertRoot);
     convertMetadata.setRoot(convertRoot);
 
     pnl.close();

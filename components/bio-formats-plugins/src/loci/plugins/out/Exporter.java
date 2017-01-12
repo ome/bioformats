@@ -369,6 +369,7 @@ public class Exporter {
                     ROI roi = root.getROI(0);
                     root.removeROI(roi);
                 }
+                store.setModel(root);
                 store.setRoot(root);
             }
             if (xml == null) {
