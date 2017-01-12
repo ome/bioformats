@@ -125,7 +125,7 @@ public class TiffWriterTest {
   
   @DataProvider(name = "nonTiling")
   public Object[][] createNonTiling() {
-    if (percentageOfTilingTests == 0) {
+    if (percentageOfSaveBytesTests == 0) {
       return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
     }
     int[] tileSizes = {PLANE_WIDTH};

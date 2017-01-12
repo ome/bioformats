@@ -164,6 +164,10 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
+          <systemPropertyVariables>
+            <testng.runWriterSaveBytesTests>50</testng.runWriterSaveBytesTests>
+            <testng.runWriterTilingTests>2</testng.runWriterTilingTests>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
