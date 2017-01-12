@@ -114,7 +114,7 @@ something like this:
     1.6.0_24-b24;java.vm.vendor=Sun+Microsystems+Inc.;bioformats.caller=
     Bio-Formats+utilities
 
-To avoid this issue, call the tool with the :option:`-no-upgrade` parameter.
+To avoid this issue, call the tool with the ``-no-upgrade`` option.
 
 Profiling
 ---------

@@ -14,11 +14,11 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.build" value="sphinx-build"/>
   <property name="sphinx.warnopts" value=""/>
   <property name="sphinx.opts" value=""/>
+  <property name="sphinx.srcdir" location="."/>
   <property name="sphinx.builddir" location="_build"/>
-  <property name="latex.opts" value=""/>
 
   <target name="init">
-    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
+    <property name="release.version.regex" value="v?([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
     <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
     <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
 
@@ -42,18 +42,19 @@ Type "ant -p" for a list of targets.
     </if>
     <property name="sphinx.openmicroscopy_source.user" value="openmicroscopy"/>
     <property name="sphinx.ome_source.user" value="ome"/>
-    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
+    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.2"/>
 
-    <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
-    <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
-    <replace file="conf.py" token="@sphinx_builddir@" value="."/>
-    <replace file="conf.py" token="@bioformats_source_branch@" value="${sphinx.bioformats.source.branch}"/>
-    <replace file="conf.py" token="@common_java_source_branch@" value="${sphinx.common_java.source.branch}"/>
-    <replace file="conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
-    <replace file="conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
-    <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
-    <replace file="conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
-    <replace file="conf.py" token="@ome_model_version@" value="${ome-model.version}"/>
+    <mkdir dir="${sphinx.builddir}"/>
+    <copy file="conf.py" tofile="${sphinx.builddir}/conf.py" overwrite="true"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@sphinx_srcdir@" value="${sphinx.srcdir}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@sphinx_builddir@" value="${sphinx.builddir}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@bioformats_source_branch@" value="${sphinx.bioformats.source.branch}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@common_java_source_branch@" value="${sphinx.common_java.source.branch}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
+    <replace file="${sphinx.builddir}/conf.py" token="@ome_model_version@" value="${ome-model.version}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">
@@ -70,6 +71,8 @@ Type "ant -p" for a list of targets.
         <arg value="version=${sphinx.version}"/>
         <arg value="-b"/>
         <arg value="@{buildtype}"/>
+        <arg value="-c"/>
+        <arg value="${sphinx.builddir}"/>
         <arg line="@{opts}"/>
         <arg line="@{warnopts}"/>
         <arg value="@{srcdir}"/>
@@ -80,7 +83,7 @@ Type "ant -p" for a list of targets.
 
   <target name="html" depends="init">
     <sphinx buildtype="html"
-            srcdir="."
+            srcdir="${sphinx.srcdir}"
             destdir="${sphinx.builddir}/html"
             opts="${sphinx.opts}"
             warnopts="${sphinx.warnopts}"/>
@@ -89,80 +92,13 @@ Type "ant -p" for a list of targets.
       <!--
         include (none) to prevent problems if component.resources-bin is empty
       -->
-      <fileset dir="_build/html"/>
+      <fileset dir="${sphinx.builddir}/html"/>
     </copy>
     <zip destfile="${artifact.dir}/bio-formats-doc-${sphinx.release}.zip">
-      <zipfileset dir="_build/html" includes="**/*" prefix="bio-formats-doc-${sphinx.release}"/>
+      <zipfileset dir="${sphinx.builddir}/html" includes="**/*" prefix="bio-formats-doc-${sphinx.release}"/>
     </zip>
     <delete dir="${artifact.dir}/bio-formats-doc-${sphinx.release}"/>
   </target>
-
-  <target name="man" depends="init">
-    <sphinx buildtype="man"
-            srcdir="."
-            destdir="${sphinx.builddir}/man"
-            opts="${sphinx.opts}"/>
-  </target>
-
-  <macrodef name="xelatex" description="Run XeLaTeX">
-    <attribute name="file" default=""/>
-    <sequential>
-      <basename property="file.basename" file="@{file}"/>
-      <dirname property="file.dirname" file="@{file}"/>
-      <exec executable="xelatex" failonerror="true" dir="${file.dirname}">
-        <arg line="${latex.opts}"/>
-        <arg value="${file.basename}"/>
-      </exec>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="makeindex" description="Run makeindex">
-    <attribute name="file" default=""/>
-    <sequential>
-      <basename property="file.basename" file="@{file}"/>
-      <dirname property="file.dirname" file="@{file}"/>
-      <propertyregex property="file.index" input="${file.basename}" regexp="(.*)\.tex" select="\1.idx"/>
-      <exec executable="makeindex" failonerror="true" dir="${file.dirname}">
-        <arg value="-s"/>
-        <arg value="python.ist"/>
-        <arg value="${file.index}"/>
-      </exec>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="runlatex">
-    <attribute name="file" default=""/>
-    <sequential>
-      <basename property="jar.filename" file="${lib.jarfile}"/>
-      <xelatex file="@{file}"/>
-      <xelatex file="@{file}"/>
-      <makeindex file="@{file}"/>
-      <xelatex file="@{file}"/>
-      <xelatex file="@{file}"/>
-      <xelatex file="@{file}"/>
-    </sequential>
-  </macrodef>
-
-  <target name="latexpdf" depends="init">
-    <sphinx buildtype="latex"
-            srcdir="."
-            destdir="${sphinx.builddir}/latex"
-            opts="${sphinx.opts}"
-            warnopts="${sphinx.warnopts}"/>
-    <copy file="preamble.tex" todir="${sphinx.builddir}/latex"/>
-
-    <for param="file">
-      <path>
-       <fileset dir="${sphinx.builddir}/latex" includes="*.tex"/>
-      </path>
-      <sequential>
-        <runlatex file="@{file}"/>
-      </sequential>
-    </for>
-    <copy file="_build/latex/Bio-Formats.pdf" tofile="${artifact.dir}/Bio-Formats-${sphinx.release}.pdf"/>
-  </target>
-
-  <target name="pdf" depends="latexpdf"/>
 
   <target name="linkcheck" depends="init">
     <sphinx buildtype="linkcheck" srcdir="."
@@ -173,7 +109,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean">
     <delete dir="${sphinx.builddir}"/>
-    <delete file="conf.py"/>
   </target>
 
 </project>

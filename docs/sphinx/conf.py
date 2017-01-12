@@ -86,7 +86,8 @@ release = 'UNKNOWN'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'CMakeLists.txt']
+relbuildpath=os.path.relpath(builddir, srcdir)
+exclude_patterns = [relbuildpath, 'CMakeLists.txt']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -206,7 +207,7 @@ html_theme = 'sphinxdoc'
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = ['themes']
+html_theme_path = [os.path.abspath(os.path.join(srcdir, 'themes'))]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -295,24 +296,24 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-target = project + '.tex'
-latex_documents = [
-  (master_doc, target, title, author, 'manual'),
-]
+#target = project + '.tex'
+#latex_documents = [
+#  (master_doc, target, title, author, 'manual'),
+#]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-latex_logo = os.path.join(srcdir, 'images/bio-formats-logo.pdf')
+#latex_logo = os.path.join(srcdir, 'images/bio-formats-logo.pdf')
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-latex_use_parts = True
+#latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-latex_show_urls = 'footnote'
+#latex_show_urls = 'footnote'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
