@@ -120,7 +120,7 @@ public class TiffWriterTest {
     int[] seriesCounts = {1, 5};
     int[] timeCounts = {1};
     String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
-    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions);
+    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions, percentageOfTilingTests);
   }
   
   @DataProvider(name = "nonTiling")
@@ -133,10 +133,10 @@ public class TiffWriterTest {
     int[] seriesCounts = {1};
     int[] timeCounts = {1, 5};
     String[] compressions = {COMPRESSION_UNCOMPRESSED, COMPRESSION_LZW, COMPRESSION_J2K, COMPRESSION_J2K_LOSSY, COMPRESSION_JPEG};
-    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions);
+    return getData(tileSizes, channelCounts, seriesCounts, timeCounts, compressions, percentageOfSaveBytesTests);
   }
 
-  private Object[][] getData(int[] tileSizes, int[] channelCounts, int[] seriesCounts, int[] timeCounts, String[] compressions) {
+  private Object[][] getData(int[] tileSizes, int[] channelCounts, int[] seriesCounts, int[] timeCounts, String[] compressions, int percentage) {
     boolean[] booleanValues = {true, false};
     int compressionPixelTypeSizes = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
     int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length * timeCounts.length;
@@ -180,8 +180,8 @@ public class TiffWriterTest {
     }
 
     // Return a subset of tests if a percentage is selected
-    if (percentageOfTilingTests > 0 && percentageOfTilingTests < 100) {
-      int numTests = (paramSize / 100) * percentageOfTilingTests;
+    if (percentage > 0 && percentage < 100) {
+      int numTests = (paramSize / 100) * percentage;
       Object[][] returnSubset = new Object[numTests][];
       for (int i = 0; i < numTests; i++) {
         Random rand = new Random();
