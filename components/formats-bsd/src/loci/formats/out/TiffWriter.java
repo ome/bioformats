@@ -484,8 +484,7 @@ public class TiffWriter extends FormatWriter {
           tiffParserStream.close();
         }
       }
-    }
-    else {
+    } else {
       saveBytes(no, buf, ifd, x, y, w, h);
     }
   }
