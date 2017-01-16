@@ -485,6 +485,9 @@ public class TiffWriter extends FormatWriter {
         }
       }
     }
+    else {
+      saveBytes(no, buf, ifd, x, y, w, h);
+    }
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
