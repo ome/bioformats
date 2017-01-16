@@ -12,7 +12,7 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
-  <property name="testng.runWriterSaveBytesTests" value="50"/>
+  <property name="testng.runWriterSaveBytesTests" value="2"/>
   <property name="testng.runWriterTilingTests" value="2"/>
 
   <target name="test" depends="jar,compile-tests,test-long-running,
