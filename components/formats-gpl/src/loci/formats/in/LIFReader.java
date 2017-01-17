@@ -1925,7 +1925,13 @@ public class LIFReader extends FormatReader {
       }
       String unit = dimension.getAttribute("Unit");
 
-      physicalLen /= len;
+      if (len > 1) {
+        physicalLen /= (len - 1);
+      }
+      else {
+        physicalLen = 0d;
+      }
+      
       if (unit.equals("Ks")) {
         physicalLen /= 1000;
       }
@@ -1947,7 +1953,7 @@ public class LIFReader extends FormatReader {
             if (ms.sizeZ == 1) {
               ms.sizeZ = len;
               bytesPerAxis.put(nBytes, "Z");
-              physicalSizeZ = (physicalLen * len) / (len - 1);
+              physicalSizeZ = physicalLen;
             }
             else if (ms.sizeT == 1) {
               ms.sizeT = len;
@@ -1970,7 +1976,7 @@ public class LIFReader extends FormatReader {
           else {
             ms.sizeZ = len;
             bytesPerAxis.put(nBytes, "Z");
-            physicalSizeZ = (physicalLen * len) / (len - 1);
+            physicalSizeZ = physicalLen;
           }
           break;
         case 4: // T axis
