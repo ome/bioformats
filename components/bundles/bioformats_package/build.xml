@@ -59,6 +59,8 @@ Type "ant -p" for a list of targets.
       <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
         includes="**/*" prefix="bfmatlab"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
+      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.txt"
+        fullpath="bfmatlab/NEWS.rst"/>
     </zip>
   </target>
 </project>
