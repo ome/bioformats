@@ -47,6 +47,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -407,8 +408,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // effectively useless).
     if (wellCount > 1) {
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(1), 0);
+      store.setPlateColumns(new PositiveInteger(wellCount), 0);
       store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
       store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+
+      store.setPlateAcquisitionID(
+        MetadataTools.createLSID("PlateAcquisition", 0, 0), 0, 0);
 
       for (int well=0; well<wellCount; well++) {
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
@@ -428,6 +434,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
             store.setWellSampleImageRef(imageID, 0, well, field);
             store.setWellSampleIndex(
               new NonNegativeInteger(seriesIndex), 0, well, field);
+            store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, seriesIndex);
           }
         }
       }
