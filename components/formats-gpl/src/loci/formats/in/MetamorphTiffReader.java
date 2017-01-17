@@ -433,6 +433,19 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
     }
 
+    final List<String> timestamps = handler.getTimestamps();
+    final List<Double> exposures = handler.getExposures();
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      for (int i=0; i<timestamps.size(); i++) {
+        long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
+        addGlobalMetaList("timestamp", timestamp);
+      }
+      for (int i=0; i<exposures.size(); i++) {
+        addGlobalMetaList("exposure time (ms)",
+          exposures.get(i).floatValue() * 1000);
+      }
+    }
+
     for (int s=0; s<seriesCount; s++) {
       setSeries(s);
       Well well = getWell(s);
@@ -452,18 +465,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        final List<String> timestamps = handler.getTimestamps();
-        final List<Double> exposures = handler.getExposures();
-
-        for (int i=0; i<timestamps.size(); i++) {
-          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
-          addSeriesMetaList("timestamp", timestamp);
-        }
-        for (int i=0; i<exposures.size(); i++) {
-          addSeriesMetaList("exposure time (ms)",
-            exposures.get(i).floatValue() * 1000);
-        }
-
         long startDate = 0;
         if (timestamps.size() > 0) {
           startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT, ".");
