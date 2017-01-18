@@ -84,7 +84,7 @@ public class ImageConverterTest {
   }
 
   @BeforeClass
-  public void setUp1() {
+  public void setUp() {
     oldSecurityManager = System.getSecurityManager();
     oldOut = System.out;
     oldErr = System.err;
