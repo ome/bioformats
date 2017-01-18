@@ -445,8 +445,8 @@ public class CellWorxReader extends FormatReader {
     store.setPlateID(plateID, 0);
 
     plateName = plate.getName();
-    if (plateName.indexOf(".") > 0) {
-      plateName = plateName.substring(0, plateName.lastIndexOf("."));
+    if (plateName.indexOf('.') > 0) {
+      plateName = plateName.substring(0, plateName.lastIndexOf('.'));
     }
     store.setPlateName(plateName, 0);
 
