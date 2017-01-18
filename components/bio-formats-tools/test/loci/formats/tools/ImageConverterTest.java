@@ -32,8 +32,10 @@
 
 package loci.formats.tools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.security.Permission;
 
 import loci.formats.IFormatReader;
@@ -55,6 +57,8 @@ import static org.testng.Assert.assertTrue;
 public class ImageConverterTest {
 
   private File outFile;
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
   protected static class ExitException extends SecurityException {
     public final int status;
@@ -79,11 +83,15 @@ public class ImageConverterTest {
 
   @BeforeMethod
   public void setUp() {
+    System.setOut(new PrintStream(outContent));
+    System.setErr(new PrintStream(errContent));
     System.setSecurityManager(new NoExitSecurityManager());
   }
 
   @AfterMethod
   public void tearDown() {
+    System.setOut(null);
+    System.setErr(null);
     System.setSecurityManager(null);
   }
 
@@ -123,6 +131,19 @@ public class ImageConverterTest {
       outFile.deleteOnExit();
       assertEquals(e.status, 0);
       checkImage();
+    }
+  }
+
+  @Test
+  public void testBadArgument() throws FormatException, IOException {
+    outFile = File.createTempFile("test", "ome.tif");
+    outFile.deleteOnExit();
+    String[] args = {"-foo", "test.fake", outFile.getAbsolutePath()};
+    try {
+      ImageConverter.main(args);
+    } catch (ExitException e) {
+      assertEquals(e.status, 1);
+      assertEquals("Found unknown command flag: -foo; exiting.\n", outContent.toString());
     }
   }
 }

@@ -196,7 +196,7 @@ public final class ImageConverter {
           catch (NumberFormatException e) { }
         }
         else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
-          LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
+          System.out.println("Found unknown command flag: " + args[i] + "; exiting.");
           return false;
         }
       }
