@@ -57,6 +57,9 @@ import static org.testng.Assert.assertTrue;
 public class ImageConverterTest {
 
   private File outFile;
+  private SecurityManager oldSecurityManager;
+  private PrintStream oldOut;
+  private PrintStream oldErr;
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
@@ -83,6 +86,9 @@ public class ImageConverterTest {
 
   @BeforeMethod
   public void setUp() {
+    oldSecurityManager = System.getSecurityManager();
+    oldOut = System.out;
+    oldErr = System.err;
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
     System.setSecurityManager(new NoExitSecurityManager());
@@ -90,9 +96,9 @@ public class ImageConverterTest {
 
   @AfterMethod
   public void tearDown() {
-    System.setOut(null);
-    System.setErr(null);
-    System.setSecurityManager(null);
+    System.setOut(oldOut);
+    System.setErr(oldErr);
+    System.setSecurityManager(oldSecurityManager);
   }
 
   @DataProvider(name = "suffixes")
