@@ -474,6 +474,7 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Dimension 5", dim5);
     addGlobalMeta("Dimension 6", dim6);
     addGlobalMeta("Dimension 7", dim7);
+    addGlobalMeta("Dimension 8", dim8);
     addGlobalMeta("Intent #1", intent1);
     addGlobalMeta("Intent #2", intent2);
     addGlobalMeta("Intent #3", intent3);
@@ -501,6 +502,10 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Quaternion x parameter", quaternionX);
     addGlobalMeta("Quaternion y parameter", quaternionY);
     addGlobalMeta("Quaternion z parameter", quaternionZ);
+    addGlobalMeta("Slice code", sliceCode);
+    addGlobalMeta("XYZT units", units);
+    addGlobalMeta("XYZ units", spatialUnits);
+    addGlobalMeta("Time units", timeUnits);
   }
 
 }
