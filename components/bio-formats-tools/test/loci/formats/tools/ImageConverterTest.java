@@ -44,7 +44,8 @@ import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
 
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -60,8 +61,6 @@ public class ImageConverterTest {
   private SecurityManager oldSecurityManager;
   private PrintStream oldOut;
   private PrintStream oldErr;
-  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-  private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
   protected static class ExitException extends SecurityException {
     public final int status;
@@ -84,17 +83,15 @@ public class ImageConverterTest {
     }
   }
 
-  @BeforeMethod
-  public void setUp() {
+  @BeforeClass
+  public void setUp1() {
     oldSecurityManager = System.getSecurityManager();
     oldOut = System.out;
     oldErr = System.err;
-    System.setOut(new PrintStream(outContent));
-    System.setErr(new PrintStream(errContent));
     System.setSecurityManager(new NoExitSecurityManager());
   }
 
-  @AfterMethod
+  @AfterClass
   public void tearDown() {
     System.setOut(oldOut);
     System.setErr(oldErr);
@@ -142,6 +139,8 @@ public class ImageConverterTest {
 
   @Test
   public void testBadArgument() throws FormatException, IOException {
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
     outFile = File.createTempFile("test", "ome.tif");
     outFile.deleteOnExit();
     String[] args = {"-foo", "test.fake", outFile.getAbsolutePath()};
