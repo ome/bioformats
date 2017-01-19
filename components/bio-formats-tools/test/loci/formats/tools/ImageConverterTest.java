@@ -148,7 +148,9 @@ public class ImageConverterTest {
       ImageConverter.main(args);
     } catch (ExitException e) {
       assertEquals(e.status, 1);
-      assertEquals("Found unknown command flag: -foo; exiting.\n", outContent.toString());
+      assertEquals(
+        "Found unknown command flag: -foo; exiting." +
+        System.getProperty("line.separator"), outContent.toString());
     }
   }
 }
