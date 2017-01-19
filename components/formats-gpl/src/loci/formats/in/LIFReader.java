@@ -141,7 +141,7 @@ public class LIFReader extends FormatReader {
   private Length[] posX, posY, posZ;
   private Double[] refractiveIndex;
   private List[] cutIns, cutOuts, filterModels;
-  private double[][] timestamps;
+  private Double[][] timestamps;
   private List[] laserWavelength, laserIntensity, laserActive, laserFrap;
 
   private ROI[][] imageROIs;
@@ -948,14 +948,16 @@ public class LIFReader extends FormatReader {
         }
         store.setPlanePositionZ(posZ[index], i, image);
         if (timestamps[index] != null) {
-          double timestamp = timestamps[index][image];
-          if (timestamps[index][0] == acquiredDate[index]) {
-            timestamp -= acquiredDate[index];
+          if (timestamps[index][image] != null) {
+            double timestamp = timestamps[index][image];
+            if (timestamps[index][0] == acquiredDate[index]) {
+              timestamp -= acquiredDate[index];
+            }
+            else if (timestamp == acquiredDate[index] && image > 0) {
+              timestamp = timestamps[index][0];
+            }
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
           }
-          else if (timestamp == acquiredDate[index] && image > 0) {
-            timestamp = timestamps[index][0];
-          }
-          store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
         }
 
         if (expTimes[index] != null) {
@@ -1056,7 +1058,7 @@ public class LIFReader extends FormatReader {
     laserIntensity = new List[imageNodes.size()];
     laserActive = new List[imageNodes.size()];
     laserFrap = new List[imageNodes.size()];
-    timestamps = new double[imageNodes.size()][];
+    timestamps = new Double[imageNodes.size()][];
     activeDetector = new List[imageNodes.size()];
     serialNumber = new String[imageNodes.size()];
     lensNA = new Double[imageNodes.size()];
@@ -1541,7 +1543,7 @@ public class LIFReader extends FormatReader {
     if (timeStampLists == null) return;
 
     Element timeStampList = (Element)timeStampLists.item(0);
-    timestamps[image] = new double[getImageCount()];
+    timestamps[image] = new Double[getImageCount()];
     
     // probe if timestamps are saved in the format of LAS AF 3.1 or newer
     String numberOfTimeStamps = timeStampList.getAttribute("NumberOfTimeStamps");
