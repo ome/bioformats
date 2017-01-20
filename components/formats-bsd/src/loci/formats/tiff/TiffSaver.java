@@ -420,8 +420,8 @@ public class TiffSaver {
     boolean interleaved = ifd.getPlanarConfiguration() == 1;
     boolean isTiled = ifd.isTiled();
 
-    if (!sequentialWrite) {
-      RandomAccessInputStream in = null;
+    RandomAccessInputStream in = null;
+    if (!sequentialWrite) {   
       if (filename != null) {
         in = new RandomAccessInputStream(filename);
       }
@@ -432,19 +432,14 @@ public class TiffSaver {
         throw new IllegalArgumentException(
             "Filename and bytes are null, cannot create new input stream!");
       }
-      try {
-        TiffParser parser = new TiffParser(in);
-        long[] ifdOffsets = parser.getIFDOffsets();
-        LOGGER.debug("IFD offsets: {}", Arrays.toString(ifdOffsets));
-        if (no < ifdOffsets.length) {
-          out.seek(ifdOffsets[no]);
-          LOGGER.debug("Reading IFD from {} in non-sequential write.",
-              ifdOffsets[no]);
-          ifd = parser.getIFD(ifdOffsets[no]);
-        }
-      }
-      finally {
-        in.close();
+      TiffParser parser = new TiffParser(in);
+      long[] ifdOffsets = parser.getIFDOffsets();
+      LOGGER.debug("IFD offsets: {}", Arrays.toString(ifdOffsets));
+      if (no < ifdOffsets.length) {
+        out.seek(ifdOffsets[no]);
+        LOGGER.debug("Reading IFD from {} in non-sequential write.",
+            ifdOffsets[no]);
+        ifd = parser.getIFD(ifdOffsets[no]);
       }
     }
 
@@ -496,6 +491,9 @@ public class TiffSaver {
     else {
       ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
       ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+    }
+    if (in != null) {
+      in.close();
     }
 
     long fp = out.getFilePointer();
