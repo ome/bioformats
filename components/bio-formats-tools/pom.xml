@@ -100,11 +100,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <additionalClasspathElements>
-              <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

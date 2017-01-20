@@ -16,7 +16,6 @@ Type "ant -p" for a list of targets.
     <testng failureProperty="failedTest">
       <classpath refid="test.classpath"/>
       <classpath>
-        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
       </classpath>
