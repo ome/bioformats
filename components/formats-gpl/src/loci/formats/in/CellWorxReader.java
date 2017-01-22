@@ -440,10 +440,19 @@ public class CellWorxReader extends FormatReader {
 
     String plateID = MetadataTools.createLSID("Plate", 0);
 
-    Location plate = new Location(id).getAbsoluteFile().getParentFile();
+    Location plate = new Location(id).getAbsoluteFile();
 
     store.setPlateID(plateID, 0);
-    store.setPlateName(plate.getName(), 0);
+
+    plateName = plate.getName();
+    if (plateName.indexOf('.') > 0) {
+      plateName = plateName.substring(0, plateName.lastIndexOf('.'));
+    }
+    store.setPlateName(plateName, 0);
+
+    store.setPlateRows(new PositiveInteger(wellFiles.length), 0);
+    store.setPlateColumns(new PositiveInteger(wellFiles[0].length), 0);
+
     for (int i=0; i<core.size(); i++) {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
