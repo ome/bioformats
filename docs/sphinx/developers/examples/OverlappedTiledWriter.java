@@ -143,7 +143,7 @@ public class OverlappedTiledWriter {
             int tileX = x * tileSizeX;
             int tileY = y * tileSizeY;
 
-            /* tiling-example-start */
+            /* overlapped-tiling-example-start */
             // If the last tile row or column overlaps the image size then only a partial tile
             // is read or written. The tile size used is adjusted to account for any overlap.
             int effTileSizeX = (tileX + tileSizeX) < width ? tileSizeX : width - tileX;
