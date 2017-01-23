@@ -112,7 +112,7 @@ public class TiffWriterTest {
   @DataProvider(name = "tiling")
   public Object[][] createTiling() {
     if (percentageOfTilingTests == 0) {
-      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
 
     int[] tileSizes = {1, 32, 43, 64};
@@ -126,7 +126,7 @@ public class TiffWriterTest {
   @DataProvider(name = "nonTiling")
   public Object[][] createNonTiling() {
     if (percentageOfSaveBytesTests == 0) {
-      return new Object[][] {{0, false, false, 0, 0, 0, null, 0}};
+      return new Object[][] {{0, false, false, 0, 0, 0, null, 0, false}};
     }
     int[] tileSizes = {PLANE_WIDTH};
     int[] channelCounts = {1, 3};
@@ -139,7 +139,7 @@ public class TiffWriterTest {
   private Object[][] getData(int[] tileSizes, int[] channelCounts, int[] seriesCounts, int[] timeCounts, String[] compressions, int percentage) {
     boolean[] booleanValues = {true, false};
     int compressionPixelTypeSizes = (2 * pixelTypesOther.length) + pixelTypesOther.length - 1 + pixelTypesJ2K.length + 2;
-    int paramSize = tileSizes.length * compressionPixelTypeSizes * 4 * channelCounts.length * seriesCounts.length * timeCounts.length;
+    int paramSize = tileSizes.length * compressionPixelTypeSizes * 8 * channelCounts.length * seriesCounts.length * timeCounts.length;
     Object[][] data = new Object[paramSize][];
     int index = 0;
     for (int tileSize : tileSizes) {
@@ -148,28 +148,30 @@ public class TiffWriterTest {
           for (int channelCount : channelCounts) {
             for (int seriesCount : seriesCounts) {
               for (int timeCount : timeCounts) {
-                for (String compression : compressions) {
-                  int[] pixelTypes = pixelTypesOther;
-                  if (compression.equals(COMPRESSION_J2K)) {
-                    pixelTypes = pixelTypesJ2K;
-                  }
-                  if (compression.equals(COMPRESSION_J2K_LOSSY)) {
-                    // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
-                    pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-                        FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
-                  }
-                  else if (compression.equals(COMPRESSION_JPEG)) {
-                    // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
-                    pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
-                  }
-                  for (int pixelType : pixelTypes) {
-                    if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
-                        (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
-                      data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, timeCount, compression, pixelType};
-                    } else {
-                      data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, timeCount, compression, pixelType};
+                for (Boolean bigTiff : booleanValues) {
+                  for (String compression : compressions) {
+                    int[] pixelTypes = pixelTypesOther;
+                    if (compression.equals(COMPRESSION_J2K)) {
+                      pixelTypes = pixelTypesJ2K;
                     }
-                    index ++;
+                    if (compression.equals(COMPRESSION_J2K_LOSSY)) {
+                      // Should also allow for double but JPEG 2K compression codec throws null pointer for 64 bitsPerSample
+                      pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+                          FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32, FormatTools.FLOAT};
+                    }
+                    else if (compression.equals(COMPRESSION_JPEG)) {
+                      // Should be using pixelTypesJPEG however JPEGCodec throws exception: > 8 bit data cannot be compressed with JPEG
+                      pixelTypes = new int[] {FormatTools.INT8, FormatTools.UINT8};
+                    }
+                    for (int pixelType : pixelTypes) {
+                      if (FormatTools.getBytesPerPixel(pixelType) > 2 &&
+                          (compression.equals(COMPRESSION_J2K) || compression.equals(COMPRESSION_J2K_LOSSY))) {
+                        data[index] = new Object[] {tileSize, endianness, false, channelCount, seriesCount, timeCount, compression, pixelType, bigTiff};
+                      } else {
+                        data[index] = new Object[] {tileSize, endianness, interleaved, channelCount, seriesCount, timeCount, compression, pixelType, bigTiff};
+                      }
+                      index ++;
+                    }
                   }
                 }
               }
@@ -496,12 +498,12 @@ public class TiffWriterTest {
 
   @Test(dataProvider = "tiling")
   public void testSaveBytesTiling(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
-      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
+      int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfTilingTests == 0) return;
 
     File tmp = File.createTempFile("tiffWriterTest_Tiling", ".tiff");
     tmp.deleteOnExit();
-    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
     TiffReader reader = new TiffReader();
     reader.setId(tmp.getAbsolutePath());
@@ -526,12 +528,12 @@ public class TiffWriterTest {
 
   @Test(dataProvider = "nonTiling")
   public void testSaveBytes(int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
-      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
+      int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     if (percentageOfSaveBytesTests == 0) return;
 
     File tmp = File.createTempFile("tiffWriterTest", ".tiff");
     tmp.deleteOnExit();
-    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType);
+    Plane originalPlane = writeImage(tmp, tileSize, littleEndian, interleaved, rgbChannels, seriesCount, sizeT, compression, pixelType, bigTiff);
 
     TiffReader reader = new TiffReader();
     reader.setId(tmp.getAbsolutePath());
@@ -543,12 +545,13 @@ public class TiffWriterTest {
   }
 
   private Plane writeImage(File file, int tileSize, boolean littleEndian, boolean interleaved, int rgbChannels, 
-      int seriesCount, int sizeT, String compression, int pixelType) throws Exception {
+      int seriesCount, int sizeT, String compression, int pixelType, boolean bigTiff) throws Exception {
     TiffWriter writer = new TiffWriter();
     String pixelTypeString = FormatTools.getPixelTypeString(pixelType);
     writer.setMetadataRetrieve(createMetadata(pixelTypeString, rgbChannels, seriesCount, littleEndian, sizeT));
     writer.setCompression(compression);
     writer.setInterleaved(interleaved);
+    writer.setBigTiff(bigTiff);
     if (tileSize != PLANE_WIDTH) {
       writer.setTileSizeX(tileSize);
       writer.setTileSizeY(tileSize);
