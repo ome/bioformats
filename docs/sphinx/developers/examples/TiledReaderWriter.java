@@ -68,7 +68,7 @@ public class TiledReaderWriter {
    * @param tileSizeX the width of tile to attempt to use
    * @param tileSizeY the height of tile to attempt to use
    */
-  public TiledReaderWriter(String inputFile, String outputFile, int tileX, int tileY) {
+  public TiledReaderWriter(String inputFile, String outputFile, int tileSizeX, int tileSizeY) {
     this.inputFile = inputFile;
     this.outputFile = outputFile;
     this.tileSizeX = tileSizeX;
