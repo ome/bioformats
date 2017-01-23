@@ -53,13 +53,16 @@ public class ExampleSuite {
 
     // Retrieve local test files
     URL resource =  ExampleSuite.class.getResource("test.fake");
+    URL overlappedResource =  ExampleSuite.class.getResource("test&sizeX=1024&sizeY=1024.fake");
     File inputFile = new File(resource.toURI());
+    File overlappedInputFile = new File(overlappedResource.toURI());
     File parentDir = inputFile.getParentFile();
     File convertedFile = new File(parentDir, "converted.ome.tiff");
     File exportFile = new File(parentDir, "export.ome.tiff");
     File exportSPWFile = new File(parentDir, "exportSPW.ome.tiff");
     File simpleTiledFile = new File(parentDir, "simpleTiledFile.ome.tiff");
     File tiledFile = new File(parentDir, "tiledFile.ome.tiff");
+    File overlappedTiledFile = new File(parentDir, "overlappedTiledFile.ome.tiff");
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
@@ -71,5 +74,7 @@ public class ExampleSuite {
         inputFile.getAbsolutePath(), simpleTiledFile.getAbsolutePath(), "256", "256"});
     execute("TiledReaderWriter", new String[] {
         inputFile.getAbsolutePath(), tiledFile.getAbsolutePath(), "256", "256"});
+    execute("OverlappedTiledWriter", new String[] {
+        overlappedInputFile.getAbsolutePath(), overlappedTiledFile.getAbsolutePath(), "96", "96"});
   }
 }
