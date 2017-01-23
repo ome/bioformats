@@ -87,9 +87,7 @@ public class TiledReaderWriter {
    * @throws FormatException 
    * @throws ServiceException 
    */
-  private boolean initialize() throws DependencyException, FormatException, IOException, ServiceException {
-    Exception exception = null;
-
+  private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
     // construct the object that stores OME-XML metadata
     ServiceFactory factory = new ServiceFactory();
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -110,7 +108,6 @@ public class TiledReaderWriter {
     this.tileSizeY = writer.setTileSizeY(tileSizeY);
 
     writer.setId(outputFile);
-    return exception == null;
   }
 
   /** Read tiles from input file and write tiles to output OME Tiff. 
@@ -162,9 +159,21 @@ public class TiledReaderWriter {
 
   /** Close the file reader and writer. 
    * @throws IOException */
-  private void cleanup() throws IOException {
-    reader.close();
-    writer.close();
+  private void cleanup() {
+    try {
+      reader.close();
+    }
+    catch (IOException e) {
+      System.err.println("Failed to close reader.");
+      e.printStackTrace();
+    }
+    try {
+      writer.close();
+    }
+    catch (IOException e) {
+      System.err.println("Failed to close writer.");
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -183,9 +192,8 @@ public class TiledReaderWriter {
     // initialize the files
     boolean initializationSuccess = tiledReadWriter.initialize();
 
-    if (initializationSuccess) {
-      tiledReadWriter.readWriteTiles();
-    }
+    // read and write the image using tiles
+    tiledReadWriter.readWriteTiles();
 
     // close the files
     tiledReadWriter.cleanup();
