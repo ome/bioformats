@@ -24,6 +24,9 @@
  */
 
 import java.io.IOException;
+
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
@@ -80,55 +83,53 @@ public class SimpleTiledWriter {
    * writer. The input reader will read a full plane which will then be passed
    * to the OME Tiff Writer. The writer will then automatically write the
    * image in a tiled format based on the tile size values provided.
+   * @throws FormatException 
+   * @throws DependencyException 
+   * @throws ServiceException 
+   * @throws IOException 
    *
    */
-  public void readWriteTiles() {
-    try {
-      // construct the object that stores OME-XML metadata
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      IMetadata omexml = service.createOMEXMLMetadata();
+  public void readWriteTiles() throws FormatException, DependencyException, ServiceException, IOException {
+    // construct the object that stores OME-XML metadata
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omexml = service.createOMEXMLMetadata();
 
-      // set up the reader and associate it with the input file
-      reader = new ImageReader();
-      reader.setMetadataStore(omexml);
-      reader.setId(inputFile);
+    // set up the reader and associate it with the input file
+    reader = new ImageReader();
+    reader.setMetadataStore(omexml);
+    reader.setId(inputFile);
 
-      /* initialize-tiling-writer-example-start */
-      // set up the writer and associate it with the output file
-      writer = new OMETiffWriter();
-      writer.setMetadataRetrieve(omexml);
-      writer.setInterleaved(reader.isInterleaved());
+    /* initialize-tiling-writer-example-start */
+    // set up the writer and associate it with the output file
+    writer = new OMETiffWriter();
+    writer.setMetadataRetrieve(omexml);
+    writer.setInterleaved(reader.isInterleaved());
 
-      // set the tile size height and width for writing
-      writer.setTileSizeX(tileSizeX);
-      writer.setTileSizeY(tileSizeY);
+    // set the tile size height and width for writing
+    writer.setTileSizeX(tileSizeX);
+    writer.setTileSizeY(tileSizeY);
 
-      writer.setId(outputFile);
+    writer.setId(outputFile);
 
-      /* initialize-tiling-writer-example-end */
-      /* tiling-writer-example-start */
+    /* initialize-tiling-writer-example-end */
+    /* tiling-writer-example-start */
 
-      byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
+    byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
 
-      for (int series=0; series<reader.getSeriesCount(); series++) {
-        reader.setSeries(series);
-        writer.setSeries(series);
+    for (int series=0; series<reader.getSeriesCount(); series++) {
+      reader.setSeries(series);
+      writer.setSeries(series);
 
-        // convert each image in the current series
-        for (int image=0; image<reader.getImageCount(); image++) {
-          // Read tiles from the input file and write them to the output OME Tiff
-          // The OME Tiff Writer will automatically write the images in a tiled format
-          buf = reader.openBytes(image);
-          writer.saveBytes(image, buf);
-        }
+      // convert each image in the current series
+      for (int image=0; image<reader.getImageCount(); image++) {
+        // Read tiles from the input file and write them to the output OME Tiff
+        // The OME Tiff Writer will automatically write the images in a tiled format
+        buf = reader.openBytes(image);
+        writer.saveBytes(image, buf);
       }
-      /* tiling-writer-example-end */
     }
-    catch (Exception e) {
-      System.err.println("Failed to read and write tiled files.");
-      e.printStackTrace();
-    }
+    /* tiling-writer-example-end */
   }
 
   /** Close the file reader and writer. */
@@ -155,8 +156,10 @@ public class SimpleTiledWriter {
    * $ java SimpleTiledWriter input-file.oib output-file.ome.tiff 256 256
    * @throws IOException
    * @throws FormatException
+   * @throws ServiceException 
+   * @throws DependencyException 
    */
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
     int tileSizeY = Integer.parseInt(args[3]);
     SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
