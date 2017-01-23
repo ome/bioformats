@@ -24,6 +24,8 @@
  */
 
 import java.io.IOException;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
@@ -80,36 +82,34 @@ public class TiledReaderWriter {
    *
    * @return true if the reader and writer were successfully set up, or false
    *   if an error occurred
+   * @throws DependencyException 
+   * @throws IOException 
+   * @throws FormatException 
+   * @throws ServiceException 
    */
-  private boolean initialize() {
+  private boolean initialize() throws DependencyException, FormatException, IOException, ServiceException {
     Exception exception = null;
-    try {
-      // construct the object that stores OME-XML metadata
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      IMetadata omexml = service.createOMEXMLMetadata();
 
-      // set up the reader and associate it with the input file
-      reader = new ImageReader();
-      reader.setMetadataStore(omexml);
-      reader.setId(inputFile);
+    // construct the object that stores OME-XML metadata
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omexml = service.createOMEXMLMetadata();
 
-      // set up the writer and associate it with the output file
-      writer = new OMETiffWriter();
-      writer.setMetadataRetrieve(omexml);
-      writer.setInterleaved(reader.isInterleaved());
+    // set up the reader and associate it with the input file
+    reader = new ImageReader();
+    reader.setMetadataStore(omexml);
+    reader.setId(inputFile);
 
-      // set the tile size height and width for writing
-      this.tileSizeX = writer.setTileSizeX(tileSizeX);
-      this.tileSizeY = writer.setTileSizeY(tileSizeY);
+    // set up the writer and associate it with the output file
+    writer = new OMETiffWriter();
+    writer.setMetadataRetrieve(omexml);
+    writer.setInterleaved(reader.isInterleaved());
 
-      writer.setId(outputFile);
-    }
-    catch (Exception e) {
-      exception = e;
-      System.err.println("Failed to initialize files.");
-      exception.printStackTrace();
-    }
+    // set the tile size height and width for writing
+    this.tileSizeX = writer.setTileSizeX(tileSizeX);
+    this.tileSizeY = writer.setTileSizeY(tileSizeY);
+
+    writer.setId(outputFile);
     return exception == null;
   }
 
@@ -160,22 +160,11 @@ public class TiledReaderWriter {
     }
   }
 
-  /** Close the file reader and writer. */
-  private void cleanup() {
-    try {
-      reader.close();
-    }
-    catch (IOException e) {
-      System.err.println("Failed to close reader.");
-      e.printStackTrace();
-    }
-    try {
-      writer.close();
-    }
-    catch (IOException e) {
-      System.err.println("Failed to close writer.");
-      e.printStackTrace();
-    }
+  /** Close the file reader and writer. 
+   * @throws IOException */
+  private void cleanup() throws IOException {
+    reader.close();
+    writer.close();
   }
 
   /**
@@ -184,8 +173,10 @@ public class TiledReaderWriter {
    * $ java TiledReaderWriter input-file.oib output-file.ome.tiff 256 256
    * @throws IOException
    * @throws FormatException
+   * @throws ServiceException 
+   * @throws DependencyException 
    */
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
     int tileSizeY = Integer.parseInt(args[3]);
     TiledReaderWriter tiledReadWriter = new TiledReaderWriter(args[0], args[1], tileSizeX, tileSizeY);
