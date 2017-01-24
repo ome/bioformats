@@ -5,7 +5,7 @@ SBIG
 
 
 
-Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+Owner: `Santa Barbara Instrument Group (SBIG) <http://diffractionlimited.com/>`_
 
 **Support**
 
@@ -23,7 +23,7 @@ Reader: SBIGReader (:bfreader:`Source Code <SBIGReader.java>`, :doc:`Supported M
 
 We currently have:
 
-* an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ 
+* an `official SBIG specification document <http://diffractionlimited.com/support/sbig-archives/>`_ 
 * a few SBIG files
 
 We would like to have:
