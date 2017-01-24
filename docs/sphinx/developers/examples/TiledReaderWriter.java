@@ -185,7 +185,7 @@ public class TiledReaderWriter {
     int tileSizeY = Integer.parseInt(args[3]);
     TiledReaderWriter tiledReadWriter = new TiledReaderWriter(args[0], args[1], tileSizeX, tileSizeY);
     // initialize the files
-    boolean initializationSuccess = tiledReadWriter.initialize();
+    tiledReadWriter.initialize();
 
     // read and write the image using tiles
     tiledReadWriter.readWriteTiles();
