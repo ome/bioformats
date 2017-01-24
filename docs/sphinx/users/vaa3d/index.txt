@@ -2,7 +2,7 @@ Vaa3D
 =====
 
 `Vaa3D <http://vaa3d.org>`_,
-developed by the `Peng Lab <http://penglab.janelia.org/>`_ at the `HHMI
+developed by the `Peng Lab <http://home.penglab.com/>`_ at the `HHMI
 Janelia Farm Research Campus <http://www.hhmi.org/janelia/>`_, is a
 handy, fast, and versatile 3D/4D/5D Image Visualization & Analysis
 System for Bioimages & Surface Objects.
