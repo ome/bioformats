@@ -111,7 +111,7 @@ notes = .. seealso:: \n
 
 [Amira Mesh]
 extensions = .am, .amiramesh, .grey, .hx, .labels
-developer = `Visage Imaging <http://www.amiravis.com/>`_
+developer = `Visage Imaging <http://www.vsg3d.com/>`_
 bsd = no
 weHave = * a few Amira Mesh datasets
 weWant = * more Amira Mesh datasets
