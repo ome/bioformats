@@ -1604,7 +1604,7 @@ extensions = .oib, .oif
 owner = `Olympus <http://www.olympus.com/>`_
 bsd = no
 versions = 1.0, 2.0
-software = `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
+software = `FV-Viewer from Olympus <http://www.olympus-lifescience.com/en/>`_
 weHave = * an OIF specification document (v2.0.0.0, from 2008, in PDF) \n
 * an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) \n
 * older FV1000 specification documents (draft, in DOC and XLS) \n

@@ -23,7 +23,7 @@ Reader: FV1000Reader (:bfreader:`Source Code <FV1000Reader.java>`, :doc:`Support
 
 Freely Available Software:
 
-- `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
+- `FV-Viewer from Olympus <http://www.olympus-lifescience.com/en/>`_
 
 
 We currently have:
