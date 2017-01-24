@@ -70,4 +70,4 @@ Commercial applications that support this format include:
 * `SVI Huygens <http://svi.nl/>`_ 
 
 .. seealso:: 
-  `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_
+  `Olympus FluoView Resource Center <http://www.olympus-lifescience.com/>`_
