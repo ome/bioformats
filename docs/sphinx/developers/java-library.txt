@@ -68,7 +68,7 @@ The complete list of current dependencies is as follows:
     * - `XMP Library for Java v5.1.2 <http://www.adobe.com/devnet/xmp.html>`_
       - com.adobe.xmp:xmpcore:5.1.2
       - `BSD License`_
-    * - `JCommander v1.27 <http://beust.com/jcommander>`_
+    * - `JCommander v1.27 <http://jcommander.org/>`_
       - com.beust:jcommander:1.27
       - `Apache License v2.0`_
     * - `metadata-extractor v2.6.2 <https://github.com/drewnoakes/metadata-extractor>`_
