@@ -1928,7 +1928,7 @@ API to read and write PNG files. \n
 [Prairie Technologies TIFF]
 pagename = prairie-tech-tiff
 extensions = .tif, .xml, .cfg
-developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
+developer = `Prairie Technologies <https://www.bruker.com/products/fluorescence-microscopes/ultima-multiphoton-microscopy/ultima-in-vitro/overview.html/>`_
 bsd = no
 weHave = * many Prairie datasets
 pixelsRating = Very good
