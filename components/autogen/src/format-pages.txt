@@ -159,7 +159,7 @@ extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
 bsd = yes
 software = `Firefox 3+ <http://www.mozilla.com/firefox>`_ \n
-`Opera 9.5+ <http://www.opera.com/download>`_ \n
+`Opera 9.5+ <http://www.opera.com>`_ \n
 `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 weHave = * `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ \n
 * several APNG files
