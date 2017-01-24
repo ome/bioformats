@@ -1957,7 +1957,7 @@ mif = true
 
 [Quesant]
 extensions = .afm
-owner = `KLA-Tencor Corporation <https://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
+owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 developer = Quesant Instrument Corporation
 bsd = no
 weHave = * Pascal code that can read Quesant files (from ImageSXM) \n

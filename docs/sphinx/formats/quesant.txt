@@ -8,7 +8,7 @@ Extensions: .afm
 
 Developer: Quesant Instrument Corporation
 
-Owner: `KLA-Tencor Corporation <https://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
+Owner: `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 
 **Support**
 
