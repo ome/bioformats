@@ -174,7 +174,7 @@ non-OME/external dependency is bumped.
 .. _MIT License: https://opensource.org/licenses/MIT
 .. _BSD 3-Clause: https://opensource.org/licenses/BSD-3-Clause
 .. _Sun Public License / LGPL: http://www.beanshell.org/license.html
-.. _Common Public License v1.0: https://www.opensource.org/licenses/cpl1.0.txt
+.. _Common Public License v1.0: https://opensource.org/licenses/cpl1.0.txt
 .. _MIT-Style License: https://github.com/Unidata/thredds/blob/v4.3.19/cdm/license.txt
 .. _BSD License: https://opensource.org/licenses/BSD-2-Clause
 .. _Eclipse Public License v1.0: https://opensource.org/licenses/EPL-1.0
