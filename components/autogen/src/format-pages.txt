@@ -20,7 +20,7 @@ range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
 Free software from 3i can export the files to OME-TIFF post-acquisition, see \n
-https://www.slidebook.com/reader.php.\n
+https://www.intelligent-imaging.com/slidebook.\n
 \n
 3i also develops a native SlideBook reader which works with Bio-Formats. See \n
 http://www.openmicroscopy.org/info/slidebook for details.\n
