@@ -2034,9 +2034,9 @@ utilityRating = Fair
 reader = RHKReader
 
 [SBIG]
-owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+owner = `Santa Barbara Instrument Group (SBIG) <http://diffractionlimited.com/>`_
 bsd = no
-weHave = * an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
+weHave = * an `official SBIG specification document <http://diffractionlimited.com/support/sbig-archives/>`_ \n
 * a few SBIG files
 weWant = * more SBIG files
 pixelsRating = Very good
