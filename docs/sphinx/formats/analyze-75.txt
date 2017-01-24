@@ -6,7 +6,7 @@ Analyze 7.5
 
 Extensions: .img, .hdr
 
-Developer: `Mayo Foundation Biomedical Imaging Resource <https://rportal.mayo.edu/bir/>`_
+Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/research/core-resources/biomedical-imaging-resource-core/overview>`_
 
 
 **Support**
