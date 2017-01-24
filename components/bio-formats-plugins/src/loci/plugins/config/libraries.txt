@@ -200,7 +200,7 @@ notes = Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI
 [Simple Logging Facade for Java]
 type = Java library
 class = org.slf4j.Logger
-url = http://www.slf4j.org/
+url = https://www.slf4j.org/
 license = MIT
 notes = Used by the NetCDF Java library.
 
