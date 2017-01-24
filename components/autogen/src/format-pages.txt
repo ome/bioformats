@@ -397,7 +397,7 @@ notes = - There are three distinct Imaris formats: \n
     #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
 
 [Bruker MRI]
-developer = `Bruker <http://www.bruker.com/>`_
+developer = `Bruker <https://www.bruker.com/>`_
 bsd = no
 software = `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
 weHave = * a few Bruker MRI datasets
@@ -1957,7 +1957,7 @@ mif = true
 
 [Quesant]
 extensions = .afm
-owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
+owner = `KLA-Tencor Corporation <https://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 developer = Quesant Instrument Corporation
 bsd = no
 weHave = * Pascal code that can read Quesant files (from ImageSXM) \n
