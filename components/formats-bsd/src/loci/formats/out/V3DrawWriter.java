@@ -46,7 +46,7 @@ import static loci.common.DataTools.unpackBytes;
 
 /**
  * V3DrawWriter writes images in the .v3draw format for rapid I/O in <a
- * href="http://vaa3d.org">Vaa3D</a>, an open-source 3D visualization and
+ * href="http://www.alleninstitute.org/what-we-do/brain-science/research/products-tools/vaa3d/">Vaa3D</a>, an open-source 3D visualization and
  * analysis toolkit.
  *
  * <dd><a
