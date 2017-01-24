@@ -6,7 +6,7 @@ Hamamatsu ndpi
 
 Extensions: .ndpi, .ndpis
 
-Developer: `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 
 **Support**
