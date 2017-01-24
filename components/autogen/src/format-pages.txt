@@ -2171,7 +2171,7 @@ Bio-Formats can save image stacks as TIFF or BigTIFF. \n
 
 [TillPhotonics TillVision]
 extensions = .vws
-developer = `TILL Photonics <http://www.till-photonics.com/>`_
+developer = `TILL Photonics <https://www.fei.com/service-support/Light-Microscopy/>`_
 bsd = no
 weHave = * several TillVision datasets
 weWant = * an official specification document
