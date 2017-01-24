@@ -124,7 +124,7 @@ reader = AmiraReader
 
 [Analyze 7.5]
 extensions = .img, .hdr
-developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+developer = `Mayo Foundation Biomedical Imaging Resource <https://rportal.mayo.edu/bir/>`_
 bsd = no
 weHave = * `an Analyze 7.5 specification document <http://web.archive.org/web/20070927191351/http://www.mayo.edu/bir/PDF/ANALYZE75.pdf>`_ \n
 * several Analyze 7.5 datasets
