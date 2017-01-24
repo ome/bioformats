@@ -18,7 +18,7 @@ its Java dependencies including Bio-Formats.
 .. note::
   In order to retrieve the NetCDF dependency of Bio-Formats, it is necessary
   to configure the Unidata releases repository in addition to Maven Central and
-  the OME artifactory in your :file:`pom.xml`, :file:`build.gradle` or
+  the OME artifactory in your :examples:`pom.xml`, :examples:`build.gradle` or
   :file:`ivy.xml` file.
 
 Bio-Formats as a Java library
@@ -27,7 +27,7 @@ Bio-Formats as a Java library
 Alternatively Bio-Formats can be used by including its component jar files.
 You can :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to
 use it as a library. Just add :file:`formats-gpl.jar` to your CLASSPATH or
-build path. You will also need :file:`common.jar` for common I/O functions,
+build path. You will also need :file:`ome-common.jar` for common I/O functions,
 :file:`ome-xml.jar` for metadata standardization, and
 `SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
 
