@@ -128,7 +128,7 @@ The complete list of current dependencies is as follows:
     * - `Objenesis v2.1 <http://objenesis.org>`_
       - org.objenesis:objenesis:2.1
       - `Apache License v2.0`_
-    * - `Perf4J v0.9.13 <http://www.perf4j.org>`_
+    * - `Perf4J v0.9.13 <https://github.com/perf4j/perf4j>`_
       - org.perf4j:perf4j:0.9.13
       - `Apache License v2.0`_
     * - `Native Library Loader v2.1.4 <http://github.com/scijava/native-lib-loader>`_
