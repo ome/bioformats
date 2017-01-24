@@ -171,14 +171,14 @@ non-OME/external dependency is bumped.
 
 
 .. _Apache License v2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
-.. _MIT License: http://opensource.org/licenses/MIT
-.. _BSD 3-Clause: http://opensource.org/licenses/BSD-3-Clause
+.. _MIT License: https://opensource.org/licenses/MIT
+.. _BSD 3-Clause: https://opensource.org/licenses/BSD-3-Clause
 .. _Sun Public License / LGPL: http://www.beanshell.org/license.html
-.. _Common Public License v1.0: http://www.opensource.org/licenses/cpl1.0.txt
+.. _Common Public License v1.0: https://www.opensource.org/licenses/cpl1.0.txt
 .. _MIT-Style License: https://github.com/Unidata/thredds/blob/v4.3.19/cdm/license.txt
-.. _BSD License: http://opensource.org/licenses/BSD-2-Clause
-.. _Eclipse Public License v1.0: http://opensource.org/licenses/EPL-1.0
-.. _GPL v2: http://opensource.org/licenses/GPL-2.0
+.. _BSD License: https://opensource.org/licenses/BSD-2-Clause
+.. _Eclipse Public License v1.0: https://opensource.org/licenses/EPL-1.0
+.. _GPL v2: https://opensource.org/licenses/GPL-2.0
 
 
 Examples of usage
