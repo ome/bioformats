@@ -6,7 +6,7 @@ Hamamatsu VMS
 
 Extensions: .vms
 
-Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 
 
 **Support**

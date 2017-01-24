@@ -7,7 +7,7 @@ Hamamatsu HIS
 Extensions: .his
 
 
-Owner: `Hamamatsu <http://www.hamamatsu.com>`_
+Owner: `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 
 **Support**
 

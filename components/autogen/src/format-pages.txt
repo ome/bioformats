@@ -700,7 +700,7 @@ reader = GIFReader
 
 [Hamamatsu Aquacosmos NAF]
 extensions = .naf
-developer = `Hamamatsu <http://www.hamamatsu.com/>`_
+developer = `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 bsd = no
 weHave = * a few NAF files
 weWant = * a specification document \n
@@ -715,7 +715,7 @@ mif = true
 
 [Hamamatsu HIS]
 extensions = .his
-owner = `Hamamatsu <http://www.hamamatsu.com>`_
+owner = `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 bsd = no
 weHave = * Pascal code that can read HIS files (from ImageSXM) \n
 * several HIS files
@@ -731,7 +731,7 @@ mif = true
 
 [Hamamatsu ndpi]
 extensions = .ndpi, .ndpis
-developer = `Hamamatsu <http://www.hamamatsu.com>`_
+developer = `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 bsd = no
 software = `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
@@ -748,7 +748,7 @@ pyramid = yes
 
 [Hamamatsu VMS]
 extensions = .vms
-developer = `Hamamatsu <http://www.hamamatsu.com>`_
+developer = `Hamamatsu <http://www.hamamatsu.com/us/en/index.html>`_
 bsd = no
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 weHave = * a few example datasets \n
