@@ -122,7 +122,7 @@ The complete list of current dependencies is as follows:
     * - `BeanShell v2.0b4 <http://www.beanshell.org>`_
       - org.beanshell:bsh:2.0b4
       - `Sun Public License / LGPL`_
-    * - `Hamcrest Core v1.1 <http://hamcrest.org/JavaHamcrest>`_
+    * - `Hamcrest Core v1.1 <https://github.com/hamcrest/JavaHamcrest>`_
       - org.hamcrest:hamcrest-core:1.1
       - `BSD 3-Clause`_
     * - `Objenesis v2.1 <http://objenesis.org>`_
