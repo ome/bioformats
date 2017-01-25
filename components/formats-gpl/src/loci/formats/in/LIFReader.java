@@ -88,6 +88,10 @@ public class LIFReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String OLD_PHYSICAL_SIZE_KEY =
+    "leicalif.old_physical_size";
+  public static final boolean OLD_PHYSICAL_SIZE_DEFAULT = false;
+
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
@@ -159,6 +163,15 @@ public class LIFReader extends FormatReader {
     super("Leica Image File Format", "lif");
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+  }
+
+  public boolean useOldPhysicalSizeCalculation() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        OLD_PHYSICAL_SIZE_KEY, OLD_PHYSICAL_SIZE_DEFAULT);
+    }
+    return OLD_PHYSICAL_SIZE_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -1960,7 +1973,9 @@ public class LIFReader extends FormatReader {
       }
       String unit = dimension.getAttribute("Unit");
 
+      double offByOnePhysicalLen = 0d;
       if (len > 1) {
+        offByOnePhysicalLen = physicalLen / len;
         physicalLen /= (len - 1);
       }
       else {
@@ -1969,11 +1984,14 @@ public class LIFReader extends FormatReader {
       
       if (unit.equals("Ks")) {
         physicalLen /= 1000;
+        offByOnePhysicalLen /= 1000;
       }
       else if (unit.equals("m")) {
         physicalLen *= 1000000;
+        offByOnePhysicalLen *= 1000000;
       }
 
+      boolean oldPhysicalSize = useOldPhysicalSizeCalculation();
       switch (id) {
         case 1: // X axis
           ms.sizeX = len;
@@ -1981,7 +1999,7 @@ public class LIFReader extends FormatReader {
           if (ms.rgb) nBytes /= 3;
           ms.pixelType =
             FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
-          physicalSizeX = physicalLen;
+          physicalSizeX = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           break;
         case 2: // Y axis
           if (ms.sizeY != 0) {
@@ -1997,7 +2015,7 @@ public class LIFReader extends FormatReader {
           }
           else {
             ms.sizeY = len;
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           break;
         case 3: // Z axis
@@ -2006,7 +2024,7 @@ public class LIFReader extends FormatReader {
             ms.sizeY = len;
             ms.sizeZ = 1;
             bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           else {
             ms.sizeZ = len;
@@ -2020,7 +2038,7 @@ public class LIFReader extends FormatReader {
             ms.sizeY = len;
             ms.sizeT = 1;
             bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = physicalLen;
+            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
           }
           else {
             ms.sizeT = len;
