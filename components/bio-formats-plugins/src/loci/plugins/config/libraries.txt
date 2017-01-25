@@ -120,7 +120,7 @@ notes = Optional plugin. If you have Image5D installed, the Bio-Formats
 [View5D]
 type = ImageJ plugin
 class = view5d.View5D_
-url = http://www.nanoimaging.de/View5D/
+url = http://www.nanoimaging.uni-jena.de/View5D/View5D.html
 license = GPL
 notes = Optional plugin. If you have View5D installed, the Bio-Formats
         Importer plugin can use View5D to display your image stacks.
