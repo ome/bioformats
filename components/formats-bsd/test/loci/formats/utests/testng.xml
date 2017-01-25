@@ -70,6 +70,7 @@
       <groups/>
       <classes>
         <class name="loci.formats.utests.out.TiffWriterTest"/>
+        <class name="loci.formats.utests.out.OMETiffWriterTest"/>
       </classes>
     </test>
     <test name="ReaderWrapper">
