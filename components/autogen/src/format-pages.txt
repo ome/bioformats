@@ -1902,7 +1902,7 @@ compressed files but note that this is no longer available from Apple. \n
 \n
 .. seealso:: \n
   `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ \n
-  `Another PICT technical overview <https://www.prepressure.com/library/file-formats/pict>`_
+  `Another PICT technical overview <http://www.fileformat.info/format/macpict/egff.htm>`_
 
 [PNG (Portable Network Graphics)]
 pagename = png
