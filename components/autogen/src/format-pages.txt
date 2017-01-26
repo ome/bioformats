@@ -20,7 +20,7 @@ range of metadata that is included in .sld files, and so exporting to \n
 OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
 preserved. \n
 Free software from 3i can export the files to OME-TIFF post-acquisition, see \n
-https://www.slidebook.com/reader.php.\n
+https://www.intelligent-imaging.com/slidebook.\n
 \n
 3i also develops a native SlideBook reader which works with Bio-Formats. See \n
 http://www.openmicroscopy.org/info/slidebook for details.\n
@@ -111,7 +111,7 @@ notes = .. seealso:: \n
 
 [Amira Mesh]
 extensions = .am, .amiramesh, .grey, .hx, .labels
-developer = `Visage Imaging <http://www.amiravis.com/>`_
+developer = `Visage Imaging <http://www.vsg3d.com/>`_
 bsd = no
 weHave = * a few Amira Mesh datasets
 weWant = * more Amira Mesh datasets
@@ -124,7 +124,7 @@ reader = AmiraReader
 
 [Analyze 7.5]
 extensions = .img, .hdr
-developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/research/core-resources/biomedical-imaging-resource-core/overview>`_
 bsd = no
 weHave = * `an Analyze 7.5 specification document <http://web.archive.org/web/20070927191351/http://www.mayo.edu/bir/PDF/ANALYZE75.pdf>`_ \n
 * several Analyze 7.5 datasets
@@ -159,7 +159,7 @@ extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
 bsd = yes
 software = `Firefox 3+ <http://www.mozilla.com/firefox>`_ \n
-`Opera 9.5+ <http://www.opera.com/download>`_ \n
+`Opera 9.5+ <http://www.opera.com>`_ \n
 `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 weHave = * `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ \n
 * several APNG files
@@ -397,7 +397,7 @@ notes = - There are three distinct Imaris formats: \n
     #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
 
 [Bruker MRI]
-developer = `Bruker <http://www.bruker.com/>`_
+developer = `Bruker <https://www.bruker.com/>`_
 bsd = no
 software = `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
 weHave = * a few Bruker MRI datasets
@@ -700,7 +700,7 @@ reader = GIFReader
 
 [Hamamatsu Aquacosmos NAF]
 extensions = .naf
-developer = `Hamamatsu <http://www.hamamatsu.com/>`_
+developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
 weHave = * a few NAF files
 weWant = * a specification document \n
@@ -902,7 +902,7 @@ reader = IMODReader
 [Improvision Openlab LIFF]
 extensions = .liff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
+developer = `Improvision <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/index.html>`_
 bsd = no
 versions = 2.0, 5.0
 weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
@@ -921,7 +921,7 @@ mif = true
 [Improvision Openlab Raw]
 extensions = .raw
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
+developer = `Improvision <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/index.html>`_
 bsd = no
 weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 * a few Openlab Raw datasets
@@ -935,7 +935,7 @@ reader = OpenlabRawReader
 [Improvision TIFF]
 extensions = .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-developer = `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
+developer = `Improvision <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/index.html>`_
 bsd = no
 weHave = * an Improvision TIFF specification document \n
 * a few Improvision TIFF datasets
@@ -1604,7 +1604,7 @@ extensions = .oib, .oif
 owner = `Olympus <http://www.olympus.com/>`_
 bsd = no
 versions = 1.0, 2.0
-software = `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
+software = `FV-Viewer from Olympus <http://www.olympus-lifescience.com/en/>`_
 weHave = * an OIF specification document (v2.0.0.0, from 2008, in PDF) \n
 * an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) \n
 * older FV1000 specification documents (draft, in DOC and XLS) \n
@@ -1633,7 +1633,7 @@ Commercial applications that support this format include: \n
 * `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
-  `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_
+  `Olympus FluoView Resource Center <http://www.olympus-lifescience.com/>`_
 
 [Olympus FluoView TIFF]
 extensions = .tif
@@ -1902,7 +1902,7 @@ compressed files but note that this is no longer available from Apple. \n
 \n
 .. seealso:: \n
   `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ \n
-  `Another PICT technical overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_
+  `Another PICT technical overview <http://www.fileformat.info/format/macpict/egff.htm>`_
 
 [PNG (Portable Network Graphics)]
 pagename = png
@@ -1928,7 +1928,7 @@ API to read and write PNG files. \n
 [Prairie Technologies TIFF]
 pagename = prairie-tech-tiff
 extensions = .tif, .xml, .cfg
-developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
+developer = `Prairie Technologies <https://www.bruker.com/products/fluorescence-microscopes/ultima-multiphoton-microscopy/ultima-in-vitro/overview.html>`_
 bsd = no
 weHave = * many Prairie datasets
 pixelsRating = Very good
@@ -2034,9 +2034,9 @@ utilityRating = Fair
 reader = RHKReader
 
 [SBIG]
-owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+owner = `Santa Barbara Instrument Group (SBIG) <http://diffractionlimited.com/>`_
 bsd = no
-weHave = * an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
+weHave = * an `official SBIG specification document <http://diffractionlimited.com/support/sbig-archives/>`_ \n
 * a few SBIG files
 weWant = * more SBIG files
 pixelsRating = Very good
@@ -2171,7 +2171,7 @@ Bio-Formats can save image stacks as TIFF or BigTIFF. \n
 
 [TillPhotonics TillVision]
 extensions = .vws
-developer = `TILL Photonics <http://www.till-photonics.com/>`_
+developer = `TILL Photonics <https://www.fei.com/service-support/Light-Microscopy/>`_
 bsd = no
 weHave = * several TillVision datasets
 weWant = * an official specification document

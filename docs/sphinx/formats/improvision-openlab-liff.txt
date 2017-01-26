@@ -6,7 +6,7 @@ Improvision Openlab LIFF
 
 Extensions: .liff
 
-Developer: `Improvision <http://www.perkinelmer.com/cellular-imaging>`_
+Developer: `Improvision <http://www.perkinelmer.com/lab-products-and-services/cellular-imaging/index.html>`_
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 

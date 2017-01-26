@@ -16,7 +16,7 @@ This may be accessed using the repository path::
     git@github.com:openmicroscopy/bioformats.git
 
 More information about Git and client downloads are available from the
-`Git project website <http://git-scm.com/>`_.  You can also browse the
+`Git project website <https://git-scm.com/>`_.  You can also browse the
 `Bio-Formats source on GitHub
 <https://github.com/openmicroscopy/bioformats>`_
 

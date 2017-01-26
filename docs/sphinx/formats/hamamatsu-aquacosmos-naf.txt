@@ -6,7 +6,7 @@ Hamamatsu Aquacosmos NAF
 
 Extensions: .naf
 
-Developer: `Hamamatsu <http://www.hamamatsu.com/>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 
 **Support**

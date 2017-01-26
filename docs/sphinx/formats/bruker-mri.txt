@@ -4,7 +4,7 @@ Bruker MRI
 ===============================================================================
 
 
-Developer: `Bruker <http://www.bruker.com/>`_
+Developer: `Bruker <https://www.bruker.com/>`_
 
 
 **Support**

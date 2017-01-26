@@ -6,7 +6,7 @@ Amira Mesh
 
 Extensions: .am, .amiramesh, .grey, .hx, .labels
 
-Developer: `Visage Imaging <http://www.amiravis.com/>`_
+Developer: `Visage Imaging <http://www.vsg3d.com/>`_
 
 
 **Support**

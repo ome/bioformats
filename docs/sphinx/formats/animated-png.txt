@@ -25,7 +25,7 @@ Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 Freely Available Software:
 
 - `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
-- `Opera 9.5+ <http://www.opera.com/download>`_ 
+- `Opera 9.5+ <http://www.opera.com>`_ 
 - `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 
 

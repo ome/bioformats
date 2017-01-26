@@ -28,7 +28,7 @@ ways:
    `Image5D <http://developer.imagej.net/plugins/image5d>`_ plugin
    (if installed)
 -  With Rainer Heintzmann's
-   `View5D <http://www.nanoimaging.de/View5D>`_ plugin (if installed)
+   `View5D <http://www.nanoimaging.uni-jena.de/View5D/View5D.html>`_ plugin (if installed)
 
 ImageJ v1.37 and later automatically (via ``HandleExtraFileTypes``) calls
 the Bio-Formats logic, if installed, as needed when a file is opened
