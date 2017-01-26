@@ -187,11 +187,19 @@ public class TiledReaderWriter {
     // initialize the files
     tiledReadWriter.initialize();
 
-    // read and write the image using tiles
-    tiledReadWriter.readWriteTiles();
-
-    // close the files
-    tiledReadWriter.cleanup();
+    try {
+      // read and write the image using tiles
+      tiledReadWriter.readWriteTiles();
+    }
+    catch(Exception e) {
+      System.err.println("Failed to read and write tiles.");
+      e.printStackTrace();
+      throw e;
+    }
+    finally {
+      // close the files
+      tiledWriter.cleanup();
+    }
   }
 
 }

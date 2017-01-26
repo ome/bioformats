@@ -194,11 +194,19 @@ public class OverlappedTiledWriter {
     // initialize the files
     overlappedTiledWriter.initialize();
 
-    // read and write the image using overlapped tiles
-    overlappedTiledWriter.readWriteTiles();
-
-    // close the files
-    overlappedTiledWriter.cleanup();
+    try {
+      // read and write the image using overlapped tiles
+      overlappedTiledWriter.readWriteTiles();
+    }
+    catch(Exception e) {
+      System.err.println("Failed to read and write tiles.");
+      e.printStackTrace();
+      throw e;
+    }
+    finally {
+      // close the files
+      overlappedTiledWriter.cleanup();
+    }
   }
 
 }

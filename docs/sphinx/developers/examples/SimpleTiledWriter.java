@@ -164,11 +164,19 @@ public class SimpleTiledWriter {
     int tileSizeY = Integer.parseInt(args[3]);
     SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
 
-    // Read in images from the input and write them out automatically using tiling
-    tiledWriter.readWriteTiles();
-
-    // close the files
-    tiledWriter.cleanup();
+    try {
+      // Read in images from the input and write them out automatically using tiling
+      tiledWriter.readWriteTiles();
+    }
+    catch(Exception e) {
+      System.err.println("Failed to read and write tiles.");
+      e.printStackTrace();
+      throw e;
+    }
+    finally {
+      // close the files
+      tiledWriter.cleanup();
+    }
   }
 
 }
