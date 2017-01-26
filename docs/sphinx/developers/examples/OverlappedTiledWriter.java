@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading and writing a file in a tiled OME Tiff format.
+ * Example class for reading and writing a file in a tiled OME-Tiff format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
@@ -82,10 +82,10 @@ public class OverlappedTiledWriter {
    *
    * @return true if the reader and writer were successfully set up, or false
    *   if an error occurred
-   * @throws DependencyException 
-   * @throws IOException 
-   * @throws FormatException 
-   * @throws ServiceException 
+   * @throws DependencyException thrown if failed to create an OMEXMLService
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown if invalid ID set for reader or writer or invalid tile size set
+   * @throws ServiceException thrown if unable to create OME-XML meta data
    */
   private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
     // construct the object that stores OME-XML metadata
@@ -111,12 +111,13 @@ public class OverlappedTiledWriter {
   }
 
   /** 
-   * Read tiles from input file and write tiles to output OME Tiff. 
+   * Read tiles from input file and write tiles to output OME-Tiff. 
    * In this example we are assuming that the tile size used does not divide evenly
    * into the image height and width. When this occurs the last row and column
    * of tiles are instead written as partial tiles rather than a full padded tile.
-   * @throws IOException 
-   * @throws FormatException */
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown by FormatWriter if attempting to set invalid series
+   */
   public void readWriteTiles() throws FormatException, IOException {
     int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     int tilePlaneSize = tileSizeX * tileSizeY * reader.getRGBChannelCount() * bpp;
@@ -149,7 +150,7 @@ public class OverlappedTiledWriter {
             int effTileSizeX = (tileX + tileSizeX) < width ? tileSizeX : width - tileX;
             int effTileSizeY = (tileY + tileSizeY) < height ? tileSizeY : height - tileY;
 
-            // Read tiles from the input file and write them to the output OME Tiff
+            // Read tiles from the input file and write them to the output OME-Tiff
             buf = reader.openBytes(image, tileX, tileY, effTileSizeX, effTileSizeY);
             writer.saveBytes(image, buf, tileX, tileY, effTileSizeX, effTileSizeY);
             /* overlapped-tiling-example-end */
@@ -159,8 +160,7 @@ public class OverlappedTiledWriter {
     }
   }
 
-  /** Close the file reader and writer. 
-   * @throws IOException */
+  /** Close the file reader and writer. */
   private void cleanup() {
     try {
       reader.close();
@@ -179,13 +179,13 @@ public class OverlappedTiledWriter {
   }
 
   /**
-   * To read an image file and write out an OME Tiff tiled image on the command line:
+   * To read an image file and write out an OME-Tiff tiled image on the command line:
    *
    * $ java OverlappedTiledWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException
-   * @throws FormatException
-   * @throws ServiceException 
-   * @throws DependencyException 
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown when setting invalid values in reader or writer
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws DependencyException thrown if failed to create an OMEXMLService
    */
   public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
