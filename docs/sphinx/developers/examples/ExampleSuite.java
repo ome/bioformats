@@ -62,7 +62,9 @@ public class ExampleSuite {
     File exportSPWFile = new File(parentDir, "exportSPW.ome.tiff");
     File simpleTiledFile = new File(parentDir, "simpleTiledFile.ome.tiff");
     File tiledFile = new File(parentDir, "tiledFile.ome.tiff");
+    File tiledFile2 = new File(parentDir, "tiledFile2.ome.tiff");
     File overlappedTiledFile = new File(parentDir, "overlappedTiledFile.ome.tiff");
+    File overlappedTiledFile2 = new File(parentDir, "overlappedTiledFile2.ome.tiff");
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
@@ -74,7 +76,11 @@ public class ExampleSuite {
         inputFile.getAbsolutePath(), simpleTiledFile.getAbsolutePath(), "256", "256"});
     execute("TiledReaderWriter", new String[] {
         inputFile.getAbsolutePath(), tiledFile.getAbsolutePath(), "256", "256"});
+    execute("TiledReaderWriter", new String[] {
+        inputFile.getAbsolutePath(), tiledFile2.getAbsolutePath(), "256", "128"});
     execute("OverlappedTiledWriter", new String[] {
         overlappedInputFile.getAbsolutePath(), overlappedTiledFile.getAbsolutePath(), "96", "96"});
+    execute("OverlappedTiledWriter", new String[] {
+        overlappedInputFile.getAbsolutePath(), overlappedTiledFile2.getAbsolutePath(), "192", "96"});
   }
 }
