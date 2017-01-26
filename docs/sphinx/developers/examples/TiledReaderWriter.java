@@ -82,10 +82,10 @@ public class TiledReaderWriter {
    *
    * @return true if the reader and writer were successfully set up, or false
    *   if an error occurred
-   * @throws DependencyException 
-   * @throws IOException 
-   * @throws FormatException 
-   * @throws ServiceException 
+   * @throws DependencyException thrown if failed to create an OMEXMLService
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown if invalid ID set for reader or writer or invalid tile size set
+   * @throws ServiceException thrown if unable to create OME-XML meta data
    */
   private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
     // construct the object that stores OME-XML metadata
@@ -111,8 +111,9 @@ public class TiledReaderWriter {
   }
 
   /** Read tiles from input file and write tiles to output OME Tiff. 
-   * @throws IOException 
-   * @throws FormatException */
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown by FormatWriter if attempting to set invalid series
+   */
   public void readWriteTiles() throws FormatException, IOException {
     int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     int tilePlaneSize = tileSizeX * tileSizeY * reader.getRGBChannelCount() * bpp;
@@ -152,8 +153,7 @@ public class TiledReaderWriter {
     }
   }
 
-  /** Close the file reader and writer. 
-   * @throws IOException */
+  /** Close the file reader and writer. */
   private void cleanup() {
     try {
       reader.close();
@@ -175,10 +175,10 @@ public class TiledReaderWriter {
    * To read an image file and write out an OME Tiff tiled image on the command line:
    *
    * $ java TiledReaderWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException
-   * @throws FormatException
-   * @throws ServiceException 
-   * @throws DependencyException 
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown when setting invalid values in reader or writer
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws DependencyException thrown if failed to create an OMEXMLService
    */
   public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);

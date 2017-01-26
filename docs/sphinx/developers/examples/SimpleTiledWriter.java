@@ -83,11 +83,10 @@ public class SimpleTiledWriter {
    * writer. The input reader will read a full plane which will then be passed
    * to the OME Tiff Writer. The writer will then automatically write the
    * image in a tiled format based on the tile size values provided.
-   * @throws FormatException 
-   * @throws DependencyException 
-   * @throws ServiceException 
-   * @throws IOException 
-   *
+   * @throws FormatException thrown when setting invalid values in reader or writer 
+   * @throws DependencyException thrown if failed to create an OMEXMLService
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
    */
   public void readWriteTiles() throws FormatException, DependencyException, ServiceException, IOException {
     // construct the object that stores OME-XML metadata
@@ -154,10 +153,10 @@ public class SimpleTiledWriter {
    * To read an image file and write out an OME Tiff tiled image on the command line:
    *
    * $ java SimpleTiledWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException
-   * @throws FormatException
-   * @throws ServiceException 
-   * @throws DependencyException 
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown when setting invalid values in reader or writer 
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws DependencyException thrown if failed to create an OMEXMLService
    */
   public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
