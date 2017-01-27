@@ -198,7 +198,7 @@ public class TiledReaderWriter {
     }
     finally {
       // close the files
-      tiledWriter.cleanup();
+      tiledReadWriter.cleanup();
     }
   }
 
