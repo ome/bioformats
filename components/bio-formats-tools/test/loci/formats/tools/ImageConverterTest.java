@@ -37,6 +37,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.security.Permission;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
@@ -44,6 +46,7 @@ import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -103,6 +106,12 @@ public class ImageConverterTest {
     return new Object[][] {{".ome.tiff"}, {".tif"}, {".ics"}};
   }
 
+  @DataProvider(name = "options")
+  public Object[][] createOptions() {
+    return new Object[][] {{"-z 2"}, {"-series 0 -z 2"}, {"-channel 1"}, 
+      {"-series 0 -channel 1"}, {"-series 0 -timepoint 3"}, {"-timepoint 3"}};
+  }
+
   public void checkImage() throws FormatException, IOException {
     IFormatReader r = new ImageReader();
     r.setId(outFile.getAbsolutePath());
@@ -117,6 +126,25 @@ public class ImageConverterTest {
     String[] args = {"test.fake", outFile.getAbsolutePath()};
     try {
       ImageConverter.main(args);
+    } catch (ExitException e) {
+      outFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      checkImage();
+    }
+  }
+
+  @Test(dataProvider = "options")
+  public void testOptions(String options) throws FormatException, IOException {
+    outFile = File.createTempFile("test", ".ome.tiff");
+    outFile.delete();
+    String[] optionsArgs = options.split(" ");
+    ArrayList<String> argsList = new ArrayList<String>();
+    argsList.add("test&sizeZ=3&sizeC=2&sizeT=4.fake"); 
+    argsList.addAll(Arrays.asList(optionsArgs));
+    argsList.add(outFile.getAbsolutePath());
+    String [] args = new String[argsList.size()];
+    try {
+      ImageConverter.main(argsList.toArray(args));
     } catch (ExitException e) {
       outFile.deleteOnExit();
       assertEquals(e.status, 0);
