@@ -73,6 +73,7 @@ import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
+import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -414,7 +415,9 @@ public final class ImageConverter {
         OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
         IMetadata meta = service.createOMEXMLMetadata(xml);
         if (series >= 0) {
-          Image exportImage = root.getImage(series);
+          Image exportImage = new Image(root.getImage(series));
+          Pixels exportPixels = new Pixels(root.getImage(series).getPixels());
+          exportImage.setPixels(exportPixels);
           OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
