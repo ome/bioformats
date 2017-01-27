@@ -35,7 +35,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading and writing a file in a tiled OME Tiff format.
+ * Example class for reading and writing a file in a tiled OME-Tiff format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
@@ -110,7 +110,7 @@ public class TiledReaderWriter {
     writer.setId(outputFile);
   }
 
-  /** Read tiles from input file and write tiles to output OME Tiff. 
+  /** Read tiles from input file and write tiles to output OME-Tiff. 
    * @throws IOException thrown if unable to setup input or output stream for reader or writer
    * @throws FormatException thrown by FormatWriter if attempting to set invalid series
    */
@@ -143,7 +143,7 @@ public class TiledReaderWriter {
             int tileX = x * tileSizeX;
             int tileY = y * tileSizeY;
 
-            // Read tiles from the input file and write them to the output OME Tiff
+            // Read tiles from the input file and write them to the output OME-Tiff
             buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
             writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
           }
@@ -172,7 +172,7 @@ public class TiledReaderWriter {
   }
 
   /**
-   * To read an image file and write out an OME Tiff tiled image on the command line:
+   * To read an image file and write out an OME-Tiff tiled image on the command line:
    *
    * $ java TiledReaderWriter input-file.oib output-file.ome.tiff 256 256
    * @throws IOException thrown if unable to setup input or output stream for reader or writer
