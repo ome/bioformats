@@ -80,15 +80,16 @@ public class SimpleTiledWriter {
   /**
    * Set up the file reader and writer, ensuring that the input file is
    * associated with the reader and the output file is associated with the
-   * writer. The input reader will read a full plane which will then be passed
-   * to the OME-Tiff Writer. The writer will then automatically write the
-   * image in a tiled format based on the tile size values provided.
-   * @throws FormatException thrown when setting invalid values in reader or writer 
+   * writer.
+   *
+   * @return true if the reader and writer were successfully set up, or false
+   *   if an error occurred
    * @throws DependencyException thrown if failed to create an OMEXMLService
-   * @throws ServiceException thrown if unable to create OME-XML meta data
    * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown if invalid ID set for reader or writer or invalid tile size set
+   * @throws ServiceException thrown if unable to create OME-XML meta data
    */
-  public void readWriteTiles() throws FormatException, DependencyException, ServiceException, IOException {
+  private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
     // construct the object that stores OME-XML metadata
     ServiceFactory factory = new ServiceFactory();
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -106,14 +107,26 @@ public class SimpleTiledWriter {
     writer.setInterleaved(reader.isInterleaved());
 
     // set the tile size height and width for writing
-    writer.setTileSizeX(tileSizeX);
-    writer.setTileSizeY(tileSizeY);
+    this.tileSizeX = writer.setTileSizeX(tileSizeX);
+    this.tileSizeY = writer.setTileSizeY(tileSizeY);
 
     writer.setId(outputFile);
-
     /* initialize-tiling-writer-example-end */
-    /* tiling-writer-example-start */
+  }
 
+  /**
+   * Set up the file reader and writer, ensuring that the input file is
+   * associated with the reader and the output file is associated with the
+   * writer. The input reader will read a full plane which will then be passed
+   * to the OME-Tiff Writer. The writer will then automatically write the
+   * image in a tiled format based on the tile size values provided.
+   * @throws FormatException thrown when setting invalid values in reader or writer 
+   * @throws DependencyException thrown if failed to create an OMEXMLService
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   */
+  public void readWriteTiles() throws FormatException, DependencyException, ServiceException, IOException {
+    /* tiling-writer-example-start */
     byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
 
     for (int series=0; series<reader.getSeriesCount(); series++) {
@@ -162,6 +175,8 @@ public class SimpleTiledWriter {
     int tileSizeX = Integer.parseInt(args[2]);
     int tileSizeY = Integer.parseInt(args[3]);
     SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
+    // initialize the files
+    tiledWriter.initialize();
 
     try {
       // Read in images from the input and write them out automatically using tiling
