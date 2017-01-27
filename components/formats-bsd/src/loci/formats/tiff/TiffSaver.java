@@ -80,6 +80,10 @@ public class TiffSaver {
   /** Whether or not to write BigTIFF data. */
   private boolean bigTiff = false;
   private boolean sequentialWrite = false;
+  
+  /** Store tile offsets and original file pointer when writing sequentially. */
+  private List<Long> sequentialTileOffsets;
+  private Long sequentialTileFilePointer;
 
   /** The codec options if set. */
   private CodecOptions options;
@@ -419,6 +423,7 @@ public class TiffSaver {
     int tilesPerColumn = (int) ifd.getTilesPerColumn();
     boolean interleaved = ifd.getPlanarConfiguration() == 1;
     boolean isTiled = ifd.isTiled();
+    long defaultByteCount = 0L;
 
     RandomAccessInputStream in = null;
     try {
@@ -443,6 +448,9 @@ public class TiffSaver {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
       }
+      else if (isTiled) {
+        defaultByteCount = strips[0].length;
+      }
   
       // record strip byte counts and offsets
   
@@ -465,7 +473,7 @@ public class TiffSaver {
       }
       else {
         while (byteCounts.size() < totalTiles) {
-          byteCounts.add(0L);
+          byteCounts.add(defaultByteCount);
         }
       }
       int tileOrStripOffsetX = x / (int) ifd.getTileWidth();
@@ -483,6 +491,12 @@ public class TiffSaver {
         while (offsets.size() < totalTiles) {
           offsets.add(0L);
         }
+        if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
+          sequentialTileOffsets = offsets;
+        }
+        else if (isTiled) {
+          offsets = sequentialTileOffsets;
+        }
       }
   
       if (isTiled) {
@@ -495,6 +509,12 @@ public class TiffSaver {
       }
 
       long fp = out.getFilePointer();
+      if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
+        sequentialTileFilePointer = fp;
+      }
+      else if (isTiled) {
+        fp = sequentialTileFilePointer;
+      }
       writeIFD(ifd, 0);
   
       // strips.length is the total number of strips being written during
