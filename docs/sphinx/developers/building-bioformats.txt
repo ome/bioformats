@@ -121,28 +121,9 @@ In general, ``ant jars`` or ``ant tools`` is the correct command.
 
 When using Maven, Bio-Formats is configured to run the "install" target
 by default, so all JARs will be copied into your local Maven repository
-in ~/.m2/repository. Simply run::
+in :file:`~/.m2/repository`. Simply run::
 
     mvn
 
 With either Ant or Maven, you can use similar commands in any subproject
 folder to build just that component.
-
-Using Gradle, Maven or Ivy
---------------------------
-
-All released :file:`.jar` artifacts may be obtained through the OME
-`Artifactory server
-<http://artifacts.openmicroscopy.org/artifactory>`_.  The "Client
-Settings" section of the Artifactory main page provides example code
-snippets for inclusion into your Gradle, Maven or Ivy project, which
-will enable the use of this repository.
-
-Example snippets for using the Bio-Formats |version|-SNAPSHOT
-``formats-gpl`` artifact are available for :download:`Gradle
-<artifactory/build.gradle>` and for :download:`Maven
-<artifactory/pom.xml>`.  These may be copied into your project to
-enable the use of the Bio-Formats library components, and may be
-adjusted to use different components or different release or
-development versions of Bio-Formats.
-
