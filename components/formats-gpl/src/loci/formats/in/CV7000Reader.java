@@ -124,6 +124,21 @@ public class CV7000Reader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    if (noPixels) {
+      HashSet<String> files = new HashSet<String>();
+      for (String file : allFiles) {
+        if (!checkSuffix(file, "tif")) {
+          files.add(file);
+        }
+      }
+      return files.toArray(new String[files.size()]);
+    }
+    return allFiles;
+  }
+
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
@@ -227,6 +242,7 @@ public class CV7000Reader extends FormatReader {
 
     parent = new Location(id).getAbsoluteFile().getParentFile();
     allFiles = parent.list(true);
+    Arrays.sort(allFiles);
     for (int i=0; i<allFiles.length; i++) {
       allFiles[i] = new Location(parent, allFiles[i]).getAbsolutePath();
     }
