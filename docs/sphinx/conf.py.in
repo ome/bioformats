@@ -115,11 +115,6 @@ gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
 bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 bf_cpp = bf_github_blob + 'cpp/'
 
-# Variables used to define Jenkins extlinks
-jenkins_root = 'http://ci.openmicroscopy.org'
-jenkins_job_root = jenkins_root + '/job'
-jenkins_view_root = jenkins_root + '/view'
-
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
 trac_root = 'https://trac.openmicroscopy.org/ome'
@@ -141,10 +136,6 @@ extlinks = {
     'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
     'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     'bf-cpp-lib': (bf_cpp + 'lib/' + '%s', ''),
-    # Jenkins links
-    'jenkins' : (jenkins_root + '/%s', ''),
-    'jenkinsjob' : (jenkins_job_root + '/%s', ''),
-    'jenkinsview' : (jenkins_view_root + '/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
