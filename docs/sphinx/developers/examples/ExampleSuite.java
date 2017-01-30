@@ -38,7 +38,7 @@ public class ExampleSuite {
 
   public static void execute(String name, String[] args) throws Exception {
     System.out.println("Executing " + name);
-    Class c = Class.forName(name);
+    Class<?> c = Class.forName(name);
     Object passedArgs[] = {args};
     c.getMethod("main", args.getClass()).invoke(null, passedArgs);
     System.out.println("Success");
