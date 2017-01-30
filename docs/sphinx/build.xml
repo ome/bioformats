@@ -42,7 +42,6 @@ Type "ant -p" for a list of targets.
     </if>
     <property name="sphinx.openmicroscopy_source.user" value="openmicroscopy"/>
     <property name="sphinx.ome_source.user" value="ome"/>
-    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
 
     <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
     <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
@@ -51,7 +50,6 @@ Type "ant -p" for a list of targets.
     <replace file="conf.py" token="@common_java_source_branch@" value="${sphinx.common_java.source.branch}"/>
     <replace file="conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
     <replace file="conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
-    <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
     <replace file="conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
     <replace file="conf.py" token="@ome_model_version@" value="${ome-model.version}"/>
   </target>

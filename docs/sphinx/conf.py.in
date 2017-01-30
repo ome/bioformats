@@ -17,7 +17,6 @@ builddir = '@sphinx_builddir@'
 bioformats_source_branch = '@bioformats_source_branch@'
 openmicroscopy_source_user = '@openmicroscopy_source_user@'
 ome_source_user = '@ome_source_user@'
-omerodoc_uri = '@sphinx_omerodoc_uri@'
 ome_common_version = '@ome_common_version@'
 ome_model_version = '@ome_model_version@'
 
@@ -157,7 +156,6 @@ extlinks = {
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
-    'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.3/%s', ''),
