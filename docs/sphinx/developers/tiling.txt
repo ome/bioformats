@@ -97,3 +97,25 @@ Full working example code is provided in
    :download:`TiledReaderWriter.java <examples/TiledReaderWriter.java>` - code from that class is
    referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
    Java CLASSPATH in order to compile :file:`TiledReaderWriter.java`.
+
+Tiles which overlap image size
+------------------------------
+
+It may not always be the case that the tile size divides evenly into the image height and width.
+In these scenarios in which the last column or row of tiles overlaps with the image boundary, a smaller tile 
+is instead read or written for the final row or column. If a full sized tile with padding is written then a 
+:javadoc:`loci.formats.FormatException <loci/formats/FormatException.html>` will be thrown for ``Invalid tile size``.
+
+To deal with this we can modify the previous tiled writing example to check if the tile size will overlap
+the image boundaries. If it will not overlap then the full tile size is used, if it does then the tile size 
+for that tile is modified to reflect the partial tile.
+
+.. literalinclude:: examples/OverlappedTiledWriter.java
+   :language: java
+   :start-after: overlapped-tiling-example-start
+   :end-before: overlapped-tiling-example-end
+
+Full working example code is provided in
+   :download:`OverlappedTiledWriter.java <examples/OverlappedTiledWriter.java>` - code from that class is
+   referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
+   Java CLASSPATH in order to compile :file:`OverlappedTiledWriter.java`.

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -24,7 +24,6 @@
  */
 
 import java.io.IOException;
-
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -36,12 +35,11 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading a full image and use an OME-Tiff writer to 
- * automatically write out the image in a tiled format.
+ * Example class for reading and writing a file in a tiled OME-Tiff format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
-public class SimpleTiledWriter {
+public class OverlappedTiledWriter {
 
   /** The file format reader. */
   private ImageReader reader;
@@ -62,7 +60,7 @@ public class SimpleTiledWriter {
   private int tileSizeY;
 
   /**
-   * Construct a new SimpleTiledWriter to read the specified input file 
+   * Construct a new OverlappedTiledWriter to read the specified input file 
    * and write the given output file using the tile sizes provided.
    *
    * @param inputFile the file to be read
@@ -70,7 +68,7 @@ public class SimpleTiledWriter {
    * @param tileSizeX the width of tile to attempt to use
    * @param tileSizeY the height of tile to attempt to use
    */
-  public SimpleTiledWriter(String inputFile, String outputFile, int tileSizeX, int tileSizeY) {
+  public OverlappedTiledWriter(String inputFile, String outputFile, int tileSizeX, int tileSizeY) {
     this.inputFile = inputFile;
     this.outputFile = outputFile;
     this.tileSizeX = tileSizeX;
@@ -100,7 +98,6 @@ public class SimpleTiledWriter {
     reader.setMetadataStore(omexml);
     reader.setId(inputFile);
 
-    /* initialize-tiling-writer-example-start */
     // set up the writer and associate it with the output file
     writer = new OMETiffWriter();
     writer.setMetadataRetrieve(omexml);
@@ -111,23 +108,20 @@ public class SimpleTiledWriter {
     this.tileSizeY = writer.setTileSizeY(tileSizeY);
 
     writer.setId(outputFile);
-    /* initialize-tiling-writer-example-end */
   }
 
-  /**
-   * Set up the file reader and writer, ensuring that the input file is
-   * associated with the reader and the output file is associated with the
-   * writer. The input reader will read a full plane which will then be passed
-   * to the OME-Tiff Writer. The writer will then automatically write the
-   * image in a tiled format based on the tile size values provided.
-   * @throws FormatException thrown when setting invalid values in reader or writer 
-   * @throws DependencyException thrown if failed to create an OMEXMLService
-   * @throws ServiceException thrown if unable to create OME-XML meta data
+  /** 
+   * Read tiles from input file and write tiles to output OME-Tiff. 
+   * In this example we are assuming that the tile size used does not divide evenly
+   * into the image height and width. When this occurs the last row and column
+   * of tiles are instead written as partial tiles rather than a full padded tile.
    * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown by FormatWriter if attempting to set invalid series
    */
-  public void readWriteTiles() throws FormatException, DependencyException, ServiceException, IOException {
-    /* tiling-writer-example-start */
-    byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
+  public void readWriteTiles() throws FormatException, IOException {
+    int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
+    int tilePlaneSize = tileSizeX * tileSizeY * reader.getRGBChannelCount() * bpp;
+    byte[] buf = new byte[tilePlaneSize];
 
     for (int series=0; series<reader.getSeriesCount(); series++) {
       reader.setSeries(series);
@@ -135,13 +129,35 @@ public class SimpleTiledWriter {
 
       // convert each image in the current series
       for (int image=0; image<reader.getImageCount(); image++) {
-        // Read tiles from the input file and write them to the output OME-Tiff
-        // The OME-Tiff Writer will automatically write the images in a tiled format
-        buf = reader.openBytes(image);
-        writer.saveBytes(image, buf);
+        int width = reader.getSizeX();
+        int height = reader.getSizeY();
+
+        // Determined the number of tiles to read and write
+        int nXTiles = width / tileSizeX;
+        int nYTiles = height / tileSizeY;
+        if (nXTiles * tileSizeX != width) nXTiles++;
+        if (nYTiles * tileSizeY != height) nYTiles++;
+
+        for (int y=0; y<nYTiles; y++) {
+          for (int x=0; x<nXTiles; x++) {
+            // The x and y coordinates for the current tile
+            int tileX = x * tileSizeX;
+            int tileY = y * tileSizeY;
+
+            /* overlapped-tiling-example-start */
+            // If the last tile row or column overlaps the image size then only a partial tile
+            // is read or written. The tile size used is adjusted to account for any overlap.
+            int effTileSizeX = (tileX + tileSizeX) < width ? tileSizeX : width - tileX;
+            int effTileSizeY = (tileY + tileSizeY) < height ? tileSizeY : height - tileY;
+
+            // Read tiles from the input file and write them to the output OME-Tiff
+            buf = reader.openBytes(image, tileX, tileY, effTileSizeX, effTileSizeY);
+            writer.saveBytes(image, buf, tileX, tileY, effTileSizeX, effTileSizeY);
+            /* overlapped-tiling-example-end */
+          }
+        }
       }
     }
-    /* tiling-writer-example-end */
   }
 
   /** Close the file reader and writer. */
@@ -165,22 +181,22 @@ public class SimpleTiledWriter {
   /**
    * To read an image file and write out an OME-Tiff tiled image on the command line:
    *
-   * $ java SimpleTiledWriter input-file.oib output-file.ome.tiff 256 256
+   * $ java OverlappedTiledWriter input-file.oib output-file.ome.tiff 256 256
    * @throws IOException thrown if unable to setup input or output stream for reader or writer
-   * @throws FormatException thrown when setting invalid values in reader or writer 
+   * @throws FormatException thrown when setting invalid values in reader or writer
    * @throws ServiceException thrown if unable to create OME-XML meta data
    * @throws DependencyException thrown if failed to create an OMEXMLService
    */
   public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
     int tileSizeY = Integer.parseInt(args[3]);
-    SimpleTiledWriter tiledWriter = new SimpleTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
+    OverlappedTiledWriter overlappedTiledWriter = new OverlappedTiledWriter(args[0], args[1], tileSizeX, tileSizeY);
     // initialize the files
-    tiledWriter.initialize();
+    overlappedTiledWriter.initialize();
 
     try {
-      // Read in images from the input and write them out automatically using tiling
-      tiledWriter.readWriteTiles();
+      // read and write the image using overlapped tiles
+      overlappedTiledWriter.readWriteTiles();
     }
     catch(Exception e) {
       System.err.println("Failed to read and write tiles.");
@@ -189,7 +205,7 @@ public class SimpleTiledWriter {
     }
     finally {
       // close the files
-      tiledWriter.cleanup();
+      overlappedTiledWriter.cleanup();
     }
   }
 
