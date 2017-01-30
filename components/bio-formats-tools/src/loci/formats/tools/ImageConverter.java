@@ -73,6 +73,7 @@ import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
+import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -409,21 +410,20 @@ public final class ImageConverter {
     }
 
     if (store instanceof MetadataRetrieve) {
-      if (series >= 0) {
-        try {
-          String xml = service.getOMEXML(service.asRetrieve(store));
-          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
-          Image exportImage = root.getImage(series);
-
-          IMetadata meta = service.createOMEXMLMetadata(xml);
+      try {
+        String xml = service.getOMEXML(service.asRetrieve(store));
+        OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+        IMetadata meta = service.createOMEXMLMetadata(xml);
+        if (series >= 0) {
+          Image exportImage = new Image(root.getImage(series));
+          Pixels exportPixels = new Pixels(root.getImage(series).getPixels());
+          exportImage.setPixels(exportPixels);
           OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }
-
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
-
           meta.setPixelsSizeX(new PositiveInteger(width), 0);
           meta.setPixelsSizeY(new PositiveInteger(height), 0);
 
@@ -443,31 +443,31 @@ public final class ImageConverter {
 
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
-        catch (ServiceException e) {
-          throw new FormatException(e);
+        else {
+          for (int i=0; i<reader.getSeriesCount(); i++) {
+            meta.setPixelsSizeX(new PositiveInteger(width), 0);
+            meta.setPixelsSizeY(new PositiveInteger(height), 0);
+
+            if (autoscale) {
+              store.setPixelsType(PixelType.UINT8, i);
+            }
+
+            if (channel >= 0) {
+              meta.setPixelsSizeC(new PositiveInteger(1), 0);
+            }
+            if (zSection >= 0) {
+              meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+            }
+            if (timepoint >= 0) {
+              meta.setPixelsSizeT(new PositiveInteger(1), 0);
+            }
+          }
+
+          writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
       }
-      else {
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          store.setPixelsSizeX(new PositiveInteger(width), 0);
-          store.setPixelsSizeY(new PositiveInteger(height), 0);
-
-          if (autoscale) {
-            store.setPixelsType(PixelType.UINT8, i);
-          }
-
-          if (channel >= 0) {
-            store.setPixelsSizeC(new PositiveInteger(1), 0);
-          }
-          if (zSection >= 0) {
-            store.setPixelsSizeZ(new PositiveInteger(1), 0);
-          }
-          if (timepoint >= 0) {
-            store.setPixelsSizeT(new PositiveInteger(1), 0);
-          }
-        }
-
-        writer.setMetadataRetrieve((MetadataRetrieve) store);
+      catch (ServiceException e) {
+        throw new FormatException(e);
       }
     }
     writer.setWriteSequentially(true);
