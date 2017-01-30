@@ -33,6 +33,7 @@ import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
@@ -61,6 +62,8 @@ public final class LociPrefs {
     "bioformats.zeissczi.allow.autostitch";
   public static final String PREF_CZI_ATTACHMENT =
     "bioformats.zeissczi.include.attachments";
+  public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
+    "bioformats.leicalif.physicalsize.compatibility";
 
   // -- Constructor --
 
@@ -93,6 +96,8 @@ public final class LociPrefs {
         ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
       ((DynamicMetadataOptions) options).setBoolean(
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+      ((DynamicMetadataOptions) options).setBoolean(
+        LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
       reader.setMetadataOptions(options);
     }
 
@@ -169,6 +174,11 @@ public final class LociPrefs {
   public static boolean includeCZIAttachments() {
     return Prefs.get(PREF_CZI_ATTACHMENT,
                      ZeissCZIReader.INCLUDE_ATTACHMENTS_DEFAULT);
+  }
+
+  public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {
+    return Prefs.get(PREF_LEICA_LIF_PHYSICAL_SIZE,
+      LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
   }
 
   // -- Helper methods --
