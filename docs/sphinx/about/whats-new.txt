@@ -1,6 +1,66 @@
 Version history
 ===============
 
+5.3.3 (2017 February 2)
+-----------------------
+
+Bug fixes:
+
+* ImageJ
+   - fix for issue when exporting from an ImagePlus that represents signed 
+     data. The pixel type will now remain unchanged as will the pixel values 
+     which had previously been scaled incorrectly
+
+* Command line tools 
+   - fix for IllegalArgumentException when using bfconvert via command line 
+     with option set to only convert a single time-point, channel or Z section
+
+* Tiff writing 
+   - using TiffWriter to write tiled images now supports the writing of 
+     BigTIFF datasets
+
+File format fixes:
+
+* Applied Precision CellWorX
+   - fix to now display the correct plate name and dimensions
+
+* NIFTI
+   - a few fixes for problems with byte alignment when reading non-core 
+     metadata from NIFTI headers
+
+* LeicaLIF
+   - added support for timestamps of lif files created with LAS AF 3.1 or 
+     newer. In the case of a halted acquisition only non-null timestamps are 
+     stored in the OME metadata
+   - the physical pixel height and width were incorrectly calculated by 
+     dividing by the number of pixels. This has now been corrected to match 
+     the official Leica LIF specification documents by dividing by the number 
+     of pixels minus one
+   - for backwards compatibility an option to preserve pre-5.3.3 physical sizes 
+     has been added. This can be set either via command line tools, through 
+     the API with the DynamicMetadataOptions class, or in the Bio-Formats 
+     plugin configuration in ImageJ
+
+* Improvision TIFF
+   - channel colors are now being read and if present set correctly in image metadata
+
+* MetaMorph
+   - Fix for OutOfMemoryError exceptions when reading large Metamorph TIFF plates
+
+Updated build system:
+
+* version history file added to MATLAB bundle as NEWS.rst
+* increased TiffWriter test coverage
+* added test coverage framework for command line tools including new ImageConverterTest 
+
+Documentation improvements:
+
+* improved documentation and new examples for using tiled writing
+* updated developer documentation for use of Bio-Formats as a Maven, Gradle 
+  or Ivy dependency
+* documentation for Leica LIF bug fixes and use of backward compatibility options
+* fixes for a number of broken links
+
 5.3.2 (2017 January 9)
 ----------------------
 
