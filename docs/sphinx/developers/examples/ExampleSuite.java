@@ -31,6 +31,7 @@
  */
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.io.File;
 
 
@@ -65,6 +66,16 @@ public class ExampleSuite {
     File tiledFile2 = new File(parentDir, "tiledFile2.ome.tiff");
     File overlappedTiledFile = new File(parentDir, "overlappedTiledFile.ome.tiff");
     File overlappedTiledFile2 = new File(parentDir, "overlappedTiledFile2.ome.tiff");
+    
+    // Remove any existing output files
+    Files.deleteIfExists(convertedFile.toPath());
+    Files.deleteIfExists(exportFile.toPath());
+    Files.deleteIfExists(exportSPWFile.toPath());
+    Files.deleteIfExists(simpleTiledFile.toPath());
+    Files.deleteIfExists(tiledFile.toPath());
+    Files.deleteIfExists(tiledFile2.toPath());
+    Files.deleteIfExists(overlappedTiledFile.toPath());
+    Files.deleteIfExists(overlappedTiledFile2.toPath());
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
