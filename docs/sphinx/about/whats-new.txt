@@ -12,7 +12,7 @@ Bug fixes:
      which had previously been scaled incorrectly
 
 * Command line tools 
-   - fix for IllegalArgumentException when using bfconvert via command line 
+   - fix for ``java.lang.IllegalArgumentException`` when using bfconvert via command line 
      with option set to only convert a single time-point, channel or Z section
 
 * Tiff writing 
@@ -38,14 +38,14 @@ File format fixes:
      of pixels minus one
    - for backwards compatibility an option to preserve pre-5.3.3 physical sizes 
      has been added. This can be set either via command line tools, through 
-     the API with the DynamicMetadataOptions class, or in the Bio-Formats 
+     the API with the ``loci.formats.in.DynamicMetadataOptions`` class, or in the Bio-Formats 
      plugin configuration in ImageJ
 
 * Improvision TIFF
    - channel colors are now being read and if present set correctly in image metadata
 
 * MetaMorph
-   - fix for OutOfMemoryError exceptions when reading large Metamorph TIFF plates
+   - fix for ``java.lang.OutOfMemoryError`` exceptions when reading large Metamorph TIFF plates
 
 Updated build system:
 
