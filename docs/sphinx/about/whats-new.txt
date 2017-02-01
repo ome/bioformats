@@ -28,8 +28,8 @@ File format fixes:
    - a few fixes for problems with byte alignment when reading non-core 
      metadata from NIFTI headers
 
-* LeicaLIF
-   - added support for timestamps of lif files created with LAS AF 3.1 or 
+* Leica LIF
+   - added support for timestamps of LIF files created with LAS AF 3.1 or 
      newer. In the case of a halted acquisition only non-null timestamps are 
      stored in the OME metadata
    - the physical pixel height and width were incorrectly calculated by 
@@ -45,7 +45,7 @@ File format fixes:
    - channel colors are now being read and if present set correctly in image metadata
 
 * MetaMorph
-   - Fix for OutOfMemoryError exceptions when reading large Metamorph TIFF plates
+   - fix for OutOfMemoryError exceptions when reading large Metamorph TIFF plates
 
 Updated build system:
 
