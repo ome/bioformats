@@ -168,7 +168,7 @@ public class PyramidTiffReader extends BaseTiffReader {
     int seriesCount = ifds.size() / nPlanes;
 
     String comment = ifds.get(0).getComment();
-    if (comment != null && comment.length() > 0) {
+    if (comment != null && comment.length() > 0 && comment.trim().startsWith("<")) {
       try {
         ServiceFactory factory = new ServiceFactory();
         OMEXMLService service = factory.getInstance(OMEXMLService.class);
