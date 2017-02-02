@@ -31,11 +31,11 @@ File format fixes:
 * Leica LIF
    - added support for timestamps of LIF files created with LAS AF 3.1 or 
      newer. In the case of a halted acquisition only non-null timestamps are 
-     stored in the OME metadata
+     stored in the OME metadata (thanks to Michael Goelzer)
    - the physical pixel height and width were incorrectly calculated by 
      dividing by the number of pixels. This has now been corrected to match 
      the official Leica LIF specification documents by dividing by the number 
-     of pixels minus one
+     of pixels minus one (thanks to Michael Goelzer)
    - for backwards compatibility an option to preserve pre-5.3.3 physical sizes 
      has been added. This can be set either via command line tools, through 
      the API with the ``loci.formats.in.DynamicMetadataOptions`` class, or in the Bio-Formats 
