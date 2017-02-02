@@ -2251,6 +2251,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Pyramid TIFF files may include an OME-XML comment
+            if (result && r instanceof PyramidTiffReader &&
+              readers[j] instanceof OMETiffReader)
+            {
+              continue;
+            }
+
             if (result && r instanceof TrestleReader &&
               (readers[j] instanceof JPEGReader ||
               readers[j] instanceof PGMReader ||
