@@ -347,7 +347,7 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setChannelEmissionWavelength(emWavelength.get(c), s, i);
           store.setChannelExcitationWavelength(exWavelength.get(c), s, i);
 
-          if (i < channelColors.length) {
+          if (channelColors != null && i < channelColors.length) {
             int color = channelColors[i];
 
             int red = color & 0xff;
