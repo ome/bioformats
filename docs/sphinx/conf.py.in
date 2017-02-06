@@ -17,7 +17,6 @@ builddir = '@sphinx_builddir@'
 bioformats_source_branch = '@bioformats_source_branch@'
 openmicroscopy_source_user = '@openmicroscopy_source_user@'
 ome_source_user = '@ome_source_user@'
-omerodoc_uri = '@sphinx_omerodoc_uri@'
 ome_common_version = '@ome_common_version@'
 ome_model_version = '@ome_model_version@'
 
@@ -116,11 +115,6 @@ gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
 bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 bf_cpp = bf_github_blob + 'cpp/'
 
-# Variables used to define Jenkins extlinks
-jenkins_root = 'http://ci.openmicroscopy.org'
-jenkins_job_root = jenkins_root + '/job'
-jenkins_view_root = jenkins_root + '/view'
-
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
 trac_root = 'https://trac.openmicroscopy.org/ome'
@@ -142,10 +136,6 @@ extlinks = {
     'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
     'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     'bf-cpp-lib': (bf_cpp + 'lib/' + '%s', ''),
-    # Jenkins links
-    'jenkins' : (jenkins_root + '/%s', ''),
-    'jenkinsjob' : (jenkins_job_root + '/%s', ''),
-    'jenkinsview' : (jenkins_view_root + '/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
@@ -157,7 +147,6 @@ extlinks = {
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
-    'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5.3/%s', ''),
