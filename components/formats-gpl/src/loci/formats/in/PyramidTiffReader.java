@@ -66,7 +66,7 @@ public class PyramidTiffReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private IMetadata omexml = null;;
+  private IMetadata omexml = null;
 
   // -- Constructor --
 
