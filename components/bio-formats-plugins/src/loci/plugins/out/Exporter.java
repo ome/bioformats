@@ -439,10 +439,14 @@ public class Exporter {
             // this prevents problems if the user changed the bit depth of the image
             boolean applyCalibrationFunction = false;
             try {
-                int originalType = FormatTools.pixelTypeFromString(
+                int originalType = -1;
+                if (store.getPixelsType(0) != null) {
+                  originalType = FormatTools.pixelTypeFromString(
                   store.getPixelsType(0).toString());
+                }
                 if (ptype != originalType &&
-                  (!FormatTools.isSigned(originalType) ||
+                  (store.getPixelsType(0) == null ||
+                  !FormatTools.isSigned(originalType) ||
                   FormatTools.getBytesPerPixel(originalType) !=
                   FormatTools.getBytesPerPixel(ptype)))
                 {
