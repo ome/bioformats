@@ -1197,7 +1197,8 @@ software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/micros
 weHave = * a LIF/XLLF/XLEF/LOF specification document (version 3.2, from no later than 2016 December 15, in PDF) \n
 * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 * a LIF specification document (version 1, from no later than 2006 April 3, in PDF) \n
-* numerous LIF datasets
+* numerous LIF datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/Leica-LIF/>`__
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
