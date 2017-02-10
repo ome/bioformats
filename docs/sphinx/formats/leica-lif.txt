@@ -32,7 +32,8 @@ We currently have:
 * a LIF/XLLF/XLEF/LOF specification document (version 3.2, from no later than 2016 December 15, in PDF) 
 * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) 
 * a LIF specification document (version 1, from no later than 2006 April 3, in PDF) 
-* numerous LIF datasets
+* numerous LIF datasets 
+* `public sample images <http://downloads.openmicroscopy.org/images/Leica-LIF/>`__
 
 We would like to have:
 
