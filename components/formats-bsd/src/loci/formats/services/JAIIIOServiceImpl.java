@@ -38,12 +38,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.ServiceLoader;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
@@ -102,7 +102,7 @@ public class JAIIIOServiceImpl extends AbstractService
 
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageWriterSpi> iter = 
-      ServiceRegistry.lookupProviders(J2KImageWriterSpi.class);
+      ServiceLoader.load(J2KImageWriterSpi.class).iterator();
     registry.registerServiceProviders(iter);
     J2KImageWriterSpi spi =
       registry.getServiceProviderByClass(J2KImageWriterSpi.class);
@@ -196,7 +196,7 @@ public class JAIIIOServiceImpl extends AbstractService
   private static IIORegistry registerServiceProviders() {
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
-      ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
+            ServiceLoader.load(J2KImageReaderSpi.class).iterator();
     registry.registerServiceProviders(iter);
     return registry;
   }
