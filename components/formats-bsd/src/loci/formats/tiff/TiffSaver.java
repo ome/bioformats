@@ -616,6 +616,7 @@ public class TiffSaver {
     if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
+    extraStream.close();
   }
 
   /**
@@ -848,6 +849,10 @@ public class TiffSaver {
         TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
         saver.setLittleEndian(isLittleEndian());
         saver.writeIFDValue(extraOut, entry.getValueOffset(), tag, value);
+        ifdOut.close();
+        saver.close();
+        extraOut.close();
+
         ifdBuf.seek(0);
         extraBuf.seek(0);
 
