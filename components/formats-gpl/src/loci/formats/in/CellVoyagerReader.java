@@ -748,6 +748,8 @@ public class CellVoyagerReader extends FormatReader
 			final String endTime = getChildText( msRoot, "EndTime" );
 			store.setPlateAcquisitionStartTime( new Timestamp( beginTime ), 0, 0 );
 			store.setPlateAcquisitionEndTime( new Timestamp( endTime ), 0, 0 );
+
+      store.setPlateName(beginTime, 0);
 		}
 
 		// Wells position on the plate
