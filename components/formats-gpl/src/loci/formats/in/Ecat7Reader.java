@@ -46,6 +46,10 @@ public class Ecat7Reader extends FormatReader {
   // -- Constants --
 
   public static final String ECAT7_MAGIC = "MATRIX72v";
+
+  // there are three ECAT7 versions, see: https://github.com/neurodebian/spm12/blob/master/spm_ecat2nifti.m
+  public static final String ECAT7_MAGIC_REGEX = "MATRIX7[012]v";
+
   private static final long HEADER_SIZE = 1536;
 
   // -- Constructor --
@@ -99,7 +103,7 @@ public class Ecat7Reader extends FormatReader {
     CoreMetadata ms0 = core.get(0);
 
     String check = in.readString(14).trim();
-    if (!check.equals(ECAT7_MAGIC)) {
+    if (!check.matches(ECAT7_MAGIC_REGEX)) {
       throw new FormatException("Invalid ECAT 7 file.");
     }
 
