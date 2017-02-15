@@ -162,7 +162,10 @@ public class CellVoyagerReader extends FormatReader
 			String filename = String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, targetTindex + 1, targetZindex + 1, targetCindex + 1 );
 			filename = filename.replace( '\\', File.separatorChar );
 			final Location image = new Location( measurementFolder, filename );
-			if ( !image.exists() ) { throw new IOException( "Could not find required file: " + image ); }
+      if (!image.exists()) {
+        LOGGER.warn("Could not find file {}", image);
+        continue;
+      }
 
 			tiffReader.setId( image.getAbsolutePath() );
 
@@ -357,10 +360,9 @@ public class CellVoyagerReader extends FormatReader
 			final int areaIndex = indices[ 1 ];
 			final AreaInfo area = wells.get( wellIndex ).areas.get( areaIndex );
 			final int nFields = area.fields.size();
-			final String[] images = new String[ getImageCount() * nFields + 2 ];
-			int index = 0;
-			images[ index++ ] = measurementResultFile.getAbsolutePath();
-			images[ index++ ] = omeMeasurementFile.getAbsolutePath();
+      ArrayList<String> images = new ArrayList<String>();
+      images.add(measurementResultFile.getAbsolutePath());
+      images.add(omeMeasurementFile.getAbsolutePath());
 
 			for ( final Integer timepoint : timePoints )
 			{
@@ -374,13 +376,17 @@ public class CellVoyagerReader extends FormatReader
 							 * Here we compose file names on the fly assuming
 							 * they follow the pattern below. Fragile I guess.
 							 */
-							images[ index++ ] = measurementFolder.getAbsolutePath() + String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, timepoint, zslice, channel );
+              String relativePath = String.format(SINGLE_TIFF_PATH_BUILDER,
+                wellIndex + 1, field.index, timepoint, zslice, channel);
+              Location imageFile = new Location(measurementFolder, relativePath);
+              if (imageFile.exists()) {
+                images.add(imageFile.getAbsolutePath());
+              }
 						}
-
 					}
 				}
 			}
-			return images;
+			return images.toArray(new String[images.size()]);
 		}
 
 	}
@@ -701,8 +707,8 @@ public class CellVoyagerReader extends FormatReader
 		 */
 
 		final MetadataStore store = makeFilterMetadata();
-		MetadataTools.populatePixels( store, this, true );
 		MetadataConverter.convertMetadata( omeMD, store );
+		MetadataTools.populatePixels( store, this, true );
 
 		/*
 		 * Pinhole disk
@@ -764,7 +770,7 @@ public class CellVoyagerReader extends FormatReader
 				Length posX = new Length(Double.valueOf(well.centerX), UNITS.REFERENCEFRAME);
 				Length posY = new Length(Double.valueOf(well.centerY), UNITS.REFERENCEFRAME);
 				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
-				store.setWellSampleID( MetadataTools.createLSID( "WellSample", area.UID ), 0, wellIndex, areaIndex );
+				store.setWellSampleID( MetadataTools.createLSID("WellSample", 0, wellIndex, areaIndex), 0, wellIndex, areaIndex );
 				store.setWellSamplePositionX(posX, 0, wellIndex, areaIndex);
 				store.setWellSamplePositionY(posY, 0, wellIndex, areaIndex);
 
