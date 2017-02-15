@@ -780,8 +780,6 @@ public class TiffSaver {
   {
     if (raf == null)
       throw new FormatException("Output cannot be null");
-    TiffParser parser = new TiffParser(raf);
-    long[] offsets = parser.getIFDOffsets();
     out.seek(raf.getFilePointer() - (bigTiff ? 8 : 4));
     writeIntValue(out, 0);
   }
