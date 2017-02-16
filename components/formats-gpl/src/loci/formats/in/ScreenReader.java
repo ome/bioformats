@@ -78,7 +78,6 @@ public class ScreenReader extends FormatReader {
   // -- Fields --
 
   private String[] plateMetadataFiles;
-  private String[] excludeReaders;
   private String[][] files;
   private String[] ordering;
   private int[][] axisTypes;
@@ -366,15 +365,15 @@ public class ScreenReader extends FormatReader {
 
     String excludeReadersEntry = plateTable.get("ExcludeReaders");
     if (null != excludeReadersEntry) {
-      excludeReaders = excludeReadersEntry.split(",", -1);
-    }
-    for (String r : excludeReaders) {
-      try {
-        Class<? extends IFormatReader> c =
-          Class.forName(r).asSubclass(IFormatReader.class);
-        validReaders.removeClass(c);
-      } catch (ClassNotFoundException e) {
-        LOGGER.warn("Reader {} not found", r);
+      String[] excludeReaders = excludeReadersEntry.split(",", -1);
+      for (String r : excludeReaders) {
+        try {
+          Class<? extends IFormatReader> c =
+            Class.forName(r).asSubclass(IFormatReader.class);
+          validReaders.removeClass(c);
+        } catch (ClassNotFoundException e) {
+          LOGGER.warn("Reader {} not found", r);
+        }
       }
     }
 
