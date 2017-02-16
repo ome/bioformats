@@ -111,9 +111,10 @@ import org.xml.sax.SAXException;
 public class CellVoyagerReader extends FormatReader
 {
 
-	private static final String SINGLE_TIFF_PATH_BUILDER = "Image/W%dF%03dT%04dZ%02dC%d.tif";
+	private static final String SINGLE_TIFF_PATH_BUILDER = "W%dF%03dT%04dZ%02dC%d.tif";
 
 	private Location measurementFolder;
+  private Location imageFolder;
 
 	private List< ChannelInfo > channelInfos;
 
@@ -128,8 +129,6 @@ public class CellVoyagerReader extends FormatReader
 	public CellVoyagerReader()
 	{
 		super( "CellVoyager", new String[] { "tif", "xml" } );
-		this.suffixNecessary = false;
-		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
 		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stitch together several TIF files.";
 		this.domains = new String[] { FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN };
@@ -142,12 +141,7 @@ public class CellVoyagerReader extends FormatReader
 
 		final CoreMetadata cm = core.get( getSeries() );
 
-		final int nImagesPerTimepoint = cm.sizeC * cm.sizeZ;
-		final int targetTindex = no / nImagesPerTimepoint;
-
-		final int rem = no % nImagesPerTimepoint;
-		final int targetZindex = rem / cm.sizeC;
-		final int targetCindex = rem % cm.sizeC;
+    int[] zct = getZCTCoords(no);
 
 		final int[] indices = seriesToWellArea( getSeries() );
 		final int wellIndex = indices[ 0 ];
@@ -159,9 +153,8 @@ public class CellVoyagerReader extends FormatReader
 		for ( final FieldInfo field : area.fields )
 		{
 
-			String filename = String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, targetTindex + 1, targetZindex + 1, targetCindex + 1 );
-			filename = filename.replace( '\\', File.separatorChar );
-			final Location image = new Location( measurementFolder, filename );
+			String filename = String.format(SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, zct[2] + 1, zct[0] + 1, zct[1] + 1);
+			final Location image = new Location( imageFolder, filename );
       if (!image.exists()) {
         LOGGER.warn("Could not find file {}", image);
         continue;
@@ -258,8 +251,13 @@ public class CellVoyagerReader extends FormatReader
 		final String localName = new Location( name ).getName();
 		if ( localName.equals( "MeasurementResult.xml" ) ) { return true; }
 		final Location parent = new Location( name ).getAbsoluteFile().getParentFile();
-		final Location xml = new Location( parent, "MeasurementResult.xml" );
-		if ( !xml.exists() ) { return false; }
+		Location xml = new Location( parent, "MeasurementResult.xml" );
+		if (!xml.exists()) {
+      xml = new Location(parent.getParentFile(), "MeasurementResult.xml");
+      if (!xml.exists()) {
+        return false;
+      }
+    }
 
 		return super.isThisType( name, open );
 	}
@@ -274,7 +272,11 @@ public class CellVoyagerReader extends FormatReader
 		if ( !measurementFolder.isDirectory() )
 		{
 			measurementFolder = measurementFolder.getParentFile();
+      if (measurementFolder.getName().equals("Image")) {
+			  measurementFolder = measurementFolder.getParentFile();
+      }
 		}
+    imageFolder = new Location(measurementFolder, "Image");
 
 		measurementResultFile = new Location( measurementFolder, "MeasurementResult.xml" );
 		if ( !measurementResultFile.exists() ) { throw new IOException( "Could not find " + measurementResultFile + " in folder." ); }
@@ -378,7 +380,7 @@ public class CellVoyagerReader extends FormatReader
 							 */
               String relativePath = String.format(SINGLE_TIFF_PATH_BUILDER,
                 wellIndex + 1, field.index, timepoint, zslice, channel);
-              Location imageFile = new Location(measurementFolder, relativePath);
+              Location imageFile = new Location(imageFolder, relativePath);
               if (imageFile.exists()) {
                 images.add(imageFile.getAbsolutePath());
               }
@@ -948,7 +950,7 @@ public class CellVoyagerReader extends FormatReader
 		final List< Integer > timepoints = new ArrayList< Integer >( nTimePoints );
 		for ( int i = 0; i < nTimePoints; i++ )
 		{
-			timepoints.add( Integer.valueOf( i ) );
+      timepoints.add(i + 1);
 		}
 		return timepoints;
 	}
