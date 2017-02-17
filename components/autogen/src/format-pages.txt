@@ -554,7 +554,8 @@ several attempts to fix the problem blind. \n
 extensions = .v
 developer = `Siemens <http://www.siemens.com>`_
 bsd = no
-weHave = * a few ECAT7 files
+weHave = * a few ECAT7 files \n
+* `public sample images <http://downloads.openmicroscopy.org/images/ECAT7/>`__
 weWant = * an ECAT7 specification document \n
 * more ECAT7 files
 pixelsRating = Good

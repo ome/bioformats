@@ -25,7 +25,8 @@ Reader: Ecat7Reader (:bfreader:`Source Code <Ecat7Reader.java>`, :doc:`Supported
 
 We currently have:
 
-* a few ECAT7 files
+* a few ECAT7 files 
+* `public sample images <http://downloads.openmicroscopy.org/images/ECAT7/>`__
 
 We would like to have:
 
