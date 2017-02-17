@@ -25,31 +25,30 @@
 
 package loci.formats.in;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.ChannelSeparator;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatReader;
-import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
+import loci.formats.*;
 import loci.formats.meta.MetadataStore;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+
 
 /**
  * NDPISReader is the file format reader for Hamamatsu .ndpis files.
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Manuel Stritt (manuel.stritt at actelion.com)
  */
 public class NDPISReader extends FormatReader {
 
   // -- Fields --
 
   private String[] ndpiFiles;
-  private ChannelSeparator[] readers;
+  private NDPIReader[] readers;
+  private final static int CHANNELTAG = 65434;
 
   // -- Constructor --
 
@@ -88,12 +87,34 @@ public class NDPISReader extends FormatReader {
     return readers[0].getOptimalTileHeight();
   }
 
+
+  /* @see IFormatReader#openBytes(int, int, int, int, int) */
+  @Override
+  public byte[] openBytes(int no, int x, int y, int w, int h)
+          throws FormatException, IOException
+  {
+    int ch = getRGBChannelCount();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    byte[] newBuffer;
+    try {
+      newBuffer = DataTools.allocate(w, h, ch, bpp);
+    }
+    catch (IllegalArgumentException e) {
+      throw new FormatException("Image plane too large. Only 2GB of data can " +
+              "be extracted at one time. You can workaround the problem by opening " +
+              "the plane in tiles; for further details, see: " +
+              "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
+              "bug-reporting.html#common-issues-to-check", e);
+    }
+    return openBytes(no, newBuffer, x, y, w, h);
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
+          throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
@@ -102,13 +123,26 @@ public class NDPISReader extends FormatReader {
     readers[channel].setId(ndpiFiles[channel]);
     readers[channel].setSeries(getSeries());
     readers[channel].setResolution(getResolution());
-    int cIndex = channel < readers[channel].getSizeC() ? channel : 0;
-    int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
-
-    readers[channel].openBytes(plane, buf, x, y, w, h);
+    byte[] bufRGB = DataTools.allocate(w, h, 3); // w*h*RGB  - maybe this should be reused...
+    bufRGB = readers[channel].openBytes(0, bufRGB, x, y, w, h);
+    int intens;
+    // each channel is RGB data (with usually only one band used), thus we sum up the intensities
+    if (readers[channel].isInterleaved()) {
+      for (int i = 0; i < buf.length; i++) {
+        intens = bufRGB[i * 3] + bufRGB[i * 3 + 1] + bufRGB[i * 3 + 2];
+        buf[i] = (byte) (intens <= 255 ? intens : 255);   // clamp to byte
+      }
+    } else {    // not interleaved
+      int offs = w*h;
+      for (int i = 0; i < buf.length; i++) {
+        intens = bufRGB[i] + bufRGB[i + offs] + bufRGB[i + offs *2];
+        buf[i] = (byte) (intens <= 255 ? intens : 255);   // clamp to byte
+      }
+    }
 
     return buf;
   }
+
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
@@ -135,7 +169,7 @@ public class NDPISReader extends FormatReader {
     if (!fileOnly) {
       ndpiFiles = null;
       if (readers != null) {
-        for (ChannelSeparator reader : readers) {
+        for (NDPIReader reader : readers) {
           if (reader != null) {
             reader.close();
           }
@@ -165,12 +199,12 @@ public class NDPISReader extends FormatReader {
 
       if (key.equals("NoImages")) {
         ndpiFiles = new String[Integer.parseInt(value)];
-        readers = new ChannelSeparator[ndpiFiles.length];
+        readers = new NDPIReader[ndpiFiles.length];
       }
       else if (key.startsWith("Image")) {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
         ndpiFiles[index] = new Location(parent, value).getAbsolutePath();
-        readers[index] = new ChannelSeparator(new NDPIReader());
+        readers[index] = new NDPIReader();
         readers[index].setFlattenedResolutions(hasFlattenedResolutions());
       }
     }
@@ -187,7 +221,15 @@ public class NDPISReader extends FormatReader {
     }
 
     MetadataStore store = makeFilterMetadata();
+    for (int c=0; c<readers.length; c++) {     // populate channel names based on IFD entry
+      if (c>0) // 0 is already open
+        readers[c].setId(ndpiFiles[c]);
+      String channelName = readers[c].getIFDs().get(0).getIFDStringValue(CHANNELTAG);
+      store.setChannelName(channelName, getSeries(), c);
+    }
     MetadataTools.populatePixels(store, this);
   }
+
+
 
 }
