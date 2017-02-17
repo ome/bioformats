@@ -53,6 +53,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.meta.MetadataConverter;
+import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Image;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
@@ -543,7 +545,6 @@ public class CellVoyagerReader extends FormatReader
 		final Element channelsEl = getChild( msRoot, "Channels" );
 		final List< Element > channelEls = getChildren( channelsEl, "Channel" );
 		channelInfos = new ArrayList< ChannelInfo >();
-		int channelIndex = 0;
 		for ( final Element channelEl : channelEls )
 		{
 			final boolean isEnabled = Boolean.parseBoolean( getChildText( channelEl, "IsEnabled" ) );
@@ -553,8 +554,6 @@ public class CellVoyagerReader extends FormatReader
 			}
 			final ChannelInfo ci = readChannel( channelEl );
 			channelInfos.add( ci );
-
-			omeMD.setChannelColor( ci.color, 0, channelIndex++ );
 		}
 
 		/*
@@ -662,6 +661,9 @@ public class CellVoyagerReader extends FormatReader
 		 * stitched from 20 fields.
 		 */
 
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMD.getRoot();
+    Image firstImage = root.getImage(0);
+
 		core.clear();
 		for ( final WellInfo well : wells )
 		{
@@ -669,6 +671,9 @@ public class CellVoyagerReader extends FormatReader
 			{
 				final CoreMetadata ms = new CoreMetadata();
 				core.add( ms );
+        if (core.size() > 1) {
+          root.addImage(firstImage);
+        }
 
 				ms.sizeX = area.width;
 				ms.sizeY = area.height;
@@ -703,6 +708,7 @@ public class CellVoyagerReader extends FormatReader
 				ms.littleEndian = true;
 			}
 		}
+    omeMD.setRoot(root);
 
 		/*
 		 * Populate the MetadataStore.
@@ -724,10 +730,10 @@ public class CellVoyagerReader extends FormatReader
 
 		final Element containerEl = getChild( msRoot, new String[] { "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" } );
 		final String type = containerEl.getAttribute( "xsi:type" );
+    boolean plateMetadata = false;
 		if ( type.equals( "WellPlate" ) )
 		{
-			// I don't know an other case. I can just hope that if there is
-			// another name for microplate I will find out quickly.
+      plateMetadata = true;
 
 			final int nrows = Integer.parseInt( getChildText( containerEl, "RowCount" ) );
 			final int ncols = Integer.parseInt( getChildText( containerEl, "ColumnCount" ) );
@@ -753,6 +759,9 @@ public class CellVoyagerReader extends FormatReader
 
       store.setPlateName(beginTime, 0);
 		}
+    else if (!type.equals("PreparedSlide")) {
+      LOGGER.warn("Unexpected acquisition type: {}", type);
+    }
 
 		// Wells position on the plate
 		int seriesIndex = -1;
@@ -761,28 +770,41 @@ public class CellVoyagerReader extends FormatReader
 		{
 			wellIndex++;
 			final int wellNumber = well.number;
-			store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
-			store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
-			store.setWellID( MetadataTools.createLSID( "Well", well.UID ), 0, wellIndex );
+      if (plateMetadata) {
+			  store.setWellID(MetadataTools.createLSID("Well", 0, wellIndex), 0, wellIndex);
+			  store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
+			  store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
+      }
 			int areaIndex = -1;
 			for ( final AreaInfo area : well.areas )
 			{
 				seriesIndex++;
 				areaIndex++;
-				final String imageName = "Well " + wellNumber + " (r=" + well.row + ", c=" + well.col + ") - Area " + areaIndex;
+        String imageID = MetadataTools.createLSID("Image", seriesIndex);
+        store.setImageID(imageID, seriesIndex);
+				final String imageName = "Well " + wellNumber + " (UID=" + well.UID + ", r=" + well.row + ", c=" + well.col + ") - Area " + areaIndex;
 				store.setImageName( imageName, seriesIndex );
-				Length posX = new Length(Double.valueOf(well.centerX), UNITS.REFERENCEFRAME);
-				Length posY = new Length(Double.valueOf(well.centerY), UNITS.REFERENCEFRAME);
-				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
-				store.setWellSampleID( MetadataTools.createLSID("WellSample", 0, wellIndex, areaIndex), 0, wellIndex, areaIndex );
-				store.setWellSamplePositionX(posX, 0, wellIndex, areaIndex);
-				store.setWellSamplePositionY(posY, 0, wellIndex, areaIndex);
 
-				channelIndex = 0;
+        if (plateMetadata) {
+  				Length posX = new Length(Double.valueOf(well.centerX), UNITS.REFERENCEFRAME);
+  				Length posY = new Length(Double.valueOf(well.centerY), UNITS.REFERENCEFRAME);
+
+          String wellSample = MetadataTools.createLSID("WellSample", 0, wellIndex, areaIndex);
+	  			store.setWellSampleID(wellSample, 0, wellIndex, areaIndex);
+          store.setWellSampleImageRef(imageID, 0, wellIndex, areaIndex);
+		  		store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
+		  		store.setWellSamplePositionX(posX, 0, wellIndex, areaIndex);
+		  		store.setWellSamplePositionY(posY, 0, wellIndex, areaIndex);
+
+          store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, seriesIndex);
+        }
+        store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), seriesIndex);
+
 				for ( int i = 0; i < channelInfos.size(); i++ )
 				{
-					store.setChannelPinholeSize( new Length(pinholeSize, UNITS.MICROMETER), seriesIndex, channelIndex++ );
+					store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), seriesIndex, i);
 					store.setChannelName( channelInfos.get( i ).name, seriesIndex, i );
+          store.setChannelColor(channelInfos.get(i).color, seriesIndex, i);
 				}
 			}
 
