@@ -1,6 +1,25 @@
 Version history
 ===============
 
+5.3.4 (2017 February 21)
+------------------------
+
+Bug fixes:
+
+* ImageJ
+   - fix for a NullPointerException when exporting images that were not opened via 
+     theBio-Formats importer, and thus do not have a complete OMEXMLMetadata store.
+
+* Java 1.9
+   - fix compile and runtime errors to enable building with Java 1.9
+
+Documentation improvements:
+
+* new public sample files added for ECAT7 (thanks to Torsten Stöter)
+* new public sample files added for Leica LIF (thanks to Michael Goelzer)
+* new specification document (Version 3.2) for Leica LIF
+* updated links to OMERO documentation as a result of decoupling
+
 5.3.3 (2017 February 2)
 -----------------------
 
