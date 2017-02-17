@@ -21,7 +21,7 @@ Updated build system:
 * updated dependency for `ome-model <https://github.com/ome/ome-model>` in the POM to 
   version 5.4.0. This allows for improved ROI handling by enabling support for Shape 
   objects with Transform attributes. OME-XML schema version remains unchanged as 
-  :model_doc:`OME schema 2016-06 </schemas/june-2016-2.html>`_
+  :model_doc:`OME schema 2016-06 </schemas/june-2016-2.html>`
 
 Documentation improvements:
 
