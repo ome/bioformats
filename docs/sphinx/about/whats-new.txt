@@ -8,10 +8,13 @@ Bug fixes:
 
 * ImageJ
    - fix for a NullPointerException when exporting images that were not opened via 
-     theBio-Formats importer, and thus do not have a complete OMEXMLMetadata store.
+     the Bio-Formats importer, and thus do not have a complete OMEXMLMetadata store.
 
 * Java 1.9
    - fix compile and runtime errors to enable building with Java 1.9
+
+* ECAT7
+   - update to add support for different versions of ECAT7 files (thanks to Torsten Stöter)
 
 Documentation improvements:
 
