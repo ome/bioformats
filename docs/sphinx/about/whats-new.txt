@@ -16,6 +16,10 @@ Bug fixes:
 * ECAT7
    - update to add support for different versions of ECAT7 files (thanks to Torsten Stöter)
 
+Updated build system:
+
+* updated dependency for `ome-model <https://github.com/ome/ome-model>` in the POM to version 5.4.0
+
 Documentation improvements:
 
 * new public sample files added for ECAT7 (thanks to Torsten Stöter)
