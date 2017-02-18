@@ -30,13 +30,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -288,25 +287,21 @@ public class CellVoyagerReader extends FormatReader
 		 * Open MeasurementSettings file
 		 */
 
-		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = null;
-		try
-		{
-			dBuilder = dbFactory.newDocumentBuilder();
-		}
-		catch ( final ParserConfigurationException e )
-		{
-			LOGGER.debug( "", e );
-		}
-		Document msDocument = null;
-		try
-		{
-			msDocument = dBuilder.parse( measurementResultFile.getAbsolutePath() );
-		}
-		catch ( final SAXException e )
-		{
-			LOGGER.debug( "", e );
-		}
+    RandomAccessInputStream result =
+      new RandomAccessInputStream(measurementResultFile.getAbsolutePath());
+    Document msDocument = null;
+    try {
+      msDocument = XMLTools.parseDOM(result);
+    }
+    catch (ParserConfigurationException e) {
+      throw new IOException(e);
+    }
+    catch (SAXException e) {
+      throw new IOException(e);
+    }
+    finally {
+      result.close();
+    }
 
 		msDocument.getDocumentElement().normalize();
 
@@ -326,16 +321,21 @@ public class CellVoyagerReader extends FormatReader
 		 * Open OME metadata file
 		 */
 
+    RandomAccessInputStream measurement =
+      new RandomAccessInputStream(omeMeasurementFile.getAbsolutePath());
 		Document omeDocument = null;
-		try
-		{
-			omeDocument = dBuilder.parse( omeMeasurementFile.getAbsolutePath() );
-		}
-		catch ( final SAXException e )
-		{
-			LOGGER.debug( "", e );
-		}
-
+    try {
+      omeDocument = XMLTools.parseDOM(measurement);
+    }
+    catch (ParserConfigurationException e) {
+      throw new IOException(e);
+    }
+    catch (SAXException e) {
+      throw new IOException(e);
+    }
+    finally {
+      measurement.close();
+    }
 		omeDocument.getDocumentElement().normalize();
 
 		/*
@@ -1115,24 +1115,20 @@ public class CellVoyagerReader extends FormatReader
 
 	private static final Element getChild( final Element parent, final String childName )
 	{
-		final NodeList childNodes = parent.getChildNodes();
-		for ( int i = 0; i < childNodes.getLength(); i++ )
-		{
-			final Node item = childNodes.item( i );
-			if ( item.getNodeName().equals( childName ) ) { return ( Element ) item; }
-		}
-		return null;
+    return getChild(parent, new String[] {childName});
 	}
 
 	private static final Element getChild( final Element parent, final String[] path )
 	{
-		if ( path.length == 1 ) { return getChild( parent, path[ 0 ] ); }
-
 		final NodeList childNodes = parent.getChildNodes();
-		for ( int i = 0; i < childNodes.getLength(); i++ )
-		{
-			final Node item = childNodes.item( i );
-			if ( item.getNodeName().equals( path[ 0 ] ) ) { return getChild( ( Element ) item, Arrays.copyOfRange( path, 1, path.length ) ); }
+		for (int i=0; i<childNodes.getLength(); i++) {
+			final Node item = childNodes.item(i);
+			if (item.getNodeName().equals(path[0])) {
+        if (path.length == 1) {
+          return (Element) item;
+        }
+        return getChild((Element) item, Arrays.copyOfRange(path, 1, path.length));
+      }
 		}
 		return null;
 	}
@@ -1151,26 +1147,16 @@ public class CellVoyagerReader extends FormatReader
 
 	private static final String getChildText( final Element parent, final String[] path )
 	{
-		if ( path.length == 1 ) { return getChildText( parent, path[ 0 ] ); }
-
-		final NodeList childNodes = parent.getChildNodes();
-		for ( int i = 0; i < childNodes.getLength(); i++ )
-		{
-			final Node item = childNodes.item( i );
-			if ( item.getNodeName().equals( path[ 0 ] ) ) { return getChildText( ( Element ) item, Arrays.copyOfRange( path, 1, path.length ) ); }
-		}
-		return null;
+    Element child = getChild(parent, path);
+    if (child != null) {
+      return child.getTextContent();
+    }
+    return null;
 	}
 
 	private static final String getChildText( final Element parent, final String childName )
 	{
-		final NodeList childNodes = parent.getChildNodes();
-		for ( int i = 0; i < childNodes.getLength(); i++ )
-		{
-			final Node item = childNodes.item( i );
-			if ( item.getNodeName().equals( childName ) ) { return item.getTextContent(); }
-		}
-		return null;
+    return getChildText(parent, new String[] {childName});
 	}
 
 }
