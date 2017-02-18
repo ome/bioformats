@@ -502,7 +502,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final TransformerException e2 )
 		{
-			e2.printStackTrace();
+      LOGGER.debug("", e2);
 		}
 		try
 		{
