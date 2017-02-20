@@ -129,13 +129,13 @@ public class NDPISReader extends FormatReader {
     // each channel is RGB data (with usually only one band used), thus we sum up the intensities
     if (readers[channel].isInterleaved()) {
       for (int i = 0; i < buf.length; i++) {
-        intens = bufRGB[i * 3] + bufRGB[i * 3 + 1] + bufRGB[i * 3 + 2];
+        intens = ((int)bufRGB[i * 3] & 0xff) + ((int)bufRGB[i * 3 + 1] & 0xff) + ((int)bufRGB[i * 3 + 2] & 0xff);
         buf[i] = (byte) (intens <= 255 ? intens : 255);   // clamp to byte
       }
     } else {    // not interleaved
       int offs = w*h;
       for (int i = 0; i < buf.length; i++) {
-        intens = bufRGB[i] + bufRGB[i + offs] + bufRGB[i + offs *2];
+        intens = ((int)bufRGB[i] & 0xff) + ((int)bufRGB[i + offs] & 0xff) + ((int)bufRGB[i + offs *2] & 0xff);
         buf[i] = (byte) (intens <= 255 ? intens : 255);   // clamp to byte
       }
     }
