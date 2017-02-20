@@ -90,6 +90,7 @@ public class CV7000Reader extends FormatReader {
   private ArrayList<Channel> channels;
   private int fields;
   private String startTime, endTime;
+  private ArrayList<String> extraFiles;
 
   // -- Constructor --
 
@@ -160,12 +161,15 @@ public class CV7000Reader extends FormatReader {
         }
       }
     }
+    files.addAll(extraFiles);
     for (String file : allFiles) {
       if (!checkSuffix(file, "tif")) {
         files.add(file);
       }
     }
-    return files.toArray(new String[files.size()]);
+    String[] allFiles = files.toArray(new String[files.size()]);
+    Arrays.sort(allFiles);
+    return allFiles;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -188,6 +192,7 @@ public class CV7000Reader extends FormatReader {
       startTime = null;
       endTime = null;
       reversePlaneLookup = null;
+      extraFiles = null;
     }
   }
 
@@ -333,6 +338,7 @@ public class CV7000Reader extends FormatReader {
       // do this so that the index does not default to 0 for ERR planes
       Arrays.fill(reversePlaneLookup[i], -1);
     }
+    extraFiles = new ArrayList<String>();
     for (int i=0; i<planeData.size(); i++) {
       Plane p = planeData.get(i);
       int wellIndex = Arrays.binarySearch(wells, p.row * plate.getPlateColumns() + p.column);
@@ -340,7 +346,13 @@ public class CV7000Reader extends FormatReader {
         new int[] {p.field, wellIndex});
       p.no = FormatTools.positionToRaster(planeLengths,
         new int[] {p.channel - minSizeC, p.z - minSizeZ, p.timepoint - minSizeT});
-      reversePlaneLookup[p.series][p.no] = i;
+      if (reversePlaneLookup[p.series][p.no] < 0) {
+        reversePlaneLookup[p.series][p.no] = i;
+      }
+      else {
+        LOGGER.warn("Ignoring file {}", p.file);
+        extraFiles.add(p.file);
+      }
     }
 
     // populate the MetadataStore
