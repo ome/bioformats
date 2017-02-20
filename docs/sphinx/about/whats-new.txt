@@ -1,6 +1,35 @@
 Version history
 ===============
 
+5.3.4 (2017 February 21)
+------------------------
+
+Bug fixes:
+
+* ImageJ
+   - fix for a NullPointerException when exporting images that were not opened via 
+     the Bio-Formats importer, and thus do not have a complete OMEXMLMetadata store
+
+* Java 1.9
+   - fix compile and runtime errors to enable building with Java 1.9
+
+* ECAT7
+   - update to add support for different versions of ECAT7 files (thanks to Torsten Stöter)
+
+Updated build system:
+
+* updated dependency for `ome-model <https://github.com/ome/ome-model>`_ in the POM to 
+  version 5.4.0. This allows for improved ROI handling by enabling support for Shape 
+  objects with Transform attributes. OME-XML schema version remains unchanged as 
+  :model_doc:`OME schema 2016-06 <schemas/june-2016-2.html>`
+
+Documentation improvements:
+
+* new public sample files added for ECAT7 (thanks to Torsten Stöter)
+* new public sample files added for Leica LIF (thanks to Michael Goelzer)
+* new specification document (Version 3.2) for Leica LIF
+* updated links to OMERO documentation as a result of decoupling
+
 5.3.3 (2017 February 2)
 -----------------------
 
