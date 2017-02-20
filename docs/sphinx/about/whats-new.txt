@@ -8,7 +8,7 @@ Bug fixes:
 
 * ImageJ
    - fix for a NullPointerException when exporting images that were not opened via 
-     the Bio-Formats importer, and thus do not have a complete OMEXMLMetadata store.
+     the Bio-Formats importer, and thus do not have a complete OMEXMLMetadata store
 
 * Java 1.9
    - fix compile and runtime errors to enable building with Java 1.9
@@ -21,7 +21,7 @@ Updated build system:
 * updated dependency for `ome-model <https://github.com/ome/ome-model>`_ in the POM to 
   version 5.4.0. This allows for improved ROI handling by enabling support for Shape 
   objects with Transform attributes. OME-XML schema version remains unchanged as 
-  :model_doc:`OME schema 2016-06 </schemas/june-2016-2.html>`
+  :model_doc:`OME schema 2016-06 <schemas/june-2016-2.html>`
 
 Documentation improvements:
 
