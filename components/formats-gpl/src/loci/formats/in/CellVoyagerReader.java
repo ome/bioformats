@@ -149,6 +149,8 @@ public class CellVoyagerReader extends FormatReader
 		final AreaInfo area = well.areas.get( areaIndex );
 		final MinimalTiffReader tiffReader = new MinimalTiffReader();
 
+    imageFolder = new Location(currentId).getAbsoluteFile().getParentFile();
+    imageFolder = new Location(imageFolder, "Image");
 		for ( final FieldInfo field : area.fields )
 		{
 
