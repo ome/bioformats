@@ -2247,44 +2247,46 @@ public class ZeissCZIReader extends FormatReader {
       return;
     }
 
-    Element displaySetting = (Element) displaySettings.item(0);
-    NodeList channelNodes = getGrandchildren(displaySetting, "Channel");
+    for (int display=0; display<displaySettings.getLength(); display++) {
+      Element displaySetting = (Element) displaySettings.item(display);
+      NodeList channelNodes = getGrandchildren(displaySetting, "Channel");
 
-    if (channelNodes != null) {
-      for (int i=0; i<channelNodes.getLength(); i++) {
-        Element channel = (Element) channelNodes.item(i);
-        String color = getFirstNodeValue(channel, "Color");
-        if (color == null) {
-          color = getFirstNodeValue(channel, "OriginalColor");
-        }
+      if (channelNodes != null) {
+        for (int i=0; i<channelNodes.getLength(); i++) {
+          Element channel = (Element) channelNodes.item(i);
+          String color = getFirstNodeValue(channel, "Color");
+          if (color == null) {
+            color = getFirstNodeValue(channel, "OriginalColor");
+          }
 
-        while (channels.size() <= i) {
-          channels.add(new Channel());
-        }
-        channels.get(i).color = color;
+          while (channels.size() <= i) {
+            channels.add(new Channel());
+          }
+          channels.get(i).color = color;
 
-        String fluor = getFirstNodeValue(channel, "DyeName");
-        if (fluor != null) {
-          channels.get(i).fluor = fluor;
-        }
-        String name = channel.getAttribute("Name");
-        if (name != null) {
-          channels.get(i).name = name;
-        }
+          String fluor = getFirstNodeValue(channel, "DyeName");
+          if (fluor != null) {
+            channels.get(i).fluor = fluor;
+          }
+          String name = channel.getAttribute("Name");
+          if (name != null) {
+            channels.get(i).name = name;
+          }
 
-        String emission = getFirstNodeValue(channel, "DyeMaxEmission");
-        if (emission != null) {
-          channels.get(i).emission = emission;
-        }
-        String excitation = getFirstNodeValue(channel, "DyeMaxExcitation");
-        if (excitation != null) {
-          channels.get(i).excitation = excitation;
-        }
+          String emission = getFirstNodeValue(channel, "DyeMaxEmission");
+          if (emission != null) {
+            channels.get(i).emission = emission;
+          }
+          String excitation = getFirstNodeValue(channel, "DyeMaxExcitation");
+          if (excitation != null) {
+            channels.get(i).excitation = excitation;
+          }
 
-        String illumination = getFirstNodeValue(channel, "IlluminationType");
+          String illumination = getFirstNodeValue(channel, "IlluminationType");
 
-        if (illumination != null) {
-          channels.get(i).illumination = getIlluminationType(illumination);
+          if (illumination != null) {
+            channels.get(i).illumination = getIlluminationType(illumination);
+          }
         }
       }
     }
