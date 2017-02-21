@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.Region;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,7 +41,6 @@ import ome.units.unit.Unit;
 import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for IMOD binary files.

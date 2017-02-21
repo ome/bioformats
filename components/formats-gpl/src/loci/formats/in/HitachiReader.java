@@ -50,9 +50,7 @@ import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-import ome.units.quantity.Length;
 
 /**
  * HitachiReader is the file format reader for S-4800 files.

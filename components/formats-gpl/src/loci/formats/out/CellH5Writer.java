@@ -32,7 +32,6 @@
 
 package loci.formats.out;
 
-import ch.systemsx.cisd.base.mdarray.MDArray;
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
@@ -40,7 +39,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.Locale;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
@@ -53,13 +51,8 @@ import loci.formats.in.CellH5Reader.CellH5Constants;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.JHDFService;
 import loci.formats.services.JHDFServiceImpl;
-import loci.formats.tiff.IFD;
 
-import ome.units.quantity.Time;
-import ome.units.quantity.Length;
-import ome.units.UNITS;
 import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * CellH5Writer is the file format writer for CellH5 format.

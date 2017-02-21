@@ -29,12 +29,9 @@ import ch.systemsx.cisd.base.mdarray.MDIntArray;
 import ch.systemsx.cisd.base.mdarray.MDShortArray;
 import ch.systemsx.cisd.hdf5.HDF5CompoundDataMap;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.services.Service;
-import loci.common.services.ServiceException;
 
 /**
  * Utility class for working with NetCDF/HDF files.

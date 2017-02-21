@@ -59,7 +59,6 @@
 
 package loci.formats.out;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import ome.units.UNITS;
@@ -68,18 +67,12 @@ import ome.units.quantity.Length;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 
-import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
-
-import ome.units.quantity.Length;
-import ome.units.UNITS;
 
 /**
  * WlzWriter is the file format writer for Woolz files.

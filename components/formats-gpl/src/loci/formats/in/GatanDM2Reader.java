@@ -30,7 +30,6 @@ import java.io.IOException;
 import ome.xml.model.primitives.Timestamp;
 
 import loci.common.DateTools;
-import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -39,9 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 /**

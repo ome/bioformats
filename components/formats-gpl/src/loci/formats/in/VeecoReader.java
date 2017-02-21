@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -42,8 +41,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * VeecoReader is the file format reader for Veeco HDF files.
