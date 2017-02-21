@@ -43,9 +43,7 @@ import loci.common.services.ServiceException;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Tag;
-import com.drew.imaging.ImageProcessingException;
 
 /**
  *

@@ -37,12 +37,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
-import loci.common.services.DependencyException;
-import loci.common.services.Service;
 import loci.common.services.ServiceException;
 
 import org.libjpegturbo.turbojpeg.TJ;

@@ -33,7 +33,6 @@
 package loci.formats.in;
 
 import java.awt.color.CMMException;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -52,7 +51,6 @@ import loci.formats.services.EXIFService;
 import java.util.Date;
 import java.util.HashMap;
 import org.joda.time.DateTime;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.Timestamp;
 

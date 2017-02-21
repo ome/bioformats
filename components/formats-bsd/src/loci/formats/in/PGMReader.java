@@ -37,7 +37,6 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import loci.common.ByteArrayHandle;
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.CoreMetadata;

@@ -51,8 +51,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Time;
 import ome.units.quantity.Length;
 import ome.units.UNITS;

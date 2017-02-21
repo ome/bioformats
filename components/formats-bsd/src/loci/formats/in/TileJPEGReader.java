@@ -33,10 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Hashtable;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.Region;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
