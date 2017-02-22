@@ -298,7 +298,7 @@ public class LosslessJPEGCodec extends BaseCodec {
 	          byte tableClass = (byte) ((s & 0xf0) >> 4);
 	          byte destination = (byte) (s & 0xf);
 	          int[] nCodes = new int[16];
-	          Vector table = new Vector();
+	          Vector<Short> table = new Vector<Short>();
 	          for (int i=0; i<nCodes.length; i++) {
 	            nCodes[i] = in.read();
 	            table.add(new Short((short) nCodes[i]));

@@ -40,7 +40,7 @@ import javax.swing.filechooser.FileFilter;
  * A file filter based on file extensions, for use with a JFileChooser.
  */
 public class ExtensionFileFilter extends FileFilter
-  implements java.io.FileFilter, Comparable
+  implements java.io.FileFilter, Comparable<Object>
 {
 
   // -- Fields --

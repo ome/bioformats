@@ -605,7 +605,7 @@ public class OMETiffReader extends FormatReader {
 
     // search for missing filenames
     if (needSearch) {
-      Enumeration en = files.keys();
+      Enumeration<String> en = files.keys();
       while (en.hasMoreElements()) {
         String uuid = (String) en.nextElement();
         String filename = files.get(uuid);
@@ -619,16 +619,16 @@ public class OMETiffReader extends FormatReader {
     }
 
     // build list of used files
-    Enumeration en = files.keys();
+    Enumeration<String> en = files.keys();
     int numUUIDs = files.size();
-    HashSet fileSet = new HashSet(); // ensure no duplicate filenames
+    HashSet<String> fileSet = new HashSet<String>(); // ensure no duplicate filenames
     for (int i=0; i<numUUIDs; i++) {
       String uuid = (String) en.nextElement();
       String filename = files.get(uuid);
       fileSet.add(filename);
     }
     used = new String[fileSet.size()];
-    Iterator iter = fileSet.iterator();
+    Iterator<String> iter = fileSet.iterator();
     for (int i=0; i<used.length; i++) used[i] = (String) iter.next();
 
     // process TiffData elements

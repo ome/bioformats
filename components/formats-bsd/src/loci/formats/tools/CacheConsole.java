@@ -305,7 +305,7 @@ public final class CacheConsole {
   private static final void printSource(String prefix, Cache cache) {
     ICacheSource source = cache.getSource();
     System.out.print(prefix + " ");
-    Class sourceClass = source.getClass();
+    Class<? extends ICacheSource> sourceClass = source.getClass();
     if (sourceClass == BufferedImageSource.class) {
       System.out.println("BufferedImage");
     }
@@ -319,7 +319,7 @@ public final class CacheConsole {
   private static final void printStrategy(String prefix, Cache cache) {
     ICacheStrategy strategy = cache.getStrategy();
     System.out.print(prefix + " ");
-    Class strategyClass = strategy.getClass();
+    Class<? extends ICacheStrategy> strategyClass = strategy.getClass();
     if (strategyClass == CrosshairStrategy.class) {
       System.out.println("crosshair");
     }

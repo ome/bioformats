@@ -92,7 +92,7 @@ public class BufferedImageWriter extends WriterWrapper {
   public void saveImage(int no, BufferedImage image, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    Class dataType = getNativeDataType();
+    Class<?> dataType = getNativeDataType();
     if (BufferedImage.class.isAssignableFrom(dataType)) {
       // native data type is compatible with BufferedImage
       savePlane(no, image, x, y, w, h);

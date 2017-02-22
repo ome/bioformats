@@ -76,7 +76,7 @@ public class BufferedImageReader extends ReaderWrapper {
   public BufferedImage openImage(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    Class dataType = getNativeDataType();
+    Class<?> dataType = getNativeDataType();
     if (BufferedImage.class.isAssignableFrom(dataType)) {
       // native data type is compatible with BufferedImage
       return (BufferedImage) openPlane(no, x, y, w, h);
@@ -91,7 +91,7 @@ public class BufferedImageReader extends ReaderWrapper {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    Class dataType = getNativeDataType();
+    Class<?> dataType = getNativeDataType();
     if (BufferedImage.class.isAssignableFrom(dataType)) {
       BufferedImage img = AWTImageTools.makeUnsigned(openImage(no));
       return AWTImageTools.scale(img, getThumbSizeX(), getThumbSizeY(), false);
