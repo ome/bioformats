@@ -124,6 +124,7 @@ public class ScreenReader extends FormatReader {
     boolean singleFiles = false;
     try {
       singleFiles = r.isSingleFile(filename);
+      r.close();
     }
     catch (FormatException e) { }
     catch (IOException e) { }
@@ -292,7 +293,6 @@ public class ScreenReader extends FormatReader {
 
     Arrays.sort(files, c);
     readers = new ImageReader[files.length];
-    int coreLength = files.length;
 
     plateMaps = new boolean[maxRow + 1][maxCol + 1];
     plateMetadataFiles =
@@ -418,7 +418,6 @@ public class ScreenReader extends FormatReader {
   }
 
   private int getSeriesIndex(int well, int field) {
-    int fieldCount = readers[well].getSeriesCount();
     int seriesIndex = 0;
     int validWells = -1;
     for (int row=0; row<plateMaps.length; row++) {

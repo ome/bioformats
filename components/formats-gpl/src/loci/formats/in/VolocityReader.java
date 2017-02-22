@@ -200,6 +200,7 @@ public class VolocityReader extends FormatReader {
     }
     else {
       if (pix.getFilePointer() + planeSize > pix.length()) {
+        pix.close();
         return buf;
       }
       readPlane(pix, x, y, w, h, buf);
