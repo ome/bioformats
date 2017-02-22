@@ -1871,7 +1871,7 @@ Commercial applications that support this format include: \n
 * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
-  `PerkinElmer UltraVIEW system overview (pdf) <http://www.perkinelmer.com/lab-solutions/resources/docs/BRO_UltraVIEW-VoX-Product-Brochure.pdf>`_
+  `PerkinElmer UltraVIEW system overview (pdf) <http://www.perkinelmer.com/lab-solutions/resources/PDFs/LST/Brochures/BRO_UltraVIEW-VoX-Product-Brochure.pdf>`_
 
 [Portable Any Map]
 pagename = pgm
