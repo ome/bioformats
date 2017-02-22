@@ -841,7 +841,6 @@ public class FluoviewReader extends BaseTiffReader {
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();
-          int nChars = String.valueOf(getImageCount()).length();
           for (int i=0; i<getImageCount(); i++) {
             int[] zct = getZCTCoords(i);
             String key = String.format(

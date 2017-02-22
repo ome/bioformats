@@ -96,7 +96,6 @@ public class LeicaHandler extends BaseHandler {
   private int nextChannel = 0;
   private Double zoom, pinhole;
   private List<Integer> detectorIndices;
-  private String filterWheelName;
   private int nextFilter = 0;
   private int nextROI = 0;
   private ROI roi;

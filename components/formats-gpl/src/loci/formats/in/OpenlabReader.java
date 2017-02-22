@@ -94,9 +94,6 @@ public class OpenlabReader extends FormatReader {
   /** LIFF version (should be 2 or 5). */
   private int version;
 
-  /** Number of series. */
-  private int numSeries;
-
   private PlaneInfo[] planes;
   private float xcal, ycal;
 
@@ -320,7 +317,6 @@ public class OpenlabReader extends FormatReader {
       luts = null;
       lastPlane = 0;
       version = 0;
-      numSeries = 0;
       xcal = ycal = 0f;
       nextTag = 0;
       tag = subTag = 0;

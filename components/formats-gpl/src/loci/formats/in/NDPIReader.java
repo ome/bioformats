@@ -376,7 +376,6 @@ public class NDPIReader extends BaseTiffReader {
 
     int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
-    long prevMarkerOffset = 0;
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       ifd.remove(THUMB_TAG_2);

@@ -82,7 +82,6 @@ public class FEIReader extends FormatReader {
     byte[] segment = new byte[getSizeX() / 2];
     byte[] plane = new byte[FormatTools.getPlaneSize(this)];
     // interlace frames - there are four rows of two columns
-    int halfRow = getSizeX() / 2;
     for (int q=0; q<4; q++) {
       for (int row=q; row<getSizeY(); row+=4) {
         for (int s=0; s<2; s++) {

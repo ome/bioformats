@@ -108,8 +108,6 @@ public class CellWorxReader extends FormatReader {
     }
     if (!open) return false;
 
-    boolean foundHTD = false;
-
     Location current = new Location(name).getAbsoluteFile();
     Location parent = current.getParentFile();
 

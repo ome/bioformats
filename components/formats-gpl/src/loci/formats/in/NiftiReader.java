@@ -389,8 +389,6 @@ public class NiftiReader extends FormatReader {
         break;
     }
 
-    int timeCorrection = 1;
-
     switch (timeUnits) {
       case UNITS_MSEC:
         timeUnit = UNITS.MILLISECOND;

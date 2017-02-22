@@ -101,8 +101,6 @@ public class CellH5Reader extends FormatReader {
 
   // -- Fields --
 
-  private double pixelSizeX, pixelSizeY, pixelSizeZ;
-  private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
   private transient JHDFService jhdf;
 
@@ -274,7 +272,6 @@ public class CellH5Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       seriesCount = 0;
-      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
 
       if (jhdf != null) {
         jhdf.close();
@@ -381,7 +378,6 @@ public class CellH5Reader extends FormatReader {
 
   private void parseStructure() throws FormatException {
     seriesCount = 0;
-    pixelSizeX = pixelSizeY = pixelSizeZ = 1;
     core.clear();
     // read experiment structure and collect coordinates
 

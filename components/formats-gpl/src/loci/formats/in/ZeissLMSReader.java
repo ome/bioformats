@@ -110,7 +110,6 @@ public class ZeissLMSReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     CoreMetadata m = core.get(0);
     CoreMetadata thumb = new CoreMetadata();

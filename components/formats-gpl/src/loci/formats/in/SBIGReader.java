@@ -138,7 +138,6 @@ public class SBIGReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     CoreMetadata m = core.get(0);
 
-    Double temperature = null;
     Double sizeX = null, sizeY = null;
     String date = null, description = null;
 
