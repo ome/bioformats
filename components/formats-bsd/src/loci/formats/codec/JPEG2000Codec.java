@@ -189,13 +189,20 @@ public class JPEG2000Codec extends BaseCodec {
 
     try {
       service.writeImage(out, img, j2kOptions);
-      out.close();
     }
     catch (IOException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
     }
     catch (ServiceException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
+    }
+    finally {
+      try {
+        out.close();
+      }
+      catch (IOException e) {
+        throw new FormatException("Could not compress JPEG-2000 data.", e);
+      }
     }
 
     try {

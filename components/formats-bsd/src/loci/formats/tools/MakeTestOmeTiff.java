@@ -152,6 +152,7 @@ public class MakeTestOmeTiff {
     final String id = getId(name);
     final OMETiffWriter out = createWriter(name, info, id);
     writeData(name, info, id, out);
+    out.close();
   }
 
   public static void main(final String[] args) throws FormatException,

@@ -69,7 +69,7 @@ public class BioFormatsExtensionPrinter {
 		for (String s : suffixes) fo.println("*." + s);
 
 		fo.close();
-
+    reader.close();
 		System.out.println(suffixes.length + " suffixes discovered.");
 	}
 

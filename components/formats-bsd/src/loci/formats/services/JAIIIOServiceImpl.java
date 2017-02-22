@@ -150,6 +150,7 @@ public class JAIIIOServiceImpl extends AbstractService
     }
     BufferedImage image = reader.read(0, param);
     reader.dispose();
+    mciis.close();
     return image;
   }
 
@@ -175,6 +176,7 @@ public class JAIIIOServiceImpl extends AbstractService
     }
     Raster raster = reader.readRaster(0, param);
     reader.dispose();
+    mciis.close();
     return raster;
   }
 

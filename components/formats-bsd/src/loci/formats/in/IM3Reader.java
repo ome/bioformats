@@ -903,8 +903,9 @@ public class IM3Reader extends FormatReader {
    * Write a summary of each record to STDOUT
    *
    * @param args
+   * @throws IOException 
    */
-  static public void main(String [] args){
+  static public void main(String [] args) throws IOException{
     final IM3Reader reader = new IM3Reader();
     try {
       reader.setId(args[0]);
@@ -913,6 +914,9 @@ public class IM3Reader extends FormatReader {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
+    }
+    finally {
+      reader.close();
     }
   }
 }
