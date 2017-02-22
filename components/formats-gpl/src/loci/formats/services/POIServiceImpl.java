@@ -160,7 +160,7 @@ public class POIServiceImpl extends AbstractService implements POIService {
 
   private void parseFile(DirectoryEntry r) throws IOException {
     filePath.add(r.getName());
-    Iterator iter = r.getEntries();
+    Iterator<?> iter = r.getEntries();
 
     while (iter.hasNext()) {
       Entry o = (Entry) iter.next();
