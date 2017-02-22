@@ -75,7 +75,6 @@ public class NRRDReader extends FormatReader {
 
   private String[] pixelSizes;
 
-  private boolean lookForCompanion = true;
   private boolean initializeHelper = false;
 
   // -- Constructor --

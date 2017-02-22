@@ -328,8 +328,6 @@ public class DicomReader extends FormatReader {
         int rowLen = w * bpp;
         int srcRowLen = getSizeX() * bpp;
 
-        int srcPlane = getSizeY() * srcRowLen;
-
         for (int row=0; row<h; row++) {
           int src = (row + y) * srcRowLen + x * bpp;
           int dest = (h * c + row) * rowLen;

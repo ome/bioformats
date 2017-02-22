@@ -49,7 +49,6 @@ public class UnsignedIntColorModel extends ColorModel {
 
   // -- Fields --
 
-  private int pixelBits;
   private int nChannels;
   private ComponentColorModel helper;
 
@@ -65,7 +64,6 @@ public class UnsignedIntColorModel extends ColorModel {
     helper = new ComponentColorModel(AWTImageTools.makeColorSpace(nChannels),
       nChannels == 4, false, ColorModel.TRANSLUCENT, dataType);
 
-    this.pixelBits = pixelBits;
     this.nChannels = nChannels;
   }
 

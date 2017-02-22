@@ -36,9 +36,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static java.util.Collections.unmodifiableSet;
 
 
@@ -52,10 +49,6 @@ import static java.util.Collections.unmodifiableSet;
 public class AxisGuesser {
 
   // -- Constants --
-
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(AxisGuesser.class);
 
   /** Axis type for unclassified axes. */
   public static final int UNKNOWN_AXIS = 0;

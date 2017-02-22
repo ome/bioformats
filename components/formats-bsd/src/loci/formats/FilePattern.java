@@ -43,9 +43,6 @@ import java.util.regex.PatternSyntaxException;
 import loci.common.DataTools;
 import loci.common.Location;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Represents a collection of files meant to be part of the same
  * data series.
@@ -95,10 +92,6 @@ import org.slf4j.LoggerFactory;
 public class FilePattern {
 
   // -- Constants --
-
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(FilePattern.class);
 
   // -- Fields --
 

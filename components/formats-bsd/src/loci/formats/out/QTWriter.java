@@ -211,7 +211,6 @@ public class QTWriter extends FormatWriter {
       }
 
       // update the number of pixel bytes written
-      int planeOffset = numBytes;
       numBytes += (planeSize + pad * height);
       out.seek(BYTE_COUNT_OFFSET);
       out.writeInt(numBytes + 8);
