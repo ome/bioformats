@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.util.HashMap;
 
 import ome.xml.model.primitives.PositiveInteger;
 
