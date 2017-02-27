@@ -71,7 +71,6 @@ import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
 import loci.plugins.LociExporter;
@@ -321,7 +320,7 @@ public class Exporter {
             if (multiFile.wasCanceled()) return;
         }
 
-        try {
+        try (IFormatWriter w = new ImageWriter().getWriter(outfile)) {
             int ptype = 0;
             int channels = 1;
             switch (imp.getType()) {
@@ -342,7 +341,6 @@ public class Exporter {
             }
             String title = imp.getTitle();
 
-            IFormatWriter w = new ImageWriter().getWriter(outfile);
             w.setWriteSequentially(true);
             FileInfo fi = imp.getOriginalFileInfo();
             String xml = fi == null ? null : fi.description == null ? null :
