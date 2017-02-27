@@ -272,7 +272,9 @@ public class GatanReader extends FormatReader {
         }
       }
 
-      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+      String instrument = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrument, 0);
+      store.setImageInstrumentRef(instrument, 0);
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
