@@ -425,14 +425,24 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           else {
-            byte[] rawData = new SubBlock(plane).readPixelData();
-            RandomAccessInputStream s = new RandomAccessInputStream(rawData);
-            try {
-              readPlane(s, x, y, w, h, realX - getSizeX(), buf);
-              emptyTile = false;
+            byte[] rawData = null;
+            // re-use the existing stream if we know there is only one file
+            // this saves a little time over opening a new stream for every tile/plane
+            if (pixels.size() == 0) {
+              rawData = new SubBlock(plane).readPixelData(in, new Region(x, y, w, h), buf);
             }
-            finally {
-              s.close();
+            else {
+              rawData = new SubBlock(plane).readPixelData();
+            }
+            if (rawData.length > buf.length) {
+              RandomAccessInputStream s = new RandomAccessInputStream(rawData);
+              try {
+                readPlane(s, x, y, w, h, realX - getSizeX(), buf);
+                emptyTile = false;
+              }
+              finally {
+                s.close();
+              }
             }
             break;
           }
@@ -3372,20 +3382,31 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     public byte[] readPixelData(RandomAccessInputStream s) throws FormatException, IOException {
-      byte[] data = new byte[(int) dataSize];
+      return readPixelData(s, null, null);
+    }
+
+    public byte[] readPixelData(RandomAccessInputStream s, Region tile, byte[] buf) throws FormatException, IOException {
       s.order(isLittleEndian());
       s.seek(dataOffset);
-        s.read(data);
+
+      int bpp = FormatTools.getBytesPerPixel(getPixelType());
+      if (directoryEntry.compression == UNCOMPRESSED) {
+        if (buf == null) {
+          buf = new byte[tile.width * tile.height * bpp * getRGBChannelCount()];
+        }
+        readPlane(s, tile.x, tile.y, tile.width, tile.height, buf);
+        return buf;
+      }
+
+      byte[] data = new byte[(int) dataSize];
+      s.read(data);
 
       CodecOptions options = new CodecOptions();
       options.interleaved = isInterleaved();
       options.littleEndian = isLittleEndian();
-      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
-        FormatTools.getBytesPerPixel(getPixelType());
+      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() * bpp;
 
       switch (directoryEntry.compression) {
-        case UNCOMPRESSED:
-          break;
         case JPEG:
           data = new JPEGCodec().decompress(data, options);
           break;
@@ -3395,7 +3416,7 @@ public class ZeissCZIReader extends FormatReader {
         case JPEGXR:
           options.maxBytes = directoryEntry.dimensionEntries[0].storedSize *
             directoryEntry.dimensionEntries[1].storedSize *
-            getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+            getRGBChannelCount() * bpp;
           data = new JPEGXRCodec().decompress(data, options);
           break;
         case 104: // camera-specific packed pixels
