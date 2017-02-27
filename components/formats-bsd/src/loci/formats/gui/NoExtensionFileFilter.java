@@ -41,7 +41,7 @@ import javax.swing.filechooser.FileFilter;
  * for use with a JFileChooser.
  */
 public class NoExtensionFileFilter extends FileFilter
-  implements java.io.FileFilter, Comparable<Object>
+  implements java.io.FileFilter, Comparable
 {
 
   // -- FileFilter API methods --

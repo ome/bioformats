@@ -385,7 +385,7 @@ public class CacheComponent extends JPanel
 
   /** Converts cache source to source chooser index. */
   private int sourceIndex(ICacheSource s) {
-    Class<? extends ICacheSource> c = s.getClass();
+    Class c = s.getClass();
     for (int i=0; i<SOURCE_VALUES.length; i++) {
       if (SOURCE_VALUES[i] == c) return i;
     }
@@ -410,7 +410,7 @@ public class CacheComponent extends JPanel
 
   /** Converts cache strategy to strategy chooser index. */
   private int strategyIndex(ICacheStrategy s) {
-    Class<? extends ICacheStrategy> c = s.getClass();
+    Class c = s.getClass();
     for (int i=0; i<STRATEGY_VALUES.length; i++) {
       if (STRATEGY_VALUES[i] == c) return i;
     }

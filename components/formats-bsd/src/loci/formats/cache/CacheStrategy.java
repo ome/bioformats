@@ -42,7 +42,7 @@ import loci.formats.FormatTools;
  * Superclass of cache strategies.
  */
 public abstract class CacheStrategy
-  implements CacheReporter, Comparator<Object>, ICacheStrategy
+  implements CacheReporter, Comparator, ICacheStrategy
 {
 
   // -- Constants --
@@ -77,7 +77,7 @@ public abstract class CacheStrategy
   private boolean dirty;
 
   /** List of cache event listeners. */
-  protected Vector<CacheListener> listeners;
+  protected Vector listeners;
 
   // -- Constructors --
 
@@ -92,7 +92,7 @@ public abstract class CacheStrategy
     Arrays.fill(priorities, NORMAL_PRIORITY);
     positions = getPossiblePositions();
     dirty = true;
-    listeners = new Vector<CacheListener>();
+    listeners = new Vector();
   }
 
   // -- Abstract CacheStrategy API methods --

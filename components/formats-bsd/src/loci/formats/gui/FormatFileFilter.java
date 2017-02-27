@@ -42,7 +42,7 @@ import loci.formats.IFormatReader;
  * A file filter for a biological file format, for use with a JFileChooser.
  */
 public class FormatFileFilter extends FileFilter
-  implements java.io.FileFilter, Comparable<Object>
+  implements java.io.FileFilter, Comparable
 {
 
   // -- Fields --

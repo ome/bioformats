@@ -269,7 +269,7 @@ public class JPEGTileDecoder {
     }
 
     @Override
-    public void setProperties(Hashtable<?, ?> props) { }
+    public void setProperties(Hashtable props) { }
     @Override
     public void setColorModel(ColorModel model) { }
     @Override
