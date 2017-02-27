@@ -35,7 +35,6 @@ import java.util.Arrays;
 import loci.formats.FormatTools;
 import loci.formats.meta.IMetadata;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.Time;

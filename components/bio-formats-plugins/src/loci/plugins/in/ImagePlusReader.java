@@ -45,16 +45,12 @@ import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
@@ -575,7 +571,6 @@ public class ImagePlusReader implements StatusReporter {
     r.setSeries(series);
 
     final int[] zct = r.getZCTCoords(ndx);
-    final int sizeC = r.getSizeC();
     final StringBuffer sb = new StringBuffer();
 
     int[] subC;

@@ -28,13 +28,11 @@
 package loci.plugins.in;
 
 import ij.IJ;
-import ij.Prefs;
 import ij.gui.GenericDialog;
 
 import loci.formats.UpgradeChecker;
 import loci.plugins.BF;
 import loci.plugins.Updater;
-import loci.plugins.prefs.Option;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.

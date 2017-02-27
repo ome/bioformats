@@ -29,7 +29,6 @@ package loci.plugins.in;
 
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.gui.GenericDialog;
 
 import java.util.ArrayList;
 import java.util.List;
