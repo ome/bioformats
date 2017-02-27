@@ -79,7 +79,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
   /* @see MDBService#parseDatabase() */
   @Override
   public Vector<Vector<String[]>> parseDatabase() throws IOException {
-    List<?> catalog = mdb.catalog;
+    List catalog = mdb.catalog;
 
     Vector<Vector<String[]>> rtn = new Vector<Vector<String[]>>();
 
