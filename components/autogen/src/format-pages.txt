@@ -1517,8 +1517,8 @@ notes = .. seealso:: \n
 extensions = .img, .hdr, .nii, .nii.gz
 developer = `National Institutes of Health <http://www.nih.gov/>`_
 bsd = no
-samples = `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_
-weHave = * `NIfTI specification documents <http://afni.nimh.nih.gov/pub/dist/doc/nifti/nifti_revised.html>`_ \n
+samples = `Official test data <https://nifti.nimh.nih.gov/nifti-1/data/>`_
+weHave = * `NIfTI specification documents <https://nifti.nimh.nih.gov/nifti-1/>`_\n
 * several NIfTI datasets \n
 * `public sample images <http://downloads.openmicroscopy.org/images/NIfTI/>`__
 pixelsRating = Very good
