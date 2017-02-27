@@ -30,6 +30,7 @@ import ij.gui.YesNoCancelDialog;
 import ij.io.DirectoryChooser;
 import ij.plugin.PlugIn;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import loci.formats.FilePattern;
@@ -52,9 +53,6 @@ public class Mass_Importer implements PlugIn {
     // create a list of files we have already processed
     HashSet<String> done = new HashSet<String>();
 
-    // image reader object, for testing whether a file is in a supported format
-    ImageReader tester = new ImageReader();
-
     // list of files to actually open with Bio-Formats Importer
     ArrayList<String> filesToOpen = new ArrayList<String>();
 
@@ -62,25 +60,31 @@ public class Mass_Importer implements PlugIn {
     File dir = new File(dirPath);
     File[] files = dir.listFiles();
     IJ.showStatus("Scanning directory");
-    for (int i=0; i<files.length; i++) {
-      String id = files[i].getAbsolutePath();
-      IJ.showProgress((double) i / files.length);
-
-      // skip files that have already been processed
-      if (done.contains(id)) continue;
-
-      // skip unsupported files
-      if (!tester.isThisType(id, false)) continue;
-
-      // use FilePattern to group files with similar names
-      String name = files[i].getName();
-      FilePattern fp = new FilePattern(name, dirPath);
-
-      // get a list of all files part of this group, and mark them as done
-      String[] used = fp.getFiles();
-      for (int j=0; j<used.length; j++) done.add(used[j]);
-
-      filesToOpen.add(id);
+    
+    // image reader object, for testing whether a file is in a supported format
+    try (ImageReader tester = new ImageReader()) {
+      for (int i=0; i<files.length; i++) {
+        String id = files[i].getAbsolutePath();
+        IJ.showProgress((double) i / files.length);
+  
+        // skip files that have already been processed
+        if (done.contains(id)) continue;
+  
+        // skip unsupported files
+        if (!tester.isThisType(id, false)) continue;
+  
+        // use FilePattern to group files with similar names
+        String name = files[i].getName();
+        FilePattern fp = new FilePattern(name, dirPath);
+  
+        // get a list of all files part of this group, and mark them as done
+        String[] used = fp.getFiles();
+        for (int j=0; j<used.length; j++) done.add(used[j]);
+  
+        filesToOpen.add(id);
+      }
+    } catch (IOException e) {
+      IJ.error("Sorry, an error while closing ImageReader: " + e.getMessage());
     }
     IJ.showProgress(1.0);
     IJ.showStatus("");
