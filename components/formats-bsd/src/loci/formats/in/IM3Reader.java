@@ -906,17 +906,13 @@ public class IM3Reader extends FormatReader {
    * @throws IOException 
    */
   static public void main(String [] args) throws IOException{
-    final IM3Reader reader = new IM3Reader();
-    try {
+    try (IM3Reader reader = new IM3Reader()) {
       reader.setId(args[0]);
       reader.writeSummary();
     } catch (FormatException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
-    }
-    finally {
-      reader.close();
     }
   }
 }

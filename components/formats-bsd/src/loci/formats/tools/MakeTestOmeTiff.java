@@ -150,9 +150,9 @@ public class MakeTestOmeTiff {
     throws FormatException, IOException
   {
     final String id = getId(name);
-    final OMETiffWriter out = createWriter(name, info, id);
-    writeData(name, info, id, out);
-    out.close();
+    try (OMETiffWriter out = createWriter(name, info, id)) {
+      writeData(name, info, id, out);
+    }
   }
 
   public static void main(final String[] args) throws FormatException,
