@@ -61,8 +61,7 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.Index16ColorModel;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -115,6 +114,7 @@ public final class ImageConverter {
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   // -- Constructor --
 
@@ -149,6 +149,9 @@ public final class ImageConverter {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-padded")) zeroPadding = true;
+        else if (args[i].equals("-option")) {
+          options.set(args[++i], args[++i]);
+        }
         else if (args[i].equals("-overwrite")) {
           overwrite = true;
         }
@@ -226,7 +229,8 @@ public final class ImageConverter {
       "    [-bigtiff] [-compression codec] [-series series] [-map id]",
       "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
       "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
-      "    [-version] [-no-upgrade][-padded] in_file out_file",
+      "    [-version] [-no-upgrade] [-padded] [-option key value]",
+      "    in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -253,6 +257,7 @@ public final class ImageConverter {
       "          -z: only convert the specified Z section (indexed from 0)",
       "  -timepoint: only convert the specified timepoint (indexed from 0)",
       "     -padded: filename indexes for series, z, c and t will be zero padded",
+      "     -option: add the specified key/value pair to the options list",
       "",
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
@@ -295,7 +300,6 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
-    MetadataOptions options= new DefaultMetadataOptions();
     options.setValidate(validate);
     writer.setMetadataOptions(options);
     firstTile = true;
