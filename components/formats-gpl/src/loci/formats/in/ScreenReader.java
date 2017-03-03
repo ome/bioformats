@@ -379,6 +379,7 @@ public class ScreenReader extends FormatReader {
 
     ImageReader iReader = new ImageReader(validReaders);
     FileStitcher stitcher = new FileStitcher(iReader, true);
+    stitcher.setReaderClassList(validReaders);
     stitcher.setCanChangePattern(false);
     // After setReaderClassList
     reader = new DimensionSwapper(stitcher);
