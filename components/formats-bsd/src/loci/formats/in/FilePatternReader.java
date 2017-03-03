@@ -34,9 +34,14 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -331,12 +336,42 @@ public class FilePatternReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    // read the pattern from the file
-    // the file should just contain a single line with the relative or
-    // absolute file pattern
-
     currentId = new Location(id).getAbsolutePath();
-    pattern = DataTools.readFile(id).trim();
+
+    Map<String, String> pairs = new HashMap<String, String>();
+    BufferedReader br = new BufferedReader(new FileReader(id));
+    String line;
+    while ((line = br.readLine()) != null) {
+      line = line.trim();
+      if (line.length() == 0) {
+        continue;
+      }
+      if (line.startsWith("#")) {
+        String[] kv = line.substring(1).split("\\s+=\\s+", 2);
+        if (kv.length == 2) {
+          pairs.put(kv[0].trim(), kv[1].trim());
+        }
+      } else {
+        pattern = line;
+      }
+    }
+    br.close();
+
+    String excludeReadersEntry = pairs.get("ExcludeReaders");
+    if (null != excludeReadersEntry) {
+      String[] excludeReaders = excludeReadersEntry.split(",", -1);
+      for (String r : excludeReaders) {
+        try {
+          Class<? extends IFormatReader> c =
+            Class.forName(r).asSubclass(IFormatReader.class);
+          newClasses.removeClass(c);
+        } catch (ClassNotFoundException e) {
+          throw new RuntimeException("Reader not found: " + r);
+        }
+      }
+      stitcher.setReaderClassList(newClasses);
+    }
+
     String dir = new Location(id).getAbsoluteFile().getParent();
     if (new Location(pattern).getParent() == null) {
       pattern = dir + File.separator + pattern;
