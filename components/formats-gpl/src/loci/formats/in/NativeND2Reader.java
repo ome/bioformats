@@ -668,9 +668,8 @@ public class NativeND2Reader extends FormatReader {
 
               lastImage = entry;
 
-              // assumption nameLength is constant throughout the file for image blocks!
               imageOffsets.add(new Long(entry.position + 16));
-              imageLengths.add(new int[] {nameLength, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
+              imageLengths.add(new int[] {entry.name.length() + 1, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
               imageNames.add(entry.name.substring(12));
 
               blockCount ++;
@@ -691,6 +690,7 @@ public class NativeND2Reader extends FormatReader {
             chunkmapSkips -= 1;
           }
 
+          dataLength -= 31;
           imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
