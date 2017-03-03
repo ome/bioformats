@@ -669,7 +669,8 @@ public class NativeND2Reader extends FormatReader {
               lastImage = entry;
 
               imageOffsets.add(new Long(entry.position + 16));
-              imageLengths.add(new int[] {entry.name.length() + 1, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
+              int realLength = (int) Math.max(entry.name.length() + 1, nameLength);
+              imageLengths.add(new int[] {realLength, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
               imageNames.add(entry.name.substring(12));
 
               blockCount ++;
