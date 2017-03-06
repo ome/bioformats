@@ -316,7 +316,7 @@ public class OMETiffWriter extends TiffWriter {
     OMEXMLMetadata meta = service.createOMEXMLMetadata();
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     meta.setUUID(uuid);
-    meta.setBinaryOnlyMetadataFile(companion);
+    meta.setBinaryOnlyMetadataFile(new Location(companion).getName());
     meta.setBinaryOnlyUUID(companionUUID);
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
     root.setCreator(FormatTools.CREATOR);
