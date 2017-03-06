@@ -333,10 +333,10 @@ public class FilePatternReader extends FormatReader {
     String line;
     while ((line = br.readLine()) != null) {
       line = line.trim();
-      if (line.length() == 0) {
+      if (line.isEmpty()) {
         continue;
       }
-      if (line.startsWith("#")) {
+      if (line.charAt(0) == '#') {
         String[] kv = line.substring(1).split("\\s+=\\s+", 2);
         if (kv.length == 2) {
           pairs.put(kv[0].trim(), kv[1].trim());
