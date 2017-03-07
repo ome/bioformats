@@ -1,39 +1,25 @@
 Using Bio-Formats as a Java library
 ===================================
 
-Bio-Formats as a Maven dependency
----------------------------------
+Bio-Formats as a Maven, Gradle or Ivy dependency
+------------------------------------------------
 
-If you wish to make use of Bio-Formats within your own software it can be
-included as a dependency in any Maven project. The dependency can be added
-to the project pom file and should include the desired Bio-Formats version.
-Using `bioformats_package` as the artifactId will include the complete
-Bio-Formats package, or individual components can be chosen as desired.
+All released :file:`.jar` artifacts are published to and can be obtained from
+the `OME Artifactory <http://artifacts.openmicroscopy.org/artifactory>`_.  The
+"Client Settings" section of the Artifactory main page provides example code
+snippets for inclusion into your Gradle, Maven or Ivy project, which will
+enable the use of this repository.
 
-::
+Examples of getting started with Bio-Formats using Maven or Gradle are given
+in the https://github.com/openmicroscopy/bio-formats-examples repository.
+`OMERO <http://github.com/openmicroscopy/openmicroscopy>`_ uses Ivy to manage
+its Java dependencies including Bio-Formats.
 
-  <dependency>
-    <groupId>ome</groupId>
-    <artifactId>bioformats_package</artifactId>
-    <version>5.3.0</version>
-  </dependency>
-
-In order to include this Bio-Formats dependency a custom repository
-must also be added to the project pom or
-:file:`${user.home}/.m2/settings.xml`.
-The repositories element is inherited so for a group of projects the
-repositories element can be defined at the top of your inheritance chain.
-
-::
-
-  <repositories>
-    <repository>
-      <id>ome</id>
-      <name>Bio-Formats Repo</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/maven</url>
-    </repository>
-  </repositories>
-  
+.. note::
+  In order to retrieve the NetCDF dependency of Bio-Formats, it is necessary
+  to configure the Unidata releases repository in addition to Maven Central and
+  the OME artifactory in your :examples:`pom.xml`, :examples:`build.gradle` or
+  :file:`ivy.xml` file.
 
 Bio-Formats as a Java library
 -----------------------------
@@ -41,9 +27,9 @@ Bio-Formats as a Java library
 Alternatively Bio-Formats can be used by including its component jar files.
 You can :downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to
 use it as a library. Just add :file:`formats-gpl.jar` to your CLASSPATH or
-build path. You will also need :file:`common.jar` for common I/O functions,
+build path. You will also need :file:`ome-common.jar` for common I/O functions,
 :file:`ome-xml.jar` for metadata standardization, and
-`SLF4J <http://slf4j.org/>`_ for :doc:`logging`.
+`SLF4J <https://www.slf4j.org/>`_ for :doc:`logging`.
 
 Dependencies
 ^^^^^^^^^^^^
@@ -68,7 +54,7 @@ The complete list of current dependencies is as follows:
     * - `XMP Library for Java v5.1.2 <http://www.adobe.com/devnet/xmp.html>`_
       - com.adobe.xmp:xmpcore:5.1.2
       - `BSD License`_
-    * - `JCommander v1.27 <http://beust.com/jcommander>`_
+    * - `JCommander v1.27 <http://jcommander.org/>`_
       - com.beust:jcommander:1.27
       - `Apache License v2.0`_
     * - `metadata-extractor v2.6.2 <https://github.com/drewnoakes/metadata-extractor>`_
@@ -122,22 +108,22 @@ The complete list of current dependencies is as follows:
     * - `BeanShell v2.0b4 <http://www.beanshell.org>`_
       - org.beanshell:bsh:2.0b4
       - `Sun Public License / LGPL`_
-    * - `Hamcrest Core v1.1 <http://hamcrest.org/JavaHamcrest>`_
+    * - `Hamcrest Core v1.1 <https://github.com/hamcrest/JavaHamcrest>`_
       - org.hamcrest:hamcrest-core:1.1
       - `BSD 3-Clause`_
     * - `Objenesis v2.1 <http://objenesis.org>`_
       - org.objenesis:objenesis:2.1
       - `Apache License v2.0`_
-    * - `Perf4J v0.9.13 <http://www.perf4j.org>`_
+    * - `Perf4J v0.9.13 <https://github.com/perf4j/perf4j>`_
       - org.perf4j:perf4j:0.9.13
       - `Apache License v2.0`_
     * - `Native Library Loader v2.1.4 <http://github.com/scijava/native-lib-loader>`_
       - org.scijava:native-lib-loader:2.1.4
       - `BSD License`_
-    * - `SLF4J API v1.7.4 <http://www.slf4j.org>`_
+    * - `SLF4J API v1.7.4 <https://www.slf4j.org>`_
       - org.slf4j:slf4j-api:1.7.6
       - `MIT License`_
-    * - `SLF4J LOG4J-12 Binding v1.7.6 <http://www.slf4j.org>`_
+    * - `SLF4J LOG4J-12 Binding v1.7.6 <https://www.slf4j.org>`_
       - org.slf4j:slf4j-log4j12:1.7.6
       - `MIT License`_
     * - `TestNG v6.8 <http://testng.org>`_
@@ -170,15 +156,15 @@ Bio-Formats release will always be increased if the version of a
 non-OME/external dependency is bumped.
 
 
-.. _Apache License v2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
-.. _MIT License: http://opensource.org/licenses/MIT
-.. _BSD 3-Clause: http://opensource.org/licenses/BSD-3-Clause
+.. _Apache License v2.0: https://spdx.org/licenses/Apache-2.0.html
+.. _MIT License: https://spdx.org/licenses/MIT.html
+.. _BSD 3-Clause: https://spdx.org/licenses/BSD-3-Clause.html
 .. _Sun Public License / LGPL: http://www.beanshell.org/license.html
-.. _Common Public License v1.0: http://www.opensource.org/licenses/cpl1.0.txt
+.. _Common Public License v1.0: https://spdx.org/licenses/CPL-1.0.html
 .. _MIT-Style License: https://github.com/Unidata/thredds/blob/v4.3.19/cdm/license.txt
-.. _BSD License: http://opensource.org/licenses/BSD-2-Clause
-.. _Eclipse Public License v1.0: http://opensource.org/licenses/EPL-1.0
-.. _GPL v2: http://opensource.org/licenses/GPL-2.0
+.. _BSD License: https://spdx.org/licenses/BSD-2-Clause.html
+.. _Eclipse Public License v1.0: https://spdx.org/licenses/EPL-1.0.html
+.. _GPL v2: https://spdx.org/licenses/GPL-2.0.html
 
 
 Examples of usage

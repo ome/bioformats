@@ -1,10 +1,10 @@
 .. index:: Zeiss AxioVision TIFF
-.. index:: .xml, .tiff
+.. index:: .xml, .tif
 
 Zeiss AxioVision TIFF
 ===============================================================================
 
-Extensions: .xml, .tiff
+Extensions: .xml, .tif
 
 Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
 

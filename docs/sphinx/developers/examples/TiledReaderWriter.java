@@ -24,6 +24,8 @@
  */
 
 import java.io.IOException;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
@@ -33,7 +35,7 @@ import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Example class for reading and writing a file in a tiled OME Tiff format.
+ * Example class for reading and writing a file in a tiled OME-Tiff format.
  *
  * @author David Gault dgault at dundee.ac.uk
  */
@@ -66,7 +68,7 @@ public class TiledReaderWriter {
    * @param tileSizeX the width of tile to attempt to use
    * @param tileSizeY the height of tile to attempt to use
    */
-  public TiledReaderWriter(String inputFile, String outputFile, int tileX, int tileY) {
+  public TiledReaderWriter(String inputFile, String outputFile, int tileSizeX, int tileSizeY) {
     this.inputFile = inputFile;
     this.outputFile = outputFile;
     this.tileSizeX = tileSizeX;
@@ -80,42 +82,38 @@ public class TiledReaderWriter {
    *
    * @return true if the reader and writer were successfully set up, or false
    *   if an error occurred
+   * @throws DependencyException thrown if failed to create an OMEXMLService
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown if invalid ID set for reader or writer or invalid tile size set
+   * @throws ServiceException thrown if unable to create OME-XML meta data
    */
-  private boolean initialize() {
-    Exception exception = null;
-    try {
-      // construct the object that stores OME-XML metadata
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      IMetadata omexml = service.createOMEXMLMetadata();
+  private void initialize() throws DependencyException, FormatException, IOException, ServiceException {
+    // construct the object that stores OME-XML metadata
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    IMetadata omexml = service.createOMEXMLMetadata();
 
-      // set up the reader and associate it with the input file
-      reader = new ImageReader();
-      reader.setMetadataStore(omexml);
-      reader.setId(inputFile);
+    // set up the reader and associate it with the input file
+    reader = new ImageReader();
+    reader.setMetadataStore(omexml);
+    reader.setId(inputFile);
 
-      // set up the writer and associate it with the output file
-      writer = new OMETiffWriter();
-      writer.setMetadataRetrieve(omexml);
-      writer.setInterleaved(reader.isInterleaved());
+    // set up the writer and associate it with the output file
+    writer = new OMETiffWriter();
+    writer.setMetadataRetrieve(omexml);
+    writer.setInterleaved(reader.isInterleaved());
 
-      // set the tile size height and width for writing
-      this.tileSizeX = writer.setTileSizeX(tileSizeX);
-      this.tileSizeY = writer.setTileSizeY(tileSizeY);
+    // set the tile size height and width for writing
+    this.tileSizeX = writer.setTileSizeX(tileSizeX);
+    this.tileSizeY = writer.setTileSizeY(tileSizeY);
 
-      writer.setId(outputFile);
-    }
-    catch (Exception e) {
-      exception = e;
-      System.err.println("Failed to initialize files.");
-      exception.printStackTrace();
-    }
-    return exception == null;
+    writer.setId(outputFile);
   }
 
-  /** Read tiles from input file and write tiles to output OME Tiff. 
-   * @throws IOException 
-   * @throws FormatException */
+  /** Read tiles from input file and write tiles to output OME-Tiff. 
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown by FormatWriter if attempting to set invalid series
+   */
   public void readWriteTiles() throws FormatException, IOException {
     int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     int tilePlaneSize = tileSizeX * tileSizeY * reader.getRGBChannelCount() * bpp;
@@ -145,12 +143,7 @@ public class TiledReaderWriter {
             int tileX = x * tileSizeX;
             int tileY = y * tileSizeY;
 
-            // If the last tile row or column overlaps the image size then only a partial tile
-            // is read or written. The tile size used is adjusted to account for any overlap.
-            int effTileSizeX = (tileX + tileSizeX) < width ? tileSizeX : width - tileX;
-            int effTileSizeY = (tileY + tileSizeY) < height ? tileSizeY : height - tileY;
-
-            // Read tiles from the input file and write them to the output OME Tiff
+            // Read tiles from the input file and write them to the output OME-Tiff
             buf = reader.openBytes(image, tileX, tileY, tileSizeX, tileSizeY);
             writer.saveBytes(image, buf, tileX, tileY, tileSizeX, tileSizeY);
           }
@@ -179,25 +172,34 @@ public class TiledReaderWriter {
   }
 
   /**
-   * To read an image file and write out an OME Tiff tiled image on the command line:
+   * To read an image file and write out an OME-Tiff tiled image on the command line:
    *
    * $ java TiledReaderWriter input-file.oib output-file.ome.tiff 256 256
-   * @throws IOException
-   * @throws FormatException
+   * @throws IOException thrown if unable to setup input or output stream for reader or writer
+   * @throws FormatException thrown when setting invalid values in reader or writer
+   * @throws ServiceException thrown if unable to create OME-XML meta data
+   * @throws DependencyException thrown if failed to create an OMEXMLService
    */
-  public static void main(String[] args) throws FormatException, IOException {
+  public static void main(String[] args) throws FormatException, IOException, DependencyException, ServiceException {
     int tileSizeX = Integer.parseInt(args[2]);
     int tileSizeY = Integer.parseInt(args[3]);
     TiledReaderWriter tiledReadWriter = new TiledReaderWriter(args[0], args[1], tileSizeX, tileSizeY);
     // initialize the files
-    boolean initializationSuccess = tiledReadWriter.initialize();
+    tiledReadWriter.initialize();
 
-    if (initializationSuccess) {
+    try {
+      // read and write the image using tiles
       tiledReadWriter.readWriteTiles();
     }
-
-    // close the files
-    tiledReadWriter.cleanup();
+    catch(Exception e) {
+      System.err.println("Failed to read and write tiles.");
+      e.printStackTrace();
+      throw e;
+    }
+    finally {
+      // close the files
+      tiledReadWriter.cleanup();
+    }
   }
 
 }

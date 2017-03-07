@@ -26,7 +26,7 @@ Readers:
 
 Freely Available Software:
 
-- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+- `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_
 
 Sample Datasets:
 

@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-bio-formats</artifactId>
-  <version>5.3.2-SNAPSHOT</version>
+  <version>5.3.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -38,7 +38,7 @@
          When possible, we advise using the relevant groupId and version
          properties for your dependencies rather than hardcoding them. -->
 
-    <release.version>5.3.2-SNAPSHOT</release.version>
+    <release.version>5.3.5-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2016</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -54,7 +54,7 @@
     <testng.version>6.8</testng.version>
     <guava.version>17.0</guava.version>
     <ome-common.version>5.3.1</ome-common.version>
-    <ome-model.version>5.3.1</ome-model.version>
+    <ome-model.version>5.4.0</ome-model.version>
     <ome-poi.version>5.3.1</ome-poi.version>
     <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
     <jxrlib.version>0.2.1</jxrlib.version>

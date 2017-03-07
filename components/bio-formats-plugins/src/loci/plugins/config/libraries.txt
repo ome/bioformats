@@ -120,7 +120,7 @@ notes = Optional plugin. If you have Image5D installed, the Bio-Formats
 [View5D]
 type = ImageJ plugin
 class = view5d.View5D_
-url = http://www.nanoimaging.de/View5D/
+url = http://www.nanoimaging.uni-jena.de/View5D/View5D.html
 license = GPL
 notes = Optional plugin. If you have View5D installed, the Bio-Formats
         Importer plugin can use View5D to display your image stacks.
@@ -200,7 +200,7 @@ notes = Used by Bio-Formats for OLE support in CXD, IPW, OIB and ZVI
 [Simple Logging Facade for Java]
 type = Java library
 class = org.slf4j.Logger
-url = http://www.slf4j.org/
+url = https://www.slf4j.org/
 license = MIT
 notes = Used by the NetCDF Java library.
 

@@ -1711,6 +1711,10 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("CellVoyager")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
             continue;
@@ -2358,6 +2362,13 @@ public class FormatReaderTest {
 
             // QuickTime reader doesn't pick up resource forks
             if (!result && i > 0 && r instanceof QTReader) {
+              continue;
+            }
+
+            if (r instanceof CellVoyagerReader &&
+              (!result || readers[j] instanceof OMEXMLReader) &&
+              used[i].toLowerCase().endsWith(".ome.xml"))
+            {
               continue;
             }
 

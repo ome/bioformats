@@ -476,6 +476,7 @@ public class TiffWriter extends FormatWriter {
         if (no < ifdOffsets.length) {
           ifd = parser.getIFD(ifdOffsets[no]);
         }
+        saveBytes(no, buf, ifd, x, y, w, h);
       }
       finally {
         RandomAccessInputStream tiffParserStream = parser.getStream();
@@ -484,8 +485,9 @@ public class TiffWriter extends FormatWriter {
         }
       }
     }
-
-    saveBytes(no, buf, ifd, x, y, w, h);
+    else {
+      saveBytes(no, buf, ifd, x, y, w, h);
+    }
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */

@@ -6,7 +6,7 @@ TillPhotonics TillVision
 
 Extensions: .vws
 
-Developer: `TILL Photonics <http://www.till-photonics.com/>`_
+Developer: `TILL Photonics <https://www.fei.com/service-support/Light-Microscopy/>`_
 
 
 **Support**

@@ -24,11 +24,11 @@ Reader: NiftiReader (:bfreader:`Source Code <NiftiReader.java>`, :doc:`Supported
 
 Sample Datasets:
 
-- `Official test data <http://afni.nimh.nih.gov/pub/dist/data/>`_
+- `Official test data <https://nifti.nimh.nih.gov/nifti-1/data/>`_
 
 We currently have:
 
-* `NIfTI specification documents <http://afni.nimh.nih.gov/pub/dist/doc/nifti/nifti_revised.html>`_ 
+* `NIfTI specification documents <https://nifti.nimh.nih.gov/nifti-1/>`_
 * several NIfTI datasets 
 * `public sample images <http://downloads.openmicroscopy.org/images/NIfTI/>`__
 

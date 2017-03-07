@@ -45,6 +45,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -279,6 +280,7 @@ public abstract class BaseZeissReader extends FormatReader {
     else if (bpp == 2 || bpp == 6) m.pixelType = FormatTools.UINT16;
     if (isJPEG) m.pixelType = FormatTools.UINT8;
 
+    m.bitsPerPixel = FormatTools.getBytesPerPixel(m.pixelType) * 8;
     m.indexed = !isRGB() && channelColors != null;
 
     // We shouldn't need to copy the coremetadata here.  This
@@ -344,6 +346,16 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setChannelName(channelName.get(c), s, i);
           store.setChannelEmissionWavelength(emWavelength.get(c), s, i);
           store.setChannelExcitationWavelength(exWavelength.get(c), s, i);
+
+          if (channelColors != null && i < channelColors.length) {
+            int color = channelColors[i];
+
+            int red = color & 0xff;
+            int green = (color & 0xff00) >> 8;
+            int blue = (color & 0xff0000) >> 16;
+
+            store.setChannelColor(new Color(red, green, blue, 255), s, i);
+          }
         }
       }
 
@@ -841,7 +853,19 @@ public abstract class BaseZeissReader extends FormatReader {
           {
             System.arraycopy(
               channelColors, 1, channelColors, 0, channelColors.length - 1);
-            channelColors[cIndex - 1] = Integer.parseInt(value);          }
+            channelColors[cIndex - 1] = Integer.parseInt(value);
+          }
+          else if (channelColors != null && channelColors[0] > 0 &&
+            channelColors.length > 1)
+          {
+            int c = 1;
+            while (c < channelColors.length - 1 && channelColors[c] != 0) {
+              c++;
+            }
+            if (channelColors[c] == 0) {
+              channelColors[c] = Integer.parseInt(value);
+            }
+          }
         }
         else if (key.startsWith("Scale Factor for X") && physicalSizeX == null)
         {

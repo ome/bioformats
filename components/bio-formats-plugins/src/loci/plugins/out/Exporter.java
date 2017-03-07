@@ -435,11 +435,27 @@ public class Exporter {
                 store.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
             }
 
-            // always reset the pixel type
+            // reset the pixel type, unless the only change is signedness
             // this prevents problems if the user changed the bit depth of the image
+            boolean applyCalibrationFunction = false;
             try {
-                store.setPixelsType(PixelType.fromString(
-                        FormatTools.getPixelTypeString(ptype)), 0);
+                int originalType = -1;
+                if (store.getPixelsType(0) != null) {
+                  originalType = FormatTools.pixelTypeFromString(
+                  store.getPixelsType(0).toString());
+                }
+                if (ptype != originalType &&
+                  (store.getPixelsType(0) == null ||
+                  !FormatTools.isSigned(originalType) ||
+                  FormatTools.getBytesPerPixel(originalType) !=
+                  FormatTools.getBytesPerPixel(ptype)))
+                {
+                  store.setPixelsType(PixelType.fromString(
+                    FormatTools.getPixelTypeString(ptype)), 0);
+                }
+                else if (FormatTools.isSigned(originalType)) {
+                  applyCalibrationFunction = true;
+                }
             }
             catch (EnumerationException e) { }
 
@@ -692,11 +708,36 @@ public class Exporter {
                 int y = proc.getHeight();
 
                 if (proc instanceof ByteProcessor) {
-                    plane = (byte[]) proc.getPixels();
+                    if (applyCalibrationFunction) {
+                      // don't alter 'pixels' directly as that will
+                      // affect the open ImagePlus
+                      byte[] pixels = (byte[]) proc.getPixels();
+                      plane = new byte[pixels.length];
+                      float[] calibration = proc.getCalibrationTable();
+                      for (int pixel=0; pixel<pixels.length; pixel++) {
+                        plane[pixel] = (byte) calibration[pixels[pixel] & 0xff];
+                      }
+                    }
+                    else {
+                      plane = (byte[]) proc.getPixels();
+                    }
                 }
                 else if (proc instanceof ShortProcessor) {
-                    plane = DataTools.shortsToBytes(
-                            (short[]) proc.getPixels(), littleEndian);
+                    short[] pixels = (short[]) proc.getPixels();
+                    if (applyCalibrationFunction) {
+                      // don't alter 'pixels' directly as that will
+                      // affect the open ImagePlus
+                      plane = new byte[pixels.length * 2];
+                      float[] calibration = proc.getCalibrationTable();
+                      for (int pixel=0; pixel<pixels.length; pixel++) {
+                        short v = (short) calibration[pixels[pixel] & 0xffff];
+                        DataTools.unpackBytes(
+                          v, plane, pixel * 2, 2, littleEndian);
+                      }
+                    }
+                    else {
+                      plane = DataTools.shortsToBytes(pixels, littleEndian);
+                    }
                 }
                 else if (proc instanceof FloatProcessor) {
                     plane = DataTools.floatsToBytes(

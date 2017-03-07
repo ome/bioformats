@@ -33,6 +33,7 @@ import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.NativeND2Reader;
 import loci.formats.in.ND2Reader;
@@ -64,6 +65,8 @@ public final class LociPrefs {
     "bioformats.zeissczi.include.attachments";
   public static final String PREF_ND2_CHUNKMAP =
     "bioformats.nativend2.chunkmap";
+  public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
+    "bioformats.leicalif.physicalsize.compatibility";
 
   // -- Constructor --
 
@@ -98,6 +101,8 @@ public final class LociPrefs {
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
       ((DynamicMetadataOptions) options).setBoolean(
         NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
+      ((DynamicMetadataOptions) options).setBoolean(
+        LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
       reader.setMetadataOptions(options);
     }
 
@@ -178,6 +183,11 @@ public final class LociPrefs {
 
   public static boolean useND2Chunkmap() {
     return Prefs.get(PREF_ND2_CHUNKMAP, NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+  }
+
+  public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {
+    return Prefs.get(PREF_LEICA_LIF_PHYSICAL_SIZE,
+      LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
   }
 
   // -- Helper methods --

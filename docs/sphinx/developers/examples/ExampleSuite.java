@@ -31,6 +31,7 @@
  */
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.io.File;
 
 
@@ -38,7 +39,7 @@ public class ExampleSuite {
 
   public static void execute(String name, String[] args) throws Exception {
     System.out.println("Executing " + name);
-    Class c = Class.forName(name);
+    Class<?> c = Class.forName(name);
     Object passedArgs[] = {args};
     c.getMethod("main", args.getClass()).invoke(null, passedArgs);
     System.out.println("Success");
@@ -53,13 +54,28 @@ public class ExampleSuite {
 
     // Retrieve local test files
     URL resource =  ExampleSuite.class.getResource("test.fake");
+    URL overlappedResource =  ExampleSuite.class.getResource("test&sizeX=1024&sizeY=1024.fake");
     File inputFile = new File(resource.toURI());
+    File overlappedInputFile = new File(overlappedResource.toURI());
     File parentDir = inputFile.getParentFile();
     File convertedFile = new File(parentDir, "converted.ome.tiff");
     File exportFile = new File(parentDir, "export.ome.tiff");
     File exportSPWFile = new File(parentDir, "exportSPW.ome.tiff");
     File simpleTiledFile = new File(parentDir, "simpleTiledFile.ome.tiff");
     File tiledFile = new File(parentDir, "tiledFile.ome.tiff");
+    File tiledFile2 = new File(parentDir, "tiledFile2.ome.tiff");
+    File overlappedTiledFile = new File(parentDir, "overlappedTiledFile.ome.tiff");
+    File overlappedTiledFile2 = new File(parentDir, "overlappedTiledFile2.ome.tiff");
+    
+    // Remove any existing output files
+    Files.deleteIfExists(convertedFile.toPath());
+    Files.deleteIfExists(exportFile.toPath());
+    Files.deleteIfExists(exportSPWFile.toPath());
+    Files.deleteIfExists(simpleTiledFile.toPath());
+    Files.deleteIfExists(tiledFile.toPath());
+    Files.deleteIfExists(tiledFile2.toPath());
+    Files.deleteIfExists(overlappedTiledFile.toPath());
+    Files.deleteIfExists(overlappedTiledFile2.toPath());
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
@@ -71,5 +87,11 @@ public class ExampleSuite {
         inputFile.getAbsolutePath(), simpleTiledFile.getAbsolutePath(), "256", "256"});
     execute("TiledReaderWriter", new String[] {
         inputFile.getAbsolutePath(), tiledFile.getAbsolutePath(), "256", "256"});
+    execute("TiledReaderWriter", new String[] {
+        inputFile.getAbsolutePath(), tiledFile2.getAbsolutePath(), "256", "128"});
+    execute("OverlappedTiledWriter", new String[] {
+        overlappedInputFile.getAbsolutePath(), overlappedTiledFile.getAbsolutePath(), "96", "96"});
+    execute("OverlappedTiledWriter", new String[] {
+        overlappedInputFile.getAbsolutePath(), overlappedTiledFile2.getAbsolutePath(), "192", "96"});
   }
 }

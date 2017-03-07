@@ -6,7 +6,7 @@ Prairie Technologies TIFF
 
 Extensions: .tif, .xml, .cfg
 
-Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
+Developer: `Prairie Technologies <https://www.bruker.com/products/fluorescence-microscopes/ultima-multiphoton-microscopy/ultima-in-vitro/overview.html>`_
 
 
 **Support**

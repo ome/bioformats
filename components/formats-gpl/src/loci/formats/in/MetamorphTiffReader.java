@@ -47,6 +47,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -185,7 +186,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    final List<String> uniqueChannels = new ArrayList<String>();
+    List<String> uniqueChannels = new ArrayList<String>();
     final List<Double> uniqueZs = new ArrayList<Double>();
     final List<Length> stageX = new ArrayList<Length>();
     final List<Length> stageY = new ArrayList<Length>();
@@ -332,6 +333,23 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
+
+    // if the channel name and Z position are unique
+    // for each plane, then prefer unique channels over unique Zs
+    // the division by uniqueC.size is not a typo - it's meant to
+    // account for the multiple actual Z sections
+    if (effectiveC * getSizeZ() > totalPlanes &&
+      (effectiveC * (getSizeZ() / uniqueC.size()) == totalPlanes ||
+      effectiveC == totalPlanes))
+    {
+      if (getSizeZ() >= uniqueC.size()) {
+        m.sizeZ /= uniqueC.size();
+      }
+      else {
+        m.sizeZ = 1;
+      }
+    }
+
     m.sizeT = totalPlanes /
       (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
     if (getSizeT() == 0) m.sizeT = 1;
@@ -390,8 +408,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // effectively useless).
     if (wellCount > 1) {
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(1), 0);
+      store.setPlateColumns(new PositiveInteger(wellCount), 0);
       store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
       store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+
+      store.setPlateAcquisitionID(
+        MetadataTools.createLSID("PlateAcquisition", 0, 0), 0, 0);
 
       for (int well=0; well<wellCount; well++) {
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
@@ -411,8 +434,22 @@ public class MetamorphTiffReader extends BaseTiffReader {
             store.setWellSampleImageRef(imageID, 0, well, field);
             store.setWellSampleIndex(
               new NonNegativeInteger(seriesIndex), 0, well, field);
+            store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, seriesIndex);
           }
         }
+      }
+    }
+
+    final List<String> timestamps = handler.getTimestamps();
+    final List<Double> exposures = handler.getExposures();
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      for (int i=0; i<timestamps.size(); i++) {
+        long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
+        addGlobalMetaList("timestamp", timestamp);
+      }
+      for (int i=0; i<exposures.size(); i++) {
+        addGlobalMetaList("exposure time (ms)",
+          exposures.get(i).floatValue() * 1000);
       }
     }
 
@@ -435,18 +472,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        final List<String> timestamps = handler.getTimestamps();
-        final List<Double> exposures = handler.getExposures();
-
-        for (int i=0; i<timestamps.size(); i++) {
-          long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT, ".");
-          addSeriesMetaList("timestamp", timestamp);
-        }
-        for (int i=0; i<exposures.size(); i++) {
-          addSeriesMetaList("exposure time (ms)",
-            exposures.get(i).floatValue() * 1000);
-        }
-
         long startDate = 0;
         if (timestamps.size() > 0) {
           startDate = DateTools.getTime(timestamps.get(0), DATE_FORMAT, ".");
@@ -502,11 +527,19 @@ public class MetamorphTiffReader extends BaseTiffReader {
           store.setPixelsPhysicalSizeZ(sizeZ, s);
         }
 
+        if (uniqueChannels.size() == 0) {
+          uniqueChannels = handler.getChannelNames();
+        }
+
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {
             store.setChannelName(uniqueChannels.get(c), s, c);
           }
           else store.setChannelName(handler.getChannelName(), s, c);
+          if (c < wavelengths.size()) {
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(Double.valueOf(wavelengths.get(c))), s, c);
+          }
         }
       }
     }
