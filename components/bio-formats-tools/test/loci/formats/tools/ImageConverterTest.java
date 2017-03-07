@@ -45,6 +45,7 @@ import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
+import loci.formats.out.OMETiffWriter;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.testng.annotations.AfterClass;
@@ -179,6 +180,26 @@ public class ImageConverterTest {
       assertEquals(
         "Found unknown command flag: -foo; exiting." +
         System.getProperty("line.separator"), outContent.toString());
+    }
+  }
+
+  @Test
+  public void testCompanion() throws FormatException, IOException {
+    outFile = File.createTempFile("test", ".ome.tif");
+    outFile.delete();
+    File compFile = new File(outFile.getParentFile(), "test.companion.ome");
+    String[] args = {
+      "-option", OMETiffWriter.COMPANION_KEY, compFile.getAbsolutePath(),
+      "test.fake", outFile.getAbsolutePath()
+    };
+    try {
+      ImageConverter.main(args);
+    } catch (ExitException e) {
+      outFile.deleteOnExit();
+      compFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      assertTrue(compFile.exists());
+      checkImage();
     }
   }
 }
