@@ -88,27 +88,6 @@ public class NDPISReader extends FormatReader {
   }
 
 
-  /* @see IFormatReader#openBytes(int, int, int, int, int) */
-  @Override
-  public byte[] openBytes(int no, int x, int y, int w, int h)
-          throws FormatException, IOException
-  {
-    int ch = getRGBChannelCount();
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    byte[] newBuffer;
-    try {
-      newBuffer = DataTools.allocate(w, h, ch, bpp);
-    }
-    catch (IllegalArgumentException e) {
-      throw new FormatException("Image plane too large. Only 2GB of data can " +
-              "be extracted at one time. You can workaround the problem by opening " +
-              "the plane in tiles; for further details, see: " +
-              "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
-              "bug-reporting.html#common-issues-to-check", e);
-    }
-    return openBytes(no, newBuffer, x, y, w, h);
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
