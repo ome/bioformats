@@ -707,6 +707,9 @@ public class NativeND2Reader extends FormatReader {
           }
 
           dataLength -= 31;
+          LOGGER.debug(
+            "Adding non-chunkmap offset {}, nameLength = {}, dataLength = {}",
+              fp, nameLength, dataLength);
           imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
