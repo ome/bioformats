@@ -434,7 +434,7 @@ public class ZeissCZIReader extends FormatReader {
             else {
               rawData = new SubBlock(plane).readPixelData();
             }
-            if (rawData.length > buf.length) {
+            if (rawData.length > buf.length || pixels.size() > 0) {
               RandomAccessInputStream s = new RandomAccessInputStream(rawData);
               try {
                 readPlane(s, x, y, w, h, realX - getSizeX(), buf);
