@@ -35,6 +35,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 
+import loci.formats.in.NativeND2Reader;
 import loci.plugins.util.LociPrefs;
 
 /**
@@ -59,8 +60,16 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
       "Use Nikon's ND2 library instead of native ND2 support", nikon);
     legacyBox.addItemListener(this);
 
-    labels = new String[] {legacyLabel};
-    widgets = new Component[] {legacyBox};
+    boolean chunkmap = Prefs.get(LociPrefs.PREF_ND2_CHUNKMAP,
+      NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+
+    String chunkmapLabel = "Chunkmap";
+    JCheckBox chunkmapBox = new JCheckBox(
+      "Use chunkmap table to read image offsets", chunkmap);
+    chunkmapBox.addItemListener(this);
+
+    labels = new String[] {legacyLabel, chunkmapLabel};
+    widgets = new Component[] {legacyBox, chunkmapBox};
   }
 
   // -- IFormatWidgets API methods --
@@ -80,7 +89,12 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
+    if (box.equals(getWidgets()[0])) {
+      Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
+    }
+    else if (box.equals(getWidgets()[1])) {
+      Prefs.set(LociPrefs.PREF_ND2_CHUNKMAP, box.isSelected());
+    }
   }
 
 }

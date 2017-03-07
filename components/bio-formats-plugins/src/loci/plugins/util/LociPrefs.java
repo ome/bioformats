@@ -34,6 +34,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataOptions;
+import loci.formats.in.NativeND2Reader;
 import loci.formats.in.ND2Reader;
 import loci.formats.in.PictReader;
 import loci.formats.in.QTReader;
@@ -61,6 +62,8 @@ public final class LociPrefs {
     "bioformats.zeissczi.allow.autostitch";
   public static final String PREF_CZI_ATTACHMENT =
     "bioformats.zeissczi.include.attachments";
+  public static final String PREF_ND2_CHUNKMAP =
+    "bioformats.nativend2.chunkmap";
 
   // -- Constructor --
 
@@ -93,6 +96,8 @@ public final class LociPrefs {
         ZeissCZIReader.ALLOW_AUTOSTITCHING_KEY, allowCZIAutostitch());
       ((DynamicMetadataOptions) options).setBoolean(
         ZeissCZIReader.INCLUDE_ATTACHMENTS_KEY, includeCZIAttachments());
+      ((DynamicMetadataOptions) options).setBoolean(
+        NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       reader.setMetadataOptions(options);
     }
 
@@ -169,6 +174,10 @@ public final class LociPrefs {
   public static boolean includeCZIAttachments() {
     return Prefs.get(PREF_CZI_ATTACHMENT,
                      ZeissCZIReader.INCLUDE_ATTACHMENTS_DEFAULT);
+  }
+
+  public static boolean useND2Chunkmap() {
+    return Prefs.get(PREF_ND2_CHUNKMAP, NativeND2Reader.USE_CHUNKMAP_DEFAULT);
   }
 
   // -- Helper methods --

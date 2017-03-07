@@ -75,6 +75,9 @@ public class NativeND2Reader extends FormatReader {
   public static final long ND2_MAGIC_BYTES_2 = 0x6a502020L;
   private static final int BUFFER_SIZE = 32 * 1024;
 
+  public static final String USE_CHUNKMAP_KEY = "nativend2.chunkmap";
+  public static final boolean USE_CHUNKMAP_DEFAULT = true;
+
   // -- Fields --
 
   /** Array of image offsets. */
@@ -130,6 +133,17 @@ public class NativeND2Reader extends FormatReader {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+  }
+
+  // -- NativeND2Reader methods --
+
+  public boolean useChunkMap() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        USE_CHUNKMAP_KEY, USE_CHUNKMAP_DEFAULT);
+    }
+    return USE_CHUNKMAP_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -354,7 +368,8 @@ public class NativeND2Reader extends FormatReader {
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
-    boolean useChunkMap = true; // could be deactivated here ...
+    boolean useChunkMap = useChunkMap();
+    LOGGER.debug("Attempting to use chunk map = {}", useChunkMap);
 
     channelColors = new HashMap<String, Integer>();
 
