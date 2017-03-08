@@ -38,7 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import loci.formats.FormatException;
 import loci.formats.in.TiffReader;
 import loci.formats.in.OMETiffReader;
@@ -198,19 +197,18 @@ public class OMETiffWriterTest {
     options.set(OMETiffWriter.COMPANION_KEY, companion);
     int planeCount =
       WriterUtilities.SIZE_Z * WriterUtilities.SIZE_C * WriterUtilities.SIZE_T;
-    //--
+
     OMETiffWriter cwriter = new OMETiffWriter();
     cwriter.setMetadataOptions(options);
     cwriter.setMetadataRetrieve(metadata);
     cwriter.setId(outFile.getAbsolutePath());
     cwriter.setSeries(0);
     byte[] img = new byte[WriterUtilities.SIZE_X * WriterUtilities.SIZE_Y];
-    Arrays.fill(img, (byte) 0);
     for (int i = 0; i < planeCount; i++) {
       cwriter.saveBytes(i, img);
     }
     cwriter.close();
-    //--
+
     assertTrue(cFile.exists());
     OMETiffReader reader = new OMETiffReader();
     reader.setId(companion);
