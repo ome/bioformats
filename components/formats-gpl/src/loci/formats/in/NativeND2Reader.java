@@ -696,7 +696,7 @@ public class NativeND2Reader extends FormatReader {
 
             blockCount --; // one was already added by the outer blockCount ++;
 
-            in.seek(lastImage.position + 16 + lastImage.length);
+            in.seek(lastImage.position + lastImage.length);
 
             continue;
 
