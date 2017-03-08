@@ -45,7 +45,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**

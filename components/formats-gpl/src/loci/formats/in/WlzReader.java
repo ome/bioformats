@@ -69,7 +69,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
 import loci.formats.meta.MetadataStore;
 

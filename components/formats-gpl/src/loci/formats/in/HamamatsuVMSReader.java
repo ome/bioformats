@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**

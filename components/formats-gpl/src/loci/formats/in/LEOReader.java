@@ -39,9 +39,7 @@ import loci.formats.tiff.TiffParser;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
-import ome.units.quantity.Length;
 
 /**
  * LEOReader is the file format reader for LEO EM files.

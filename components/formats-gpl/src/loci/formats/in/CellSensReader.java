@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -55,8 +54,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**

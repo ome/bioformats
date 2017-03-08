@@ -54,7 +54,6 @@ import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 

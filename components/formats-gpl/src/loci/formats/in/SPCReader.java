@@ -643,7 +643,6 @@ public class SPCReader extends FormatReader {
    
    private void invalidAndMark(int blockPtr) {
 
-    long sum;
     byte routM = (byte) (rawBuf[blockPtr - 2] & 0xf0);
     
     switch (routM) {
@@ -685,7 +684,6 @@ public class SPCReader extends FormatReader {
    
     private void invalidAndMarkInit(int blockPtr) {
 
-    long sum;
     byte routM = (byte) (rawBuf[blockPtr - 2] & 0xf0);
     Integer position;
 

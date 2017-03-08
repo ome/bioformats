@@ -28,7 +28,6 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
@@ -39,7 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;

@@ -58,8 +58,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;

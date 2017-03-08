@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;

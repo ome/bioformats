@@ -29,7 +29,6 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.MissingLibraryException;

@@ -41,7 +41,6 @@ import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.primitives.PositiveFloat;
 
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.testng.annotations.BeforeMethod;

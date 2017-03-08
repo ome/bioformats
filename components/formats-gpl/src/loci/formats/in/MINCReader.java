@@ -43,7 +43,6 @@ import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**

@@ -50,8 +50,6 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;

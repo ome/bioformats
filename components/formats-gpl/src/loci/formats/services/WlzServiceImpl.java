@@ -59,23 +59,12 @@
 
 package loci.formats.services;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import loci.common.Constants;
-import loci.common.Location;
 import loci.common.services.AbstractService;
-import loci.common.services.ServiceException;
 
 import loci.formats.FormatTools;
 import loci.formats.FormatException;
-import loci.formats.MissingLibraryException;
 
 import uk.ac.mrc.hgu.Wlz.WlzException;
 import uk.ac.mrc.hgu.Wlz.WlzGreyType;
@@ -83,11 +72,9 @@ import uk.ac.mrc.hgu.Wlz.WlzObjectType;
 import uk.ac.mrc.hgu.Wlz.WlzFileStream;
 import uk.ac.mrc.hgu.Wlz.WlzFileInputStream;
 import uk.ac.mrc.hgu.Wlz.WlzFileOutputStream;
-import uk.ac.mrc.hgu.Wlz.WlzIBox2;
 import uk.ac.mrc.hgu.Wlz.WlzIBox3;
 import uk.ac.mrc.hgu.Wlz.WlzIVertex2;
 import uk.ac.mrc.hgu.Wlz.WlzIVertex3;
-import uk.ac.mrc.hgu.Wlz.WlzDVertex2;
 import uk.ac.mrc.hgu.Wlz.WlzDVertex3;
 import uk.ac.mrc.hgu.Wlz.WlzObject;
 

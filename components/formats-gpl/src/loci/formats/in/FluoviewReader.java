@@ -40,8 +40,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import loci.formats.tiff.TiffRational;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
@@ -843,7 +841,6 @@ public class FluoviewReader extends BaseTiffReader {
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();
-          int nChars = String.valueOf(getImageCount()).length();
           for (int i=0; i<getImageCount(); i++) {
             int[] zct = getZCTCoords(i);
             String key = String.format(

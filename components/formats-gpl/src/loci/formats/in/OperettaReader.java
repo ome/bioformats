@@ -46,7 +46,6 @@ import loci.formats.tiff.TiffParser;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;

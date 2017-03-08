@@ -49,7 +49,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.JPEGXRCodec;
@@ -60,10 +59,8 @@ import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -74,8 +71,6 @@ import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.xml.sax.SAXException;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

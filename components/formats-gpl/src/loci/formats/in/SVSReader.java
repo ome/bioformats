@@ -47,12 +47,9 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
-import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**

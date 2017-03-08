@@ -46,7 +46,6 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**

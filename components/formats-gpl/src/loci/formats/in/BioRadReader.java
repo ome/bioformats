@@ -45,7 +45,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -388,12 +387,6 @@ public class BioRadReader extends FormatReader {
     m.falseColor = true;
 
     LOGGER.info("Reading notes");
-
-    String zoom = null, zstart = null, zstop = null, mag = null;
-    String gain1 = null, gain2 = null, gain3 = null;
-    String offset1 = null;
-    String ex1 = null, ex2 = null, ex3 = null;
-    String em1 = null, em2 = null, em3 = null;
 
     MetadataStore store = makeFilterMetadata();
 

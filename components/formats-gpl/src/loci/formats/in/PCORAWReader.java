@@ -30,7 +30,6 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;

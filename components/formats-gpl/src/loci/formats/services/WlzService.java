@@ -62,7 +62,6 @@ package loci.formats.services;
 import java.io.IOException;
 
 import loci.formats.FormatException;
-import loci.formats.MissingLibraryException;
 
 import loci.common.services.Service;
 
