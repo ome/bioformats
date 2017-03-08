@@ -1,7 +1,6 @@
 /*
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
-
  * %%
  * Copyright (C) 2015 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
