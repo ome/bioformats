@@ -110,7 +110,7 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>bsd_2</licenseName>
-          <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
+          <projectName>Top-level reader and writer APIs</projectName>
         </configuration>
       </plugin>
     </plugins>
