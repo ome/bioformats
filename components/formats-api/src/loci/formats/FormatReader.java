@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,7 +47,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.common.xml.XMLTools;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
