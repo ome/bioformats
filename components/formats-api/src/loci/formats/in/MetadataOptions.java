@@ -1,6 +1,6 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
  * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
