@@ -201,7 +201,7 @@ public class JPEG2000Codec extends BaseCodec {
         out.close();
       }
       catch (IOException e) {
-        throw new FormatException("Could not compress JPEG-2000 data.", e);
+        throw new FormatException("Failed to close RandomAccessOutputStream.", e);
       }
     }
 
