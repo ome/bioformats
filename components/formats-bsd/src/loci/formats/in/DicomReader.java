@@ -184,7 +184,7 @@ public class DicomReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 2048;
+    final int blockLen = 1024;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
 
     stream.seek(128);
