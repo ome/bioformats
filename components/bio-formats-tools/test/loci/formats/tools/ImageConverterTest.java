@@ -129,7 +129,7 @@ public class ImageConverterTest {
 
   @Test(dataProvider = "suffixes")
   public void testDefault(String suffix) throws FormatException, IOException {
-    outFile = tempDir.resolve("test." + suffix).toFile();
+    outFile = tempDir.resolve("test" + suffix).toFile();
     String[] args = {"test.fake", outFile.getAbsolutePath()};
     try {
       ImageConverter.main(args);
