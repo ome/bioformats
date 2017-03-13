@@ -40,7 +40,7 @@
 
     <release.version>5.4.0-SNAPSHOT</release.version>
     <date>${maven.build.timestamp}</date>
-    <year>2016</year>
+    <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
     <imagej1.version>1.48s</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
