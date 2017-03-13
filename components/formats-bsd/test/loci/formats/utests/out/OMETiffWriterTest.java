@@ -33,10 +33,15 @@
 package loci.formats.utests.out;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import loci.formats.FormatException;
 import loci.formats.in.TiffReader;
+import loci.formats.in.OMETiffReader;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.OMETiffWriter;
 import loci.formats.tiff.IFD;
@@ -180,5 +185,41 @@ public class OMETiffWriterTest {
 
     tmp.delete();
     reader.close();
+  }
+
+  @Test
+  public void testCompanion() throws Exception {
+    Path wd = Files.createTempDirectory(this.getClass().getName());
+    File outFile = wd.resolve("test.ome.tif").toFile();
+    File cFile = wd.resolve("test.companion.ome").toFile();
+    String companion = cFile.getAbsolutePath();
+    DynamicMetadataOptions options = new DynamicMetadataOptions();
+    options.set(OMETiffWriter.COMPANION_KEY, companion);
+    int planeCount =
+      WriterUtilities.SIZE_Z * WriterUtilities.SIZE_C * WriterUtilities.SIZE_T;
+
+    OMETiffWriter cwriter = new OMETiffWriter();
+    cwriter.setMetadataOptions(options);
+    cwriter.setMetadataRetrieve(metadata);
+    cwriter.setId(outFile.getAbsolutePath());
+    cwriter.setSeries(0);
+    byte[] img = new byte[WriterUtilities.SIZE_X * WriterUtilities.SIZE_Y];
+    for (int i = 0; i < planeCount; i++) {
+      cwriter.saveBytes(i, img);
+    }
+    cwriter.close();
+
+    assertTrue(cFile.exists());
+    OMETiffReader reader = new OMETiffReader();
+    reader.setId(companion);
+    assertEquals(reader.getSizeX(), WriterUtilities.SIZE_X);
+    assertEquals(reader.getSizeY(), WriterUtilities.SIZE_Y);
+    assertEquals(reader.getSizeZ(), WriterUtilities.SIZE_Z);
+    assertEquals(reader.getSizeC(), WriterUtilities.SIZE_C);
+    assertEquals(reader.getSizeT(), WriterUtilities.SIZE_T);
+    reader.close();
+    outFile.deleteOnExit();
+    cFile.deleteOnExit();
+    wd.toFile().deleteOnExit();
   }
 }

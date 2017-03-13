@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.3.5-SNAPSHOT</version>
+    <version>5.4.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -110,7 +110,7 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>bsd_2</licenseName>
-          <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
+          <projectName>Top-level reader and writer APIs</projectName>
         </configuration>
       </plugin>
     </plugins>

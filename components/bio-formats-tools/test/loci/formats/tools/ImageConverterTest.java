@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -36,6 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,10 +47,11 @@ import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.FormatException;
 import loci.formats.tools.ImageConverter;
+import loci.formats.out.OMETiffWriter;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -60,10 +63,11 @@ import static org.testng.Assert.assertTrue;
  */
 public class ImageConverterTest {
 
+  private Path tempDir;
   private File outFile;
-  private SecurityManager oldSecurityManager;
-  private PrintStream oldOut;
-  private PrintStream oldErr;
+  private final SecurityManager oldSecurityManager = System.getSecurityManager();
+  private final PrintStream oldOut = System.out;
+  private final PrintStream oldErr = System.err;
 
   protected static class ExitException extends SecurityException {
     public final int status;
@@ -86,19 +90,23 @@ public class ImageConverterTest {
     }
   }
 
-  @BeforeClass
-  public void setUp() {
-    oldSecurityManager = System.getSecurityManager();
-    oldOut = System.out;
-    oldErr = System.err;
+  @BeforeMethod
+  public void setUp() throws IOException {
     System.setSecurityManager(new NoExitSecurityManager());
+
+    tempDir = Files.createTempDirectory(this.getClass().getName());
+    tempDir.toFile().deleteOnExit();
+  }
+
+  @AfterMethod
+  public void resetSecurityManager() {
+    System.setSecurityManager(oldSecurityManager);
   }
 
   @AfterClass
   public void tearDown() {
     System.setOut(oldOut);
     System.setErr(oldErr);
-    System.setSecurityManager(oldSecurityManager);
   }
 
   @DataProvider(name = "suffixes")
@@ -121,8 +129,7 @@ public class ImageConverterTest {
 
   @Test(dataProvider = "suffixes")
   public void testDefault(String suffix) throws FormatException, IOException {
-    outFile = File.createTempFile("test", suffix);
-    outFile.delete();
+    outFile = tempDir.resolve("test" + suffix).toFile();
     String[] args = {"test.fake", outFile.getAbsolutePath()};
     try {
       ImageConverter.main(args);
@@ -135,8 +142,7 @@ public class ImageConverterTest {
 
   @Test(dataProvider = "options")
   public void testOptions(String options) throws FormatException, IOException {
-    outFile = File.createTempFile("test", ".ome.tiff");
-    outFile.delete();
+    outFile = tempDir.resolve("test.ome.tiff").toFile();
     String[] optionsArgs = options.split(" ");
     ArrayList<String> argsList = new ArrayList<String>();
     argsList.add("test&sizeZ=3&sizeC=2&sizeT=4.fake"); 
@@ -154,7 +160,7 @@ public class ImageConverterTest {
 
   @Test(dataProvider = "suffixes")
   public void testOverwrite(String suffix) throws FormatException, IOException {
-    outFile = File.createTempFile("test", suffix);
+    outFile = Files.createTempFile(tempDir, "test", suffix).toFile();
     String[] args = {"-overwrite", "test.fake", outFile.getAbsolutePath()};
     try {
       ImageConverter.main(args);
@@ -169,8 +175,7 @@ public class ImageConverterTest {
   public void testBadArgument() throws FormatException, IOException {
     ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
-    outFile = File.createTempFile("test", "ome.tif");
-    outFile.deleteOnExit();
+    outFile = tempDir.resolve("test.ome.tiff").toFile();
     String[] args = {"-foo", "test.fake", outFile.getAbsolutePath()};
     try {
       ImageConverter.main(args);
@@ -179,6 +184,25 @@ public class ImageConverterTest {
       assertEquals(
         "Found unknown command flag: -foo; exiting." +
         System.getProperty("line.separator"), outContent.toString());
+    }
+  }
+
+  @Test
+  public void testCompanion() throws FormatException, IOException {
+    outFile = tempDir.resolve("test.ome.tiff").toFile();
+    File compFile = tempDir.resolve("test.companion.ome").toFile();
+    String[] args = {
+      "-option", OMETiffWriter.COMPANION_KEY, compFile.getAbsolutePath(),
+      "test.fake", outFile.getAbsolutePath()
+    };
+    try {
+      ImageConverter.main(args);
+    } catch (ExitException e) {
+      outFile.deleteOnExit();
+      compFile.deleteOnExit();
+      assertEquals(e.status, 0);
+      assertTrue(compFile.exists());
+      checkImage();
     }
   }
 }

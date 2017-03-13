@@ -28,7 +28,6 @@ package loci.formats.services;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.services.Service;
 
 import ome.metakit.MetakitException;
 import ome.metakit.MetakitReader;

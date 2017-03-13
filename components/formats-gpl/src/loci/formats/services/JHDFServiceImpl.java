@@ -24,19 +24,10 @@
  */
 package loci.formats.services;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
-import loci.common.Constants;
-import loci.common.Location;
 import loci.common.services.AbstractService;
-import loci.common.services.ServiceException;
 
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;

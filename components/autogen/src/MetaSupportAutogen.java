@@ -93,7 +93,7 @@ public class MetaSupportAutogen {
 
     // generate master table of metadata properties
     VelocityTools.processTemplate(ve, context, "doc/meta-summary.vm",
-      "../../docs/sphinx/metadata-summary.txt");
+      "../../docs/sphinx/metadata-summary.rst");
 
     // generate metadata property support documentation for each handler
     for (String handler : supportList.handlers()) {
@@ -102,7 +102,7 @@ public class MetaSupportAutogen {
       String pagename = supportList.getPageName();
       if (pagename != null) {
         VelocityTools.processTemplate(ve, context, "doc/MetadataSupport.vm",
-          "../../docs/sphinx/" + pagename + ".txt");
+          "../../docs/sphinx/" + pagename + ".rst");
       }
     }
   }

@@ -46,7 +46,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -476,7 +475,6 @@ public class InCellReader extends FormatReader {
     if (isTiff && filename != null) {
       tiffReader = new MinimalTiffReader();
       tiffReader.setId(filename);
-      int nextTiming = 0;
       for (int i=0; i<seriesCount; i++) {
         CoreMetadata ms = core.get(i);
         ms.sizeX = tiffReader.getSizeX();
@@ -888,8 +886,6 @@ public class InCellReader extends FormatReader {
   class InCellHandler extends BaseHandler {
     private String currentQName;
     private boolean openImage;
-    private int nextEmWave = 0;
-    private int nextExWave = 0;
     private MetadataStore store;
     private int nextPlate = 0;
     private int currentRow = -1, currentCol = -1;

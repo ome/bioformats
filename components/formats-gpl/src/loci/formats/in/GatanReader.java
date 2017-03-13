@@ -86,9 +86,6 @@ public class GatanReader extends FormatReader {
   private List<Double> pixelSizes;
   private List<String> units;
 
-  private int bytesPerPixel;
-
-  private int pixelDataNum = 0;
   private int numPixelBytes;
 
   private boolean signed;
@@ -142,7 +139,7 @@ public class GatanReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelOffset = 0;
-      bytesPerPixel = pixelDataNum = numPixelBytes = 0;
+      numPixelBytes = 0;
       pixelSizes = null;
       signed = false;
       timestamp = 0;

@@ -25,14 +25,10 @@
 
 package loci.formats.services;
 
-import java.io.IOException;
-
 import loci.common.services.AbstractService;
-import loci.common.services.Service;
 import loci.formats.FormatException;
 
 import ome.jxrlib.Decode;
-import ome.jxrlib.DecodeException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

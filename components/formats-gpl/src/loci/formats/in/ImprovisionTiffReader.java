@@ -40,7 +40,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;

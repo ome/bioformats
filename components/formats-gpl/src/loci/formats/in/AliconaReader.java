@@ -39,8 +39,6 @@ import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.

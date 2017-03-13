@@ -1,6 +1,6 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
  * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.util.HashMap;
 
 import ome.xml.model.primitives.PositiveInteger;
 

@@ -34,7 +34,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
@@ -43,7 +42,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 
@@ -378,7 +376,6 @@ public class NDPIReader extends BaseTiffReader {
 
     int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
-    long prevMarkerOffset = 0;
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       ifd.remove(THUMB_TAG_2);

@@ -37,8 +37,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.unit.Unit;
@@ -390,8 +388,6 @@ public class NiftiReader extends FormatReader {
         spatialUnit = UNITS.MILLIMETER;
         break;
     }
-
-    int timeCorrection = 1;
 
     switch (timeUnits) {
       case UNITS_MSEC:

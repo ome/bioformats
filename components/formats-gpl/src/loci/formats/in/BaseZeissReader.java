@@ -691,6 +691,8 @@ public abstract class BaseZeissReader extends FormatReader {
             // The lookup table shape is a rectangle gradient.  We could generate this
             // as a series of 256 coloured rectangles with some labels.
             //    break;
+        default:
+          break;
         }
         roiIndex++;
       }

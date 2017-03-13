@@ -935,7 +935,6 @@ public class MetamorphReader extends BaseTiffReader {
       int lastFile = -1;
       IFDList lastIFDs = null;
       IFD lastIFD = null;
-      long[] lastOffsets = null;
 
       double distance = zStart;
       TiffParser tp = null;
@@ -1635,7 +1634,7 @@ public class MetamorphReader extends BaseTiffReader {
     int currentID;
     long valOrOffset;
     // variable declarations, because switch is dumb
-    int num, denom;
+    int num;
     String thedate, thetime;
     long lastOffset;
 

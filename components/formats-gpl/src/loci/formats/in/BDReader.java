@@ -2,7 +2,6 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- *
  * Copyright (C) 2005 - 2016 Vanderbilt Integrative Cancer Center and Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
@@ -56,7 +55,6 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 

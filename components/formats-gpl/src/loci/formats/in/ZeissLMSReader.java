@@ -28,7 +28,6 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -111,7 +110,6 @@ public class ZeissLMSReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     CoreMetadata m = core.get(0);
     CoreMetadata thumb = new CoreMetadata();

@@ -40,7 +40,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import ome.xml.model.primitives.NonNegativeInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

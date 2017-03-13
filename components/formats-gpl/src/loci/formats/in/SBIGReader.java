@@ -36,7 +36,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 
@@ -139,7 +138,6 @@ public class SBIGReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     CoreMetadata m = core.get(0);
 
-    Double temperature = null;
     Double sizeX = null, sizeY = null;
     String date = null, description = null;
 
