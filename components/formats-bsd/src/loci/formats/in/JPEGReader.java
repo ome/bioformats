@@ -33,9 +33,17 @@
 package loci.formats.in;
 
 import java.awt.color.CMMException;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -88,7 +96,7 @@ public class JPEGReader extends DelegateReader {
     try {
       super.setId(id);
     }
-    catch (CMMException e) {
+    catch (Exception e) {
       // strip out all but the first application marker
       // ImageIO isn't too keen on supporting multiple application markers
       // in the same stream, as evidenced by:
@@ -183,6 +191,55 @@ public class JPEGReader extends DelegateReader {
       }
 
       return checkSuffix(name, getSuffixes());
+    }
+
+    /* @see loci.formats.in.ImageIOReader#initImage() */
+    @Override
+    protected void initImage() throws IOException, FormatException {
+      try {
+        super.initImage();
+      }
+      catch (CMMException e) {
+        // this is handled by setId
+      }
+      catch (Throwable e) {
+        LOGGER.warn("", e);
+        Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("JPEG");
+        ImageReader reader = null;
+        while (readers.hasNext() && (reader == null || !reader.canReadRaster())) {
+          reader = readers.next();
+        }
+
+        ImageInputStream s = ImageIO.createImageInputStream(new File(currentId));
+        reader.setInput(s);
+        Raster raster = reader.readRaster(0, null);
+        int nBands = raster.getNumBands();
+
+        img = new BufferedImage(raster.getWidth(), raster.getHeight(),
+          nBands == 4 ? BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_INT_RGB);
+        img.getRaster().setRect(raster);
+
+        // reasonably safe to assume that 4 channels implies a CMYK image
+        if (nBands == 4) {
+          for (int y=0; y<img.getHeight(); y++) {
+            for (int x=0; x<img.getWidth(); x++) {
+              int rgb = img.getRGB(x, y);
+              double c = ((rgb >> 24) & 0xff) / 255.0;
+              double m = ((rgb >> 16) & 0xff) / 255.0;
+              double ye = ((rgb >> 8) & 0xff) / 255.0;
+              double k = (rgb & 0xff) / 255.0;
+
+              int r = (int) (255 * (1 - c) * (1 - k));
+              int g = (int) (255 * (1 - m) * (1 - k));
+              int b = (int) (255 * (1 - ye) * (1 - k));
+
+              rgb = (r << 16) | (g << 8) | b;
+
+              img.setRGB(x, y, rgb);
+            }
+          }
+        }
+      }
     }
 
     /* @see loci.formats.FormatReader#initFile(String) */
