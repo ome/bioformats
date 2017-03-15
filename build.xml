@@ -159,7 +159,7 @@ Native library loader
     License:   BSD
 
 NetCDF
-    JAR file:  netcdf-4.3.19.jar
+    JAR file:  netcdf-4.3.22.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/
     Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
     License:   LGPL

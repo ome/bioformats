@@ -66,7 +66,7 @@
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf</artifactId>
-      <version>4.3.19</version>
+      <version>4.3.22</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.protobuf</groupId>
