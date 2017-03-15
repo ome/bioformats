@@ -93,7 +93,7 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int BASELINE_OFFSET = 4944;
 
   /** Date format */
-  private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss.SSS";
+  private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
   // -- Fields --
 
@@ -837,7 +837,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
       if (date != null) {
         date = DateTools.formatDate(date.trim(),
-          new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss","MM/dd/yyyy H:mm:ss"}, true);
+          new String[] {"dd/MM/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss","dd/MM/yyyy H:mm:ss"}, true);
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();
