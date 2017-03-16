@@ -33,6 +33,7 @@
 package loci.formats.services;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -1299,9 +1300,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     throws IOException
   {
     Transformer trans;
+    ClassLoader sourceClass = OMEXMLServiceImpl.class.getClassLoader();
+
+    InputStream xsltStream = XMLTools.class.getResourceAsStream(xslt);
+
     try {
       TransformerFactory factory = TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", null);
-      trans = factory.newTransformer(new StreamSource(new File(xslt)));
+      trans = factory.newTransformer(new StreamSource(xsltStream));
       trans.setErrorListener(new XMLListener());
     }
     catch (TransformerConfigurationException exc) {
