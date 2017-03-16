@@ -1123,6 +1123,18 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
+      // Test image acquisition date
+      String expectedDate = config.getDate();
+      String date = null;
+      if (retrieve.getImageAcquisitionDate(i) != null) {
+        date = retrieve.getImageAcquisitionDate(i).getValue();
+      }
+      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+        result(testName, false, "series " + i +
+          " (expected " + expectedDate + ", actual " + date + ")");
+        return;
+      }
+
       for (int p=0; p<reader.getImageCount(); p++) {
         Time deltaT = null;
         try {
