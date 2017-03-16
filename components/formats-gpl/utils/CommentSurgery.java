@@ -58,6 +58,7 @@ public class CommentSurgery {
         RandomAccessInputStream in = new RandomAccessInputStream(id);
         saver.overwriteComment(in, xml);
         in.close();
+        saver.close();
       }
     }
   }

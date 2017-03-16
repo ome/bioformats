@@ -419,9 +419,6 @@ public class TiffSaver {
       int nChannels, boolean last, int x, int y)
   throws FormatException, IOException {
     LOGGER.debug("Attempting to write image IFD.");
-    int tilesPerRow = (int) ifd.getTilesPerRow();
-    int tilesPerColumn = (int) ifd.getTilesPerColumn();
-    boolean interleaved = ifd.getPlanarConfiguration() == 1;
     boolean isTiled = ifd.isTiled();
     long defaultByteCount = 0L;
 
@@ -451,132 +448,7 @@ public class TiffSaver {
       else if (isTiled) {
         defaultByteCount = strips[0].length;
       }
-  
-      // record strip byte counts and offsets
-  
-      List<Long> byteCounts = new ArrayList<Long>();
-      List<Long> offsets = new ArrayList<Long>();
-      long totalTiles = tilesPerRow * tilesPerColumn;
-  
-      if (!interleaved) {
-        totalTiles *= nChannels;
-      }
-  
-      if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS) ||
-        ifd.containsKey(IFD.TILE_BYTE_COUNTS))
-      {
-        long[] ifdByteCounts = isTiled ?
-          ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS) : ifd.getStripByteCounts();
-        for (long stripByteCount : ifdByteCounts) {
-          byteCounts.add(stripByteCount);
-        }
-      }
-      else {
-        while (byteCounts.size() < totalTiles) {
-          byteCounts.add(defaultByteCount);
-        }
-      }
-      int tileOrStripOffsetX = x / (int) ifd.getTileWidth();
-      int tileOrStripOffsetY = y / (int) ifd.getTileLength();
-      int firstOffset = (tileOrStripOffsetY * tilesPerRow) + tileOrStripOffsetX;
-      if (ifd.containsKey(IFD.STRIP_OFFSETS)
-          || ifd.containsKey(IFD.TILE_OFFSETS)) {
-        long[] ifdOffsets = isTiled ?
-          ifd.getIFDLongArray(IFD.TILE_OFFSETS) : ifd.getStripOffsets();
-        for (int i = 0; i < ifdOffsets.length; i++) {
-          offsets.add(ifdOffsets[i]);
-        }
-      }
-      else {
-        while (offsets.size() < totalTiles) {
-          offsets.add(0L);
-        }
-        if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
-          sequentialTileOffsets = offsets;
-        }
-        else if (isTiled) {
-          offsets = sequentialTileOffsets;
-        }
-      }
-  
-      if (isTiled) {
-        ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-        ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
-      }
-      else {
-        ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-        ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
-      }
-
-      long fp = out.getFilePointer();
-      if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
-        sequentialTileFilePointer = fp;
-      }
-      else if (isTiled) {
-        fp = sequentialTileFilePointer;
-      }
-      writeIFD(ifd, 0);
-  
-      // strips.length is the total number of strips being written during
-      // this method call, which is no more than the total number of
-      // strips in the image
-      //
-      // for single-channel or interleaved image data, the strips are written
-      // in order
-      // for multi-channel non-interleaved image data, the strip indexing has
-      // to correct for the fact that each strip represents a single channel
-      //
-      // for example, in a 3 channel non-interleaved image with 2 calls to
-      // writeImageIFD each of which writes half of the image:
-      //  - we expect 6 strips to be written in total; the first call writes
-      //    {0, 2, 4}, the second writes {1, 3, 5}
-      //  - in each call to writeImageIFD:
-      //      * strips.length is 3
-      //      * interleaved is false
-      //      * nChannels is 3
-      //      * tileCount is 2
-  
-      int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
-      for (int i=0; i<strips.length; i++) {
-        out.seek(out.length());
-        int index = interleaved ? i : (i / nChannels) * nChannels;
-        int c = interleaved ? 0 : i % nChannels;
-        int thisOffset = firstOffset + index + (c * tileCount);
-        offsets.set(thisOffset, out.getFilePointer());
-        byteCounts.set(thisOffset, new Long(strips[i].length));
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug(String.format(
-              "Writing tile/strip %d/%d size: %d offset: %d",
-              thisOffset + 1, totalTiles, byteCounts.get(thisOffset),
-              offsets.get(thisOffset)));
-        }
-        out.write(strips[i]);
-      }
-      if (isTiled) {
-        ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-        ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
-      }
-      else {
-        ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
-        ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
-      }
-      long endFP = out.getFilePointer();
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Offset before IFD write: {} Seeking to: {}",
-            out.getFilePointer(), fp);
-      }
-      out.seek(fp);
-  
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Writing tile/strip offsets: {}",
-            Arrays.toString(toPrimitiveArray(offsets)));
-        LOGGER.debug("Writing tile/strip byte counts: {}",
-            Arrays.toString(toPrimitiveArray(byteCounts)));
-      }
-      writeIFD(ifd, last ? 0 : endFP);
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Offset after IFD write: {}", out.getFilePointer());
-      }
+      writeIFDStrips(ifd, no, strips, nChannels, last, x, y, defaultByteCount);
     }
     finally {
       if (in != null) {
@@ -616,6 +488,7 @@ public class TiffSaver {
     if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
+    extraStream.close();
   }
 
   /**
@@ -850,6 +723,10 @@ public class TiffSaver {
         TiffSaver saver = new TiffSaver(ifdOut, ifdBuf);
         saver.setLittleEndian(isLittleEndian());
         saver.writeIFDValue(extraOut, entry.getValueOffset(), tag, value);
+        ifdOut.close();
+        saver.close();
+        extraOut.close();
+
         ifdBuf.seek(0);
         extraBuf.seek(0);
 
@@ -997,4 +874,136 @@ public class TiffSaver {
     }
   }
 
+  private void writeIFDStrips(IFD ifd, int no, byte[][] strips,
+      int nChannels, boolean last, int x, int y, long defaultByteCount) throws FormatException, IOException {
+    int tilesPerRow = (int) ifd.getTilesPerRow();
+    int tilesPerColumn = (int) ifd.getTilesPerColumn();
+    boolean interleaved = ifd.getPlanarConfiguration() == 1;
+    boolean isTiled = ifd.isTiled();
+
+    // record strip byte counts and offsets
+    List<Long> byteCounts = new ArrayList<Long>();
+    List<Long> offsets = new ArrayList<Long>();
+    long totalTiles = tilesPerRow * tilesPerColumn;
+
+    if (!interleaved) {
+      totalTiles *= nChannels;
+    }
+
+    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS) ||
+      ifd.containsKey(IFD.TILE_BYTE_COUNTS))
+    {
+      long[] ifdByteCounts = isTiled ?
+        ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS) : ifd.getStripByteCounts();
+      for (long stripByteCount : ifdByteCounts) {
+        byteCounts.add(stripByteCount);
+      }
+    }
+    else {
+      while (byteCounts.size() < totalTiles) {
+        byteCounts.add(defaultByteCount);
+      }
+    }
+    int tileOrStripOffsetX = x / (int) ifd.getTileWidth();
+    int tileOrStripOffsetY = y / (int) ifd.getTileLength();
+    int firstOffset = (tileOrStripOffsetY * tilesPerRow) + tileOrStripOffsetX;
+    if (ifd.containsKey(IFD.STRIP_OFFSETS)
+        || ifd.containsKey(IFD.TILE_OFFSETS)) {
+      long[] ifdOffsets = isTiled ?
+        ifd.getIFDLongArray(IFD.TILE_OFFSETS) : ifd.getStripOffsets();
+      for (int i = 0; i < ifdOffsets.length; i++) {
+        offsets.add(ifdOffsets[i]);
+      }
+    }
+    else {
+      while (offsets.size() < totalTiles) {
+        offsets.add(0L);
+      }
+      if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
+        sequentialTileOffsets = offsets;
+      }
+      else if (isTiled) {
+        offsets = sequentialTileOffsets;
+      }
+    }
+
+    if (isTiled) {
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+    }
+    else {
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+    }
+
+    long fp = out.getFilePointer();
+    if (isTiled && tileOrStripOffsetX == 0 && tileOrStripOffsetY == 0) {
+      sequentialTileFilePointer = fp;
+    }
+    else if (isTiled) {
+      fp = sequentialTileFilePointer;
+    }
+    writeIFD(ifd, 0);
+
+    // strips.length is the total number of strips being written during
+    // this method call, which is no more than the total number of
+    // strips in the image
+    //
+    // for single-channel or interleaved image data, the strips are written
+    // in order
+    // for multi-channel non-interleaved image data, the strip indexing has
+    // to correct for the fact that each strip represents a single channel
+    //
+    // for example, in a 3 channel non-interleaved image with 2 calls to
+    // writeImageIFD each of which writes half of the image:
+    //  - we expect 6 strips to be written in total; the first call writes
+    //    {0, 2, 4}, the second writes {1, 3, 5}
+    //  - in each call to writeImageIFD:
+    //      * strips.length is 3
+    //      * interleaved is false
+    //      * nChannels is 3
+    //      * tileCount is 2
+
+    int tileCount = isTiled ? tilesPerRow * tilesPerColumn : 1;
+    for (int i=0; i<strips.length; i++) {
+      out.seek(out.length());
+      int index = interleaved ? i : (i / nChannels) * nChannels;
+      int c = interleaved ? 0 : i % nChannels;
+      int thisOffset = firstOffset + index + (c * tileCount);
+      offsets.set(thisOffset, out.getFilePointer());
+      byteCounts.set(thisOffset, new Long(strips[i].length));
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(String.format(
+            "Writing tile/strip %d/%d size: %d offset: %d",
+            thisOffset + 1, totalTiles, byteCounts.get(thisOffset),
+            offsets.get(thisOffset)));
+      }
+      out.write(strips[i]);
+    }
+    if (isTiled) {
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+    }
+    else {
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+    }
+    long endFP = out.getFilePointer();
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Offset before IFD write: {} Seeking to: {}",
+          out.getFilePointer(), fp);
+    }
+    out.seek(fp);
+
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Writing tile/strip offsets: {}",
+          Arrays.toString(toPrimitiveArray(offsets)));
+      LOGGER.debug("Writing tile/strip byte counts: {}",
+          Arrays.toString(toPrimitiveArray(byteCounts)));
+    }
+    writeIFD(ifd, last ? 0 : endFP);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Offset after IFD write: {}", out.getFilePointer());
+    }
+  }
 }

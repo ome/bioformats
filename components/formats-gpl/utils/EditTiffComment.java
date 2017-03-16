@@ -61,6 +61,7 @@ public class EditTiffComment {
       RandomAccessInputStream in = new RandomAccessInputStream(f);
       saver.overwriteComment(in, xml);
       in.close();
+      saver.close();
       System.out.println(" [done]");
     }
   }
