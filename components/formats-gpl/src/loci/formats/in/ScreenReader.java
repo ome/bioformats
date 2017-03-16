@@ -32,6 +32,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 import loci.common.DataTools;
 import loci.common.IniList;
@@ -197,7 +199,7 @@ public class ScreenReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int spotIndex = seriesMap.get(getCoreIndex());
-    final List<String> allFiles = new ArrayList<String>();
+    final Set<String> allFiles = new LinkedHashSet<String>();
     try {
       for (String file : files[spotIndex]) {
         reader.close();
