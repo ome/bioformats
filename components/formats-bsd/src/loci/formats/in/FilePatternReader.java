@@ -382,6 +382,18 @@ public class FilePatternReader extends FormatReader {
       }
     }
     setSeries(0);
+
+    MetadataStore store = makeFilterMetadata();
+
+    String channelNamesEntry = pairs.get("ChannelNames");
+    if (null != channelNamesEntry) {
+      String[] channelNames = channelNamesEntry.split(",", -1);
+      for (int s = 0; s < getSeriesCount(); s++) {
+        for (int i = 0; i < channelNames.length; i++) {
+          store.setChannelName(channelNames[i], s, i);
+        }
+      }
+    }
   }
 
 }
