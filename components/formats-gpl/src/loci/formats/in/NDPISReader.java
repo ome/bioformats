@@ -222,7 +222,7 @@ public class NDPISReader extends FormatReader {
       store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER),getSeries(), c);
 
       bandUsed[c] = 0;
-      if (readers[c].getSizeC()>=3) {
+      if (samplesPerPixel[c]>=3) {
         // define band used based on emission wavelength
         // wavelength = 0  Colour Image
         // 380 =< wavelength <= 490 Blue
