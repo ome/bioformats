@@ -154,6 +154,7 @@ public class PictReader extends FormatReader {
         v.write(new JPEGCodec().decompress(s, options));
       }
 
+      s.close();
       s = new RandomAccessInputStream(v);
       s.seek(0);
       readPlane(s, x, y, w, h, buf);

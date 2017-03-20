@@ -58,19 +58,19 @@ public class BioFormatsExtensionPrinter {
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("Generating list of Bio-Formats supported suffixes...");
-		IFormatReader reader = new ImageReader();
-		String[] suffixes = reader.getSuffixes();
+		try (IFormatReader reader = new ImageReader()) {
+			String[] suffixes = reader.getSuffixes();
 
-		PrintWriter fo = null;
+			PrintWriter fo = null;
 
-		fo =
-      new PrintWriter(new File("BioFormatsSuffixes.txt"), Constants.ENCODING);
+			fo =
+				new PrintWriter(new File("BioFormatsSuffixes.txt"), Constants.ENCODING);
 
-		for (String s : suffixes) fo.println("*." + s);
+			for (String s : suffixes) fo.println("*." + s);
 
-		fo.close();
-
-		System.out.println(suffixes.length + " suffixes discovered.");
+			fo.close();
+			System.out.println(suffixes.length + " suffixes discovered.");
+		}
 	}
 
 }

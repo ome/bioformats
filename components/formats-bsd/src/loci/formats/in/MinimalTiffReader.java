@@ -34,9 +34,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +52,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
-import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**

@@ -274,7 +274,7 @@ public class UpgradeChecker {
       boolean success = install(urlDir + File.separator + jar,
         downloadDir + File.separator + jar);
       if (overallSuccess) {
-        success = overallSuccess;
+        overallSuccess = success;
       }
     }
     return overallSuccess;

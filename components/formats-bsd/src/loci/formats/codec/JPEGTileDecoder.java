@@ -38,10 +38,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Hashtable;
 
-import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.formats.FormatException;

@@ -149,6 +149,7 @@ public class JAIIIOServiceImpl extends AbstractService
       param.setResolution(options.resolution.intValue());
     }
     BufferedImage image = reader.read(0, param);
+    mciis.close();
     reader.dispose();
     return image;
   }
@@ -174,6 +175,7 @@ public class JAIIIOServiceImpl extends AbstractService
       param.setResolution(options.resolution.intValue());
     }
     Raster raster = reader.readRaster(0, param);
+    mciis.close();
     reader.dispose();
     return raster;
   }

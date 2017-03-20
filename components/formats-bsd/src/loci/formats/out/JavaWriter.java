@@ -87,8 +87,6 @@ public class JavaWriter extends FormatWriter {
     // write array
     String varName = "series" + series + "Plane" + no;
     Object array = DataTools.makeDataArray(buf, bpp, fp, little);
-    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
-    int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
 
     out.seek(out.length());
     if (array instanceof byte[]) {

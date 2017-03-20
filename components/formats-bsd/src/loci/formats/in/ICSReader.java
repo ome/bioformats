@@ -52,8 +52,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Frequency;
@@ -609,7 +607,6 @@ public class ICSReader extends FormatReader {
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int len = FormatTools.getPlaneSize(this);
-    int pixel = bpp * getRGBChannelCount();
     int rowLen = FormatTools.getPlaneSize(this, w, 1);
 
     int[] coordinates = getZCTCoords(no);
@@ -792,9 +789,15 @@ public class ICSReader extends FormatReader {
       versionTwo = true;
     }
     else {
-      if (idsId == null) throw new FormatException("No IDS file found.");
+      if (idsId == null) {
+        f.close();
+        throw new FormatException("No IDS file found.");
+      }
       Location idsFile = new Location(idsId);
-      if (!idsFile.exists()) throw new FormatException("IDS file not found.");
+      if (!idsFile.exists()) {
+        f.close();
+        throw new FormatException("IDS file not found.");
+      }
       currentIdsId = idsId;
       in = new RandomAccessInputStream(currentIdsId);
     }
@@ -1854,7 +1857,6 @@ public class ICSReader extends FormatReader {
   private String[] findKeyValueForCategory(String[] tokens,
                                            String[][] regexesArray) {
     String[] keyValue = null;
-    int index = 0;
     for (String[] regexes : regexesArray) {
       if (compareTokens(tokens, 1, regexes, 0)) {
         int splitIndex = 1 + regexes.length; // add one for the category
@@ -1863,7 +1865,6 @@ public class ICSReader extends FormatReader {
         keyValue = new String[] { key, value };
         break;
       }
-      ++index;
     }
     return keyValue;
   }

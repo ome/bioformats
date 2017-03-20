@@ -48,10 +48,7 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
-import ome.units.UNITS;
 
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
@@ -78,7 +75,6 @@ public class NRRDReader extends FormatReader {
 
   private String[] pixelSizes;
 
-  private boolean lookForCompanion = true;
   private boolean initializeHelper = false;
 
   // -- Constructor --

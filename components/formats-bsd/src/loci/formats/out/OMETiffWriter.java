@@ -56,7 +56,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffSaver;

@@ -910,10 +910,10 @@ public class IM3Reader extends FormatReader {
    * Write a summary of each record to STDOUT
    *
    * @param args
+   * @throws IOException 
    */
-  static public void main(String [] args){
-    final IM3Reader reader = new IM3Reader();
-    try {
+  static public void main(String [] args) throws IOException{
+    try (IM3Reader reader = new IM3Reader()) {
       reader.setId(args[0]);
       reader.writeSummary();
     } catch (FormatException e) {
