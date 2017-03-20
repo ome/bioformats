@@ -10,6 +10,8 @@ File format improvements:
    - added support for DICOMDIR files, which allow multiple DICOM files in a single 
      directory to be opened as a single dataset
    - plane position values for values X, Y and Z are now being set in OME-XML
+   - correctly read the physical size X and Y values based on the available 
+     `specification <http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_10.7.html#sect_10.7.1.3>`_
 * Nikon NIS-Elements ND2
    - performance improvements based on reading chunkmap. Processing of the chunkmap 
      can be disabled via the MetadataOptions API using the boolean option 
@@ -21,12 +23,6 @@ File format improvements:
      This can be used via the bfconvert command line tool by setting the value of 
      option ``ometiff.companion`` to the name of the companion file to use. For example 
      ``bfconvert -option ometiff.companion outputFile.companion.ome inputFile.tiff outputFile.ome.tiff``
-
-Bug fixes:
-
-* DICOM
-   - correctly read the physical size X and Y values based on the available 
-     `specification <http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_10.7.html#sect_10.7.1.3>`_
 * CellVoyager
    - metadata fixes specifically the naming of plates. Additional refactoring of 
      the reader for general maintainability
