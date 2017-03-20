@@ -53,8 +53,6 @@ import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 

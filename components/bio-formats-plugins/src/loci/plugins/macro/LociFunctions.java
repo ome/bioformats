@@ -29,10 +29,8 @@ package loci.plugins.macro;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.process.ImageProcessor;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import loci.common.Region;
 import loci.common.services.DependencyException;
@@ -54,8 +52,6 @@ import loci.plugins.in.ImportProcess;
 import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -422,8 +418,9 @@ public class LociFunctions extends MacroFunctions {
   public void getFormat(String id, String[] format)
     throws FormatException, IOException
   {
-    ImageReader reader = new ImageReader();
-    format[0] = reader.getFormat(id);
+    try (ImageReader reader = new ImageReader()) {
+      format[0] = reader.getFormat(id);
+    }
   }
 
   public void setId(String id) throws FormatException, IOException {

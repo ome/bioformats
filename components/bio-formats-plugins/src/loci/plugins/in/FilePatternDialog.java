@@ -34,19 +34,15 @@ import com.jgoodies.forms.layout.FormLayout;
 import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Label;
-import java.awt.Panel;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.JPanel;
 
 import ij.IJ;
