@@ -122,9 +122,7 @@ public class NDPISReader extends FormatReader {
         }
       } else {    // not interleaved
         final int offs = w * h;
-        for (int i = 0; i < buf.length; i++) {
-          buf[i] = bufReader[i + offs * band];
-        }
+        System.arraycopy(bufReader,offs * band,buf,0,buf.length);
       }
       return buf;
     }
