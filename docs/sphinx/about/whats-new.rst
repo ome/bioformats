@@ -1,6 +1,52 @@
 Version history
 ===============
 
+5.4.0 (2017 March 21)
+---------------------
+
+File format improvements:
+
+* DICOM
+   - added support for DICOMDIR files, which allow multiple DICOM files in a single 
+     directory to be opened as a single dataset
+   - plane position values for values X, Y and Z are now being set in OME-XML
+   - correctly read the physical size X and Y values based on the available 
+     `specification <http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_10.7.html#sect_10.7.1.3>`_
+* Nikon NIS-Elements ND2
+   - performance improvements based on reading chunkmap. Processing of the chunkmap 
+     can be disabled via the MetadataOptions API using the boolean option 
+     ``nativend2.chunkmap``. For ImageJ users this option can be accessed via a checkbox 
+     in the Nikon ND2 section of the Bio-Formats configuration dialog 
+     :menuselection:`Plugins --> Bio-Formats --> Bio-Formats Plugins Configuration` (thanks to Christian Sachs)
+* OME-TIFF
+   - added an option to save an OME-TIFF dataset as a binary TIFF and companion XML. 
+     This can be used via the bfconvert command line tool by setting the value of 
+     option ``ometiff.companion`` to the name of the companion file to use. For example 
+     ``bfconvert -option ometiff.companion outputFile.companion.ome inputFile.tiff outputFile.ome.tiff``
+* CellVoyager
+   - metadata fixes specifically the naming of plates. Additional refactoring of 
+     the reader for general maintainability
+* Gatan Digital Micrograph
+   - previously missing Image-Instrument reference has been added to OME-XML
+* TiffSaver
+   - ensure open resources are closed under all possible scenarios
+
+Updated build system:
+
+* updated dependency for NetCDF to 4.3.22
+* updated copyright headers from 2016 to 2017 and reviewed and fixed any incorrect 
+  header descriptions
+* documentation has been migrated to use ``.rst`` file format for Sphinx files
+* reviewed and cleaned up warnings such as unused variables and imports
+* added CellVoyager datasets to automated testing via continuous integration
+* unified the semantics for creating temporary directories within unit tests
+
+Documentation improvements:
+
+* fixed link for PerkinElmer UltraVIEW system
+* fixed links for NIfTI public specification and data sets
+* available software for Hamamatsu ndpi has been updated from NDP.view to NDP.view2
+
 5.3.4 (2017 February 21)
 ------------------------
 
