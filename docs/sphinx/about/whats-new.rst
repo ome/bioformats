@@ -30,6 +30,17 @@ File format improvements:
    - previously missing Image-Instrument reference has been added to OME-XML
 * TiffSaver
    - ensure open resources are closed under all possible scenarios
+* Zeiss CZI
+   - improved performance of large uncompressed images. When tiles from a
+     large uncompressed image with no internal tiling are requested, only the
+     specific tile specified in the call to openBytes is read from disk,
+     instead of the entire image being read and then copied
+* Zeiss AxioVision ZVI (Zeiss Vision Image)
+   - ensure that the bitsPerPixel field is always set to match the final pixel
+     type, and populate any channel colors that were parsed in the metadata.
+     The bits per pixel update should only affect uint16 or int16 files where
+     the acquisition bit depth is not a multiple of 8, and the RGB channel
+     count is greater than 1
 
 Updated build system:
 
