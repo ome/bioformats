@@ -1418,8 +1418,8 @@ public class DicomReader extends FormatReader {
     LOGGER.trace("  instance = {}, originalInstance = {}", instance, originalInstance);
     LOGGER.trace("  checkSeries = {}", checkSeries);
     LOGGER.trace("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
-    LOGGER.debug("  currentX = {}, originalX = {}", currentX, originalX);
-    LOGGER.debug("  currentY = {}, originalY = {}", currentY, originalY);
+    LOGGER.trace("  currentX = {}, originalX = {}", currentX, originalX);
+    LOGGER.trace("  currentY = {}, originalY = {}", currentY, originalY);
 
     if (date == null || time == null || instance == null ||
       (checkSeries && fileSeries != originalSeries))
