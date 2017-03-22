@@ -275,7 +275,7 @@ public class DicomReader extends FormatReader {
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
-    if (fileList.size() > 1) {
+    if (fileList.size() > 1 || fileList.get(keys[getSeries()]).size() > 1) {
       int fileNumber = 0;
       if (fileList.get(keys[getSeries()]).size() > 1) {
         fileNumber = no / imagesPerFile;
@@ -1395,8 +1395,14 @@ public class DicomReader extends FormatReader {
     }
     stream.close();
 
+    LOGGER.trace("  date = {}, originalDate = {}", date, originalDate);
+    LOGGER.trace("  time = {}, originalTime = {}", time, originalTime);
+    LOGGER.trace("  instance = {}, originalInstance = {}", instance, originalInstance);
+    LOGGER.trace("  checkSeries = {}", checkSeries);
+    LOGGER.trace("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
+
     if (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries == originalSeries))
+      (checkSeries && fileSeries != originalSeries))
     {
       return;
     }
@@ -1412,6 +1418,9 @@ public class DicomReader extends FormatReader {
       timestamp = Integer.parseInt(originalTime);
     }
     catch (NumberFormatException e) { }
+
+    LOGGER.trace("  stamp = {}", stamp);
+    LOGGER.trace("  timestamp = {}", timestamp);
 
     if (date.equals(originalDate) && (Math.abs(stamp - timestamp) < 150)) {
       int position = Integer.parseInt(instance) - 1;
