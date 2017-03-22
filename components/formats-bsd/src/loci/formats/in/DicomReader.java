@@ -151,6 +151,7 @@ public class DicomReader extends FormatReader {
 
   private String originalDate, originalTime, originalInstance;
   private int originalSeries;
+  private int originalX, originalY;
 
   private DicomReader helper;
 
@@ -463,6 +464,8 @@ public class DicomReader extends FormatReader {
       date = time = imageType = null;
       originalDate = originalTime = originalInstance = null;
       originalSeries = 0;
+      originalX = 0;
+      originalY = 0;
       helper = null;
       companionFiles.clear();
       positionX.clear();
@@ -576,6 +579,7 @@ public class DicomReader extends FormatReader {
           int y = in.readShort();
           if (y > getSizeY()) {
             m.sizeY = y;
+            originalY = y;
           }
           addInfo(tag, getSizeY());
           break;
@@ -583,6 +587,7 @@ public class DicomReader extends FormatReader {
           int x = in.readShort();
           if (x > getSizeX()) {
             m.sizeX = x;
+            originalX = x;
           }
           addInfo(tag, getSizeX());
           break;
@@ -1371,8 +1376,9 @@ public class DicomReader extends FormatReader {
     int fileSeries = -1;
 
     String date = null, time = null, instance = null;
+    int currentX = 0, currentY = 0;
     while (date == null || time == null || instance == null ||
-      (checkSeries && fileSeries < 0))
+      (checkSeries && fileSeries < 0) || currentX == 0 || currentY == 0)
     {
       long fp = stream.getFilePointer();
       if (fp + 4 >= stream.length() || fp < 0) break;
@@ -1391,6 +1397,18 @@ public class DicomReader extends FormatReader {
       else if ("Series Number".equals(key)) {
         fileSeries = Integer.parseInt(stream.readString(elementLength).trim());
       }
+      else if (tag == ROWS) {
+        int y = stream.readShort();
+        if (y > currentY) {
+          currentY = y;
+        }
+      }
+      else if (tag == COLUMNS) {
+        int x = stream.readShort();
+        if (x > currentX) {
+          currentX = x;
+        }
+      }
       else stream.skipBytes(elementLength);
     }
     stream.close();
@@ -1400,11 +1418,17 @@ public class DicomReader extends FormatReader {
     LOGGER.trace("  instance = {}, originalInstance = {}", instance, originalInstance);
     LOGGER.trace("  checkSeries = {}", checkSeries);
     LOGGER.trace("  fileSeries = {}, originalSeries = {}", fileSeries, originalSeries);
+    LOGGER.debug("  currentX = {}, originalX = {}", currentX, originalX);
+    LOGGER.debug("  currentY = {}, originalY = {}", currentY, originalY);
 
     if (date == null || time == null || instance == null ||
       (checkSeries && fileSeries != originalSeries))
     {
       return;
+    }
+
+    if (currentX != originalX || currentY != originalY) {
+      fileSeries++;
     }
 
     int stamp = 0;
