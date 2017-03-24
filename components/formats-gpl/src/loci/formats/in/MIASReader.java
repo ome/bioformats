@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -613,6 +615,9 @@ public class MIASReader extends FormatReader {
       }
 
       tiffFiles = tmpFiles.toArray(new String[0]);
+      if (ArrayUtils.isEmpty(tiffFiles)){
+        throw new FormatException("Empty dataset - No tiff files were found.");
+      }
 
       Location firstTiff = new Location(tiffFiles[0]);
 
