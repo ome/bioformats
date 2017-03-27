@@ -1,7 +1,7 @@
 FocalPoint
 ==========
 
-`FocalPoint <http://www.bioinformatics.bbsrc.ac.uk/projects/focalpoint/>`_
+`FocalPoint <https://www.bioinformatics.babraham.ac.uk/projects/focalpoint/>`_
 is an image browser, similar to `Windows
 Explorer <http://en.wikipedia.org/wiki/Windows_Explorer>`_ or other
 `file manager <http://en.wikipedia.org/wiki/File_manager>`_ application,
