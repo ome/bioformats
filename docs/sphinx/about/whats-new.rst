@@ -7,25 +7,27 @@ Version history
 File format improvements:
 
 * DICOM
-   - added support for DICOMDIR files, which allow multiple DICOM files in a single 
-     directory to be opened as a single dataset
+   - added support for DICOMDIR files, which allow multiple DICOM files in a 
+     single directory to be opened as a single dataset
    - plane position values for values X, Y and Z are now being set in OME-XML
    - correctly read the physical size X and Y values based on the available 
      `specification <http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_10.7.html#sect_10.7.1.3>`_
 * Nikon NIS-Elements ND2
-   - performance improvements based on reading chunkmap. Processing of the chunkmap 
-     can be disabled via the MetadataOptions API using the boolean option 
-     ``nativend2.chunkmap``. For ImageJ users this option can be accessed via a checkbox 
-     in the Nikon ND2 section of the Bio-Formats configuration dialog 
+   - performance improvements based on reading chunkmap. Processing of the
+     chunkmap can be disabled via the MetadataOptions API using the boolean
+     option ``nativend2.chunkmap``. For ImageJ users this option can be
+     accessed via a checkbox in the Nikon ND2 section of the Bio-Formats
+     configuration dialog
      :menuselection:`Plugins --> Bio-Formats --> Bio-Formats Plugins Configuration` (thanks to Christian Sachs)
 * OME-TIFF
-   - added an option to save an OME-TIFF dataset as a binary TIFF and companion XML. 
-     This can be used via the bfconvert command line tool by setting the value of 
-     option ``ometiff.companion`` to the name of the companion file to use. For example 
-     ``bfconvert -option ometiff.companion outputFile.companion.ome inputFile.tiff outputFile.ome.tiff``
+   - added an option to save an OME-TIFF dataset as a binary TIFF and
+     companion XML. This can be used via the bfconvert command line tool by
+     setting the value of option ``ometiff.companion`` to the name of the
+     companion file to use. For example ``bfconvert -option ometiff.companion
+     outputFile.companion.ome inputFile.tiff outputFile.ome.tiff``
 * CellVoyager
-   - metadata fixes specifically the naming of plates. Additional refactoring of 
-     the reader for general maintainability
+   - metadata fixes specifically the naming of plates. Additional refactoring
+     of the reader for general maintainability
 * Gatan Digital Micrograph
    - previously missing Image-Instrument reference has been added to OME-XML
 * TiffSaver
@@ -33,14 +35,14 @@ File format improvements:
 * Zeiss CZI
    - improved performance of large uncompressed images. When tiles from a
      large uncompressed image with no internal tiling are requested, only the
-     specific tile specified in the call to openBytes is read from disk,
+     specific tile specified in the call to ``openBytes`` is read from disk,
      instead of the entire image being read and then copied
 * Zeiss AxioVision ZVI (Zeiss Vision Image)
-   - ensure that the bitsPerPixel field is always set to match the final pixel
-     type, and populate any channel colors that were parsed in the metadata.
-     The bits per pixel update should only affect uint16 or int16 files where
-     the acquisition bit depth is not a multiple of 8, and the RGB channel
-     count is greater than 1
+   - ensure that the ``bitsPerPixel`` field is always set to match the final
+     pixel type, and populate any channel colors that were parsed in the
+     metadata. The bits per pixel update should only affect ``uint16`` or 
+     ``int16`` files where the acquisition bit depth is not a multiple of 8, 
+     and the RGB channel count is greater than 1
 
 Updated build system:
 
