@@ -290,6 +290,9 @@ public class DicomReader extends FormatReader {
     int ec = isIndexed() ? 1 : getSizeC();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bytes = getSizeX() * getSizeY() * bpp * ec;
+    if (in == null) {
+      in = new RandomAccessInputStream(currentId);
+    }
     in.seek(offsets[no]);
 
     if (isRLE) {
