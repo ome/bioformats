@@ -106,7 +106,6 @@ Visualization and analysis applications
     focalpoint/index
     graphic-con/index
     icy/index
-    imago/index
     iqm/index
     macnif/index
     micromanager/index
