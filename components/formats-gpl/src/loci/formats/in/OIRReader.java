@@ -218,8 +218,10 @@ public class OIRReader extends FormatReader {
         }
       }
 
-      String laserId = MetadataTools.createLSID("LightSource", 0, ch.laserIndex);
-      store.setChannelLightSourceSettingsID(laserId, 0, c);
+      if (ch.laserIndex >= 0 && ch.laserIndex < lasers.size()) {
+        String laserId = MetadataTools.createLSID("LightSource", 0, ch.laserIndex);
+        store.setChannelLightSourceSettingsID(laserId, 0, c);
+      }
     }
   }
 
@@ -706,7 +708,7 @@ public class OIRReader extends FormatReader {
   class Channel {
     public String id;
     public String name;
-    public int laserIndex;
+    public int laserIndex = -1;
   }
 
   class Laser {
