@@ -114,8 +114,7 @@ public class BDReader extends FormatReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     String id = new Location(name).getAbsolutePath();
-    File tempf = new File(id);
-    boolean dirCheck = tempf.isDirectory();
+    boolean dirCheck = new Location(name).isDirectory();
     if (dirCheck) return false;
     if (name.endsWith(EXPERIMENT_FILE)) return true;
     if (!open) return false;
