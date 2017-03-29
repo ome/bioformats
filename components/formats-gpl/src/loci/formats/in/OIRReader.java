@@ -135,6 +135,7 @@ public class OIRReader extends FormatReader {
     m.littleEndian = true;
     m.sizeZ = 1;
     m.sizeC = 1;
+    m.sizeT = 1;
 
     long baseOffset = 96;
     in.seek(baseOffset);
@@ -149,7 +150,6 @@ public class OIRReader extends FormatReader {
     readXMLBlock();
 
     m.sizeC *= channels.size();
-    m.sizeT = 1;
     m.dimensionOrder = "XYCZT";
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
 
@@ -477,6 +477,9 @@ public class OIRReader extends FormatReader {
 
                 if (name.equals("ZSTACK")) {
                   m.sizeZ = Integer.parseInt(size.getTextContent());
+                }
+                else if (name.equals("TIMELAPSE")) {
+                  m.sizeT = Integer.parseInt(size.getTextContent());
                 }
                 else if (name.equals("LAMBDA")) {
                   m.sizeC = Integer.parseInt(size.getTextContent());
