@@ -251,7 +251,7 @@ public class OIRReader extends FormatReader {
       else if (xmlLength < 0 || xmlLength >= (in.length() - in.getFilePointer())) {
         in.seek(in.getFilePointer() - 40);
         xmlLength = in.readInt();
-        if (xmlLength + in.getFilePointer() > in.length()) {
+        if (xmlLength <= 0 || xmlLength + in.getFilePointer() > in.length()) {
           return;
         }
         String uid = in.readString(xmlLength);
@@ -662,6 +662,7 @@ public class OIRReader extends FormatReader {
       in.seek(offset);
       if (check == 2) {
         in.seek(offset + checkLength + 8);
+        return true;
       }
       return false;
     }
