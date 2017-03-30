@@ -142,8 +142,10 @@ public class OIRReader extends FormatReader {
     m.sizeC = 1;
     m.sizeT = 1;
 
-    long baseOffset = 96;
+    long baseOffset = 16;
     in.seek(baseOffset);
+    while (in.readInt() != 0xffffffff);
+    in.skipBytes(4);
 
     // seek past reference image blocks
     while (skipPixelBlock(false));
