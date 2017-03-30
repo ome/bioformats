@@ -351,6 +351,13 @@ public class OIRReader extends FormatReader {
         m.sizeY = Integer.parseInt(height.getTextContent());
       }
 
+      NodeList axisNodes = imageInfo.getElementsByTagName("commonimage:axis");
+      if (axisNodes != null) {
+        for (int i=0; i<axisNodes.getLength(); i++) {
+          parseAxis((Element) axisNodes.item(i));
+        }
+      }
+
       NodeList channelNodes = imageInfo.getElementsByTagName("commonphase:channel");
       for (int i=0; i<channelNodes.getLength(); i++) {
         Channel c = new Channel();
@@ -473,33 +480,7 @@ public class OIRReader extends FormatReader {
               (!dimensionAxis.hasAttribute("paramEnable") ||
               dimensionAxis.getAttribute("paramEnable").equals("true")))
             {
-              Element axis = getFirstChild(dimensionAxis, "commonparam:axis");
-              Element size = getFirstChild(dimensionAxis, "commonparam:maxSize");
-              Element start = getFirstChild(dimensionAxis, "commonparam:startPosition");
-              Element end = getFirstChild(dimensionAxis, "commonparam:endPosition");
-              Element step = getFirstChild(dimensionAxis, "commonparam:step");
-
-              if (axis != null && size != null) {
-                String name = axis.getTextContent();
-
-                if (name.equals("ZSTACK")) {
-                  m.sizeZ = Integer.parseInt(size.getTextContent());
-                }
-                else if (name.equals("TIMELAPSE")) {
-                  m.sizeT = Integer.parseInt(size.getTextContent());
-                }
-                else if (name.equals("LAMBDA")) {
-                  m.sizeC = Integer.parseInt(size.getTextContent());
-                  m.moduloC.type = FormatTools.SPECTRA;
-                  m.moduloC.start = DataTools.parseDouble(start.getTextContent());
-                  m.moduloC.step = DataTools.parseDouble(step.getTextContent());
-                  // calculate the end point, as the stored value may be too large
-                  m.moduloC.end = m.moduloC.start + m.moduloC.step * (m.sizeC - 1);
-                }
-                else {
-                  LOGGER.warn("Unhandled axis '{}'", name);
-                }
-              }
+              parseAxis(dimensionAxis);
             }
           }
         }
@@ -611,6 +592,41 @@ public class OIRReader extends FormatReader {
             }
           }
         }
+      }
+    }
+  }
+
+  private void parseAxis(Element dimensionAxis) {
+    CoreMetadata m = core.get(0);
+    Element axis = getFirstChild(dimensionAxis, "commonparam:axis");
+    Element size = getFirstChild(dimensionAxis, "commonparam:maxSize");
+    Element start = getFirstChild(dimensionAxis, "commonparam:startPosition");
+    Element end = getFirstChild(dimensionAxis, "commonparam:endPosition");
+    Element step = getFirstChild(dimensionAxis, "commonparam:step");
+
+    if (axis != null && size != null) {
+      String name = axis.getTextContent();
+
+      if (name.equals("ZSTACK")) {
+        if (m.sizeZ <= 1) {
+          m.sizeZ = Integer.parseInt(size.getTextContent());
+        }
+      }
+      else if (name.equals("TIMELAPSE")) {
+        if (m.sizeT <= 1) {
+          m.sizeT = Integer.parseInt(size.getTextContent());
+        }
+      }
+      else if (name.equals("LAMBDA")) {
+        m.sizeC = Integer.parseInt(size.getTextContent());
+        m.moduloC.type = FormatTools.SPECTRA;
+        m.moduloC.start = DataTools.parseDouble(start.getTextContent());
+        m.moduloC.step = DataTools.parseDouble(step.getTextContent());
+        // calculate the end point, as the stored value may be too large
+        m.moduloC.end = m.moduloC.start + m.moduloC.step * (m.sizeC - 1);
+      }
+      else {
+        LOGGER.warn("Unhandled axis '{}'", name);
       }
     }
   }
