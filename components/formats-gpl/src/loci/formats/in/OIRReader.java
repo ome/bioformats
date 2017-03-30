@@ -364,6 +364,7 @@ public class OIRReader extends FormatReader {
         Element channelNode = (Element) channelNodes.item(i);
 
         c.id = channelNode.getAttribute("id");
+        int index = Integer.parseInt(channelNode.getAttribute("order")) - 1;
 
         Element name = getFirstChild(channelNode, "commonphase:name");
         if (name != null) {
@@ -424,7 +425,15 @@ public class OIRReader extends FormatReader {
           }
         }
 
-        channels.add(c);
+        while (index > channels.size()) {
+          channels.add(null);
+        }
+        if (index == channels.size()) {
+          channels.add(c);
+        }
+        else {
+          channels.set(index, c);
+        }
       }
     }
 
