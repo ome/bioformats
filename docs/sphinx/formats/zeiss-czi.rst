@@ -53,7 +53,7 @@ Utility: |Good|
 format, we are not able to distribute them to third parties.**
 
 Additional options are available for reading this format type, see
-doc link for information.
+:doc:`options` for information.
 
 JPEG-XR compressed CZI files are supported on the following 64-bit platforms:
 

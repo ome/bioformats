@@ -57,7 +57,7 @@ Utility: |Very good|
 format, we are not able to distribute them to third parties.**
 
 Additional options are available for reading this format type, see
-doc link for information.
+:doc:`options` for information.
 
 LAS stands for "Leica Application Suite". 
 AF stands for "Advanced Fluorescence". 

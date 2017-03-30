@@ -76,6 +76,10 @@ defined for each section:
     Additional relevant information e.g. that we cannot distribute 
     specification documents to third parties
 
+  options
+    A link to additional Reader options documentation where they are available
+    for the format
+
 Dataset structure table
 -----------------------
 
