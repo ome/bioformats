@@ -48,6 +48,5 @@ Utility: |Fair|
 **Additional Information**
 
 
-
 * Only files containing frame, line and pixel clock information 
   are currently supported

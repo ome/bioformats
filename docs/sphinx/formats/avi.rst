@@ -56,7 +56,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-
 * Bio-Formats can save image stacks as AVI (uncompressed). 
 * The following codecs are supported for reading: 
 

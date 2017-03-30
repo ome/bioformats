@@ -52,7 +52,6 @@ Utility: |Very good|
 **Additional Information**
 
 
-
 * ICS version 1.0 datasets have two files - an .ics file that contains 
   all of the metadata in plain-text format, and an .ids file that 
   contains all of the pixel data. 

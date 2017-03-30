@@ -46,7 +46,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-
 QuickTime for Java is required for reading vector files and some 
 compressed files but note that this is no longer available from Apple. 
 

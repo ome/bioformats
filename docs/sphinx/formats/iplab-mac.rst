@@ -50,5 +50,4 @@ Utility: |Fair|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-
 iVision-Mac was formerly called IPLab for Macintosh.

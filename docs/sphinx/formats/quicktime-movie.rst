@@ -59,7 +59,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-
 Bio-Formats has two modes of operation for QuickTime: 
 
 * The legacy QTJava mode requires QuickTime for Java which will only run 

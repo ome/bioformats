@@ -51,5 +51,4 @@ Utility: |Fair|
 **Additional Information**
 
 
-
 .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.

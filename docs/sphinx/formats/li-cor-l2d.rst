@@ -48,6 +48,5 @@ Utility: |Good|
 **Additional Information**
 
 
-
 L2D datasets cannot be imported into OME using server-side import. 
 They can, however, be imported from ImageJ, or using the omeul utility.

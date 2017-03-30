@@ -57,7 +57,6 @@ Utility: |Fair|
 **Additional Information**
 
 
-
 - There are three distinct Imaris formats: 
     #. the old binary format (introduced in Imaris version 2.7) 
     #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) 

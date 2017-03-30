@@ -53,7 +53,6 @@ Utility: |Very good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-
 LCS stands for "Leica Confocal Software". 
 LEI presumably stands for "Leica Experimental Information". 
 

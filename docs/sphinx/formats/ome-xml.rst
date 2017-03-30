@@ -50,7 +50,6 @@ Utility: |Outstanding|
 **Additional Information**
 
 
-
 Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` 
 to read OME-XML files. 
 

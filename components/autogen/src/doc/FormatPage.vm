@@ -99,8 +99,8 @@ format, we are not able to distribute them to third parties.**
 #if ($options)
 Additional options are available for reading this format type, see
 :doc:`options` for information.
-#end
 
+#end
 #foreach ($note in $notes)
 $note
 #end

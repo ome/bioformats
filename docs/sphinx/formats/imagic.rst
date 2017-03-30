@@ -51,6 +51,5 @@ Utility: |Good|
 **Additional Information**
 
 
-
 .. seealso:: 
   `IMAGIC specification <http://www.imagescience.de/em2em.html>`_

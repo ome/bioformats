@@ -54,7 +54,6 @@ Utility: |Fair|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-
 Commercial applications that support IPLab include: 
 
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 

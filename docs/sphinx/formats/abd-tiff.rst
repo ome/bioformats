@@ -50,6 +50,5 @@ Utility: |Good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-
 With a few minor exceptions, the ABD-TIFF format is identical to the 
 Fluoview TIFF format.

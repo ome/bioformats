@@ -51,7 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
-
 Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_  
 API to read and write PNG files. 
 

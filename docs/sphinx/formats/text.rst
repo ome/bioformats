@@ -44,5 +44,4 @@ Utility: |Poor|
 **Additional Information**
 
 
-
 Reads tabular pixel data produced by a variety of software.

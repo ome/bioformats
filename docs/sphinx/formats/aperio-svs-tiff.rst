@@ -51,6 +51,5 @@ Utility: |Good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-
 .. seealso:: 
   `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
