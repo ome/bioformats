@@ -98,8 +98,13 @@ public class OIRReader extends FormatReader {
     for (int i=start; i<end; i+=channels.size()) {
       Long offset = pixelBlocks.get(i);
       byte[] pixels = readPixelBlock(offset, false);
-      System.arraycopy(pixels, 0, buf, nextPointer, pixels.length);
-      nextPointer += pixels.length;
+      if (pixels != null) {
+        int length = (int) Math.min(pixels.length, buf.length - nextPointer);
+        if (length > 0 && nextPointer < buf.length) {
+          System.arraycopy(pixels, 0, buf, nextPointer, length);
+          nextPointer += length;
+        }
+      }
     }
 
     return buf;
@@ -621,6 +626,9 @@ public class OIRReader extends FormatReader {
 
   private boolean skipPixelBlock(boolean store) throws IOException {
     long offset = in.getFilePointer();
+    if (offset + 8 >= in.length()) {
+      return false;
+    }
     int checkLength = in.readInt();
     int check = in.readInt();
     if (check != 3) {
