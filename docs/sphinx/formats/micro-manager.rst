@@ -50,6 +50,7 @@ Utility: |Good|
 **Additional Information**
 
 
+
 - Bio-Formats will recognize a :file:`*metadata.txt` file as part of a
   Micro-Manager fileset if pointed at it and will load the fileset including
   the companion TIFF files.

@@ -47,6 +47,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 This should not be confused with the more common Zeiss LSM format, 
 which has a similar extension.  As far as we know, the Axio CSM 700 system is 
 the only one which saves files in the .lms format.

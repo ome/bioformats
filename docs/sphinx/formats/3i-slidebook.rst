@@ -49,6 +49,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 We strongly encourage users to export their .sld files to OME-TIFF 
 using the SlideBook software.  Bio-Formats is not likely to support the full 
 range of metadata that is included in .sld files, and so exporting to 

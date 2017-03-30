@@ -53,6 +53,7 @@ Utility: |Good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+
 - The Deltavision format is based on the Medical Research Council (MRC) file format. 
 - Commercial applications that support DeltaVision include: 
 

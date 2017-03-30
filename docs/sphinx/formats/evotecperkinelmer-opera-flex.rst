@@ -47,6 +47,7 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 The LuraWave LWF decoder library (i.e. lwf\_jsdk2.6.jar) with 
 license code is required to decode wavelet-compressed Flex files. 
 

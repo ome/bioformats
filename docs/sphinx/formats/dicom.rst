@@ -57,6 +57,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 * DICOM stands for "Digital Imaging and Communication in Medicine". 
 * Bio-Formats supports both compressed and uncompressed DICOM files. 
 

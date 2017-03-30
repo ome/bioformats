@@ -56,6 +56,7 @@ Utility: |Very good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+
 Bio-Formats uses a modified version of the `Apache Jakarta POI 
 <http://jakarta.apache.org/poi/>`_ library to read OIB files. 
 OIF stands for "Original Imaging Format". 

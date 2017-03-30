@@ -46,6 +46,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 Bio-Formats uses a modified version of the `Apache Jakarta 
 POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. 
 

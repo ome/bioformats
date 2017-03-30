@@ -53,5 +53,6 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 Bio-Formats uses a modified version of the `Apache Jakarta 
 POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.

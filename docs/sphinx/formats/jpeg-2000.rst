@@ -51,5 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. 
 JPEG stands for "Joint Photographic Experts Group".

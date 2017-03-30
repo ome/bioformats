@@ -47,6 +47,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 .. seealso:: 
   `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_ 
   `FITS Support Office <http://fits.gsfc.nasa.gov/>`_

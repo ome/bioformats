@@ -54,6 +54,7 @@ Utility: |Fair|
 **Additional Information**
 
 
+
 Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). 
 Bio-Formats can save image stacks as TIFF or BigTIFF. 
 

@@ -53,6 +53,9 @@ Utility: |Very good|
 **Additional Information**
 
 
+Additional options are available for reading this format type, see
+doc link for information.
+
 There are two distinct versions of ND2: an old version, which uses 
 JPEG-2000 compression, and a new version which is either uncompressed or 
 Zip-compressed.  We are not aware of the version number or release date 

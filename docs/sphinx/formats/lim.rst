@@ -48,6 +48,7 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 Bio-Formats only supports uncompressed LIM files. 
 
 Commercial applications that support LIM include: 

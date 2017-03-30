@@ -1208,6 +1208,7 @@ utilityRating = Very good
 privateSpecification = true
 reader = LIFReader
 mif = true
+options = true
 notes = LAS stands for "Leica Application Suite". \n
 AF stands for "Advanced Fluorescence". \n
 \n
@@ -1567,6 +1568,7 @@ presenceRating = Very good
 utilityRating = Very good
 reader = NativeND2Reader, LegacyND2Reader
 mif = true
+options = true
 notes = There are two distinct versions of ND2: an old version, which uses \n
 JPEG-2000 compression, and a new version which is either uncompressed or \n
 Zip-compressed.  We are not aware of the version number or release date \n
@@ -2469,6 +2471,7 @@ privateSpecification = true
 pyramid = yes
 reader = ZeissCZIReader
 mif = true
+options = true
 notes = JPEG-XR compressed CZI files are supported on the following 64-bit platforms:\n
 \n
 * Windows 7 and above with `Visual Studio 2015 C++ Redistributable <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_\n

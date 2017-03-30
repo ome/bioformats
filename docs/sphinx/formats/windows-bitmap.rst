@@ -49,6 +49,7 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 Compressed BMP files are currently not supported. 
 
 .. seealso:: 

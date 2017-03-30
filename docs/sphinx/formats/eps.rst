@@ -51,5 +51,6 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 * Bio-Formats can save individual planes as EPS. 
 * Certain types of compressed EPS files are not supported.

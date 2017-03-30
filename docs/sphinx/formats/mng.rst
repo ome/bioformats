@@ -53,6 +53,7 @@ Utility: |Poor|
 **Additional Information**
 
 
+
 .. seealso:: 
   `MNG homepage <http://www.libpng.org/pub/mng/>`_  
   `MNG specification <http://www.libpng.org/pub/mng/spec>`_
