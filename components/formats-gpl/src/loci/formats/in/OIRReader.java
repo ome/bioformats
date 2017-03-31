@@ -67,6 +67,7 @@ public class OIRReader extends FormatReader {
   private Length physicalSizeY;
   private Length physicalSizeZ;
   private Timestamp acquisitionDate;
+  private int defaultXMLSkip = 36;
 
   // -- Constructor --
 
@@ -124,6 +125,7 @@ public class OIRReader extends FormatReader {
       physicalSizeY = null;
       physicalSizeZ = null;
       acquisitionDate = null;
+      defaultXMLSkip = 36;
     }
   }
 
@@ -235,13 +237,17 @@ public class OIRReader extends FormatReader {
   // -- Helper methods --
 
   private void readXMLBlock() throws FormatException, IOException {
+    long offset = in.getFilePointer();
+    if (in.getFilePointer() + 8 >= in.length()) {
+      return;
+    }
     // total block length could include multiple strings of XML
     int totalBlockLength = in.readInt();
     long end = in.getFilePointer() + totalBlockLength - 4;
     in.skipBytes(4);
 
     while (in.getFilePointer() < end) {
-      in.skipBytes(36);
+      in.skipBytes(defaultXMLSkip);
       int xmlLength = in.readInt();
       if (xmlLength <= 32) {
         xmlLength = in.readInt();
@@ -256,6 +262,18 @@ public class OIRReader extends FormatReader {
         }
         String uid = in.readString(xmlLength);
         xmlLength = in.readInt();
+        if (xmlLength < 0 || xmlLength > totalBlockLength) {
+          in.seek(offset + 4);
+          int skipped = 0;
+          while (in.readInt() != totalBlockLength - skipped) {
+            skipped += 4;
+            if (in.getFilePointer() + 4 >= in.length()) {
+              return;
+            }
+          }
+          xmlLength = totalBlockLength - skipped;
+          defaultXMLSkip = skipped - 4;
+        }
       }
 
       if (xmlLength <= 32) {
@@ -292,19 +310,28 @@ public class OIRReader extends FormatReader {
     }
   }
 
-  private void parseFrameProperties(Element root) {
+  private void parseFrameProperties(Element root) throws FormatException {
     CoreMetadata m = core.get(0);
 
     Element imageDefinition = getFirstChild(root, "commonframe:imageDefinition");
     if (imageDefinition != null) {
       Element width = getFirstChild(imageDefinition, "base:width");
       Element height = getFirstChild(imageDefinition, "base:height");
+      Element depth = getFirstChild(imageDefinition, "base:depth");
+      Element bitCount = getFirstChild(imageDefinition, "base:bitCounts");
 
       if (width != null) {
         m.sizeX = Integer.parseInt(width.getTextContent());
       }
       if (height != null) {
         m.sizeY = Integer.parseInt(height.getTextContent());
+      }
+      if (depth != null) {
+        int bytes = Integer.parseInt(depth.getTextContent());
+        m.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, false);
+      }
+      if (bitCount != null) {
+        m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
       }
     }
   }
@@ -437,7 +464,17 @@ public class OIRReader extends FormatReader {
       }
     }
 
+    for (int i=0; i<channels.size(); i++) {
+      if (channels.get(i) == null) {
+        channels.remove(i);
+        i--;
+      }
+    }
+
     Element acquisition = getFirstChild(root, "commonimage:acquisition");
+    if (acquisition == null) {
+      acquisition = getFirstChild(root, "lsmimage:acquisition");
+    }
     if (acquisition != null) {
       Element microscopeConfiguration = getFirstChild(acquisition, "commonimage:microscopeConfiguration");
       if (microscopeConfiguration != null) {
@@ -477,6 +514,9 @@ public class OIRReader extends FormatReader {
 
 
       Element imagingParam = getFirstChild(acquisition, "commonimage:imagingParam");
+      if (imagingParam == null) {
+        imagingParam = getFirstChild(acquisition, "lsmimage:imagingParam");
+      }
 
       if (imagingParam != null) {
         NodeList axes = imagingParam.getElementsByTagName("commonparam:axis");
@@ -552,6 +592,26 @@ public class OIRReader extends FormatReader {
           }
         }
 
+        Element resolution = getFirstChild(imagingParam, "commonparam:pixelResolution");
+        if (resolution != null) {
+          Element x = getFirstChild(resolution, "commonparam:x");
+          Element y = getFirstChild(resolution, "commonparam:y");
+          Element z = getFirstChild(resolution, "commonparam:z");
+
+          if (x != null && physicalSizeX == null) {
+            Double xValue = DataTools.parseDouble(x.getTextContent());
+            physicalSizeX = FormatTools.getPhysicalSize(xValue, null);
+          }
+          if (y != null && physicalSizeY == null) {
+            Double yValue = DataTools.parseDouble(y.getTextContent());
+            physicalSizeY = FormatTools.getPhysicalSize(yValue, null);
+          }
+          if (z != null && physicalSizeZ == null) {
+            Double zValue = DataTools.parseDouble(z.getTextContent());
+            physicalSizeZ = FormatTools.getPhysicalSize(zValue, null);
+          }
+        }
+
       }
 
       NodeList imagingMainLasers = acquisition.getElementsByTagName("lsmimage:imagingMainLaser");
@@ -576,31 +636,67 @@ public class OIRReader extends FormatReader {
       }
 
       NodeList channelLinkages = acquisition.getElementsByTagName("commonphase:channel");
-      if (channelLinkages != null) {
+      boolean appendChannels = channels.size() == 0;
+      if (channelLinkages != null && channelLinkages.getLength() > 0) {
         for (int i=0; i<channelLinkages.getLength(); i++) {
           Element channel = (Element) channelLinkages.item(i);
-          String id = channel.getAttribute("id");
-          NodeList laserIds = channel.getElementsByTagName("lsmimage:laserDataId");
-          // do not link the laser to the channel if multiple linkages are present (e.g. lambda)
-          if (laserIds == null || laserIds.getLength() > 1) {
-            continue;
-          }
-          Element laserId = (Element) laserIds.item(0);
+          parseChannel(channel, appendChannels);
+        }
+      }
+      else {
+        // so far seems to only be needed for the oldest (software version 1.2.x) files
+        channelLinkages = acquisition.getElementsByTagName("lsmimage:channel");
+        for (int i=0; i<channelLinkages.getLength(); i++) {
+          Element channel = (Element) channelLinkages.item(i);
+          parseChannel(channel, appendChannels);
+        }
+      }
+    }
+  }
 
-          if (id != null && laserId != null) {
-            for (Channel ch : channels) {
-              if (ch.id.equals(id)) {
-                for (int l=0; l<lasers.size(); l++) {
-                  Laser laser = lasers.get(l);
-                  if (laser.dataId.equals(laserId.getTextContent())) {
-                    ch.laserIndex = l;
-                    break;
-                  }
-                }
-              }
+  private void parseChannel(Element channel, boolean appendChannels) {
+    if (channel.hasAttribute("enable") && !channel.getAttribute("enable").equals("true")) {
+      return;
+    }
+    String id = channel.getAttribute("id");
+    NodeList laserIds = channel.getElementsByTagName("lsmimage:laserDataId");
+    // do not link the laser to the channel if multiple linkages are present (e.g. lambda)
+    if (laserIds == null || laserIds.getLength() > 1) {
+      return;
+    }
+    Element laserId = (Element) laserIds.item(0);
+    Element name = getFirstChild(channel, "commonimage:name");
+    String channelName = null;
+    if (name != null) {
+      channelName = name.getTextContent();
+    }
+
+    if (id != null && laserId != null) {
+      boolean foundChannel = false;
+      for (Channel ch : channels) {
+        if (ch.id.equals(id) || ch.name.equals(name)) {
+          foundChannel = true;
+          for (int l=0; l<lasers.size(); l++) {
+            Laser laser = lasers.get(l);
+            if (laser.dataId.equals(laserId.getTextContent())) {
+              ch.laserIndex = l;
+              break;
             }
           }
         }
+      }
+      if (!foundChannel && appendChannels) {
+        Channel c = new Channel();
+        c.id = id;
+        c.name = channelName;
+        for (int l=0; l<lasers.size(); l++) {
+          Laser laser = lasers.get(l);
+          if (laser.dataId.equals(laserId.getTextContent())) {
+            c.laserIndex = l;
+            break;
+          }
+        }
+        channels.add(c);
       }
     }
   }
