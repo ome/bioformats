@@ -1,7 +1,7 @@
-Additional Reader options
+Additional reader options
 =========================
 
-Some Readers have additional options which can be used to inform how
+Some readers have additional options which can be used to inform how
 Bio-Formats reads files in that format.
 
 Available options
@@ -35,6 +35,6 @@ Usage
 -----
 
 Options can be used via the command line with
-:doc:`showinf -option </users/comlinetools/display>`, in ImageJ via the
+:option:`showinf -option`, in ImageJ via the
 :doc:`configuration window </users/imagej/features>`, or via the API using the
 :javadoc:`DynamicMetadataOptions class <loci/formats/in/DynamicMetadataOptions.html>`.
