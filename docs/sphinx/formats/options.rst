@@ -14,19 +14,19 @@ Available options
      - Option
      - Default
      - Description
-   * - Leica LIF
+   * - :doc:`leica-lif`
      - ``leicalif.old_physical_size``
      - false
      - Ensure physical pixel sizes are compatible with versions <= 5.3.2
-   * - Nikon ND2
+   * - :doc:`nikon-nis-elements-nd2`
      - ``nativend2.chunkmap``
      - true
      - Use chunkmap table to read image offsets
-   * - Zeiss CZI
+   * - :doc:`zeiss-czi`
      - ``zeissczi.attachments``
      - true
      - Include attachment images
-   * - Zeiss CZI
+   * - :doc:`zeiss-czi`
      - ``zeissczi.autostitch``
      - true
      - Automatically stitch tiled images
