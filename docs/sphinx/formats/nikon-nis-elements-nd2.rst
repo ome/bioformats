@@ -53,7 +53,7 @@ Utility: |Very good|
 **Additional Information**
 
 
-Additional options are available for reading this format type, see
+Additional options are available for reading or writing this format type, see
 :doc:`options` for information.
 
 There are two distinct versions of ND2: an old version, which uses 

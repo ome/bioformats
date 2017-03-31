@@ -51,7 +51,7 @@ dimensions, and other basic metadata will be printed to the console.
 
       showinf -option key value /path/to/file
 
-    e.g. additional Reader options, see :doc:`/formats/options`::
+    e.g. additional reader options, see :doc:`/formats/options`::
 
       showinf -option leicalif.old_physical_size true /path/to/file
 

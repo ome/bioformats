@@ -77,8 +77,8 @@ defined for each section:
     specification documents to third parties
 
   options
-    A link to additional Reader options documentation where they are available
-    for the format
+    A link to additional reader and writer options documentation where they
+    are available for the format
 
 Dataset structure table
 -----------------------

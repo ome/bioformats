@@ -50,6 +50,9 @@ Utility: |Outstanding|
 **Additional Information**
 
 
+Additional options are available for reading or writing this format type, see
+:doc:`options` for information.
+
 Bio-Formats can save image stacks as OME-TIFF. 
 
 Commercial applications that support OME-TIFF include: 

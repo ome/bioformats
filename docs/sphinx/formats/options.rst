@@ -1,11 +1,11 @@
-Additional reader options
-=========================
+Additional reader and writer options
+====================================
 
-Some readers have additional options which can be used to inform how
-Bio-Formats reads files in that format.
+Some readers and writers have additional options which can be used to inform
+how Bio-Formats reads or writes files in that format.
 
-Available options
------------------
+Reader options
+--------------
 
 .. list-table::
    :header-rows: 1
@@ -32,9 +32,32 @@ Available options
      - Automatically stitch tiled images
 
 Usage
------
+^^^^^
 
-Options can be used via the command line with
+Reader options can be used via the command line with
 :option:`showinf -option`, in ImageJ via the
 :doc:`configuration window </users/imagej/features>`, or via the API using the
+:javadoc:`DynamicMetadataOptions class <loci/formats/in/DynamicMetadataOptions.html>`.
+
+Writer options
+--------------
+
+.. list-table::
+   :header-rows: 1
+
+   * - Format name
+     - Option
+     - Default
+     - Description
+   * - :doc:`ome-tiff`
+     - ``ometiff.companion``
+     - None
+     - If set, OME-XML will be written to a companion file with a name
+       determined by the option value
+
+Usage
+^^^^^
+
+Writer options can be used via the command line using
+:option:`bfconvert -option`, or via the API using the
 :javadoc:`DynamicMetadataOptions class <loci/formats/in/DynamicMetadataOptions.html>`.
