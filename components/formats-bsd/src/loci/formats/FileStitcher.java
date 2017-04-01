@@ -554,19 +554,20 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public int getSeriesCount() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return noStitch ? reader.getSeriesCount() : core.size();
+    if (noStitch) {
+      return reader.getSeriesCount();
+    }
+    if (hasFlattenedResolutions()) {
+      return core.size();
+    }
+    return coreIndexToSeries(core.size() - 1) + 1;
   }
 
   /* @see IFormatReader#setSeries(int) */
   @Override
   public void setSeries(int no) {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    int n = reader.getSeriesCount();
-    if (n > 1 || noStitch) reader.setSeries(no);
-    else {
-      coreIndex = no;
-      series = no;
-    }
+    setCoreIndex(seriesToCoreIndex(no));
   }
 
   /* @see IFormatReader#getSeries() */
@@ -579,7 +580,7 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#seriesToCoreIndex(int) */
   @Override
   public int seriesToCoreIndex(int series) {
-    int n = reader.getSeriesCount();
+    int n = reader.getCoreMetadataList().size();
     if (n > 1 || noStitch) return reader.seriesToCoreIndex(series);
     return series;
   }
@@ -587,7 +588,7 @@ public class FileStitcher extends ReaderWrapper {
   /* @see IFormatReader#coreIndexToSeries(int) */
   @Override
   public int coreIndexToSeries(int index) {
-    int n = reader.getSeriesCount();
+    int n = reader.getCoreMetadataList().size();
     if (n > 1 || noStitch) return reader.coreIndexToSeries(index);
     return index;
   }
@@ -596,7 +597,7 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void setCoreIndex(int no) {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    int n = reader.getSeriesCount();
+    int n = reader.getCoreMetadataList().size();
     if (n > 1 || noStitch) reader.setCoreIndex(no);
     else {
       coreIndex = no;
@@ -609,6 +610,20 @@ public class FileStitcher extends ReaderWrapper {
   public int getCoreIndex() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getCoreIndex() > 0 ? reader.getCoreIndex() : coreIndex;
+  }
+
+  /* @see IFormatReader#setFlattenedResolutions() */
+  @Override
+  public void setFlattenedResolutions(boolean flatten) {
+    FormatTools.assertId(getCurrentFile(), false, 2);
+    if (externals == null) reader.setFlattenedResolutions(flatten);
+    else {
+      for (ExternalSeries s : externals) {
+        for (DimensionSwapper r : s.getReaders()) {
+          r.setFlattenedResolutions(flatten);
+        }
+      }
+    }
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -864,7 +879,9 @@ public class FileStitcher extends ReaderWrapper {
     reader.reopenFile();
     for (ExternalSeries s : externals) {
       for (DimensionSwapper r : s.getReaders()) {
-        r.reopenFile();
+        if (r.getCurrentFile() != null) {
+          r.reopenFile();
+        }
       }
     }
   }
@@ -942,7 +959,7 @@ public class FileStitcher extends ReaderWrapper {
     reader.setId(fp.getFiles()[0]);
 
     String msg = " Please rename your files or disable file stitching.";
-    if (reader.getSeriesCount() > 1 && externals.length > 1) {
+    if (reader.getCoreMetadataList().size() > 1 && externals.length > 1) {
       throw new FormatException("Unsupported grouping: File pattern contains " +
         "multiple files and each file contains multiple series." + msg);
     }
@@ -964,7 +981,7 @@ public class FileStitcher extends ReaderWrapper {
     // if this is a multi-series dataset, we need some special logic
     int seriesCount = externals.length;
     if (externals.length == 1) {
-      seriesCount = reader.getSeriesCount();
+      seriesCount = reader.getCoreMetadataList().size();
     }
 
     // verify that file pattern is valid and matches existing files
@@ -1007,7 +1024,7 @@ public class FileStitcher extends ReaderWrapper {
     // analyze first file; assume each file has the same parameters
     core.clear();
 
-    int oldSeries = getSeries();
+    int oldSeries = getCoreIndex();
     for (int i=0; i<seriesCount; i++) {
       IFormatReader rr = getReader(i, 0);
       CoreMetadata ms = new CoreMetadata();
@@ -1041,20 +1058,20 @@ public class FileStitcher extends ReaderWrapper {
 
     // order may need to be adjusted
     for (int i=0; i<seriesCount; i++) {
-      setSeries(i);
+      setCoreIndex(i);
       AxisGuesser ag = externals[getExternalSeries()].getAxisGuesser();
       core.get(i).dimensionOrder = ag.getAdjustedOrder();
       core.get(i).orderCertain = ag.isCertain();
       computeAxisLengths();
     }
-    setSeries(oldSeries);
+    setCoreIndex(oldSeries);
 
     // populate metadata store
     store = reader.getMetadataStore();
     // don't overwrite pixel info if files aren't actually grouped
     if (!noStitch) {
       MetadataTools.populatePixels(store, this, false, false);
-      if (reader.getSeriesCount() == 1 && getSeriesCount() > 1) {
+      if (reader.getCoreMetadataList().size() == 1 && getSeriesCount() > 1) {
         for (int i=0; i<getSeriesCount(); i++) {
           int index = getExternalSeries(i);
           String pattern = externals[index].getFilePattern().getPattern();
@@ -1072,7 +1089,7 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   private int getExternalSeries(int currentSeries) {
-    if (reader.getSeriesCount() > 1) return 0;
+    if (reader.getCoreMetadataList().size() > 1) return 0;
     return currentSeries;
   }
 
@@ -1228,7 +1245,7 @@ public class FileStitcher extends ReaderWrapper {
         r.setGroupFiles(false);
       }
       r.setId(externals[external].getFiles()[fno]);
-      r.setSeries(reader.getSeriesCount() > 1 ? sno : 0);
+      r.setCoreIndex(reader.getCoreMetadataList().size() > 1 ? sno : 0);
       String newOrder = ((DimensionSwapper) reader).getInputOrder();
       if ((externals[external].getFiles().length > 1 || !r.isOrderCertain()) &&
         (r.getRGBChannelCount() == 1 ||
