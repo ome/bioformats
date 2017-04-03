@@ -22,13 +22,11 @@ Reader: HamamatsuVMSReader (:bfreader:`Source Code <HamamatsuVMSReader.java>`, :
 
 
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
 * a few example datasets 
+* `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-VMS/>`__ 
 * `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
 
 We would like to have:

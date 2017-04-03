@@ -28,13 +28,11 @@ Freely Available Software:
 
 - `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
 
 We currently have:
 
-* many example datasets
+* many example datasets 
+* `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-NDPI/>`__
 
 We would like to have:
 
