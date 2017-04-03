@@ -192,6 +192,7 @@ notes = .. seealso:: \n
 extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
 bsd = no
+software = `OpenSlide <http://openslide.org>`_
 versions = 8.0, 8.2, 9.0
 weHave = * many SVS datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__\n
@@ -734,7 +735,8 @@ mif = true
 extensions = .ndpi, .ndpis
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
-software = `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_
+software = `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_ \n
+`OpenSlide <http://openslide.org>`_
 weHave = * many example datasets \n
 * `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-NDPI/>`__
 weWant = * an official specification document
@@ -751,6 +753,7 @@ pyramid = yes
 extensions = .vms
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
+software = `OpenSlide <http://openslide.org>`_
 weHave = * a few example datasets \n
 * `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-VMS/>`__ \n
 * `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
@@ -1270,6 +1273,7 @@ Commercial applications that support LEI include: \n
 extensions = .scn
 developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
 bsd = no
+software = `OpenSlide <http://openslide.org>`_
 versions = 2012-03-10
 weHave = * a few sample datasets
 weWant = * an official specification document \n

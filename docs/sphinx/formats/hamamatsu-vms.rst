@@ -21,6 +21,9 @@ Officially Supported Versions:
 Reader: HamamatsuVMSReader (:bfreader:`Source Code <HamamatsuVMSReader.java>`, :doc:`Supported Metadata Fields </metadata/HamamatsuVMSReader>`)
 
 
+Freely Available Software:
+
+- `OpenSlide <http://openslide.org>`_
 
 
 We currently have:

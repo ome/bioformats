@@ -26,7 +26,8 @@ Readers:
 
 Freely Available Software:
 
-- `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_
+- `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_ 
+- `OpenSlide <http://openslide.org>`_
 
 
 We currently have:

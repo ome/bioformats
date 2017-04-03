@@ -21,6 +21,9 @@ Officially Supported Versions: 2012-03-10
 Reader: LeicaSCNReader (:bfreader:`Source Code <LeicaSCNReader.java>`, :doc:`Supported Metadata Fields </metadata/LeicaSCNReader>`)
 
 
+Freely Available Software:
+
+- `OpenSlide <http://openslide.org>`_
 
 
 We currently have:
