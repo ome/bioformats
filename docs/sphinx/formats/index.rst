@@ -31,4 +31,5 @@ available from our `sample image downloads site <http://downloads.openmicroscopy
     /supported-formats
     /metadata-summary
     pattern-file
+    options
 
