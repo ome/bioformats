@@ -158,6 +158,20 @@ public class OIRReader extends FormatReader {
 
     readXMLBlock();
 
+    while (in.getFilePointer() < in.length() - 16) {
+      in.findString("<?xml");
+      in.seek(in.getFilePointer() - 9);
+      int length = in.readInt();
+      if (length < 0 || length + in.getFilePointer() > in.length()) {
+        break;
+      }
+      String xml = in.readString(length);
+      boolean expectPixelBlock = xml.endsWith(":frameProperties>");
+      if (expectPixelBlock) {
+        while (skipPixelBlock(true));
+      }
+    }
+
     m.sizeC *= channels.size();
     m.dimensionOrder = "XYCZT";
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
@@ -778,6 +792,7 @@ public class OIRReader extends FormatReader {
     }
     if (store) {
       pixelBlocks.add(offset);
+      LOGGER.debug("added pixel block @ {}, size = {}", offset, pixelBlocks.size());
     }
 
     int pixelBytes = in.readInt();
