@@ -28,12 +28,15 @@ package loci.formats.in;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.*;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.FormatException;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -93,13 +96,12 @@ public class NDPISReader extends FormatReader {
     return readers[0].getOptimalTileHeight();
   }
 
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-          throws FormatException, IOException
+    throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
@@ -110,7 +112,6 @@ public class NDPISReader extends FormatReader {
     readers[channel].setResolution(getResolution());
     int spp = samplesPerPixel[channel];
     if (spp==1) return readers[channel].openBytes(0, buf, x, y, w, h);    // single band reader
-
     else {   // read intensity from used band (the other bands are close to zero, only jpeg artifacts and should be ignored)
       byte[] bufReader = DataTools.allocate(w, h, spp); // w*h*RGB
       bufReader = readers[channel].openBytes(0, bufReader, x, y, w, h);
@@ -127,7 +128,6 @@ public class NDPISReader extends FormatReader {
       return buf;
     }
   }
-
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
@@ -210,8 +210,7 @@ public class NDPISReader extends FormatReader {
     bandUsed = new int[ndpiFiles.length];
     MetadataStore store = makeFilterMetadata();
     for (int c=0; c<readers.length; c++) {     // populate channel names based on IFD entry
-      if (c>0) // 0 is already open
-        readers[c].setId(ndpiFiles[c]);
+      readers[c].setId(ndpiFiles[c]);
       IFD ifd = readers[c].getIFDs().get(0);
       samplesPerPixel[c] = ifd.getSamplesPerPixel();
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
@@ -226,7 +225,6 @@ public class NDPISReader extends FormatReader {
         // 380 =< wavelength <= 490 Blue
         // 490 < wavelength <= 580 Green
         // 580 < wavelength <= 780 Red
-        bandUsed[c] = 0;
         if (380 < wavelength && wavelength <= 490) bandUsed[c] = 2;
         else if (490 < wavelength && wavelength <= 580) bandUsed[c] = 1;
         else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
@@ -234,7 +232,5 @@ public class NDPISReader extends FormatReader {
     }
     MetadataTools.populatePixels(store, this);
   }
-
-
 
 }
