@@ -27,6 +27,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
@@ -58,7 +61,7 @@ public class OIRReader extends FormatReader {
 
   // -- Fields --
 
-  private ArrayList<Long> pixelBlocks = new ArrayList<Long>();
+  private HashMap<String, Long> pixelBlocks = new HashMap<String, Long>();
   private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<Laser> lasers = new ArrayList<Laser>();
   private ArrayList<Detector> detectors = new ArrayList<Detector>();
@@ -68,6 +71,7 @@ public class OIRReader extends FormatReader {
   private Length physicalSizeZ;
   private Timestamp acquisitionDate;
   private int defaultXMLSkip = 36;
+  private int blocksPerPlane = 0;
 
   // -- Constructor --
 
@@ -90,23 +94,81 @@ public class OIRReader extends FormatReader {
 
     int nextPointer = 0;
     int blocksPerChannel = pixelBlocks.size() / channels.size();
-    int blocksPerPlane = blocksPerChannel / (getImageCount() / channels.size());
+
+    String[] pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
+    Arrays.sort(pixelUIDs, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        int lastUnderscore1 = s1.lastIndexOf("_");
+        int lastUnderscore2 = s2.lastIndexOf("_");
+
+        Integer block1 = new Integer(s1.substring(lastUnderscore1 + 1));
+        Integer block2 = new Integer(s2.substring(lastUnderscore2 + 1));
+
+        int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
+        int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);
+
+        String prefix1 = s1.substring(0, underscore1);
+        String prefix2 = s2.substring(0, underscore2);
+
+        String channel1 = s1.substring(underscore1 + 1, lastUnderscore1);
+        String channel2 = s2.substring(underscore2 + 1, lastUnderscore2);
+
+        if (!prefix1.equals(prefix2)) {
+          return s1.compareTo(s2);
+        }
+
+        if (!channel1.equals(channel2)) {
+          Integer index1 = -1;
+          Integer index2 = -2;
+          for (int i=0; i<channels.size(); i++) {
+            if (channels.get(i).id.equals(channel1)) {
+              index1 = i;
+            }
+            if (channels.get(i).id.equals(channel2)) {
+              index2 = i;
+            }
+          }
+          return index1.compareTo(index2);
+        }
+
+        return block1.compareTo(block2);
+      }
+    });
 
     int[] zct = getZCTCoords(no);
     int newNo = getIndex(zct[0], 0, zct[2]);
-    int start = newNo * blocksPerPlane + zct[1];
-    int end = start + (blocksPerPlane * channels.size());
-    for (int i=start; i<end; i+=channels.size()) {
-      Long offset = pixelBlocks.get(i);
+
+    int first = newNo * getSizeC() * blocksPerPlane + zct[1] * blocksPerPlane;
+    int startIndex = -1;
+    int step = blocksPerPlane * getSizeZ() * getSizeT();
+    while (first < pixelUIDs.length) {
+      if (pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0) {
+        startIndex = first;
+        break;
+      }
+      else {
+        first += step;
+      }
+    }
+
+    byte[] wholePlane = new byte[FormatTools.getPlaneSize(this)];
+    int end = startIndex + blocksPerPlane;
+    for (int i=startIndex; i<end; i++) {
+      Long offset = pixelBlocks.get(pixelUIDs[i]);
       byte[] pixels = readPixelBlock(offset, false);
       if (pixels != null) {
-        int length = (int) Math.min(pixels.length, buf.length - nextPointer);
-        if (length > 0 && nextPointer < buf.length) {
-          System.arraycopy(pixels, 0, buf, nextPointer, length);
+        int length = (int) Math.min(pixels.length, wholePlane.length - nextPointer);
+        if (length > 0 && nextPointer < wholePlane.length) {
+          System.arraycopy(pixels, 0, wholePlane, nextPointer, length);
           nextPointer += length;
         }
       }
     }
+
+    RandomAccessInputStream s = new RandomAccessInputStream(wholePlane);
+    readPlane(s, x, y, w, h, buf);
+    s.close();
 
     return buf;
   }
@@ -126,6 +188,7 @@ public class OIRReader extends FormatReader {
       physicalSizeZ = null;
       acquisitionDate = null;
       defaultXMLSkip = 36;
+      blocksPerPlane = 0;
     }
   }
 
@@ -175,6 +238,16 @@ public class OIRReader extends FormatReader {
     m.sizeC *= channels.size();
     m.dimensionOrder = "XYCZT";
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+
+    if (blocksPerPlane * getImageCount() > pixelBlocks.size()) {
+      if (getSizeT() > 1) {
+        m.sizeT = pixelBlocks.size() / (blocksPerPlane * getSizeC() * getSizeZ());
+      }
+      else if (getSizeZ() > 1) {
+        m.sizeZ = pixelBlocks.size() / (blocksPerPlane * getSizeC());
+      }
+      m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -282,6 +355,7 @@ public class OIRReader extends FormatReader {
           while (in.readInt() != totalBlockLength - skipped) {
             skipped += 4;
             if (in.getFilePointer() + 4 >= in.length()) {
+              in.seek(end);
               return;
             }
           }
@@ -290,11 +364,11 @@ public class OIRReader extends FormatReader {
         }
       }
 
-      if (xmlLength <= 32) {
+      if (xmlLength <= 32 || in.getFilePointer() + xmlLength > end + 8) {
         break;
       }
       String xml = in.readString(xmlLength).trim();
-      LOGGER.debug("xml = {}", xml);
+      LOGGER.trace("xml = {}", xml);
       parseXML(xml);
     }
   }
@@ -791,7 +865,11 @@ public class OIRReader extends FormatReader {
       return false;
     }
     if (store) {
-      pixelBlocks.add(offset);
+      pixelBlocks.put(uid, offset);
+      int blockIndex = Integer.parseInt(uid.substring(uid.lastIndexOf("_") + 1));
+      if (blockIndex >= blocksPerPlane) {
+        blocksPerPlane = blockIndex + 1;
+      }
       LOGGER.debug("added pixel block @ {}, size = {}", offset, pixelBlocks.size());
     }
 
@@ -800,7 +878,7 @@ public class OIRReader extends FormatReader {
 
     if (pixelBytes <= 0) {
       if (store) {
-        pixelBlocks.remove(pixelBlocks.size() - 1);
+        pixelBlocks.remove(uid);
       }
       return false;
     }
@@ -829,7 +907,7 @@ public class OIRReader extends FormatReader {
     }
     if (skip) {
       if (in.getFilePointer() + 4 < in.length()) {
-        pixelBlocks.add(offset);
+        pixelBlocks.put(uid, offset);
       }
       else {
         return null;
@@ -842,7 +920,7 @@ public class OIRReader extends FormatReader {
 
     if (skip) {
       if (pixelBytes <= 0) {
-        pixelBlocks.remove(pixelBlocks.size() - 1);
+        pixelBlocks.remove(uid);
       }
       in.skipBytes(pixelBytes);
       return null;
