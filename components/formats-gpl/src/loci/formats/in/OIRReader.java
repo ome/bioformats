@@ -137,7 +137,7 @@ public class OIRReader extends FormatReader {
     });
 
     int[] zct = getZCTCoords(no);
-    int newNo = getIndex(zct[0], 0, zct[2]);
+    int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
 
     int first = newNo * getSizeC() * blocksPerPlane + zct[1] * blocksPerPlane;
     int startIndex = -1;
