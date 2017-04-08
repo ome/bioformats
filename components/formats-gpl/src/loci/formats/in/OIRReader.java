@@ -72,6 +72,7 @@ public class OIRReader extends FormatReader {
   private Timestamp acquisitionDate;
   private int defaultXMLSkip = 36;
   private int blocksPerPlane = 0;
+  private String[] pixelUIDs = null;
 
   // -- Constructor --
 
@@ -94,47 +95,6 @@ public class OIRReader extends FormatReader {
 
     int nextPointer = 0;
     int blocksPerChannel = pixelBlocks.size() / channels.size();
-
-    String[] pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
-    Arrays.sort(pixelUIDs, new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        int lastUnderscore1 = s1.lastIndexOf("_");
-        int lastUnderscore2 = s2.lastIndexOf("_");
-
-        Integer block1 = new Integer(s1.substring(lastUnderscore1 + 1));
-        Integer block2 = new Integer(s2.substring(lastUnderscore2 + 1));
-
-        int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
-        int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);
-
-        String prefix1 = s1.substring(0, underscore1);
-        String prefix2 = s2.substring(0, underscore2);
-
-        String channel1 = s1.substring(underscore1 + 1, lastUnderscore1);
-        String channel2 = s2.substring(underscore2 + 1, lastUnderscore2);
-
-        if (!prefix1.equals(prefix2)) {
-          return s1.compareTo(s2);
-        }
-
-        if (!channel1.equals(channel2)) {
-          Integer index1 = -1;
-          Integer index2 = -2;
-          for (int i=0; i<channels.size(); i++) {
-            if (channels.get(i).id.equals(channel1)) {
-              index1 = i;
-            }
-            if (channels.get(i).id.equals(channel2)) {
-              index2 = i;
-            }
-          }
-          return index1.compareTo(index2);
-        }
-
-        return block1.compareTo(block2);
-      }
-    });
 
     int[] zct = getZCTCoords(no);
     int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
@@ -189,6 +149,7 @@ public class OIRReader extends FormatReader {
       acquisitionDate = null;
       defaultXMLSkip = 36;
       blocksPerPlane = 0;
+      pixelUIDs = null;
     }
   }
 
@@ -247,6 +208,53 @@ public class OIRReader extends FormatReader {
         m.sizeZ = pixelBlocks.size() / (blocksPerPlane * getSizeC());
       }
       m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    }
+
+    pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
+    Arrays.sort(pixelUIDs, new Comparator<String>() {
+      @Override
+      public int compare(String s1, String s2) {
+        int lastUnderscore1 = s1.lastIndexOf("_");
+        int lastUnderscore2 = s2.lastIndexOf("_");
+
+        Integer block1 = new Integer(s1.substring(lastUnderscore1 + 1));
+        Integer block2 = new Integer(s2.substring(lastUnderscore2 + 1));
+
+        int underscore1 = s1.lastIndexOf("_", lastUnderscore1 - 1);
+        int underscore2 = s2.lastIndexOf("_", lastUnderscore2 - 1);
+
+        String prefix1 = s1.substring(0, underscore1);
+        String prefix2 = s2.substring(0, underscore2);
+
+        String channel1 = s1.substring(underscore1 + 1, lastUnderscore1);
+        String channel2 = s2.substring(underscore2 + 1, lastUnderscore2);
+
+        if (!prefix1.equals(prefix2)) {
+          return s1.compareTo(s2);
+        }
+
+        if (!channel1.equals(channel2)) {
+          Integer index1 = -1;
+          Integer index2 = -2;
+          for (int i=0; i<channels.size(); i++) {
+            if (channels.get(i).id.equals(channel1)) {
+              index1 = i;
+            }
+            if (channels.get(i).id.equals(channel2)) {
+              index2 = i;
+            }
+          }
+          return index1.compareTo(index2);
+        }
+
+        return block1.compareTo(block2);
+      }
+    });
+
+    if (LOGGER.isTraceEnabled()) {
+      for (int i=0; i<pixelUIDs.length; i++) {
+        LOGGER.trace("pixel UID #{} = {}", i, pixelUIDs[i]);
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
