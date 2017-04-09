@@ -43,6 +43,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
@@ -73,6 +74,8 @@ public class OIRReader extends FormatReader {
   private int defaultXMLSkip = 36;
   private int blocksPerPlane = 0;
   private String[] pixelUIDs = null;
+  private String baseName;
+  private int lastChannel = -1;
 
   // -- Constructor --
 
@@ -83,6 +86,37 @@ public class OIRReader extends FormatReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  @Override
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    int pixelType = getPixelType();
+    if ((pixelType != FormatTools.INT8 && pixelType != FormatTools.UINT8) ||
+      !isIndexed())
+    {
+      return null;
+    }
+    if (lastChannel < 0 || lastChannel >= channels.size()) {
+      return null;
+    }
+    return (byte[][]) channels.get(lastChannel).lut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  @Override
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    int pixelType = getPixelType();
+    if ((pixelType != FormatTools.INT16 && pixelType != FormatTools.UINT16) ||
+      !isIndexed())
+    {
+      return null;
+    }
+    if (lastChannel < 0 || lastChannel >= channels.size()) {
+      return null;
+    }
+    return (short[][]) channels.get(lastChannel).lut;
+  }
+
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -97,6 +131,7 @@ public class OIRReader extends FormatReader {
     int blocksPerChannel = pixelBlocks.size() / channels.size();
 
     int[] zct = getZCTCoords(no);
+    lastChannel = zct[1];
     int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
 
     int first = newNo * getSizeC() * blocksPerPlane + zct[1] * blocksPerPlane;
@@ -150,6 +185,8 @@ public class OIRReader extends FormatReader {
       defaultXMLSkip = 36;
       blocksPerPlane = 0;
       pixelUIDs = null;
+      baseName = null;
+      lastChannel = -1;
     }
   }
 
@@ -167,6 +204,8 @@ public class OIRReader extends FormatReader {
     m.sizeZ = 1;
     m.sizeC = 1;
     m.sizeT = 1;
+    m.indexed = true;
+    m.falseColor = true;
 
     long baseOffset = 16;
     in.seek(baseOffset);
@@ -197,7 +236,6 @@ public class OIRReader extends FormatReader {
     }
 
     m.sizeC *= channels.size();
-    m.dimensionOrder = "XYCZT";
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
 
     if (blocksPerPlane * getImageCount() > pixelBlocks.size()) {
@@ -208,6 +246,21 @@ public class OIRReader extends FormatReader {
         m.sizeZ = pixelBlocks.size() / (blocksPerPlane * getSizeC());
       }
       m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    }
+
+    m.dimensionOrder = "XYC";
+    if (getSizeZ() == 1 || getSizeT() == 1) {
+      m.dimensionOrder += "ZT";
+    }
+    else {
+      int zIndex = baseName.toLowerCase().indexOf("z");
+      int tIndex = baseName.toLowerCase().indexOf("t");
+      if (zIndex < tIndex) {
+        m.dimensionOrder += "TZ";
+      }
+      else {
+        m.dimensionOrder += "ZT";
+      }
     }
 
     pixelUIDs = pixelBlocks.keySet().toArray(new String[pixelBlocks.size()]);
@@ -315,6 +368,9 @@ public class OIRReader extends FormatReader {
     for (int c=0; c<channels.size(); c++) {
       Channel ch = channels.get(c);
       store.setChannelName(ch.name, 0, c);
+      if (ch.color != null) {
+        store.setChannelColor(ch.color, 0, c);
+      }
 
       for (int d=0; d<detectors.size(); d++) {
         if (detectors.get(d).channelId.equals(ch.id)) {
@@ -342,6 +398,7 @@ public class OIRReader extends FormatReader {
     in.skipBytes(4);
 
     while (in.getFilePointer() < end) {
+      long start = in.getFilePointer();
       in.skipBytes(defaultXMLSkip);
       int xmlLength = in.readInt();
       if (xmlLength <= 32) {
@@ -353,7 +410,11 @@ public class OIRReader extends FormatReader {
         in.seek(in.getFilePointer() - 40);
         xmlLength = in.readInt();
         if (xmlLength <= 0 || xmlLength + in.getFilePointer() > in.length()) {
-          return;
+          in.seek(start);
+          xmlLength = in.readInt();
+          if (xmlLength <= 0 || xmlLength + in.getFilePointer() > in.length()) {
+            return;
+          }
         }
         String uid = in.readString(xmlLength);
         xmlLength = in.readInt();
@@ -375,13 +436,14 @@ public class OIRReader extends FormatReader {
       if (xmlLength <= 32 || in.getFilePointer() + xmlLength > end + 8) {
         break;
       }
+      long fp = in.getFilePointer();
       String xml = in.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
-      parseXML(xml);
+      parseXML(xml, fp);
     }
   }
 
-  private void parseXML(String xml) throws FormatException, IOException {
+  private void parseXML(String xml, long startFilePointer) throws FormatException, IOException {
     Element root = null;
     try {
       root = XMLTools.parseDOM(xml).getDocumentElement();
@@ -402,6 +464,62 @@ public class OIRReader extends FormatReader {
       }
       else if ("lsmframe:frameProperties".equals(name)) {
         parseFrameProperties(root);
+      }
+      else if ("lut:LUT".equals(name)) {
+        long fp = in.getFilePointer();
+        in.seek(startFilePointer - 44);
+        int uidLength = in.readInt();
+        String uid = in.readString(uidLength);
+        in.seek(fp);
+
+        parseLUT(root, uid);
+      }
+    }
+  }
+
+  private void parseLUT(Element root, String uid) throws FormatException {
+    Element linear = getFirstChild(root, "lut:linear");
+    boolean isLinear = false;
+    if (linear != null) {
+      isLinear = Boolean.valueOf(linear.getTextContent());
+    }
+
+    Element data = getFirstChild(root, "lut:data");
+    if (data != null) {
+      String lutContent = data.getTextContent();
+      for (int i=0; i<channels.size(); i++) {
+        if (channels.get(i).lut == null && channels.get(i).id.equals(uid)) {
+          if (getPixelType() == FormatTools.UINT8) {
+            channels.get(i).lut = new byte[3][lutContent.length() / 8];
+          }
+          else if (getPixelType() == FormatTools.UINT16) {
+            channels.get(i).lut = new short[3][lutContent.length() / 8];
+          }
+          else {
+            LOGGER.warn("Skipping LUTs for pixel type {}", getPixelType());
+            return;
+          }
+
+          for (int q=0; q<lutContent.length(); q+=8) {
+            int r = Integer.parseInt(lutContent.substring(q, q + 2), 16);
+            int g = Integer.parseInt(lutContent.substring(q + 2, q + 4), 16);
+            int b = Integer.parseInt(lutContent.substring(q + 4, q + 6), 16);
+            if (channels.get(i).lut instanceof byte[][]) {
+              ((byte[][]) channels.get(i).lut)[0][q / 8] = (byte) (r & 0xff);
+              ((byte[][]) channels.get(i).lut)[1][q / 8] = (byte) (g & 0xff);
+              ((byte[][]) channels.get(i).lut)[2][q / 8] = (byte) (b & 0xff);
+            }
+            else if (channels.get(i).lut instanceof short[][]) {
+              ((short[][]) channels.get(i).lut)[0][q / 8] = (short) ((r & 0xffff) * 256);
+              ((short[][]) channels.get(i).lut)[1][q / 8] = (short) ((g & 0xffff) * 256);
+              ((short[][]) channels.get(i).lut)[2][q / 8] = (short) ((b & 0xffff) * 256);
+            }
+            if (isLinear && q == lutContent.length() - 8) {
+              channels.get(i).color = new Color(r, g, b, 255);
+            }
+          }
+          break;
+        }
       }
     }
   }
@@ -428,6 +546,14 @@ public class OIRReader extends FormatReader {
       }
       if (bitCount != null) {
         m.bitsPerPixel = Integer.parseInt(bitCount.getTextContent());
+      }
+    }
+
+    Element general = getFirstChild(root, "commonframe:general");
+    if (general != null) {
+      Element name = getFirstChild(general, "base:name");
+      if (name != null) {
+        baseName = name.getTextContent();
       }
     }
   }
@@ -945,6 +1071,8 @@ public class OIRReader extends FormatReader {
     public String id;
     public String name;
     public int laserIndex = -1;
+    public Object lut;
+    public Color color;
   }
 
   class Laser {
