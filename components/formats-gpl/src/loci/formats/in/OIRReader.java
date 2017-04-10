@@ -50,6 +50,7 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -533,6 +534,7 @@ public class OIRReader extends FormatReader {
 
         parseLUT(root, uid);
       }
+      parseOriginalMetadata(root);
     }
   }
 
@@ -1040,6 +1042,33 @@ public class OIRReader extends FormatReader {
       }
       else {
         LOGGER.warn("Unhandled axis '{}'", name);
+      }
+    }
+  }
+
+  private void parseOriginalMetadata(Node root) {
+    String value = root.getNodeValue();
+    if (value != null && value.trim().length() > 0) {
+      value = value.trim();
+      String key = "";
+
+      Node parent = root.getParentNode();
+      if (parent != null) {
+        String name = parent.getNodeName();
+        key = name.substring(name.indexOf(":") + 1);
+      }
+      Node grandparent = parent.getParentNode();
+      if (grandparent != null) {
+        String name = grandparent.getNodeName();
+        name = name.substring(name.indexOf(":") + 1);
+        key = name + " " + key;
+      }
+      addSeriesMetaList(key, value);
+    }
+    else {
+      NodeList children = root.getChildNodes();
+      for (int i=0; i<children.getLength(); i++) {
+        parseOriginalMetadata(children.item(i));
       }
     }
   }
