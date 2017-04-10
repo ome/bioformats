@@ -1,4 +1,4 @@
-In memory reading and writing in Bio-Formats
+In-memory reading and writing in Bio-Formats
 ============================================
 
 Bio-Formats readers and writers are traditionally used to handle image files 
@@ -53,7 +53,7 @@ the in-memory data.
    :start-after: out—mapping-start
    :end-before: out—mapping-end
 
-The mapped filename can now be passed to initialise the writer as standard.
+The mapped filename can now be passed to initialize the writer as standard.
 
 .. literalinclude:: ../../../components/formats-gpl/utils/ReadWriteInMemory.java
    :language: java
@@ -61,7 +61,7 @@ The mapped filename can now be passed to initialise the writer as standard.
    :end-before: write—init-end
 
 The data can then be written to memory using the same read and write loop which would 
-normally be used to write a file disk.
+normally be used to write a file to disk.
 
 .. literalinclude:: ../../../components/formats-gpl/utils/ReadWriteInMemory.java
    :language: java
@@ -79,4 +79,4 @@ an output file location.
 .. seealso:: 
    :source:`ReadWriteInMemory.java <components/formats-gpl/utils/ReadWriteInMemory.java>` - Full source code which is
    referenced here in part. You will need to have :file:`bioformats_package.jar` in your 
-   Java CLASSPATH in order to compile :file:`ReadWriteInMemory.java`.
+   Java :envvar:`CLASSPATH` in order to compile :file:`ReadWriteInMemory.java`.
