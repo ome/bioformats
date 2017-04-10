@@ -63,7 +63,7 @@ public class OIRReader extends FormatReader {
 
   // -- Fields --
 
-  private HashMap<String, Long> pixelBlocks = new HashMap<String, Long>();
+  private HashMap<String, PixelBlock> pixelBlocks = new HashMap<String, PixelBlock>();
   private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<Laser> lasers = new ArrayList<Laser>();
   private ArrayList<Detector> detectors = new ArrayList<Detector>();
@@ -150,21 +150,41 @@ public class OIRReader extends FormatReader {
 
     byte[] wholePlane = new byte[FormatTools.getPlaneSize(this)];
     int end = startIndex + blocksPerPlane;
+
+
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int bufferOffset = bpp * ((y * getSizeX()) + x);
+    int rowLen = bpp * w;
+    int imageWidth = bpp * getSizeX();
+    int bufferEnd = bpp * (((y + h) * getSizeX()) + x + w);
+    int bufferPointer = 0;
+
     for (int i=startIndex; i<end; i++) {
-      Long offset = pixelBlocks.get(pixelUIDs[i]);
-      byte[] pixels = readPixelBlock(offset);
+      PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
+
+      if (bufferPointer + block.length < bufferOffset ||
+        bufferPointer >= bufferEnd)
+      {
+        bufferPointer += block.length;
+        continue;
+      }
+
+      byte[] pixels = readPixelBlock(block.offset);
       if (pixels != null) {
-        int length = (int) Math.min(pixels.length, wholePlane.length - nextPointer);
-        if (length > 0 && nextPointer < wholePlane.length) {
-          System.arraycopy(pixels, 0, wholePlane, nextPointer, length);
-          nextPointer += length;
+        int blockY = bufferPointer / imageWidth;
+        int blockH = pixels.length / imageWidth;
+
+        for (int yy=blockY; yy<blockY+blockH; yy++) {
+          if (yy < y || yy >= y + h) {
+            continue;
+          }
+          int blockOffset = (yy - blockY) * imageWidth + x * bpp;
+          int bufOffset = (yy - y) * rowLen;
+          System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
         }
       }
+      bufferPointer += block.length;
     }
-
-    RandomAccessInputStream s = new RandomAccessInputStream(wholePlane);
-    readPlane(s, x, y, w, h, buf);
-    s.close();
 
     return buf;
   }
@@ -1123,22 +1143,21 @@ public class OIRReader extends FormatReader {
     if (in.getFilePointer() + 4 >= in.length()) {
       return false;
     }
-    if (store) {
-      pixelBlocks.put(uid, offset);
+    int pixelBytes = in.readInt();
+    in.skipBytes(4);
+
+    if (store && pixelBytes > 0) {
+      PixelBlock block = new PixelBlock();
+      block.offset = offset;
+      block.length = pixelBytes;
+      pixelBlocks.put(uid, block);
       int blockIndex = Integer.parseInt(uid.substring(uid.lastIndexOf("_") + 1));
       if (blockIndex >= blocksPerPlane) {
         blocksPerPlane = blockIndex + 1;
       }
       LOGGER.debug("added pixel block @ {}, size = {}", offset, pixelBlocks.size());
     }
-
-    int pixelBytes = in.readInt();
-    in.skipBytes(4);
-
-    if (pixelBytes <= 0) {
-      if (store) {
-        pixelBlocks.remove(uid);
-      }
+    else if (pixelBytes <= 0) {
       return false;
     }
     in.skipBytes(pixelBytes);
@@ -1211,6 +1230,11 @@ public class OIRReader extends FormatReader {
     public Double wd;
     public Double ri;
     public Immersion immersion;
+  }
+
+  class PixelBlock {
+    public long offset;
+    public int length;
   }
 
 }
