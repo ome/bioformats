@@ -311,6 +311,51 @@ public class OIRReader extends FormatReader {
       }
     }
 
+    // populate original metadata
+
+    addGlobalMeta("Creation date", acquisitionDate);
+    addGlobalMeta("Pixel Length X", physicalSizeX);
+    addGlobalMeta("Pixel Length Y", physicalSizeY);
+    addGlobalMeta("Z step", physicalSizeZ);
+
+    for (Channel channel : channels) {
+      String prefix = "Channel " + channel.name + " ";
+      addGlobalMetaList(prefix + "ID", channel.id);
+      addGlobalMetaList(prefix + "color", channel.color);
+      addGlobalMetaList(prefix + "pinhole", channel.pinhole);
+      addGlobalMetaList(prefix + "start wavelength", channel.excitation);
+      addGlobalMetaList(prefix + "end wavelength", channel.emission);
+      addGlobalMetaList(prefix + "linked laser index", channel.laserIndex);
+    }
+
+    for (Objective objective : objectives) {
+      addGlobalMetaList("Objective Lens name", objective.name);
+      addGlobalMetaList("Objective Lens magnification", objective.magnification);
+      addGlobalMetaList("Objective Lens na", objective.na);
+      addGlobalMetaList("Objective Lens wd", objective.wd);
+      addGlobalMetaList("Objective Lens refractive index", objective.ri);
+      addGlobalMetaList("Objective Lens immersion", objective.immersion);
+    }
+
+    for (Laser laser : lasers) {
+      String prefix = "Laser " + laser.name + " ";
+      addGlobalMetaList(prefix + "ID", laser.id);
+      addGlobalMetaList(prefix + "data ID", laser.dataId);
+      addGlobalMetaList(prefix + "power", laser.power);
+      addGlobalMetaList(prefix + "transmissivity", laser.transmissivity);
+      addGlobalMetaList(prefix + "wavelength", laser.wavelength);
+    }
+
+    for (Detector detector : detectors) {
+      addGlobalMetaList("Detector ID", detector.id);
+      addGlobalMetaList("Detector linked channel ID", detector.channelId);
+      addGlobalMetaList("Detector voltage", detector.voltage);
+      addGlobalMetaList("Detector offset", detector.offset);
+      addGlobalMetaList("Detector gain", detector.gain);
+    }
+
+    // populate MetadataStore
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
