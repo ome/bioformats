@@ -35,7 +35,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -153,7 +152,7 @@ public class OIRReader extends FormatReader {
     int end = startIndex + blocksPerPlane;
     for (int i=startIndex; i<end; i++) {
       Long offset = pixelBlocks.get(pixelUIDs[i]);
-      byte[] pixels = readPixelBlock(offset, false);
+      byte[] pixels = readPixelBlock(offset);
       if (pixels != null) {
         int length = (int) Math.min(pixels.length, wholePlane.length - nextPointer);
         if (length > 0 && nextPointer < wholePlane.length) {
@@ -208,6 +207,17 @@ public class OIRReader extends FormatReader {
     m.sizeT = 1;
     m.indexed = true;
     m.falseColor = true;
+
+    // pixel data is stored raw in multiple blocks
+    // each block is preceded by a UID indicating the plane and block index, e.g.
+    // z001t001_<channel ID #0>_0
+    // z001t001_<channel ID #0>_1
+    // z001t001_<channel ID #1>_0
+    // ...
+    // z010t010_<channel ID #1>_1
+    //
+    // blocks of XML are interspersed, which define the acquisition parameters
+    // including image dimensions and color lookup tables
 
     long baseOffset = 16;
     in.seek(baseOffset);
@@ -1135,7 +1145,7 @@ public class OIRReader extends FormatReader {
     return true;
   }
 
-  private byte[] readPixelBlock(long offset, boolean skip) throws IOException {
+  private byte[] readPixelBlock(long offset) throws IOException {
     in.seek(offset);
 
     int checkLength = in.readInt();
@@ -1154,26 +1164,10 @@ public class OIRReader extends FormatReader {
       in.seek(offset);
       return null;
     }
-    if (skip) {
-      if (in.getFilePointer() + 4 < in.length()) {
-        pixelBlocks.put(uid, offset);
-      }
-      else {
-        return null;
-      }
-    }
 
     int pixelBytes = in.readInt();
 
     in.skipBytes(4); // currently unknown
-
-    if (skip) {
-      if (pixelBytes <= 0) {
-        pixelBlocks.remove(uid);
-      }
-      in.skipBytes(pixelBytes);
-      return null;
-    }
 
     byte[] pixels = new byte[pixelBytes];
     in.readFully(pixels);
