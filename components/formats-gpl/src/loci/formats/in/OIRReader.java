@@ -43,6 +43,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
@@ -344,6 +345,7 @@ public class OIRReader extends FormatReader {
       store.setObjectiveNominalMagnification(objective.magnification, 0, i);
       store.setObjectiveLensNA(objective.na, 0, i);
       store.setObjectiveWorkingDistance(FormatTools.createLength(objective.wd, UNITS.MILLIMETRE), 0, i);
+      store.setObjectiveImmersion(objective.immersion, 0, i);
 
       if (i == 0) {
         store.setObjectiveSettingsID(lsid, 0);
@@ -370,6 +372,18 @@ public class OIRReader extends FormatReader {
       store.setChannelName(ch.name, 0, c);
       if (ch.color != null) {
         store.setChannelColor(ch.color, 0, c);
+      }
+
+      if (ch.pinhole != null) {
+        store.setChannelPinholeSize(ch.pinhole, 0, c);
+      }
+
+      if (ch.emission != null) {
+        store.setChannelEmissionWavelength(ch.emission, 0, c);
+      }
+
+      if (ch.excitation != null) {
+        store.setChannelExcitationWavelength(ch.excitation, 0, c);
       }
 
       for (int d=0; d<detectors.size(); d++) {
@@ -620,6 +634,29 @@ public class OIRReader extends FormatReader {
           c.name = name.getTextContent();
         }
 
+        Element pinhole = getFirstChild(channelNode, "fvCommonphase:pinholeDiameter");
+        if (pinhole != null) {
+          Double pinholeSize = DataTools.parseDouble(pinhole.getTextContent());
+          if (pinholeSize != null) {
+            c.pinhole = new Length(pinholeSize, UNITS.MICROMETER);
+          }
+        }
+
+        Element startWavelength = getFirstChild(channelNode, "opticalelement:startWavelength");
+        Element endWavelength = getFirstChild(channelNode, "opticalelement:endWavelength");
+        if (startWavelength != null) {
+          Double wave = DataTools.parseDouble(startWavelength.getTextContent());
+          if (wave != null) {
+            c.excitation = FormatTools.getExcitationWavelength(wave);
+          }
+        }
+        if (endWavelength != null) {
+          Double wave = DataTools.parseDouble(endWavelength.getTextContent());
+          if (wave != null) {
+            c.emission = FormatTools.getEmissionWavelength(wave);
+          }
+        }
+
         Element imageDefinition = getFirstChild(channelNode, "commonphase:imageDefinition");
         if (imageDefinition != null) {
           Element depth = getFirstChild(imageDefinition, "commonphase:depth");
@@ -712,6 +749,7 @@ public class OIRReader extends FormatReader {
             Element na = getFirstChild(lens, "opticalelement:naValue");
             Element wd = getFirstChild(lens, "opticalelement:wdValue");
             Element refraction = getFirstChild(lens, "opticalelement:refraction");
+            Element immersion = getFirstChild(lens, "opticalelement:immersion");
 
             if (lensName != null) {
               objective.name = lensName.getTextContent();
@@ -727,6 +765,9 @@ public class OIRReader extends FormatReader {
             }
             if (refraction != null) {
               objective.ri = DataTools.parseDouble(refraction.getTextContent());
+            }
+            if (immersion != null) {
+              objective.immersion = getImmersion(immersion.getTextContent());
             }
 
             objectives.add(objective);
@@ -1073,6 +1114,9 @@ public class OIRReader extends FormatReader {
     public int laserIndex = -1;
     public Object lut;
     public Color color;
+    public Length pinhole;
+    public Length excitation;
+    public Length emission;
   }
 
   class Laser {
@@ -1098,6 +1142,7 @@ public class OIRReader extends FormatReader {
     public Double na;
     public Double wd;
     public Double ri;
+    public Immersion immersion;
   }
 
 }
