@@ -449,11 +449,11 @@ public class OIRReader extends FormatReader {
       root = XMLTools.parseDOM(xml).getDocumentElement();
     }
     catch (ParserConfigurationException e) {
-      LOGGER.warn("Could not parse XML", e);
+      LOGGER.debug("Could not parse XML", e);
       return;
     }
     catch (SAXException e) {
-      LOGGER.warn("Could not parse XML", e);
+      LOGGER.debug("Could not parse XML", e);
       return;
     }
 
