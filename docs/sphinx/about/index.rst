@@ -50,52 +50,60 @@ include:
 -  `Confocal microscopy mailing
    list <http://lists.umn.edu/cgi-bin/wa?A0=confocalmicroscopy>`_
 
-
 Bio-Formats versions
 --------------------
 
-Bio-Formats is now decoupled from OMERO with its own release schedule rather
-than being updated whenever a new version of :products_plone:`OMERO <omero>`
-is released.
-We expect this to result in more frequent releases to get fixes out to the
-community faster.
-
-See the :doc:`version history <whats-new>` for a list of major changes in
-each release.
+Since Bio-Formats 5.1.3, Bio-Formats is decoupled from OMERO with its own
+release schedule than being updated whenever a new version of
+:products_plone:`OMERO <omero>` is released.
+This change allows in more frequent releases to get fixes out to the
+community faster. See the :doc:`version history <whats-new>` for a list of
+changes in each release.
 
 .. _versioning-policy:
 
 Versioning policy
 ^^^^^^^^^^^^^^^^^
 
-Bio-Formats does not yet conform to `strict semantic versioning <http://semver.org>`_.
-The following set of rules describe the current policy (using
-`RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_):
+The following set of rules describe the current versioning policy using
+`RFC 2119 <https://www.ietf.org/rfc/rfc2119.txt>`_.
+
+The Bio-Formats API follows strict `semantic versioning <http://semver.org>`_
+since Bio-Formats 5.3.0 i.e.:
 
 - The version number MUST take the form X.Y.Z where X, Y, and Z are
   non-negative integers, and MUST NOT contain leading zeroes. X is the major
   version, Y is the minor version and Z is the patch version.
-- The patch version Z MUST be incremented if only backwards
-  compatible bug fixes are introduced. A bug fix is defined as an internal
-  change that fixes incorrect behavior.
-- Either the minor version Y or the major version X MUST be incremented when
-  backwards-incompatible changes (model-breaking API) are introduced to the
-  public API. These version increases MAY also include patch level changes.
+- The patch version Z MUST be incremented if only backwards-compatible bug
+  fixes are introduced. A bug fix is defined as an internal change that fixes
+  incorrect behavior.
+- The minor version Y MUST be incremented if new, backwards-compatible
+  functionality is introduced to the public API.
+- The major version X MUST be incremented when backwards-incompatible changes
+  are introduced to the public API.
 - Either the minor version or the major version MUST be incremented if the
   version of a non-OME/external dependency is updated.
 
-The exception to this policy is serialization. Serialization functionality was
-implemented as a ReaderWrapper called Memoizer in Bio-Formats 5.0.0 and is
-exposed to the community via a public API. Currently:
+Serialization functionality was implemented as a ReaderWrapper called Memoizer
+in Bio-Formats 5.0.0 and is exposed to the community via a public API.
+Since Bio-Format 5.4.0,:
 
-- Major/minor/patch version bumps of Bio-Formats are not backwards-compatible
-  with regard to serialization in that cached memo files written with a
-  previous version may not be readable by later versions and may need to be
-  rewritten.
-- Consumers with code relying on Bio-Formats caching stability should
-  not upgrade their Bio-Formats version for now.
-- Changes breaking the serialization should be grouped together as much as
-  possible in order to minimize the number of breakages per series.
+- The minor version Y MUST be incremented if changes are introduced that
+  are not backwards compatible with regard to serialization.
+- Serialized memo files written with a previous minor version MAY not be
+  readable by later versions and MAY need to be rewritten.
+- Consumers with code relying on Bio-Formats caching stability SHOULD
+  not upgrade the minor version of Bio-Formats version for now.
+
+For format reader fixes and additions, the policy should read as follows:
+
+- The minor version Y MUST be incremented when a new file format reader is
+  introduced.
+- The minor version Y MUST be incremented when a non backwards-compatible
+  format bug fix is introduced, e.g. a fix that modifies the core metadata
+  of existing files.
+- The patch version Z MUST be incremented if only backwards-compatible format
+  bug fixes are introducted
 
 See `this GitHub issue <https://github.com/openmicroscopy/design/issues/55>`_
 for further details.
