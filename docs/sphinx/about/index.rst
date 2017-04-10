@@ -54,9 +54,9 @@ Bio-Formats versions
 --------------------
 
 Since Bio-Formats 5.1.3, Bio-Formats is decoupled from OMERO with its own
-release schedule than being updated whenever a new version of
+release schedule rather than being updated whenever a new version of
 :products_plone:`OMERO <omero>` is released.
-This change allows in more frequent releases to get fixes out to the
+This change allows for more frequent releases to get fixes out to the
 community faster. See the :doc:`version history <whats-new>` for a list of
 changes in each release.
 
@@ -103,7 +103,7 @@ For format reader fixes and additions, the policy should read as follows:
   format bug fix is introduced, e.g. a fix that modifies the core metadata
   of existing files.
 - The patch version Z MUST be incremented if only backwards-compatible format
-  bug fixes are introducted
+  bug fixes are introduced.
 
 See `this GitHub issue <https://github.com/openmicroscopy/design/issues/55>`_
 for further details.
