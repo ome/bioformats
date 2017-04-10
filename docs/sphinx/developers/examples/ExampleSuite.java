@@ -66,6 +66,7 @@ public class ExampleSuite {
     File tiledFile2 = new File(parentDir, "tiledFile2.ome.tiff");
     File overlappedTiledFile = new File(parentDir, "overlappedTiledFile.ome.tiff");
     File overlappedTiledFile2 = new File(parentDir, "overlappedTiledFile2.ome.tiff");
+    File inMemoryFile = new File(parentDir, inputFile.getName() +".ome.tif");
     
     // Remove any existing output files
     Files.deleteIfExists(convertedFile.toPath());
@@ -76,6 +77,7 @@ public class ExampleSuite {
     Files.deleteIfExists(tiledFile2.toPath());
     Files.deleteIfExists(overlappedTiledFile.toPath());
     Files.deleteIfExists(overlappedTiledFile2.toPath());
+    Files.deleteIfExists(inMemoryFile.toPath());
 
     // Execute examples
     execute("ReadPhysicalSize", new String[] {inputFile.getAbsolutePath()});
@@ -93,5 +95,6 @@ public class ExampleSuite {
         overlappedInputFile.getAbsolutePath(), overlappedTiledFile.getAbsolutePath(), "96", "96"});
     execute("OverlappedTiledWriter", new String[] {
         overlappedInputFile.getAbsolutePath(), overlappedTiledFile2.getAbsolutePath(), "192", "96"});
+    execute("ReadWriteInMemory", new String[] {inputFile.getAbsolutePath()});
   }
 }
