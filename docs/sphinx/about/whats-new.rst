@@ -1,6 +1,34 @@
 Version history
 ===============
 
+5.4.1 (2017 April 13)
+---------------------
+
+File format improvements:
+
+* MIAS (Maia Scientific)
+   - added a fix for a possible exception when image files are not found under 
+     channel-specific subdirectories
+* BD Pathway
+   - added fix to check if ``Experiment.exp`` is a directory or an experiment file
+* Imspector OBF
+   - enabled forward compatibility for future versions as the OBF format is backwards 
+     compatible (thanks to Bjoern Thiel)
+
+Documentation improvements:
+
+* updated external homepage link for FocalPoint
+* removed imago from list of visualization and analysis applications as it is no
+  longer available from the Mayachitra website
+* added links to public sample files for Hamamatsu ndpi and Hamamatsu VMS
+* listed OpenSlide as available software for supported formats
+* added a new developer page detailing in-memory reading and writing
+* updated the Bio-Formats API versioning policy which now follows strict 
+  semantic versioning
+* a new options page has been added detailing the usage of configurable format specific 
+  options for readers and writers. Links to the available options are also included under 
+  the relevant supported formats
+
 5.4.0 (2017 March 21)
 ---------------------
 
