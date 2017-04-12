@@ -68,7 +68,7 @@ normally be used to write a file to disk.
    :start-after: write-start
    :end-before: write-end
 
-If it desired the data written to memory can then be flushed to disk and written to 
+If desired the data written to memory can then be flushed to disk and written to 
 an output file location.
 
 .. literalinclude:: examples/ReadWriteInMemory.java
