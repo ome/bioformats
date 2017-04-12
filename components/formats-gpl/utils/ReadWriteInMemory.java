@@ -38,6 +38,7 @@ import loci.formats.services.OMEXMLService;
  * @deprecated Class has been moved to documentation examples and is available for download 
  * from http://www.openmicroscopy.org/site/support/bio-formats/developers/in-memory.html
  */
+@Deprecated
 public class ReadWriteInMemory {
 
   public static void main(String[] args)
