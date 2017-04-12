@@ -179,7 +179,7 @@ Simple example of how to open multiple files simultaneously.
 :source:`ParallelRead <components/formats-gpl/utils/ParallelRead.java>` -
 Reads all files in given directory in parallel, using a separate thread for each.
 
-:source:`ReadWriteInMemory <components/formats-gpl/utils/ReadWriteInMemory.java>` -
+:doc:`ReadWriteInMemory <in-memory>` -
 Tests the Bio-Formats I/O logic to and from byte arrays in memory.
 
 File writing:
