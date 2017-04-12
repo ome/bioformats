@@ -148,9 +148,7 @@ public class OIRReader extends FormatReader {
       }
     }
 
-    byte[] wholePlane = new byte[FormatTools.getPlaneSize(this)];
     int end = startIndex + blocksPerPlane;
-
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bufferOffset = bpp * ((y * getSizeX()) + x);
@@ -1014,7 +1012,7 @@ public class OIRReader extends FormatReader {
     if (id != null && laserId != null) {
       boolean foundChannel = false;
       for (Channel ch : channels) {
-        if (ch.id.equals(id) || ch.name.equals(name)) {
+        if (ch.id.equals(id) || ch.name.equals(channelName)) {
           foundChannel = true;
           for (int l=0; l<lasers.size(); l++) {
             Laser laser = lasers.get(l);
