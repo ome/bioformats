@@ -18,9 +18,9 @@ File format improvements:
 Documentation improvements:
 
 * updated external homepage link for FocalPoint
-* removed imago from list of visualization and analysis applications as it is no
+* removed Imago from list of visualization and analysis applications as it is no
   longer available from the Mayachitra website
-* added links to public sample files for Hamamatsu ndpi and Hamamatsu VMS
+* added links to public sample files for Hamamatsu NDPI and Hamamatsu VMS
 * listed OpenSlide as available software for supported formats
 * added a new developer page detailing in-memory reading and writing
 * updated the Bio-Formats API versioning policy, which now follows strict 
