@@ -12,7 +12,7 @@ File format improvements:
 * BD Pathway
    - added fix to check if ``Experiment.exp`` is a directory or an experiment file
 * Imspector OBF
-   - enabled forward compatibility for future versions as the OBF format is backwards 
+   - enabled forward compatibility for future versions, as the OBF format is backwards 
      compatible (thanks to Bjoern Thiel)
 
 Documentation improvements:
@@ -23,9 +23,9 @@ Documentation improvements:
 * added links to public sample files for Hamamatsu ndpi and Hamamatsu VMS
 * listed OpenSlide as available software for supported formats
 * added a new developer page detailing in-memory reading and writing
-* updated the Bio-Formats API versioning policy which now follows strict 
+* updated the Bio-Formats API versioning policy, which now follows strict 
   semantic versioning
-* a new options page has been added detailing the usage of configurable format-specific 
+* a new options page has been added, detailing the usage of configurable format-specific 
   options for readers and writers. Links to the available options are also included under 
   the relevant supported formats
 
