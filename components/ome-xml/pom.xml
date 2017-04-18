@@ -8,7 +8,7 @@
   <parent>
     <groupId>idr</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
     <relativePath>../..</relativePath>
   </parent>
 
