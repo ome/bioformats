@@ -1,10 +1,11 @@
 IDL
 ===
 
-`IDL <http://www.harrisgeospatial.com/ProductsandTechnology/Software/IDL.aspx>`_ (Interactive
-Data Language) is a popular data visualization and analysis platform
-used for interactive processing of large amounts of data including
-images.
+`IDL
+<http://www.harrisgeospatial.com/ProductsandTechnology/Software/IDL.aspx>`_
+(Interactive Data Language) is a popular data visualization and analysis
+platform used for interactive processing of large amounts of data
+including images.
 
 IDL possesses the ability to interact with Java applications via its
 IDL-Java bridge. Karsten Rodenacker has written a script that uses
