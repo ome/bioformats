@@ -1,7 +1,7 @@
 IDL
 ===
 
-`IDL <http://www.exelisvis.com/ProductsServices/IDL.aspx>`_ (Interactive
+`IDL <http://www.harrisgeospatial.com/ProductsandTechnology/Software/IDL.aspx>`_ (Interactive
 Data Language) is a popular data visualization and analysis platform
 used for interactive processing of large amounts of data including
 images.
