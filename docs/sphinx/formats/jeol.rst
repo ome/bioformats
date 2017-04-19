@@ -7,7 +7,7 @@ JEOL
 Extensions: .dat, .img, .par
 
 
-Owner: `JEOL <http://www.jeol.com>`_
+Owner: `JEOL <https://www.jeol.co.jp/en/>`_
 
 **Support**
 

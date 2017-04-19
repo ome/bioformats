@@ -1063,7 +1063,7 @@ notes = Commercial applications that support IPLab include: \n
 
 [JEOL]
 extensions = .dat, .img, .par
-owner = `JEOL <http://www.jeol.com>`_
+owner = `JEOL <https://www.jeol.co.jp/en/>`_
 bsd = no
 weHave = * Pascal code that reads JEOL files (from ImageSXM) \n
 * a few JEOL files
