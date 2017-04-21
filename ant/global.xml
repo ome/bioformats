@@ -111,7 +111,7 @@ Type "ant -p" for a list of targets.
     </try>
     <catch/>
   </trycatch>
-  <property name="build.version" value="${release.version}"/>
+  <property name="build.version" value="v${release.version}"/>
 
   <!-- Internal build targets -->
 
