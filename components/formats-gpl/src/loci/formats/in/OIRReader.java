@@ -258,7 +258,12 @@ public class OIRReader extends FormatReader {
       if (length < 0 || length + in.getFilePointer() > in.length()) {
         break;
       }
+      long fp = in.getFilePointer();
       String xml = in.readString(length);
+      LOGGER.trace("xml = {}", xml);
+      if (channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) {
+        parseXML(xml, fp);
+      }
       boolean expectPixelBlock = xml.endsWith(":frameProperties>");
       if (expectPixelBlock) {
         while (skipPixelBlock(true));
@@ -999,7 +1004,7 @@ public class OIRReader extends FormatReader {
     String id = channel.getAttribute("id");
     NodeList laserIds = channel.getElementsByTagName("lsmimage:laserDataId");
     // do not link the laser to the channel if multiple linkages are present (e.g. lambda)
-    if (laserIds == null || laserIds.getLength() > 1) {
+    if ((laserIds == null || laserIds.getLength() > 1) && !appendChannels) {
       return;
     }
     Element laserId = (Element) laserIds.item(0);
@@ -1009,16 +1014,18 @@ public class OIRReader extends FormatReader {
       channelName = name.getTextContent();
     }
 
-    if (id != null && laserId != null) {
+    if (id != null) {
       boolean foundChannel = false;
       for (Channel ch : channels) {
-        if (ch.id.equals(id) || ch.name.equals(channelName)) {
+        if (ch.id.equals(id)) {
           foundChannel = true;
-          for (int l=0; l<lasers.size(); l++) {
-            Laser laser = lasers.get(l);
-            if (laser.dataId.equals(laserId.getTextContent())) {
-              ch.laserIndex = l;
-              break;
+          if (laserId != null) {
+            for (int l=0; l<lasers.size(); l++) {
+              Laser laser = lasers.get(l);
+              if (laser.dataId.equals(laserId.getTextContent())) {
+                ch.laserIndex = l;
+                break;
+              }
             }
           }
         }
@@ -1027,11 +1034,13 @@ public class OIRReader extends FormatReader {
         Channel c = new Channel();
         c.id = id;
         c.name = channelName;
-        for (int l=0; l<lasers.size(); l++) {
-          Laser laser = lasers.get(l);
-          if (laser.dataId.equals(laserId.getTextContent())) {
-            c.laserIndex = l;
-            break;
+        if (laserId != null) {
+          for (int l=0; l<lasers.size(); l++) {
+            Laser laser = lasers.get(l);
+            if (laser.dataId.equals(laserId.getTextContent())) {
+              c.laserIndex = l;
+              break;
+            }
           }
         }
         channels.add(c);
