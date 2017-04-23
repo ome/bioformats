@@ -1674,6 +1674,21 @@ notes = Commercial applications that support this format include: \n
 * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 * `SVI Huygens <http://svi.nl/>`_
 
+[Olympus OIR]
+extensions = .oir
+owner = `Olympus <http://www.olympus.com/>`_
+bsd = no
+software = `Olympus Viewer Plugin for ImageJ <http://imagej.net/OlympusImageJPlugin>`_
+weHave = * several OIR datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/Olympus-OIR>`_
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = OIRReader
+notes = Support for this format was added in partnership with OLYMPUS EUROPA SE & Co. KG
+
 [Olympus ScanR]
 extensions = .xml, .dat, .tif
 owner = `Olympus <http://www.olympus.com/>`_
