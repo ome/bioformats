@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
@@ -347,46 +348,49 @@ public class OIRReader extends FormatReader {
 
     // populate original metadata
 
-    addGlobalMeta("Creation date", acquisitionDate);
-    addGlobalMeta("Pixel Length X", physicalSizeX);
-    addGlobalMeta("Pixel Length Y", physicalSizeY);
-    addGlobalMeta("Z step", physicalSizeZ);
+    Hashtable<String, Object> tmpMeta = new Hashtable<String, Object>();
+    addMeta("Creation date", acquisitionDate, tmpMeta);
+    addMeta("Pixel Length X", physicalSizeX, tmpMeta);
+    addMeta("Pixel Length Y", physicalSizeY, tmpMeta);
+    addMeta("Z step", physicalSizeZ, tmpMeta);
 
     for (Channel channel : channels) {
       String prefix = "Channel " + channel.name + " ";
-      addGlobalMetaList(prefix + "ID", channel.id);
-      addGlobalMetaList(prefix + "color", channel.color);
-      addGlobalMetaList(prefix + "pinhole", channel.pinhole);
-      addGlobalMetaList(prefix + "start wavelength", channel.excitation);
-      addGlobalMetaList(prefix + "end wavelength", channel.emission);
-      addGlobalMetaList(prefix + "linked laser index", channel.laserIndex);
+      addMetaList(prefix + "ID", channel.id, tmpMeta);
+      addMetaList(prefix + "color", channel.color, tmpMeta);
+      addMetaList(prefix + "pinhole", channel.pinhole, tmpMeta);
+      addMetaList(prefix + "start wavelength", channel.excitation, tmpMeta);
+      addMetaList(prefix + "end wavelength", channel.emission, tmpMeta);
+      addMetaList(prefix + "linked laser index", channel.laserIndex, tmpMeta);
     }
 
     for (Objective objective : objectives) {
-      addGlobalMetaList("Objective Lens name", objective.name);
-      addGlobalMetaList("Objective Lens magnification", objective.magnification);
-      addGlobalMetaList("Objective Lens na", objective.na);
-      addGlobalMetaList("Objective Lens wd", objective.wd);
-      addGlobalMetaList("Objective Lens refractive index", objective.ri);
-      addGlobalMetaList("Objective Lens immersion", objective.immersion);
+      addMetaList("Objective Lens name", objective.name, tmpMeta);
+      addMetaList("Objective Lens magnification", objective.magnification, tmpMeta);
+      addMetaList("Objective Lens na", objective.na, tmpMeta);
+      addMetaList("Objective Lens wd", objective.wd, tmpMeta);
+      addMetaList("Objective Lens refractive index", objective.ri, tmpMeta);
+      addMetaList("Objective Lens immersion", objective.immersion, tmpMeta);
     }
 
     for (Laser laser : lasers) {
       String prefix = "Laser " + laser.name + " ";
-      addGlobalMetaList(prefix + "ID", laser.id);
-      addGlobalMetaList(prefix + "data ID", laser.dataId);
-      addGlobalMetaList(prefix + "power", laser.power);
-      addGlobalMetaList(prefix + "transmissivity", laser.transmissivity);
-      addGlobalMetaList(prefix + "wavelength", laser.wavelength);
+      addMetaList(prefix + "ID", laser.id, tmpMeta);
+      addMetaList(prefix + "data ID", laser.dataId, tmpMeta);
+      addMetaList(prefix + "power", laser.power, tmpMeta);
+      addMetaList(prefix + "transmissivity", laser.transmissivity, tmpMeta);
+      addMetaList(prefix + "wavelength", laser.wavelength, tmpMeta);
     }
 
     for (Detector detector : detectors) {
-      addGlobalMetaList("Detector ID", detector.id);
-      addGlobalMetaList("Detector linked channel ID", detector.channelId);
-      addGlobalMetaList("Detector voltage", detector.voltage);
-      addGlobalMetaList("Detector offset", detector.offset);
-      addGlobalMetaList("Detector gain", detector.gain);
+      addMetaList("Detector ID", detector.id, tmpMeta);
+      addMetaList("Detector linked channel ID", detector.channelId, tmpMeta);
+      addMetaList("Detector voltage", detector.voltage, tmpMeta);
+      addMetaList("Detector offset", detector.offset, tmpMeta);
+      addMetaList("Detector gain", detector.gain, tmpMeta);
     }
+    // this ensures that global metadata keys will be sorted before series keys
+    MetadataTools.merge(tmpMeta, metadata, "\0");
 
     // populate MetadataStore
 
