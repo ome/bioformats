@@ -129,9 +129,6 @@ public class OIRReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int nextPointer = 0;
-    int blocksPerChannel = pixelBlocks.size() / channels.size();
-
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
     int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
