@@ -26,7 +26,7 @@ Reader: CellomicsReader (:bfreader:`Source Code <CellomicsReader.java>`, :doc:`S
 We currently have:
 
 * a few Cellomics .c01 datasets
-* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
+* `public sample images <http://downloads.openmicroscopy.org/images/Cellomics/>`__
 
 We would like to have:
 

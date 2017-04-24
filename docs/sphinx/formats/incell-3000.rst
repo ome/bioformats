@@ -22,13 +22,10 @@ Reader: InCell3000Reader (:bfreader:`Source Code <InCell3000Reader.java>`, :doc:
 
 
 
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-* a few example datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/InCell3000/>`__
 
 We would like to have:
 
