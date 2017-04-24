@@ -97,6 +97,7 @@ loci.formats.in.FlowSightReader       # cif
 loci.formats.in.IM3Reader             # im3
 loci.formats.in.I2IReader             # i2i
 loci.formats.in.SPEReader             # spe
+loci.formats.in.OIRReader             # oir
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
