@@ -97,22 +97,21 @@ Type "ant -p" for a list of targets.
     <isset property="isSnapshot"/>
     <then>
       <echo>isSnapshot = ${isSnapshot}</echo>
-      <trycatch>
-        <try>
-          <exec executable="git" outputproperty="build.revision"
-                failifexecutionfails="true" failonerror="true">
-            <arg value="rev-parse"/>
-            <arg value="--verify"/>
-            <arg value="HEAD"/>
-          </exec>
-          <property name="build.version" value="${build.revision}"/>
-        </try>
-        <catch>
-        </catch>
-      </trycatch>
     </then>
   </if>
-  <property name="build.version" value="${release.version}"/>
+  <trycatch>
+    <try>
+      <exec executable="git" outputproperty="build.revision"
+            failifexecutionfails="true" failonerror="true">
+        <arg value="rev-parse"/>
+        <arg value="--verify"/>
+        <arg value="HEAD"/>
+      </exec>
+      <property name="build.version" value="${build.revision}"/>
+    </try>
+    <catch/>
+  </trycatch>
+  <property name="build.version" value="v${release.version}"/>
 
   <!-- Internal build targets -->
 
