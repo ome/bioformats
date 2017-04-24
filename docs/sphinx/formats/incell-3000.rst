@@ -25,11 +25,10 @@ Reader: InCell3000Reader (:bfreader:`Source Code <InCell3000Reader.java>`, :doc:
 
 We currently have:
 
-* `public sample images <http://downloads.openmicroscopy.org/images/InCell3000/>`__
+* a few example datasets
 
 We would like to have:
 
-* an official specification document
 
 **Ratings**
 

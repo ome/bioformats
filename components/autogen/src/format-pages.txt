@@ -987,7 +987,8 @@ mif = true
 extensions = .frm
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
-weHave = * `public sample images <http://downloads.openmicroscopy.org/images/InCell3000/>`__
+weHave = * a few example datasets
+* `public sample images <http://downloads.openmicroscopy.org/images/InCell3000/>`__ \n
 weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Fair
