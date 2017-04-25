@@ -460,7 +460,7 @@ extensions = .c01, .dib
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 bsd = no
 weHave = * a few Cellomics .c01 datasets\n
-* `public .dib sample images <http://downloads.openmicroscopy.org/images/HCS/BBBC/>`_
+* `public sample images <http://downloads.openmicroscopy.org/images/Cellomics/>`__
 weWant = * a Cellomics .c01 specification document \n
 * more Cellomics .c01 datasets
 pixelsRating = Very good
@@ -987,8 +987,8 @@ mif = true
 extensions = .frm
 developer = `GE <http://gelifesciences.com/>`_
 bsd = no
-samples = `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
-weHave = * a few example datasets
+weHave = * a few example datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/InCell3000/>`__
 weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Fair
