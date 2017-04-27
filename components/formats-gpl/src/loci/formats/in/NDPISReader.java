@@ -180,14 +180,14 @@ public class NDPISReader extends FormatReader {
       }
       else if (key.startsWith("Image")) {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
-        System.out.println(index);
         ndpiFiles[index] = new Location(parent, value).getAbsolutePath();
         readers[index] = new ChannelSeparator(new NDPIReader());
         readers[index].setFlattenedResolutions(hasFlattenedResolutions());
       }
     }
 
-    readers[0].setMetadataStore(getMetadataStore());
+    MetadataStore store = makeFilterMetadata();
+    readers[0].getReader().setMetadataStore(store);
     readers[0].setId(ndpiFiles[0]);
 
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
@@ -198,7 +198,6 @@ public class NDPISReader extends FormatReader {
       ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
     }
 
-    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     bandUsed = new int[ndpiFiles.length];
@@ -210,8 +209,8 @@ public class NDPISReader extends FormatReader {
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
       Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
 
-      store.setChannelName(channelName, getSeries(), c);
-      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER),getSeries(), c);
+      store.setChannelName(channelName, 0, c);
+      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER), 0, c);
 
       bandUsed[c] = 0;
       if (ifd.getSamplesPerPixel() >= 3) {
