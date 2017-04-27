@@ -112,9 +112,8 @@ public class NDPISReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     int channel = zct[1];
     readers[channel].setId(ndpiFiles[channel]);
-    readers[channel].setSeries(getSeries());
-    readers[channel].setResolution(getResolution());
-    int cIndex = (channel < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
+    readers[channel].setCoreIndex(getCoreIndex());
+    int cIndex = (bandUsed[channel] < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
     int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
     readers[channel].openBytes(plane, buf, x, y, w, h);
 
