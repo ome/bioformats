@@ -258,6 +258,10 @@ public class OIRReader extends FormatReader {
       }
       long fp = in.getFilePointer();
       String xml = in.readString(length);
+      if (!xml.startsWith("<?xml")) {
+        in.seek(fp - 2);
+        continue;
+      }
       LOGGER.trace("xml = {}", xml);
       if (channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) {
         parseXML(xml, fp);
@@ -980,6 +984,24 @@ public class OIRReader extends FormatReader {
       }
 
       NodeList channelLinkages = acquisition.getElementsByTagName("commonphase:channel");
+
+      // check if each existing channel has at least one pixel block associated
+      // if not, clear and re-populate the channel list
+      for (int c=0; c<channels.size(); c++) {
+        String id = channels.get(c).id;
+        boolean hasUID = false;
+        for (String uid : pixelBlocks.keySet()) {
+          if (uid.indexOf(id) >= 0) {
+            hasUID = true;
+            break;
+          }
+        }
+        if (!hasUID) {
+          channels.remove(c);
+          c--;
+        }
+      }
+
       boolean appendChannels = channels.size() == 0;
       if (channelLinkages != null && channelLinkages.getLength() > 0) {
         for (int i=0; i<channelLinkages.getLength(); i++) {
@@ -1004,8 +1026,16 @@ public class OIRReader extends FormatReader {
     }
     String id = channel.getAttribute("id");
     NodeList laserIds = channel.getElementsByTagName("lsmimage:laserDataId");
+    if (laserIds == null) {
+      laserIds = channel.getElementsByTagName("fvLsmimage:laserDataId");
+    }
     // do not link the laser to the channel if multiple linkages are present (e.g. lambda)
     if ((laserIds == null || laserIds.getLength() > 1) && !appendChannels) {
+      return;
+    }
+
+    String type = channel.getAttribute("xsi:type");
+    if (type != null && !type.endsWith("NormalChannel")) {
       return;
     }
     Element laserId = (Element) laserIds.item(0);
