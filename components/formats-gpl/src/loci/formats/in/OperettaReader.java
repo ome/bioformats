@@ -138,7 +138,9 @@ public class OperettaReader extends FormatReader {
     ArrayList<String> files = new ArrayList<String>();
     files.add(currentId);
     for (Plane p : planes[getSeries()]) {
-      files.add(p.filename);
+      if (p.filename != null && new Location(p.filename).exists()) {
+        files.add(p.filename);
+      }
     }
 
     return files.toArray(new String[files.size()]);
@@ -166,10 +168,11 @@ public class OperettaReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    Arrays.fill(buf, (byte) 0);
     if (getSeries() < planes.length && no < planes[getSeries()].length) {
       Plane p = planes[getSeries()][no];
 
-      if (new Location(p.filename).exists()) {
+      if (p.filename != null && new Location(p.filename).exists()) {
         if (reader == null) {
           reader = new MinimalTiffReader();
         }
@@ -300,15 +303,35 @@ public class OperettaReader extends FormatReader {
       ms.rgb = false;
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(planes[i][0].filename, 16);
-      TiffParser parser = new TiffParser(s);
-      parser.setDoCaching(false);
+      int planeIndex = 0;
+      String filename = planes[i][planeIndex].filename;
+      while ((filename == null || !new Location(filename).exists()) &&
+        planeIndex < planes[i].length - 1)
+      {
+        LOGGER.debug("Missing TIFF file: {}", filename);
+        planeIndex++;
+        filename = planes[i][planeIndex].filename;
+      }
 
-      IFD firstIFD = parser.getFirstIFD();
-      ms.littleEndian = firstIFD.isLittleEndian();
-      ms.pixelType = firstIFD.getPixelType();
-      s.close();
+      if (filename != null && new Location(filename).exists()) {
+        RandomAccessInputStream s =
+          new RandomAccessInputStream(filename, 16);
+        TiffParser parser = new TiffParser(s);
+        parser.setDoCaching(false);
+
+        IFD firstIFD = parser.getFirstIFD();
+        ms.littleEndian = firstIFD.isLittleEndian();
+        ms.pixelType = firstIFD.getPixelType();
+        s.close();
+      }
+      else if (i > 0) {
+        LOGGER.warn("Could not find valid TIFF file for series {}", i);
+        ms.littleEndian = core.get(0).littleEndian;
+        ms.pixelType = core.get(0).pixelType;
+      }
+      else {
+        LOGGER.warn("Could not find valid TIFF file for series 0; pixel type may be wrong");
+      }
     }
 
     // populate the MetadataStore
@@ -483,9 +506,11 @@ public class OperettaReader extends FormatReader {
       }
       else if (activePlane != null) {
         if ("URL".equals(currentName)) {
-          Location parent =
-            new Location(currentId).getAbsoluteFile().getParentFile();
-          activePlane.filename = new Location(parent, value).getAbsolutePath();
+          if (value.length() > 0) {
+            Location parent =
+              new Location(currentId).getAbsoluteFile().getParentFile();
+            activePlane.filename = new Location(parent, value).getAbsolutePath();
+          }
         }
         else if ("Row".equals(currentName)) {
           activePlane.row = Integer.parseInt(value) - 1;
