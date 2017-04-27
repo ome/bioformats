@@ -125,10 +125,11 @@ public class ColumbusReader extends FormatReader {
       return true;
     }
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    parent = parent.getParentFile();
-    Location xml = new Location(parent, XML_FILE);
-    if (!xml.exists()) {
-      return false;
+    if (new Location(parent, XML_FILE).exists()) {
+      return true;
+    }
+    if (new Location(parent.getParentFile(), XML_FILE).exists()) {
+      return true;
     }
 
     return super.isThisType(name, open);
