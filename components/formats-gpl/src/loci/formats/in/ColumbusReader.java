@@ -124,11 +124,7 @@ public class ColumbusReader extends FormatReader {
     if (localName.equals(XML_FILE)) {
       return true;
     }
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    if (new Location(parent, XML_FILE).exists()) {
-      return true;
-    }
-    if (new Location(parent.getParentFile(), XML_FILE).exists()) {
+    if (null != findXML(name)) {
       return true;
     }
 
@@ -605,6 +601,19 @@ public class ColumbusReader extends FormatReader {
     }
     LOGGER.warn("Could not find plane for row={}, column={}, field={}, t={}, c={}",
       new Object[] {row, col, field, t, c});
+    return null;
+  }
+
+  private static Location findXML(String name) {
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    Location xml = new Location(parent, XML_FILE);
+    if (xml.exists()) {
+      return xml;
+    }
+    xml = new Location(parent.getParentFile(), XML_FILE);
+    if (xml.exists()) {
+      return xml;
+    }
     return null;
   }
 
