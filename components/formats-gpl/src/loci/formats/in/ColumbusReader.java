@@ -210,21 +210,12 @@ public class ColumbusReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    // make sure that we have the XML file and not a TIFF file
-
-    if (!checkSuffix(id, "xml")) {
-      Location parent = new Location(id).getAbsoluteFile().getParentFile();
-      Location xml = new Location(parent, XML_FILE);
-      if (!xml.exists()) {
-        throw new FormatException("Could not find XML file " +
-          xml.getAbsolutePath());
-      }
-      initFile(xml.getAbsolutePath());
-      return;
+    Location xml = findXML(id);
+    if (null == xml) {
+      throw new FormatException("Could not find " + XML_FILE);
     }
-    else {
-      super.initFile(id);
-    }
+    id = xml.getAbsolutePath();
+    super.initFile(id);
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
 
