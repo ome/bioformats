@@ -1,5 +1,3 @@
-package com.glencoesoftware.orthogonal.reader;
-
 import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
@@ -21,10 +19,10 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import ome.units.quantity.Length;
 
-public class Main {
+public class OrthogonalReader {
 
     private static final Logger log =
-            LoggerFactory.getLogger(Main.class);
+            LoggerFactory.getLogger(OrthogonalReader.class);
 
     @Arg
     private String input;
@@ -48,7 +46,7 @@ public class Main {
         parser.addArgument("--debug")
               .action(Arguments.storeTrue())
               .help("Set logging level to Debug");
-        Main main = new Main();
+        OrthogonalReader main = new OrthogonalReader();
         try {
             parser.parseArgs(args, main);
         } catch (ArgumentParserException e) {
