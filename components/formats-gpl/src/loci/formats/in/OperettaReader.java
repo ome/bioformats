@@ -334,6 +334,11 @@ public class OperettaReader extends FormatReader {
       }
     }
 
+    addGlobalMeta("Plate name", handler.getPlateName());
+    addGlobalMeta("Plate description", handler.getPlateDescription());
+    addGlobalMeta("Plate ID", handler.getPlateIdentifier());
+    addGlobalMeta("Measurement ID", handler.getMeasurementID());
+
     // populate the MetadataStore
 
     MetadataStore store = makeFilterMetadata();
@@ -418,6 +423,7 @@ public class OperettaReader extends FormatReader {
 
     private String displayName;
     private String plateID;
+    private String measurementID;
     private String measurementTime;
     private String plateName;
     private String plateDescription;
@@ -438,6 +444,10 @@ public class OperettaReader extends FormatReader {
 
     public String getPlateIdentifier() {
       return plateID;
+    }
+
+    public String getMeasurementID() {
+      return measurementID;
     }
 
     public String getMeasurementTime() {
@@ -488,6 +498,9 @@ public class OperettaReader extends FormatReader {
       }
       else if ("PlateID".equals(currentName)) {
         plateID = value;
+      }
+      else if ("MeasurementID".equals(currentName)) {
+        measurementID = value;
       }
       else if ("MeasurementStartTime".equals(currentName)) {
         measurementTime = value;
