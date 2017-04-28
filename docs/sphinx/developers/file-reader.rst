@@ -103,6 +103,8 @@ See :doc:`Bio-Formats metadata processing </about/index>` for more information o
 .. seealso::
   :source:`IFormatReader <components/formats-api/src/loci/formats/IFormatReader.java>`
     Source code of the ``loci.formats.IFormatReader`` interface
+  :download:`OrthogonalReader.java <examples/OrthogonalReader.java>`
+    Example of reading XY, XZ, and YZ image planes from a file
 
 File reading extras
 -------------------
