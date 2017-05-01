@@ -48,7 +48,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -58,8 +57,6 @@ import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
