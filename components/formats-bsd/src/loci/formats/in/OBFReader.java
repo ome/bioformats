@@ -367,7 +367,7 @@ public class OBFReader extends FormatReader
       obf.seriesMetadata.put("Name", name);
       String description = in.readString(lengthOfDescription);
 
-      if (description != null) {
+      if (description != null && lengthOfDescription > 0) {
         description = XMLTools.sanitizeXML(description);
 
         // some XML node names may contain white space, which prevents parsing
