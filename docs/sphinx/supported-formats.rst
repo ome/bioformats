@@ -1057,6 +1057,17 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |yes|
      - |no|
+   * - :doc:`formats/olympus-oir`
+     - .oir
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+     - |no|
+     - |no|
    * - :doc:`formats/olympus-scanr`
      - .xml, .dat, .tif
      - |Very good|
@@ -1608,7 +1619,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **144** formats
+Bio-Formats currently supports **145** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1772,6 +1783,7 @@ Bio-Formats currently supports **144** formats
     formats/olympus-cellrapl
     formats/olympus-fluoview-fv1000
     formats/olympus-fluoview-tiff
+    formats/olympus-oir
     formats/olympus-scanr
     formats/olympus-sis-tiff
     formats/ome-tiff
