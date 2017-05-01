@@ -202,7 +202,7 @@ public class NDPISReader extends FormatReader {
 
     bandUsed = new int[ndpiFiles.length];
     for (int c=0; c<readers.length; c++) {
-      // // populate channel names based on IFD entry
+      // populate channel names based on IFD entry
       TiffParser tp = new TiffParser(ndpiFiles[c]);
       IFD ifd = tp.getIFDs().get(0);
 
