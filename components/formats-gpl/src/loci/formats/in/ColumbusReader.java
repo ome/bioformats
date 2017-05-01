@@ -415,7 +415,7 @@ public class ColumbusReader extends FormatReader {
                 p = lookupPlane(row, col, field, t, c);
                 if (p != null) {
                   p.series = wellSample;
-                  store.setPlaneDeltaT(new Time(p.deltaT - timestampSeconds, UNITS.S), p.series, getIndex(0, c, t));
+                  store.setPlaneDeltaT(new Time(p.deltaT - timestampSeconds, UNITS.SECOND), p.series, getIndex(0, c, t));
                 }
               }
             }
