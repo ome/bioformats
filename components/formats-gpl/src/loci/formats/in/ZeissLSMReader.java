@@ -1103,6 +1103,23 @@ public class ZeissLSMReader extends FormatReader {
             int green = (color & 0xff00) >> 8;
             int blue = (color & 0xff0000) >> 16;
 
+            // specially handle the case when the stored color is black
+            // if this is not the first channel, copy the color from the
+            // previous channel (necessary for SIM data)
+            // otherwise set the color to white, as this will display better
+            if (red == 0 && green == 0 & blue == 0) {
+              if (i > 0) {
+                red = channelColor[i - 1].getRed();
+                green = channelColor[i - 1].getGreen();
+                blue = channelColor[i - 1].getBlue();
+              }
+              else {
+                red = 255;
+                green = 255;
+                blue = 255;
+              }
+            }
+
             channelColor[i] = new Color(red, green, blue, 255);
 
             for (int j=0; j<256; j++) {
