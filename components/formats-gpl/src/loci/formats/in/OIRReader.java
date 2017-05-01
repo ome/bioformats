@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
@@ -127,9 +128,6 @@ public class OIRReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    int nextPointer = 0;
-    int blocksPerChannel = pixelBlocks.size() / channels.size();
 
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
@@ -258,7 +256,16 @@ public class OIRReader extends FormatReader {
       if (length < 0 || length + in.getFilePointer() > in.length()) {
         break;
       }
+      long fp = in.getFilePointer();
       String xml = in.readString(length);
+      if (!xml.startsWith("<?xml")) {
+        in.seek(fp - 2);
+        continue;
+      }
+      LOGGER.trace("xml = {}", xml);
+      if (channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) {
+        parseXML(xml, fp);
+      }
       boolean expectPixelBlock = xml.endsWith(":frameProperties>");
       if (expectPixelBlock) {
         while (skipPixelBlock(true));
@@ -342,46 +349,49 @@ public class OIRReader extends FormatReader {
 
     // populate original metadata
 
-    addGlobalMeta("Creation date", acquisitionDate);
-    addGlobalMeta("Pixel Length X", physicalSizeX);
-    addGlobalMeta("Pixel Length Y", physicalSizeY);
-    addGlobalMeta("Z step", physicalSizeZ);
+    Hashtable<String, Object> tmpMeta = new Hashtable<String, Object>();
+    addMeta("Creation date", acquisitionDate, tmpMeta);
+    addMeta("Pixel Length X", physicalSizeX, tmpMeta);
+    addMeta("Pixel Length Y", physicalSizeY, tmpMeta);
+    addMeta("Z step", physicalSizeZ, tmpMeta);
 
     for (Channel channel : channels) {
       String prefix = "Channel " + channel.name + " ";
-      addGlobalMetaList(prefix + "ID", channel.id);
-      addGlobalMetaList(prefix + "color", channel.color);
-      addGlobalMetaList(prefix + "pinhole", channel.pinhole);
-      addGlobalMetaList(prefix + "start wavelength", channel.excitation);
-      addGlobalMetaList(prefix + "end wavelength", channel.emission);
-      addGlobalMetaList(prefix + "linked laser index", channel.laserIndex);
+      addMetaList(prefix + "ID", channel.id, tmpMeta);
+      addMetaList(prefix + "color", channel.color, tmpMeta);
+      addMetaList(prefix + "pinhole", channel.pinhole, tmpMeta);
+      addMetaList(prefix + "start wavelength", channel.excitation, tmpMeta);
+      addMetaList(prefix + "end wavelength", channel.emission, tmpMeta);
+      addMetaList(prefix + "linked laser index", channel.laserIndex, tmpMeta);
     }
 
     for (Objective objective : objectives) {
-      addGlobalMetaList("Objective Lens name", objective.name);
-      addGlobalMetaList("Objective Lens magnification", objective.magnification);
-      addGlobalMetaList("Objective Lens na", objective.na);
-      addGlobalMetaList("Objective Lens wd", objective.wd);
-      addGlobalMetaList("Objective Lens refractive index", objective.ri);
-      addGlobalMetaList("Objective Lens immersion", objective.immersion);
+      addMetaList("Objective Lens name", objective.name, tmpMeta);
+      addMetaList("Objective Lens magnification", objective.magnification, tmpMeta);
+      addMetaList("Objective Lens na", objective.na, tmpMeta);
+      addMetaList("Objective Lens wd", objective.wd, tmpMeta);
+      addMetaList("Objective Lens refractive index", objective.ri, tmpMeta);
+      addMetaList("Objective Lens immersion", objective.immersion, tmpMeta);
     }
 
     for (Laser laser : lasers) {
       String prefix = "Laser " + laser.name + " ";
-      addGlobalMetaList(prefix + "ID", laser.id);
-      addGlobalMetaList(prefix + "data ID", laser.dataId);
-      addGlobalMetaList(prefix + "power", laser.power);
-      addGlobalMetaList(prefix + "transmissivity", laser.transmissivity);
-      addGlobalMetaList(prefix + "wavelength", laser.wavelength);
+      addMetaList(prefix + "ID", laser.id, tmpMeta);
+      addMetaList(prefix + "data ID", laser.dataId, tmpMeta);
+      addMetaList(prefix + "power", laser.power, tmpMeta);
+      addMetaList(prefix + "transmissivity", laser.transmissivity, tmpMeta);
+      addMetaList(prefix + "wavelength", laser.wavelength, tmpMeta);
     }
 
     for (Detector detector : detectors) {
-      addGlobalMetaList("Detector ID", detector.id);
-      addGlobalMetaList("Detector linked channel ID", detector.channelId);
-      addGlobalMetaList("Detector voltage", detector.voltage);
-      addGlobalMetaList("Detector offset", detector.offset);
-      addGlobalMetaList("Detector gain", detector.gain);
+      addMetaList("Detector ID", detector.id, tmpMeta);
+      addMetaList("Detector linked channel ID", detector.channelId, tmpMeta);
+      addMetaList("Detector voltage", detector.voltage, tmpMeta);
+      addMetaList("Detector offset", detector.offset, tmpMeta);
+      addMetaList("Detector gain", detector.gain, tmpMeta);
     }
+    // this ensures that global metadata keys will be sorted before series keys
+    MetadataTools.merge(tmpMeta, metadata, "\0");
 
     // populate MetadataStore
 
@@ -974,6 +984,24 @@ public class OIRReader extends FormatReader {
       }
 
       NodeList channelLinkages = acquisition.getElementsByTagName("commonphase:channel");
+
+      // check if each existing channel has at least one pixel block associated
+      // if not, clear and re-populate the channel list
+      for (int c=0; c<channels.size(); c++) {
+        String id = channels.get(c).id;
+        boolean hasUID = false;
+        for (String uid : pixelBlocks.keySet()) {
+          if (uid.indexOf(id) >= 0) {
+            hasUID = true;
+            break;
+          }
+        }
+        if (!hasUID) {
+          channels.remove(c);
+          c--;
+        }
+      }
+
       boolean appendChannels = channels.size() == 0;
       if (channelLinkages != null && channelLinkages.getLength() > 0) {
         for (int i=0; i<channelLinkages.getLength(); i++) {
@@ -998,8 +1026,16 @@ public class OIRReader extends FormatReader {
     }
     String id = channel.getAttribute("id");
     NodeList laserIds = channel.getElementsByTagName("lsmimage:laserDataId");
+    if (laserIds == null) {
+      laserIds = channel.getElementsByTagName("fvLsmimage:laserDataId");
+    }
     // do not link the laser to the channel if multiple linkages are present (e.g. lambda)
-    if (laserIds == null || laserIds.getLength() > 1) {
+    if ((laserIds == null || laserIds.getLength() > 1) && !appendChannels) {
+      return;
+    }
+
+    String type = channel.getAttribute("xsi:type");
+    if (type != null && !type.endsWith("NormalChannel")) {
       return;
     }
     Element laserId = (Element) laserIds.item(0);
@@ -1009,16 +1045,18 @@ public class OIRReader extends FormatReader {
       channelName = name.getTextContent();
     }
 
-    if (id != null && laserId != null) {
+    if (id != null) {
       boolean foundChannel = false;
       for (Channel ch : channels) {
-        if (ch.id.equals(id) || ch.name.equals(channelName)) {
+        if (ch.id.equals(id)) {
           foundChannel = true;
-          for (int l=0; l<lasers.size(); l++) {
-            Laser laser = lasers.get(l);
-            if (laser.dataId.equals(laserId.getTextContent())) {
-              ch.laserIndex = l;
-              break;
+          if (laserId != null) {
+            for (int l=0; l<lasers.size(); l++) {
+              Laser laser = lasers.get(l);
+              if (laser.dataId.equals(laserId.getTextContent())) {
+                ch.laserIndex = l;
+                break;
+              }
             }
           }
         }
@@ -1027,11 +1065,13 @@ public class OIRReader extends FormatReader {
         Channel c = new Channel();
         c.id = id;
         c.name = channelName;
-        for (int l=0; l<lasers.size(); l++) {
-          Laser laser = lasers.get(l);
-          if (laser.dataId.equals(laserId.getTextContent())) {
-            c.laserIndex = l;
-            break;
+        if (laserId != null) {
+          for (int l=0; l<lasers.size(); l++) {
+            Laser laser = lasers.get(l);
+            if (laser.dataId.equals(laserId.getTextContent())) {
+              c.laserIndex = l;
+              break;
+            }
           }
         }
         channels.add(c);
