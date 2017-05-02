@@ -294,8 +294,6 @@ public class OperettaReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
-      ms.sizeX = planes[i][0].x;
-      ms.sizeY = planes[i][0].y;
       ms.sizeZ = uniqueZs.size();
       ms.sizeC = uniqueCs.size();
       ms.sizeT = uniqueTs.size();
@@ -304,6 +302,11 @@ public class OperettaReader extends FormatReader {
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
       int planeIndex = 0;
+      while (planes[i][planeIndex] == null) {
+        planeIndex++;
+      }
+      ms.sizeX = planes[i][planeIndex].x;
+      ms.sizeY = planes[i][planeIndex].y;
       String filename = planes[i][planeIndex].filename;
       while ((filename == null || !new Location(filename).exists()) &&
         planeIndex < planes[i].length - 1)
