@@ -25,21 +25,26 @@
 
 package loci.formats.in;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.FormatReader;
+import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
-import loci.formats.FormatException;
+import loci.formats.tiff.TiffParser;
+
+
 import ome.units.UNITS;
 import ome.units.quantity.Length;
-import java.io.IOException;
-import java.util.ArrayList;
-
 
 
 /**
@@ -53,9 +58,8 @@ public class NDPISReader extends FormatReader {
   // -- Fields --
 
   private String[] ndpiFiles;
-  private NDPIReader[] readers;
+  private ChannelSeparator[] readers;
   private int[] bandUsed;
-  private int[] samplesPerPixel;
   private final static int TAG_CHANNEL = 65434;
   private final static int TAG_EMISSION_WAVELENGTH = 65451;
 
@@ -108,25 +112,12 @@ public class NDPISReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     int channel = zct[1];
     readers[channel].setId(ndpiFiles[channel]);
-    readers[channel].setSeries(getSeries());
-    readers[channel].setResolution(getResolution());
-    int spp = samplesPerPixel[channel];
-    if (spp==1) return readers[channel].openBytes(0, buf, x, y, w, h);    // single band reader
-    else {   // read intensity from used band (the other bands are close to zero, only jpeg artifacts and should be ignored)
-      byte[] bufReader = DataTools.allocate(w, h, spp); // w*h*RGB
-      bufReader = readers[channel].openBytes(0, bufReader, x, y, w, h);
-      int band = bandUsed[channel];
-      // each channel is RGB data (with usually only one band used), thus we sum up the intensities
-      if (readers[channel].isInterleaved()) {
-        for (int i = 0; i < buf.length; i++) {
-          buf[i] = bufReader[i * spp + band];
-        }
-      } else {    // not interleaved
-        final int offs = w * h;
-        System.arraycopy(bufReader,offs * band,buf,0,buf.length);
-      }
-      return buf;
-    }
+    readers[channel].setCoreIndex(getCoreIndex());
+    int cIndex = (bandUsed[channel] < readers[channel].getSizeC()) ? bandUsed[channel] : 0;
+    int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
+    readers[channel].openBytes(plane, buf, x, y, w, h);
+
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -154,7 +145,7 @@ public class NDPISReader extends FormatReader {
     if (!fileOnly) {
       ndpiFiles = null;
       if (readers != null) {
-        for (NDPIReader reader : readers) {
+        for (ChannelSeparator reader : readers) {
           if (reader != null) {
             reader.close();
           }
@@ -184,18 +175,19 @@ public class NDPISReader extends FormatReader {
 
       if (key.equals("NoImages")) {
         ndpiFiles = new String[Integer.parseInt(value)];
-        readers = new NDPIReader[ndpiFiles.length];
+        readers = new ChannelSeparator[ndpiFiles.length];
 
       }
       else if (key.startsWith("Image")) {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
         ndpiFiles[index] = new Location(parent, value).getAbsolutePath();
-        readers[index] = new NDPIReader();
+        readers[index] = new ChannelSeparator(new NDPIReader());
         readers[index].setFlattenedResolutions(hasFlattenedResolutions());
       }
     }
 
-    readers[0].setMetadataStore(getMetadataStore());
+    MetadataStore store = makeFilterMetadata();
+    readers[0].getReader().setMetadataStore(store);
     readers[0].setId(ndpiFiles[0]);
 
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
@@ -206,20 +198,22 @@ public class NDPISReader extends FormatReader {
       ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
     }
 
-    samplesPerPixel = new int[ndpiFiles.length];
+    MetadataTools.populatePixels(store, this);
+
     bandUsed = new int[ndpiFiles.length];
-    MetadataStore store = makeFilterMetadata();
-    for (int c=0; c<readers.length; c++) {     // populate channel names based on IFD entry
-      readers[c].setId(ndpiFiles[c]);
-      IFD ifd = readers[c].getIFDs().get(0);
-      samplesPerPixel[c] = ifd.getSamplesPerPixel();
+    for (int c=0; c<readers.length; c++) {
+      // populate channel names based on IFD entry
+      TiffParser tp = new TiffParser(ndpiFiles[c]);
+      IFD ifd = tp.getIFDs().get(0);
+
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
       Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
-      store.setChannelName(channelName, getSeries(), c);
-      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER),getSeries(), c);
+
+      store.setChannelName(channelName, 0, c);
+      store.setChannelEmissionWavelength(new Length(wavelength, UNITS.NANOMETER), 0, c);
 
       bandUsed[c] = 0;
-      if (samplesPerPixel[c]>=3) {
+      if (ifd.getSamplesPerPixel() >= 3) {
         // define band used based on emission wavelength
         // wavelength = 0  Colour Image
         // 380 =< wavelength <= 490 Blue
@@ -230,7 +224,6 @@ public class NDPISReader extends FormatReader {
         else if (580 < wavelength && wavelength <= 780) bandUsed[c] = 0;
       }
     }
-    MetadataTools.populatePixels(store, this);
   }
 
 }
