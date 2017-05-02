@@ -696,7 +696,7 @@ public class ColumbusReader extends FormatReader {
         measurementName = value;
       }
       else if (currentName.equals("Reference")) {
-        metadataFiles.add(value);
+        metadataFiles.add(new Location(value).toString());
       }
       else if (currentName.equals("PlateRows")) {
         plateRows = new Integer(value);
