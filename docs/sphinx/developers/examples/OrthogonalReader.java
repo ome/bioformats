@@ -12,11 +12,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
-import net.sourceforge.argparse4j.ArgumentParsers;
-import net.sourceforge.argparse4j.annotation.Arg;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import ome.units.quantity.Length;
 
 public class OrthogonalReader {
@@ -24,36 +19,39 @@ public class OrthogonalReader {
     private static final Logger log =
             LoggerFactory.getLogger(OrthogonalReader.class);
 
-    @Arg
     private String input;
 
-    @Arg
     private String output;
 
-    @Arg
     private boolean debug;
 
     public static void main(String[] args) throws Throwable {
         log.info("Orthogonal reader started");
-        ArgumentParser parser =
-                ArgumentParsers.newArgumentParser("parser");
-        parser.addArgument("--input")
-              .required(true)
-              .help("Input file");
-        parser.addArgument("--output")
-              .required(true)
-              .help("Input file");
-        parser.addArgument("--debug")
-              .action(Arguments.storeTrue())
-              .help("Set logging level to Debug");
         OrthogonalReader main = new OrthogonalReader();
-        try {
-            parser.parseArgs(args, main);
-        } catch (ArgumentParserException e) {
-            parser.handleError(e);
-            System.exit(1);
+        for (int i=0; i<args.length; i++) {
+          if (args[i].equals("--input")) {
+            main.setInputFile(args[i + 1]);
+          }
+          else if (args[i].equals("--output")) {
+            main.setOutputFile(args[i + 1]);
+          }
+          else if (args[i].equals("--debug")) {
+            main.setDebug(true);
+          }
         }
         main.readOrthogonalPlanes();
+    }
+
+    public void setInputFile(String input) {
+      this.input = input;
+    }
+
+    public void setOutputFile(String output) {
+      this.output = output;
+    }
+
+    public void setDebug(boolean debug) {
+      this.debug = debug;
     }
 
     private ImageReader initialiseReader(String fileName) throws Exception {
