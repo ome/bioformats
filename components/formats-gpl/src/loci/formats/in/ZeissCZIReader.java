@@ -177,7 +177,7 @@ public class ZeissCZIReader extends FormatReader {
   public ZeissCZIReader() {
     super("Zeiss CZI", "czi");
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HISTOLOGY_DOMAIN};
-    suffixSufficient = true;
+    suffixSufficient = false;
     suffixNecessary = false;
   }
 
