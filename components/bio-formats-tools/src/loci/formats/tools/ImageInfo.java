@@ -855,9 +855,16 @@ public class ImageInfo {
             pix = DataTools.normalizeDoubles((double[]) pix);
           }
         }
-        images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
-          sizeX, sizeY, reader.isInterleaved(), false, min, max),
-          sizeX, sizeY, FormatTools.isSigned(pixelType));
+        if (thumbs) {
+          images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
+            sizeX, sizeY, reader.isInterleaved(), false, min, max),
+            sizeX, sizeY, FormatTools.isSigned(pixelType));
+        }
+        else {
+          images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
+            width, height, reader.isInterleaved(), false, min, max),
+            width, height, FormatTools.isSigned(pixelType));
+        }
       }
       if (images[i - start] == null) {
         LOGGER.warn("\t************ Failed to read plane #{} ************", i);
