@@ -2252,6 +2252,14 @@ public class FormatReaderTest {
               continue;
             }
 
+            // Columbus datasets can consist of OME-TIFF files with
+            // extra metadata files
+            if (result && r instanceof ColumbusReader &&
+              readers[j] instanceof OMETiffReader)
+            {
+              continue;
+            }
+
             // Micromanager datasets can consist of OME-TIFF files
             // with an extra metadata file
             if (result && r instanceof MicromanagerReader &&
