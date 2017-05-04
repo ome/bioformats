@@ -1825,6 +1825,18 @@ presenceRating = Fair
 utilityRating = Poor
 reader = PQBinReader
 
+[PerkinElmer Columbus]
+extensions = .xml, .csv, .tif
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+bsd = no
+weHave = * a few example datasets
+pixelsRating = Good
+metadataRating = Very Good
+opennessRating = Fair
+presenceRating = Good
+utilityRating = Fair
+reader = ColumbusReader
+
 [Perkin Elmer Densitometer]
 extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
