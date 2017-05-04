@@ -10,14 +10,16 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 19 of them (3%).
-  * Of those, Bio-Formats fully or partially converts 19 (100%).
+  * The file format itself supports 21 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 21 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Hamamatsu NDPIS format reader:
+  * :schema:`Channel : EmissionWavelength <OME-2016-06/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : Name <OME-2016-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2016-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Image : AcquisitionDate <OME-2016-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2016-06/ome_xsd.html#Image_ID>`
@@ -37,6 +39,6 @@ These fields are fully supported by the Bio-Formats Hamamatsu NDPIS format reade
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 19**
+**Total supported: 21**
 
-**Total unknown or missing: 457**
+**Total unknown or missing: 455**

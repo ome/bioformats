@@ -10,19 +10,21 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 34 of them (7%).
-  * Of those, Bio-Formats fully or partially converts 34 (100%).
+  * The file format itself supports 39 of them (8%).
+  * Of those, Bio-Formats fully or partially converts 39 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats CellVoyager format reader:
+  * :schema:`Channel : Color <OME-2016-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : Name <OME-2016-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : PinholeSize <OME-2016-06/ome_xsd.html#Channel_PinholeSize>`
   * :schema:`Channel : SamplesPerPixel <OME-2016-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Image : AcquisitionDate <OME-2016-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2016-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2016-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2016-06/ome_xsd.html#Image_Name>`
   * :schema:`Pixels : BigEndian <OME-2016-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2016-06/ome_xsd.html#Pixels_DimensionOrder>`
@@ -39,19 +41,22 @@ These fields are fully supported by the Bio-Formats CellVoyager format reader:
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
   * :schema:`Plate : Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
+  * :schema:`Plate : Name <OME-2016-06/ome_xsd.html#Plate_Name>`
   * :schema:`Plate : Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
   * :schema:`PlateAcquisition : EndTime <OME-2016-06/ome_xsd.html#PlateAcquisition_EndTime>`
   * :schema:`PlateAcquisition : ID <OME-2016-06/ome_xsd.html#PlateAcquisition_ID>`
   * :schema:`PlateAcquisition : MaximumFieldCount <OME-2016-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
   * :schema:`PlateAcquisition : StartTime <OME-2016-06/ome_xsd.html#PlateAcquisition_StartTime>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2016-06/ome_xsd.html#WellSampleRef_ID>`
   * :schema:`Well : Column <OME-2016-06/ome_xsd.html#Well_Column>`
   * :schema:`Well : ID <OME-2016-06/ome_xsd.html#Well_ID>`
   * :schema:`Well : Row <OME-2016-06/ome_xsd.html#Well_Row>`
   * :schema:`WellSample : ID <OME-2016-06/ome_xsd.html#WellSample_ID>`
+  * :schema:`WellSample : ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
   * :schema:`WellSample : PositionX <OME-2016-06/ome_xsd.html#WellSample_PositionX>`
   * :schema:`WellSample : PositionY <OME-2016-06/ome_xsd.html#WellSample_PositionY>`
 
-**Total supported: 34**
+**Total supported: 39**
 
-**Total unknown or missing: 442**
+**Total unknown or missing: 437**

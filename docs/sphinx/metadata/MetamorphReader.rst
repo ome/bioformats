@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 46 of them (9%).
-  * Of those, Bio-Formats fully or partially converts 46 (100%).
+  * The file format itself supports 47 of them (9%).
+  * Of those, Bio-Formats fully or partially converts 47 (100%).
 
 Supported fields
 ===============================================================================
@@ -41,6 +41,7 @@ These fields are fully supported by the Bio-Formats Metamorph STK format reader:
   * :schema:`Objective : ID <OME-2016-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : LensNA <OME-2016-06/ome_xsd.html#Objective_LensNA>`
   * :schema:`ObjectiveSettings : ID <OME-2016-06/ome_xsd.html#ObjectiveSettings_ID>`
+  * :schema:`ObjectiveSettings : RefractiveIndex <OME-2016-06/ome_xsd.html#ObjectiveSettings_RefractiveIndex>`
   * :schema:`Pixels : BigEndian <OME-2016-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2016-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2016-06/ome_xsd.html#Pixels_ID>`
@@ -64,6 +65,6 @@ These fields are fully supported by the Bio-Formats Metamorph STK format reader:
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 46**
+**Total supported: 47**
 
-**Total unknown or missing: 430**
+**Total unknown or missing: 429**

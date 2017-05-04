@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 45 of them (9%).
-  * Of those, Bio-Formats fully or partially converts 45 (100%).
+  * The file format itself supports 47 of them (9%).
+  * Of those, Bio-Formats fully or partially converts 47 (100%).
 
 Supported fields
 ===============================================================================
@@ -47,8 +47,10 @@ These fields are fully supported by the Bio-Formats CellWorx format reader:
   * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Plate : Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
   * :schema:`Plate : ID <OME-2016-06/ome_xsd.html#Plate_ID>`
   * :schema:`Plate : Name <OME-2016-06/ome_xsd.html#Plate_Name>`
+  * :schema:`Plate : Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
   * :schema:`PlateAcquisition : EndTime <OME-2016-06/ome_xsd.html#PlateAcquisition_EndTime>`
   * :schema:`PlateAcquisition : ID <OME-2016-06/ome_xsd.html#PlateAcquisition_ID>`
   * :schema:`PlateAcquisition : MaximumFieldCount <OME-2016-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
@@ -63,6 +65,6 @@ These fields are fully supported by the Bio-Formats CellWorx format reader:
   * :schema:`WellSample : PositionX <OME-2016-06/ome_xsd.html#WellSample_PositionX>`
   * :schema:`WellSample : PositionY <OME-2016-06/ome_xsd.html#WellSample_PositionY>`
 
-**Total supported: 45**
+**Total supported: 47**
 
-**Total unknown or missing: 431**
+**Total unknown or missing: 429**
