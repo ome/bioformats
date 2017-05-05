@@ -23,6 +23,7 @@ File format improvements:
    - fix for ``SAXParseException`` when description field in metadata is empty
 
 Documentation improvements:
+
 * added links to public sample files for Cellomics
 * added links to public sample files for InCell 3000
 
