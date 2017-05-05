@@ -72,6 +72,14 @@ defined for each section:
   reader
     A string or a comma-separated list of all readers for this format
 
+  mif
+    set to ``true`` if the format can store multiple Images (in OME-XML
+    terminology) or series (in Bio-Formats API terminology)
+
+  pyramid
+    set to ``yes`` if the format can store a single image at multiple
+    resolutions
+
   notes
     Additional relevant information e.g. that we cannot distribute 
     specification documents to third parties
