@@ -29,6 +29,7 @@ We currently have:
 
 We would like to have:
 
+* an official specification document
 
 **Ratings**
 

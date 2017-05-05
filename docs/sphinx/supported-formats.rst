@@ -1165,7 +1165,7 @@ You can sort this table by clicking on any of the headings.
      - |Fair|
      - |no|
      - |no|
-     - |no|
+     - |yes|
      - |no|
    * - :doc:`formats/perkinelmer-nuance`
      - .im3

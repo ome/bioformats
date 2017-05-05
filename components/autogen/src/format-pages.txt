@@ -1830,12 +1830,14 @@ extensions = .xml, .csv, .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 weHave = * a few example datasets
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Very Good
 opennessRating = Fair
 presenceRating = Good
 utilityRating = Fair
 reader = ColumbusReader
+mif = true
 
 [Perkin Elmer Densitometer]
 extensions = .pds
