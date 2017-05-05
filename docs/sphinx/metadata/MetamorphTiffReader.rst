@@ -10,13 +10,14 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 38 of them (7%).
-  * Of those, Bio-Formats fully or partially converts 38 (100%).
+  * The file format itself supports 43 of them (9%).
+  * Of those, Bio-Formats fully or partially converts 43 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Metamorph TIFF format reader:
+  * :schema:`Channel : EmissionWavelength <OME-2016-06/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : Name <OME-2016-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2016-06/ome_xsd.html#Channel_SamplesPerPixel>`
@@ -47,8 +48,12 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
   * :schema:`Plate : ColumnNamingConvention <OME-2016-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+  * :schema:`Plate : Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
   * :schema:`Plate : ID <OME-2016-06/ome_xsd.html#Plate_ID>`
   * :schema:`Plate : RowNamingConvention <OME-2016-06/ome_xsd.html#Plate_RowNamingConvention>`
+  * :schema:`Plate : Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
+  * :schema:`PlateAcquisition : ID <OME-2016-06/ome_xsd.html#PlateAcquisition_ID>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2016-06/ome_xsd.html#WellSampleRef_ID>`
   * :schema:`Well : Column <OME-2016-06/ome_xsd.html#Well_Column>`
   * :schema:`Well : ID <OME-2016-06/ome_xsd.html#Well_ID>`
   * :schema:`Well : Row <OME-2016-06/ome_xsd.html#Well_Row>`
@@ -56,6 +61,6 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * :schema:`WellSample : ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
 
-**Total supported: 38**
+**Total supported: 43**
 
-**Total unknown or missing: 438**
+**Total unknown or missing: 433**

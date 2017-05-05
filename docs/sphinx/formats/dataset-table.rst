@@ -322,6 +322,9 @@ You can sort this table by clicking on any of the headings.
    * - Olympus Fluoview/ABD TIFF
      - .tif, .tiff
      - One or more .tif/.tiff files, and an optional .txt file
+   * - Olympus OIR
+     - .oir
+     - Single file
    * - Olympus SIS TIFF
      - .tif, .tiff
      - Single file
@@ -361,6 +364,9 @@ You can sort this table by clicking on any of the headings.
    * - PerkinElmer
      - .ano, .cfg, .csv, .htm, .rec, .tim, .zpo, .tif
      - One .htm file, several other metadata files (.tim, .ano, .csv, …) and either .tif files or .2, .3, .4, etc. files
+   * - PerkinElmer Columbus
+     - .xml
+     - Directory with XML file and one .tif/.tiff file per plane
    * - PerkinElmer Operetta
      - .tif, .tiff, .xml
      - Directory with XML file and one .tif/.tiff file per plane

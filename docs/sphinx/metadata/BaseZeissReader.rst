@@ -10,13 +10,14 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 83 of them (17%).
-  * Of those, Bio-Formats fully or partially converts 83 (100%).
+  * The file format itself supports 84 of them (17%).
+  * Of those, Bio-Formats fully or partially converts 84 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats BaseZeissReader:
+  * :schema:`Channel : Color <OME-2016-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : EmissionWavelength <OME-2016-06/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ExcitationWavelength <OME-2016-06/ome_xsd.html#Channel_ExcitationWavelength>`
   * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
@@ -101,6 +102,6 @@ These fields are fully supported by the Bio-Formats BaseZeissReader:
   * :schema:`Rectangle : X <OME-2016-06/ome_xsd.html#Rectangle_X>`
   * :schema:`Rectangle : Y <OME-2016-06/ome_xsd.html#Rectangle_Y>`
 
-**Total supported: 83**
+**Total supported: 84**
 
-**Total unknown or missing: 393**
+**Total unknown or missing: 392**

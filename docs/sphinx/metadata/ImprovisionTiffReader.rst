@@ -10,13 +10,14 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 25 of them (5%).
-  * Of those, Bio-Formats fully or partially converts 25 (100%).
+  * The file format itself supports 26 of them (5%).
+  * Of those, Bio-Formats fully or partially converts 26 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Improvision TIFF format reader:
+  * :schema:`Channel : Color <OME-2016-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : ID <OME-2016-06/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : Name <OME-2016-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2016-06/ome_xsd.html#Channel_SamplesPerPixel>`
@@ -43,6 +44,6 @@ These fields are fully supported by the Bio-Formats Improvision TIFF format read
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 25**
+**Total supported: 26**
 
-**Total unknown or missing: 451**
+**Total unknown or missing: 450**

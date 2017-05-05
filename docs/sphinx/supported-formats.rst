@@ -1156,6 +1156,17 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |no|
      - |no|
+   * - :doc:`formats/perkinelmer-columbus`
+     - .xml, .csv, .tif
+     - |Good|
+     - |Very Good|
+     - |Fair|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+     - |yes|
+     - |no|
    * - :doc:`formats/perkinelmer-nuance`
      - .im3
      - |Good|
@@ -1619,7 +1630,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **145** formats
+Bio-Formats currently supports **146** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1792,6 +1803,7 @@ Bio-Formats currently supports **145** formats
     formats/pcoraw
     formats/pcx-pc-paintbrush
     formats/perkin-elmer-densitometer
+    formats/perkinelmer-columbus
     formats/perkinelmer-nuance
     formats/perkinelmer-operetta
     formats/perkinelmer-ultraview
