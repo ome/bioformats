@@ -340,7 +340,10 @@ public class ZeissCZIReader extends FormatReader {
     boolean emptyTile = true;
     try {
       int minTileX = Integer.MAX_VALUE, minTileY = Integer.MAX_VALUE;
-      int baseResolution = (maxResolution + 1) * (currentIndex / (maxResolution + 1));
+      int baseResolution = currentIndex;
+      while (baseResolution > 0 && core.get(baseResolution - 1).sizeX > core.get(baseResolution).sizeX) {
+        baseResolution--;
+      }
       for (SubBlock plane : planes) {
         if ((plane.planeIndex == no && ((maxResolution == 0 && plane.coreIndex == currentIndex) ||
           (maxResolution > 0 && plane.coreIndex == baseResolution))) ||
@@ -539,9 +542,9 @@ public class ZeissCZIReader extends FormatReader {
     if (tileWidth != null && getCoreIndex() < tileWidth.length) {
       int width = tileWidth[getCoreIndex()];
       if (width == 0 && getCoreIndex() > 0) {
-        return tileWidth[getCoreIndex() - 1] / 2;
+        width = tileWidth[getCoreIndex() - 1] / 2;
       }
-      return width;
+      return width == 0 ? 1024 : width;
     }
     return super.getOptimalTileWidth();
   }
@@ -555,9 +558,9 @@ public class ZeissCZIReader extends FormatReader {
     if (tileHeight != null && getCoreIndex() < tileHeight.length) {
       int height = tileHeight[getCoreIndex()];
       if (height == 0 && getCoreIndex() > 0) {
-        return tileHeight[getCoreIndex() - 1] / 2;
+        height = tileHeight[getCoreIndex() - 1] / 2;
       }
-      return height;
+      return height == 0 ? 1024 : height;
     }
     return super.getOptimalTileHeight();
   }
@@ -970,6 +973,12 @@ public class ZeissCZIReader extends FormatReader {
           if (!hasValidPlane) {
             core.remove(s + r);
             core.get(s).resolutionCount--;
+            // adjust the core indexes of any subsequent planes
+            for (SubBlock plane : planes) {
+              if (plane.coreIndex > s + r) {
+                plane.coreIndex--;
+              }
+            }
           }
           else {
             int div = (int) Math.pow(scaleFactor, r);
@@ -1725,8 +1734,8 @@ public class ZeissCZIReader extends FormatReader {
       int seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
       plane.resolutionIndex = plane.coreIndex;
       plane.coreIndex += seriesIndex * (maxResolution + 1);
-      LOGGER.trace("    assigned plane index = {}; series index = {}",
-        plane.planeIndex, seriesIndex);
+      LOGGER.trace("    assigned plane index = {}; series index = {}; coreIndex = {}",
+        plane.planeIndex, seriesIndex, plane.coreIndex);
     }
   }
 
