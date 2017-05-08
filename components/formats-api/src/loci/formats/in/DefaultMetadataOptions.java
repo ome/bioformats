@@ -32,6 +32,12 @@
 
 package loci.formats.in;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
+
 
 /**
  * {@link MetadataOptions} instance which is created by most reader classes
