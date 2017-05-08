@@ -1,6 +1,33 @@
 Version history
 ===============
 
+5.5.0 (2017 May 8)
+------------------
+
+New file formats:
+
+* Olympus OIR
+   - added support for :doc:`Olympus .oir </formats/olympus-oir>` data  (funded by a 
+     partnership between Glencoe Software and OLYMPUS EUROPA SE & Co. KG)
+* PerkinElmer Columbus
+   - added support for :doc:`PerkinElmer Columbus </formats/perkinelmer-columbus>` data
+
+File format improvements:
+
+* Andor Bio-Imaging Division (ABD) TIFF
+   - fixed acquisition date format from ``MM/dd/yyyy`` to ``dd/MM/yyyy``
+* Nikon NIS-Elements ND2
+   - corrected logic used to determined ``PixelType`` by parsing uiBpc tags
+* Hamamatsu ndpi
+   - improved handling of channels in  NDPIS datasets (thanks to Manuel Stritt)
+* Imspector OBF
+   - fix for ``SAXParseException`` when description field in metadata is empty
+
+Documentation improvements:
+
+* added links to public sample files for Cellomics
+* added links to public sample files for InCell 3000
+
 5.4.1 (2017 April 13)
 ---------------------
 
