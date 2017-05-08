@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -76,7 +76,7 @@ public class GetPhysicalMetadata {
       physicalSizeY.value() + " " + physicalSizeY.unit().getSymbol());
     System.out.println("\tZ spacing = " +
       physicalSizeZ.value() + " " + physicalSizeZ.unit().getSymbol());
-    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.S).doubleValue() + " seconds");
+    System.out.println("\tTime increment = " + timeIncrement.value(UNITS.SECOND).doubleValue() + " seconds");
   }
 
   public static void main(String[] args) throws Exception {

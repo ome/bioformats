@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -50,7 +50,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
@@ -519,7 +518,7 @@ public class ScanrReader extends FormatReader {
       if (next == originalIndex &&
         missingWellFiles == nSlices * nTimepoints * nChannels * nPos)
       {
-        next += nSlices * nTimepoints * nChannels * nPos;
+        wellNumbers.remove(well);
       }
     }
     nWells = wellNumbers.size();
@@ -545,12 +544,7 @@ public class ScanrReader extends FormatReader {
     }
 
     reader = new MinimalTiffReader();
-    for (String tiff : tiffs) {
-      if (tiff != null) {
-        reader.setId(tiff);
-	break;
-      }
-    }
+    reader.setId(tiffs[0]);
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
@@ -692,10 +686,10 @@ public class ScanrReader extends FormatReader {
             Double time = exposures.get(c);
             if (time != null) {
               time /= 1000;
-              store.setPlaneExposureTime(new Time(time, UNITS.S), i, image);
+              store.setPlaneExposureTime(new Time(time, UNITS.SECOND), i, image);
             }
             if (deltaT != null) {
-              store.setPlaneDeltaT(new Time(deltaT, UNITS.S), i, image);
+              store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), i, image);
             }
           }
         }
@@ -723,7 +717,7 @@ public class ScanrReader extends FormatReader {
     private int nextXPos = 0;
     private int nextYPos = 0;
 
-    private StringBuffer currentValue = new StringBuffer();
+    private final StringBuilder currentValue = new StringBuilder();
 
     // -- DefaultHandler API methods --
 

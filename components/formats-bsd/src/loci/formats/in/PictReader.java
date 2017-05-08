@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -154,6 +154,7 @@ public class PictReader extends FormatReader {
         v.write(new JPEGCodec().decompress(s, options));
       }
 
+      s.close();
       s = new RandomAccessInputStream(v);
       s.seek(0);
       readPlane(s, x, y, w, h, buf);

@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -46,13 +45,13 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -77,7 +76,6 @@ import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
-import ome.xml.model.enums.LineCap;
 import ome.xml.model.enums.Marker;
 import ome.xml.model.enums.Medium;
 import ome.xml.model.enums.MicrobeamManipulationType;
@@ -103,7 +101,6 @@ import ome.xml.model.enums.handlers.IlluminationTypeEnumHandler;
 import ome.xml.model.enums.handlers.ImmersionEnumHandler;
 import ome.xml.model.enums.handlers.LaserMediumEnumHandler;
 import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
-import ome.xml.model.enums.handlers.LineCapEnumHandler;
 import ome.xml.model.enums.handlers.MarkerEnumHandler;
 import ome.xml.model.enums.handlers.MediumEnumHandler;
 import ome.xml.model.enums.handlers.MicrobeamManipulationTypeEnumHandler;
@@ -188,9 +185,6 @@ public abstract class FormatReader extends FormatHandler
    * semantics of {@link #getMetadataStore()} prevent "null" access.
    */
   protected MetadataStore metadataStore = new DummyMetadata();
-
-  /** Metadata parsing options. */
-  protected MetadataOptions metadataOptions = new DefaultMetadataOptions();
 
   private ServiceFactory factory;
   private OMEXMLService service;
@@ -584,36 +578,6 @@ public abstract class FormatReader extends FormatHandler
   /** Return a properly configured loci.formats.meta.FilterMetadata. */
   protected MetadataStore makeFilterMetadata() {
     return new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-  }
-
-  // -- IMetadataConfigurable API methods --
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
-   */
-  @Override
-  public Set<MetadataLevel> getSupportedMetadataLevels() {
-    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
-    supportedLevels.add(MetadataLevel.ALL);
-    supportedLevels.add(MetadataLevel.NO_OVERLAYS);
-    supportedLevels.add(MetadataLevel.MINIMUM);
-    return supportedLevels;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
-   */
-  @Override
-  public MetadataOptions getMetadataOptions() {
-    return metadataOptions;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
-   */
-  @Override
-  public void setMetadataOptions(MetadataOptions options) {
-    this.metadataOptions = options;
   }
 
   // -- IFormatReader API methods --
@@ -1462,6 +1426,15 @@ public abstract class FormatReader extends FormatHandler
         ((OMEXMLMetadata) store).resolveReferences();
         setupService();
 
+        if (getMetadataOptions().isValidate()) {
+          try {
+            String omexml = service.getOMEXML((MetadataRetrieve)store);
+            service.validateOMEXML(omexml);
+          } catch (ServiceException | NullPointerException e) {
+            LOGGER.warn("OMEXMLService unable to create OME-XML metadata object.", e);
+          }
+        }
+
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
 
@@ -1796,22 +1769,6 @@ public abstract class FormatReader extends FormatHandler
     }
     catch (EnumerationException e) {
       throw new FormatException("LaserType creation failed", e);
-    }
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.LineCap} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   */
-  protected LineCap getLineCap(String value) throws FormatException {
-    LineCapEnumHandler handler = new LineCapEnumHandler();
-    try {
-      return (LineCap) handler.getEnumeration(value);
-    }
-    catch (EnumerationException e) {
-      throw new FormatException("LineCap creation failed", e);
     }
   }
   /**

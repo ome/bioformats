@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -65,29 +65,29 @@ public class MakeTestOmeTiff {
   public boolean isModulo = false;
 
   public void makeSamples() throws FormatException, IOException {
-    makeOmeTiff("single-channel", "439", "167", "1", "1", "1", "XYZCT");
-    makeOmeTiff("multi-channel", "439", "167", "1", "3", "1", "XYZCT");
-    makeOmeTiff("z-series", "439", "167", "5", "1", "1", "XYZCT");
-    makeOmeTiff("multi-channel-z-series", "439", "167", "5", "3", "1", "XYZCT");
-    makeOmeTiff("time-series", "439", "167", "1", "1", "7", "XYZCT");
-    makeOmeTiff("multi-channel-time-series", "439", "167", "1", "3", "7",
+    makeOmeTiffExtensions("single-channel", "439", "167", "1", "1", "1", "XYZCT");
+    makeOmeTiffExtensions("multi-channel", "439", "167", "1", "3", "1", "XYZCT");
+    makeOmeTiffExtensions("z-series", "439", "167", "5", "1", "1", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-z-series", "439", "167", "5", "3", "1", "XYZCT");
+    makeOmeTiffExtensions("time-series", "439", "167", "1", "1", "7", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-time-series", "439", "167", "1", "3", "7",
       "XYZCT");
-    makeOmeTiff("4D-series", "439", "167", "5", "1", "7", "XYZCT");
-    makeOmeTiff("multi-channel-4D-series", "439", "167", "5", "3", "7",
+    makeOmeTiffExtensions("4D-series", "439", "167", "5", "1", "7", "XYZCT");
+    makeOmeTiffExtensions("multi-channel-4D-series", "439", "167", "5", "3", "7",
       "XYZCT");
-    makeOmeTiff("modulo-6D-Z", "250", "200", "8", "3", "2",
+    makeOmeTiffExtensions("modulo-6D-Z", "250", "200", "8", "3", "2",
       "XYZCT", "4", "1", "1");
-    makeOmeTiff("modulo-6D-C", "250", "200", "4", "9", "2",
+    makeOmeTiffExtensions("modulo-6D-C", "250", "200", "4", "9", "2",
       "XYZCT", "1", "3", "1");
-    makeOmeTiff("modulo-6D-T", "250", "200", "4", "3", "6",
+    makeOmeTiffExtensions("modulo-6D-T", "250", "200", "4", "3", "6",
       "XYZCT", "1", "1", "2");
-    makeOmeTiff("modulo-7D-ZC", "250", "220", "8", "9", "2",
+    makeOmeTiffExtensions("modulo-7D-ZC", "250", "220", "8", "9", "2",
       "XYZCT", "4", "3", "1");
-    makeOmeTiff("modulo-7D-CT", "250", "220", "4", "9", "6",
+    makeOmeTiffExtensions("modulo-7D-CT", "250", "220", "4", "9", "6",
       "XYZCT", "1", "3", "2");
-    makeOmeTiff("modulo-7D-ZT", "250", "220", "8", "3", "6",
+    makeOmeTiffExtensions("modulo-7D-ZT", "250", "220", "8", "3", "6",
       "XYZCT", "4", "1", "2");
-    makeOmeTiff("modulo-8D", "200", "250", "8", "9", "6",
+    makeOmeTiffExtensions("modulo-8D", "200", "250", "8", "9", "6",
       "XYZCT", "4", "3", "2");
   }
 
@@ -104,7 +104,7 @@ public class MakeTestOmeTiff {
       displayUsage();
       return 1;
     }
-    
+
     if (args.length == 10 ) {
       isModulo = true;
     }
@@ -124,17 +124,35 @@ public class MakeTestOmeTiff {
       sizeCsub = Integer.parseInt(args[8]);
       sizeTsub = Integer.parseInt(args[9]);
     }
-    
+
     makeOmeTiff(name, info);
     return 0;
+  }
+
+  public void makeOmeTiffExtensions(final String... args) throws FormatException,
+    IOException
+  {
+    final String name = args[0];
+
+    args[0] = name + ".ome.tif";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tiff";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tf2";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.tf8";
+    makeOmeTiff(args);
+    args[0] = name + ".ome.btf";
+    makeOmeTiff(args);
   }
 
   public void makeOmeTiff(final String name, final CoreMetadata info)
     throws FormatException, IOException
   {
     final String id = getId(name);
-    final OMETiffWriter out = createWriter(name, info, id);
-    writeData(name, info, id, out);
+    try (OMETiffWriter out = createWriter(name, info, id)) {
+      writeData(name, info, id, out);
+    }
   }
 
   public static void main(final String[] args) throws FormatException,
@@ -179,8 +197,15 @@ public class MakeTestOmeTiff {
 
   private String getId(final String name) {
     final String id;
-    if (name.toLowerCase().endsWith(".ome.tif")) id = name;
-    else id = name + ".ome.tif";
+    if (name.toLowerCase().endsWith(".ome.tiff") ||
+        name.toLowerCase().endsWith(".ome.tif") ||
+        name.toLowerCase().endsWith(".ome.tf2") ||
+        name.toLowerCase().endsWith(".ome.tf8") ||
+        name.toLowerCase().endsWith(".ome.btf")) {
+        id = name;
+    } else {
+        id = name + ".ome.tiff";
+    }
     return id;
   }
 
@@ -233,13 +258,13 @@ public class MakeTestOmeTiff {
       serviceFactory.getInstance(OMEXMLService.class);
     final IMetadata meta = omexmlService.createOMEXMLMetadata();
     MetadataTools.populateMetadata(meta, 0, name, info);
-    
+
     if (isModulo) {
       meta.setXMLAnnotationID("Annotation:Modulo:0", 0);
       meta.setXMLAnnotationNamespace("openmicroscopy.org/omero/dimension/modulo", 0);
       meta.setXMLAnnotationDescription("For a description of how 6D, 7D, and 8D data is stored using the Modulo extension see http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html", 0);
       StringBuilder moduloBlock = new StringBuilder();
-      
+
       moduloBlock.append("<Modulo namespace=\"http://www.openmicroscopy.org/Schemas/Additions/2011-09\">");
       if (sizeZsub != 1) {
         moduloBlock.append("<ModuloAlongZ Type=\"other\" TypeDescription=\"Example Data Over Z-Plane\" Start=\"0\" Step=\"1\" End=\"");
@@ -257,7 +282,7 @@ public class MakeTestOmeTiff {
         moduloBlock.append("\"/>");
       }
       moduloBlock.append("</Modulo>");
-      
+
       meta.setXMLAnnotationValue(moduloBlock.toString(), 0);
 
       meta.setImageAnnotationRef("Annotation:Modulo:0", 0, 0);

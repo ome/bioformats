@@ -2,8 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- *
- * Copyright (C) 2005 - 2014 Vanderbilt Integrative Cancer Center and Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Vanderbilt Integrative Cancer Center and Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -56,7 +55,6 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -115,10 +113,15 @@ public class BDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
+    
+    Location location = new Location(name);
+    String id = location.getAbsolutePath();
+    boolean dirCheck = location.isDirectory();
+    if (dirCheck) return false;
     if (name.endsWith(EXPERIMENT_FILE)) return true;
     if (!open) return false;
 
-    String id = new Location(name).getAbsolutePath();
+    
     try {
       id = locateExperimentFile(id);
     }
@@ -497,7 +500,7 @@ public class BDReader extends FormatReader {
         long firstPlane = 0;
         for (int p=0; p<getImageCount(); p++) {
           int[] zct = getZCTCoords(p);
-          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.S), i, p);
+          store.setPlaneExposureTime(new Time(exposure[zct[1]], UNITS.SECOND), i, p);
           String file = getFilename(i, p);
           if (file != null) {
             long plane = getTimestamp(file);
@@ -505,7 +508,7 @@ public class BDReader extends FormatReader {
               firstPlane = plane;
             }
             double timestamp = (plane - firstPlane) / 1000.0;
-            store.setPlaneDeltaT(new Time(timestamp, UNITS.S), i, p);
+            store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, p);
           }
         }
       }
@@ -571,7 +574,7 @@ public class BDReader extends FormatReader {
           while (!line.endsWith(".adf\"")) {
             line = s.readLine().trim();
           }
-          plateName = line.substring(line.indexOf(":")).trim();
+          plateName = line.substring(line.indexOf(':')).trim();
           plateName = plateName.replace('/', File.separatorChar);
           plateName = plateName.replace('\\', File.separatorChar);
           for (int i=0; i<3; i++) {
@@ -691,12 +694,12 @@ public class BDReader extends FormatReader {
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");
-      em = em.substring(0, em.indexOf(" "));
+      em = em.substring(0, em.indexOf(' '));
       emWave[c] = Double.parseDouble(em);
 
       String ex = numerator.get("Excitation");
       ex = ex.substring(0, ex.lastIndexOf(" "));
-      if (ex.indexOf(" ") != -1) {
+      if (ex.indexOf(' ') != -1) {
         ex = ex.substring(ex.lastIndexOf(" ") + 1);
       }
       exWave[c] = Double.parseDouble(ex);

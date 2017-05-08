@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -187,7 +187,7 @@ public class CacheComponent extends JPanel
     row += 2;
 
     JPanel bottom = new JPanel();
-    StringBuffer rows = new StringBuffer();
+    final StringBuilder rows = new StringBuilder();
     rows.append("pref:grow");
     for (int i=0; i<axisLabels.length; i++) rows.append(",3dlu,pref:grow");
     layout = new FormLayout(

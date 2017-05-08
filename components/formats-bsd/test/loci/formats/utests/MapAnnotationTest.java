@@ -1,21 +1,21 @@
 /*
  * #%L
- * Tests for OME Bio-Formats BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -50,7 +46,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import ome.xml.model.Image;
 import ome.xml.model.MapAnnotation;
 import ome.xml.model.MapPair;
-import ome.xml.model.MapPairs;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
@@ -81,16 +76,17 @@ public class MapAnnotationTest {
     image.setPixels(pixels);
 
     // Add a Map Annotation
-    List<MapPair> pairs = new ArrayList<MapPair>();
-    pairs.add(new MapPair("a", "1"));
-    pairs.add(new MapPair("b", "2"));
-    pairs.add(new MapPair("c", "3"));
-    pairs.add(new MapPair("d", "4"));
-    pairs.add(new MapPair("e", "5"));
+    List<MapPair> map = new ArrayList<MapPair>();
+    map.add(new MapPair("a", "1"));
+    map.add(new MapPair("d", "2"));
+    map.add(new MapPair("c", "3"));
+    map.add(new MapPair("b", "4"));
+    map.add(new MapPair("e", "5"));
+    map.add(new MapPair("c", "6"));
 
     MapAnnotation mapAnnotation = new MapAnnotation();
     mapAnnotation.setID("Annotation:0");
-    mapAnnotation.setValue(new MapPairs(pairs));
+    mapAnnotation.setValue(map);
 
     StructuredAnnotations structuredAnnotations = new StructuredAnnotations();
     structuredAnnotations.addMapAnnotation(mapAnnotation);
@@ -124,19 +120,26 @@ public class MapAnnotationTest {
     ome = new OME(document.getDocumentElement(), model);
     model.resolveReferences();
 
-    assertNotNull(ome); 
-    assertEquals(ome.getImage(0).getPixels().getID(), "Pixels:0"); 
-    assertNotNull(ome.getImage(0).getLinkedAnnotation(0)); 
+    assertNotNull(ome);
+    assertEquals(ome.getImage(0).getPixels().getID(), "Pixels:0");
+    assertNotNull(ome.getImage(0).getLinkedAnnotation(0));
 
-    MapAnnotation mapAnnotation = (MapAnnotation) ome.getImage(0).getLinkedAnnotation(0); 
-    MapPairs dataMap = mapAnnotation.getValue();
+    MapAnnotation mapAnnotation = (MapAnnotation) ome.getImage(0).getLinkedAnnotation(0);
+    List<MapPair> dataMap = mapAnnotation.getValue();
 
-    assertEquals(5, dataMap.getPairs().size());
-    assertEquals(new MapPair("a", "1"), dataMap.getPairs().get(0));
-    assertEquals(new MapPair("b", "2"), dataMap.getPairs().get(1));
-    assertEquals(new MapPair("c", "3"), dataMap.getPairs().get(2));
-    assertEquals(new MapPair("d", "4"), dataMap.getPairs().get(3));
-    assertEquals(new MapPair("e", "5"), dataMap.getPairs().get(4));
+    assertEquals(6, dataMap.size());
+    assertEquals("a", dataMap.get(0).getName());
+    assertEquals("1", dataMap.get(0).getValue());
+    assertEquals("d", dataMap.get(1).getName());
+    assertEquals("2", dataMap.get(1).getValue());
+    assertEquals("c", dataMap.get(2).getName());
+    assertEquals("3", dataMap.get(2).getValue());
+    assertEquals("b", dataMap.get(3).getName());
+    assertEquals("4", dataMap.get(3).getValue());
+    assertEquals("e", dataMap.get(4).getName());
+    assertEquals("5", dataMap.get(4).getValue());
+    assertEquals("c", dataMap.get(5).getName());
+    assertEquals("6", dataMap.get(5).getValue());
   }
 
 }

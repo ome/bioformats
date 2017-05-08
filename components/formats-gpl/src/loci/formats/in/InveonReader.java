@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,7 +39,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 
@@ -163,7 +162,7 @@ public class InveonReader extends FormatReader {
       line = line.trim();
 
       if (!line.startsWith("#")) {
-        int space = line.indexOf(" ");
+        int space = line.indexOf(' ');
         if (space < 0) {
           continue;
         }
@@ -248,13 +247,13 @@ public class InveonReader extends FormatReader {
           key.equals("ct_projection_center_offset") ||
           key.equals("ct_projection_horizontal_bed_offset"))
         {
-          space = value.indexOf(" ");
+          space = value.indexOf(' ');
           int index = Integer.parseInt(value.substring(0, space));
           value = value.substring(space + 1);
           key += " " + index;
         }
         else if (key.equals("user")) {
-          space = value.indexOf(" ");
+          space = value.indexOf(' ');
           key = value.substring(0, space);
           value = value.substring(space + 1);
         }
@@ -628,7 +627,7 @@ public class InveonReader extends FormatReader {
   }
 
   private String transformFilter(String value) {
-    int space = value.indexOf(" ");
+    int space = value.indexOf(' ');
     int filter = Integer.parseInt(value.substring(0, space));
     String cutoff = " (cutoff = " + value.substring(space + 1) + ")";
 

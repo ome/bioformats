@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.Region;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -42,7 +41,6 @@ import ome.units.unit.Unit;
 import ome.units.quantity.Length;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for IMOD binary files.
@@ -335,7 +333,7 @@ public class IMODReader extends FormatReader {
             int g = colors[obj][1] & 0xff;
             int b = colors[obj][2] & 0xff;
 
-            StringBuffer sb = new StringBuffer();
+            final StringBuilder sb = new StringBuilder();
             for (int i=0; i<nPoints; i++) {
               sb.append(points[obj][contour][i][0]);
               sb.append(",");
@@ -472,23 +470,23 @@ public class IMODReader extends FormatReader {
       case 0:
         return UNITS.PIXEL;
       case 1:
-        return UNITS.M;
+        return UNITS.METER;
       case 3:
-        return UNITS.KM;
+        return UNITS.KILOMETER;
       case -2:
-        return UNITS.CM;
+        return UNITS.CENTIMETER;
       case -3:
-        return UNITS.MM;
+        return UNITS.MILLIMETER;
       case -6:
-        return UNITS.MICROM;
+        return UNITS.MICROMETER;
       case -9:
-        return UNITS.NM;
+        return UNITS.NANOMETER;
       case -10:
         return UNITS.ANGSTROM;
       case -12:
-        return UNITS.PM;
+        return UNITS.PICOMETER;
     }
-    return UNITS.MICROM;
+    return UNITS.MICROMETER;
   }
 
 }

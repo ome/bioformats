@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -155,7 +155,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   @Override
   protected boolean displayDialog(GenericDialog gd) {
     ThumbLoader loader = null;
-    if (thumbReader != null && !options.isForceThumbnails()) {
+    if (thumbReader != null && !options.isForceThumbnails() && Macro.getOptions() == null) {
       // spawn background thumbnail loader
       loader = new ThumbLoader(thumbReader, p, gd);
     }

@@ -1,4 +1,0 @@
-		if (o3.getLightPath() == null)
-		{
-			o3.setLightPath(new LightPath());
-		}

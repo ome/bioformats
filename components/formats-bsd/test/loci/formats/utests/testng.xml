@@ -2,7 +2,7 @@
   #%L
   BSD implementations of Bio-Formats readers and writers
   %%
-  Copyright (C) 2005 - 2016 Open Microscopy Environment:
+  Copyright (C) 2005 - 2017 Open Microscopy Environment:
     - Board of Regents of the University of Wisconsin-Madison
     - Glencoe Software, Inc.
     - University of Dundee
@@ -65,6 +65,13 @@
         <classes>
             <class name="loci.formats.utests.tiff.TiffParserTest"/>
         </classes>
+    </test>
+    <test name="TiffWriterTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.out.TiffWriterTest"/>
+        <class name="loci.formats.utests.out.OMETiffWriterTest"/>
+      </classes>
     </test>
     <test name="ReaderWrapper">
       <groups/>
@@ -137,6 +144,42 @@
       <groups/>
       <classes>
         <class name="loci.formats.utests.FakeReaderTest"/>
+      </classes>
+    </test>
+    <test name="GenericExcitationMapTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.GenericExcitationMapTest"/>
+      </classes>
+    </test>
+    <test name="ImagingEnvironmentMapTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ImagingEnvironmentMapTest"/>
+      </classes>
+    </test>
+    <test name="MapAnnotationTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.MapAnnotationTest"/>
+      </classes>
+    </test>
+    <test name="ConversionTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ConversionTest"/>
+      </classes>
+    </test>
+    <test name="CompressDecompressTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.CompressDecompressTest"/>
+      </classes>
+    </test>
+    <test name="ImageReaderTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.ImageReaderTest"/>
       </classes>
     </test>
 </suite>

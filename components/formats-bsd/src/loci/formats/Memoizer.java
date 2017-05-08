@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -631,20 +631,18 @@ public class Memoizer extends ReaderWrapper {
   /**
    * Returns {@code true} if the version of the memo file as returned by
    * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
-   * do not match the current version as specified by {@link FormatTools#VERSION}
-   * and {@link FormatTools#VCS_REVISION}, respectively.
+   * do not match the current version as specified by {@link FormatTools#VERSION}.
    */
   public boolean versionMismatch() throws IOException {
 
       final String releaseVersion = ser.loadReleaseVersion();
-      final String revision = ser.loadRevision();
 
       if (!isVersionChecking()) {
         return false;
       }
 
       String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
+      int firstDot = minor.indexOf('.');
       if (firstDot >= 0) {
         int secondDot = minor.indexOf(".", firstDot + 1);
         if (secondDot >= 0) {
@@ -653,7 +651,7 @@ public class Memoizer extends ReaderWrapper {
       }
 
       String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf('.') + 1));
       if (!currentMinor.equals(minor)) {
         LOGGER.info("Different release version: {} not {}",
           releaseVersion, FormatTools.VERSION);
@@ -661,9 +659,10 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // REVISION NUMBER
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
+      if (!versionChecking &&
+          FormatTools.VERSION.endsWith("-SNAPSHOT")) {
+        LOGGER.info("Development version: {}",
+          FormatTools.VERSION);
         return true;
       }
 
@@ -998,15 +997,18 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("Kryo Exception: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (ArrayIndexOutOfBoundsException e) {
       LOGGER.warn("deleting invalid memo file: {}", memoFile, e);
+      LOGGER.debug("ArrayIndexOutOfBoundsException: " + e.getMessage());
       deleteQuietly(memoFile);
       return null;
     } catch (Throwable t) {
       // Logging at error since this is unexpected.
       LOGGER.error("deleting invalid memo file: {}", memoFile, t);
+      LOGGER.debug("Other Exception: " + t.getMessage());
       deleteQuietly(memoFile);
       return null;
     } finally {
@@ -1039,7 +1041,6 @@ public class Memoizer extends ReaderWrapper {
       // Save to temporary location.
       ser.saveVersion(VERSION);
       ser.saveReleaseVersion(FormatTools.VERSION);
-      ser.saveRevision(FormatTools.VCS_REVISION);
       ser.saveReader(reader);
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);

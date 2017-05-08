@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -101,8 +101,6 @@ public class CellH5Reader extends FormatReader {
 
   // -- Fields --
 
-  private double pixelSizeX, pixelSizeY, pixelSizeZ;
-  private double minX, minY, minZ, maxX, maxY, maxZ;
   private int seriesCount;
   private transient JHDFService jhdf;
 
@@ -274,22 +272,12 @@ public class CellH5Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       seriesCount = 0;
-      pixelSizeX = pixelSizeY = pixelSizeZ = 0;
 
       if (jhdf != null) {
         jhdf.close();
       }
       jhdf = null;
       lastChannel = 0;
-
-      minX = minY = minZ = maxX = maxY = maxZ = 0d;
-      store = null;
-      CellH5PositionList.clear();
-      CellH5PathsToImageData.clear();
-      cellObjectNames.clear();
-      times = null;
-      classes = null;
-      bbox = null;
     }
   }
 
@@ -390,7 +378,6 @@ public class CellH5Reader extends FormatReader {
 
   private void parseStructure() throws FormatException {
     seriesCount = 0;
-    pixelSizeX = pixelSizeY = pixelSizeZ = 1;
     core.clear();
     // read experiment structure and collect coordinates
 
@@ -623,10 +610,10 @@ public class CellH5Reader extends FormatReader {
           classColorHexString = (String) classDef[cls].get("color");
           classColors.add(hex2Rgb(classColorHexString));
         }
-        if (classDef.length > 0 && jhdf.exists(coord.pathToPosition + featureName + CellH5Constants.PREDICTED_CLASS_LABELS)) {
-            hasClassification = true;
-            classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
-              featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
+        if (classDef.length > 0) {
+          hasClassification = true;
+          classes = jhdf.readCompoundArrayDataMap(coord.pathToPosition +
+            featureName + CellH5Constants.PREDICTED_CLASS_LABELS);
         }
       }
 

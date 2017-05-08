@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,10 +38,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Hashtable;
 
-import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.formats.FormatException;

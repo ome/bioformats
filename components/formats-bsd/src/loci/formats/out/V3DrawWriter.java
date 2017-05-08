@@ -1,21 +1,21 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 package loci.formats.out;
@@ -46,7 +42,7 @@ import static loci.common.DataTools.unpackBytes;
 
 /**
  * V3DrawWriter writes images in the .v3draw format for rapid I/O in <a
- * href="http://vaa3d.org">Vaa3D</a>, an open-source 3D visualization and
+ * href="http://www.alleninstitute.org/what-we-do/brain-science/research/products-tools/vaa3d/">Vaa3D</a>, an open-source 3D visualization and
  * analysis toolkit.
  *
  * <dd><a
@@ -91,7 +87,7 @@ public class V3DrawWriter extends FormatWriter {
             throw new FormatException("V3DRawWriter does not support writing tiles");
         }
 
-        final String formatkey = "raw_image_stack_by_hpeng"; // for header  
+        final String formatkey = "raw_image_stack_by_hpeng"; // for header
         byte[] v2 = new byte[2];
         byte[] v4 = new byte[4];
 
@@ -106,7 +102,13 @@ public class V3DrawWriter extends FormatWriter {
         }
         String endianString = "L";
         MetadataRetrieve meta = getMetadataRetrieve();
-        boolean bigendian =  meta.getPixelsBinDataBigEndian(series, 0);
+        boolean bigendian = false;
+        if (meta.getPixelsBigEndian(series) != null) {
+          bigendian = meta.getPixelsBigEndian(series).booleanValue();
+        }
+        else if (meta.getPixelsBinDataCount(series) == 0) {
+          bigendian = meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+        }
         if (!bigendian) {
             endianString = "L";
         }else{
@@ -145,16 +147,16 @@ public class V3DrawWriter extends FormatWriter {
             initialized[series][realIndex] = true;
         }
         try {
-//write the header if it's the first time through       
+//write the header if it's the first time through
             if (lastPlane == -1) {
                 pixels.write(formatkey.getBytes(Constants.ENCODING));             // write format key
                 pixels.write(endianString.getBytes(Constants.ENCODING));          // endianness.
                 unpackBytes(bytesPerPixel, v2, 0, 2, !bigendian);
-                pixels.write(v2);                                // unitSize 
+                pixels.write(v2);                                // unitSize
                 for (int d : sz) {
                     unpackBytes(d, v4, 0, 4, !bigendian);
                     pixels.write(v4);
-                }        // and image dimensions into header 
+                }        // and image dimensions into header
                 pixels.write(buf);
                 LOGGER.info("*********   V3DrawWriter.java internal variables  *********");
                 LOGGER.info("bytesPerPixel = " + bytesPerPixel);
@@ -166,7 +168,7 @@ public class V3DrawWriter extends FormatWriter {
                 LOGGER.info("endian= " + endianString);
             } else {
                 pixels.seek(planeSize * realIndex + pixelOffset);
-                //write the rest of the plane 
+                //write the rest of the plane
                 pixels.write(buf);
             }
             lastPlane = realIndex;

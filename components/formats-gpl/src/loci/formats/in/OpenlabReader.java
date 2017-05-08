@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
@@ -43,8 +44,6 @@ import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
-import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -95,9 +94,6 @@ public class OpenlabReader extends FormatReader {
   /** LIFF version (should be 2 or 5). */
   private int version;
 
-  /** Number of series. */
-  private int numSeries;
-
   private PlaneInfo[] planes;
   private float xcal, ycal;
 
@@ -106,7 +102,7 @@ public class OpenlabReader extends FormatReader {
   private String fmt = "";
   private int[][] planeOffsets;
 
-  private Vector<byte[][]> luts;
+  private List<byte[][]> luts;
   private int lastPlane = 0;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
@@ -248,7 +244,7 @@ public class OpenlabReader extends FormatReader {
             if (getSeries() < planeOffsets.length) {
               index = planeOffsets[getSeries()][lastPlane];
             }
-            luts.setElementAt(pict.get8BitLookupTable(), index);
+            luts.set(index, pict.get8BitLookupTable());
           }
 
           r.openBytes(0, buf, x, y, w, h);
@@ -321,7 +317,6 @@ public class OpenlabReader extends FormatReader {
       luts = null;
       lastPlane = 0;
       version = 0;
-      numSeries = 0;
       xcal = ycal = 0f;
       nextTag = 0;
       tag = subTag = 0;
@@ -341,7 +336,7 @@ public class OpenlabReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    luts = new Vector<byte[][]>();
+    luts = new ArrayList<byte[][]>();
 
     LOGGER.info("Verifying Openlab LIFF format");
 
@@ -377,7 +372,7 @@ public class OpenlabReader extends FormatReader {
 
     int imagesFound = 0;
 
-    Vector<PlaneInfo> representativePlanes = new Vector<PlaneInfo>();
+    final List<PlaneInfo> representativePlanes = new ArrayList<PlaneInfo>();
 
     while (in.getFilePointer() + 8 < in.length()) {
       long fp = in.getFilePointer();
@@ -489,8 +484,8 @@ public class OpenlabReader extends FormatReader {
 
     int nSeries = representativePlanes.size();
     planeOffsets = new int[nSeries][];
-    Vector<Integer> tmpOffsets = new Vector<Integer>();
-    Vector<String> names = new Vector<String>();
+    final List<Integer> tmpOffsets = new ArrayList<Integer>();
+    final List<String> names = new ArrayList<String>();
 
     core.clear();
     for (int i=0; i<nSeries; i++) {
@@ -742,10 +737,10 @@ public class OpenlabReader extends FormatReader {
   }
 
   private void parseImageNames(int s) {
-    Vector<String> uniqueF = new Vector<String>();
-    Vector<String> uniqueC = new Vector<String>();
-    Vector<String> uniqueZ = new Vector<String>();
-    Vector<String> uniqueT = new Vector<String>();
+    final List<String> uniqueF = new ArrayList<String>();
+    final List<String> uniqueC = new ArrayList<String>();
+    final List<String> uniqueZ = new ArrayList<String>();
+    final List<String> uniqueT = new ArrayList<String>();
     String[] axes = new String[] {"Z", "C", "T"};
 
     CoreMetadata m = core.get(s);
@@ -801,7 +796,7 @@ public class OpenlabReader extends FormatReader {
       }
       else {
         for (String axis : axes) {
-          Vector<String> unique = null;
+          List<String> unique = null;
           if (axis.equals("Z")) unique = uniqueZ;
           else if (axis.equals("C")) unique = uniqueC;
           else if (axis.equals("T")) unique = uniqueT;

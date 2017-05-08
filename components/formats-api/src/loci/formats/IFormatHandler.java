@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,7 +38,7 @@ import java.io.IOException;
 /**
  * Interface for all biological file format readers and writers.
  */
-public interface IFormatHandler extends Closeable {
+public interface IFormatHandler extends Closeable, IMetadataConfigurable {
 
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);

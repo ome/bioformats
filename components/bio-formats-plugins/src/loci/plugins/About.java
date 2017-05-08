@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -66,9 +66,9 @@ public final class About implements PlugIn {
   public static void about() {
     String msg = "<html>" +
       "Bio-Formats Plugins for ImageJ" +
-      "<br>Revision: " + FormatTools.VCS_REVISION +
-      "<br>Build date: " + FormatTools.DATE +
       "<br>Release: " + FormatTools.VERSION +
+      "<br>Build date: " + FormatTools.DATE +
+      "<br>VCS revision: " + FormatTools.VCS_REVISION +
       "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
       " Open Microscopy Environment:" +
       "<ul>" +

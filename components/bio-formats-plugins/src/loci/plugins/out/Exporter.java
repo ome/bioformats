@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -137,6 +137,7 @@ public class Exporter {
         Boolean splitZ = null;
         Boolean splitC = null;
         Boolean splitT = null;
+        Boolean padded = null;
         Boolean saveRoi = null;
         String compression = null;
 
@@ -147,12 +148,14 @@ public class Exporter {
             String z = Macro.getValue(plugin.arg, "splitZ", null);
             String c = Macro.getValue(plugin.arg, "splitC", null);
             String t = Macro.getValue(plugin.arg, "splitT", null);
+            String zeroPad = Macro.getValue(plugin.arg, "padded", null);
             String sr = Macro.getValue(plugin.arg, "saveRoi", null);
             compression = Macro.getValue(plugin.arg, "compression", null);
             String id = Macro.getValue(plugin.arg, "imageid", null);
             splitZ = z == null ? null : Boolean.valueOf(z);
             splitC = c == null ? null : Boolean.valueOf(c);
             splitT = t == null ? null : Boolean.valueOf(t);
+            padded = zeroPad == null ? null : Boolean.valueOf(zeroPad);
             saveRoi = sr == null ? null : Boolean.valueOf(sr);
             if (id != null) {
                 try {
@@ -297,6 +300,7 @@ public class Exporter {
             if (splitZ == null) splitZ = Boolean.FALSE;
             if (splitC == null) splitC = Boolean.FALSE;
             if (splitT == null) splitT = Boolean.FALSE;
+            if (padded == null) padded = Boolean.FALSE;
         }
         if (splitZ == null || splitC == null || splitT == null) {
             // ask if we want to export multiple files
@@ -306,15 +310,17 @@ public class Exporter {
             multiFile.addCheckbox("Write_each_Z_section to a separate file", false);
             multiFile.addCheckbox("Write_each_timepoint to a separate file", false);
             multiFile.addCheckbox("Write_each_channel to a separate file", false);
+            multiFile.addCheckbox("Use zero padding for filename indexes", false);
             multiFile.showDialog();
 
             splitZ = multiFile.getNextBoolean();
             splitT = multiFile.getNextBoolean();
             splitC = multiFile.getNextBoolean();
+            padded = multiFile.getNextBoolean();
             if (multiFile.wasCanceled()) return;
         }
 
-        try {
+        try (IFormatWriter w = new ImageWriter().getWriter(outfile)) {
             int ptype = 0;
             int channels = 1;
             switch (imp.getType()) {
@@ -335,7 +341,6 @@ public class Exporter {
             }
             String title = imp.getTitle();
 
-            IFormatWriter w = new ImageWriter().getWriter(outfile);
             w.setWriteSequentially(true);
             FileInfo fi = imp.getOriginalFileInfo();
             String xml = fi == null ? null : fi.description == null ? null :
@@ -428,11 +433,27 @@ public class Exporter {
                 store.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
             }
 
-            // always reset the pixel type
+            // reset the pixel type, unless the only change is signedness
             // this prevents problems if the user changed the bit depth of the image
+            boolean applyCalibrationFunction = false;
             try {
-                store.setPixelsType(PixelType.fromString(
-                        FormatTools.getPixelTypeString(ptype)), 0);
+                int originalType = -1;
+                if (store.getPixelsType(0) != null) {
+                  originalType = FormatTools.pixelTypeFromString(
+                  store.getPixelsType(0).toString());
+                }
+                if (ptype != originalType &&
+                  (store.getPixelsType(0) == null ||
+                  !FormatTools.isSigned(originalType) ||
+                  FormatTools.getBytesPerPixel(originalType) !=
+                  FormatTools.getBytesPerPixel(ptype)))
+                {
+                  store.setPixelsType(PixelType.fromString(
+                    FormatTools.getPixelTypeString(ptype)), 0);
+                }
+                else if (FormatTools.isSigned(originalType)) {
+                  applyCalibrationFunction = true;
+                }
             }
             catch (EnumerationException e) { }
 
@@ -467,7 +488,7 @@ public class Exporter {
             store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(cal.pixelWidth), 0);
             store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(cal.pixelHeight), 0);
             store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(cal.pixelDepth), 0);
-            store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.S), 0);
+            store.setPixelsTimeIncrement(new Time(new Double(cal.frameInterval), UNITS.SECOND), 0);
 
             if (imp.getImageStackSize() !=
                     imp.getNChannels() * imp.getNSlices() * imp.getNFrames())
@@ -550,8 +571,9 @@ public class Exporter {
                 for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
                     for (int c=0; c<(splitC ? sizeC : 1); c++) {
                         for (int t=0; t<(splitT ? sizeT : 1); t++) {
-                            outputFiles[nextFile++] = base + (splitZ ? "_Z" + z : "") +
-                                    (splitC ? "_C" + c : "") + (splitT ? "_T" + t : "") + ext;
+                            int index = FormatTools.getIndex(ORDER, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, z, c, t);
+                            String pattern = base + (splitZ ? "_Z%z" : "") + (splitC ? "_C%c" : "") + (splitT ? "_T%t" : "") + ext;
+                            outputFiles[nextFile++] = FormatTools.getFilename(0, index, store, pattern, padded);
                         }
                     }
                 }
@@ -656,8 +678,14 @@ public class Exporter {
             int start = doStack ? 0 : imp.getCurrentSlice() - 1;
             int end = doStack ? size : start + 1;
 
-            boolean littleEndian =
-                    !w.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
+            boolean littleEndian = false;
+            if (w.getMetadataRetrieve().getPixelsBigEndian(0) != null)
+            {
+              littleEndian = !w.getMetadataRetrieve().getPixelsBigEndian(0).booleanValue();
+            }
+            else if (w.getMetadataRetrieve().getPixelsBinDataCount(0) == 0) {
+              littleEndian = !w.getMetadataRetrieve().getPixelsBinDataBigEndian(0, 0).booleanValue();
+            }
             byte[] plane = null;
             w.setInterleaved(false);
 
@@ -678,11 +706,36 @@ public class Exporter {
                 int y = proc.getHeight();
 
                 if (proc instanceof ByteProcessor) {
-                    plane = (byte[]) proc.getPixels();
+                    if (applyCalibrationFunction) {
+                      // don't alter 'pixels' directly as that will
+                      // affect the open ImagePlus
+                      byte[] pixels = (byte[]) proc.getPixels();
+                      plane = new byte[pixels.length];
+                      float[] calibration = proc.getCalibrationTable();
+                      for (int pixel=0; pixel<pixels.length; pixel++) {
+                        plane[pixel] = (byte) calibration[pixels[pixel] & 0xff];
+                      }
+                    }
+                    else {
+                      plane = (byte[]) proc.getPixels();
+                    }
                 }
                 else if (proc instanceof ShortProcessor) {
-                    plane = DataTools.shortsToBytes(
-                            (short[]) proc.getPixels(), littleEndian);
+                    short[] pixels = (short[]) proc.getPixels();
+                    if (applyCalibrationFunction) {
+                      // don't alter 'pixels' directly as that will
+                      // affect the open ImagePlus
+                      plane = new byte[pixels.length * 2];
+                      float[] calibration = proc.getCalibrationTable();
+                      for (int pixel=0; pixel<pixels.length; pixel++) {
+                        short v = (short) calibration[pixels[pixel] & 0xffff];
+                        DataTools.unpackBytes(
+                          v, plane, pixel * 2, 2, littleEndian);
+                      }
+                    }
+                    else {
+                      plane = DataTools.shortsToBytes(pixels, littleEndian);
+                    }
                 }
                 else if (proc instanceof FloatProcessor) {
                     plane = DataTools.floatsToBytes(

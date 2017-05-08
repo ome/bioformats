@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,7 +30,6 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -195,7 +194,7 @@ public class PCORAWReader extends FormatReader {
       String[] lines = DataTools.readFile(paramFile).split("\n");
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
-        int sep = line.indexOf(":");
+        int sep = line.indexOf(':');
         if (sep < 0) {
           continue;
         }
@@ -208,11 +207,11 @@ public class PCORAWReader extends FormatReader {
         if (key.equals("Exposure / Delay")) {
           // set the exposure time
 
-          String exp = value.substring(0, value.indexOf(" "));
+          String exp = value.substring(0, value.indexOf(' '));
           Double parsedExp = new Double(exp);
           Time exposure = null;
           if (parsedExp != null) {
-            exposure = new Time(parsedExp / 1000, UNITS.S);
+            exposure = new Time(parsedExp / 1000, UNITS.SECOND);
           }
 
           for (int plane=0; plane<getImageCount(); plane++) {
@@ -233,7 +232,7 @@ public class PCORAWReader extends FormatReader {
           store.setDetectorSettingsBinning(getBinning(value), 0, 0);
         }
         else if (key.equals("Comment")) {
-          StringBuffer description = new StringBuffer();
+          final StringBuilder description = new StringBuilder();
           for (int j=i + 1; j<lines.length; j++) {
             lines[j] = lines[j].trim();
             if (lines[j].length() > 0) {

@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -28,13 +28,11 @@
 package loci.plugins.in;
 
 import ij.IJ;
-import ij.Prefs;
 import ij.gui.GenericDialog;
 
 import loci.formats.UpgradeChecker;
 import loci.plugins.BF;
 import loci.plugins.Updater;
-import loci.plugins.prefs.Option;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.

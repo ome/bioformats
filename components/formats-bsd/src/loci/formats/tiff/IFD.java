@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -362,7 +362,7 @@ public class IFD extends HashMap<Integer, Object> {
       value = sb.toString();
     }
     else if (o instanceof short[]) {
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       for (short s : ((short[]) o)) {
         if (!Character.isISOControl((char) s)) {
           sb.append((char) s);

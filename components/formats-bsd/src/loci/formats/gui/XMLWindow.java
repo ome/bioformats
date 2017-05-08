@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -148,7 +148,7 @@ public class XMLWindow extends JFrame {
     else {
       BufferedReader in = new BufferedReader(
         new InputStreamReader(System.in, Constants.ENCODING));
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       while (true) {
         String line = in.readLine();
         if (line == null) break;

@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,9 +38,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import loci.common.Region;
 import loci.formats.codec.CodecOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 import org.slf4j.Logger;
@@ -182,6 +185,50 @@ public class ImageWriter implements IFormatWriter {
     IFormatWriter[] w = new IFormatWriter[writers.length];
     System.arraycopy(writers, 0, w, 0, writers.length);
     return w;
+  }
+
+  @Override
+  public int getTileSizeX() throws FormatException {
+    return getWriter().getTileSizeX();
+  }
+
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    return getWriter().setTileSizeX(tileSize);
+  }
+
+  @Override
+  public int getTileSizeY() throws FormatException {
+    return getWriter().getTileSizeY();
+  }
+
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    return getWriter().setTileSizeY(tileSize);
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels() */
+  @Override
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    return getWriters()[0].getSupportedMetadataLevels();
+  }
+
+  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
+  @Override
+  public MetadataOptions getMetadataOptions() {
+    return getWriters()[0].getMetadataOptions();
+  }
+
+  /**
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(MetadataOptions)
+   */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    for (IFormatWriter writer : writers) {
+      writer.setMetadataOptions(options);
+    }
   }
 
   // -- IFormatWriter API methods --
@@ -430,7 +477,8 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {
-    getWriter(id).setId(id);
+    IFormatWriter writer = getWriter(id);
+    writer.setId(id);
   }
 
   /* @see IFormatHandler#close() */

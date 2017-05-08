@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -52,8 +52,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Frequency;
@@ -609,7 +607,6 @@ public class ICSReader extends FormatReader {
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int len = FormatTools.getPlaneSize(this);
-    int pixel = bpp * getRGBChannelCount();
     int rowLen = FormatTools.getPlaneSize(this, w, 1);
 
     int[] coordinates = getZCTCoords(no);
@@ -792,9 +789,15 @@ public class ICSReader extends FormatReader {
       versionTwo = true;
     }
     else {
-      if (idsId == null) throw new FormatException("No IDS file found.");
+      if (idsId == null) {
+        f.close();
+        throw new FormatException("No IDS file found.");
+      }
       Location idsFile = new Location(idsId);
-      if (!idsFile.exists()) throw new FormatException("IDS file not found.");
+      if (!idsFile.exists()) {
+        f.close();
+        throw new FormatException("IDS file not found.");
+      }
       currentIdsId = idsId;
       in = new RandomAccessInputStream(currentIdsId);
     }
@@ -821,7 +824,7 @@ public class ICSReader extends FormatReader {
     String line = reader.readString(NL);
     boolean signed = false;
 
-    StringBuffer textBlock = new StringBuffer();
+    final StringBuilder textBlock = new StringBuilder();
     double[] sizes = null;
 
     Double[] emWaves = null, exWaves = null;
@@ -976,7 +979,7 @@ public class ICSReader extends FormatReader {
           else if (key.equalsIgnoreCase("history date") ||
                    key.equalsIgnoreCase("history created on"))
           {
-            if (value.indexOf(" ") > 0) {
+            if (value.indexOf(' ') > 0) {
               date = value.substring(0, value.lastIndexOf(" "));
               date = DateTools.formatDate(date, DATE_FORMATS);
             }
@@ -1050,7 +1053,7 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history laser rep rate")) {
               String repRate = value;
-              if (repRate.indexOf(" ") != -1) {
+              if (repRate.indexOf(' ') != -1) {
                 repRate = repRate.substring(0, repRate.lastIndexOf(" "));
               }
               laserRepetitionRate = new Double(repRate);
@@ -1162,12 +1165,12 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history Exposure")) {
               String expTime = value;
-              if (expTime.indexOf(" ") != -1) {
-                expTime = expTime.substring(0, expTime.indexOf(" "));
+              if (expTime.indexOf(' ') != -1) {
+                expTime = expTime.substring(0, expTime.indexOf(' '));
               }
               Double expDouble = new Double(expTime);
               if (expDouble != null) {
-                exposureTime = new Time(expDouble, UNITS.S);
+                exposureTime = new Time(expDouble, UNITS.SECOND);
               }
             }
             else if (key.equalsIgnoreCase("history filterset")) {
@@ -1329,15 +1332,15 @@ public class ICSReader extends FormatReader {
       }
       else if (axes[i].equals("z")) {
         m.sizeZ = axisLengths[i];
-        if (getDimensionOrder().indexOf("Z") == -1) {
-          m.dimensionOrder += "Z";
+        if (getDimensionOrder().indexOf('Z') == -1) {
+          m.dimensionOrder += 'Z';
         }
       }
       else if (axes[i].equals("t")) {
         if (getSizeT() == 0) m.sizeT = axisLengths[i];
         else m.sizeT *= axisLengths[i];
-        if (getDimensionOrder().indexOf("T") == -1) {
-          m.dimensionOrder += "T";
+        if (getDimensionOrder().indexOf('T') == -1) {
+          m.dimensionOrder += 'T';
         }
       }
       else {
@@ -1346,8 +1349,8 @@ public class ICSReader extends FormatReader {
         channelLengths.add(new Integer(axisLengths[i]));
         storedRGB = getSizeX() == 0;
         m.rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
-        if (getDimensionOrder().indexOf("C") == -1) {
-          m.dimensionOrder += "C";
+        if (getDimensionOrder().indexOf('C') == -1) {
+          m.dimensionOrder += 'C';
         }
 
         if (axes[i].startsWith("c")) {
@@ -1553,10 +1556,10 @@ public class ICSReader extends FormatReader {
           }
           else if (axis.equals("t") && scale != null) {
             if (checkUnit(unit, "ms")) {
-              store.setPixelsTimeIncrement(new Time(scale, UNITS.MS), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.MILLISECOND), 0);
             }
             else if (checkUnit(unit, "seconds") || checkUnit(unit, "s") ) {
-              store.setPixelsTimeIncrement(new Time(scale, UNITS.S), 0);
+              store.setPixelsTimeIncrement(new Time(scale, UNITS.SECOND), 0);
             }
           }
         }
@@ -1583,7 +1586,7 @@ public class ICSReader extends FormatReader {
         for (int t=0; t<timestamps.length; t++) {
           if (t >= getSizeT()) break; // ignore superfluous timestamps
           if (timestamps[t] == null) continue; // ignore missing timestamp
-          Time deltaT = new Time(timestamps[t], UNITS.S);
+          Time deltaT = new Time(timestamps[t], UNITS.SECOND);
           if (Double.isNaN(deltaT.value().doubleValue())) continue; // ignore invalid timestamp
           // assign timestamp to all relevant planes
           for (int z=0; z<getSizeZ(); z++) {
@@ -1602,7 +1605,7 @@ public class ICSReader extends FormatReader {
           store.setChannelName(channelNames.get(i), 0, i);
         }
         if (pinholes.containsKey(i)) {
-          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROM), 0, i);
+          store.setChannelPinholeSize(new Length(pinholes.get(i), UNITS.MICROMETER), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
           Length em = FormatTools.getEmissionWavelength(emWaves[i]);
@@ -1635,11 +1638,11 @@ public class ICSReader extends FormatReader {
 
         store.setLaserManufacturer(laserManufacturer, 0, i);
         store.setLaserModel(laserModel, 0, i);
-        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MILLIWATT);
         if (theLaserPower != null) {
           store.setLaserPower(theLaserPower, 0, i);
         }
-        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HERTZ);
         if (theLaserRepetitionRate != null) {
           store.setLaserRepetitionRate(theLaserRepetitionRate, 0, i);
         }
@@ -1651,11 +1654,11 @@ public class ICSReader extends FormatReader {
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
         store.setLaserManufacturer(laserManufacturer, 0, 0);
         store.setLaserModel(laserModel, 0, 0);
-        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MW);
+        Power theLaserPower = FormatTools.createPower(laserPower, UNITS.MILLIWATT);
         if (theLaserPower != null) {
           store.setLaserPower(theLaserPower, 0, 0);
         }
-        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HZ);
+        Frequency theLaserRepetitionRate = FormatTools.createFrequency(laserRepetitionRate, UNITS.HERTZ);
         if (theLaserRepetitionRate != null) {
           store.setLaserRepetitionRate(theLaserRepetitionRate, 0, 0);
         }
@@ -1691,7 +1694,7 @@ public class ICSReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (workingDistance != null) {
-        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
+        store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
       }
       if (magnification != null) {
         store.setObjectiveCalibratedMagnification(magnification, 0, 0);
@@ -1776,7 +1779,7 @@ public class ICSReader extends FormatReader {
     List<String> tokens = new ArrayList<String>();
     boolean inWhiteSpace = true;
     boolean withinQuotes = false;
-    StringBuffer token = null;
+    StringBuilder token = null;
     for (int i = 0; i < line.length(); ++i) {
       char c = line.charAt(i);
       if (Character.isWhitespace(c) || c == 0x04) {
@@ -1801,7 +1804,7 @@ public class ICSReader extends FormatReader {
         if (inWhiteSpace) {
           inWhiteSpace = false;
           // start a new token string
-          token = new StringBuffer();
+          token = new StringBuilder();
         }
         // build token string
         token.append(c);
@@ -1834,7 +1837,7 @@ public class ICSReader extends FormatReader {
    * Builds a string from a list of tokens.
    */
   private String concatenateTokens(String[] tokens, int start, int stop) {
-    StringBuffer returnValue = new StringBuffer();
+    final StringBuilder returnValue = new StringBuilder();
     for (int i = start; i < tokens.length && i < stop; ++i) {
       returnValue.append(tokens[i]);
       if (i < stop - 1) {
@@ -1854,7 +1857,6 @@ public class ICSReader extends FormatReader {
   private String[] findKeyValueForCategory(String[] tokens,
                                            String[][] regexesArray) {
     String[] keyValue = null;
-    int index = 0;
     for (String[] regexes : regexesArray) {
       if (compareTokens(tokens, 1, regexes, 0)) {
         int splitIndex = 1 + regexes.length; // add one for the category
@@ -1863,7 +1865,6 @@ public class ICSReader extends FormatReader {
         keyValue = new String[] { key, value };
         break;
       }
-      ++index;
     }
     return keyValue;
   }

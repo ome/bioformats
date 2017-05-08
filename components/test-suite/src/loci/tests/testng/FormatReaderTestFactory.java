@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -29,6 +29,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -36,6 +41,8 @@ import loci.formats.FileStitcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Factory;
+
+import static loci.tests.testng.TestTools.getProperty;
 
 /**
  * Factory for scanning a directory structure and generating instances of
@@ -57,20 +64,9 @@ public class FormatReaderTestFactory {
 
   // -- TestNG factory methods --
 
-  /**
-   * Safely return a system property by key excluding default Ant values
-   */
-  public String getProperty(String key) {
-    String value = System.getProperty(key);
-    if (value == null || value.equals("${" + key + "}")) {
-      return null;
-    }
-    return value;
-  }
-
   @Factory
   public Object[] createInstances() {
-    List files = new ArrayList();
+    List<String> files = new ArrayList<String>();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
@@ -199,28 +195,69 @@ public class FormatReaderTestFactory {
     }
 
     // remove duplicates
-    int index = 0;
-    FileStitcher reader = new FileStitcher(TestTools.getTestImageReader());
-    while (index < files.size()) {
-      String file = (String) files.get(index);
+    Set<String> fileSet = new LinkedHashSet<String>();
+    Map<String, String> originalPath = new HashMap<String, String>();
+    for (String s: files) {
+      String canonicalPath;
+      try {
+        canonicalPath = (new File(s)).getCanonicalPath();
+      } catch (IOException e) {
+        LOGGER.warn("Could not get canonical path for {}", s);
+        canonicalPath = s;
+      }
+      fileSet.add(canonicalPath);
+      originalPath.put(canonicalPath, s);
+    }
+    Set<String> minimalFiles = new LinkedHashSet<String>();
+    FileStitcher reader = new FileStitcher();
+    Set<String> failingIds = new LinkedHashSet<String>();
+    while (!fileSet.isEmpty()) {
+      String file = fileSet.iterator().next();
       try {
         reader.setId(file);
-        String[] usedFiles = reader.getUsedFiles();
-        for (int q=0; q<usedFiles.length; q++) {
-          if (files.indexOf(usedFiles[q]) > index) {
-            files.remove(usedFiles[q]);
-          }
-        }
+      } catch (Exception e) {
+        LOGGER.error("setId(\"{}\") failed", file, e);
+        failingIds.add(file);
+        fileSet.remove(file);
+        continue;
       }
-      catch (Exception e) { }
+      try {
+        String[] usedFiles = reader.getUsedFiles();
+        Set<String> auxFiles = new LinkedHashSet<String>();
+        for (String s: usedFiles) {
+          auxFiles.add((new File(s)).getCanonicalPath());
+        }
+        fileSet.removeAll(auxFiles);
+        String masterFile = reader.getCurrentFile();
+        auxFiles.remove(masterFile);
+        minimalFiles.removeAll(auxFiles);
+        minimalFiles.add(masterFile);
+      }
+      catch (Exception e) {
+        LOGGER.warn("Could not determine duplicate status for {}", file, e);
+        minimalFiles.add(file);
+      }
       finally {
+        fileSet.remove(file);
         try {
           reader.close();
         }
         catch (IOException e) { }
       }
-
-      index++;
+    }
+    if (!failingIds.isEmpty()) {
+      String msg = String.format("setId failed on %s", failingIds);
+      LOGGER.error(msg);
+      throw new RuntimeException(msg);
+    }
+    files = new ArrayList<String>();
+    for (String s: minimalFiles) {
+      if (!originalPath.containsKey(s)) {
+        String msg = "No match found for " + s;
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      files.add(originalPath.get(s));
     }
 
     // create test class instances

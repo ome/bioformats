@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -56,7 +56,6 @@ import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
-import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -102,7 +101,8 @@ public class OMETiffReader extends FormatReader {
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tif", "ome.tiff", "companion.ome"});
+    super("OME-TIFF", new String[] {"ome.tiff", "ome.tif", "ome.tf2",
+                                    "ome.tf8", "ome.btf", "companion.ome"});
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
@@ -248,7 +248,12 @@ public class OMETiffReader extends FormatReader {
       }
 
       for (int i=0; i<meta.getImageCount(); i++) {
-        meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
+        meta.setPixelsBigEndian(Boolean.TRUE, i);
+        if (meta.getPixelsBinDataCount(i) > 0) {
+          for (int j=0; j<meta.getPixelsBinDataCount(i); j++) {
+            meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, j);
+          }
+        }
         MetadataTools.verifyMinimumPopulated(meta, i);
       }
       return meta.getImageCount() > 0;
@@ -349,7 +354,7 @@ public class OMETiffReader extends FormatReader {
     }
     IFD ifd = ifdList.get(i);
     RandomAccessInputStream s =
-      new RandomAccessInputStream(info[series][no].id);
+      new RandomAccessInputStream(info[series][no].id, 16);
     TiffParser p = new TiffParser(s);
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
@@ -368,7 +373,7 @@ public class OMETiffReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     int series = getSeries();
     if (noPixels) return null;
-    Vector<String> usedFiles = new Vector<String>();
+    final List<String> usedFiles = new ArrayList<String>();
     if (metadataFile != null) {
       usedFiles.add(metadataFile);
     }
@@ -404,6 +409,7 @@ public class OMETiffReader extends FormatReader {
     super.close(fileOnly);
     if (info != null) {
       for (OMETiffPlane[] dimension : info) {
+        if (dimension == null) continue;
         for (OMETiffPlane plane : dimension) {
           if (plane.reader != null) {
             try {
@@ -853,7 +859,7 @@ public class OMETiffReader extends FormatReader {
       CoreMetadata m = core.get(s);
       info[s] = planes;
       try {
-        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id);
+        RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
         String firstFile = info[s][0].id;
         if (!info[s][0].reader.isThisType(testFile)) {
           LOGGER.warn("{} is not a valid OME-TIFF", info[s][0].id);
@@ -871,7 +877,7 @@ public class OMETiffReader extends FormatReader {
 
             continue;
           }
-          testFile = new RandomAccessInputStream(info[s][plane].id);
+          testFile = new RandomAccessInputStream(info[s][plane].id, 16);
           if (!info[s][plane].reader.isThisType(testFile)) {
             LOGGER.warn("{} is not a valid OME-TIFF", info[s][plane].id);
             info[s][plane].id = info[s][0].id;
@@ -978,7 +984,7 @@ public class OMETiffReader extends FormatReader {
     // remove null CoreMetadata entries
 
     ArrayList<CoreMetadata> series = new ArrayList<CoreMetadata>();
-    Vector<OMETiffPlane[]> planeInfo = new Vector<OMETiffPlane[]>();
+    final List<OMETiffPlane[]> planeInfo = new ArrayList<OMETiffPlane[]>();
     for (int i=0; i<core.size(); i++) {
       if (core.get(i) != null) {
         series.add(core.get(i));
@@ -1014,51 +1020,74 @@ public class OMETiffReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(metadataStore, this, false, false);
+    for (int i=0; i<meta.getImageCount(); i++) {
+      // make sure that TheZ, TheC, and TheT are all set on any
+      // existing Planes
+      // missing Planes are not added, and exising TheZ, TheC, and
+      // TheT values are not changed
+      for (int p=0; p<meta.getPlaneCount(i); p++) {
+        NonNegativeInteger z = meta.getPlaneTheZ(i, p);
+        NonNegativeInteger c = meta.getPlaneTheC(i, p);
+        NonNegativeInteger t = meta.getPlaneTheT(i, p);
+
+        if (z == null) {
+          z = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheZ(z, i, p);
+        }
+        if (c == null) {
+          c = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheC(c, i, p);
+        }
+        if (t == null) {
+          t = new NonNegativeInteger(0);
+          metadataStore.setPlaneTheT(t, i, p);
+        }
+      }
+    }
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
         metadataStore.setImageAcquisitionDate(
             new Timestamp(acquiredDates[i]), i);
       }
     }
-    metadataStore = getMetadataStoreForConversion();
   }
 
   // -- OMETiffReader API methods --
 
   /**
-   * Returns a MetadataStore that is populated in such a way as to
-   * produce valid OME-XML.  The returned MetadataStore cannot be used
-   * by an IFormatWriter, as it will not contain the required
-   * BinData.BigEndian attributes.
+   * Get a MetadataStore suitable for display.
+   *
+   * Note: Historically, this method removed certain elements
+   * for display purposes and was not be suitable for use with
+   * FormatWriter due to not containing required BinData
+   * BigEndian attributes. This is no longer the case; the general
+   * {@link FormatReader#getMetadataStore()} method will always create
+   * valid metadata which is suitable for both display and use
+   * with FormatWriter, and so should be used instead.
+   *
+   * @return the metadata store.
+   * @deprecated Use the general {@link FormatReader#getMetadataStore()} method.
    */
   public MetadataStore getMetadataStoreForDisplay() {
-    MetadataStore store = getMetadataStore();
-    if (service.isOMEXMLMetadata(store)) {
-      service.removeBinData((OMEXMLMetadata) store);
-      for (int i=0; i<getSeriesCount(); i++) {
-        if (((OMEXMLMetadata) store).getTiffDataCount(i) == 0) {
-          service.addMetadataOnly((OMEXMLMetadata) store, i);
-        }
-      }
-    }
-    return store;
+    return getMetadataStore();
   }
 
   /**
-   * Returns a MetadataStore that is populated in such a way as to be
-   * usable by an IFormatWriter.  Any OME-XML generated from this
-   * MetadataStore is <em>very unlikely</em> to be valid, as more than
-   * likely both BinData and TiffData element will be present.
+   * Get a MetadataStore suitable for writing.
+   *
+   * Note: Historically, this method created metadata suitable
+   * for use with FormatWriter, but would possibly not generate
+   * valid OME-XML if both BinData and TiffData elements were
+   * present.  This is no longer the case; the general
+   * {@link FormatReader#getMetadataStore()} method will always create
+   * valid metadata which is suitable for use with FormatWriter,
+   * and so should be used instead.
+   *
+   * @return the metadata store.
+   * @deprecated Use the general {@link FormatReader#getMetadataStore()} method.
    */
   public MetadataStore getMetadataStoreForConversion() {
-    MetadataStore store = getMetadataStore();
-    int realSeries = getSeries();
-    for (int i=0; i<getSeriesCount(); i++) {
-      setSeries(i);
-      store.setPixelsBinDataBigEndian(new Boolean(!isLittleEndian()), i, 0);
-    }
-    setSeries(realSeries);
-    return store;
+    return getMetadataStore();
   }
 
   // -- Helper methods --
@@ -1081,7 +1110,11 @@ public class OMETiffReader extends FormatReader {
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */
   private String readMetadataFile() throws IOException {
-    if (checkSuffix(metadataFile, "tif") || checkSuffix(metadataFile, "tiff")) {
+    if (checkSuffix(metadataFile, "ome.tiff") ||
+        checkSuffix(metadataFile, "ome.tif") ||
+        checkSuffix(metadataFile, "ome.tf2") ||
+        checkSuffix(metadataFile, "ome.tf8") ||
+        checkSuffix(metadataFile, "ome.btf")) {
       // metadata file is an OME-TIFF file; extract OME-XML comment
       return new TiffParser(metadataFile).getComment();
     }

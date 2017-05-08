@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,6 @@ package loci.formats;
 
 import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.util.HashMap;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -293,6 +292,40 @@ public abstract class FormatWriter extends FormatHandler
     this.sequential = sequential;
   }
 
+  /* @see IFormatWriter#getTileSizeX() */
+  @Override
+  public int getTileSizeX() throws FormatException {
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to get tile size.");
+    return width.getValue();
+  }
+
+  /* @see IFormatWriter#setTileSizeX(int) */
+  @Override
+  public int setTileSizeX(int tileSize) throws FormatException {
+    PositiveInteger width = metadataRetrieve.getPixelsSizeX(getSeries());
+    if (width == null) throw new FormatException("Pixels Size X must not be null when attempting to set tile size.");
+    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    return width.getValue();
+  }
+
+  /* @see IFormatWriter#getTileSizeY() */
+  @Override
+  public int getTileSizeY() throws FormatException {
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to get tile size.");
+    return height.getValue();
+  }
+
+  /* @see IFormatWriter#setTileSizeY(int) */
+  @Override
+  public int setTileSizeY(int tileSize) throws FormatException {
+    PositiveInteger height = metadataRetrieve.getPixelsSizeY(getSeries());
+    if (height == null) throw new FormatException("Pixels Size Y must not be null when attempting to set tile size.");
+    if (tileSize <= 0) throw new FormatException("Tile size must be > 0.");
+    return height.getValue();
+  }
+
   // -- IFormatHandler API methods --
 
   /**
@@ -311,7 +344,7 @@ public abstract class FormatWriter extends FormatHandler
     if (out != null) {
       out.close();
     }
-    out = new RandomAccessOutputStream(currentId);
+    out = createOutputStream();
 
     MetadataRetrieve r = getMetadataRetrieve();
     initialized = new boolean[r.getImageCount()][];
@@ -429,7 +462,7 @@ public abstract class FormatWriter extends FormatHandler
   protected int getSamplesPerPixel() {
     return getSamplesPerPixel(series);
   }
-  
+
   /** Retrieve the number of samples per pixel for given series. */
   protected int getSamplesPerPixel(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
@@ -439,12 +472,12 @@ public abstract class FormatWriter extends FormatHandler
     }
     return samples == null ? 1 : samples.getValue();
   }
-  
+
   /** Retrieve the total number of planes in the current series. */
   protected int getPlaneCount() {
     return getPlaneCount(series);
   }
-  
+
   /** Retrieve the total number of planes in given series. */
   protected int getPlaneCount(int series) {
     MetadataRetrieve r = getMetadataRetrieve();
@@ -453,6 +486,10 @@ public abstract class FormatWriter extends FormatHandler
     int c = r.getPixelsSizeC(series).getValue().intValue();
     c /= r.getChannelSamplesPerPixel(series, 0).getValue().intValue();
     return z * c * t;
+  }
+
+  protected RandomAccessOutputStream createOutputStream() throws IOException {
+    return new RandomAccessOutputStream(currentId);
   }
 
 }

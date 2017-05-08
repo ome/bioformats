@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,9 +34,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +52,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
-import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -95,8 +92,6 @@ public class MinimalTiffReader extends FormatReader {
 
   protected boolean noSubresolutions = false;
 
-  protected boolean seriesToIFD = false;
-
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;
 
@@ -107,7 +102,7 @@ public class MinimalTiffReader extends FormatReader {
 
   /** Constructs a new MinimalTiffReader. */
   public MinimalTiffReader() {
-    this("Minimal TIFF", new String[] {"tif", "tiff"});
+    this("Minimal TIFF", new String[] {"tif", "tiff", "tf2", "tf8", "btf"});
   }
 
   /** Constructs a new MinimalTiffReader. */
@@ -284,12 +279,7 @@ public class MinimalTiffReader extends FormatReader {
 
     IFD firstIFD = ifds.get(0);
     lastPlane = no;
-    IFD ifd;
-    if (seriesToIFD) {
-      ifd = ifds.get(getSeries());
-    } else {
-      ifd = ifds.get(no);
-    }
+    IFD ifd = ifds.get(no);
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
         && resolutionLevels != null) {
@@ -386,7 +376,6 @@ public class MinimalTiffReader extends FormatReader {
       tiffParser = null;
       resolutionLevels = null;
       j2kCodecOptions = null;
-      seriesToIFD = false;
     }
   }
 

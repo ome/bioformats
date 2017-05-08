@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import loci.common.DataTools;
@@ -105,24 +104,20 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    int index = no;
+    int index = -1;
 
-    if (getSeriesCount() == 1) {
-      int[] coords = getZCTCoords(no);
-      for (int q=0; q<coordinates.length; q++) {
-        if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
-          coordinates[q][2] == coords[2])
-        {
-          index = q;
-          break;
-        }
+    int[] coords = getZCTCoords(no);
+    for (int q=0; q<coordinates.length; q++) {
+      if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
+        coordinates[q][2] == coords[2] && coordinates[q][3] == getSeries())
+      {
+        index = q;
+        break;
       }
     }
-    else {
-      index += getSeries() * getImageCount();
-    }
+    LOGGER.trace("no = " + no + ", index = " + index);
 
-    if (index >= imageFiles.length) {
+    if (index < 0 || index >= imageFiles.length) {
       return buf;
     }
 
@@ -186,22 +181,21 @@ public class ZeissZVIReader extends BaseZeissReader {
     // double-check that the coordinates are valid
     // all of the image numbers must be accounted for
 
-    HashMap<Integer, Boolean> valid = new HashMap<Integer, Boolean>();
+    Integer[] zs = zIndices.toArray(new Integer[zIndices.size()]);
+    Integer[] cs = channelIndices.toArray(new Integer[channelIndices.size()]);
+    Integer[] ts = timepointIndices.toArray(new Integer[timepointIndices.size()]);
+    Integer[] tiles = tileIndices.toArray(new Integer[tileIndices.size()]);
+    Arrays.sort(zs);
+    Arrays.sort(cs);
+    Arrays.sort(ts);
+    Arrays.sort(tiles);
+
     for (int i=0; i<coordinates.length; i++) {
-      valid.put(i, false);
-    }
-    for (int i=0; i<coordinates.length; i++) {
-      try {
-        int index =
-          getIndex(coordinates[i][0], coordinates[i][1], coordinates[i][2]);
-        valid.put(index, true);
-      }
-      catch (IllegalArgumentException e) {
-        LOGGER.trace("Found invalid coordinates", e);
-      }
-    }
-    if (valid.containsValue(false)) {
-      coordinates = new int[0][0];
+      coordinates[i][0] = Arrays.binarySearch(zs, coordinates[i][0]);
+      coordinates[i][1] = Arrays.binarySearch(cs, coordinates[i][1]);
+      coordinates[i][2] = Arrays.binarySearch(ts, coordinates[i][2]);
+      coordinates[i][3] = Arrays.binarySearch(tiles, coordinates[i][3]);
+      LOGGER.trace("corrected coordinate #{} = {}", i, coordinates[i]);
     }
   }
 
@@ -281,23 +275,23 @@ public class ZeissZVIReader extends BaseZeissReader {
         int zidx = s.readInt();
         int cidx = s.readInt();
         int tidx = s.readInt();
+        s.skipBytes(4);
+        int tileIndex = s.readInt();
 
         zIndices.add(zidx);
         timepointIndices.add(tidx);
         channelIndices.add(cidx);
+        tileIndices.add(tileIndex);
 
-        s.skipBytes(len);
+        s.skipBytes(len - 8);
 
         for (int q=0; q<5; q++) {
           getNextTag(s);
         }
 
         s.skipBytes(4);
-        //if (getSizeX() == 0) {
         core.get(0).sizeX = s.readInt();
         core.get(0).sizeY = s.readInt();
-        //}
-        //else s.skipBytes(8);
         s.skipBytes(4);
 
         if (bpp == 0) {
@@ -320,6 +314,8 @@ public class ZeissZVIReader extends BaseZeissReader {
         coordinates[imageNum][0] = zidx;
         coordinates[imageNum][1] = cidx;
         coordinates[imageNum][2] = tidx;
+        coordinates[imageNum][3] = tileIndex;
+        LOGGER.trace("imageNum = {}, coordinate = {}", imageNum, coordinates[imageNum]);
         imageFiles[imageNum] = name;
         s.close();
       }
@@ -397,12 +393,13 @@ public class ZeissZVIReader extends BaseZeissReader {
       }
     }
     super.countImages();
+    coordinates = new int[getSeriesCount() * getImageCount()][4];
   }
 
   private int getImageNumber(String dirName, int defaultNumber) {
     if (dirName.toUpperCase().indexOf("ITEM") != -1) {
-      int open = dirName.indexOf("(");
-      int close = dirName.indexOf(")");
+      int open = dirName.indexOf('(');
+      int close = dirName.indexOf(')');
       if (open < 0 || close < 0 || close < open) return defaultNumber;
       return Integer.parseInt(dirName.substring(open + 1, close));
     }

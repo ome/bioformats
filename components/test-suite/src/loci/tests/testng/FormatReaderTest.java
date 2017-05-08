@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -192,7 +192,7 @@ public class FormatReaderTest {
         }
 
         if (c > 4 || plane < 0 || plane != checkPlane ||
-          !TestTools.canFitInMemory(plane))
+          !TestTools.canFitInMemory(plane * 3))
         {
           continue;
         }
@@ -229,6 +229,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -258,7 +262,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (!TestTools.canFitInMemory(expected) || expected < 0) {
+        if (!TestTools.canFitInMemory(expected * 3) || expected < 0) {
           continue;
         }
 
@@ -275,6 +279,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -314,9 +322,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbImage(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
 
         int actualX = b.getWidth();
@@ -389,9 +400,12 @@ public class FormatReaderTest {
         try {
           b = reader.openThumbBytes(0);
         }
-        catch (OutOfMemoryError e) {
-          result(testName, true, "Image too large");
-          return;
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
         }
         success = b.length == expected;
         if (!success) {
@@ -521,8 +535,15 @@ public class FormatReaderTest {
         if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
         if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
         if (!(r instanceof OMETiffReader)) {
-          if (reader.isLittleEndian() ==
-            retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
+          boolean littleEndian = false;
+          if (retrieve.getPixelsBigEndian(i) != null)
+          {
+            littleEndian = !retrieve.getPixelsBigEndian(i).booleanValue();
+          }
+          else if (retrieve.getPixelsBinDataCount(i) == 0) {
+            littleEndian = !retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue();
+          }
+          if (reader.isLittleEndian() != littleEndian)
           {
             msg = "BigEndian";
           }
@@ -573,13 +594,13 @@ public class FormatReaderTest {
   public void testSaneOMEXML() {
     String testName = "testSaneOMEXML";
     if (!initFile()) result(testName, false, "initFile");
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
+      result(testName, true);
+      return;
+    }
     String msg = null;
     try {
-      String format = config.getReader();
-      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
-        result(testName, true);
-        return;
-      }
 
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       boolean success = omexmlService.isOMEXMLMetadata(retrieve);
@@ -926,7 +947,7 @@ public class FormatReaderTest {
 
       Length expectedSize = config.getPhysicalSizeX();
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      
+
       if (!isAlmostEqual(realSize,expectedSize))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -946,7 +967,7 @@ public class FormatReaderTest {
       config.setSeries(i);
       Length expectedSize = config.getPhysicalSizeY();
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      
+
       if (!isAlmostEqual(realSize,expectedSize))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -1102,6 +1123,18 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
+      // Test image acquisition date
+      String expectedDate = config.getDate();
+      String date = null;
+      if (retrieve.getImageAcquisitionDate(i) != null) {
+        date = retrieve.getImageAcquisitionDate(i).getValue();
+      }
+      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+        result(testName, false, "series " + i +
+          " (expected " + expectedDate + ", actual " + date + ")");
+        return;
+      }
+
       for (int p=0; p<reader.getImageCount(); p++) {
         Time deltaT = null;
         try {
@@ -1119,7 +1152,7 @@ public class FormatReaderTest {
           return;
         }
         if (expectedDeltaT != null) {
-          Double seconds = deltaT.value(UNITS.S).doubleValue();
+          Double seconds = deltaT.value(UNITS.SECOND).doubleValue();
           if (Math.abs(seconds - expectedDeltaT) > Constants.EPSILON) {
             result(testName, false, "series " + i + ", plane " + p +
               " (expected " + expectedDeltaT + ", actual " + seconds + ")");
@@ -1164,7 +1197,7 @@ public class FormatReaderTest {
         String expectedXUnit = config.getPositionXUnit(p);
         String expectedYUnit = config.getPositionYUnit(p);
         String expectedZUnit = config.getPositionZUnit(p);
-        
+
         if (posX == null && expectedX == null) {
         }
         else if (posX == null) {
@@ -1375,12 +1408,6 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      String format = config.getReader();
-      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
-        result(testName, true);
-        return;
-      }
-
       MetadataStore store = reader.getMetadataStore();
       success = omexmlService.isOMEXMLMetadata(store);
       if (!success) msg = TestTools.shortClassName(store);
@@ -1456,6 +1483,13 @@ public class FormatReaderTest {
             }
             catch (IOException e) {
               LOGGER.info("", e);
+            }
+            catch (Throwable e) {
+              if (TestTools.isOutOfMemory(e)) {
+                result(testName, true, "Image too large");
+                return;
+              }
+              throw e;
             }
           }
         }
@@ -1562,7 +1596,7 @@ public class FormatReaderTest {
 
       LOGGER.debug("newFile = {}", newFile);
 
-      IFormatReader check = new FileStitcher(TestTools.getTestImageReader());
+      IFormatReader check = new FileStitcher();
       try {
         check.setId(newFile);
         int nFiles = check.getUsedFiles().length;
@@ -1603,7 +1637,7 @@ public class FormatReaderTest {
       else {
         Arrays.sort(base);
         IFormatReader r =
-          /*config.noStitching() ? TestTools.getTestImageReader() :*/ new FileStitcher(TestTools.getTestImageReader());
+          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         int maxFiles = (int) Math.min(base.length, 100);
 
@@ -1693,6 +1727,10 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Hamamatsu VMS") &&
             !base[i].toLowerCase().endsWith(".vms"))
           {
+            continue;
+          }
+
+          if (reader.getFormat().equals("CellVoyager")) {
             continue;
           }
 
@@ -1822,28 +1860,28 @@ public class FormatReaderTest {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
     if (!initFile()) result(testName, false, "initFile");
-    String format = config.getReader();
-    if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
+    if (!config.hasValidXML()) {
+      LOGGER.debug("Skipping valid XML test");
       result(testName, true);
+      return;
     }
-    else {
-      boolean success = true;
-      try {
-        MetadataStore store = reader.getMetadataStore();
-        MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-        String xml = omexmlService.getOMEXML(retrieve);
-        // prevent issues due to thread-unsafeness of
-        // javax.xml.validation.Validator as used during XML validation
-        synchronized (configTree) {
-          success = xml != null && omexmlService.validateOMEXML(xml);
-        }
+    String format = config.getReader();
+    boolean success = true;
+    try {
+      MetadataStore store = reader.getMetadataStore();
+      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+      String xml = omexmlService.getOMEXML(retrieve);
+      // prevent issues due to thread-unsafeness of
+      // javax.xml.validation.Validator as used during XML validation
+      synchronized (configTree) {
+        success = xml != null && omexmlService.validateOMEXML(xml);
       }
-      catch (Throwable t) {
-        LOGGER.info("", t);
-        success = false;
-      }
-      result(testName, success);
     }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success);
     try {
       close();
     }
@@ -1862,7 +1900,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
+        new BufferedImageReader(new FileStitcher());
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -1908,6 +1946,10 @@ public class FormatReaderTest {
       resolutionReader.close();
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -1955,6 +1997,10 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.info("", t);
       success = false;
     }
@@ -2008,7 +2054,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       IFormatReader resolutionReader =
-        new BufferedImageReader(new FileStitcher(TestTools.getTestImageReader()));
+        new BufferedImageReader(new FileStitcher());
       resolutionReader.setFlattenedResolutions(false);
       resolutionReader.setNormalized(true);
       resolutionReader.setOriginalMetadataPopulated(false);
@@ -2036,7 +2082,11 @@ public class FormatReaderTest {
           try {
             md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
           }
-          catch (Exception e) {
+          catch (Throwable e) {
+            if (TestTools.isOutOfMemory(e)) {
+              result(testName, true, "Image too large");
+              return;
+            }
             LOGGER.warn("", e);
           }
 
@@ -2085,7 +2135,13 @@ public class FormatReaderTest {
         try {
           md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
         }
-        catch (Exception e) { }
+        catch (Throwable e) {
+          if (TestTools.isOutOfMemory(e)) {
+            result(testName, true, "Image too large");
+            return;
+          }
+          throw e;
+        }
 
         if (md5 == null && expected1 == null && expected2 == null) {
           success = true;
@@ -2328,6 +2384,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (r instanceof CellVoyagerReader &&
+              (!result || readers[j] instanceof OMEXMLReader) &&
+              used[i].toLowerCase().endsWith(".ome.xml"))
+            {
+              continue;
+            }
+
             // the pattern reader only picks up pattern files
             if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
@@ -2379,7 +2442,7 @@ public class FormatReaderTest {
       String tmpdir = System.getProperty("java.io.tmpdir");
       memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
       memoDir.mkdir();
-      Memoizer memo = new Memoizer(TestTools.getTestImageReader(), 0, memoDir);
+      Memoizer memo = new Memoizer(0, memoDir);
       memo.setId(reader.getCurrentFile());
       memo.close();
       memoFile = memo.getMemoFile(reader.getCurrentFile());
@@ -2395,6 +2458,10 @@ public class FormatReaderTest {
       result(testName, true);
     }
     catch (Throwable t) {
+      if (TestTools.isOutOfMemory(t)) {
+        result(testName, true, "Image too large");
+        return;
+      }
       LOGGER.warn("", t);
       result(testName, false, t.getMessage());
     }
@@ -2482,7 +2549,8 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    ImageReader ir = TestTools.getTestImageReader();
+    // Remove external SlideBook6Reader class for testing purposes
+    ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);

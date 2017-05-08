@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,11 +27,6 @@
 
 package loci.plugins.in;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -41,7 +36,6 @@ import ij.process.LUT;
 import java.awt.Color;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
-import java.io.File;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -49,9 +43,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.plugins.BF;
 
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+import org.testng.annotations.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,8 +151,43 @@ public class ImporterTest {
 
   private static final int ONE_SERIES = 1;
 
-  @Rule
-  public TemporaryFolder wd = new TemporaryFolder();
+  private static final String[] FAKE_FILES;
+  private static final String FAKE_PATTERN;
+
+  private static final int FAKE_PLANE_COUNT = 7;
+  private static final int FAKE_CHANNEL_COUNT = 3;
+  private static final int FAKE_TIMEPOINT_COUNT = 5;
+  private static final int FAKE_SIZE_X = 50;
+  private static final int FAKE_SIZE_Y = 50;
+
+  static {
+    //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, 1, 1,
+                        -1, false, -1, false, -1);
+
+    FAKE_FILES = new String[] {
+      String.format(template, "1", "1"),
+      String.format(template, "2", "1"),
+      String.format(template, "3", "1"),
+      String.format(template, "1", "2"),
+      String.format(template, "2", "2"),
+      String.format(template, "3", "2"),
+      String.format(template, "1", "3"),
+      String.format(template, "2", "3"),
+      String.format(template, "3", "3"),
+      String.format(template, "1", "4"),
+      String.format(template, "2", "4"),
+      String.format(template, "3", "4"),
+      String.format(template, "1", "5"),
+      String.format(template, "2", "5"),
+      String.format(template, "3", "5")
+    };
+    FAKE_PATTERN = String.format(template, "<1-3>", "<1-5>");
+
+    for (String file : FAKE_FILES) {
+      Location.mapId(file, "iThinkI'mImportantButI'mNot");
+    }
+  }
 
   // ** Helper methods *******************************************************************
 
@@ -988,39 +1020,12 @@ public class ImporterTest {
   }
 
   /** tests BF's options.setGroupFiles() */
-  private void datasetGroupFilesTester(boolean virtual) {
-    int sizeZ = 7;
-    int sizeC = 3;
-    int sizeT = 5;
-    int sizeX = 50;
-    int sizeY = 50;
-
-    String template = constructFakeFilename(
-        "test_C%s_TP%s", FormatTools.UINT8, sizeX, sizeY, sizeZ,
-        1, 1, -1, false, -1, false, -1
-    );
-    File file;
-    String path = "";
-    for (int c = 1; c <= sizeC; c++) {
-      for (int t = 1; t <= sizeT; t++) {
-        try {
-          file = wd.newFile(String.format(template, c, t));
-          if (1 == c && 1 == t) {
-            path = file.getAbsolutePath();
-          }
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    }
-    String pattern_base = String.format(
-        template,
-        String.format("<1-%d>", sizeC),
-        String.format("<1-%d>", sizeT)
-    );
-    String pattern = new File(wd.getRoot(), pattern_base).getAbsolutePath();
+  private void datasetGroupFilesTester(boolean virtual)
+  {
+    String path = FAKE_FILES[0];
 
     ImagePlus[] imps = null;
+
     try {
       ImporterOptions options = new ImporterOptions();
       options.setAutoscale(false);
@@ -1028,7 +1033,7 @@ public class ImporterTest {
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
-      assertEquals(pattern, options.getId());
+      assertEquals(FAKE_PATTERN, options.getId());
     }
     catch (IOException e) {
       fail(e.getMessage());
@@ -1036,9 +1041,12 @@ public class ImporterTest {
     catch (FormatException e) {
       fail(e.getMessage());
     }
-    impsCountTest(imps, 1);
-    xyzctTest(imps[0], sizeX, sizeY, sizeZ, sizeC, sizeT);
-    groupedFilesTest(imps[0], sizeZ, sizeC, sizeT);
+
+    impsCountTest(imps,1);
+
+    xyzctTest(imps[0], FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
+
+    groupedFilesTest(imps[0], FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
   }
 
   /** tests BF's options.setUngroupFiles() */

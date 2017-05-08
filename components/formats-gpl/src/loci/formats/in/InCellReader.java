@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,7 +46,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -91,7 +90,8 @@ public class InCellReader extends FormatReader {
 
   private int wellRows, wellCols;
   private Map<Integer, int[]> wellCoordinates;
-  private HashMap<Integer, Length> posX, posY;
+  private Map<Integer, Length> posX, posY;
+  private int offsetPointCounter;
 
   private boolean[][] exclude;
 
@@ -107,8 +107,8 @@ public class InCellReader extends FormatReader {
   private Double temperature;
   private Double refractive;
 
-  private ArrayList<String> exFilters = new ArrayList<String>();
-  private ArrayList<String> emFilters = new ArrayList<String>();
+  private List<String> exFilters = new ArrayList<String>();
+  private List<String> emFilters = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -256,6 +256,7 @@ public class InCellReader extends FormatReader {
       wellCoordinates = null;
       posX = null;
       posY = null;
+      offsetPointCounter = 0;
       creationDate = null;
       wellRows = wellCols = 0;
       fieldCount = 0;
@@ -362,6 +363,7 @@ public class InCellReader extends FormatReader {
     wellCoordinates = new HashMap<Integer, int[]>();
     posX = new HashMap<Integer, Length>();
     posY = new HashMap<Integer, Length>();
+    offsetPointCounter = 0;
 
     byte[] b = new byte[(int) in.length()];
     in.read(b);
@@ -473,7 +475,6 @@ public class InCellReader extends FormatReader {
     if (isTiff && filename != null) {
       tiffReader = new MinimalTiffReader();
       tiffReader.setId(filename);
-      int nextTiming = 0;
       for (int i=0; i<seriesCount; i++) {
         CoreMetadata ms = core.get(i);
         ms.sizeX = tiffReader.getSizeX();
@@ -640,10 +641,10 @@ public class InCellReader extends FormatReader {
             if (img == null) continue;
             int plane = time * getSizeZ() * c + q;
             if (img.deltaT != null) {
-              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.S), i, plane);
+              store.setPlaneDeltaT(new Time(img.deltaT, UNITS.SECOND), i, plane);
             }
             if (img.exposure != null) {
-              store.setPlaneExposureTime(new Time(img.exposure, UNITS.S), i, plane);
+              store.setPlaneExposureTime(new Time(img.exposure, UNITS.SECOND), i, plane);
             }
 
             store.setPlanePositionX(posX.get(field), i, plane);
@@ -684,15 +685,15 @@ public class InCellReader extends FormatReader {
         }
         if (temperature != null) {
           store.setImagingEnvironmentTemperature(
-                  new Temperature(temperature, UNITS.DEGREEC), i);
+                  new Temperature(temperature, UNITS.CELSIUS), i);
         }
       }
       setSeries(0);
 
       // populate Plate data
 
-      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROM), 0);
-      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROM), 0);
+      store.setPlateWellOriginX(new Length(0.5, UNITS.MICROMETER), 0);
+      store.setPlateWellOriginY(new Length(0.5, UNITS.MICROMETER), 0);
     }
   }
 
@@ -885,8 +886,6 @@ public class InCellReader extends FormatReader {
   class InCellHandler extends BaseHandler {
     private String currentQName;
     private boolean openImage;
-    private int nextEmWave = 0;
-    private int nextExWave = 0;
     private MetadataStore store;
     private int nextPlate = 0;
     private int currentRow = -1, currentCol = -1;
@@ -1063,7 +1062,10 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("offset_point")) {
         String x = attributes.getValue("x");
         String y = attributes.getValue("y");
-        int index = Integer.parseInt(attributes.getValue("index"));
+        Integer index = DataTools.parseInteger(attributes.getValue("index"));
+        if (null == index) {
+          index = offsetPointCounter++;
+        }
 
         posX.put(index, new Length(Double.valueOf(x), UNITS.REFERENCEFRAME));
         posY.put(index, new Length(Double.valueOf(y), UNITS.REFERENCEFRAME));

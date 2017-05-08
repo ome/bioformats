@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -260,7 +260,7 @@ public class NativeQTReader extends FormatReader {
         }
       }
       else {
-        System.arraycopy(t, row*srcRowLen + x*bpp*getSizeC(), buf,
+        System.arraycopy(t, (row + y)*srcRowLen + x*bpp*getSizeC(), buf,
           row*destRowLen, destRowLen);
       }
     }
@@ -623,7 +623,7 @@ public class NativeQTReader extends FormatReader {
 
   /** Debugging method; prints information on an atom. */
   private void print(int depth, long size, String type) {
-    StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     for (int i=0; i<depth; i++) sb.append(" ");
     sb.append(type + " : [" + size + "]");
     LOGGER.debug(sb.toString());

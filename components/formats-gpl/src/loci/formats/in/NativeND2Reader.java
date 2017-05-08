@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,10 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -50,8 +47,6 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Color;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
@@ -77,6 +72,9 @@ public class NativeND2Reader extends FormatReader {
   public static final long ND2_MAGIC_BYTES_1 = 0xdacebe0aL;
   public static final long ND2_MAGIC_BYTES_2 = 0x6a502020L;
   private static final int BUFFER_SIZE = 32 * 1024;
+
+  public static final String USE_CHUNKMAP_KEY = "nativend2.chunkmap";
+  public static final boolean USE_CHUNKMAP_DEFAULT = true;
 
   // -- Fields --
 
@@ -133,6 +131,17 @@ public class NativeND2Reader extends FormatReader {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+  }
+
+  // -- NativeND2Reader methods --
+
+  public boolean useChunkMap() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+        USE_CHUNKMAP_KEY, USE_CHUNKMAP_DEFAULT);
+    }
+    return USE_CHUNKMAP_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -338,6 +347,16 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Internal FormatReader API methods --
 
+  static class ChunkMapEntry {
+    public String name;
+    public long position;
+    public long length;
+
+    public String toString() {
+      return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
+    }
+  }
+
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
@@ -346,6 +365,9 @@ public class NativeND2Reader extends FormatReader {
     // using a 32KB buffer instead of the default 1MB gives
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
+
+    boolean useChunkMap = useChunkMap();
+    LOGGER.debug("Attempting to use chunk map = {}", useChunkMap);
 
     channelColors = new HashMap<String, Integer>();
 
@@ -371,16 +393,137 @@ public class NativeND2Reader extends FormatReader {
       ArrayList<Boolean> validDimensions = new ArrayList<Boolean>();
 
       ByteArrayHandle xml = new ByteArrayHandle();
-      StringBuffer name = new StringBuffer();
+      final StringBuilder name = new StringBuilder();
 
       int extraZDataCount = 0;
       boolean foundMetadata = false;
+      boolean foundAttributes = false;
       boolean useLastText = false;
       int blockCount = 0;
+
+
+      TreeMap<Long, ChunkMapEntry> allChunkPositions = new TreeMap<Long, ChunkMapEntry>();
+
+      if(useChunkMap) {
+        /* In modern ND2 files, the chunk map is stored near the end, and contains
+         * a list of blocks and their offsets. By using these offsets instead of
+         * scanning through the whole file, an enormous speed up can be achieved.
+         *
+         * Implementation: Read the chunk map beforehand, process the file as normally,
+         * once the first ImageDataSeq block is reached, add all images and skip past the
+         * image data to process remaining metadata.
+         * I haven't read through all of NativeND2Reader, but I hope to have the least
+         * chance of inadvertedly breaking something by this approach.
+         */
+        String chunkMapSignature = "ND2 CHUNK MAP SIGNATURE 0000001";
+        in.seek(in.length() - 40);
+
+        if(!in.readString(chunkMapSignature.length()).equals(chunkMapSignature)) {
+          useChunkMap = false;
+          LOGGER.info("ND2 Warning: No chunk map found!");
+        } else {
+          in.skipBytes(1);
+
+          long chunkMapPosition = in.readLong();
+          in.seek(chunkMapPosition);
+
+          int tmpLenOne = in.readInt();
+          int tmpLenTwo = in.readInt();
+          long chunkMapLength = in.readLong();
+
+          chunkMapPosition += 16 + tmpLenTwo;
+          in.seek(chunkMapPosition);
+
+          long chunkMapEnd = chunkMapPosition + chunkMapLength;
+
+          int imageDataCount = 0;
+          int maxImageIndex = -1;
+
+          while(in.getFilePointer() + 1 + 16 < chunkMapEnd) {
+
+            char b = (char) in.readByte();
+            while (b != '!') {
+              name.append(b);
+              b = (char) in.readByte();
+            }
+
+            ChunkMapEntry entry = new ChunkMapEntry();
+            entry.name = name.toString();
+            name.delete(0, name.length());
+
+            if(entry.name.equals(chunkMapSignature))
+              break;
+
+            entry.position = in.readLong();
+            entry.length = in.readLong();
+
+            if (entry.name.startsWith("ImageDataSeq|")) {
+              imageDataCount++;
+              int imageIndex = -1;
+              try {
+                imageIndex = Integer.parseInt(entry.name.substring("ImageDataSeq|".length()));
+                if (imageIndex > maxImageIndex) {
+                  maxImageIndex = imageIndex;
+                }
+              }
+              catch (NumberFormatException e) {
+                LOGGER.trace(entry.name, e);
+              }
+            }
+
+            allChunkPositions.put(entry.position, entry);
+
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("ND2 {}", entry.toString());
+            }
+          }
+          if (imageDataCount != maxImageIndex + 1) {
+            LOGGER.warn("Discarding chunk map; image data count = {}, max index = {}",
+              imageDataCount, maxImageIndex);
+            useChunkMap = false;
+          }
+        }
+
+        in.seek(0);
+      }
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
       byte[] buf = new byte[BUFFER_SIZE];
+
+      if(useChunkMap) {
+
+        long checkEvery = in.length() / 10;
+        long nextCheck = 0;
+
+        // chunk map sanity checks
+
+        for (ChunkMapEntry entry : allChunkPositions.values()) {
+          if (!entry.name.startsWith("ImageDataSeq")) {
+            continue;
+          }
+
+          if(entry.position > nextCheck) {
+
+            in.seek(entry.position);
+            in.read(buf, 0, sigBytes.length);
+
+            if (!(buf[0] == sigBytes[0] && buf[1] == sigBytes[1] && buf[2] == sigBytes[2] && buf[3] == sigBytes[3])) {
+              LOGGER.warn("Broken ND2 File detected! Disabling chunk map processing.");
+
+              useChunkMap = false;
+              break;
+            }
+
+            nextCheck = entry.position + checkEvery;
+          }
+        }
+      }
+
+      int chunkmapSkips = 0;
+
+      in.seek(0);
+
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
         int foundIndex = -1;
@@ -492,16 +635,79 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
-          if (foundMetadata) {
+          if (foundMetadata && foundAttributes) {
             imageOffsets.clear();
             imageNames.clear();
             imageLengths.clear();
             customDataOffsets.clear();
             customDataLengths.clear();
             foundMetadata = false;
+            foundAttributes = false;
             extraZDataCount = 0;
             useLastText = true;
           }
+
+          if(useChunkMap && chunkmapSkips == 0) {
+            ChunkMapEntry lastImage = null;
+
+            // sanity check: see if the chunk we just found is actually in the chunkmap ...
+
+            long lookupPosition = in.getFilePointer() - 28;
+
+            Long lookupResult = allChunkPositions.floorKey(lookupPosition);
+
+            if(lookupResult == null || lookupResult != lookupPosition) {
+              // if not, deactivate chunkmap processing and try classic
+              useChunkMap = false;
+              in.seek(lookupPosition);
+              continue;
+            }
+
+            for(ChunkMapEntry entry : allChunkPositions.values()) {
+              if((entry.position + 28) < in.getFilePointer()) {
+                continue;
+              }
+
+              if(!entry.name.startsWith("ImageDataSeq")) {
+                break;
+              }
+
+              if(lastImage!=null) {
+                chunkmapSkips = (int)(((entry.position - lastImage.position) / entry.length) - 1);
+                if(chunkmapSkips > 0) {
+                  break;
+                }
+              }
+
+              lastImage = entry;
+
+              imageOffsets.add(new Long(entry.position + 16));
+              int realLength = (int) Math.max(entry.name.length() + 1, nameLength);
+              imageLengths.add(new int[] {realLength, (int)(entry.length - nameLength - 16), getSizeX() * getSizeY()});
+              imageNames.add(entry.name.substring(12));
+
+              blockCount ++;
+
+              percent = (int) (100 * entry.position / in.length());
+              LOGGER.info("Parsing block '{}' {}%", "ImageDataSeq", percent);
+            }
+
+            blockCount --; // one was already added by the outer blockCount ++;
+
+            in.seek(lastImage.position + lastImage.length);
+
+            continue;
+
+          }
+
+          if(chunkmapSkips > 0) {
+            chunkmapSkips -= 1;
+          }
+
+          dataLength -= 31;
+          LOGGER.debug(
+            "Adding non-chunkmap offset {}, nameLength = {}, dataLength = {}",
+              fp, nameLength, dataLength);
           imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
@@ -510,7 +716,7 @@ public class NativeND2Reader extends FormatReader {
             b = (char) in.readByte();
           }
           imageNames.add(name.toString());
-          name = name.delete(0, name.length());
+          name.setLength(0);
         }
         else if (blockType.startsWith("ImageText")) {
           foundMetadata = true;
@@ -531,7 +737,7 @@ public class NativeND2Reader extends FormatReader {
           blockType.startsWith("CustomDataVa"))
         {
           if (blockType.equals("ImageAttribu")) {
-            foundMetadata = true;
+            foundAttributes = true;
             in.skipBytes(6);
             long endFP = in.getFilePointer() + len - 18;
             while (in.read() == 0);
@@ -572,7 +778,7 @@ public class NativeND2Reader extends FormatReader {
                 xmlString =
                   xmlString.substring(0, xmlString.lastIndexOf(">") + 1);
                 if (xmlString.startsWith("<?xml")) {
-                  xmlString = xmlString.substring(xmlString.indexOf(">") + 1);
+                  xmlString = xmlString.substring(xmlString.indexOf('>') + 1);
                 }
                 if (!xmlString.endsWith("</variant>")) {
                   xmlString += "</variant>";
@@ -677,6 +883,10 @@ public class NativeND2Reader extends FormatReader {
             isLossless = isLossless && canBeLossless;
           }
           else {
+            if (blockType.startsWith("ImageMetadat")) {
+              foundMetadata = true;
+            }
+
             int length = len - 12;
             byte[] b = new byte[length];
             in.read(b);
@@ -1109,15 +1319,15 @@ public class NativeND2Reader extends FormatReader {
         fieldIndex--;
       }
 
-      if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
+      if (getSizeC() > 1 && getDimensionOrder().indexOf('C') == -1) {
         core.get(0).dimensionOrder = "C" + getDimensionOrder();
         fieldIndex++;
       }
 
       core.get(0).dimensionOrder = "XY" + getDimensionOrder();
-      if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
-      if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
-      if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
+      if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += 'Z';
+      if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += 'C';
+      if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += 'T';
 
       if (getSizeZ() == 0) {
         core.get(0).sizeZ = 1;
@@ -1471,7 +1681,7 @@ public class NativeND2Reader extends FormatReader {
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 4);
 
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       // stored XML doesn't have a root node - add one, so that we can parse
       // using SAX
 
@@ -1489,7 +1699,7 @@ public class NativeND2Reader extends FormatReader {
         }
         s = in.readString(blockLength);
         s = s.replaceAll("<!--.+?>", ""); // remove comments
-        int openBracket = s.indexOf("<");
+        int openBracket = s.indexOf('<');
         if (openBracket == -1) continue;
         int closedBracket = s.lastIndexOf(">") + 1;
         if (closedBracket < openBracket) continue;
@@ -1575,9 +1785,9 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex++;
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) core.get(0).dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') == -1) core.get(0).dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') == -1) core.get(0).dimensionOrder += 'T';
     core.get(0).dimensionOrder = "XY" + getDimensionOrder();
 
     if (getImageCount() == 0) {
@@ -1893,7 +2103,7 @@ public class NativeND2Reader extends FormatReader {
           }
           if (stampIndex < tsT.size()) {
             double stamp = tsT.get(stampIndex).doubleValue();
-            store.setPlaneDeltaT(new Time(stamp, UNITS.S), i, n);
+            store.setPlaneDeltaT(new Time(stamp, UNITS.SECOND), i, n);
           }
 
           int index = i * getSizeC() + coords[1];
@@ -1901,7 +2111,7 @@ public class NativeND2Reader extends FormatReader {
             index = coords[1];
           }
           if (exposureTime != null && index < exposureTime.size() && exposureTime.get(index) != null) {
-            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.S), i, n);
+            store.setPlaneExposureTime(new Time(exposureTime.get(index), UNITS.SECOND), i, n);
           }
         }
       }
@@ -1980,7 +2190,7 @@ public class NativeND2Reader extends FormatReader {
 
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
-          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), i, c);
+          store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), i, c);
         }
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
@@ -2020,7 +2230,7 @@ public class NativeND2Reader extends FormatReader {
         }
         if (index < speed.size()) {
           store.setDetectorSettingsReadOutRate(
-                  new Frequency(speed.get(index), UNITS.HZ), i, c);
+                  new Frequency(speed.get(index), UNITS.HERTZ), i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
       }
@@ -2030,7 +2240,7 @@ public class NativeND2Reader extends FormatReader {
       if (i * getSizeC() < temperature.size()) {
         Double temp = temperature.get(i * getSizeC());
         store.setImagingEnvironmentTemperature(
-                new Temperature(temp, UNITS.DEGREEC), i);
+                new Temperature(temp, UNITS.CELSIUS), i);
       }
     }
 
@@ -2038,7 +2248,7 @@ public class NativeND2Reader extends FormatReader {
     Double voltage = handler.getVoltage();
     if (voltage != null) {
       store.setDetectorSettingsVoltage(
-              new ElectricPotential(voltage, UNITS.V), 0, 0);
+              new ElectricPotential(voltage, UNITS.VOLT), 0, 0);
     }
 
     // populate Objective
@@ -2131,7 +2341,7 @@ public class NativeND2Reader extends FormatReader {
     try {
       ND2Handler handler = new ND2Handler(core, offsetCount);
       String xmlString = XMLTools.sanitizeXML(textString);
-      int start = xmlString.indexOf("<");
+      int start = xmlString.indexOf('<');
       int end = xmlString.lastIndexOf(">");
       if (start >= 0 && end >= 0 && end >= start) {
         xmlString = xmlString.substring(start, end + 1);
@@ -2158,7 +2368,7 @@ public class NativeND2Reader extends FormatReader {
       String[] lines = textString.split("\n");
       ND2Handler handler = new ND2Handler(core, offsetCount);
       for (String line : lines) {
-        int separator = line.indexOf(":");
+        int separator = line.indexOf(':');
         if (separator >= 0) {
           String key = line.substring(0, separator).trim();
           String value = line.substring(separator + 1).trim();
@@ -2187,7 +2397,7 @@ public class NativeND2Reader extends FormatReader {
       lines = textString.split(" ");
       for (int i=0; i<lines.length; i++) {
         String key = lines[i++];
-        while (!key.endsWith(":") && key.indexOf("_") < 0 && i < lines.length) {
+        while (!key.endsWith(":") && key.indexOf('_') < 0 && i < lines.length) {
           key += " " + lines[i++];
           if (i >= lines.length) {
             break;
@@ -2220,12 +2430,7 @@ public class NativeND2Reader extends FormatReader {
             key = key.substring(0, 8);
           }
           if (trueSizeZ == null) {
-            try {
-              trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
-            }
-            catch (NumberFormatException nfe) {
-              LOGGER.trace("Could not parse step", nfe);
-            }
+            trueSizeZ = DataTools.parseDouble(value);
           }
         }
         else if (key.equals("Name")) {
@@ -2238,22 +2443,13 @@ public class NativeND2Reader extends FormatReader {
             if (last-first < 0){
                 last = first + key.substring(first).indexOf(' ');
             }
-            try {
-              textEmissionWavelengths.add(
-                new Double(key.substring(first, last).trim()) + 20);
-            }
-            catch (NumberFormatException nfe) {
-              LOGGER.trace("Could not parse emission wavelength", nfe);
-            }
+            Double wavelength = DataTools.parseDouble(key.substring(
+              first, last).trim()) + 20;
+            if (wavelength != null) textEmissionWavelengths.add(wavelength);
           }
         }
         else if (key.equals("Refractive Index")) {
-          try {
-            refractiveIndex = Double.parseDouble(DataTools.sanitizeDouble(value));
-          }
-          catch (NumberFormatException nfe) {
-            LOGGER.trace("Could not parse refractive index", nfe);
-          }
+          refractiveIndex = DataTools.parseDouble(value);
         }
 
         if (metadata.containsKey(key)) {

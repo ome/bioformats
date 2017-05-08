@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -46,12 +47,9 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
-import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 /**
@@ -280,16 +278,16 @@ public class SVSReader extends BaseTiffReader {
         for (String line : lines) {
           tokens = line.split("[|]");
           for (String t : tokens) {
-            if (t.indexOf("=") == -1) {
+            if (t.indexOf('=') == -1) {
               addGlobalMeta("Comment", t);
               comments[i] = t;
             }
             else {
-              key = t.substring(0, t.indexOf("=")).trim();
-              value = t.substring(t.indexOf("=") + 1).trim();
+              key = t.substring(0, t.indexOf('=')).trim();
+              value = t.substring(t.indexOf('=') + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = FormatTools.getPhysicalSizeX(Double.parseDouble(value));
+                pixelSize[i] = FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -298,19 +296,19 @@ public class SVSReader extends BaseTiffReader {
                 time = value;
               }
               else if (key.equals("Emission Wavelength")) {
-                emissionWavelength = new Double(value);
+                emissionWavelength = DataTools.parseDouble(value);
               }
               else if (key.equals("Excitation Wavelength")) {
-                excitationWavelength = new Double(value);
+                excitationWavelength = DataTools.parseDouble(value);
               }
               else if (key.equals("Exposure Time")) {
-                exposureTime = new Double(value);
+                exposureTime = DataTools.parseDouble(value);
               }
               else if (key.equals("Exposure Scale")) {
-                exposureScale = new Double(value);
+                exposureScale = DataTools.parseDouble(value);
               }
               else if (key.equals("AppMag")) {
-                magnification = new Double(value);
+                magnification = DataTools.parseDouble(value);
               }
             }
           }
@@ -386,7 +384,7 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0) {
+      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(pixelSize[i], i);
         store.setPixelsPhysicalSizeY(pixelSize[i], i);
       }

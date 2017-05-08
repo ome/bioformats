@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -58,19 +58,19 @@ public class BioFormatsExtensionPrinter {
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("Generating list of Bio-Formats supported suffixes...");
-		IFormatReader reader = new ImageReader();
-		String[] suffixes = reader.getSuffixes();
+		try (IFormatReader reader = new ImageReader()) {
+			String[] suffixes = reader.getSuffixes();
 
-		PrintWriter fo = null;
+			PrintWriter fo = null;
 
-		fo =
-      new PrintWriter(new File("BioFormatsSuffixes.txt"), Constants.ENCODING);
+			fo =
+				new PrintWriter(new File("BioFormatsSuffixes.txt"), Constants.ENCODING);
 
-		for (String s : suffixes) fo.println("*." + s);
+			for (String s : suffixes) fo.println("*." + s);
 
-		fo.close();
-
-		System.out.println(suffixes.length + " suffixes discovered.");
+			fo.close();
+			System.out.println(suffixes.length + " suffixes discovered.");
+		}
 	}
 
 }

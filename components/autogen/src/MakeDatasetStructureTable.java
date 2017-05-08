@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME Bio-Formats package for reading and converting biological file formats.
+ * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -49,7 +49,7 @@ public class MakeDatasetStructureTable {
   private void printHeader() {
     out.println(".. Please don't even think about editing this file directly.");
     out.println(".. It is generated using the 'gen-structure-table' Ant");
-    out.println(".. target in components/bio-formats, which uses");
+    out.println(".. target in components/autogen, which uses");
     out.println(".. loci.formats.tools.MakeDatasetStructureTable, so please");
     out.println(".. update that instead.");
     out.println();
@@ -60,11 +60,7 @@ public class MakeDatasetStructureTable {
     out.println("choose if you want");
     out.println("to open/import a dataset in a particular format.");
     out.println();
-    out.println(".. only:: html");
-    out.println();
-    out.println("    You can sort this table by clicking on any of the headings.");
-    out.println();
-    out.println(".. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|");
+    out.println("You can sort this table by clicking on any of the headings.");
     out.println();
     out.println(".. list-table::");
     out.println("   :class: sortable");

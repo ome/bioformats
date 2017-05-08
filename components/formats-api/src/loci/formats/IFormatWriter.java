@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -200,5 +200,39 @@ public interface IFormatWriter extends IFormatHandler {
    * will be slightly improved.
    */
   void setWriteSequentially(boolean sequential);
+
+  /**
+   * Retrieves the current tile width
+   * Defaults to full image width if not supported
+   * @return The current tile width being used
+   * @throws FormatException Image metadata including Pixels Size X must be set prior to calling getTileSizeX()
+   */
+  int getTileSizeX() throws FormatException;
+
+  /**
+   * Will attempt to set the tile width to the desired value and return the actual value which will be used
+   * @param tileSize The tile width you wish to use
+   * @return The tile width which will actually be used, this may differ from the value requested.
+   *         If the requested value is not supported the writer will return and use the closest appropriate value.
+   * @throws FormatException Tile size must be greater than 0 and less than the image width
+   */
+  int setTileSizeX(int tileSize) throws FormatException;
+
+  /**
+   * Retrieves the current tile height
+   * Defaults to full image height if not supported
+   * @return The current tile height being used
+   * @throws FormatException Image metadata including Pixels Size Y must be set prior to calling getTileSizeY()
+   */
+  int getTileSizeY() throws FormatException;
+
+  /**
+   * Will attempt to set the tile height to the desired value and return the actual value which will be used
+   * @param tileSize The tile height you wish to use
+   * @return The tile height which will actually be used, this may differ from the value requested.
+   *         If the requested value is not supported the writer will return and use the closest appropriate value.
+   * @throws FormatException Tile size must be greater than 0 and less than the image height
+   */
+  int setTileSizeY(int tileSize) throws FormatException;
 
 }

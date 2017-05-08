@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -764,7 +764,7 @@ public class FlexReader extends FormatReader {
           store.setWellSamplePositionX(l, pos[2], well, pos[0]);
         }
         if (pos[0] < yPositions.size()) {
-          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME); 
+          Length l = new Length(yPositions.get(pos[0]), UNITS.REFERENCEFRAME);
           store.setWellSamplePositionY(l, pos[2], well, pos[0]);
         }
 
@@ -783,11 +783,11 @@ public class FlexReader extends FormatReader {
           if (plane - image + c < planeExposureTime.size()) {
             if (planeExposureTime.get(plane - image + c) != null) {
               store.setPlaneExposureTime(
-                new Time(planeExposureTime.get(plane - image + c), UNITS.S), i, image);
+                new Time(planeExposureTime.get(plane - image + c), UNITS.SECOND), i, image);
             }
           }
           if (plane < planeDeltaT.size() && planeDeltaT.get(plane) != null) {
-            store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.S), i, image);
+            store.setPlaneDeltaT(new Time(planeDeltaT.get(plane), UNITS.SECOND), i, image);
           }
         }
       }
@@ -1520,7 +1520,7 @@ public class FlexReader extends FormatReader {
 
     private String filterSet;
 
-    private StringBuffer charData = new StringBuffer();
+    private final StringBuilder charData = new StringBuilder();
 
     public FlexHandler(List<String> names, List<String> factors,
       MetadataStore store, boolean populateCore, int well, int thisField)
@@ -1542,7 +1542,7 @@ public class FlexReader extends FormatReader {
     @Override
     public void endElement(String uri, String localName, String qName) {
       String value = charData.toString();
-      charData = new StringBuffer();
+      charData.setLength(0);
 
       if (qName.equals("XSize") && "Plate".equals(parentQName)) {
         wellRows = Integer.parseInt(value);
@@ -2042,7 +2042,7 @@ public class FlexReader extends FormatReader {
    * If other paths were mapped to 'alias', they will be overwritten.
    */
   public static void mapServer(String alias, String[] realNames) {
-    StringBuffer msg = new StringBuffer("mapServer(");
+    final StringBuilder msg = new StringBuilder("mapServer(");
     msg.append(alias);
     if (realNames != null) {
       msg.append(", [");
@@ -2096,7 +2096,7 @@ public class FlexReader extends FormatReader {
     String[] lines = DataTools.readFile(configFile).split("[\r\n]");
     for (String line : lines) {
       LOGGER.trace(line);
-      int eq = line.indexOf("=");
+      int eq = line.indexOf('=');
       if (eq == -1 || line.startsWith("#")) continue;
       String alias = line.substring(0, eq).trim();
       String[] servers = line.substring(eq + 1).trim().split(";");

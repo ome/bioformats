@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -55,9 +55,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
 import loci.formats.TileStitcher;
-import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
-import loci.formats.in.MetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -198,7 +196,7 @@ public class ImportProcess implements StatusReporter {
     StringTokenizer st = new StringTokenizer(seriesList, ",");
     while (st.hasMoreTokens()) {
       final String token = st.nextToken();
-      int dash = token.indexOf("-");
+      int dash = token.indexOf('-');
       if (dash < 0) {
         // single number
         try {
@@ -494,13 +492,8 @@ public class ImportProcess implements StatusReporter {
     baseReader.setMetadataFiltered(true);
     baseReader.setGroupFiles(!options.isUngroupFiles() || options.isGroupFiles());
     if(options != null && !options.showROIs()){
-        MetadataOptions mo = baseReader.getMetadataOptions();
-        if(mo == null){
-            mo = new DefaultMetadataOptions();
-        }else{
-            mo.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
-        }
-        baseReader.setMetadataOptions(mo);
+      baseReader.getMetadataOptions().setMetadataLevel(
+          MetadataLevel.NO_OVERLAYS);
     }
     baseReader.setId(options.getId());
     
@@ -546,13 +539,8 @@ public class ImportProcess implements StatusReporter {
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
     if(options != null && !options.showROIs()){
-        MetadataOptions mo = reader.getMetadataOptions();
-        if(mo == null){
-            mo = new DefaultMetadataOptions();
-        }else{
-            mo.setMetadataLevel(MetadataLevel.NO_OVERLAYS);
-        }
-        reader.setMetadataOptions(mo);
+      baseReader.getMetadataOptions().setMetadataLevel(
+          MetadataLevel.NO_OVERLAYS);
     }
     setId();
 

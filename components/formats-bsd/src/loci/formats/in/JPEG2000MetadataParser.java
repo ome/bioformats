@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -240,6 +240,8 @@ public class JPEG2000MetadataParser {
             }
 
             break;
+        default:
+          break;
         }
       }
       // Exit or seek to the next metadata box
@@ -353,6 +355,8 @@ public class JPEG2000MetadataParser {
             String comment = in.readString(segmentLength - 4);
             comments.add(comment);
             break;
+        default:
+          break;
         }
       }
       // Exit or seek to the next metadata box

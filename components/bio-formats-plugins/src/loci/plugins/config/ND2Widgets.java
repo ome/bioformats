@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -35,6 +35,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 
+import loci.formats.in.NativeND2Reader;
 import loci.plugins.util.LociPrefs;
 
 /**
@@ -59,8 +60,16 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
       "Use Nikon's ND2 library instead of native ND2 support", nikon);
     legacyBox.addItemListener(this);
 
-    labels = new String[] {legacyLabel};
-    widgets = new Component[] {legacyBox};
+    boolean chunkmap = Prefs.get(LociPrefs.PREF_ND2_CHUNKMAP,
+      NativeND2Reader.USE_CHUNKMAP_DEFAULT);
+
+    String chunkmapLabel = "Chunkmap";
+    JCheckBox chunkmapBox = new JCheckBox(
+      "Use chunkmap table to read image offsets", chunkmap);
+    chunkmapBox.addItemListener(this);
+
+    labels = new String[] {legacyLabel, chunkmapLabel};
+    widgets = new Component[] {legacyBox, chunkmapBox};
   }
 
   // -- IFormatWidgets API methods --
@@ -80,7 +89,12 @@ public class ND2Widgets implements IFormatWidgets, ItemListener {
   @Override
   public void itemStateChanged(ItemEvent e) {
     JCheckBox box = (JCheckBox) e.getSource();
-    Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
+    if (box.equals(getWidgets()[0])) {
+      Prefs.set(LociPrefs.PREF_ND2_NIKON, box.isSelected());
+    }
+    else if (box.equals(getWidgets()[1])) {
+      Prefs.set(LociPrefs.PREF_ND2_CHUNKMAP, box.isSelected());
+    }
   }
 
 }

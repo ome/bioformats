@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -82,7 +82,6 @@ public class FEIReader extends FormatReader {
     byte[] segment = new byte[getSizeX() / 2];
     byte[] plane = new byte[FormatTools.getPlaneSize(this)];
     // interlace frames - there are four rows of two columns
-    int halfRow = getSizeX() / 2;
     for (int q=0; q<4; q++) {
       for (int row=q; row<getSizeY(); row+=4) {
         for (int s=0; s<2; s++) {

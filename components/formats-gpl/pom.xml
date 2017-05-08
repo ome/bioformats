@@ -6,9 +6,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>idr</groupId>
+    <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>0.3.3</version>
+    <version>5.4.1</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -34,29 +34,24 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-common</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-mdbtools</artifactId>
+      <version>${ome-mdbtools.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mdbtools-java</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>metakit</artifactId>
-      <version>${project.version}</version>
+      <version>${metakit.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-xml</artifactId>
-      <version>${project.version}</version>
+      <version>${ome-model.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-poi</artifactId>
-      <version>${project.version}</version>
+      <version>${ome-poi.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -64,9 +59,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>ome</groupId>
+      <artifactId>jxrlib-all</artifactId>
+      <version>${jxrlib.version}</version>
+    </dependency>
+    <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf</artifactId>
-      <version>4.3.19</version>
+      <version>4.3.22</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.protobuf</groupId>
@@ -213,7 +213,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:mdbtools-java</classpathDependencyExclude>
+                <classpathDependencyExclude>org.openmicroscopy:ome-mdbtools</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>
@@ -231,7 +231,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:ome-poi</classpathDependencyExclude>
+                <classpathDependencyExclude>org.openmicroscopy:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>
@@ -375,44 +375,18 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
     </repository>
     <repository>
-      <id>ome.external</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
-    </repository>
-    <repository>
-      <id>ome.releases</id>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+      <id>ome</id>
+      <name>OME Artifactory</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
   </repositories>
-
-  <profiles>
-    <profile>
-      <id>latest-build</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>ome.snapshots</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
-        </repository>
-      </repositories>
-    </profile>
-
-    <profile>
-      <id>merge-build</id>
-
-      <repositories>
-        <repository>
-          <id>ome.unstable</id>
-          <url>http://artifacts.openmicroscopy.org/artifactory/ome.unstable</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
-
 </project>

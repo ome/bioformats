@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -53,7 +53,7 @@ public class JPEG2000Writer extends FormatWriter {
   /** Creates a new instance. */
   public JPEG2000Writer() {
     super("JPEG-2000", "jp2");
-    compressionTypes = new String[] {CompressionType.J2K_LOSSY.getCompression(), 
+    compressionTypes = new String[] {CompressionType.J2K_LOSSY.getCompression(),
         CompressionType.J2K.getCompression()};
     //The default codec options
     options = JPEG2000CodecOptions.getDefaultOptions();
@@ -69,7 +69,7 @@ public class JPEG2000Writer extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
-    
+
     /*
     if (!isFullPlane(x, y, w, h)) {
       throw new FormatException(
@@ -79,13 +79,13 @@ public class JPEG2000Writer extends FormatWriter {
     //MetadataRetrieve retrieve = getMetadataRetrieve();
     //int width = retrieve.getPixelsSizeX(series).getValue().intValue();
     //int height = retrieve.getPixelsSizeY(series).getValue().intValue();
-   
+
     out.write(compressBuffer(no, buf, x, y, w, h));
   }
 
   /**
    * Compresses the buffer.
-   * 
+   *
    * @param no the image index within the current file, starting from 0.
    * @param buf the byte array that represents the image tile.
    * @param x the X coordinate of the upper-left corner of the image tile.
@@ -100,8 +100,13 @@ public class JPEG2000Writer extends FormatWriter {
   {
     checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    boolean littleEndian =
-      !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    boolean littleEndian = false;
+    if (retrieve.getPixelsBigEndian(series) != null) {
+      littleEndian = !retrieve.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (retrieve.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString()));
@@ -116,23 +121,23 @@ public class JPEG2000Writer extends FormatWriter {
     options.bitsPerSample = bytesPerPixel * 8;
     options.littleEndian = littleEndian;
     options.interleaved = interleaved;
-    options.lossless = compression == null || 
+    options.lossless = compression == null ||
     compression.equals(CompressionType.J2K.getCompression());
     options.colorModel = getColorModel();
 
     return new JPEG2000Codec().compress(buf, options);
   }
-    
+
   /**
-   * Overridden to indicate that stacks are not supported. 
-   * @see loci.formats.IFormatWriter#canDoStacks() 
+   * Overridden to indicate that stacks are not supported.
+   * @see loci.formats.IFormatWriter#canDoStacks()
    */
   @Override
   public boolean canDoStacks() { return false; }
 
   /**
    * Overridden to return the formats supported by the writer.
-   * @see loci.formats.IFormatWriter#getPixelTypes(String) 
+   * @see loci.formats.IFormatWriter#getPixelTypes(String)
    */
   @Override
   public int[] getPixelTypes(String codec) {

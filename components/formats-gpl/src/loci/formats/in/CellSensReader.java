@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
-import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -55,8 +54,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -277,6 +274,14 @@ public class CellSensReader extends FormatReader {
   private static final int DIMENSION_VALUE_ID = 2027;
 
   private static final int CHANNEL_NAME = 2419;
+
+  // Dimension types
+  private static final int Z = 1;
+  private static final int T = 2;
+  private static final int LAMBDA = 3;
+  private static final int C = 4;
+  private static final int UNKNOWN = 5;
+  private static final int PHASE = 9;
 
   // Stack properties
   private static final int DISPLAY_LIMITS = 2003;
@@ -725,7 +730,7 @@ public class CellSensReader extends FormatReader {
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, i), 0, i);
       store.setObjectiveNominalMagnification(pyramid.magnification, 0, i);
       store.setObjectiveWorkingDistance(
-        FormatTools.createLength(pyramid.workingDistance, UNITS.MICROM), 0, i);
+        FormatTools.createLength(pyramid.workingDistance, UNITS.MICROMETER), 0, i);
 
       for (int q=0; q<pyramid.objectiveTypes.size(); q++) {
         if (pyramid.objectiveTypes.get(q) == 1) {
@@ -807,12 +812,12 @@ public class CellSensReader extends FormatReader {
               }
               if (exp != null) {
                 store.setPlaneExposureTime(
-                  FormatTools.createTime(exp / 1000000.0, UNITS.S), ii, nextPlane);
+                  FormatTools.createTime(exp / 1000000.0, UNITS.SECOND), ii, nextPlane);
               }
               store.setPlanePositionX(
-                FormatTools.createLength(pyramid.originX, UNITS.MICROM), ii, nextPlane);
+                FormatTools.createLength(pyramid.originX, UNITS.MICROMETER), ii, nextPlane);
               store.setPlanePositionY(
-                FormatTools.createLength(pyramid.originY, UNITS.MICROM), ii, nextPlane);
+                FormatTools.createLength(pyramid.originY, UNITS.MICROMETER), ii, nextPlane);
             }
           }
         }
@@ -1364,6 +1369,7 @@ public class CellSensReader extends FormatReader {
         int tag = vsi.readInt();
         long nextField = vsi.readInt() & 0xffffffffL;
         int dataSize = vsi.readInt();
+        String storedValue = null;
 
         LOGGER.debug("  tag #{}: fieldType={}, tag={}, nextField={}, dataSize={}",
           new Object[] {i, fieldType, tag, nextField, dataSize});
@@ -1526,7 +1532,7 @@ public class CellSensReader extends FormatReader {
                   }
                 }
                 if (nIntValues > 1) {
-                  value += ")";
+                  value += ')';
                 }
 
                 if (tag == IMAGE_BOUNDARY) {
@@ -1558,7 +1564,7 @@ public class CellSensReader extends FormatReader {
                   }
                 }
                 if (nDoubleValues > 1) {
-                  value += ")";
+                  value += ')';
                 }
 
                 if (tag == RWC_FRAME_SCALE) {
@@ -1695,6 +1701,7 @@ public class CellSensReader extends FormatReader {
               addGlobalMetaList(tagPrefix + tagName, value);
             }
           }
+          storedValue = value;
         }
 
         if (inDimensionProperties) {
@@ -1719,6 +1726,31 @@ public class CellSensReader extends FormatReader {
           }
           else if (tag == CHANNEL_PROPERTIES) {
             foundChannelTag = true;
+          }
+          else if (tag == DIMENSION_MEANING && storedValue != null) {
+            int dimension = -1;
+            try {
+              dimension = Integer.parseInt(storedValue);
+            }
+            catch (NumberFormatException e) { }
+            switch (dimension) {
+              case Z:
+                p.dimensionOrdering.put("Z", dimensionTag);
+                break;
+              case T:
+                p.dimensionOrdering.put("T", dimensionTag);
+                break;
+              case LAMBDA:
+                p.dimensionOrdering.put("L", dimensionTag);
+                break;
+              case C:
+                p.dimensionOrdering.put("C", dimensionTag);
+                break;
+              case PHASE:
+                p.dimensionOrdering.put("P", dimensionTag);
+              default:
+                throw new FormatException("Invalid dimension: " + dimension);
+            }
           }
         }
 
@@ -2271,7 +2303,7 @@ public class CellSensReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer b = new StringBuffer("{");
+      final StringBuilder b = new StringBuilder("{");
       for (int p : coordinate) {
         b.append(p);
         b.append(", ");

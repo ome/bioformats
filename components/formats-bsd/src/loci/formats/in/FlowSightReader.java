@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -48,8 +48,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveInteger;
-
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,11 +55,11 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author Lee Kamentsky
- * 
+ *
  * Reader for the Amris ImageStream / FlowSight file format
- * 
+ *
  * The cif file format is tiff-like, but doesn't adhere to
- * the TIFF standard, so we use the TiffParser where we can, 
+ * the TIFF standard, so we use the TiffParser where we can,
  * but do not use the TiffReader hierarchy.
  */
 public class FlowSightReader extends FormatReader {
@@ -150,9 +148,12 @@ public class FlowSightReader extends FormatReader {
     if (channelNamesString != null) {
       channelNames = channelNamesString.split("\\|");
       if (channelNames.length != channelCount) {
-        throw new FormatException(String.format(
-            "Channel count (%d) does not match number of channel names (%d) in string \"%s\"",
-            channelCount, channelNames.length, channelNamesString));
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Channel count (%d) does not match number of " +
+              "channel names (%d) in string \"%s\"",
+              channelCount, channelNames.length, channelNamesString);
+        }
+        channelCount = channelNames.length;
       }
       LOGGER.debug("Found {} channels: {}",
           channelCount, channelNamesString.replace('|', ','));
@@ -202,7 +203,7 @@ public class FlowSightReader extends FormatReader {
 
     /*
      * Scan the remaining IFDs
-     * 
+     *
      * Unfortunately, each image can have a different width and height
      * and the images and masks have a different bit depth, so in the
      * OME scheme of things, we get one series per plane.
@@ -312,13 +313,13 @@ public class FlowSightReader extends FormatReader {
 
   /**
    * Decode the whole IFD plane using bitmask compression
-   * 
+   *
    * @param ifd - the IFD to decode
    * @param imageWidth the width of the IFD plane
    * @param imageHeight the height of the IFD plane
    * @return a byte array of length imageWidth * imageHeight
    *         containing the uncompressed data
-   * @throws FormatException 
+   * @throws FormatException
    */
   private byte[] openBitmaskBytes(IFD ifd, int imageWidth, int imageHeight) throws FormatException {
     final byte [] uncompressed = new byte[imageWidth * imageHeight];
@@ -348,12 +349,12 @@ public class FlowSightReader extends FormatReader {
 
   /**
    * Decode the whole IFD plane using greyscale compression
-   * 
+   *
    * @param ifd
    * @param imageWidth
    * @param imageHeight
    * @return a byte array
-   * @throws FormatException 
+   * @throws FormatException
    */
   private byte[] openGreyscaleBytes(final IFD ifd, final int imageWidth, final int imageHeight) throws FormatException {
     final FormatException [] formatException = new FormatException[1];

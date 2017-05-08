@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -59,7 +59,6 @@
 
 package loci.formats.out;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import ome.units.UNITS;
@@ -68,18 +67,12 @@ import ome.units.quantity.Length;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 
-import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
-
-import ome.units.quantity.Length;
-import ome.units.UNITS;
 
 /**
  * WlzWriter is the file format writer for Woolz files.
@@ -195,13 +188,13 @@ public class WlzWriter extends FormatWriter {
       double vY = 1.0;
       double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROM).doubleValue();
+        vX = meta.getPixelsPhysicalSizeX(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROM).doubleValue();
+        vY = meta.getPixelsPhysicalSizeY(0).value(UNITS.MICROMETER).doubleValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROM).doubleValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).value(UNITS.MICROMETER).doubleValue();
       }
       int gType = FormatTools.pixelTypeFromString(
                   meta.getPixelsType(series).toString());

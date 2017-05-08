@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -100,6 +100,7 @@ public class FormatPageAutogen {
       context.put("developer", table.get("developer"));
       context.put("bsd", table.get("bsd"));
       context.put("export", table.get("export"));
+      context.put("pyramid", table.get("pyramid"));
 
       if (table.containsKey("versions")) {
         context.put("versions", table.get("versions"));
@@ -118,6 +119,7 @@ public class FormatPageAutogen {
       context.put("mif", table.get("mif"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
+      context.put("options", table.get("options"));
       context.put("readerextlink",
         table.get("bsd").equals("no") ? "bfreader" : "bsd-reader");
       context.put("writerextlink",
@@ -166,7 +168,7 @@ public class FormatPageAutogen {
       }
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,
-        "../../docs/sphinx/" + filename + ".txt");
+        "../../docs/sphinx/" + filename + ".rst");
     }
   }
 
@@ -204,7 +206,7 @@ public class FormatPageAutogen {
     context.put("count", sortedTable.length);
 
     VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
-      "../../docs/sphinx/supported-formats.txt");
+      "../../docs/sphinx/supported-formats.rst");
   }
 
   // -- Helper methods --
@@ -220,7 +222,7 @@ public class FormatPageAutogen {
       realPageName = realPageName.replaceAll(" ", "-");
       realPageName = realPageName.toLowerCase();
     }
-    realPageName = "formats" + File.separator + realPageName;
+    realPageName = "formats/" + realPageName;
 
     return realPageName;
   }

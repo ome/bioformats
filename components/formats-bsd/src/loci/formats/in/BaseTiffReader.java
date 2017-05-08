@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -50,7 +50,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
@@ -230,8 +229,16 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     putInt("Model", firstIFD, IFD.MODEL);
     putInt("MinSampleValue", firstIFD, IFD.MIN_SAMPLE_VALUE);
     putInt("MaxSampleValue", firstIFD, IFD.MAX_SAMPLE_VALUE);
-    putInt("XResolution", firstIFD, IFD.X_RESOLUTION);
-    putInt("YResolution", firstIFD, IFD.Y_RESOLUTION);
+
+    TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
+    TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
+
+    if (xResolution != null) {
+      put("XResolution", xResolution.doubleValue());
+    }
+    if (yResolution != null) {
+      put("YResolution", yResolution.doubleValue());
+    }
 
     int planar = firstIFD.getIFDIntValue(IFD.PLANAR_CONFIGURATION);
     String planarConfig = null;
@@ -445,7 +452,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
       if (artist != null) {
         String firstName = null, lastName = null;
-        int ndx = artist.indexOf(" ");
+        int ndx = artist.indexOf(' ');
         if (ndx < 0) lastName = artist;
         else {
           firstName = artist.substring(0, ndx);
@@ -466,10 +473,10 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixY = firstIFD.getYResolution();
 
       String unit = getResolutionUnitFromComment(firstIFD);
-      
+
       Length sizeX = FormatTools.getPhysicalSizeX(pixX, unit);
       Length sizeY = FormatTools.getPhysicalSizeY(pixY, unit);
-      
+
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
       }
@@ -482,7 +489,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         if (exif.containsKey(IFD.EXPOSURE_TIME)) {
           Object exp = exif.get(IFD.EXPOSURE_TIME);
           if (exp instanceof TiffRational) {
-            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.S);
+            Time exposure = new Time(((TiffRational) exp).doubleValue(), UNITS.SECOND);
             for (int i=0; i<getImageCount(); i++) {
               store.setPlaneExposureTime(exposure, 0, i);
             }
@@ -491,10 +498,10 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       }
     }
   }
-  
+
   /**
    * Extracts the resolution unit symbol from the comment field
-   * 
+   *
    * @param ifd
    *          The {@link IFD}
    * @return The unit symbol or <code>null</code> if the information is not
@@ -520,7 +527,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   protected String getImageCreationDate() {
     Object o = ifds.get(0).getIFDValue(IFD.DATE_TIME);
     if (o instanceof String) return (String) o;
-    if (o instanceof String[]) return ((String[]) o)[0];
+    if (o instanceof String[] && ((String[]) o).length > 0) return ((String[]) o)[0];
     return null;
   }
 

@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,8 +32,15 @@
 
 package loci.formats;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 
 /**
  * Abstract superclass of all biological file format readers and writers.
@@ -59,6 +66,9 @@ public abstract class FormatHandler implements IFormatHandler {
   /** Name of current file. */
   protected String currentId;
 
+  /** Metadata parsing options. */
+  protected MetadataOptions metadataOptions = new DynamicMetadataOptions();
+
   // -- Constructors --
 
   /** Constructs a format handler with the given name and default suffix. */
@@ -70,6 +80,36 @@ public abstract class FormatHandler implements IFormatHandler {
   public FormatHandler(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
+  }
+
+  // -- IMetadataConfigurable API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getSupportedMetadataLevels()
+   */
+  @Override
+  public Set<MetadataLevel> getSupportedMetadataLevels() {
+    Set<MetadataLevel> supportedLevels = new HashSet<MetadataLevel>();
+    supportedLevels.add(MetadataLevel.ALL);
+    supportedLevels.add(MetadataLevel.NO_OVERLAYS);
+    supportedLevels.add(MetadataLevel.MINIMUM);
+    return supportedLevels;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#getMetadataOptions()
+   */
+  @Override
+  public MetadataOptions getMetadataOptions() {
+    return metadataOptions;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IMetadataConfigurable#setMetadataOptions(loci.formats.in.MetadataOptions)
+   */
+  @Override
+  public void setMetadataOptions(MetadataOptions options) {
+    this.metadataOptions = options;
   }
 
   // -- IFormatHandler API methods --

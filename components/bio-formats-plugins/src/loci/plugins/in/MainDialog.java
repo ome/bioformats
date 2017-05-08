@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -82,6 +82,7 @@ public class MainDialog extends ImporterDialog
   protected Checkbox showMetadataBox;
   protected Checkbox showOMEXMLBox;
   protected Checkbox showROIsBox;
+  protected Choice roisModeChoice;
   protected Checkbox specifyRangesBox;
   protected Checkbox splitZBox;
   protected Checkbox splitTBox;
@@ -124,6 +125,7 @@ public class MainDialog extends ImporterDialog
     addCheckbox(gd, ImporterOptions.KEY_SHOW_METADATA);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_OME_XML);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_ROIS);
+    addChoice(gd, ImporterOptions.KEY_ROIS_MODE);
     addCheckbox(gd, ImporterOptions.KEY_SPECIFY_RANGES);
     addCheckbox(gd, ImporterOptions.KEY_SPLIT_Z);
     addCheckbox(gd, ImporterOptions.KEY_SPLIT_T);
@@ -151,6 +153,7 @@ public class MainDialog extends ImporterDialog
     options.setShowMetadata(gd.getNextBoolean());
     options.setShowOMEXML(gd.getNextBoolean());
     options.setShowROIs(gd.getNextBoolean());
+    options.setROIsMode(options.getROIsModes()[gd.getNextChoiceIndex()]);
     options.setSpecifyRanges(gd.getNextBoolean());
     options.setSplitFocalPlanes(gd.getNextBoolean());
     options.setSplitTimepoints(gd.getNextBoolean());
@@ -224,6 +227,7 @@ public class MainDialog extends ImporterDialog
     List<Choice> choices = null;
     List<Label> labels = null;
     Label colorModeLabel = null;
+    Label roisModeLabel = null;
     Label stackFormatLabel = null;
     Label stackOrderLabel = null;
     Component[] c = gd.getComponents();
@@ -262,6 +266,8 @@ public class MainDialog extends ImporterDialog
       showMetadataBox   = boxes.get(boxIndex++);
       showOMEXMLBox     = boxes.get(boxIndex++);
       showROIsBox       = boxes.get(boxIndex++);
+      roisModeChoice    = choices.get(choiceIndex++);
+      roisModeLabel     = labels.get(labelIndex++);
       specifyRangesBox  = boxes.get(boxIndex++);
       splitZBox         = boxes.get(boxIndex++);
       splitTBox         = boxes.get(boxIndex++);
@@ -293,6 +299,8 @@ public class MainDialog extends ImporterDialog
     infoTable.put(showMetadataBox, options.getShowMetadataInfo());
     infoTable.put(showOMEXMLBox, options.getShowOMEXMLInfo());
     infoTable.put(showROIsBox, options.getShowROIsInfo());
+    infoTable.put(roisModeChoice, options.getROIsModeInfo());
+    infoTable.put(roisModeLabel, options.getROIsModeInfo());
     infoTable.put(specifyRangesBox, options.getSpecifyRangesInfo());
     infoTable.put(splitZBox, options.getSplitFocalPlanesInfo());
     infoTable.put(splitTBox, options.getSplitTimepointsInfo());
@@ -311,13 +319,13 @@ public class MainDialog extends ImporterDialog
       // first column
       "pref, 3dlu, pref:grow, " +
       // second column
-      "10dlu, pref, " +
+      "10dlu, pref, 3dlu, pref:grow, " +
       // third column
       "10dlu, fill:150dlu";
 
     String rows =
       // Stack viewing        | Metadata viewing
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       // Dataset organization | Memory management
       "9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
       "3dlu, pref, " +
@@ -340,7 +348,7 @@ public class MainDialog extends ImporterDialog
     row += 2;
     builder.add(stackOrderLabel, cc.xy(1, row));
     builder.add(stackOrderChoice, cc.xy(3, row));
-    row += 4;
+    row += 6;
     builder.addSeparator("Dataset organization", cc.xyw(1, row, 3));
     row += 2;
     builder.add(groupFilesBox, xyw(cc, 1, row, 3));
@@ -365,41 +373,44 @@ public class MainDialog extends ImporterDialog
 
     // populate 2nd column
     row = 1;
-    builder.addSeparator("Metadata viewing", cc.xy(5, row));
+    builder.addSeparator("Metadata viewing", cc.xyw(5, row, 3));
     row += 2;
-    builder.add(showMetadataBox, xyw(cc, 5, row, 1));
+    builder.add(showMetadataBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(showOMEXMLBox, xyw(cc, 5, row, 1));
+    builder.add(showOMEXMLBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(showROIsBox, xyw(cc, 5, row, 1));
+    builder.add(showROIsBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.addSeparator("Memory management", cc.xy(5, row));
+    builder.add(roisModeLabel, cc.xy(5, row));
+    builder.add(roisModeChoice, cc.xy(7, row));
     row += 2;
-    builder.add(virtualBox, xyw(cc, 5, row, 1));
+    builder.addSeparator("Memory management", cc.xyw(5, row, 3));
     row += 2;
-    //builder.add(recordBox, xyw(cc, 5, row, 1));
+    builder.add(virtualBox, xyw(cc, 5, row, 3));
+    row += 2;
+    //builder.add(recordBox, xyw(cc, 5, row, 3));
     //row += 2;
-    builder.add(specifyRangesBox, xyw(cc, 5, row, 1));
+    builder.add(specifyRangesBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(cropBox, xyw(cc, 5, row, 1));
+    builder.add(cropBox, xyw(cc, 5, row, 3));
     row += 4;
-    builder.addSeparator("Split into separate windows", cc.xy(5, row));
+    builder.addSeparator("Split into separate windows", cc.xyw(5, row, 3));
     row += 2;
-    builder.add(splitCBox, xyw(cc, 5, row, 1));
+    builder.add(splitCBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(splitZBox, xyw(cc, 5, row, 1));
+    builder.add(splitZBox, xyw(cc, 5, row, 3));
     row += 2;
-    builder.add(splitTBox, xyw(cc, 5, row, 1));
+    builder.add(splitTBox, xyw(cc, 5, row, 3));
     //row += 4;
 
     // information section
-    builder.addSeparator("Information", cc.xy(7, 1));
+    builder.addSeparator("Information", cc.xy(9, 1));
     //row += 2;
     infoPane = new JEditorPane();
     infoPane.setContentType("text/html");
     infoPane.setEditable(false);
     infoPane.setText("<html>" + INFO_DEFAULT);
-    builder.add(new JScrollPane(infoPane), cc.xywh(7, 3, 1, row));
+    builder.add(new JScrollPane(infoPane), cc.xywh(9, 3, 1, row));
     //row += 2;
 
     gd.removeAll();
@@ -431,6 +442,7 @@ public class MainDialog extends ImporterDialog
     //boolean recordEnabled = recordBox.isEnabled();
     boolean showMetadataEnabled = showMetadataBox.isEnabled();
     boolean showOMEXMLEnabled = showOMEXMLBox.isEnabled();
+    boolean roisModeEnabled = roisModeChoice.isEnabled();
     boolean specifyRangesEnabled = specifyRangesBox.isEnabled();
     boolean splitZEnabled = splitZBox.isEnabled();
     boolean splitTEnabled = splitTBox.isEnabled();
@@ -450,6 +462,8 @@ public class MainDialog extends ImporterDialog
     //boolean isRecord = recordBox.getState();
     boolean isShowMetadata = showMetadataBox.getState();
     boolean isShowOMEXML = showOMEXMLBox.getState();
+    boolean isShowROIs = showROIsBox.getState();
+    String roisModeValue = roisModeChoice.getSelectedItem();
     boolean isSpecifyRanges = specifyRangesBox.getState();
     boolean isSplitZ = splitZBox.getState();
     boolean isSplitT = splitTBox.getState();
@@ -503,6 +517,10 @@ public class MainDialog extends ImporterDialog
 
     // showOMEXMLBox
     // NB: no other options affect showOMEXMLBox
+
+    // roisModeChoice
+    roisModeEnabled = isShowROIs;
+    if (!roisModeEnabled) roisModeValue = ImporterOptions.ROIS_MODE_MANAGER;
 
     // == Dataset organization ==
 
@@ -591,6 +609,7 @@ public class MainDialog extends ImporterDialog
     //recordBox.setEnabled(recordEnabled);
     showMetadataBox.setEnabled(showMetadataEnabled);
     showOMEXMLBox.setEnabled(showOMEXMLEnabled);
+    roisModeChoice.setEnabled(roisModeEnabled);
     specifyRangesBox.setEnabled(specifyRangesEnabled);
     splitZBox.setEnabled(splitZEnabled);
     splitTBox.setEnabled(splitTEnabled);
@@ -610,6 +629,7 @@ public class MainDialog extends ImporterDialog
     //recordBox.setState(isRecord);
     showMetadataBox.setState(isShowMetadata);
     showOMEXMLBox.setState(isShowOMEXML);
+    roisModeChoice.select(roisModeValue);
     specifyRangesBox.setState(isSpecifyRanges);
     splitZBox.setState(isSplitZ);
     splitTBox.setState(isSplitT);

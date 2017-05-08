@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,12 +42,9 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
-import ome.units.quantity.Time;
 import ome.units.UNITS;
 
 import org.xml.sax.Attributes;
@@ -211,8 +208,8 @@ public class AFIReader extends FormatReader {
     for (int i=0; i<pixels.size(); i++) {
       String file = pixels.get(i);
 
-      int underscore = file.indexOf("_");
-      int fullStop = file.indexOf(".");
+      int underscore = file.indexOf('_');
+      int fullStop = file.indexOf('.');
       if (underscore >= 0 && fullStop > underscore) {
         channelNames[i] = file.substring(underscore + 1, fullStop);
       }
@@ -283,7 +280,7 @@ public class AFIReader extends FormatReader {
 
         if (i < physicalSizes.length &&
           physicalSizes[i] != null &&
-          physicalSizes[i].value(UNITS.MICROM).doubleValue() - Constants.EPSILON > 0)
+          physicalSizes[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0)
         {
           Length size = physicalSizes[i];
           store.setPixelsPhysicalSizeX(size, i);
@@ -300,7 +297,7 @@ public class AFIReader extends FormatReader {
             store.setChannelExcitationWavelength(excitation[c], i, c);
           }
 
-          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.S), i, c);
+          store.setPlaneExposureTime(FormatTools.createTime(exposure[c], UNITS.SECOND), i, c);
         }
       }
     }

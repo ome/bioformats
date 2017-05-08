@@ -11,6 +11,7 @@
     <dependencySet>
       <excludes>
         <exclude>gov.nih.imagej:imagej</exclude>
+        <exclude>net.imagej:ij</exclude>
         <exclude>org.springframework:spring*</exclude>
         <exclude>aopalliance:aopalliance</exclude>
         <exclude>org.aspectj:aspectj*</exclude>
@@ -18,7 +19,6 @@
         <exclude>log4j:log4j</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
-        <exclude>junit:junit</exclude>
         <exclude>com.beust:jcommander</exclude>
         <exclude>org.yaml:snakeyaml</exclude>
         <exclude>org.beanshell:bsh</exclude>

@@ -17,72 +17,6 @@ maven()
     mvn
 }
 
-maven_findbugs()
-{
-    mvn findbugs:findbugs -Dfindbugs.threshold=medium
-}
-
-cpp()
-{
-    (
-        cd cpp
-        mkdir build
-        cd build
-        (
-            mkdir gtest
-            cd gtest
-            cmake /usr/src/gtest
-            make
-        )
-        CXX="g++ -std=gnu++98" GTEST_ROOT="$(pwd)/gtest" cmake -Dcxxstd-autodetect=OFF -Dextended-tests=OFF ../.. || cat CMakeFiles/CMakeError.log
-        make
-        make test
-        make DESTDIR=../install install
-        make doc
-    )
-}
-
-# Test cppwrap
-cppwrap()
-{
-    (
-        maven
-        cd components/formats-bsd
-        mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
-        cd target/cppwrap
-        mkdir build
-        cd build
-        cmake ..
-        make
-        ./showinf ../../../../specification/samples/2009-09/18x24y5z1t1c8b-text.ome.tiff
-        ./minimum_writer test.ome.tiff
-    )
-}
-
-# Check python sources with flake8
-flake()
-{
-    flake8 -v components cpp docs
-}
-
-# Test sphinx docs build
-sphinx()
-{
-    (
-        export SPHINXOPTS="-W"
-        ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx
-        ant -Dsphinx.warnopts=$SPHINXOPTS docs-sphinx
-    )
-}
-
-sphinx_html()
-{
-    (
-        cd docs/sphinx
-        ant -Dsphinx.warnopts=$SPHINXOPTS html
-     )
- }
-
 # Test Ant build targets
 antbuild()
 {
@@ -91,20 +25,14 @@ antbuild()
       ant clean compile-autogen
       ant clean compile-formats-api
       ant clean compile-jai
-      ant clean compile-formats-common
       ant clean compile-bio-formats-plugins
-      ant clean compile-lwf-stubs
-      ant clean compile-mipav-stubs
-      ant clean compile-mdbtools
-      ant clean compile-metakit
-      ant clean compile-ome-xml
-      ant clean compile-ome-poi
       ant clean compile-formats-bsd
       ant clean compile-formats-gpl
       ant clean compile-bio-formats-tools
       ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
+      ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx docs-sphinx
     )
 }
 
@@ -115,22 +43,10 @@ do
             clean ;;
         maven)
             maven ;;
-        maven_findbugs)
-            maven_findbugs ;;
-        cpp)
-            cpp ;;
-        cppwrap)
-            cppwrap ;;
-        flake8)
-            flake ;;
-        sphinx)
-            sphinx ;;
-        sphinx_html)
-            sphinx_html ;;
         ant)
             antbuild ;;
         all)
-            clean && maven_findbugs && cppwrap && sphinx && antbuild;;
+            clean && maven && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1

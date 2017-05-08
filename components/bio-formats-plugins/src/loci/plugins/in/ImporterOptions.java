@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -66,6 +66,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_SHOW_METADATA   = "showMetadata";
   public static final String KEY_SHOW_OME_XML    = "showOMEXML";
   public static final String KEY_SHOW_ROIS       = "showROIs";
+  public static final String KEY_ROIS_MODE       = "roiMode";
   public static final String KEY_SPECIFY_RANGES  = "specifyRanges";
   public static final String KEY_SPLIT_Z         = "splitFocalPlanes";
   public static final String KEY_SPLIT_T         = "splitTimepoints";
@@ -78,7 +79,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_WINDOWLESS      = "windowless";
   public static final String KEY_STITCH_TILES    = "stitchTiles";
   public static final String KEY_MUST_GROUP    	 = "mustGroup";
-  
+
   // possible values for colorMode
   public static final String COLOR_MODE_DEFAULT = "Default";
   public static final String COLOR_MODE_COMPOSITE = "Composite";
@@ -90,6 +91,10 @@ public class ImporterOptions extends OptionsList {
   public static final String LOCATION_LOCAL = "Local machine";
   public static final String LOCATION_HTTP  = "Internet";
   public static final String LOCATION_OMERO = "OMERO";
+
+  //possible values for roiMode
+  public static final String ROIS_MODE_MANAGER = "ROI manager";
+  public static final String ROIS_MODE_OVERLAY = "Overlay";
 
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
@@ -324,6 +329,12 @@ public class ImporterOptions extends OptionsList {
   public boolean showROIs() { return isSet(KEY_SHOW_ROIS); }
   public void setShowROIs(boolean b) { setValue(KEY_SHOW_ROIS, b); }
 
+  // roisMode
+ public String getROIsModeInfo() { return getInfo(KEY_ROIS_MODE); }
+ public String getROIsMode() { return getValue(KEY_ROIS_MODE); }
+ public String[] getROIsModes() { return getPossible(KEY_ROIS_MODE); }
+ public void setROIsMode(String s) { setValue(KEY_ROIS_MODE, s); }
+
   // specifyRanges
   public String getSpecifyRangesInfo() { return getInfo(KEY_SPECIFY_RANGES); }
   public boolean isSpecifyRanges() { return isSet(KEY_SPECIFY_RANGES); }
@@ -401,7 +412,7 @@ public class ImporterOptions extends OptionsList {
   public String getMustGroupInfo() { return getInfo(KEY_MUST_GROUP); }
   public boolean doMustGroup() { return isSet(KEY_MUST_GROUP); }
   public void setMustGroup(boolean b) { setValue(KEY_MUST_GROUP, b); }
-  
+
   // -- ImporterOptions methods - secondary options accessors and mutators --
 
   // series options
@@ -519,9 +530,9 @@ public class ImporterOptions extends OptionsList {
 
     // delete anything inside square brackets, for simplicity
     while (true) {
-      int lIndex = options.indexOf("[");
+      int lIndex = options.indexOf('[');
       if (lIndex < 0) break;
-      int rIndex = options.indexOf("]");
+      int rIndex = options.indexOf(']');
       if (rIndex < 0) rIndex = options.length() - 1;
       options = options.substring(0, lIndex) + options.substring(rIndex + 1);
     }

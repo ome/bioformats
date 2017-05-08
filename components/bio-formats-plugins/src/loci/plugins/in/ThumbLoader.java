@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -32,11 +32,13 @@ import java.awt.Panel;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import loci.common.DebugTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
@@ -123,8 +125,19 @@ public class ThumbLoader implements Runnable {
     int series, Panel panel, boolean quiet)
   {
     BF.status(quiet, "Reading thumbnail for series #" + (series + 1));
-    thumbReader.setSeries(series);
-    // open middle image thumbnail
+    // open middle image thumbnail in smallest pyramid resolution
+    List<CoreMetadata> core = thumbReader.getCoreMetadataList();
+    int index = series;
+    for (int i=0; i<=index; i++) {
+      if (core.get(i).resolutionCount > 1 &&
+        i + core.get(i).resolutionCount > index)
+      {
+        index = i + core.get(i).resolutionCount - 1;
+        break;
+      }
+    }
+    thumbReader.setSeries(index);
+
     int z = thumbReader.getSizeZ() / 2;
     int t = thumbReader.getSizeT() / 2;
     int ndx = thumbReader.getIndex(z, 0, t);

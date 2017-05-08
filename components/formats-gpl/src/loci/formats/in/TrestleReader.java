@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -219,7 +219,7 @@ public class TrestleReader extends BaseTiffReader {
     String comment = ifds.get(0).getComment();
     String[] values = comment.split(";");
     for (String v : values) {
-      int eq = v.indexOf("=");
+      int eq = v.indexOf('=');
       if (eq < 0) continue;
       String key = v.substring(0, eq).trim();
       String value = v.substring(eq + 1).trim();
@@ -284,8 +284,8 @@ public class TrestleReader extends BaseTiffReader {
     Location baseFile = new Location(currentId).getAbsoluteFile();
     Location parent = baseFile.getParentFile();
     String name = baseFile.getName();
-    if (name.indexOf(".") >= 0) {
-      name = name.substring(0, name.indexOf(".") + 1);
+    if (name.indexOf('.') >= 0) {
+      name = name.substring(0, name.indexOf('.') + 1);
     }
 
     roiFile = new Location(parent, name + "ROI").getAbsolutePath();

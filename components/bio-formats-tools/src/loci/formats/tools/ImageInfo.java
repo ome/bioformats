@@ -2,20 +2,20 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -63,11 +63,10 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.Modulo;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.in.OMETiffReader;
@@ -91,8 +90,6 @@ public class ImageInfo {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
-
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
 
   private static final ImmutableSet<String> HELP_ARGUMENTS =
       ImmutableSet.of("-h", "-help", "--help");
@@ -135,6 +132,7 @@ public class ImageInfo {
   private String format = null;
   private String cachedir = null;
   private int xmlSpaces = 3;
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -191,8 +189,11 @@ public class ImageInfo {
     if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
-        if (args[i].equals("-nopix")) pixels = false;
-        else if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(CommandLineTools.VERSION)){
+          printVersion = true;
+          return true;
+        }
+        else if (args[i].equals("-nopix")) pixels = false;
         else if (args[i].equals("-nocore")) doCore = false;
         else if (args[i].equals("-nometa")) doMeta = false;
         else if (args[i].equals("-nofilter")) filter = false;
@@ -213,17 +214,18 @@ public class ImageInfo {
           autoscale = true;
         }
         else if (args[i].equals("-novalid")) validate = false;
+        else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+          DebugTools.setRootLevel("DEBUG");
         }
         else if (args[i].equals("-trace")) {
-          DebugTools.enableLogging("TRACE");
+          DebugTools.setRootLevel("TRACE");
         }
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
-          DebugTools.enableLogging("OFF");
+          DebugTools.setRootLevel("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -270,7 +272,10 @@ public class ImageInfo {
             cache = true;
             cachedir = args[++i];
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (args[i].equals("-option")) {
+          options.set(args[++i], args[++i]);
+        }
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -296,7 +301,7 @@ public class ImageInfo {
       "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
       "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
       "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
-      "    [-cache] [-cache-dir dir]",
+      "    [-cache] [-cache-dir dir] [-option key value]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -337,6 +342,7 @@ public class ImageInfo {
       "  -cache-dir: use the specified directory to store the cached",
       "              initialized reader. If unspecified, the cached reader",
       "              will be stored under the same folder as the image file",
+      "     -option: add the specified key/value pair to the reader's options list",
       "",
       "* = may result in loss of precision",
       ""
@@ -377,6 +383,12 @@ public class ImageInfo {
     if (map != null) Location.mapId(id, map);
     else if (preload) {
       RandomAccessInputStream f = new RandomAccessInputStream(id);
+      if (!(reader instanceof ImageReader)) {
+        // verify format
+        LOGGER.info("Checking {} format [{}]", reader.getFormat(),
+                    reader.isThisType(f) ? "yes" : "no");
+        f.seek(0);
+      }
       int len = (int) f.length();
       LOGGER.info("Caching {} bytes:", len);
       byte[] b = new byte[len];
@@ -463,9 +475,10 @@ public class ImageInfo {
     reader.setNormalized(normalize);
     reader.setMetadataFiltered(filter);
     reader.setGroupFiles(group);
-    MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
-      MetadataLevel.ALL : MetadataLevel.MINIMUM);
-    reader.setMetadataOptions(metaOptions);
+    options.setMetadataLevel(
+        doMeta ? MetadataLevel.ALL : MetadataLevel.MINIMUM);
+    options.setValidate(validate);
+    reader.setMetadataOptions(options);
     reader.setFlattenedResolutions(flat);
   }
 
@@ -934,9 +947,6 @@ public class ImageInfo {
     if (baseReader instanceof ImageReader) {
       baseReader = ((ImageReader) baseReader).getReader();
     }
-    if (baseReader instanceof OMETiffReader) {
-      ms = ((OMETiffReader) baseReader).getMetadataStoreForDisplay();
-    }
 
     OMEXMLService service;
     try {
@@ -952,26 +962,13 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
-      // adding MetadataOnly elements to an OME-TIFF's XML will cause
-      // validation errors
-      if (!(baseReader instanceof OMETiffReader)) {
-        service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          service.addMetadataOnly(
-            service.getOMEMetadata((MetadataRetrieve) ms), i);
-        }
-      }
-
       if (omexmlOnly) {
-        DebugTools.enableLogging("INFO");
+        DebugTools.setRootLevel("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
-        DebugTools.enableLogging("OFF");
-      }
-      if (validate) {
-        service.validateOMEXML(xml);
+        DebugTools.setRootLevel("OFF");
       }
     }
     else {
@@ -993,7 +990,6 @@ public class ImageInfo {
   public boolean testRead(String[] args)
     throws FormatException, ServiceException, IOException
   {
-    DebugTools.enableLogging("INFO");
 
     for (final String arg : args) {
       if (HELP_ARGUMENTS.contains(arg)) {
@@ -1007,11 +1003,10 @@ public class ImageInfo {
     boolean validArgs = parseArgs(args);
     if (!validArgs) return false;
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
+    CommandLineTools.runUpgradeCheck(args);
 
     createReader();
 
@@ -1025,7 +1020,14 @@ public class ImageInfo {
 
     // initialize reader
     long s = System.currentTimeMillis();
-    reader.setId(id);
+    try {
+      reader.setId(id);
+    } catch (FormatException exc) {
+      reader.close();
+      LOGGER.error("Failure during the reader initialization");
+      LOGGER.debug("", exc);
+      return false;
+    }
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
     LOGGER.info("Initialization took {}s", sec);
@@ -1047,7 +1049,7 @@ public class ImageInfo {
       printOriginalMetadata();
     }
 
-    // output and validate OME-XML
+    // output OME-XML
     if (omexml) printOMEXML();
 
     if (!pixels) {
@@ -1104,16 +1106,7 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
+    DebugTools.enableLogging("INFO");
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

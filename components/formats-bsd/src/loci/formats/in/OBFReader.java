@@ -2,23 +2,21 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
- * Goettingen, 2014 - 2015
- *
- * Copyright (C) 2014 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2014 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
+ *   - Max Planck Institute for Biophysical Chemistry, Goettingen
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -81,9 +79,6 @@ public class OBFReader extends FormatReader
   private static final String STACK_MAGIC_STRING = "OMAS_BF_STACK\n";
   private static final short MAGIC_NUMBER = (short) 0xFFFF;
 
-  private static final int FILE_VERSION = 2;
-  private static final int STACK_VERSION = 5;
-
   private static final int MAXIMAL_NUMBER_OF_DIMENSIONS = 15;
 
   private class Stack
@@ -137,9 +132,9 @@ public class OBFReader extends FormatReader
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException
   {
-    final int fileVersion = getFileVersion(stream);
+    final int fileVersion = getFileVersion(stream) ;
 
-    return fileVersion >= 0 && fileVersion <= FILE_VERSION;
+    return fileVersion >= 0 ;
   }
 
   @Override
@@ -206,11 +201,11 @@ public class OBFReader extends FormatReader
           MetadataTools.populatePixels(ome, this, false, false);
         }
       }
-      catch (DependencyException exception) 
+      catch (DependencyException exception)
       {
         throw new MissingLibraryException( OMEXMLServiceImpl.NO_OME_XML_MSG, exception ) ;
       }
-      catch (ServiceException exception) 
+      catch (ServiceException exception)
       {
         throw new FormatException( exception ) ;
       }
@@ -241,7 +236,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthX > 0)
           {
-            Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROM);
+            Length physicalSizeX = FormatTools.getPhysicalSizeX(lengthX / obf.sizeX, UNITS.MICROMETER);
             if (physicalSizeX != null) {
               ome.setPixelsPhysicalSizeX(physicalSizeX, series);
             }
@@ -256,7 +251,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthY > 0)
           {
-            Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROM);
+            Length physicalSizeY = FormatTools.getPhysicalSizeY(lengthY / obf.sizeY, UNITS.MICROMETER);
             if (physicalSizeY != null) {
               ome.setPixelsPhysicalSizeY(physicalSizeY, series);
             }
@@ -271,7 +266,7 @@ public class OBFReader extends FormatReader
           }
           if (lengthZ > 0)
           {
-            Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROM);
+            Length physicalSizeZ = FormatTools.getPhysicalSizeZ(lengthZ / obf.sizeZ, UNITS.MICROMETER);
             if (physicalSizeZ != null) {
               ome.setPixelsPhysicalSizeZ(physicalSizeZ, series);
             }
@@ -289,7 +284,7 @@ public class OBFReader extends FormatReader
     final short magicNumber = in.readShort();
     final int version = in.readInt();
 
-    if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version <= STACK_VERSION)
+    if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER)
     {
       CoreMetadata obf = new CoreMetadata();
       core.add(obf);

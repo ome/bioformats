@@ -2,7 +2,7 @@
  * #%L
  * Fork of JAI Image I/O Tools.
  * %%
- * Copyright (C) 2008 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -106,6 +106,8 @@ import java.util.List;
 import java.util.Locale;
 
 //import javax.imageio.ImageTypeSpecifier;
+
+import java.util.ServiceLoader;
 
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
@@ -1380,8 +1382,7 @@ public class ImageUtil {
 	    descPart = " image writer";
 	}
 
-	Iterator iter = iioRegistry.getServiceProviders(spiClass, 
-							true); // useOrdering
+	Iterator iter = ServiceLoader.load(spiClass).iterator(); // useOrdering
 
 	String formatNames[];
 	ImageReaderWriterSpi provider;

@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -66,12 +66,22 @@ public class SixteenBitLosslessJPEG2000Test {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SixteenBitLosslessJPEG2000Test.class);
 
+  private final int increment;
+
+  public SixteenBitLosslessJPEG2000Test() {
+    this(1024);
+  }
+
+  public SixteenBitLosslessJPEG2000Test(int increment) {
+      this.increment = increment;
+  }
+
   @Test
   public void testLosslessPixels() throws Exception {
     int failureCount = 0;
-    for (short v=Short.MIN_VALUE; v<Short.MAX_VALUE; v++) {
+    for (int v=Short.MIN_VALUE; v<Short.MAX_VALUE; v+=increment) {
       int index = v + Short.MAX_VALUE + 1;
-      byte[] pixels = DataTools.shortToBytes(v, false);
+      byte[] pixels = DataTools.shortToBytes((short) v, false);
 
       String file = index + ".jp2";
       ByteArrayHandle tmpFile = new ByteArrayHandle(1);

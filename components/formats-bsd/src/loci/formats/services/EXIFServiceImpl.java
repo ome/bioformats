@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2015 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2015 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -43,9 +43,7 @@ import loci.common.services.ServiceException;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Tag;
-import com.drew.imaging.ImageProcessingException;
 
 /**
  *

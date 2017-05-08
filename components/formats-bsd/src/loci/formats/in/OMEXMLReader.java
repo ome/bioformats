@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -34,7 +34,8 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.CBZip2InputStream;
 import loci.common.RandomAccessInputStream;
@@ -74,9 +75,9 @@ public class OMEXMLReader extends FormatReader {
   // -- Fields --
 
   // compression value and offset for each BinData element
-  private Vector<BinData> binData;
-  private Vector<Long> binDataOffsets;
-  private Vector<String> compression;
+  private List<BinData> binData;
+  private List<Long> binDataOffsets;
+  private List<String> compression;
 
   private String omexml;
   private boolean hasSPW = false;
@@ -226,9 +227,9 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
     in.setEncoding("ASCII");
-    binData = new Vector<BinData>();
-    binDataOffsets = new Vector<Long>();
-    compression = new Vector<String>();
+    binData = new ArrayList<BinData>();
+    binDataOffsets = new ArrayList<Long>();
+    compression = new ArrayList<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
     try {
@@ -269,7 +270,6 @@ public class OMEXMLReader extends FormatReader {
     }
 
     hasSPW = omexmlMeta.getPlateCount() > 0;
-    addGlobalMeta("Is SPW file", hasSPW);
 
     // TODO
     //Hashtable originalMetadata = omexmlMeta.getOriginalMetadata();
@@ -296,7 +296,13 @@ public class OMEXMLReader extends FormatReader {
 
       Boolean endian = null;
       if (binData.size() > 0) {
-        endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
+        endian = false;
+        if (omexmlMeta.getPixelsBigEndian(i) != null) {
+          endian = omexmlMeta.getPixelsBigEndian(i).booleanValue();
+        }
+        else if (omexmlMeta.getPixelsBinDataCount(i) != 0) {
+          endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0).booleanValue();
+        }
       }
       String pixType = omexmlMeta.getPixelsType(i).toString();
       ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
@@ -329,35 +335,64 @@ public class OMEXMLReader extends FormatReader {
   // -- Helper class --
 
   class OMEXMLHandler extends BaseHandler {
-    private StringBuffer xmlBuffer;
+    private final StringBuilder xmlBuffer;
     private String currentQName;
     private Locator locator;
+    private boolean inPixels;
 
     public OMEXMLHandler() {
-      xmlBuffer = new StringBuffer();
+      xmlBuffer = new StringBuilder();
+      inPixels = false;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) {
-      if (currentQName.indexOf("BinData") < 0) {
+      if (!inPixels || currentQName.indexOf("BinData") < 0) {
         xmlBuffer.append(new String(ch, start, length));
       }
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) {
+      if (qName.indexOf("Pixels") != -1) {
+        inPixels = false;
+      }
+
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
       xmlBuffer.append(">");
     }
 
     @Override
-    public void startElement(String ur, String localName, String qName,
+    public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       currentQName = qName;
 
-      if (qName.indexOf("BinData") == -1) {
+      if (qName.indexOf("Pixels") != -1) {
+        inPixels = true;
+      }
+
+      if (inPixels && qName.indexOf("BinData") != -1) {
+        binData.add(
+          new BinData(locator.getLineNumber(), locator.getColumnNumber()));
+        String compress = attributes.getValue("Compression");
+        compression.add(compress == null ? "" : compress);
+
+        xmlBuffer.append("<");
+        xmlBuffer.append(qName);
+        for (int i=0; i<attributes.getLength(); i++) {
+          String key = XMLTools.escapeXML(attributes.getQName(i));
+          String value = XMLTools.escapeXML(attributes.getValue(i));
+          if (key.equals("Length")) value = "0";
+          xmlBuffer.append(" ");
+          xmlBuffer.append(key);
+          xmlBuffer.append("=\"");
+          xmlBuffer.append(value);
+          xmlBuffer.append("\"");
+        }
+        xmlBuffer.append(">");
+      } else {
         xmlBuffer.append("<");
         xmlBuffer.append(qName);
         for (int i=0; i<attributes.getLength(); i++) {
@@ -373,26 +408,6 @@ public class OMEXMLReader extends FormatReader {
             }
             value = endian;
           }
-          xmlBuffer.append(" ");
-          xmlBuffer.append(key);
-          xmlBuffer.append("=\"");
-          xmlBuffer.append(value);
-          xmlBuffer.append("\"");
-        }
-        xmlBuffer.append(">");
-      }
-      else {
-        binData.add(
-          new BinData(locator.getLineNumber(), locator.getColumnNumber()));
-        String compress = attributes.getValue("Compression");
-        compression.add(compress == null ? "" : compress);
-
-        xmlBuffer.append("<");
-        xmlBuffer.append(qName);
-        for (int i=0; i<attributes.getLength(); i++) {
-          String key = XMLTools.escapeXML(attributes.getQName(i));
-          String value = XMLTools.escapeXML(attributes.getValue(i));
-          if (key.equals("Length")) value = "0";
           xmlBuffer.append(" ");
           xmlBuffer.append(key);
           xmlBuffer.append("=\"");

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,7 +41,6 @@ import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.primitives.PositiveFloat;
 
-import ome.units.quantity.Length;
 import ome.units.UNITS;
 
 import org.testng.annotations.BeforeMethod;
@@ -77,7 +76,7 @@ public class Upgrade201006Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2015-01", service.getOMEXMLVersion(metadata));
+    assertEquals("2016-06", service.getOMEXMLVersion(metadata));
   }
 
   @Test
@@ -87,8 +86,8 @@ public class Upgrade201006Test {
     Pixels pixels = image.getPixels();
     // Pixels physical sizes are restricted to positive values
     PositiveFloat positiveFloatValue = new PositiveFloat(10000.0);
-    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeX());
-    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROM), pixels.getPhysicalSizeY());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROMETER), pixels.getPhysicalSizeX());
+    assertEquals(FormatTools.createLength(positiveFloatValue, UNITS.MICROMETER), pixels.getPhysicalSizeY());
     assertNull(pixels.getPhysicalSizeZ());
   }
 

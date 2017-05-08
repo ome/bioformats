@@ -1,8 +1,8 @@
 /*
  * #%L
- * Tests for OME-XML specification classes.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2010-2014 Glencoe Software, Inc.
+ * Copyright (C) 2010 - 2016 Glencoe Software, Inc.
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,10 +24,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -54,7 +50,7 @@ public class SchemaResolverTest {
       {"/Schemas/2008-02"}, {"/Schemas/2008-04"}, {"/Schemas/2008-09"},
       {"/Schemas/2009-09"}, {"/Schemas/2010-04"}, {"/Schemas/2010-06"},
       {"/Schemas/2011-06"}, {"/Schemas/2012-06"}, {"/Schemas/2012-06"},
-      {"/Schemas/2013-06"}, {"/Schemas/2015-01"}};
+      {"/Schemas/2013-06"}, {"/Schemas/2015-01"}, {"/Schemas/2016-06"}};
 
     /** Holds the error, info, warning. */
     protected Logger log = LoggerFactory.getLogger(getClass());

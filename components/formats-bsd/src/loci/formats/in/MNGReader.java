@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,8 +35,9 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -60,7 +61,7 @@ public class MNGReader extends BIFormatReader {
 
   // -- Fields --
 
-  private Vector<SeriesInfo> seriesInfo;
+  private List<SeriesInfo> seriesInfo;
 
   private boolean isJNG = false;
 
@@ -122,7 +123,7 @@ public class MNGReader extends BIFormatReader {
 
     LOGGER.info("Verifying MNG format");
 
-    seriesInfo = new Vector<SeriesInfo>();
+    seriesInfo = new ArrayList<SeriesInfo>();
     seriesInfo.add(new SeriesInfo());
 
     in.skipBytes(12);
@@ -135,7 +136,7 @@ public class MNGReader extends BIFormatReader {
 
     in.skipBytes(32);
 
-    Vector<Long> stack = new Vector<Long>();
+    final List<Long> stack = new ArrayList<Long>();
     int maxIterations = 0;
     int currentIteration = 0;
 
@@ -184,8 +185,8 @@ public class MNGReader extends BIFormatReader {
 
     // easiest way to get image dimensions is by opening the first plane
 
-    Hashtable<String, Vector> seriesOffsets = new Hashtable<String, Vector>();
-    Hashtable<String, Vector> seriesLengths = new Hashtable<String, Vector>();
+    Hashtable<String, List<Long>> seriesOffsets = new Hashtable<String, List<Long>>();
+    Hashtable<String, List<Long>> seriesLengths = new Hashtable<String, List<Long>>();
 
     SeriesInfo info = seriesInfo.get(0);
     addGlobalMeta("Number of frames", info.offsets.size());
@@ -197,19 +198,19 @@ public class MNGReader extends BIFormatReader {
       BufferedImage img = readImage(end);
       String data = img.getWidth() + "-" + img.getHeight() + "-" +
         img.getRaster().getNumBands() + "-" + AWTImageTools.getPixelType(img);
-      Vector<Long> v = new Vector<Long>();
-      if (seriesOffsets.containsKey(data)) {
-        v = seriesOffsets.get(data);
+      List<Long> v = seriesOffsets.get(data);
+      if (v == null) {
+        v = new ArrayList<Long>();
+        seriesOffsets.put(data, v);
       }
-      v.add(new Long(offset));
-      seriesOffsets.put(data, v);
+      v.add(offset);
 
-      v = new Vector();
-      if (seriesLengths.containsKey(data)) {
-        v = seriesLengths.get(data);
+      v = seriesLengths.get(data);
+      if (v == null) {
+        v = new ArrayList<Long>();
+        seriesLengths.put(data, v);
       }
-      v.add(new Long(end));
-      seriesLengths.put(data, v);
+      v.add(end);
     }
 
     String[] keys = seriesOffsets.keySet().toArray(new String[0]);
@@ -277,8 +278,8 @@ public class MNGReader extends BIFormatReader {
   // -- Helper class --
 
   private class SeriesInfo {
-    public Vector<Long> offsets = new Vector<Long>();
-    public Vector<Long> lengths = new Vector<Long>();
+    public List<Long> offsets = new ArrayList<Long>();
+    public List<Long> lengths = new ArrayList<Long>();
   }
 
 }

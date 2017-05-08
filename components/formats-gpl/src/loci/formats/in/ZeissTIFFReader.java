@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -217,18 +217,18 @@ public class ZeissTIFFReader extends BaseZeissReader {
     ArrayList<String> files = new ArrayList<String>();
 
     try {
-      if (new CaseInsensitiveLocation(tiffInfo.xmlname).exists()) {
-        files.add(tiffInfo.xmlname);
+      CaseInsensitiveLocation xml = new CaseInsensitiveLocation(tiffInfo.xmlname);
+      if (xml.exists()) {
+        files.add(xml.getAbsolutePath());
       }
     }
     catch (IOException e) {
       LOGGER.debug("Error checking existence of " + tiffInfo.xmlname, e);
     }
     try {
-      if (!noPixels && tiffInfo.origname != null &&
-        new CaseInsensitiveLocation(tiffInfo.origname).exists())
-      {
-        files.add(tiffInfo.origname);
+      CaseInsensitiveLocation origname = new CaseInsensitiveLocation(tiffInfo.origname);
+      if (!noPixels && tiffInfo.origname != null && origname.exists()) {
+        files.add(origname.getAbsolutePath());
       }
     }
     catch (IOException e) {
@@ -237,8 +237,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
     if (!noPixels) {
       for (String tiff : imageFiles) {
         try {
-          if (new CaseInsensitiveLocation(tiff).exists()) {
-            files.add(tiff);
+          CaseInsensitiveLocation tiffLocation = new CaseInsensitiveLocation(tiff);
+          if (tiffLocation.exists()) {
+            files.add(tiffLocation.getAbsolutePath());
           }
         }
         catch (IOException e) {

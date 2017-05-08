@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -187,7 +187,7 @@ public class SPWModelMock implements ModelMock {
   public static final Double LIGHTSOURCE_LED_POWER = 10.0;
 
   public static final LaserType LASER_TYPE = LaserType.DYE;
-  
+
   public static final ArcType ARC_TYPE = ArcType.HGXE;
 
   public static final FilamentType FILAMENT_TYPE = FilamentType.HALOGEN;
@@ -234,7 +234,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-06";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -242,7 +242,7 @@ public class SPWModelMock implements ModelMock {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
   public SPWModelMock(boolean makeLightSources) {
     ome = new OME();
@@ -267,7 +267,7 @@ public class SPWModelMock implements ModelMock {
     Image image = new Image();
     image.setID("Image:" + index);
     CommentAnnotation commentAnnotation = new CommentAnnotation();
-    commentAnnotation.setID("ImageCommentAnnotation:" + index);
+    commentAnnotation.setID("Annotation:" + index);
     commentAnnotation.setNamespace(GENERAL_ANNOTATION_NAMESPACE);
     commentAnnotation.setValue("Image:" + index + " annotation.");
     annotations.addCommentAnnotation(commentAnnotation);
@@ -335,13 +335,13 @@ public class SPWModelMock implements ModelMock {
       laser.setID(LIGHTSOURCE_LASER_ID);
       laser.setModel(LIGHTSOURCE_LASER_MODEL);
       laser.setType(LASER_TYPE);
-      laser.setPower(new Power(LIGHTSOURCE_LASER_POWER, UNITS.MW));
+      laser.setPower(new Power(LIGHTSOURCE_LASER_POWER, UNITS.MILLIWATT));
       // with a <Pump/>
       Laser laserPump = new Laser();
       laserPump.setID(LIGHTSOURCE_PUMP_ID);
       laserPump.setModel(LIGHTSOURCE_PUMP_MODEL);
       laserPump.setType(LASER_TYPE);
-      laserPump.setPower(new Power(LIGHTSOURCE_PUMP_POWER, UNITS.MW));
+      laserPump.setPower(new Power(LIGHTSOURCE_PUMP_POWER, UNITS.MILLIWATT));
 
       laser.linkPump(laserPump);
 
@@ -353,7 +353,7 @@ public class SPWModelMock implements ModelMock {
       arc.setID(LIGHTSOURCE_ARC_ID);
       arc.setModel(LIGHTSOURCE_ARC_MODEL);
       arc.setType(ARC_TYPE);
-      arc.setPower(new Power(LIGHTSOURCE_ARC_POWER, UNITS.MW));
+      arc.setPower(new Power(LIGHTSOURCE_ARC_POWER, UNITS.MILLIWATT));
       instrument.addLightSource(arc);
 
       // Create <Filament/> under <Instrument/>
@@ -361,14 +361,14 @@ public class SPWModelMock implements ModelMock {
       filament.setID(LIGHTSOURCE_FILAMENT_ID);
       filament.setModel(LIGHTSOURCE_FILAMENT_MODEL);
       filament.setType(FILAMENT_TYPE);
-      filament.setPower(new Power(LIGHTSOURCE_FILAMENT_POWER, UNITS.MW));
+      filament.setPower(new Power(LIGHTSOURCE_FILAMENT_POWER, UNITS.MILLIWATT));
       instrument.addLightSource(filament);
 
       // Create <LightEmittingDiode/> under <Instrument/>
       LightEmittingDiode led = new LightEmittingDiode();
       led.setID(LIGHTSOURCE_LED_ID);
       led.setModel(LIGHTSOURCE_LED_MODEL);
-      led.setPower(new Power(LIGHTSOURCE_LED_POWER, UNITS.MW));
+      led.setPower(new Power(LIGHTSOURCE_LED_POWER, UNITS.MILLIWATT));
       instrument.addLightSource(led);
     }
 

@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,6 +35,8 @@ package loci.formats;
 import java.io.IOException;
 
 import loci.common.DataTools;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 
 /**
  * Logic to automatically separate the channels in a file.
@@ -119,7 +121,7 @@ public class ChannelSeparator extends ReaderWrapper {
     String order = super.getDimensionOrder();
     if (reader.isRGB() && !reader.isIndexed()) {
       String newOrder = "XYC";
-      if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
+      if (order.indexOf('Z') > order.indexOf('T')) newOrder += "TZ";
       else newOrder += "ZT";
       return newOrder;
     }
@@ -237,7 +239,7 @@ public class ChannelSeparator extends ReaderWrapper {
     int channel = no % c;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
-    return ImageTools.splitChannels(thumb, channel, c, bpp, false, false);
+    return ImageTools.splitChannels(thumb, channel, c, bpp, false, reader.isInterleaved());
   }
 
   /* @see IFormatReader#close(boolean) */
@@ -296,6 +298,36 @@ public class ChannelSeparator extends ReaderWrapper {
     lastImageY = -1;
     lastImageWidth = -1;
     lastImageHeight = -1;
+
+    MetadataStore store = getMetadataStore();
+    boolean pixelsPopulated = false;
+    if (store instanceof MetadataRetrieve) {
+      MetadataRetrieve retrieve = (MetadataRetrieve) store;
+      for (int s=0; s<getSeriesCount(); s++) {
+        setSeries(s);
+        int rgbChannels = getSizeC() / reader.getEffectiveSizeC();
+        if (rgbChannels == 1) {
+          continue;
+        }
+        for (int c=0; c<reader.getEffectiveSizeC(); c++) {
+          if (c * rgbChannels >= retrieve.getChannelCount(s)) {
+            break;
+          }
+          String originalChannelName = retrieve.getChannelName(s, c * rgbChannels);
+          if (originalChannelName == null) {
+            continue;
+          }
+          if (!pixelsPopulated) {
+            MetadataTools.populatePixelsOnly(store, this);
+            pixelsPopulated = true;
+          }
+          for (int i=1; i<rgbChannels; i++) {
+            store.setChannelName(originalChannelName, s, c * rgbChannels + i);
+          }
+        }
+      }
+      setSeries(0);
+    }
   }
 
 }

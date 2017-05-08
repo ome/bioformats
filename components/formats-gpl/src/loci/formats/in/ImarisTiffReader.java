@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,8 +26,9 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -127,16 +126,16 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String description = null, creationDate = null;
-      Vector<Double> emWave = new Vector<Double>();
-      Vector<Double> exWave = new Vector<Double>();
-      Vector<String> channelNames = new Vector<String>();
+      final List<Double> emWave = new ArrayList<Double>();
+      final List<Double> exWave = new ArrayList<Double>();
+      final List<String> channelNames = new ArrayList<String>();
 
       if (comment != null && comment.startsWith("[")) {
         // parse key/value pairs
         StringTokenizer st = new StringTokenizer(comment, "\n");
         while (st.hasMoreTokens()) {
           String line = st.nextToken();
-          int equals = line.indexOf("=");
+          int equals = line.indexOf('=');
           if (equals < 0) continue;
           String key = line.substring(0, equals).trim();
           String value = line.substring(equals + 1).trim();
@@ -157,7 +156,7 @@ public class ImarisTiffReader extends BaseTiffReader {
           }
           else if (key.equals("RecordingDate")) {
             value = value.replaceAll(" ", "T");
-            creationDate = value.substring(0, value.indexOf("."));
+            creationDate = value.substring(0, value.indexOf('.'));
           }
         }
         metadata.remove("Comment");

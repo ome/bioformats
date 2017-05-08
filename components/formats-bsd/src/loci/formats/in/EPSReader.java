@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -310,7 +310,7 @@ public class EPSReader extends FormatReader {
         else {
           // parse key/value pairs
 
-          int ndx = line.indexOf(":");
+          int ndx = line.indexOf(':');
           if (ndx != -1) {
             String key = line.substring(0, ndx);
             String value = line.substring(ndx + 1);

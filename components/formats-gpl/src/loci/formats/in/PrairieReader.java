@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -150,7 +150,7 @@ public class PrairieReader extends FormatReader {
     Location parent = file.getParentFile();
 
     String prefix = file.getName();
-    if (prefix.indexOf(".") != -1) {
+    if (prefix.indexOf('.') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
 
@@ -162,7 +162,7 @@ public class PrairieReader extends FormatReader {
     // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    while (!xml.exists() && prefix.indexOf("_") != -1) {
+    while (!xml.exists() && prefix.indexOf('_') != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("_"));
       xml = new Location(parent, prefix + ".xml");
     }
@@ -523,7 +523,7 @@ public class PrairieReader extends FormatReader {
       final String laserID = MetadataTools.createLSID("LightSource", 0, 0);
       store.setLaserID(laserID, 0, 0);
 
-      store.setLaserPower(new Power(laserPower, UNITS.MW), 0, 0);
+      store.setLaserPower(new Power(laserPower, UNITS.MILLIWATT), 0, 0);
     }
 
     String objectiveID = null;
@@ -539,18 +539,18 @@ public class PrairieReader extends FormatReader {
       final PositiveFloat physicalSizeX =
         pf(firstFrame.getMicronsPerPixelX(), "PhysicalSizeX");
       if (physicalSizeX != null) {
-        store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROM), s);
+        store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROMETER), s);
       }
-    
+
       // populate PhysicalSizeY
       final PositiveFloat physicalSizeY =
         pf(firstFrame.getMicronsPerPixelY(), "PhysicalSizeY");
       if (physicalSizeY != null) {
-        store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROM), s);
+        store.setPixelsPhysicalSizeY(FormatTools.createLength(physicalSizeY, UNITS.MICROMETER), s);
       }
       // populate TimeIncrement
       final Double waitTime = meta.getWaitTime();
-      if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.S), s);
+      if (waitTime != null) store.setPixelsTimeIncrement(new Time(waitTime, UNITS.SECOND), s);
 
       final String[] detectorIDs = new String[channels.length];
 
@@ -651,7 +651,7 @@ public class PrairieReader extends FormatReader {
             if (posX != null) store.setPlanePositionX(posX, s, i);
             if (posY != null) store.setPlanePositionY(posY, s, i);
             if (posZ != null) store.setPlanePositionZ(posZ, s, i);
-            if (deltaT != null) store.setPlaneDeltaT(new Time(deltaT, UNITS.S), s, i);
+            if (deltaT != null) store.setPlaneDeltaT(new Time(deltaT, UNITS.SECOND), s, i);
           }
         }
       }
@@ -829,7 +829,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the first sequence associated with the given series.
-   * 
+   *
    * @param s The series (i.e., stage position).
    * @return The first associated {@code Sequence}.
    */
@@ -839,7 +839,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the sequence associated with the given series and time point.
-   * 
+   *
    * @param t The time point.
    * @param s The series (i.e., stage position).
    * @return The associated {@code Sequence}.
@@ -851,7 +851,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the sequence associated with the given time point and stage position.
-   * 
+   *
    * @param t The time point.
    * @param p The stage position.
    * @param sizeP The number of stage positions.
@@ -864,7 +864,7 @@ public class PrairieReader extends FormatReader {
   /**
    * Gets the frame index associated with the given (Z, T) position of the
    * specified series.
-   * 
+   *
    * @param sequence The sequence from which to extract the frame.
    * @param z The focal plane.
    * @param t The time point.

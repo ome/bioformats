@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,8 +41,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -95,7 +93,7 @@ public class L2DReader extends FormatReader {
     Location parent = location.getAbsoluteFile().getParentFile();
 
     String scanName = location.getName();
-    if (scanName.indexOf("_") >= 0) {
+    if (scanName.indexOf('_') >= 0) {
       scanName = scanName.substring(0, scanName.lastIndexOf("_"));
     }
 
@@ -270,8 +268,8 @@ public class L2DReader extends FormatReader {
       String[] lines = scanData.split("\n");
       for (String line : lines) {
         if (!line.startsWith("#")) {
-          String key = line.substring(0, line.indexOf("="));
-          String value = line.substring(line.indexOf("=") + 1);
+          String key = line.substring(0, line.indexOf('='));
+          String value = line.substring(line.indexOf('=') + 1);
           addSeriesMeta(key, value);
 
           if (key.equals("ExperimentNames")) {
@@ -401,8 +399,8 @@ public class L2DReader extends FormatReader {
     String[] lines = data.split("\n");
     for (String line : lines) {
       if (!line.startsWith("#")) {
-        String key = line.substring(0, line.indexOf("=")).trim();
-        String value = line.substring(line.indexOf("=") + 1).trim();
+        String key = line.substring(0, line.indexOf('=')).trim();
+        String value = line.substring(line.indexOf('=') + 1).trim();
         addGlobalMeta(key, value);
 
         if (key.equals("ScanNames")) {

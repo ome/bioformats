@@ -34,15 +34,6 @@ Bio-Formats
     Optional:      Xalan Serializer, Xalan
     License:       GPL
 
-Formats Common
-    A library containing common I/O and reflection classes
-    -=-
-    JAR file:      formats-common.jar
-    Path:          components/formats-common
-    Project deps:  (none)
-    Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      Logback
-    License:       GPL
 
 Plugins for ImageJ
     A collection of plugins for ImageJ, including the Bio-Formats Importer,
@@ -95,30 +86,6 @@ JAI Image I/O Tools
                    needed by Bio-Formats, and created an additional dependency.
                    This component will be removed once our changes have been
                    added to the official JAI CVS repository.
-
-MDB Tools (Java port)
-    Java API to handle Microsoft MDB format (Access)
-    -=-
-    JAR file:      mdbtools-java.jar
-    Path:          components/forks/mdbtools
-    Project deps:  (none)
-    Optional:      (none)
-    License:       LGPL
-    Project URL:   http://sourceforge.net/forum/message.php?msg_id=2550619
-    Notes:         Used by Bio-Formats for Zeiss LSM metadata in MDB files.
-
-Apache Jakarta POI
-    Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
-    -=-
-    JAR file:      ome-poi.jar
-    Path:          components/forks/poi
-    Project deps:  Formats Common
-    Optional:      (none)
-    License:       Apache
-    Project URL:   http://jakarta.apache.org/poi/
-    Notes:         Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE
-                   v2 and memory efficiency improvements. Used by Bio-Formats
-                   for OLE support (cxd, ipw, oib, zvi).
 
 ===============================================================================
 The following components are stubs of third party projects:
@@ -179,12 +146,6 @@ ImageJ
     Notes:     used by plugins for ImageJ and OME plugins for ImageJ
     License:   Public domain
 
-JUnit
-    JAR file:  junit-4.8.2.jar
-    URL:       http://www.junit.org/
-    Notes:     unit testing framework used for a few unit tests
-    License:   Common Public License
-
 Logback
     JAR file:  logback-core-1.1.1.jar, logback-classic-1.1.1.jar
     URL:       http://logback.qos.ch
@@ -198,7 +159,7 @@ Native library loader
     License:   BSD
 
 NetCDF
-    JAR file:  netcdf-4.3.19.jar
+    JAR file:  netcdf-4.3.22.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/
     Notes:     used by Bio-Formats via reflection for HDF support (Imaris 5.5)
     License:   LGPL
@@ -210,8 +171,8 @@ Simple Logging Facade for Java API
     License:   BSD
 
 Xalan Serializer
-    JAR file:  serializer-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  serializer-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 
@@ -229,8 +190,8 @@ Apache Velocity
     License:   Apache
 
 Xalan
-    JAR file:  xalan-2.7.1.jar
-    URL:       http://xml.apache.org/xalan-j/
+    JAR file:  xalan-2.7.2.jar
+    URL:       http://xalan.apache.org/xalan-j/
     Notes:     used for OME-XML transformations
     License:   Apache
 

@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -46,6 +46,7 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.MetadataStore;
 
 import org.slf4j.Logger;
@@ -122,13 +123,15 @@ public class ImageReader implements IFormatReader {
     MetadataOptions options = new DefaultMetadataOptions();
     List<IFormatReader> list = new ArrayList<IFormatReader>();
     Class<? extends IFormatReader>[] c = classList.getClasses();
+    // assign the same options instance to all readers
+    MetadataOptions opt = new DynamicMetadataOptions();
     for (int i=0; i<c.length; i++) {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
         // TODO: this allows each instance to unnecessarily
         // create its own MetadataOptions instance first.
-        reader.setMetadataOptions(options);
+        reader.setMetadataOptions(opt);
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 
@@ -172,10 +171,10 @@ public class BioRadGelReader extends FormatReader {
         in.skipBytes(8);
         String imageArea = in.readCString();
 
-        imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
-        int xIndex = imageArea.indexOf("x");
+        imageArea = imageArea.substring(imageArea.indexOf(':') + 1).trim();
+        int xIndex = imageArea.indexOf('x');
         if (xIndex > 0) {
-          int space = imageArea.indexOf(" ");
+          int space = imageArea.indexOf(' ');
           if (space >= 0) {
             String width = imageArea.substring(1, space);
             int nextSpace = imageArea.indexOf(" ", xIndex + 2);

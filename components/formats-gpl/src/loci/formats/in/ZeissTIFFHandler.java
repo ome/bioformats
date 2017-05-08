@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -203,7 +203,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       d.angle = parseDouble(cdata);
     }
     else if (qName.startsWith("Matrix_")) {
-      String value = qName.substring(qName.indexOf("_") + 1);
+      String value = qName.substring(qName.indexOf('_') + 1);
       Integer index = Integer.parseInt(value);
       Double mval = parseDouble(cdata);
       current_scaling.matrix.put(index, mval);
@@ -648,7 +648,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
     Dimension
     getDimension(String key)
     {
-      String value = key.substring(key.indexOf("_") + 1);
+      String value = key.substring(key.indexOf('_') + 1);
       Integer index = Integer.parseInt(value);
       Dimension d = dims.get(index);
       if (d == null)

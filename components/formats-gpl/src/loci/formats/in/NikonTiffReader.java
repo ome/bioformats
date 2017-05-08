@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -26,7 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -35,9 +36,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
@@ -58,12 +56,12 @@ public class NikonTiffReader extends BaseTiffReader {
   // -- Fields --
 
   private double physicalSizeX, physicalSizeY, physicalSizeZ;
-  private Vector<String> filterModels, dichroicModels, laserIDs;
+  private List<String> filterModels, dichroicModels, laserIDs;
   private Double magnification;
   private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
-  private Vector<Double> gain;
-  private Vector<Double> wavelength, emWave, exWave;
+  private List<Double> gain;
+  private List<Double> wavelength, emWave, exWave;
 
   // -- Constructor --
 
@@ -111,20 +109,18 @@ public class NikonTiffReader extends BaseTiffReader {
       return;
     }
 
-    filterModels = new Vector<String>();
-    dichroicModels = new Vector<String>();
-    laserIDs = new Vector<String>();
-    gain = new Vector<Double>();
-    wavelength = new Vector<Double>();
-    emWave = new Vector<Double>();
-    exWave = new Vector<Double>();
+    filterModels = new ArrayList<String>();
+    dichroicModels = new ArrayList<String>();
+    laserIDs = new ArrayList<String>();
+    gain = new ArrayList<Double>();
+    wavelength = new ArrayList<Double>();
+    emWave = new ArrayList<Double>();
+    exWave = new ArrayList<Double>();
 
     // parse key/value pairs in the comment
     String comment = ifds.get(0).getComment();
     metadata.remove("Comment");
     String[] lines = comment.split("\n");
-
-    StringBuffer k = null, v = null;
 
     String[] dimensionLabels = null, dimensionSizes = null;
 
@@ -134,16 +130,16 @@ public class NikonTiffReader extends BaseTiffReader {
       int nTokensInKey = 0;
       for (String key : TOP_LEVEL_KEYS) {
         if (line.startsWith(key)) {
-          nTokensInKey = key.indexOf(" ") != -1 ? 3 : 2;
+          nTokensInKey = key.indexOf(' ') != -1 ? 3 : 2;
           break;
         }
       }
-      k = new StringBuffer();
+      final StringBuilder k = new StringBuilder();
       for (int i=0; i<nTokensInKey; i++) {
         k.append(tokens[i]);
         if (i < nTokensInKey - 1) k.append(" ");
       }
-      v = new StringBuffer();
+      final StringBuilder v = new StringBuilder();
       for (int i=nTokensInKey; i<tokens.length; i++) {
         v.append(tokens[i]);
         if (i < tokens.length - 1) v.append(" ");
@@ -186,7 +182,7 @@ public class NikonTiffReader extends BaseTiffReader {
         gain.add(new Double(value));
       }
       else if (key.equals("history pinhole")) {
-        pinholeSize = new Double(value.substring(0, value.indexOf(" ")));
+        pinholeSize = new Double(value.substring(0, value.indexOf(' ')));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
         wavelength.add(new Double(value.replaceAll("\\D", "")));
@@ -247,7 +243,7 @@ public class NikonTiffReader extends BaseTiffReader {
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);
       store.setObjectiveLensNA(lensNA, 0, 0);
-      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MICROMETER), 0, 0);
       if (immersion == null) immersion = "Other";
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
@@ -271,7 +267,7 @@ public class NikonTiffReader extends BaseTiffReader {
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROM), 0, c);
+        store.setChannelPinholeSize(new Length(pinholeSize, UNITS.MICROMETER), 0, c);
         if (c < exWave.size()) {
           Length wave = FormatTools.getExcitationWavelength(exWave.get(c));
           if (wave != null) {

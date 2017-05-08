@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -139,7 +139,7 @@ public class ComboFileFilter extends FileFilter
   /** Gets a string representation of this file filter. */
   @Override
   public String toString() {
-    StringBuffer sb = new StringBuffer("ComboFileFilter: ");
+    final StringBuilder sb = new StringBuilder("ComboFileFilter: ");
     sb.append(desc);
     for (int i=0; i<filts.length; i++) {
       sb.append("\n\t");

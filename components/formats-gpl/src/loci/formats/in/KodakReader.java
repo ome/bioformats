@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -36,7 +38,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -179,7 +180,7 @@ public class KodakReader extends FormatReader {
     String[] lines = metadata.split("\n");
 
     for (String line : lines) {
-      int index = line.indexOf(":");
+      int index = line.indexOf(':');
       if (index < 0 || line.startsWith("#") || line.startsWith("-")) {
         continue;
       }
@@ -202,15 +203,15 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("Exposure Time")) {
-        Double exposureTime = new Double(value.substring(0, value.indexOf(" ")));
+        Double exposureTime = new Double(value.substring(0, value.indexOf(' ')));
         if (exposureTime != null) {
-          store.setPlaneExposureTime(new Time(exposureTime, UNITS.S), 0, 0);
+          store.setPlaneExposureTime(new Time(exposureTime, UNITS.SECOND), 0, 0);
         }
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch
-        if (value.indexOf(" ") > 0) {
-          value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(' ') > 0) {
+          value = value.substring(0, value.indexOf(' '));
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
@@ -222,8 +223,8 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
-        if (value.indexOf(" ") > 0) {
-          value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(' ') > 0) {
+          value = value.substring(0, value.indexOf(' '));
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
@@ -234,9 +235,18 @@ public class KodakReader extends FormatReader {
         }
       }
       else if (key.equals("CCD Temperature")) {
-        Double temp = new Double(value.substring(0, value.indexOf(" ")));
-        store.setImagingEnvironmentTemperature(
-                new Temperature(temp, UNITS.DEGREEC), 0);
+        Double temp;
+        Matcher hexMatcher = Pattern.compile("0x([0-9A-F]+)").matcher(value);
+        if (hexMatcher.matches()) {
+          // CCD temperature stored as a hexadecimal string such as "0xEB".
+          temp = new Double(Integer.parseInt(hexMatcher.group(1), 16));
+          LOGGER.debug("CCD temperature detected as {}; assumed to be invalid", temp);
+        }
+        else {
+          temp = new Double(value.substring(0, value.indexOf(' ')));
+          store.setImagingEnvironmentTemperature(
+                new Temperature(temp, UNITS.CELSIUS), 0);
+        }
       }
     }
   }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,11 +41,12 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
+
+import ome.xml.meta.MetadataConverter;
 
 /**
  * Tests writing of tiles in a tiff.

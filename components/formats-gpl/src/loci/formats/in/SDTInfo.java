@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -75,7 +75,7 @@ public class SDTInfo {
   public static final String Y_STRING = "#SP [SP_SCAN_Y,I,";
   public static final String T_STRING = "#SP [SP_ADC_RE,I,";
   public static final String C_STRING = "#SP [SP_SCAN_RX,I,";
-  
+
   public static final String X_IMG_STRING = "#SP [SP_IMG_X,I,";
   public static final String Y_IMG_STRING = "#SP [SP_IMG_Y,I,";
 
@@ -84,7 +84,7 @@ public class SDTInfo {
   // -- Fields --
 
   public int width, height, timeBins, channels, timepoints;
- 
+
   // -- Fields - File header --
 
   /** Software revision number (lower 4 bits &gt;= 10(decimal)). */
@@ -428,7 +428,7 @@ public class SDTInfo {
 
   /** reserved2 now contains block (set) length. */
   public long blockLength; // unsigned
-  
+
   // -- Constructor --
 
   /**
@@ -490,9 +490,9 @@ public class SDTInfo {
     String key = null, value = null;
     for (int i=1; i<count-1; i++) {
       String token = st.nextToken().trim();
-      if (token.indexOf(":") == -1) continue;
-      key = token.substring(0, token.indexOf(":")).trim();
-      value = token.substring(token.indexOf(":") + 1).trim();
+      if (token.indexOf(':') == -1) continue;
+      key = token.substring(0, token.indexOf(':')).trim();
+      value = token.substring(token.indexOf(':') + 1).trim();
       meta.put(key, value);
     }
 
@@ -520,13 +520,13 @@ public class SDTInfo {
       if (token.startsWith("#SP") || token.startsWith("#DI") ||
         token.startsWith("#PR") || token.startsWith("#MP"))
       {
-        int open = token.indexOf("[");
+        int open = token.indexOf('[');
         key = token.substring(open + 1, token.indexOf(",", open));
         value = token.substring(token.lastIndexOf(",") + 1, token.length() - 1);
       }
       else if (token.startsWith("#TR") || token.startsWith("#WI")) {
-        key = token.substring(0, token.indexOf("[")).trim();
-        value = token.substring(token.indexOf("[") + 1, token.indexOf("]"));
+        key = token.substring(0, token.indexOf('[')).trim();
+        value = token.substring(token.indexOf('[') + 1, token.indexOf(']'));
       }
 
       if (key != null && value != null) meta.put(key, value);
@@ -551,20 +551,20 @@ public class SDTInfo {
         int end = token.indexOf("]", ndx);
         channels = Integer.parseInt(token.substring(ndx, end));
       }
-      
+
       else if (token.indexOf(X_IMG_STRING) != -1) {
         int ndx = token.indexOf(X_IMG_STRING) + X_IMG_STRING.length();
         int end = token.indexOf("]", ndx);
         mode13width = Integer.parseInt(token.substring(ndx, end));
       }
-      
+
       else if (token.indexOf(Y_IMG_STRING) != -1) {
         int ndx = token.indexOf(Y_IMG_STRING) + Y_IMG_STRING.length();
         int end = token.indexOf("]", ndx);
         mode13height = Integer.parseInt(token.substring(ndx, end));
       }
-        
-      
+
+
     }
 
     if (in.getFilePointer() < setupOffs + setupLength) {
@@ -778,21 +778,21 @@ public class SDTInfo {
         if (scanY > 0) height = scanY;
         if (adcRE > 0) timeBins = adcRE;
         if (scanRX > 0) channels = scanRX;
-        
+
         // measurement mode 0 and 1 are both single-point data
         if (measMode == 0 || measMode == 1)  {
           width = 1;
           height = 1;
-        }  
-        
-        // for measurement_mode 13 one channel is stored in each block 
+        }
+
+        // for measurement_mode 13 one channel is stored in each block
         // & width & height are not in scanX & scanY
         if (measMode == 13)  {
           width = mode13width;
           height = mode13height;
-          channels = noOfMeasDescBlocks;  
+          channels = noOfMeasDescBlocks;
         }
-        
+
       }
 
       if (hasMeasStopInfo) {

@@ -14,9 +14,11 @@
 # Substitutions from external build system.
 srcdir = '@sphinx_srcdir@'
 builddir = '@sphinx_builddir@'
-ext_source_branch = '@sphinx_source_branch@'
-ext_source_user = '@sphinx_source_user@'
-ext_omerodoc_uri = '@sphinx_omerodoc_uri@'
+bioformats_source_branch = '@bioformats_source_branch@'
+openmicroscopy_source_user = '@openmicroscopy_source_user@'
+ome_source_user = '@ome_source_user@'
+ome_common_version = '@ome_common_version@'
+ome_model_version = '@ome_model_version@'
 
 import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(srcdir, '_ext')))
@@ -48,7 +50,7 @@ edit_on_github_prefix = 'docs/sphinx'
 templates_path = [os.path.join(srcdir, '_templates')]
 
 # The suffix of source filenames.
-source_suffix = '.txt'
+source_suffix = '.rst'
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
@@ -105,28 +107,13 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-# Variables used to define Github extlinks
-source_branch = 'develop'
-if (ext_source_branch is not None and len(ext_source_branch) > 0 and
-    ext_source_branch != "@%s@" % ('sphinx_source_branch')):
-    source_branch = ext_source_branch
-source_user = 'openmicroscopy'
-if (ext_source_user is not None and len(ext_source_user) > 0 and
-    ext_source_user != "@%s@" % ('sphinx_source_user}')):
-    source_user = ext_source_user
-
 github_root = 'https://github.com/'
-bf_github_root = github_root + source_user + '/bioformats/'
-bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
-bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
+bf_github_root = github_root + openmicroscopy_source_user + '/bioformats/'
+bf_github_tree = bf_github_root + 'tree/' + bioformats_source_branch + '/'
+bf_github_blob = bf_github_root + 'blob/' + bioformats_source_branch + '/'
 gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
 bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 bf_cpp = bf_github_blob + 'cpp/'
-
-# Variables used to define Jenkins extlinks
-jenkins_root = 'http://ci.openmicroscopy.org'
-jenkins_job_root = jenkins_root + '/job'
-jenkins_view_root = jenkins_root + '/view'
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
@@ -135,10 +122,6 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-omerodoc_uri = oo_site_root + '/support/omero5.1'
-if (ext_omerodoc_uri is not None and len(ext_omerodoc_uri) > 0 and
-    ext_omerodoc_uri != "@%s@" % ('sphinx_omerodoc_uri}')):
-    omerodoc_uri = ext_omerodoc_uri
 
 extlinks = {
     # Trac links
@@ -153,10 +136,6 @@ extlinks = {
     'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
     'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     'bf-cpp-lib': (bf_cpp + 'lib/' + '%s', ''),
-    # Jenkins links
-    'jenkins' : (jenkins_root + '/%s', ''),
-    'jenkinsjob' : (jenkins_job_root + '/%s', ''),
-    'jenkinsview' : (jenkins_view_root + '/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
@@ -168,16 +147,18 @@ extlinks = {
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
-    'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
-    'downloads' : (downloads_root + '/latest/bio-formats5.1/%s', ''),
-    'downloads_cpp' : (downloads_root + '/latest/bio-formats-cpp5.1/%s', ''),
-    'javadoc' : (downloads_root + '/latest/bio-formats5.1/api/%s', ''),
-    'doxygen' : (downloads_root + '/latest/bio-formats-cpp5.1/api/%s', ''),
+    'downloads' : (downloads_root + '/latest/bio-formats5.4/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5.4/api/%s', ''),
+    'common_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-common/' + ome_common_version + '/' + '%s', ''),
+    'xml_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-xml/' + ome_model_version + '/' + '%s', ''),
+    'specification_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-specification/' + ome_model_version + '/' + '%s', ''),
+
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
-    'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
+    'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', ''),
+    'examples' : (github_root + 'openmicroscopy/bio-formats-examples/blob/master/%s', ''),
     }
 
 rst_epilog = """
@@ -334,14 +315,7 @@ latex_show_urls = 'footnote'
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('developers/cpp/overview', 'bf-cpp-overview', 'C++ implementation overview', author, 7),
-    ('developers/cpp/conversion', 'bf-cpp-conversion', 'C++ conventions for Java programmers switching to the C++ implementation', author, 7),
-    ('developers/cpp/bf-env', 'bf-env', 'Bio-Formats environment variables', author, 7),
-    ('developers/cpp/commands/bf-test', 'bf-test', 'run Bio-Formats (C++) test tools', author, 1),
-    ('developers/cpp/commands/bf-test-info', 'bf-test-info', 'display and validate image metadata', author, 1),
-    ('developers/cpp/commands/bf-test-view', 'bf-test-view', 'view image pixel data', author, 1)
-]
+#man_pages = []
 
 # If true, show URL addresses after external links.
 #man_show_urls = False

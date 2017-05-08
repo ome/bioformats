@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -76,14 +76,17 @@ public class JavaWriter extends FormatWriter {
     }
     int bpp = FormatTools.getBytesPerPixel(type);
     boolean fp = FormatTools.isFloatingPoint(type);
-    boolean little =
-      Boolean.FALSE.equals(meta.getPixelsBinDataBigEndian(series, 0));
+    boolean little = false;
+    if (meta.getPixelsBigEndian(series) != null) {
+      little = !meta.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (meta.getPixelsBinDataCount(series) == 0) {
+      little = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
 
     // write array
     String varName = "series" + series + "Plane" + no;
     Object array = DataTools.makeDataArray(buf, bpp, fp, little);
-    int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
-    int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
 
     out.seek(out.length());
     if (array instanceof byte[]) {

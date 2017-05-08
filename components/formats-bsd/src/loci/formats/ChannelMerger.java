@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -101,10 +101,10 @@ public class ChannelMerger extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     String order = reader.getDimensionOrder();
     if (canMerge()) {
-      StringBuffer sb = new StringBuffer(order);
-      while (order.indexOf("C") != 2) {
-        char pre = order.charAt(order.indexOf("C") - 1);
-        sb.setCharAt(order.indexOf("C"), pre);
+      final StringBuilder sb = new StringBuilder(order);
+      while (order.indexOf('C') != 2) {
+        char pre = order.charAt(order.indexOf('C') - 1);
+        sb.setCharAt(order.indexOf('C'), pre);
         sb.setCharAt(order.indexOf(pre), 'C');
         order = sb.toString();
       }

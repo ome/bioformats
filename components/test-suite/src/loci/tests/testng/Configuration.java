@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -64,6 +64,7 @@ public class Configuration {
   private static final String ACCESS_TIME = "access_ms";
   private static final String MEMORY = "mem_mb";
   private static final String TEST = "test";
+  private static final String HAS_VALID_XML = "hasValidXML";
   private static final String READER = "reader";
   private static final String SERIES = " series_";
 
@@ -114,7 +115,7 @@ public class Configuration {
   private static final String Y_POSITION_UNIT = "PositionYUnit_";
   private static final String Z_POSITION = "PositionZ_";
   private static final String Z_POSITION_UNIT = "PositionZUnit_";
-  
+
   // -- Fields --
 
   private String dataFile;
@@ -166,6 +167,11 @@ public class Configuration {
 
   public boolean doTest() {
     return new Boolean(globalTable.get(TEST)).booleanValue();
+  }
+
+  public boolean hasValidXML() {
+    if (globalTable.get(HAS_VALID_XML) == null) return true;
+    return new Boolean(globalTable.get(HAS_VALID_XML)).booleanValue();
   }
 
   public String getReader() {
@@ -277,9 +283,9 @@ public class Configuration {
     try {
       return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeZUnits);
     }
-    catch (NumberFormatException e) { 
+    catch (NumberFormatException e) {
       return null;
-    } 
+    }
   }
 
   public Time getTimeIncrement() {
@@ -288,8 +294,8 @@ public class Configuration {
     try {
       return timeIncrement == null ? null : FormatTools.getTime(new Double(timeIncrement), timeIncrementUnits);
     }
-    catch (NumberFormatException e) { 
-      return null; 
+    catch (NumberFormatException e) {
+      return null;
     }
   }
 
@@ -315,8 +321,8 @@ public class Configuration {
     try {
       return exposure == null ? null : FormatTools.getTime(new Double(exposure), exposureUnits);
     }
-    catch (NumberFormatException e) { 
-      return null; 
+    catch (NumberFormatException e) {
+      return null;
     }
   }
 
@@ -329,7 +335,7 @@ public class Configuration {
     String pos = currentTable.get(X_POSITION + plane);
     return pos == null ? null : new Double(pos);
   }
-  
+
   public String getPositionXUnit(int plane) {
     return currentTable.get(X_POSITION_UNIT + plane);
   }
@@ -338,7 +344,7 @@ public class Configuration {
     String pos = currentTable.get(Y_POSITION + plane);
     return pos == null ? null : new Double(pos);
   }
-  
+
   public String getPositionYUnit(int plane) {
     return currentTable.get(Y_POSITION_UNIT + plane);
   }
@@ -351,16 +357,16 @@ public class Configuration {
   public String getPositionZUnit(int plane) {
     return currentTable.get(Z_POSITION_UNIT + plane);
   }
-  
+
   public Length getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     String emissionUnits = currentTable.get(EMISSION_WAVELENGTH_UNIT + channel);
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), emissionUnits);
     }
-    catch (NumberFormatException e) { 
+    catch (NumberFormatException e) {
       return null;
-    } 
+    }
   }
 
   public Length getExcitationWavelength(int channel) {
@@ -369,9 +375,9 @@ public class Configuration {
     try {
       return wavelength == null ? null : FormatTools.getWavelength(new Double(wavelength), excitationUnits);
     }
-    catch (NumberFormatException e) { 
+    catch (NumberFormatException e) {
       return null;
-    } 
+    }
   }
 
   public String getDetector(int channel) {
@@ -607,7 +613,7 @@ public class Configuration {
         try {
           Time deltaT = retrieve.getPlaneDeltaT(series, p);
           if (deltaT != null) {
-            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.S).toString());
+            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {

@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -44,15 +44,15 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+
+import ome.xml.meta.MetadataConverter;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.UNITS;
@@ -108,13 +108,11 @@ public class CellWorxReader extends FormatReader {
     }
     if (!open) return false;
 
-    boolean foundHTD = false;
-
     Location current = new Location(name).getAbsoluteFile();
     Location parent = current.getParentFile();
 
     String htdName = current.getName();
-    while (htdName.indexOf("_") > 0) {
+    while (htdName.indexOf('_') > 0) {
       htdName = htdName.substring(0, htdName.lastIndexOf("_"));
       if (new Location(parent, htdName + ".htd").exists() ||
         new Location(parent, htdName + ".HTD").exists())
@@ -360,13 +358,13 @@ public class CellWorxReader extends FormatReader {
       String[] f = DataTools.readFile(plateLogFile).split("\n");
       for (String line : f) {
         if (line.trim().startsWith("Z Map File")) {
-          String file = line.substring(line.indexOf(":") + 1);
+          String file = line.substring(line.indexOf(':') + 1);
           file = file.substring(file.lastIndexOf("/") + 1).trim();
           String parent = new Location(id).getAbsoluteFile().getParent();
           zMapFile = new Location(parent, file).getAbsolutePath();
         }
         else if (line.trim().startsWith("Scanner SN")) {
-          serialNumber = line.substring(line.indexOf(":") + 1).trim();
+          serialNumber = line.substring(line.indexOf(':') + 1).trim();
         }
       }
     }
@@ -439,10 +437,19 @@ public class CellWorxReader extends FormatReader {
 
     String plateID = MetadataTools.createLSID("Plate", 0);
 
-    Location plate = new Location(id).getAbsoluteFile().getParentFile();
+    Location plate = new Location(id).getAbsoluteFile();
 
     store.setPlateID(plateID, 0);
-    store.setPlateName(plate.getName(), 0);
+
+    plateName = plate.getName();
+    if (plateName.indexOf('.') > 0) {
+      plateName = plateName.substring(0, plateName.lastIndexOf('.'));
+    }
+    store.setPlateName(plateName, 0);
+
+    store.setPlateRows(new PositiveInteger(wellFiles.length), 0);
+    store.setPlateColumns(new PositiveInteger(wellFiles[0].length), 0);
+
     for (int i=0; i<core.size(); i++) {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
@@ -585,7 +592,7 @@ public class CellWorxReader extends FormatReader {
     String[] lines = data.split("\n");
     for (String line : lines) {
       line = line.trim();
-      int separator = line.indexOf(":");
+      int separator = line.indexOf(':');
       if (separator < 0) continue;
       String key = line.substring(0, separator).trim();
       String value = line.substring(separator + 1).trim();
@@ -623,7 +630,7 @@ public class CellWorxReader extends FormatReader {
         }
       }
       else if (key.equals("Scan Area")) {
-        int s = value.indexOf("x");
+        int s = value.indexOf('x');
         if (s > 0) {
           int end = value.indexOf(" ", s + 2);
           Double xSize = new Double(value.substring(0, s).trim());
@@ -644,7 +651,7 @@ public class CellWorxReader extends FormatReader {
         }
       }
       else if (key.startsWith("Channel")) {
-        int start = key.indexOf(" ") + 1;
+        int start = key.indexOf(' ') + 1;
         int end = key.indexOf(" ", start);
         if (end < 0) end = key.length();
         int index = Integer.parseInt(key.substring(start, end)) - 1;
@@ -668,16 +675,16 @@ public class CellWorxReader extends FormatReader {
             }
           }
           else if (token.startsWith("EX")) {
-            int slash = token.indexOf("/");
+            int slash = token.indexOf('/');
             if (slash > 0) {
               String ex = token.substring(0, slash).trim();
               String em = token.substring(slash + 1).trim();
 
-              if (ex.indexOf(" ") > 0) ex = ex.substring(ex.indexOf(" ") + 1);
-              if (em.indexOf(" ") > 0) {
-                em = em.substring(em.indexOf(" ") + 1);
-                if (em.indexOf(" ") > 0) {
-                  em = em.substring(0, em.indexOf(" "));
+              if (ex.indexOf(' ') > 0) ex = ex.substring(ex.indexOf(' ') + 1);
+              if (em.indexOf(' ') > 0) {
+                em = em.substring(em.indexOf(' ') + 1);
+                if (em.indexOf(' ') > 0) {
+                  em = em.substring(0, em.indexOf(' '));
                 }
               }
 

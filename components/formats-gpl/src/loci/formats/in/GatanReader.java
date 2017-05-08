@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -86,9 +86,6 @@ public class GatanReader extends FormatReader {
   private List<Double> pixelSizes;
   private List<String> units;
 
-  private int bytesPerPixel;
-
-  private int pixelDataNum = 0;
   private int numPixelBytes;
 
   private boolean signed;
@@ -142,7 +139,7 @@ public class GatanReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       pixelOffset = 0;
-      bytesPerPixel = pixelDataNum = numPixelBytes = 0;
+      numPixelBytes = 0;
       pixelSizes = null;
       signed = false;
       timestamp = 0;
@@ -272,7 +269,9 @@ public class GatanReader extends FormatReader {
         }
       }
 
-      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+      String instrument = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrument, 0);
+      store.setImageInstrumentRef(instrument, 0);
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
@@ -286,7 +285,7 @@ public class GatanReader extends FormatReader {
       store.setDetectorID(detector, 0, 0);
 
       store.setDetectorSettingsID(detector, 0, 0);
-      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.V),
+      store.setDetectorSettingsVoltage(new ElectricPotential(voltage, UNITS.VOLT),
               0, 0);
 
       if (info == null) info = "";
@@ -294,8 +293,8 @@ public class GatanReader extends FormatReader {
       for (String token : scopeInfo) {
         token = token.trim();
         if (token.startsWith("Mode")) {
-          token = token.substring(token.indexOf(" ")).trim();
-          String mode = token.substring(0, token.indexOf(" ")).trim();
+          token = token.substring(token.indexOf(' ')).trim();
+          String mode = token.substring(0, token.indexOf(' ')).trim();
           if (mode.equals("TEM")) mode = "Other";
           store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
@@ -304,7 +303,7 @@ public class GatanReader extends FormatReader {
       store.setPlanePositionX(posX, 0, 0);
       store.setPlanePositionY(posY, 0, 0);
       store.setPlanePositionZ(posZ, 0, 0);
-      store.setPlaneExposureTime(new Time(sampleTime, UNITS.S), 0, 0);
+      store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, 0);
     }
   }
 
@@ -395,7 +394,7 @@ public class GatanReader extends FormatReader {
             skipPadding();
             skipPadding();
             int numFields = in.readInt();
-            StringBuffer s = new StringBuffer();
+            final StringBuilder s = new StringBuilder();
             in.skipBytes(4);
             skipPadding();
             long baseFP = in.getFilePointer() + 4;
@@ -481,7 +480,7 @@ public class GatanReader extends FormatReader {
         addGlobalMeta(labelString, value);
 
         if (labelString.equals("Scale") && !parent.equals("Calibration")) {
-          if (value.indexOf(",") == -1) {
+          if (value.indexOf(',') == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
           }
         }
@@ -617,12 +616,12 @@ public class GatanReader extends FormatReader {
     Collator c = Collator.getInstance(Locale.ENGLISH);
     if (units != null) {
       if (c.compare("nm", units) == 0) {
-        return UNITS.NM;
+        return UNITS.NANOMETER;
       } else if (c.compare("um", units) != 0 && c.compare("µm", units) != 0) {
         LOGGER.warn("Not adjusting for unknown units: {}", units);
       }
     }
-    return UNITS.MICROM;
+    return UNITS.MICROMETER;
   }
 
 }

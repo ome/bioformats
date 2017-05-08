@@ -2,22 +2,16 @@
 ## work properly in Octave.  We must error loading the package if not.
 
 ## First check if Octave was even built with Java support
-
-if (! octave_config_info ("features").JAVA)
+if (! usejava ("jvm"))
   error ("bioformats: support for java was disabled when Octave was built");
 endif
 
 ## Now check if bioformats java library is working properly
 
-## We can't just check for a jar in classpath, filenames mean nothing.
-try
-  if (javaObject ("loci.formats.in.FakeReader"))
-    ## without an if block, we would replace the user "ans" variable
-  endif
-catch
+if (! bfCheckJavaPath (false))
   error (["bioformats: the bioformats java library is missing " ...
           "(check javaclasspath)"]);
-end_try_catch
+endif
 
 ## The whole reason why we need bioformats.jar to be on the static classpath
 ## is because Octave can't handle this properly.  So we use it for testing.

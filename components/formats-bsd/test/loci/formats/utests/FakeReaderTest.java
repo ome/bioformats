@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,6 +46,7 @@ import java.nio.file.Path;
 
 import loci.common.Constants;
 import loci.common.Location;
+import loci.formats.FormatTools;
 import loci.formats.in.FakeReader;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tools.FakeImage;
@@ -74,11 +75,11 @@ public class FakeReaderTest {
   @DataProvider(name = "physical sizes")
   public Object[][] physicalSizes() {
     return new Object[][] {
-      {"1", new Length(1.0, UNITS.MICROM)},
-      {"1.0", new Length(1.0, UNITS.MICROM)},
-      {"1mm", new Length(1.0, UNITS.MM)},
-      {"1.0mm", new Length(1.0, UNITS.MM)},
-      {"1.0 mm", new Length(1.0, UNITS.MM)},
+      {"1", new Length(1.0, UNITS.MICROMETER)},
+      {"1.0", new Length(1.0, UNITS.MICROMETER)},
+      {"1mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0mm", new Length(1.0, UNITS.MILLIMETER)},
+      {"1.0 mm", new Length(1.0, UNITS.MILLIMETER)},
       {"1.0Å", new Length(1.0, UNITS.ANGSTROM)},
       {"1.0 pixel", new Length(1.0, UNITS.PIXEL)},
       {"1.0 reference frame", new Length(1.0, UNITS.REFERENCEFRAME)},
@@ -106,10 +107,10 @@ public class FakeReaderTest {
       {"ellipses", "Ellipse"},
       {"labels", "Label"},
       {"lines", "Line"},
-      // {"masks", "Mask"},
+      {"masks", "Mask"},
       {"points", "Point"},
-      // {"polygons", "Polygon"},
-      // {"polylines", "Polyline"},
+      {"polygons", "Polygon"},
+      {"polylines", "Polyline"},
       {"rectangles", "Rectangle"},
     };
   }
@@ -120,6 +121,30 @@ public class FakeReaderTest {
       {"2016-03-01_16-14-00", new Timestamp("2016-03-01T16:14:00")},
       {"2016-03-01", null},
     };
+  }
+
+  @DataProvider(name = "pixelFeatures")
+  public Object[][] pixelFeatures() {
+    Object[] pixelTypes = {
+      FormatTools.UINT8,
+      FormatTools.INT8,
+      FormatTools.UINT16,
+      FormatTools.INT16,
+      FormatTools.UINT32,
+      FormatTools.INT32,
+      FormatTools.FLOAT,
+      FormatTools.DOUBLE
+    };
+    Object[] little = {false, true};
+    Object[][] ret = new Object[pixelTypes.length * little.length][2];
+    for (int i = 0; i < pixelTypes.length; i++) {
+      for (int j = 0; j < little.length; j++) {
+        int idx = little.length * i + j;
+        ret[idx][0] = pixelTypes[i];
+        ret[idx][1] = little[j];
+      }
+    }
+    return ret;
   }
 
   /** Create a directory under wd */
@@ -221,6 +246,7 @@ public class FakeReaderTest {
     assertEquals(m.getPixelsPhysicalSizeY(0), null);
     assertEquals(m.getPixelsPhysicalSizeZ(0), null);
     assertEquals(m.getROICount(), 0);
+    assertEquals(m.getExperimentCount(), 0);
   }
 
   @Test
@@ -286,6 +312,45 @@ public class FakeReaderTest {
     while (i >= 0) {
         assertEquals(metadata.getChannelCount(i--), reader.getSizeC());
     }
+  }
+
+  @Test
+  public void testMicrobeamINI() throws Exception {
+    mkIni("foo.fake.ini", "plates=1\nwithMicrobeam = true");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 1);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    reader.close();
+
+    mkIni("foo.fake.ini", "screens=2\nwithMicrobeam=true");
+    reader.setId(wd.resolve("foo.fake").toString());
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 2);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    assertEquals(m.getMicrobeamManipulationCount(1), 1);
+    reader.close();
+  }
+
+  @Test
+  public void testMicrobeam() throws Exception {
+    reader.setId("foo&plates=1&withMicrobeam=true.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 1);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    reader.close();
+
+    reader.setId("foo&screens=2&withMicrobeam=true.fake");
+    m = service.asRetrieve(reader.getMetadataStore());
+    assertTrue(service.validateOMEXML(service.getOMEXML(m)));
+    assertEquals(m.getExperimentCount(), 2);
+    assertEquals(m.getMicrobeamManipulationCount(0), 1);
+    assertEquals(m.getMicrobeamManipulationCount(1), 1);
+    reader.close();
+    testDefaultValues();
   }
 
   @Test
@@ -499,4 +564,68 @@ public class FakeReaderTest {
     reader.close();
     testDefaultValues();
   }
+
+  @Test(dataProvider = "pixelFeatures")
+  public void testSpecialPixels(int pixelType, boolean little)
+      throws Exception {
+    String pt = FormatTools.getPixelTypeString(pixelType);
+    int nSeries = 2;
+    int sizeC = 3;
+    int sizeZ = 4;
+    int sizeT = 5;
+    reader.setId(String.format(
+        "foo&pixelType=%s&series=%s&sizeZ=%s&sizeC=%s&sizeT=%s&little=%s.fake",
+        pt, nSeries, sizeZ, sizeC, sizeT, little));
+    reader.setSeries(1);
+    int no = sizeC * sizeZ * sizeT - 1;
+    byte[] plane = reader.openBytes(no);
+    int[] exp = new int[] {1, no, sizeZ - 1, sizeC - 1, sizeT - 1};
+    assertEquals(FakeReader.readSpecialPixels(plane, pixelType, little), exp);
+    if (pixelType == FormatTools.UINT8) {
+      assertEquals(FakeReader.readSpecialPixels(plane), exp);
+    }
+  }
+
+  @Test
+  public void testSpecialPixelsInterleaved() throws Exception {
+    int nSeries = 2;
+    int rgb = 3;
+    int sizeC = 3;
+    int effSizeC = sizeC / rgb;
+    int sizeZ = 4;
+    int sizeT = 5;
+    reader.setId(String.format(
+        "foo&series=%s&sizeZ=%s&sizeC=%s&sizeT=%s&rgb=%d&interleaved=true.fake",
+        nSeries, sizeZ, sizeC, sizeT, rgb));
+    reader.setSeries(1);
+    int no = effSizeC * sizeZ * sizeT - 1;
+    byte[] plane = reader.openBytes(no);
+    int[] exp = new int[] {1, no, sizeZ - 1, effSizeC - 1, sizeT - 1};
+    assertEquals(FakeReader.readSpecialPixels(
+        plane, FormatTools.UINT8, true, rgb, true), exp);
+  }
+
+  @Test
+  public void testSpecialPixelsIndexed() throws Exception {
+    int nSeries = 2;
+    int sizeC = 3;
+    int sizeZ = 4;
+    int sizeT = 5;
+    reader.setId(String.format(
+        "foo&series=%s&sizeZ=%s&sizeC=%s&sizeT=%s&indexed=true.fake",
+        nSeries, sizeZ, sizeC, sizeT));
+    reader.setSeries(1);
+    int no = sizeC * sizeZ * sizeT - 1;
+    byte[] plane = reader.openBytes(no);
+    int[] exp = new int[] {1, no, sizeZ - 1, sizeC - 1, sizeT - 1};
+    int[] indices = FakeReader.readSpecialPixels(plane);
+    assertEquals(indices.length, exp.length);
+    int[] specialPixels = new int[indices.length];
+    byte[][] lut = reader.get8BitLookupTable();
+    for (int i = 0; i < indices.length; i++) {
+      specialPixels[i] = lut[0][(int)indices[i]];
+    }
+    assertEquals(specialPixels, exp);
+  }
+
 }

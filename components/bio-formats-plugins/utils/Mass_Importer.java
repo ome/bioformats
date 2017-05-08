@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -30,6 +30,7 @@ import ij.gui.YesNoCancelDialog;
 import ij.io.DirectoryChooser;
 import ij.plugin.PlugIn;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import loci.formats.FilePattern;
@@ -52,9 +53,6 @@ public class Mass_Importer implements PlugIn {
     // create a list of files we have already processed
     HashSet<String> done = new HashSet<String>();
 
-    // image reader object, for testing whether a file is in a supported format
-    ImageReader tester = new ImageReader();
-
     // list of files to actually open with Bio-Formats Importer
     ArrayList<String> filesToOpen = new ArrayList<String>();
 
@@ -62,25 +60,31 @@ public class Mass_Importer implements PlugIn {
     File dir = new File(dirPath);
     File[] files = dir.listFiles();
     IJ.showStatus("Scanning directory");
-    for (int i=0; i<files.length; i++) {
-      String id = files[i].getAbsolutePath();
-      IJ.showProgress((double) i / files.length);
 
-      // skip files that have already been processed
-      if (done.contains(id)) continue;
+    // image reader object, for testing whether a file is in a supported format
+    try (ImageReader tester = new ImageReader()) {
+      for (int i=0; i<files.length; i++) {
+        String id = files[i].getAbsolutePath();
+        IJ.showProgress((double) i / files.length);
 
-      // skip unsupported files
-      if (!tester.isThisType(id, false)) continue;
+        // skip files that have already been processed
+        if (done.contains(id)) continue;
 
-      // use FilePattern to group files with similar names
-      String name = files[i].getName();
-      FilePattern fp = new FilePattern(name, dirPath);
+        // skip unsupported files
+        if (!tester.isThisType(id, false)) continue;
 
-      // get a list of all files part of this group, and mark them as done
-      String[] used = fp.getFiles();
-      for (int j=0; j<used.length; j++) done.add(used[j]);
+        // use FilePattern to group files with similar names
+        String name = files[i].getName();
+        FilePattern fp = new FilePattern(name, dirPath);
 
-      filesToOpen.add(id);
+        // get a list of all files part of this group, and mark them as done
+        String[] used = fp.getFiles();
+        for (int j=0; j<used.length; j++) done.add(used[j]);
+
+        filesToOpen.add(id);
+      }
+    } catch (IOException e) {
+      IJ.error("Sorry, an error while closing ImageReader: " + e.getMessage());
     }
     IJ.showProgress(1.0);
     IJ.showStatus("");

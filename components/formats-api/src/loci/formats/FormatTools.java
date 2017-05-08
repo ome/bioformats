@@ -1,8 +1,8 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,8 +34,12 @@ package loci.formats;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import loci.common.Constants;
 import loci.common.DateTools;
@@ -52,8 +56,10 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.UnitsLength;
+import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
 import ome.xml.model.primitives.PositiveFloat;
@@ -199,42 +205,99 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
-  public static final Properties VERSION_PROPERTIES = loadProperties();
+  public static final Properties VERSION_PROPERTIES = null;
 
-  /** Current VCS revision. */
-  public static final String VCS_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.revision");
+  /** Current VCS revision.
+   */
+  public static final String VCS_REVISION;
 
-  /** Current VCS revision (short form). */
-  public static final String VCS_SHORT_REVISION =
-    VERSION_PROPERTIES.getProperty("vcs.shortrevision");
+  /** Current VCS revision (short form).
+   * @deprecated Use the general {@link #VCS_REVISION} field.
+   */
+  @Deprecated
+  public static final String VCS_SHORT_REVISION;
 
   /** Date on which this release was built. */
-  public static final String DATE = VERSION_PROPERTIES.getProperty("date");
+  public static final String DATE;
 
   /** Year in which this release was built. */
-  public static final String YEAR = VERSION_PROPERTIES.getProperty("year");
+  public static final String YEAR;
 
   /** Version number of this release. */
-  public static final String VERSION =
-    VERSION_PROPERTIES.getProperty("release.version");
+  public static final String VERSION;
 
-  public static final String PROPERTY_FILE = "version.properties";
+  /** Value to use when setting creator/software fields in exported files. */
+  public static final String CREATOR;
 
+  /**
+   * @deprecated The property file is no longer used.
+   */
+  @Deprecated
+  public static final String PROPERTY_FILE = null;
+
+  /**
+   * @deprecated This method should no longer be used.  The properties
+   * are now obtained from the jar manifest.
+   */
+  @Deprecated
   static Properties loadProperties() {
     Properties properties = new Properties();
-    try {
-      InputStream propertyFile = Class.forName(
-        "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
-      properties.load(propertyFile);
-    }
-    catch (ClassNotFoundException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
-    catch (IOException e) {
-      LOGGER.debug("Failed to load version properties", e);
-    }
+    LOGGER.debug("loadProperties() is deprecated");
     return properties;
+  }
+
+  private static Manifest loadManifest() {
+    String className = FormatTools.class.getSimpleName() + ".class";
+    String classPath = FormatTools.class.getResource(className).toString();
+    if (!classPath.startsWith("jar")) {
+      return null;
+    }
+
+    String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) +
+      "/META-INF/MANIFEST.MF";
+
+    try{
+      Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+      return manifest;
+    }
+    catch (MalformedURLException exc) {
+    }
+    catch (IOException exc) {
+    }
+
+    return null;
+  }
+
+  static
+  {
+    Manifest manifest = loadManifest();
+    Attributes attr;
+
+    if(manifest != null) {
+      attr = manifest.getMainAttributes();
+    } else {
+      attr = new Attributes();
+    }
+
+    if (attr.getValue("Implementation-Version") != null) {
+      VERSION = attr.getValue("Implementation-Version");
+    } else {
+      VERSION = "(unknown version)";
+    }
+    CREATOR = "OME Bio-Formats " + VERSION;
+    if (attr.getValue("Implementation-Build") != null) {
+      VCS_REVISION = attr.getValue("Implementation-Build");
+    } else {
+      VCS_REVISION = "(unknown revision)";
+    }
+    VCS_SHORT_REVISION = VCS_REVISION;
+    if (attr.getValue("Implementation-Date") != null) {
+      DATE = attr.getValue("Implementation-Date");
+      YEAR = DATE.substring(DATE.lastIndexOf(' ') + 1);
+    } else {
+      DATE = "(unknown date)";
+      YEAR = "(unknown year)";
+    }
   }
 
   // -- Constants - domains --
@@ -390,9 +453,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
@@ -540,9 +603,9 @@ public final class FormatTools {
     if (!order.startsWith("XY") && !order.startsWith("YX")) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
-    int iz = order.indexOf("Z") - 2;
-    int ic = order.indexOf("C") - 2;
-    int it = order.indexOf("T") - 2;
+    int iz = order.indexOf('Z') - 2;
+    int ic = order.indexOf('C') - 2;
+    int it = order.indexOf('T') - 2;
     if (iz < 0 || iz > 2 || ic < 0 || ic > 2 || it < 0 || it > 2) {
       throw new IllegalArgumentException("Invalid dimension order: " + order);
     }
@@ -1022,11 +1085,30 @@ public final class FormatTools {
   public static String getFilename(int series, int image, IFormatReader r,
     String pattern) throws FormatException, IOException
   {
-    MetadataStore store = r.getMetadataStore();
-    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
-      (MetadataRetrieve) store : new DummyMetadata();
+    return getFilename(series, image, r, pattern, false);
+  }
 
-    String filename = pattern.replaceAll(SERIES_NUM, String.valueOf(series));
+  /**
+   * @throws FormatException Never actually thrown.
+   * @throws IOException Never actually thrown.
+   */
+  public static String getFilename(int series, int image, IFormatReader r,
+      String pattern, boolean padded) throws FormatException, IOException
+  {
+     MetadataStore store = r.getMetadataStore();
+     MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
+       (MetadataRetrieve) store : new DummyMetadata();
+     return getFilename(series, image, retrieve, pattern, padded);
+  }
+
+  public static String getFilename(int series, int image, MetadataRetrieve retrieve,
+      String pattern, boolean padded) throws FormatException, IOException
+  {
+    String sPlaces = "%d";
+    if (padded) {
+      sPlaces = "%0" + String.valueOf(retrieve.getImageCount()).length() + "d";
+    }
+    String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
     String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
@@ -1035,12 +1117,23 @@ public final class FormatTools {
 
     filename = filename.replaceAll(SERIES_NAME, imageName);
 
-    r.setSeries(series);
-    int[] coordinates = r.getZCTCoords(image);
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = retrieve.getPixelsSizeC(series).getValue();
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
 
-    filename = filename.replaceAll(Z_NUM, String.valueOf(coordinates[0]));
-    filename = filename.replaceAll(T_NUM, String.valueOf(coordinates[2]));
-    filename = filename.replaceAll(CHANNEL_NUM, String.valueOf(coordinates[1]));
+    String zPlaces = "%d";
+    String tPlaces = "%d";
+    String cPlaces = "%d";
+    if (padded) {
+      zPlaces = "%0" + String.valueOf(sizeZ).length() + "d";
+      tPlaces = "%0" + String.valueOf(sizeT).length() + "d";
+      cPlaces = "%0" + String.valueOf(sizeC).length() + "d";
+    }
+    filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
+    filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));
+    filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, coordinates[1]));
 
     String channelName = retrieve.getChannelName(series, coordinates[1]);
     if (channelName == null) channelName = String.valueOf(coordinates[1]);
@@ -1057,7 +1150,7 @@ public final class FormatTools {
       if (retrieve.getPlaneCount(series) > image) {
         Time deltaT = retrieve.getPlaneDeltaT(series, image);
         if (deltaT != null) {
-          stamp = (long) (deltaT.value(UNITS.S).doubleValue() * 1000);
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
         }
       }
       stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
@@ -1229,7 +1322,7 @@ public final class FormatTools {
     if (bytes.length == 1) return bytes[0];
     int rgbChannelCount = reader.getRGBChannelCount();
     byte[] rtn = new byte[rgbChannelCount * bytes[0].length];
-    
+
     if (!reader.isInterleaved()) {
       for (int i=0; i<rgbChannelCount; i++) {
         System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
@@ -1238,7 +1331,7 @@ public final class FormatTools {
     else {
       int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
 
-      for (int i=0; i<bytes[0].length/bpp; i+=bpp) {
+      for (int i=0; i<bytes[0].length; i+=bpp) {
         for (int j=0; j<rgbChannelCount; j++) {
           System.arraycopy(bytes[j], i, rtn, (i * rgbChannelCount) + j * bpp, bpp);
         }
@@ -1411,7 +1504,7 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Length(value, UNITS.NM);
+    return new Length(value, UNITS.NANOMETER);
   }
   
   /**
@@ -1432,9 +1525,61 @@ public final class FormatTools {
       } catch (EnumerationException e) {
       }
     }
-    return new Time(value, UNITS.S);
+    return new Time(value, UNITS.SECOND);
   }
-  
+
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} if {@code value} is {@code null} or infinite
+   *               or {@code unit} is {@code null}.
+   */
+  public static Length getStagePosition(Double value, Unit<Length> unit) {
+    if (value == null || value.isNaN() || value.isInfinite()) {
+      LOGGER.debug("Expected float value for stage position; got {}", value);
+      return null;
+    }
+
+    if (unit == null) {
+      LOGGER.debug("Expected valid unit for stage position; got {}", unit);
+      return null;
+    }
+
+    return new Length(value, unit);
+  }
+
+  /**
+   * Formats the input value for the stage position into a length of the given
+   * unit.
+   *
+   * @param value  the value of the stage position
+   * @param unit   the unit of the stage position. If the string cannot be
+   *               converted into a base length unit, the stage position length
+   *               will be constructure using the default reference frame unit.
+   *
+   * @return       the stage position formatted as a {@link Length}. Returns
+   *               {@code null} under the same conditions as
+   *               {@link #getStagePosition(Double, String)}.
+   */
+  public static Length getStagePosition(Double value, String unit) {
+      Unit<Length> baseunit = null;
+      try {
+        baseunit = UnitsLengthEnumHandler.getBaseUnit(
+          UnitsLength.fromString(unit));
+      } catch (EnumerationException e) {
+        LOGGER.warn("Invalid base unit: using default reference frame unit");
+        LOGGER.debug(e.getMessage());
+        baseunit = UNITS.REFERENCEFRAME;
+      }
+      return getStagePosition(value, baseunit);
+  }
+
   public static Length getPhysicalSize(Double value, String unit) {
     if (value != null && value != 0 && value < Double.POSITIVE_INFINITY) {
       if (unit != null) {
@@ -1465,7 +1610,7 @@ public final class FormatTools {
         } catch (EnumerationException e) {
         }
       }
-      return new Length(value, UNITS.MICROM);
+      return new Length(value, UNITS.MICROMETER);
     }
     LOGGER.debug("Expected positive value for PhysicalSize; got {}", value);
     return null;
@@ -1480,7 +1625,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeX(Double value) {
-   return getPhysicalSizeX(value, UNITS.MICROM);
+   return getPhysicalSizeX(value, UNITS.MICROMETER);
   }
   
   /**
@@ -1519,7 +1664,7 @@ public final class FormatTools {
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeY(Double value) {
-    return getPhysicalSizeY(value, UNITS.MICROM);
+    return getPhysicalSizeY(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1551,14 +1696,14 @@ public final class FormatTools {
 
   /**
    * Formats the input value for the physical size in Z into a length in
-   * microns
+   * microns.
    *
    * @param value  the value of the physical size in Z in microns
    *
    * @return       the physical size formatted as a {@link Length}
    */
   public static Length getPhysicalSizeZ(Double value) {
-    return getPhysicalSizeZ(value, UNITS.MICROM);
+    return getPhysicalSizeZ(value, UNITS.MICROMETER);
   }
 
   /**
@@ -1583,7 +1728,6 @@ public final class FormatTools {
    * @param unit   the unit of the physical size in Z
    *
    * @return       the physical size formatted as a {@link Length}
-
    */
   public static Length getPhysicalSizeZ(Double value, Unit<Length> unit) {
       return getPhysicalSize(value, unit.getSymbol());
@@ -1593,7 +1737,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
@@ -1604,7 +1748,7 @@ public final class FormatTools {
     if (value != null && value - Constants.EPSILON > 0 &&
       value < Double.POSITIVE_INFINITY)
     {
-      return createLength(new PositiveFloat(value), UNITS.NM);
+      return createLength(new PositiveFloat(value), UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
@@ -1613,7 +1757,7 @@ public final class FormatTools {
 
   public static Length getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;
@@ -1630,7 +1774,7 @@ public final class FormatTools {
 
   public static Length getCutIn(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutIn; got {}", value);
     return null;
@@ -1638,7 +1782,7 @@ public final class FormatTools {
 
   public static Length getCutOut(Double value) {
     if (value != null && value > 0) {
-      return new Length(value, UNITS.NM);
+      return new Length(value, UNITS.NANOMETER);
     }
     LOGGER.debug("Expected positive value for CutOut; got {}", value);
     return null;
@@ -1646,7 +1790,7 @@ public final class FormatTools {
 
   public static Length getFontSize(Integer value) {
     if (value != null && value >= 0) {
-      return new Length(value, UNITS.PT);
+      return new Length(value, UNITS.POINT);
     }
     LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
     return null;

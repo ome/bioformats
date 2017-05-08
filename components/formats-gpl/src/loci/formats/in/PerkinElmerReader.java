@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -27,10 +27,9 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -43,8 +42,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Length;
@@ -86,7 +83,7 @@ public class PerkinElmerReader extends FormatReader {
   private boolean isTiff = true;
 
   /** List of all files to open */
-  private Vector<String> allFiles;
+  private List<String> allFiles;
 
   private int extCount;
 
@@ -131,7 +128,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     String ext = name;
-    if (ext.indexOf(".") != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
+    if (ext.indexOf('.') != -1) ext = ext.substring(ext.lastIndexOf(".") + 1);
     boolean binFile = true;
     try {
       Integer.parseInt(ext, 16);
@@ -145,10 +142,10 @@ public class PerkinElmerReader extends FormatReader {
     String prefix = baseFile.getParent() + File.separator;
 
     String namePrefix = baseFile.getName();
-    if (namePrefix.indexOf(".") != -1) {
+    if (namePrefix.indexOf('.') != -1) {
       namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("."));
     }
-    if (namePrefix.indexOf("_") != -1 && binFile) {
+    if (namePrefix.indexOf('_') != -1 && binFile) {
       namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("_"));
     }
     prefix += namePrefix;
@@ -159,7 +156,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (!htmlFile.exists()) {
       htmlFile = new Location(prefix + ".HTM");
-      while (!htmlFile.exists() && prefix.indexOf("_") != -1) {
+      while (!htmlFile.exists() && prefix.indexOf('_') != -1) {
         prefix = prefix.substring(0, prefix.lastIndexOf("_"));
         htmlFile = new Location(prefix + ".htm");
         if (!htmlFile.exists()) htmlFile = new Location(prefix + ".HTM");
@@ -224,7 +221,7 @@ public class PerkinElmerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     if (noPixels) {
-      Vector<String> files = new Vector<String>();
+      final List<String> files = new ArrayList<String>();
       if (isTiff) {
         for (String f : allFiles) {
           if (!checkSuffix(f, new String[] {"tif", "tiff"})) {
@@ -308,7 +305,7 @@ public class PerkinElmerReader extends FormatReader {
 
     super.initFile(id);
 
-    allFiles = new Vector<String>();
+    allFiles = new ArrayList<String>();
 
     // get the working directory
     Location tmpFile = new Location(id).getAbsoluteFile();
@@ -330,7 +327,7 @@ public class PerkinElmerReader extends FormatReader {
     String timFile = null, csvFile = null, zpoFile = null;
     String htmFile = null;
 
-    Vector<PixelsFile> tempFiles = new Vector<PixelsFile>();
+    final List<PixelsFile> tempFiles = new ArrayList<PixelsFile>();
 
     int dot = id.lastIndexOf(".");
     String check = dot < 0 ? id : id.substring(0, dot);
@@ -423,7 +420,7 @@ public class PerkinElmerReader extends FormatReader {
 
     LOGGER.info("Finding image files");
 
-    Vector<Integer> foundExts = new Vector<Integer>();
+    List<Integer> foundExts = new ArrayList<Integer>();
     for (PixelsFile f : files) {
       if (!foundExts.contains(f.extIndex)) {
         foundExts.add(f.extIndex);
@@ -470,16 +467,16 @@ public class PerkinElmerReader extends FormatReader {
     // be aggressive about parsing the HTML file, since it's the only one that
     // explicitly defines the number of wavelengths and timepoints
 
-    Vector<Double> exposureTimes = new Vector<Double>();
-    Vector<Double> zPositions = new Vector<Double>();
-    Vector<Double> emWaves = new Vector<Double>();
-    Vector<Double> exWaves = new Vector<Double>();
+    final List<Double> exposureTimes = new ArrayList<Double>();
+    final List<Double> zPositions = new ArrayList<Double>();
+    final List<Double> emWaves = new ArrayList<Double>();
+    final List<Double> exWaves = new ArrayList<Double>();
 
     if (htmFile != null) {
       String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
 
       for (int j=0; j<tokens.length; j++) {
-        if (tokens[j].indexOf("<") != -1) tokens[j] = "";
+        if (tokens[j].indexOf('<') != -1) tokens[j] = "";
       }
 
       for (int j=0; j<tokens.length-1; j+=2) {
@@ -658,9 +655,9 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
-        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(i * secondsPerPlane, UNITS.SECOND), 0, i);
         if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
-          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.S), 0, i);
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]), UNITS.SECOND), 0, i);
         }
 
         if (zct[0] < zPositions.size()) {
@@ -813,7 +810,7 @@ public class PerkinElmerReader extends FormatReader {
       return;
     }
     String[] tokens = DataTools.readFile(csvFile).split("\\s");
-    Vector<String> tmp = new Vector<String>();
+    final List<String> tmp = new ArrayList<String>();
     for (String token : tokens) {
       if (token.trim().length() > 0) tmp.add(token.trim());
     }

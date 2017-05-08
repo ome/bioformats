@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -56,8 +58,6 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Length;
@@ -80,6 +80,9 @@ public class FV1000Reader extends FormatReader {
   public static final String[] OIB_SUFFIX = {"oib"};
   public static final String[] OIF_SUFFIX = {"oif"};
   public static final String[] FV1000_SUFFIXES = {"oib", "oif"};
+
+  public static final String[] PREVIEWNAME_PREFIXES = {
+    "IniFileName", "PtyFileNameReference"};
 
   public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
@@ -431,6 +434,7 @@ public class FV1000Reader extends FormatReader {
     pixelSize = new Double[NUM_DIMENSIONS];
 
     previewNames = new ArrayList<String>();
+    SortedMap<Integer, String> previewFileNames = new TreeMap<Integer, String>();
     boolean laserEnabled = true;
 
     IniList f = getIniFile(oifName);
@@ -468,7 +472,12 @@ public class FV1000Reader extends FormatReader {
           RandomAccessInputStream s = getFile(path + value.trim());
           if (s != null) {
             s.close();
-            previewNames.add(path + value.trim());
+            Integer previewIndex = getPreviewNameIndex(key);
+            if (previewIndex != null) {
+              previewFileNames.put(previewIndex, path + value.trim());
+            } else {
+              previewNames.add(path + value.trim());
+            }
           }
         }
         catch (FormatException e) {
@@ -479,6 +488,9 @@ public class FV1000Reader extends FormatReader {
         }
       }
     }
+
+    // Store sorted list of preview names
+    previewNames.addAll(previewFileNames.values());
 
     if (filenames.isEmpty()) addPtyFiles();
 
@@ -693,20 +705,20 @@ public class FV1000Reader extends FormatReader {
         if (axis == null) break;
         boolean addAxis = Integer.parseInt(axis.get("Number")) > 1;
         if (dim == 2) {
-          if (addAxis && getDimensionOrder().indexOf("C") == -1) {
-            ms0.dimensionOrder += "C";
+          if (addAxis && getDimensionOrder().indexOf('C') == -1) {
+            ms0.dimensionOrder += 'C';
           }
         }
         else if (dim == 3) {
-          if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
-            ms0.dimensionOrder += "Z";
+          if (addAxis && getDimensionOrder().indexOf('Z') == -1) {
+            ms0.dimensionOrder += 'Z';
           }
           final Double number = Double.valueOf(axis.get("AbsPositionValue"));
           plane.positionZ = new Length(number, UNITS.REFERENCEFRAME);
         }
         else if (dim == 4) {
-          if (addAxis && getDimensionOrder().indexOf("T") == -1) {
-            ms0.dimensionOrder += "T";
+          if (addAxis && getDimensionOrder().indexOf('T') == -1) {
+            ms0.dimensionOrder += 'T';
           }
           // divide by 1000, as the position is in milliseconds
           // and DeltaT is in seconds
@@ -874,12 +886,12 @@ public class FV1000Reader extends FormatReader {
     }
 
     if (getSizeC() > 1 && getSizeZ() == 1 && getSizeT() == 1) {
-      if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
+      if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += 'C';
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) ms0.dimensionOrder += "T";
+    if (getDimensionOrder().indexOf('Z') == -1) ms0.dimensionOrder += 'Z';
+    if (getDimensionOrder().indexOf('C') == -1) ms0.dimensionOrder += 'C';
+    if (getDimensionOrder().indexOf('T') == -1) ms0.dimensionOrder += 'T';
 
     ms0.pixelType =
       FormatTools.pixelTypeFromBytes(imageDepth, false, false);
@@ -1026,10 +1038,10 @@ public class FV1000Reader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.S), i);
+      store.setPixelsTimeIncrement(new Time(pixelSizeT, UNITS.SECOND), i);
 
       for (int p=0; p<core.get(i).imageCount; p++) {
-        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.S), i, p);
+        store.setPlaneDeltaT(new Time(pixelSizeT * p, UNITS.SECOND), i, p);
       }
 
       // populate LogicalChannel data
@@ -1053,7 +1065,7 @@ public class FV1000Reader extends FormatReader {
       store.setDetectorSettingsID(detectorID, 0, channelIndex);
 
       store.setDetectorGain(channel.gain, 0, channelIndex);
-      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.V);
+      ElectricPotential theVoltage = FormatTools.createElectricPotential(channel.voltage, UNITS.VOLT);
       if (theVoltage != null) {
         store.setDetectorVoltage(
               theVoltage, 0, channelIndex);
@@ -1088,7 +1100,7 @@ public class FV1000Reader extends FormatReader {
         store.setFilterID(filterID, 0, channelIndex);
         store.setFilterModel(channel.barrierFilter, 0, channelIndex);
 
-        if (channel.barrierFilter.indexOf("-") != -1) {
+        if (channel.barrierFilter.indexOf('-') != -1) {
           String[] emValues = channel.barrierFilter.split("-");
           for (int i=0; i<emValues.length; i++) {
             emValues[i] = emValues[i].replaceAll("\\D", "");
@@ -1152,7 +1164,7 @@ public class FV1000Reader extends FormatReader {
       store.setObjectiveNominalMagnification(mag, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(new Double(workingDistance), UNITS.MICROMETER), 0, 0);
     }
     store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
     store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -1178,7 +1190,7 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<planes.size(); i++) {
       PlaneData plane = planes.get(i);
       if (plane.deltaT != null) {
-        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.S), 0, i);
+        store.setPlaneDeltaT(new Time(plane.deltaT, UNITS.SECOND), 0, i);
       }
       store.setPlanePositionX(plane.positionX, 0, i);
       store.setPlanePositionY(plane.positionY, 0, i);
@@ -1358,7 +1370,7 @@ public class FV1000Reader extends FormatReader {
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
             shapeType == POLYLINE || shapeType == FREE_LINE)
           {
-            StringBuffer points = new StringBuffer();
+            final StringBuilder points = new StringBuilder();
             for (int point=0; point<xc.length; point++) {
               points.append(xc[point]);
               points.append(",");
@@ -1438,7 +1450,7 @@ public class FV1000Reader extends FormatReader {
 
       for (int file=0; file<totalFiles; file++) {
         int[] pos = FormatTools.rasterToPosition(lengths, file);
-        StringBuffer pty = new StringBuffer();
+        final StringBuilder pty = new StringBuilder();
         for (int block=0; block<prefixes.length; block++) {
           pty.append(prefixes[block]);
 
@@ -1464,12 +1476,12 @@ public class FV1000Reader extends FormatReader {
     parent = tmp.getAbsolutePath();
 
     baseFile = current.getName();
-    if (baseFile == null || baseFile.indexOf("_") == -1) return null;
+    if (baseFile == null || baseFile.indexOf('_') == -1) return null;
     baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
     if (checkSuffix(current.getName(), new String[] {"roi", "lut"})) {
       if (!new Location(tmp, baseFile + ".oif").exists() &&
         !new Location(tmp, baseFile + ".OIF").exists() &&
-        baseFile.indexOf("_") >= 0)
+        baseFile.indexOf('_') >= 0)
       {
         // some metadata files have an extra underscore
         baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
@@ -1542,9 +1554,9 @@ public class FV1000Reader extends FormatReader {
     String directoryKey = null, directoryValue = null, key = null, value = null;
     for (String line : lines) {
       line = line.trim();
-      if (line.indexOf("=") != -1) {
-        key = line.substring(0, line.indexOf("="));
-        value = line.substring(line.indexOf("=") + 1);
+      if (line.indexOf('=') != -1) {
+        key = line.substring(0, line.indexOf('='));
+        value = line.substring(line.indexOf('=') + 1);
 
         if (directoryKey != null && directoryValue != null) {
           value = value.replaceAll(directoryKey, directoryValue);
@@ -1652,6 +1664,16 @@ public class FV1000Reader extends FormatReader {
     return plane;
   }
 
+  /* Parse the index of the preview name file using a set of prefixes */
+  private Integer getPreviewNameIndex(String key) {
+    Integer previewIndex = null;
+    for (String prefix: PREVIEWNAME_PREFIXES) {
+      if (!key.startsWith(prefix)) continue;
+      return DataTools.parseInteger(key.substring(prefix.length()));
+    }
+    return previewIndex;
+  }
+
   private boolean isPreviewName(String name) {
     // "-R" in the file name indicates that this is a preview image
     int index = name.indexOf("-R");
@@ -1732,7 +1754,7 @@ public class FV1000Reader extends FormatReader {
     RandomAccessInputStream stream = getFile(filename);
     String data = stream.readString((int) stream.length());
     if (!data.startsWith("[")) {
-      data = data.substring(data.indexOf("["), data.length());
+      data = data.substring(data.indexOf('['), data.length());
     }
     data = DataTools.stripString(data);
     BufferedReader reader = new BufferedReader(new StringReader(data));

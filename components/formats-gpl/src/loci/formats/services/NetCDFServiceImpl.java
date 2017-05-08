@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -63,7 +63,7 @@ public class NetCDFServiceImpl extends AbstractService
     "NetCDF is required to read NetCDF/HDF variants. " +
     "Please obtain the necessary JAR files from " +
     "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n" +
-    "Required JAR files are netcdf-4.3.19.jar and slf4j-jdk14.jar.";
+    "Required JAR files are netcdf-4.3.22.jar and slf4j-jdk14.jar.";
 
   // -- Fields --
 
@@ -255,7 +255,7 @@ public class NetCDFServiceImpl extends AbstractService
    * @return Group or <code>root</code> if the group cannot be found.
    */
   private Group getGroup(String path) {
-    if (path.indexOf("/") == -1) {
+    if (path.indexOf('/') == -1) {
       return root;
     }
 
@@ -284,7 +284,7 @@ public class NetCDFServiceImpl extends AbstractService
     Object v = values.copyTo1DJavaArray();
     if (v instanceof Object[]) {
       Object[] array = (Object[]) v;
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
         sb.append((String) array[i]);
       }

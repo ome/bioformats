@@ -1,0 +1,123 @@
+Bio-Formats service and dependency infrastructure
+=================================================
+
+Description
+-----------
+
+The Bio-Formats service infrastructure is an interface driven pattern
+for dealing with external and internal dependencies. The design goal was
+mainly to avoid the cumbersome usage of ``ReflectedUniverse`` where
+possible and to clearly define both service dependency and interface
+between components. This is generally referred to as `dependency
+injection <http://en.wikipedia.org/wiki/Dependency_injection>`_,
+`dependency
+inversion <http://en.wikipedia.org/wiki/Dependency_inversion_principle>`_
+or `component based
+design <http://en.wikipedia.org/wiki/Component-based_software_engineering>`_.
+
+It was decided, at this point, to forgo the usage of potentially more
+powerful but also more complicated solutions such as:
+
+-  Spring (http://spring.io)
+-  Guice (http://code.google.com/p/google-guice/)
+-  ...
+
+The Wikipedia page for `dependency
+injection <http://en.wikipedia.org/wiki/Dependency_injection>`_ contains
+many other implementations in many languages.
+
+An added benefit is the potential code reuse possibilities as a result
+of decoupling of dependency and usage in Bio-Formats readers.
+Implementations of the initial Bio-Formats services were completed as
+part of BioFormatsCleanup and tickets :ticket:`463` and :ticket:`464`.
+
+Writing a service
+-----------------
+
+-  **Interface** -- The basic form of a service is an interface which
+   inherits from :common_javadoc:`loci.common.services.Service <loci/common/services/Service.html>`.
+   Here is a very basic example using the (now removed) ``OMENotesService``
+
+   ::
+
+       public interface OMENotesService extends Service {
+
+         /**
+          * Creates a new OME Notes instance.
+          * @param filename Path to the file to create a Notes instance for.
+          */
+         public void newNotes(String filename);
+
+       }
+
+-  **Implementation** -- This service then has an implementation, which
+   is usually located in the Bio-Formats component or package which
+   imports classes from an external, dynamic or other dependency. Again
+   looking at the ``OMENotesService``:
+
+   ::
+
+       public class OMENotesServiceImpl extends AbstractService
+         implements OMENotesService {
+
+         /**
+          * Default constructor.
+          */
+         public OMENotesServiceImpl() {
+           checkClassDependency(Notes.class);
+         }
+
+         /* (non-Javadoc)
+          * @see loci.formats.dependency.OMENotesService#newNotes()
+          */
+         public void newNotes(String filename) {
+           new Notes(null, filename);
+         }
+
+       }
+
+-  **Style**
+
+   -  Extension of ``AbstractService`` to enable uniform runtime
+      dependency checking is recommended. Java does not check class
+      dependencies until classes are first instantiated so if you do not
+      do this, you may end up with ``ClassNotFound`` or the like
+      exceptions being emitted from your service methods. This is to be
+      **strongly** discouraged. If a service has unresolvable classes on
+      its CLASSPATH instantiation should fail, not service method
+      invocation.
+   -  Service methods should not burden the implementer with numerous
+      checked exceptions. Also external dependency exception instances
+      should not be allowed to directly leak from a service interface.
+      Please wrap these using a ``ServiceException``.
+   -  By convention both the interface and implementation are expected
+      to be in a package named ``loci.*.services``. This is not a hard
+      requirement but should be followed where possible.
+
+-  **Registration** -- A service's interface and implementation must
+   finally be *registered* with the
+   :common_javadoc:`loci.common.services.ServiceFactory <loci/common/services/ServiceFactory.html>`
+   via the :file:`services.properties` file. Following the ``OMENotesService``
+   again, here is an example registration:
+
+   ::
+
+       ...
+       # OME notes service (implementation in legacy ome-notes component)
+       loci.common.services.OMENotesService=loci.ome.notes.services.OMENotesServiceImpl
+       ...
+
+Using a service
+---------------
+
+::
+
+    OMENotesService service = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMENotesService.class);
+    }
+    catch (DependencyException de) {
+      LOGGER.info("", de);
+    }
+    ...

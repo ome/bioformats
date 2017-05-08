@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -92,11 +92,11 @@ public class DimensionSwapper extends ReaderWrapper {
         order.length() + ")");
     }
 
-    int newX = order.indexOf("X");
-    int newY = order.indexOf("Y");
-    int newZ = order.indexOf("Z");
-    int newC = order.indexOf("C");
-    int newT = order.indexOf("T");
+    int newX = order.indexOf('X');
+    int newY = order.indexOf('Y');
+    int newZ = order.indexOf('Z');
+    int newC = order.indexOf('C');
+    int newT = order.indexOf('T');
 
     if (newX < 0) throw new IllegalArgumentException("X does not appear");
     if (newY < 0) throw new IllegalArgumentException("Y does not appear");
@@ -115,11 +115,11 @@ public class DimensionSwapper extends ReaderWrapper {
 
     int[] dims = new int[5];
 
-    int oldX = oldOrder.indexOf("X");
-    int oldY = oldOrder.indexOf("Y");
-    int oldZ = oldOrder.indexOf("Z");
-    int oldC = oldOrder.indexOf("C");
-    int oldT = oldOrder.indexOf("T");
+    int oldX = oldOrder.indexOf('X');
+    int oldY = oldOrder.indexOf('Y');
+    int oldZ = oldOrder.indexOf('Z');
+    int oldC = oldOrder.indexOf('C');
+    int oldT = oldOrder.indexOf('T');
 
     if (oldC != newC && reader.getRGBChannelCount() > 1) {
       throw new IllegalArgumentException(
@@ -299,13 +299,15 @@ public class DimensionSwapper extends ReaderWrapper {
       List<CoreMetadata> oldcore = reader.getCoreMetadataList();
       core = new ArrayList<CoreMetadata>();
       for (int s=0; s<oldcore.size(); s++) {
-        core.add(new SwappableMetadata(reader, s));
+        SwappableMetadata swappable = new SwappableMetadata(reader, s);
+        swappable.resolutionCount = oldcore.get(s).resolutionCount;
+        core.add(swappable);
       }
     }
   }
 
   // -- Helper methods --
-  
+
   protected int reorder(int no) {
     if (getInputOrder() == null) return no;
     return FormatTools.getReorderedIndex(getInputOrder(), getDimensionOrder(),

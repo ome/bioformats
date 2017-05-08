@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -307,7 +307,7 @@ public class DeltavisionReader extends FormatReader {
     int filePixelType = in.readInt();
 
     in.seek(180);
-    int rawSizeT = in.readShort();
+    int rawSizeT = in.readUnsignedShort();
     int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
 
     int sequence = in.readShort();
@@ -358,8 +358,8 @@ public class DeltavisionReader extends FormatReader {
           m.imageCount = sizeZ * sizeC;
         }
       }
-      else if (getDimensionOrder().indexOf("Z") <
-        getDimensionOrder().indexOf("T"))
+      else if (getDimensionOrder().indexOf('Z') <
+        getDimensionOrder().indexOf('T'))
       {
         sizeZ = realPlaneCount / (sizeC * sizeT);
         if (sizeZ == 0) {
@@ -758,9 +758,9 @@ public class DeltavisionReader extends FormatReader {
         DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
         // plane timing
-        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.S), series, i);
+        store.setPlaneDeltaT(new Time(new Double(hdr.timeStampSeconds), UNITS.SECOND), series, i);
         store.setPlaneExposureTime(
-          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.S), series, i);
+          new Time(new Double(extHdrFields[0][coords[1]][0].expTime), UNITS.SECOND), series, i);
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {
@@ -982,7 +982,7 @@ public class DeltavisionReader extends FormatReader {
     List<Double> filters = new ArrayList<Double>();
 
     for (String line : lines) {
-      int colon = line.indexOf(":");
+      int colon = line.indexOf(':');
       if (colon != -1 && !line.startsWith("Created")) {
         key = line.substring(0, colon).trim();
 
@@ -993,7 +993,7 @@ public class DeltavisionReader extends FormatReader {
         // Objective properties
         if (key.equals("Objective")) {
           // assume first word is the manufacturer's name
-          int space = value.indexOf(" ");
+          int space = value.indexOf(' ');
           if (space != -1) {
             String manufacturer = value.substring(0, space);
             String extra = value.substring(space + 1);
@@ -1005,9 +1005,9 @@ public class DeltavisionReader extends FormatReader {
             String magnification = "", na = "";
 
             if (tokens.length >= 1) {
-              int end = tokens[0].indexOf("X");
+              int end = tokens[0].indexOf('X');
               if (end > 0) magnification = tokens[0].substring(0, end);
-              int start = tokens[0].indexOf("/");
+              int start = tokens[0].indexOf('/');
               if (start >= 0) na = tokens[0].substring(start + 1);
             }
 
@@ -1032,11 +1032,11 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equalsIgnoreCase("Lens ID")) {
-          if (value.indexOf(",") != -1) {
-            value = value.substring(0, value.indexOf(","));
+          if (value.indexOf(',') != -1) {
+            value = value.substring(0, value.indexOf(','));
           }
-          if (value.indexOf(" ") != -1) {
-            value = value.substring(value.indexOf(" ") + 1);
+          if (value.indexOf(' ') != -1) {
+            value = value.substring(value.indexOf(' ') + 1);
           }
           if (!value.equals("null")) {
             String objectiveID = "Objective:" + value;
@@ -1128,7 +1128,7 @@ public class DeltavisionReader extends FormatReader {
             for (int series=0; series<getSeriesCount(); series++) {
               for (int c=0; c<getSizeC(); c++) {
                 store.setDetectorSettingsReadOutRate(
-                        new Frequency(khz, UNITS.KHZ), series, c);
+                        new Frequency(khz, UNITS.KILOHERTZ), series, c);
                 store.setDetectorSettingsID(detectorID, series, c);
               }
             }
@@ -1340,7 +1340,7 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      if (line.length() > 0 && line.indexOf(".") == -1) previousLine = line;
+      if (line.length() > 0 && line.indexOf('.') == -1) previousLine = line;
 
       doStatistics = line.endsWith("- reading image data...");
     }
@@ -2275,7 +2275,7 @@ public class DeltavisionReader extends FormatReader {
       store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
     }
     if (workingDistance != null) {
-      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MM), 0, 0);
+      store.setObjectiveWorkingDistance(new Length(workingDistance, UNITS.MILLIMETER), 0, 0);
     }
   }
 
@@ -2352,7 +2352,7 @@ public class DeltavisionReader extends FormatReader {
      */
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer();
+      final StringBuilder sb = new StringBuilder();
       sb.append("photosensorReading: ");
       sb.append(photosensorReading);
       sb.append("\ntimeStampSeconds: ");

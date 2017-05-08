@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.units.quantity.Length;
 
 /**
@@ -129,7 +128,7 @@ public class HRDGDFReader extends FormatReader {
 
     // size stored in kilometers
     String pixelSize =
-      data[1].substring(data[1].indexOf(" ") + 1, data[1].lastIndexOf(" "));
+      data[1].substring(data[1].indexOf(' ') + 1, data[1].lastIndexOf(" "));
     Double physicalSize = new Double(pixelSize) * 1000000000.0;
 
     // parse the center coordinates
@@ -145,8 +144,8 @@ public class HRDGDFReader extends FormatReader {
     while (!data[lineNumber++].startsWith("SURFACE WIND COMPONENTS"));
 
     String dims = data[lineNumber++].trim();
-    String x = dims.substring(0, dims.indexOf(" ")).trim();
-    String y = dims.substring(dims.indexOf(" ") + 1).trim();
+    String x = dims.substring(0, dims.indexOf(' ')).trim();
+    String y = dims.substring(dims.indexOf(' ') + 1).trim();
     surfaceWind = new double[2][Integer.parseInt(y) * Integer.parseInt(x)];
 
     int pixIndex = 0;
@@ -154,13 +153,13 @@ public class HRDGDFReader extends FormatReader {
     while (lineNumber < data.length) {
       String line = data[lineNumber++];
 
-      while (line.indexOf("(") != -1) {
-        int end = line.indexOf(")");
+      while (line.indexOf('(') != -1) {
+        int end = line.indexOf(')');
 
-        String pixel = line.substring(line.indexOf("(") + 1, end);
+        String pixel = line.substring(line.indexOf('(') + 1, end);
         line = line.substring(end + 1);
 
-        int comma = pixel.indexOf(",");
+        int comma = pixel.indexOf(',');
 
         surfaceWind[0][pixIndex] = new Double(pixel.substring(0, comma).trim());
         surfaceWind[1][pixIndex] =

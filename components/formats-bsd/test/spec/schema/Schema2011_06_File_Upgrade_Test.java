@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,6 +37,7 @@ import java.io.InputStream;
 import javax.xml.transform.Templates;
 import javax.xml.transform.stream.StreamSource;
 
+import loci.common.DataTools;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.services.OMEXMLService;
@@ -175,11 +176,12 @@ public class Schema2011_06_File_Upgrade_Test {
     @BeforeClass
     public void setUp() throws Exception {
         InputStream source = this.getClass().getResourceAsStream(ref.FILE_LOCATION);
-        System.err.println(source);
+        byte[] b = new byte[source.available()];
+        source.read(b);
+        source.close();
+        String  xml = new String(b);
         ServiceFactory sf = new ServiceFactory();
         OMEXMLService service = sf.getInstance(OMEXMLService.class);
-        String xml = XMLTools.transformXML(
-                new StreamSource(source), UPDATE_201106);
         ome = (OME) service.createOMEXMLRoot(xml);
     }
 
@@ -495,7 +497,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(0, instrument0.sizeOfFilterList());
         Assert.assertEquals(0, instrument0.sizeOfFilterSetList());
         Assert.assertEquals(0, instrument0.sizeOfLightSourceList());
-        Assert.assertEquals(1, instrument0.sizeOfObjectiveList());
         /* Perhaps: Assert.assertEquals(1, instrument1()); */
     }
 
@@ -683,7 +684,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi0 = ome.getROI(0);
         Assert.assertNull(roi0.getDescription());
         Assert.assertNull(roi0.getName());
-        Assert.assertNull(roi0.getNamespace());
         union0 = roi0.getUnion();
         Assert.assertNotNull(union0);
         Assert.assertEquals(1, union0.sizeOfShapeList());
@@ -695,7 +695,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi1 = ome.getROI(1);
         Assert.assertEquals(ref.ROI1Description, roi1.getDescription());
         Assert.assertNull(roi1.getName());
-        Assert.assertNull(roi1.getNamespace());
         union1 = roi1.getUnion();
         Assert.assertNotNull(union1);
         Assert.assertEquals(1, union1.sizeOfShapeList());
@@ -707,7 +706,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi2 = ome.getROI(2);
         Assert.assertNull(roi2.getDescription());
         Assert.assertNull(roi2.getName());
-        Assert.assertNull(roi2.getNamespace());
         union2 = roi2.getUnion();
         Assert.assertNotNull(union2);
         Assert.assertEquals(8, union2.sizeOfShapeList());
@@ -719,7 +717,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi3  = ome.getROI(3);
         Assert.assertNull(roi3.getDescription());
         Assert.assertNull(roi3.getName());
-        Assert.assertNull(roi3.getNamespace());
         union3 = roi3.getUnion();
         Assert.assertNotNull(union3);
         Assert.assertEquals(1, union3.sizeOfShapeList());
@@ -731,7 +728,6 @@ public class Schema2011_06_File_Upgrade_Test {
         roi4 = ome.getROI(4);
         Assert.assertNull(roi4.getDescription());
         Assert.assertNull(roi4.getName());
-        Assert.assertNull(roi4.getNamespace());
         union4 = roi4.getUnion();
         Assert.assertNotNull(union4);
         Assert.assertEquals(2, union4.sizeOfShapeList());
@@ -761,7 +757,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(ref.ROI1Shape1FontFamily, point1.getFontFamily());
         Assert.assertEquals(ref.ROI1Shape1FontSize, point1.getFontSize());
         Assert.assertEquals(ref.ROI1Shape1FontStyle, point1.getFontStyle());
-        Assert.assertEquals(ref.ROI1Shape1LineCap, point1.getLineCap());
         Assert.assertEquals(ref.ROI1Shape1StrokeDashArray, point1.getStrokeDashArray());
         Assert.assertEquals(ref.ROI1Shape1StrokeWidth, point1.getStrokeWidth());
         Assert.assertEquals(ref.ROI1Shape1Fill, point1.getFillColor());
@@ -793,7 +788,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape3() {
         Assert.assertNotNull(union2);
-        shape3 = union2.getShape(1);
+        shape3 = union2.getShape(0);
         Assert.assertEquals(Label.class.getName(), shape3.getClass().getName());
         Label label3 = (Label) shape3;
         Assert.assertEquals(ref.ROI2Shape3FillRule, label3.getFillRule());
@@ -807,7 +802,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape4() {
         Assert.assertNotNull(union2);
-        shape4 = union2.getShape(2);
+        shape4 = union2.getShape(4);
         Assert.assertEquals(Polygon.class.getName(), shape4.getClass().getName());
         Polygon polygon4 = (Polygon) shape4;
         Assert.assertEquals(ref.ROI2Shape4Stroke, polygon4.getStrokeColor());
@@ -818,7 +813,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape5() {
         Assert.assertNotNull(union2);
-        shape5 = union2.getShape(3);
+        shape5 = union2.getShape(5);
         Assert.assertEquals(Polyline.class.getName(), shape5.getClass().getName());
         Polyline polyline5 = (Polyline) shape5;
         Assert.assertEquals(ref.ROI2Shape5Stroke, polyline5.getStrokeColor());
@@ -831,7 +826,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape6() {
         Assert.assertNotNull(union2);
-        shape6 = union2.getShape(4);
+        shape6 = union2.getShape(6);
         Assert.assertEquals(Polyline.class.getName(), shape6.getClass().getName());
         Polyline polyline6 = (Polyline) shape6;
         Assert.assertEquals(ref.ROI2Shape6Stroke, polyline6.getStrokeColor());
@@ -843,7 +838,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape7() {
         Assert.assertNotNull(union2);
-        shape7 = union2.getShape(5);
+        shape7 = union2.getShape(1);
         Assert.assertEquals(Line.class.getName(), shape7.getClass().getName());
         Line line7 = (Line) shape7;
         Assert.assertEquals(ref.ROI2Shape7Stroke, line7.getStrokeColor());
@@ -859,7 +854,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape8() {
         Assert.assertNotNull(union2);
-        shape8 = union2.getShape(6);
+        shape8 = union2.getShape(2);
         Assert.assertEquals(Line.class.getName(), shape8.getClass().getName());
         Line line8 = (Line) shape8;
         Assert.assertEquals(ref.ROI2Shape8Stroke, line8.getStrokeColor());
@@ -874,7 +869,7 @@ public class Schema2011_06_File_Upgrade_Test {
     @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape9() {
         Assert.assertNotNull(union2);
-        shape9 = union2.getShape(7);
+        shape9 = union2.getShape(3);
         Assert.assertEquals(Line.class.getName(), shape9.getClass().getName());
         Line line9 = (Line) shape9;
         Assert.assertEquals(ref.ROI2Shape9Stroke, line9.getStrokeColor());
@@ -898,7 +893,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape11.getClass().getName());
         Label label11 = (Label) shape11;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label11.getText());
-        Assert.assertFalse(label11.getVisible());
         Assert.assertEquals(Double.valueOf(0), label11.getX());
         Assert.assertEquals(Double.valueOf(0), label11.getY());
     }
@@ -910,7 +904,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape12.getClass().getName());
         Label label12 = (Label) shape12;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label12.getText());
-        Assert.assertFalse(label12.getVisible());
         Assert.assertEquals(Double.valueOf(0), label12.getX());
         Assert.assertEquals(Double.valueOf(0), label12.getY());
     }
@@ -921,7 +914,6 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(Label.class.getName(), shape13.getClass().getName());
         Label label13 = (Label) shape13;
         Assert.assertEquals(MESSAGE_REMOVED_PATH, label13.getText());
-        Assert.assertFalse(label13.getVisible());
         Assert.assertEquals(Double.valueOf(0), label13.getX());
         Assert.assertEquals(Double.valueOf(0), label13.getY());
     }

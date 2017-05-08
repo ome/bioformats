@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -52,8 +52,6 @@ import loci.formats.meta.MetadataStore;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
-
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
@@ -375,7 +373,7 @@ public class Colorizer {
               Length wavelength =
                 retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
               if (wavelength != null) {
-                double wave = wavelength.value(UNITS.NM).doubleValue();
+                double wave = wavelength.value(UNITS.NANOMETER).doubleValue();
                 if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
                   color = Color.BLUE;
                 }

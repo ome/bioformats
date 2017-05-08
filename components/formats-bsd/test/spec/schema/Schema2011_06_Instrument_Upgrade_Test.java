@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -166,12 +166,12 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource0() {
         Assert.assertNotNull(ome);
-        lightsource0 = instrument0.getLightSource(0);
+        lightsource0 = instrument0.getLightSource(1);
         Assert.assertNotNull(lightsource0);
         Assert.assertEquals(ref.Instrument0LightSource0Manufacturer, lightsource0.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource0Model, lightsource0.getModel());
         Assert.assertEquals(ref.Instrument0LightSource0SerialNumber, lightsource0.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MW).doubleValue());
+        Assert.assertEquals(ref.Instrument0LightSource0Power, lightsource0.getPower().value(UNITS.MILLIWATT).doubleValue());
         Assert.assertEquals(Laser.class.getName(), lightsource0.getClass().getName());
         laser0 = (Laser) lightsource0;
         Assert.assertEquals(ref.Instrument0LightSource0LaserType, laser0.getType());
@@ -187,12 +187,12 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource1() {
         Assert.assertNotNull(ome);
-        lightsource1 = instrument0.getLightSource(1);
+        lightsource1 = instrument0.getLightSource(0);
         Assert.assertNotNull(lightsource1);
         Assert.assertEquals(ref.Instrument0LightSource1Manufacturer, lightsource1.getManufacturer());
         Assert.assertEquals(ref.Instrument0LightSource1Model, lightsource1.getModel());
         Assert.assertEquals(ref.Instrument0LightSource1SerialNumber, lightsource1.getSerialNumber());
-        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MW).doubleValue());
+        Assert.assertEquals(ref.Instrument0LightSource1Power, lightsource1.getPower().value(UNITS.MILLIWATT).doubleValue());
         Assert.assertEquals(Arc.class.getName(), lightsource1.getClass().getName());
         arc1 = (Arc) lightsource1;
         Assert.assertEquals(ref.Instrument0LightSource1ArcType, arc1.getType());

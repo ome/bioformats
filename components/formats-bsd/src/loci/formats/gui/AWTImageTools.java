@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -450,8 +450,14 @@ public final class AWTImageTools {
       LOGGER.warn("SamplesPerPixel is null; it is assumed to be 1.");
     }
     int channels = nChannels == null ? 1 : nChannels.getValue();
-    boolean littleEndian =
-      !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    boolean littleEndian = false;
+    if (meta.getPixelsBigEndian(series) != null)
+    {
+      littleEndian = !meta.getPixelsBigEndian(series).booleanValue();
+    }
+    else if (meta.getPixelsBinDataCount(series) == 0) {
+      littleEndian = !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
+    }
     return makeImage(data, width, height, channels,
       interleaved, FormatTools.getBytesPerPixel(type),
       FormatTools.isFloatingPoint(type), littleEndian,

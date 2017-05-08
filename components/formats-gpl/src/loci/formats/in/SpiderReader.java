@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
@@ -74,6 +73,11 @@ public class SpiderReader extends FormatReader {
     final int blockLen = 104;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     int size = (int) stream.readFloat() * 4;
+    if (size == 0) {
+      stream.seek(0);
+      stream.order(false);
+      size = (int) stream.readFloat() * 4;
+    }
     stream.skipBytes(4);
     size *= (int) stream.readFloat();
     stream.seek(44);
@@ -85,7 +89,7 @@ public class SpiderReader extends FormatReader {
     if (slices > 0) {
       size *= slices;
     }
-    return size + headerSize == stream.length();
+    return size + headerSize == stream.length() || size == stream.length();
   }
 
   /**
@@ -131,6 +135,13 @@ public class SpiderReader extends FormatReader {
     in.order(isLittleEndian());
 
     int nSlice = (int) in.readFloat();
+    m.littleEndian = nSlice > 0;
+    if (!isLittleEndian()) {
+      in.order(isLittleEndian());
+      in.seek(0);
+      nSlice = (int) in.readFloat();
+    }
+
     int nRow = (int) in.readFloat();
     int irec = (int) in.readFloat();
     in.skipBytes(4);

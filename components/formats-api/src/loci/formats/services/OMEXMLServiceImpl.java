@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,10 +33,13 @@
 package loci.formats.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,7 +57,6 @@ import loci.formats.MetadataTools;
 import loci.formats.Modulo;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
-import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.meta.ModuloAnnotation;
@@ -63,6 +65,8 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 
 import ome.units.quantity.Length;
+
+import ome.xml.meta.MetadataConverter;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.BinData;
@@ -73,6 +77,8 @@ import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
+import ome.xml.model.TiffData;
+import ome.xml.model.Annotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
 
@@ -93,7 +99,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
 
   /** Latest OME-XML version namespace. */
-  public static final String LATEST_VERSION = "2015-01";
+  public static final String LATEST_VERSION = "2016-06";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -126,6 +132,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     XSLT_PATH + "2012-06-to-2013-06.xsl";
   private static final String XSLT_201306 =
     XSLT_PATH + "2013-06-to-2015-01.xsl";
+  private static final String XSLT_201501 =
+    XSLT_PATH + "2015-01-to-2016-06.xsl";
 
   // -- Cached stylesheets --
 
@@ -143,9 +151,35 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static Templates update201106;
   private static Templates update201206;
   private static Templates update201306;
+  private static Templates update201501;
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
+
+  /**
+   * The pattern of system ID URLs for OME-XML schema definitions.
+   */
+  private static final Pattern SCHEMA_URL_PATTERN = Pattern.compile(
+      "http://www.openmicroscopy.org/Schemas/" +
+      "\\p{Alpha}+/(\\w+-\\w+)/(\\p{Alpha}+)\\.xsd");
+
+  /**
+   * Finds OME-XML schema definitions in specifications.jar.
+   */
+  private static final XMLTools.SchemaReader SCHEMA_CLASSPATH_READER =
+      new XMLTools.SchemaReader() {
+        @Override
+        public InputStream getSchemaAsStream(String url) {
+          final Matcher matcher = SCHEMA_URL_PATTERN.matcher(url);
+          if (matcher.matches()) {
+            /* from specification.jar */
+            return getClass().getResourceAsStream("/released-schema/" +
+                 matcher.group(1) + "/" + matcher.group(2) + ".xsd");
+          } else {
+            return null;
+          }
+        }
+      };
 
   /**
    * Default constructor.
@@ -201,11 +235,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2008-09");
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
-      if (!version.equals("2009-09") && !version.equals("2010-04") &&
-        !version.equals("2010-06") && !version.equals("2011-06") &&
-        !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+      if (version.compareTo("2009-09") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200809 stylesheet.");
         if (update200809 == null) {
@@ -216,11 +246,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
-      if (!version.equals("2010-04") && !version.equals("2010-06") &&
-        !version.equals("2011-06") && !version.equals("2012-06") &&
-        !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+
+      if (version.compareTo("2010-04") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200909 stylesheet.");
         if (update200909 == null) {
@@ -233,10 +260,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
 
-      if (!version.equals("2010-06") && !version.equals("2011-06") &&
-        !version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") )
-      {
+      if (version.compareTo("2010-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
         if (update201004 == null) {
@@ -248,9 +272,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
 
-      if (!version.equals("2011-06") && !version.equals("2012-06") &&
-        !version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2011-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201006 stylesheet.");
         if (update201006 == null) {
@@ -262,8 +284,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2011-06");
 
-      if (!version.equals("2012-06") && !version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2012-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201106 stylesheet.");
         if (update201106 == null) {
@@ -275,8 +296,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2012-06");
 
-      if (!version.equals("2013-06") &&
-        !version.equals("2015-01") ) {
+      if (version.compareTo("2013-06") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201206 stylesheet.");
         if (update201206 == null) {
@@ -288,7 +308,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2013-06");
 
-      if (!version.equals("2015-01") ) {
+      if (version.compareTo("2015-01") < 0) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201306 stylesheet.");
         if (update201306 == null) {
@@ -300,6 +320,17 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2015-01");
 
+      if (version.compareTo("2016-06") < 0) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201501 stylesheet.");
+        if (update201501 == null) {
+          update201501 =
+            XMLTools.getStylesheet(XSLT_201501, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update201501);
+      }
+      else transformed = xml;
+      LOGGER.debug("XML updated to at least 2016-06");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
@@ -524,7 +555,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         return false;
       }
     }
-    return XMLTools.validateXML(xml, "OME-XML");
+    return XMLTools.validateXML(xml, "OME-XML", SCHEMA_CLASSPATH_READER);
   }
 
   /**
@@ -868,6 +899,23 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     omexmlMeta.setRoot(root);
   }
 
+  /** @see OMEXMLService#removeTiffData(OMEXMLMetadata) */
+  @Override
+  public void removeTiffData(OMEXMLMetadata omexmlMeta) {
+    omexmlMeta.resolveReferences();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
+    List<Image> images = root.copyImageList();
+    for (Image img : images) {
+      Pixels pix = img.getPixels();
+      List<TiffData> tiffData = pix.copyTiffDataList();
+      for (TiffData tiff : tiffData) {
+        pix.removeTiffData(tiff);
+      }
+      pix.setMetadataOnly(null);
+    }
+    omexmlMeta.setRoot(root);
+  }
+
   /** @see OMEXMLService#removeChannels(OMEXMLMetadata, int, int) */
   @Override
   public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {
@@ -909,7 +957,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
     src1.resolveReferences();
     src2.resolveReferences();
- 
+
     OMEXMLMetadataRoot omeRoot1 = (OMEXMLMetadataRoot) src1.getRoot();
     OMEXMLMetadataRoot omeRoot2 = (OMEXMLMetadataRoot) src2.getRoot();
 

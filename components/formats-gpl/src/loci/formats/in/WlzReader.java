@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -69,7 +69,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
 import loci.formats.services.WlzService;
 import loci.formats.meta.MetadataStore;
 
@@ -176,9 +175,9 @@ public class WlzReader extends FormatReader {
       PositiveFloat x = new PositiveFloat(Math.abs(wlz.getVoxSzX()));
       PositiveFloat y = new PositiveFloat(Math.abs(wlz.getVoxSzY()));
       PositiveFloat z = new PositiveFloat(Math.abs(wlz.getVoxSzZ()));
-      store.setPixelsPhysicalSizeX(FormatTools.createLength(x, UNITS.MICROM), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.createLength(y, UNITS.MICROM), 0);
-      store.setPixelsPhysicalSizeZ(FormatTools.createLength(z, UNITS.MICROM), 0);
+      store.setPixelsPhysicalSizeX(FormatTools.createLength(x, UNITS.MICROMETER), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.createLength(y, UNITS.MICROMETER), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.createLength(z, UNITS.MICROMETER), 0);
       store.setStageLabelName(wlz.getWlzOrgLabelName(), 0);
       store.setStageLabelX(new Length(wlz.getOrgX(), UNITS.REFERENCEFRAME), 0);
       store.setStageLabelY(new Length(wlz.getOrgY(), UNITS.REFERENCEFRAME), 0);

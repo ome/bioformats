@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,8 +40,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import loci.formats.tiff.TiffRational;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.ElectricPotential;
 import ome.units.quantity.Frequency;
@@ -310,8 +308,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("event")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
-          dimensionOrder += "Z";
+        if (dimensionOrder.indexOf('Z') == -1) {
+          dimensionOrder += 'Z';
         }
         if (Double.compare(voxelZ, 1) == 0) {
           voxelZ = voxel;
@@ -319,8 +317,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("z")) {
         m.sizeZ *= size;
-        if (dimensionOrder.indexOf("Z") == -1) {
-          dimensionOrder += "Z";
+        if (dimensionOrder.indexOf('Z') == -1) {
+          dimensionOrder += 'Z';
         }
         
         ArrayList<Double> uniqueZ = new ArrayList<Double>();
@@ -350,8 +348,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
         m.sizeC *= size;
-        if (dimensionOrder.indexOf("C") == -1) {
-          dimensionOrder += "C";
+        if (dimensionOrder.indexOf('C') == -1) {
+          dimensionOrder += 'C';
         }
         voxelC = voxel;
       }
@@ -359,14 +357,14 @@ public class FluoviewReader extends BaseTiffReader {
         name.equals("animation"))
       {
         m.sizeT *= size;
-        if (dimensionOrder.indexOf("T") == -1) {
-          dimensionOrder += "T";
+        if (dimensionOrder.indexOf('T') == -1) {
+          dimensionOrder += 'T';
         }
         voxelT = voxel;
         timeIndex = i - 2;
       }
       else {
-        if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+        if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
         seriesCount *= size;
 
         if (name.equals("montage")) montageIndex = i - 2;
@@ -374,10 +372,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (dimensionOrder.indexOf("Z") == -1) dimensionOrder += "Z";
-    if (dimensionOrder.indexOf("T") == -1) dimensionOrder += "T";
-    if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
-    if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
+    if (dimensionOrder.indexOf('Z') == -1) dimensionOrder += 'Z';
+    if (dimensionOrder.indexOf('T') == -1) dimensionOrder += 'T';
+    if (dimensionOrder.indexOf('C') == -1) dimensionOrder += 'C';
+    if (dimensionOrder.indexOf('S') == -1) dimensionOrder += 'S';
 
     m.imageCount = ifds.size() / seriesCount;
     if (getSizeZ() > getImageCount()) m.sizeZ = getImageCount();
@@ -460,7 +458,7 @@ public class FluoviewReader extends BaseTiffReader {
         setSeries(s);
         for (int i=0; i<getImageCount(); i++) {
           int index = getImageIndex(i);
-          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.S), s, i);
+          store.setPlaneDeltaT(new Time(stamps[timeIndex][index], UNITS.SECOND), s, i);
         }
       }
       setSeries(0);
@@ -480,7 +478,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
-      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.S), i);
+      store.setPixelsTimeIncrement(new Time(voxelT, UNITS.SECOND), i);
 
       int montage = getMontage(i);
       int field = getField(i);
@@ -515,7 +513,7 @@ public class FluoviewReader extends BaseTiffReader {
         final Length yl = new Length(posY, UNITS.REFERENCEFRAME);
         Length zl = new Length(posZ, UNITS.REFERENCEFRAME);
         if (zPositions != null && zPositions.length > image) {
-          zl = new Length(zPositions[image], UNITS.MICROM);
+          zl = new Length(zPositions[image], UNITS.MICROMETER);
         }
         store.setPlanePositionX(xl, i, image);
         store.setPlanePositionY(yl, i, image);
@@ -538,7 +536,7 @@ public class FluoviewReader extends BaseTiffReader {
     for (int i=0; i<getSizeC(); i++) {
       if (voltages != null && voltages[i] != null) {
         store.setDetectorSettingsVoltage(
-                new ElectricPotential(new Double(voltages[i]), UNITS.V), 0, i);
+                new ElectricPotential(new Double(voltages[i]), UNITS.VOLT), 0, i);
       }
       if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
@@ -653,7 +651,7 @@ public class FluoviewReader extends BaseTiffReader {
   private void initAlternateMetadataStore() throws FormatException {
     MetadataStore store = makeFilterMetadata();
     store.setImagingEnvironmentTemperature(
-      new Temperature(new Double(temperature.floatValue()), UNITS.DEGREEC), 0);
+      new Temperature(new Double(temperature.floatValue()), UNITS.CELSIUS), 0);
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
@@ -665,14 +663,14 @@ public class FluoviewReader extends BaseTiffReader {
 
     if (exposureTime != null) {
       for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.S), 0, i);
+        store.setPlaneExposureTime(new Time(new Double(exposureTime.floatValue()), UNITS.SECOND), 0, i);
       }
     }
 
     for (int i=0; i<getEffectiveSizeC(); i++) {
       store.setDetectorSettingsID(detectorID, 0, i);
       store.setDetectorSettingsReadOutRate(
-        new Frequency(new Double(readoutTime.floatValue()), UNITS.HZ), 0, i);
+        new Frequency(new Double(readoutTime.floatValue()), UNITS.HERTZ), 0, i);
     }
   }
 
@@ -755,7 +753,7 @@ public class FluoviewReader extends BaseTiffReader {
       String[] lines = comment.split("\n");
       for (String token : lines) {
         token = token.trim();
-        int eq = token.indexOf("=");
+        int eq = token.indexOf('=');
         if (eq != -1) {
           String key = token.substring(0, eq);
           String value = token.substring(eq + 1);
@@ -829,9 +827,9 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else if (token.startsWith("Z") && token.indexOf(" um ") != -1) {
           // looking for "Z - x um in y planes"
-          String z = token.substring(token.indexOf("-") + 1);
+          String z = token.substring(token.indexOf('-') + 1);
           z = z.replaceAll("\\p{Alpha}", "").trim();
-          int firstSpace = z.indexOf(" ");
+          int firstSpace = z.indexOf(' ');
           double size = Double.parseDouble(z.substring(0, firstSpace));
           double nPlanes = Double.parseDouble(z.substring(firstSpace).trim());
           voxelZ = size / nPlanes;
@@ -843,7 +841,6 @@ public class FluoviewReader extends BaseTiffReader {
         Timestamp timestamp = Timestamp.valueOf(date);
         if (timeIndex >= 0 && timestamp != null) {
           long ms = timestamp.asInstant().getMillis();
-          int nChars = String.valueOf(getImageCount()).length();
           for (int i=0; i<getImageCount(); i++) {
             int[] zct = getZCTCoords(i);
             String key = String.format(
@@ -859,7 +856,7 @@ public class FluoviewReader extends BaseTiffReader {
       int end = comment.indexOf("[Version Info End]");
       if (start != -1 && end != -1 && end > start) {
         comment = comment.substring(start + 14, end).trim();
-        start = comment.indexOf("=") + 1;
+        start = comment.indexOf('=') + 1;
         end = comment.indexOf("\n");
         if (end > start) comment = comment.substring(start, end).trim();
         else comment = comment.substring(start).trim();

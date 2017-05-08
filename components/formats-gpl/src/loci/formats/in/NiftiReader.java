@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -37,10 +37,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
-
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
+import ome.units.unit.Unit;
 import ome.units.UNITS;
 
 /**
@@ -76,18 +75,20 @@ public class NiftiReader extends FormatReader {
   private short nDimensions;
   private String description;
   private double voxelWidth, voxelHeight, sliceThickness, deltaT;
+  private Unit<Length> spatialUnit = UNITS.MICROMETER;
+  private Unit<Time> timeUnit = UNITS.SECOND;
 
   // -- Constructor --
 
   /** Constructs a new NIfTI reader. */
   public NiftiReader() {
-    super("NIfTI", new String[] {"nii", "img", "hdr"});
+    super("NIfTI", new String[] {"nii", "img", "hdr", "nii.gz"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN,
       FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
-    datasetDescription = "A single .nii file or one .img file and a " +
-      "similarly-named .hdr file";
+    datasetDescription = "A single .nii file or a single .nii.gz file or one" +
+      " .img file and a similarly-named .hdr file";
   }
 
   // -- IFormatReader API methods --
@@ -147,7 +148,8 @@ public class NiftiReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int planeSize = FormatTools.getPlaneSize(this);
+    pixelFile.seek(0);
+    long planeSize = FormatTools.getPlaneSize(this);
     pixelFile.seek(pixelOffset + no * planeSize);
     readPlane(pixelFile, x, y, w, h, buf);
 
@@ -183,6 +185,8 @@ public class NiftiReader extends FormatReader {
       nDimensions = 0;
       description = null;
       voxelWidth = voxelHeight = sliceThickness = deltaT = 0d;
+      spatialUnit = UNITS.MICROMETER;
+      timeUnit = UNITS.SECOND;
     }
   }
 
@@ -225,9 +229,11 @@ public class NiftiReader extends FormatReader {
       pixelsFilename = id.substring(0, id.lastIndexOf(".")) + ".img";
       pixelFile = new RandomAccessInputStream(pixelsFilename);
     }
-    else if (id.endsWith(".nii")) {
+    else if (checkSuffix(id, "nii")) {
       pixelsFilename = id;
       pixelFile = in;
+    } else {
+      throw new FormatException("File does not have one of the required NIfTI extensions (.img, .hdr, .nii, .nii.gz)");
     }
 
     in.order(little);
@@ -275,11 +281,11 @@ public class NiftiReader extends FormatReader {
       store.setImageDescription(description, 0);
 
       Length sizeX =
-        FormatTools.getPhysicalSizeX(new Double(voxelWidth));
+        FormatTools.getPhysicalSizeX(new Double(voxelWidth), spatialUnit);
       Length sizeY =
-        FormatTools.getPhysicalSizeY(new Double(voxelHeight));
+        FormatTools.getPhysicalSizeY(new Double(voxelHeight), spatialUnit);
       Length sizeZ =
-        FormatTools.getPhysicalSizeZ(new Double(sliceThickness));
+        FormatTools.getPhysicalSizeZ(new Double(sliceThickness), spatialUnit);
 
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, 0);
@@ -290,7 +296,7 @@ public class NiftiReader extends FormatReader {
       if (sizeZ != null) {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
-      store.setPixelsTimeIncrement(new Time(new Double(deltaT), UNITS.S), 0);
+      store.setPixelsTimeIncrement(new Time(new Double(deltaT), timeUnit), 0);
     }
   }
 
@@ -337,12 +343,13 @@ public class NiftiReader extends FormatReader {
   }
 
   private void populateExtendedMetadata() throws IOException {
-    in.seek(40);
-    char sliceOrdering = in.readChar();
+    in.seek(39);
+    byte sliceOrdering = in.readByte();
     in.skipBytes(8);
     short dim5 = in.readShort();
     short dim6 = in.readShort();
     short dim7 = in.readShort();
+    short dim8 = in.readShort();
 
     float intent1 = in.readFloat();
     float intent2 = in.readFloat();
@@ -365,41 +372,31 @@ public class NiftiReader extends FormatReader {
     float scaleSlope = in.readFloat();
     float scaleIntercept = in.readFloat();
     short sliceEnd = in.readShort();
-    char sliceCode = in.readChar();
-    char units = in.readChar();
+    byte sliceCode = in.readByte();
+    byte units = in.readByte();
 
     int spatialUnits = (units & 7);
     int timeUnits = (units & 0x38);
 
     // correct physical dimensions according to spatial and time units
 
-    int spatialCorrection = 1;
-
     switch (spatialUnits) {
       case UNITS_METER:
-        spatialCorrection = 1000000;
+        spatialUnit = UNITS.METER;
         break;
       case UNITS_MM:
-        spatialCorrection = 1000;
+        spatialUnit = UNITS.MILLIMETER;
         break;
     }
-
-    voxelWidth *= spatialCorrection;
-    voxelHeight *= spatialCorrection;
-    sliceThickness *= spatialCorrection;
-
-    int timeCorrection = 1;
 
     switch (timeUnits) {
       case UNITS_MSEC:
-        timeCorrection = 1000;
+        timeUnit = UNITS.MILLISECOND;
         break;
       case UNITS_USEC:
-        timeCorrection = 1000000;
+        timeUnit = UNITS.MICROSECOND;
         break;
     }
-
-    deltaT /= timeCorrection;
 
     float calMax = in.readFloat();
     float calMin = in.readFloat();
@@ -430,7 +427,7 @@ public class NiftiReader extends FormatReader {
 
     String intentName = in.readString(16);
 
-    if (in.getFilePointer() + 4 < in.length()) {
+    if (in.getFilePointer() + 8 < in.length()) {
       in.skipBytes(4);
       byte extension = in.readByte();
       in.skipBytes(3);
@@ -473,6 +470,7 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Dimension 5", dim5);
     addGlobalMeta("Dimension 6", dim6);
     addGlobalMeta("Dimension 7", dim7);
+    addGlobalMeta("Dimension 8", dim8);
     addGlobalMeta("Intent #1", intent1);
     addGlobalMeta("Intent #2", intent2);
     addGlobalMeta("Intent #3", intent3);
@@ -500,6 +498,10 @@ public class NiftiReader extends FormatReader {
     addGlobalMeta("Quaternion x parameter", quaternionX);
     addGlobalMeta("Quaternion y parameter", quaternionY);
     addGlobalMeta("Quaternion z parameter", quaternionZ);
+    addGlobalMeta("Slice code", sliceCode);
+    addGlobalMeta("XYZT units", units);
+    addGlobalMeta("XYZ units", spatialUnits);
+    addGlobalMeta("Time units", timeUnits);
   }
 
 }

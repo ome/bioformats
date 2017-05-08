@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -413,14 +413,14 @@ public class ConfigWindow extends JFrame
       if (line == null) break;
 
       // ignore characters following # sign (comments)
-      int ndx = line.indexOf("#");
+      int ndx = line.indexOf('#');
       if (ndx >= 0) line = line.substring(0, ndx);
       boolean space = line.startsWith(" ");
       line = line.trim();
       if (line.equals("")) continue;
 
       // parse key/value pairs
-      int equals = line.indexOf("=");
+      int equals = line.indexOf('=');
       if (line.startsWith("[")) {
         // new entry
         if (props == null) props = new HashMap<String, String>();

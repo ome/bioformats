@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -39,7 +39,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.quantity.Length;
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -75,7 +74,7 @@ public class UnisokuReader extends FormatReader {
       return super.isThisType(name, open);
     }
 
-    if (name.indexOf(".") < 0) {
+    if (name.indexOf('.') < 0) {
       return false;
     }
 
@@ -163,7 +162,7 @@ public class UnisokuReader extends FormatReader {
       lines[i] = lines[i].trim();
       if (lines[i].startsWith(":")) {
         String key = lines[i++];
-        StringBuffer data = new StringBuffer();
+        final StringBuilder data = new StringBuilder();
         while (i < lines.length && !lines[i].trim().startsWith(":")) {
           data.append(" ");
           data.append(lines[i++].trim());
@@ -180,7 +179,7 @@ public class UnisokuReader extends FormatReader {
           date = DateTools.formatDate(value, "MM/dd/yy HH:mm:ss");
         }
         else if (key.startsWith(":ascii flag; data type")) {
-          value = value.substring(value.indexOf(" ") + 1);
+          value = value.substring(value.indexOf(' ') + 1);
           int type = Integer.parseInt(value);
           boolean signed = type % 2 == 1;
           int bytes = type / 2;

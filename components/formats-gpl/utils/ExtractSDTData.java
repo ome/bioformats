@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,7 +37,7 @@ public class ExtractSDTData {
       System.exit(1);
     }
     String id = args[0];
-    String tid = id.substring(0, id.indexOf("."));
+    String tid = id.substring(0, id.indexOf('.'));
     SDTReader r = new SDTReader();
     r.setId(id);
     int bins = r.getTimeBinCount();

@@ -9,7 +9,6 @@ Type "ant -p" for a list of targets.
 <project name="sphinx" default="html" basedir=".">
   <description>Build file for sphinx documentation</description>
   <property name="root.dir" location="../.."/>
-  <import file="${root.dir}/ant/version.xml"/>
   <import file="${root.dir}/ant/global.xml"/>
 
   <property name="sphinx.build" value="sphinx-build"/>
@@ -18,19 +17,41 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
 
-  <target name="init" depends="release-version">
-    <property name="sphinx.release" value="${release.shortversion}"/>
+  <target name="init">
+    <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
+    <propertyregex property="release.major" input="${release.version}" regexp="${release.version.regex}" select="\1"/>
+    <propertyregex property="release.minor" input="${release.version}" regexp="${release.version.regex}" select="\2"/>
+
+    <property name="sphinx.release" value="${release.version}"/>
     <property name="sphinx.version" value="${release.major}.${release.minor}"/>
-    <property name="sphinx.source.branch" value="develop"/>
-    <property name="sphinx.source.user" value="openmicroscopy"/>
-    <property name="sphinx.omerodoc.uri" value="http://www.openmicroscopy.org/site/support/omero5.1"/>
+    <if>
+      <isset property="sphinx.source.branch"/>
+      <then>
+        <property name="sphinx.bioformats.source.branch" value="${sphinx.source.branch}"/>
+        <property name="sphinx.common_java.source.branch" value="${sphinx.source.branch}"/>
+      </then>
+    </if>
+    <property name="sphinx.bioformats.source.branch" value="develop"/>
+    <property name="sphinx.common_java.source.branch" value="master"/>
+    <if>
+      <isset property="sphinx.source.user"/>
+      <then>
+        <property name="sphinx.openmicroscopy_source.user" value="${sphinx.source.user}"/>
+        <property name="sphinx.ome_source.user" value="${sphinx.source.user}"/>
+      </then>
+    </if>
+    <property name="sphinx.openmicroscopy_source.user" value="openmicroscopy"/>
+    <property name="sphinx.ome_source.user" value="ome"/>
 
     <copy file="conf.py.in" tofile="conf.py" overwrite="true"/>
     <replace file="conf.py" token="@sphinx_srcdir@" value="."/>
     <replace file="conf.py" token="@sphinx_builddir@" value="."/>
-    <replace file="conf.py" token="@sphinx_source_branch@" value="${sphinx.source.branch}"/>
-    <replace file="conf.py" token="@sphinx_source_user@" value="${sphinx.source.user}"/>
-    <replace file="conf.py" token="@sphinx_omerodoc_uri@" value="${sphinx.omerodoc.uri}"/>
+    <replace file="conf.py" token="@bioformats_source_branch@" value="${sphinx.bioformats.source.branch}"/>
+    <replace file="conf.py" token="@common_java_source_branch@" value="${sphinx.common_java.source.branch}"/>
+    <replace file="conf.py" token="@openmicroscopy_source_user@" value="${sphinx.openmicroscopy_source.user}"/>
+    <replace file="conf.py" token="@ome_source_user@" value="${sphinx.ome_source.user}"/>
+    <replace file="conf.py" token="@ome_common_version@" value="${ome-common.version}"/>
+    <replace file="conf.py" token="@ome_model_version@" value="${ome-model.version}"/>
   </target>
 
   <macrodef name="sphinx" description="Run sphinx-build">

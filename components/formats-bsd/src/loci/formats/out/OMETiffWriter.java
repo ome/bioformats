@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,29 +33,34 @@
 package loci.formats.out;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.Location;
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffSaver;
+import loci.formats.in.MetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 
 /**
  * OMETiffWriter is the file format writer for OME-TIFF files.
@@ -70,6 +75,8 @@ public class OMETiffWriter extends TiffWriter {
     "Please edit cautiously (if at all), and back up the original data " +
     "before doing so. For more information, see the OME-TIFF web site: " +
     FormatTools.URL_OME_TIFF + ". -->";
+
+  public static final String COMPANION_KEY = "ometiff.companion";
 
   // -- Fields --
 
@@ -96,12 +103,24 @@ public class OMETiffWriter extends TiffWriter {
       if (currentId != null) {
         setupServiceAndMetadata();
 
-        // remove any BinData elements from the OME-XML
+        // remove any BinData and old TiffData elements from the OME-XML
         service.removeBinData(omeMeta);
+        service.removeTiffData(omeMeta);
 
         for (int series=0; series<omeMeta.getImageCount(); series++) {
           setSeries(series);
           populateImage(omeMeta, series);
+        }
+
+        String companion = getCompanion();
+        String companionUUID = null;
+        if (null != companion) {
+          String companionXML = getOMEXML(companion);
+          PrintWriter out = new PrintWriter(companion, Constants.ENCODING);
+          out.println(XMLTools.indentXML(companionXML, true));
+          out.close();
+          companionUUID = "urn:uuid:" + getUUID(
+              new Location(companion).getName());
         }
 
         List<String> files = new ArrayList<String>();
@@ -110,7 +129,16 @@ public class OMETiffWriter extends TiffWriter {
             if (!files.contains(f) && f != null) {
               files.add(f);
 
-              String xml = getOMEXML(f);
+              String xml = null;
+              if (null != companion) {
+                xml = getBinaryOnlyOMEXML(f, companion, companionUUID);
+              } else {
+                xml = getOMEXML(f);
+              }
+              xml = insertWarningComment(xml);
+              if (getMetadataOptions().isValidate()) {
+                service.validateOMEXML(xml);
+              }
 
               // write OME-XML to the first IFD's comment
               saveComment(f, xml);
@@ -219,6 +247,15 @@ public class OMETiffWriter extends TiffWriter {
     }
   }
 
+  // -- OMETiff-specific methods --
+  public String getCompanion() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).get(COMPANION_KEY);
+    }
+    return null;
+  }
+
   // -- Helper methods --
 
   /** Gets the UUID corresponding to the given filename. */
@@ -246,10 +283,19 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta = service.createOMEXMLMetadata(omexml);
   }
 
+  private String insertWarningComment(String xml) {
+    String prefix = xml.substring(0, xml.indexOf('>') + 1);
+    String suffix = xml.substring(xml.indexOf('>') + 1);
+    return prefix + WARNING_COMMENT + suffix;
+  }
+
   private String getOMEXML(String file) throws FormatException, IOException {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
+
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omeMeta.getRoot();
+    root.setCreator(FormatTools.CREATOR);
 
     String xml;
     try {
@@ -258,11 +304,22 @@ public class OMETiffWriter extends TiffWriter {
     catch (ServiceException se) {
       throw new FormatException(se);
     }
+    return xml;
+  }
 
-    // insert warning comment
-    String prefix = xml.substring(0, xml.indexOf(">") + 1);
-    String suffix = xml.substring(xml.indexOf(">") + 1);
-    return prefix + WARNING_COMMENT + suffix;
+  private String getBinaryOnlyOMEXML(
+      String file, String companion, String companionUUID) throws
+        FormatException, IOException, DependencyException, ServiceException {
+    ServiceFactory factory = new ServiceFactory();
+    OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    OMEXMLMetadata meta = service.createOMEXMLMetadata();
+    String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
+    meta.setUUID(uuid);
+    meta.setBinaryOnlyMetadataFile(new Location(companion).getName());
+    meta.setBinaryOnlyUUID(companionUUID);
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
+    root.setCreator(FormatTools.CREATOR);
+    return service.getOMEXML(meta);
   }
 
   private void saveComment(String file, String xml) throws IOException {

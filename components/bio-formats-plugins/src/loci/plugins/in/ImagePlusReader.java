@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,16 +45,12 @@ import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
-import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
@@ -550,7 +546,7 @@ public class ImagePlusReader implements StatusReporter {
       title = fp.getPattern();
       if (title == null) {
         title = file;
-        if (title.indexOf(".") != -1) {
+        if (title.indexOf('.') != -1) {
           title = title.substring(0, title.lastIndexOf("."));
         }
       }
@@ -575,7 +571,6 @@ public class ImagePlusReader implements StatusReporter {
     r.setSeries(series);
 
     final int[] zct = r.getZCTCoords(ndx);
-    final int sizeC = r.getSizeC();
     final StringBuffer sb = new StringBuffer();
 
     int[] subC;

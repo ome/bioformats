@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -51,10 +51,7 @@ import static org.testng.AssertJUnit.*;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
-import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
-import ome.xml.model.DoubleAnnotation;
-import ome.xml.model.External;
 import ome.xml.model.Filament;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
@@ -63,7 +60,6 @@ import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Reference;
 import ome.xml.model.CommentAnnotation;
 import ome.xml.model.TiffData;
@@ -94,10 +90,8 @@ import ome.xml.model.enums.FilterType;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
-import ome.units.quantity.Power;
 import ome.units.UNITS;
 
 import org.testng.annotations.BeforeClass;
@@ -246,7 +240,7 @@ public class InOutCurrentTest {
   public static final Double LIGHTSOURCE_LED_POWER = 10.0;
 
   public static final LaserType LASER_TYPE = LaserType.DYE;
-  
+
   public static final ArcType ARC_TYPE = ArcType.HGXE;
 
   public static final FilamentType FILAMENT_TYPE = FilamentType.HALOGEN;
@@ -280,12 +274,12 @@ public class InOutCurrentTest {
 
   public static final Double RECTANGLE_HEIGHT = 256.0;
 
-  public static final String TIFF_DATA_UUID = 
+  public static final String TIFF_DATA_UUID =
     "6DFA2954-FA9B-4447-A26C-82F9580D9425";
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2015-01";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -293,7 +287,7 @@ public class InOutCurrentTest {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2015-01/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd";
 
   private Document document;
 
@@ -511,7 +505,7 @@ public class InOutCurrentTest {
     assertNotNull(laser);
     assertEquals(LIGHTSOURCE_LASER_ID, laser.getID());
     assertEquals(LIGHTSOURCE_LASER_MODEL, laser.getModel());
-    assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LASER_POWER, laser.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, laser.getType());
   }
 
@@ -519,7 +513,7 @@ public class InOutCurrentTest {
   public void testValidLaserMetadata() {
     assertEquals(LIGHTSOURCE_LASER_ID, metadata.getLaserID(0, 0));
     assertEquals(LIGHTSOURCE_LASER_MODEL, metadata.getLaserModel(0, 0));
-    assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, metadata.getLaserType(0, 0));
   }
 
@@ -541,7 +535,7 @@ public class InOutCurrentTest {
     assertNotNull(laserPump);
     assertEquals(LIGHTSOURCE_PUMP_ID, laserPump.getID());
     assertEquals(LIGHTSOURCE_PUMP_MODEL, laserPump.getModel());
-    assertEquals(LIGHTSOURCE_PUMP_POWER, laserPump.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_PUMP_POWER, laserPump.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, laserPump.getType());
     assertEquals(laser.getLinkedPump(),laserPump);
   }
@@ -550,7 +544,7 @@ public class InOutCurrentTest {
   public void testValidPumpMetadata() {
     assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserID(0, 1));
     assertEquals(LIGHTSOURCE_PUMP_MODEL, metadata.getLaserModel(0, 1));
-    assertEquals(LIGHTSOURCE_PUMP_POWER, metadata.getLaserPower(0, 1).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_PUMP_POWER, metadata.getLaserPower(0, 1).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(LASER_TYPE, metadata.getLaserType(0, 1));
     assertEquals(LIGHTSOURCE_PUMP_ID, metadata.getLaserPump(0, 0));
   }
@@ -562,7 +556,7 @@ public class InOutCurrentTest {
     assertNotNull(arc);
     assertEquals(LIGHTSOURCE_ARC_ID, arc.getID());
     assertEquals(LIGHTSOURCE_ARC_MODEL, arc.getModel());
-    assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_ARC_POWER, arc.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(ARC_TYPE, arc.getType());
   }
 
@@ -570,7 +564,7 @@ public class InOutCurrentTest {
   public void testValidArcMetadata() {
     assertEquals(LIGHTSOURCE_ARC_ID, metadata.getArcID(0, 2));
     assertEquals(LIGHTSOURCE_ARC_MODEL, metadata.getArcModel(0, 2));
-    assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(ARC_TYPE, metadata.getArcType(0, 2));
   }
 
@@ -592,7 +586,7 @@ public class InOutCurrentTest {
     assertNotNull(filament);
     assertEquals(LIGHTSOURCE_FILAMENT_ID, filament.getID());
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, filament.getModel());
-    assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, filament.getPower().value(UNITS.MILLIWATT).doubleValue());
     assertEquals(FILAMENT_TYPE, filament.getType());
   }
 
@@ -601,7 +595,7 @@ public class InOutCurrentTest {
   public void testValidFilamentMetadata() {
     assertEquals(LIGHTSOURCE_FILAMENT_ID, metadata.getFilamentID(0, 3));
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, metadata.getFilamentModel(0, 3));
-    assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3).value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3).value(UNITS.MILLIWATT).doubleValue());
     assertEquals(FILAMENT_TYPE, metadata.getFilamentType(0, 3));
   }
 
@@ -623,7 +617,7 @@ public class InOutCurrentTest {
     assertNotNull(led);
     assertEquals(LIGHTSOURCE_LED_ID, led.getID());
     assertEquals(LIGHTSOURCE_LED_MODEL, led.getModel());
-    assertEquals(LIGHTSOURCE_LED_POWER, led.getPower().value(UNITS.MW).doubleValue());
+    assertEquals(LIGHTSOURCE_LED_POWER, led.getPower().value(UNITS.MILLIWATT).doubleValue());
   }
 
   @Test(dependsOnMethods={"testValidLightEmittingDiodeNode"},enabled=false)

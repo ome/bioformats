@@ -4,22 +4,22 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -52,6 +52,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.plugins.in.ImporterOptions;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 import ome.xml.model.Ellipse;
@@ -95,6 +96,20 @@ public class ROIHandler {
    */
   public static void openROIs(IMetadata retrieve, ImagePlus[] images,
           boolean isOMERO) {
+    openROIs(retrieve, images, isOMERO, ImporterOptions.ROIS_MODE_MANAGER);
+  }
+
+  /**
+   * Opens the rois and converts them into ImageJ Rois.
+   *
+   * @param retrieve The OMEXML store.
+   * @param images The imageJ object.
+   * @param isOMERO <code>true</code> if data stored in OMERO,
+   *        <code>false</code> otherwise.
+   * @param roisMode Determines whether to import Rois to overlay or RoiManager
+   */
+  public static void openROIs(IMetadata retrieve, ImagePlus[] images,
+          boolean isOMERO, String roisMode) {
     if (!(retrieve instanceof OMEXMLMetadata)) return;
     int nextRoi = 0;
     RoiManager manager = RoiManager.getInstance();
@@ -108,7 +123,8 @@ public class ROIHandler {
     int imageCount = images.length;
     for (int imageNum=0; imageNum<imageCount; imageNum++) {
       int roiCount = root.sizeOfROIList();
-      if (roiCount > 0 && manager == null) {
+      if (roiCount > 0 && manager == null
+    		  && roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
         manager = new RoiManager();
       }
 
@@ -358,7 +374,7 @@ public class ROIHandler {
               if (shapeObject.getTheT() != null) {
                 t = shapeObject.getTheT().getValue();
               }
-              // ImageJ expects 1-based indexing, opposed to 
+              // ImageJ expects 1-based indexing, opposed to
               // 0-based indexing in OME
               // Roi positions differ between hyperstacks and normal stacks
               ImagePlus imp = images[imageNum];
@@ -397,7 +413,18 @@ public class ROIHandler {
             if (sc != null) {
               roi.setStrokeColor(sc);
             }
-            manager.add(images[imageNum], roi, nextRoi++);
+
+            if (roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
+                manager.add(images[imageNum], roi, nextRoi++);
+            } else if (roisMode.equals(ImporterOptions.ROIS_MODE_OVERLAY)) {
+                Overlay overlay = images[imageNum].getOverlay();
+                if (overlay == null) {
+                    overlay = new Overlay(roi);
+                    images[imageNum].setOverlay(overlay);
+                } else {
+                    overlay.add(roi);
+                }
+            }
           }
         }
       }
@@ -406,7 +433,6 @@ public class ROIHandler {
         manager.runCommand("show all with labels");
       }
     }
-
   }
 
   /**
@@ -923,7 +949,7 @@ public class ROIHandler {
 
     for (int q=0; q<pointList.length; q++) {
       pointList[q] = pointList[q].trim();
-      int delim = pointList[q].indexOf(",");
+      int delim = pointList[q].indexOf(',');
       coordinates[0][q] =
           (int) Double.parseDouble(pointList[q].substring(0, delim));
       coordinates[1][q] =

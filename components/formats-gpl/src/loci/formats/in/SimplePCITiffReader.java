@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,10 +42,8 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import ome.units.quantity.Time;
@@ -163,7 +161,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
     IniTable microscopeTable = ini.getTable(" MICROSCOPE ");
     if (microscopeTable != null) {
       String objective = microscopeTable.get("Objective");
-      int space = objective.indexOf(" ");
+      int space = objective.indexOf(' ');
       if (space != -1) {
         magnification = new Double(objective.substring(0, space - 1));
         immersion = objective.substring(space + 1);
@@ -264,7 +262,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = getZCTCoords(i);
         if (zct[1] < exposureTimes.size() && exposureTimes.get(zct[1]) != null) {
-          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.S), 0, i);
+          store.setPlaneExposureTime(new Time(exposureTimes.get(zct[1]) / 1000000, UNITS.SECOND), 0, i);
         }
       }
     }

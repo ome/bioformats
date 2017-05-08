@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -110,7 +110,7 @@ public class FitsReader extends FormatReader {
       line = in.readString(LINE_LENGTH);
 
       // parse key/value pair
-      int ndx = line.indexOf("=");
+      int ndx = line.indexOf('=');
       int comment = line.indexOf("/", ndx);
       if (comment < 0) comment = line.length();
 

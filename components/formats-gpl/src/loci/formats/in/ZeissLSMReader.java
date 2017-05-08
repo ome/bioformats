@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -179,6 +179,7 @@ public class ZeissLSMReader extends FormatReader {
   private String binning;
   private List<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
+  private int rotations, phases, illuminations;
   private Map<String, Integer> seriesCounts;
   private String userName;
   private String[][] channelNames;
@@ -270,6 +271,9 @@ public class ZeissLSMReader extends FormatReader {
       zCoordinates = null;
       dimensionM = 0;
       dimensionP = 0;
+      rotations = 0;
+      phases = 0;
+      illuminations = 0;
       seriesCounts = null;
       originX = originY = originZ = 0d;
       userName = null;
@@ -592,7 +596,6 @@ public class ZeissLSMReader extends FormatReader {
         store.setImageAcquisitionDate(new Timestamp(
             acquiredDate.get(series)), series);
       }
-      store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
     setSeries(0);
   }
@@ -722,7 +725,7 @@ public class ZeissLSMReader extends FormatReader {
     int instrument = getEffectiveSeries(series);
 
     String imageName = getLSMFileFromSeries(series);
-    if (imageName.indexOf(".") != -1) {
+    if (imageName.indexOf('.') != -1) {
       imageName = imageName.substring(0, imageName.lastIndexOf("."));
     }
     if (imageName.indexOf(File.separator) != -1) {
@@ -966,18 +969,47 @@ public class ZeissLSMReader extends FormatReader {
       if (splitPlanes) ms.imageCount *= getSizeC();
     }
 
+    // NB: the Zeiss LSM 5.5 specification indicates that there should be
+    //     15 32-bit integers here; however, there are actually 16 32-bit
+    //     integers before the tile position offset.
+    //     We have confirmed with Zeiss that this is correct, and the 6.0
+    //     specification was updated to contain the correct information.
+
+    // rotations and phases may be reversed
+    // we only have examples where both values are equal
+    rotations = ras.readInt();
+    phases = ras.readInt();
+    illuminations = ras.readInt();
+
+    if (rotations > 1) {
+      ms.moduloZ.step = ms.sizeZ;
+      ms.moduloZ.end = ms.sizeZ * (rotations - 1);
+      ms.moduloZ.type = FormatTools.ROTATION;
+      ms.sizeZ *= rotations;
+    }
+
+    if (illuminations > 1) {
+      ms.moduloC.step = ms.sizeC;
+      ms.moduloC.end = ms.sizeC * (illuminations - 1);
+      ms.moduloC.type = FormatTools.ILLUMINATION;
+      ms.moduloC.parentType = FormatTools.CHANNEL;
+      ms.sizeC *= illuminations;
+    }
+
+    if (phases > 1) {
+      ms.moduloT.step = ms.sizeT;
+      ms.moduloT.end = ms.sizeT * (phases - 1);
+      ms.moduloT.type = FormatTools.PHASE;
+      ms.sizeT *= phases;
+    }
+
     for (int c=0; c<getEffectiveSizeC(); c++) {
       String lsid = MetadataTools.createLSID("Channel", series, c);
       store.setChannelID(lsid, series, c);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      // NB: the Zeiss LSM 5.5 specification indicates that there should be
-      //     15 32-bit integers here; however, there are actually 16 32-bit
-      //     integers before the tile position offset.
-      //     We have confirmed with Zeiss that this is correct, and the 6.0
-      //     specification was updated to contain the correct information.
-      ras.skipBytes(64);
+      ras.skipBytes(52);
 
       int tilePositionOffset = ras.readInt();
 
@@ -1062,6 +1094,9 @@ public class ZeissLSMReader extends FormatReader {
           lut[getSeries()] = new byte[getSizeC() * 3][256];
           core.get(getSeries()).indexed = true;
           for (int i=0; i<getSizeC(); i++) {
+            if (i >= channelColor.length) {
+              continue;
+            }
             int color = in.readInt();
 
             int red = color & 0xff;
@@ -1293,7 +1328,7 @@ public class ZeissLSMReader extends FormatReader {
 
         if (getSizeT() > 1 && zct[2] < timestamps.size() - stampIndex) {
           double thisStamp = timestamps.get(stampIndex + zct[2]).doubleValue();
-          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.S), series, i);
+          store.setPlaneDeltaT(new Time(thisStamp - firstStamp, UNITS.SECOND), series, i);
         }
         if (xCoordinates.size() > series) {
           final Double xCoord = xCoordinates.get(series);
@@ -1381,7 +1416,7 @@ public class ZeissLSMReader extends FormatReader {
       if (track.acquire) {
         if (track.timeIncrement != null)
         {
-          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.S), series);
+          store.setPixelsTimeIncrement(new Time(track.timeIncrement, UNITS.SECOND), series);
         }
       }
     }
@@ -1390,7 +1425,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.pinhole != null && channel.pinhole.doubleValue() != 0f &&
         nextDetectChannel < getSizeC() && channel.acquire)
       {
-        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROM), series, nextDetectChannel);
+        store.setChannelPinholeSize(new Length(channel.pinhole, UNITS.MICROMETER), series, nextDetectChannel);
       }
       if (channel.filter != null) {
         String id = MetadataTools.createLSID("Filter", instrument, nextFilter);
@@ -1401,7 +1436,7 @@ public class ZeissLSMReader extends FormatReader {
         store.setFilterID(id, instrument, nextFilter);
         store.setFilterModel(channel.filter, instrument, nextFilter);
 
-        int space = channel.filter.indexOf(" ");
+        int space = channel.filter.indexOf(' ');
         if (space != -1) {
           String type = channel.filter.substring(0, space).trim();
           if (type.equals("BP")) type = "BandPass";
@@ -1746,7 +1781,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          StringBuffer p = new StringBuffer();
+          StringBuilder p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1775,7 +1810,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -1815,7 +1850,7 @@ public class ZeissLSMReader extends FormatReader {
             }
           }
 
-          p = new StringBuffer();
+          p = new StringBuilder();
           for (int j=0; j<points.length; j++) {
             p.append(points[j][0]);
             p.append(",");
@@ -2153,7 +2188,7 @@ public class ZeissLSMReader extends FormatReader {
         return in.readDouble();
       case TYPE_ASCII:
         String s = in.readByteToString(dataSize).trim();
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i=0; i<s.length(); i++) {
           if (s.charAt(i) >= 10) sb.append(s.charAt(i));
           else break;
@@ -2266,7 +2301,8 @@ public class ZeissLSMReader extends FormatReader {
 
     public void addToHashtable() {
       String prefix = this.getClass().getSimpleName();
-      Integer[] keys = blockData.keySet().toArray(new Integer[0]);
+      Integer[] keys = blockData.keySet().toArray(
+          new Integer[blockData.size()]);
       for (Integer key : keys) {
         if (METADATA_KEYS.get(key) != null) {
           addSeriesMetaList(prefix + " " + METADATA_KEYS.get(key),
@@ -2302,7 +2338,7 @@ public class ZeissLSMReader extends FormatReader {
       description = getStringValue(RECORDING_DESCRIPTION);
       name = getStringValue(RECORDING_NAME);
       binning = getStringValue(RECORDING_CAMERA_BINNING);
-      if (binning != null && binning.indexOf("x") == -1) {
+      if (binning != null && binning.indexOf('x') == -1) {
         if (binning.equals("0")) binning = null;
         else binning += "x" + binning;
       }
@@ -2323,12 +2359,12 @@ public class ZeissLSMReader extends FormatReader {
       String[] tokens = objective.split(" ");
       int next = 0;
       for (; next<tokens.length; next++) {
-        if (tokens[next].indexOf("/") != -1) break;
+        if (tokens[next].indexOf('/') != -1) break;
         correction += tokens[next];
       }
       if (next < tokens.length) {
         String p = tokens[next++];
-        int slash = p.indexOf("/");
+        int slash = p.indexOf('/');
         if (slash > 0) {
           try {
             magnification = new Double(p.substring(0, slash - 1));

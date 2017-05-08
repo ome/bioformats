@@ -1,21 +1,21 @@
 /*
  * #%L
- * BSD implementations of Bio-Formats readers and writers
+ * Top-level reader and writer APIs
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -32,50 +32,58 @@
 
 package loci.formats.in;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * {@link MetadataOptions} instance which is created by most reader classes
  * on construction. Optimally, this initial instance will be passed down through
  * any reader stack and further instances will not need to be created.
+ *
+ * Default implementation of {@link loci.formats.in.MetadataOptions}.
  */
 public class DefaultMetadataOptions implements MetadataOptions {
 
-  private MetadataLevel level;
+  private MetadataLevel metadataLevel;
+  private boolean validate;
 
   private final Map<String, Object > extensibleOptions = new HashMap<String, Object>();
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * The underlying MetadataLevel will be set to {@link loci.formats.in.MetadataLevel#ALL}.
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to {@link MetadataLevel#ALL} and disable file validation.
    */
   public DefaultMetadataOptions() {
-    this.level = MetadataLevel.ALL;
+    this(MetadataLevel.ALL);
   }
 
   /**
-   * Construct a new DefaultMetadataOptions.
-   * @param level the MetadataLevel to use
+   * Construct a new {@code DefaultMetadataOptions}. Set the metadata level
+   * to the specified value and disable file validation.
+   *
+   * @param level the {@link loci.formats.in.MetadataLevel} to use.
    */
   public DefaultMetadataOptions(MetadataLevel level) {
-    this.level = level;
+    metadataLevel = level;
+    validate = false;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#getMetadataLevel()
-   */
   @Override
   public MetadataLevel getMetadataLevel() {
-    return level;
+    return metadataLevel;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.MetadataOptions#setMetadataLevel(loci.formats.in.MetadataLevel)
-   */
   @Override
   public void setMetadataLevel(MetadataLevel level) {
-    this.level = level;
+    metadataLevel = level;
+  }
+
+  @Override
+  public boolean isValidate() {
+    return validate;
+  }
+
+  @Override
+  public void setValidate(boolean validateMetadata) {
+    validate = validateMetadata;
   }
 
   @Override

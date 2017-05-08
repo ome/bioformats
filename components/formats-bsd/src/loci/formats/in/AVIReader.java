@@ -2,20 +2,20 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,7 +33,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
@@ -126,10 +127,10 @@ public class AVIReader extends FormatReader {
   // -- Fields --
 
   /** Offset to each plane. */
-  private Vector<Long> offsets;
+  private List<Long> offsets;
 
   /** Number of bytes in each plane. */
-  private Vector<Long> lengths;
+  private List<Long> lengths;
 
   private String listString;
   private String type = "error";
@@ -309,8 +310,8 @@ public class AVIReader extends FormatReader {
 
     LOGGER.info("Verifying AVI format");
 
-    offsets = new Vector<Long>();
-    lengths = new Vector<Long>();
+    offsets = new ArrayList<Long>();
+    lengths = new ArrayList<Long>();
     lastImageNo = -1;
 
     while (in.getFilePointer() < in.length() - 8) {

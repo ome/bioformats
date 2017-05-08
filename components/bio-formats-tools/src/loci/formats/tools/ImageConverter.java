@@ -2,20 +2,20 @@
  * #%L
  * Bio-Formats command line tools for reading and converting files
  * %%
- * Copyright (C) 2005 - 2016 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,8 +60,8 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
-import loci.formats.UpgradeChecker;
 import loci.formats.gui.Index16ColorModel;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -72,6 +72,7 @@ import loci.formats.tiff.IFD;
 
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
+import ome.xml.model.Pixels;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -88,8 +89,6 @@ public final class ImageConverter {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(ImageConverter.class);
 
-  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
-
   // -- Fields --
 
   private String in = null, out = null;
@@ -98,6 +97,7 @@ public final class ImageConverter {
   private boolean stitch = false, separate = false, merge = false, fill = false;
   private boolean bigtiff = false, group = true;
   private boolean printVersion = false;
+  private boolean lookup = true;
   private boolean autoscale = false;
   private Boolean overwrite = null;
   private int series = -1;
@@ -106,12 +106,15 @@ public final class ImageConverter {
   private int channel = -1, zSection = -1, timepoint = -1;
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private int saveTileWidth = 0, saveTileHeight = 0;
+  private boolean validate = false;
+  private boolean zeroPadding = false;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
 
   private HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
   private boolean firstTile = true;
+  private DynamicMetadataOptions options = new DynamicMetadataOptions();
 
   // -- Constructor --
 
@@ -128,9 +131,11 @@ public final class ImageConverter {
     }
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-") && args.length > 1) {
-        if (args[i].equals("-debug")) {
-          DebugTools.enableLogging("DEBUG");
+        if (args[i].equals(CommandLineTools.VERSION)) {
+          printVersion = true;
+          return true;
         }
+        else if (args[i].equals("-debug")) DebugTools.setRootLevel("DEBUG");
         else if (args[i].equals("-stitch")) stitch = true;
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-merge")) merge = true;
@@ -139,7 +144,14 @@ public final class ImageConverter {
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-compression")) compression = args[++i];
         else if (args[i].equals("-nogroup")) group = false;
+        else if (args[i].equals("-nolookup")) lookup = false;
         else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-novalid")) validate = false;
+        else if (args[i].equals("-validate")) validate = true;
+        else if (args[i].equals("-padded")) zeroPadding = true;
+        else if (args[i].equals("-option")) {
+          options.set(args[++i], args[++i]);
+        }
         else if (args[i].equals("-overwrite")) {
           overwrite = true;
         }
@@ -187,13 +199,13 @@ public final class ImageConverter {
           }
           catch (NumberFormatException e) { }
         }
-        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
+        else if (!args[i].equals(CommandLineTools.NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
       }
       else {
-        if (args[i].equals("-version")) printVersion = true;
+        if (args[i].equals(CommandLineTools.VERSION)) printVersion = true;
         else if (in == null) in = args[i];
         else if (out == null) out = args[i];
         else {
@@ -216,8 +228,9 @@ public final class ImageConverter {
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
       "    [-bigtiff] [-compression codec] [-series series] [-map id]",
       "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-      "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
-      "    [-no-upgrade] in_file out_file",
+      "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
+      "    [-version] [-no-upgrade] [-padded] [-option key value]",
+      "    in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -233,6 +246,7 @@ public final class ImageConverter {
       "      -range: specify range of planes to convert (inclusive)",
       "    -nogroup: force multi-file datasets to be read as individual" +
       "              files",
+      "   -nolookup: disable the conversion of lookup tables",
       "  -autoscale: automatically adjust brightness and contrast before",
       "              converting; this may mean that the original pixel",
       "              values are not preserved",
@@ -242,6 +256,8 @@ public final class ImageConverter {
       "    -channel: only convert the specified channel (indexed from 0)",
       "          -z: only convert the specified Z section (indexed from 0)",
       "  -timepoint: only convert the specified timepoint (indexed from 0)",
+      "     -padded: filename indexes for series, z, c and t will be zero padded",
+      "     -option: add the specified key/value pair to the options list",
       "",
       "If any of the following patterns are present in out_file, they will",
       "be replaced with the indicated metadata value from the input file.",
@@ -284,19 +300,20 @@ public final class ImageConverter {
     throws FormatException, IOException
   {
     nextOutputIndex.clear();
+    options.setValidate(validate);
+    writer.setMetadataOptions(options);
     firstTile = true;
-    DebugTools.enableLogging("INFO");
     boolean success = parseArgs(args);
     if (!success) {
       return false;
     }
 
     if (printVersion) {
-      LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
-      LOGGER.info("Build date: {}", FormatTools.DATE);
+      CommandLineTools.printVersion();
       return true;
     }
+
+    CommandLineTools.runUpgradeCheck(args);
 
     if (in == null || out == null) {
       printUsage();
@@ -348,6 +365,7 @@ public final class ImageConverter {
       minMax = (MinMaxCalculator) reader;
     }
 
+    reader.setMetadataOptions(options);
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
@@ -396,21 +414,20 @@ public final class ImageConverter {
     }
 
     if (store instanceof MetadataRetrieve) {
-      if (series >= 0) {
-        try {
-          String xml = service.getOMEXML(service.asRetrieve(store));
-          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
-          Image exportImage = root.getImage(series);
-
-          IMetadata meta = service.createOMEXMLMetadata(xml);
+      try {
+        String xml = service.getOMEXML(service.asRetrieve(store));
+        OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
+        IMetadata meta = service.createOMEXMLMetadata(xml);
+        if (series >= 0) {
+          Image exportImage = new Image(root.getImage(series));
+          Pixels exportPixels = new Pixels(root.getImage(series).getPixels());
+          exportImage.setPixels(exportPixels);
           OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }
-
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
-
           meta.setPixelsSizeX(new PositiveInteger(width), 0);
           meta.setPixelsSizeY(new PositiveInteger(height), 0);
 
@@ -430,31 +447,31 @@ public final class ImageConverter {
 
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
-        catch (ServiceException e) {
-          throw new FormatException(e);
+        else {
+          for (int i=0; i<reader.getSeriesCount(); i++) {
+            meta.setPixelsSizeX(new PositiveInteger(width), 0);
+            meta.setPixelsSizeY(new PositiveInteger(height), 0);
+
+            if (autoscale) {
+              store.setPixelsType(PixelType.UINT8, i);
+            }
+
+            if (channel >= 0) {
+              meta.setPixelsSizeC(new PositiveInteger(1), 0);
+            }
+            if (zSection >= 0) {
+              meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+            }
+            if (timepoint >= 0) {
+              meta.setPixelsSizeT(new PositiveInteger(1), 0);
+            }
+          }
+
+          writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
       }
-      else {
-        for (int i=0; i<reader.getSeriesCount(); i++) {
-          store.setPixelsSizeX(new PositiveInteger(width), 0);
-          store.setPixelsSizeY(new PositiveInteger(height), 0);
-
-          if (autoscale) {
-            store.setPixelsType(PixelType.UINT8, i);
-          }
-
-          if (channel >= 0) {
-            store.setPixelsSizeC(new PositiveInteger(1), 0);
-          }
-          if (zSection >= 0) {
-            store.setPixelsSizeZ(new PositiveInteger(1), 0);
-          }
-          if (timepoint >= 0) {
-            store.setPixelsSizeT(new PositiveInteger(1), 0);
-          }
-        }
-
-        writer.setMetadataRetrieve((MetadataRetrieve) store);
+      catch (ServiceException e) {
+        throw new FormatException(e);
       }
     }
     writer.setWriteSequentially(true);
@@ -521,7 +538,7 @@ public final class ImageConverter {
           continue;
         }
 
-        String outputName = FormatTools.getFilename(q, i, reader, out);
+        String outputName = FormatTools.getFilename(q, i, reader, out, zeroPadding);
         if (outputName.equals(FormatTools.getTileFilename(0, 0, 0, outputName))) {
           writer.setId(outputName);
           if (compression != null) writer.setCompression(compression);
@@ -841,18 +858,20 @@ public final class ImageConverter {
   private void applyLUT(IFormatWriter writer)
     throws FormatException, IOException
   {
-    byte[][] lut = reader.get8BitLookupTable();
-    if (lut != null) {
-      IndexColorModel model = new IndexColorModel(8, lut[0].length,
-        lut[0], lut[1], lut[2]);
-      writer.setColorModel(model);
-    }
-    else {
-      short[][] lut16 = reader.get16BitLookupTable();
-      if (lut16 != null) {
-        Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
-          lut16, reader.isLittleEndian());
+    if (lookup) {
+      byte[][] lut = reader.get8BitLookupTable();
+      if (lut != null) {
+        IndexColorModel model = new IndexColorModel(8, lut[0].length,
+          lut[0], lut[1], lut[2]);
         writer.setColorModel(model);
+      }
+      else {
+        short[][] lut16 = reader.get16BitLookupTable();
+        if (lut16 != null) {
+          Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
+            lut16, reader.isLittleEndian());
+          writer.setColorModel(model);
+        }
       }
     }
   }
@@ -860,16 +879,7 @@ public final class ImageConverter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
-      UpgradeChecker checker = new UpgradeChecker();
-      boolean canUpgrade =
-        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-      if (canUpgrade) {
-        LOGGER.info("*** A new stable version is available. ***");
-        LOGGER.info("*** Install the new version using:     ***");
-        LOGGER.info("***   'upgradechecker -install'        ***");
-      }
-    }
+    DebugTools.enableLogging("INFO");
     ImageConverter converter = new ImageConverter();
     if (!converter.testConvert(new ImageWriter(), args)) System.exit(1);
     System.exit(0);
