@@ -57,7 +57,12 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
+
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
 import ome.units.quantity.Temperature;
@@ -762,7 +767,8 @@ public class MetamorphReader extends BaseTiffReader {
         }
         core.add(toAdd);
       }
-      seriesToIFD = true;
+      // METADATA-ONLY
+      // seriesToIFD = true;
     }
 
     List<String> timestamps = null;
@@ -784,7 +790,7 @@ public class MetamorphReader extends BaseTiffReader {
       store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
     }
 
-    String instrumentID = null;
+    instrumentID = null;
     if (false) { // METADATA-ONLY
       store.setInstrumentID(instrumentID, 0);
       store.setDetectorID(detectorID, 0, 0);

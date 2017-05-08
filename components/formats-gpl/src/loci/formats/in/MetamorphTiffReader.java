@@ -130,19 +130,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  @Override
-  public void close(boolean fileOnly) throws IOException {
-    super.close(fileOnly);
-    if (!fileOnly) {
-      files = null;
-      wellCount = 0;
-      fieldRowCount = 0;
-      fieldColumnCount = 0;
-      dualCamera = false;
-    }
-  }
-
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
