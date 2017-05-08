@@ -15,7 +15,7 @@ New file formats:
 File format improvements:
 
 * Andor Bio-Imaging Division (ABD) TIFF
-   - fixed acquisition date formatfrom ``MM/dd/yyyy`` to ``dd/MM/yyyy``
+   - fixed acquisition date format from ``MM/dd/yyyy`` to ``dd/MM/yyyy``
 * Nikon NIS-Elements ND2
    - corrected logic used to determined ``PixelType`` by parsing uiBpc tags
 * Hamamatsu ndpi
