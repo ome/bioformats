@@ -7,7 +7,8 @@ Version history
 New file formats:
 
 * Olympus OIR
-   - added support for :doc:`Olympus .oir </formats/olympus-oir>` data
+   - added support for :doc:`Olympus .oir </formats/olympus-oir>` data  (funded by a 
+     partnership between Glencoe Software and OLYMPUS EUROPA SE & Co. KG)
 * PerkinElmer Columbus
    - added support for :doc:`PerkinElmer Columbus </formats/perkinelmer-columbus>` data
 
