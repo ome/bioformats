@@ -274,7 +274,7 @@ public class MetamorphReader extends BaseTiffReader {
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
     stkReaders[getSeries()][ndx].setMetadataOptions(
-        new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+        new DynamicMetadataOptions(MetadataLevel.MINIMUM));
     int plane = stks[getSeries()].length == 1 ? no : coords[0];
     try {
       if (!file.equals(stkReaders[getSeries()][ndx].getCurrentFile())) {
@@ -717,7 +717,7 @@ public class MetamorphReader extends BaseTiffReader {
           stkReaders[i][j].setCanLookForND(false);
           if (j > 0) {
             stkReaders[i][j].setMetadataOptions(
-              new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+              new DynamicMetadataOptions(MetadataLevel.MINIMUM));
           }
         }
       }

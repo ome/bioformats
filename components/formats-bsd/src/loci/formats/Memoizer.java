@@ -45,6 +45,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
@@ -328,11 +329,18 @@ public class Memoizer extends ReaderWrapper {
   }
 
   private static <T> T getMetadataOption(
-      MetadataOptions options, String name, Class<T> type) {
+      MetadataOptions opts, String name, Class<T> type) {
+
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return null;
+    }
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
+
     T opt = null;
     String fullName = String.format("%s.%s", Memoizer.class.getName(), name);
     try {
-      opt = type.cast(options.getMetadataOption(fullName));
+      opt = type.cast(options.get(fullName));
     } catch (ClassCastException e) {
       LOGGER.warn("{}: wrong type (expected: {})", name, type.getName());
     }
@@ -540,12 +548,18 @@ public class Memoizer extends ReaderWrapper {
    *
    * @param options
    */
-  public void configure(MetadataOptions options) {
+  public void configure(MetadataOptions opts) {
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return;
+    }
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
+
     String k = Memoizer.class.getName();
-    options.setMetadataOption(k + ".cacheDirectory", this.directory);
-    options.setMetadataOption(k + ".inPlace", this.doInPlaceCaching);
-    options.setMetadataOption(k + ".minimumElapsed", this.minimumElapsed);
-    options.setMetadataOption(k + ".failIfMissing", this.failIfMissing);
+    options.setFile(k + ".cacheDirectory", this.directory);
+    options.setBoolean(k + ".inPlace", this.doInPlaceCaching);
+    options.setLong(k + ".minimumElapsed", this.minimumElapsed);
+    options.setBoolean(k + ".failIfMissing", this.failIfMissing);
     reader.setMetadataOptions(options);
   }
 
@@ -555,8 +569,15 @@ public class Memoizer extends ReaderWrapper {
   }
 
   public void setFailIfMissing(boolean failIfMissing) {
+    MetadataOptions opts = reader.getMetadataOptions();
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return;
+    }
+
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
     this.failIfMissing = failIfMissing;
-    reader.getMetadataOptions().setMetadataOption(Memoizer.class.getName() + ".failIfMissing", failIfMissing);
+    options.setBoolean(Memoizer.class.getName() + ".failIfMissing", failIfMissing);
   }
 
   /**

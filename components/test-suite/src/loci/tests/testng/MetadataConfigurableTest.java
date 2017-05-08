@@ -38,7 +38,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
@@ -70,12 +70,12 @@ public class MetadataConfigurableTest {
   public void setUp() {
     pixelsOnly = new ImageReader();
     pixelsOnly.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+      new DynamicMetadataOptions(MetadataLevel.MINIMUM));
     all = new ImageReader();
-    all.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.ALL));
+    all.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.ALL));
     noOverlays = new ImageReader();
     noOverlays.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+      new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     id = getProperty(FILENAME_PROPERTY);
     if (null == id) {
       LOGGER.error(SKIP_MESSAGE);

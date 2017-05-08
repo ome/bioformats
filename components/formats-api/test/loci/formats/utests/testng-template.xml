@@ -41,9 +41,4 @@
         <class name="loci.formats.utests.DynamicMetadataOptionsTest"/>
       </classes>
     </test>
-    <test name="DefaultMetadataOptions">
-      <classes>
-        <class name="loci.formats.utests.DefaultMetadataOptionsTest"/>
-      </classes>
-    </test>
 </suite>

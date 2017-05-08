@@ -2552,7 +2552,7 @@ public class FormatReaderTest {
     // Remove external SlideBook6Reader class for testing purposes
     ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+    reader.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);
