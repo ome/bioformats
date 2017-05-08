@@ -57,6 +57,7 @@ import loci.formats.MetadataTools;
 import loci.formats.Modulo;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.meta.ModuloAnnotation;
@@ -66,7 +67,6 @@ import loci.formats.ome.OMEXMLMetadataImpl;
 
 import ome.units.quantity.Length;
 
-import ome.xml.meta.MetadataConverter;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.BinData;
