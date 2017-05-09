@@ -16,6 +16,7 @@ Type "ant -p" for a list of targets.
     description="generate Sphinx pages for each supported format">
     <java classname="FormatPageAutogen"
       classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath location="${root.dir}/ant/"/><!-- logback.xml -->
       <classpath refid="runtime.classpath"/>
       <arg value="${filelist}"/>
     </java>
@@ -25,6 +26,7 @@ Type "ant -p" for a list of targets.
     description="generate dataset structure table">
     <java classname="MakeDatasetStructureTable"
       classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath location="${root.dir}/ant/"/><!-- logback.xml -->
       <classpath refid="runtime.classpath"/>
        <arg value="../../docs/sphinx/formats/dataset-table.rst"/>
     </java>
@@ -34,6 +36,7 @@ Type "ant -p" for a list of targets.
     description="generate docs for Bio-Formats original metadata support">
     <java classname="OriginalMetadataAutogen"
       classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath location="${root.dir}/ant/"/><!-- logback.xml -->
       <classpath refid="runtime.classpath"/>
       <arg value="${filelist}"/>
     </java>
@@ -50,6 +53,7 @@ Type "ant -p" for a list of targets.
         <java classname="${component.main-class}"
           classpath="${classes.dir}"
           fork="true" dir="${component.meta-support-dir}" failonerror="true">
+            <classpath location="${root.dir}/ant/"/><!-- logback.xml -->
             <classpath refid="runtime.classpath"/>
             <arg value="${omexml.version}"/>
         </java>
