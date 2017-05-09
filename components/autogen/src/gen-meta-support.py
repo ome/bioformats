@@ -69,14 +69,34 @@ def is_file(f, ftype=".java"):
 
 def get_xml_elements():
     """List all XML elements from the model"""
-    elements = []
-    modelDir = join(
-        componentsDir, 'ome-xml', 'build', 'src', 'ome', 'xml', 'model')
-    for f in sorted(listdir(modelDir)):
-        if not is_file(join(modelDir, f)):
-            continue
-        elements.append(basename(f).rstrip('.java'))
-    return elements
+
+    # Since Bio-Formats 5.3.0, the ome-xml component is decoupled from
+    # Bio-Formats. This function returns a hard-coded list of the OME-XML
+    # elements which should be updated for each model change
+    return [
+        'AffineTransform', 'Annotation', 'AnnotationRef', 'Arc',
+        'BasicAnnotation', 'BinDat', 'BinaryFile', 'BinaryOnly',
+        'BooleanAnnotation', 'Channel', 'ChannelRef', 'CommentAnnotation',
+        'Dataset', 'DatasetRef', 'Detector', 'DetectorSettings', 'Dichroic',
+        'DichroicRef', 'DoubleAnnotation', 'Ellipse', 'EmissionFilterRef',
+        'ExcitationFilterRef', 'Experiment', 'ExperimentRef', 'Experimenter',
+        'ExperimenterGroup', 'ExperimenterGroupRef', 'ExperimenterRef',
+        'External', 'Filament', 'FileAnnotation', 'Filter', 'FilterRef',
+        'FilterSet', 'FilterSetRef', 'Folder', 'FolderRef',
+        'GenericExcitationSource', 'Image', 'ImageRef', 'ImagingEnvironment',
+        'Instrument', 'InstrumentRef', 'Label', 'Laser', 'Leader',
+        'LightEmittingDiode', 'LightPath', 'LightSource',
+        'LightSourceSettings', 'Line', 'ListAnnotation', 'LongAnnotation',
+        'ManufacturerSpec', 'MapAnnotation', 'Mask', 'MetadataOnly',
+        'MicrobeamManipulation', 'MicrobeamManipulationRef', 'Microscope',
+        'NumericAnnotation', 'OME', 'Objective', 'ObjectiveSettings',
+        'Pixels', 'Plane', 'Plate', 'PlateAcquisition', 'PlateRef', 'Point',
+        'Polygon', 'Polyline', 'Project', 'ProjectRef', 'Pump', 'ROI',
+        'ROIRef', 'Reagent', 'ReagentRef', 'Rectangle', 'Reference', 'Rights',
+        'Screen', 'Settings', 'Shape', 'StageLabel', 'StructuredAnnotations',
+        'TagAnnotation', 'TermAnnotation', 'TextAnnotation', 'TiffData',
+        'TimestampAnnotation', 'TransmittanceRange', 'TypeAnnotation', 'UUID',
+        'Union', 'Well', 'WellSample', 'WellSampleRef', 'XMLAnnotation']
 
 
 def get_readers():
