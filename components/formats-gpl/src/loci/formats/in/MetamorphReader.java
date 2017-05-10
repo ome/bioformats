@@ -790,12 +790,9 @@ public class MetamorphReader extends BaseTiffReader {
       store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
     }
 
-    instrumentID = null;
-    if (false) { // METADATA-ONLY
-      store.setInstrumentID(instrumentID, 0);
-      store.setDetectorID(detectorID, 0, 0);
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
-    }
+    store.setInstrumentID(instrumentID, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorType(getDetectorType("Other"), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
@@ -815,8 +812,7 @@ public class MetamorphReader extends BaseTiffReader {
         store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
       }
 
-      // METADATA-ONLY
-      // store.setImageInstrumentRef(instrumentID, i);
+      store.setImageInstrumentRef(instrumentID, i);
 
       String comment = getFirstComment(i);
       if (i == 0 || !isHCS) {
