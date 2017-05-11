@@ -75,6 +75,11 @@ defined for each section:
         or `Channel.EmissionWavelength`, or `Channel.ExcitationWavelength` are supported
       * increment `metadataRating` by 1 if any SPW metadata is supported or :term:`pyramid` is ``yes``
 
+    `metadataRating` can also be set to a placeholder value, and updated using
+    the :program:`ant` ``gen-metadata-ratings`` target under the :file:`autogen` component::
+
+      $ ant -f components/autogen/build.xml gen-metadata-ratings
+
   reader
     A string or a comma-separated list of all readers for this format
 
