@@ -79,8 +79,8 @@ def get_xml_elements():
     """List all XML elements from the model"""
 
     # Since Bio-Formats 5.3.0, the ome-xml component is decoupled from
-    # Bio-Formats. This function returns introspect the OME-XML JAR under
-    # the local Maven repository to return the list of elements
+    # Bio-Formats. This logic introspects the OME-XML JAR from the local
+    # Maven repository to create the list of elements
     elements = []
     with zipfile.ZipFile(OMEXML_PATH, 'r') as zf:
         for zi in zf.infolist():
