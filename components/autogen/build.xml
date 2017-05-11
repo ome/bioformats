@@ -12,6 +12,15 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
+  <target name="gen-metadata-ratings" depends="compile"
+    description="update format metadata ratings">
+    <java classname="MetadataRatings"
+      classpath="${classes.dir}" fork="true" failonerror="true">
+      <classpath refid="runtime.classpath"/>
+      <arg value="${src.dir}/format-pages.txt"/>
+    </java>
+  </target>
+
   <target name="gen-format-pages" depends="compile"
     description="generate Sphinx pages for each supported format">
     <java classname="FormatPageAutogen"
