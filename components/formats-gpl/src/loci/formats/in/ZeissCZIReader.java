@@ -638,6 +638,11 @@ public class ZeissCZIReader extends FormatReader {
 
     calculateDimensions();
 
+    if (planes.size() == 0) {
+      throw new FormatException(
+        "Pixel data could not be found; this file may be corrupted");
+    }
+
     int firstX = planes.get(0).x;
     int firstY = planes.get(0).y;
 
