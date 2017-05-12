@@ -760,6 +760,7 @@ public abstract class BaseZeissReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      acquisitionDate = null;
       timestamps = exposureTime = null;
       offsets = null;
       coordinates = null;
