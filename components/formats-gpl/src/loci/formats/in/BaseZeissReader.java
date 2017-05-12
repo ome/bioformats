@@ -72,7 +72,7 @@ public abstract class BaseZeissReader extends FormatReader {
   protected int[] offsets;
   protected int[][] coordinates;
 
-  protected Timestamp acquisitionDate;
+  protected transient Timestamp acquisitionDate;
   protected Map<Integer, String> timestamps, exposureTime;
   protected int cIndex = -1;
   protected boolean isJPEG, isZlib;
