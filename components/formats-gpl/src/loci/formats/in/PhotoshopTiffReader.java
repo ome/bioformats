@@ -66,6 +66,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
   private int[][] channelOrder;
   private String[] layerNames;
 
+  // this can be turned into an option in 5.3+
+  private boolean readLayers = false;
+
   // -- Constructor --
 
   /** Constructs a new Photoshop TIFF reader. */
@@ -243,7 +246,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerNames[layer] = tag.readString(nameLength + pad);
           layerNames[layer] =
             layerNames[layer].replaceAll("[^\\p{ASCII}]", "").trim();
-          if (layerNames[layer].length() == nameLength + pad &&
+          if (readLayers && layerNames[layer].length() == nameLength + pad &&
             !layerNames[layer].equalsIgnoreCase("Layer " + layer + "M"))
           {
             addGlobalMetaList("Layer name", layerNames[layer]);
@@ -288,11 +291,13 @@ public class PhotoshopTiffReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    store.setImageName("Merged", 0);
-    if (layerNames != null) {
-      int end = (int) Math.min(getSeriesCount() - 1, layerNames.length);
-      for (int layer=0; layer<end; layer++) {
-        store.setImageName(layerNames[layer], layer + 1);
+    if (readLayers) {
+      store.setImageName("Merged", 0);
+      if (layerNames != null) {
+        int end = (int) Math.min(getSeriesCount() - 1, layerNames.length);
+        for (int layer=0; layer<end; layer++) {
+          store.setImageName(layerNames[layer], layer + 1);
+        }
       }
     }
   }
