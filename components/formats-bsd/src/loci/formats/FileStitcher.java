@@ -895,16 +895,21 @@ public class FileStitcher extends ReaderWrapper {
     LOGGER.debug("initFile: {}", id);
 
     FilePattern fp = new FilePattern(id);
+
+    LOGGER.info("fp.getFiles(): {}", Arrays.toString(fp.getFiles()));
+    LOGGER.info("patternIds: {}", patternIds);
+    LOGGER.info("canChangePattern(): {}", canChangePattern());
+
     if (!patternIds) {
       patternIds = fp.isValid() && fp.getFiles().length > 1;
     }
-    else if (canChangePattern()) {
+    else if (canChangePattern() || fp.getFiles().length == 0) {
       patternIds =
         !new Location(id).exists() && Location.getMappedId(id).equals(id);
     }
 
     boolean mustGroup = false;
-    if (patternIds) {
+    if (patternIds && fp.getFiles().length != 0) {
       mustGroup = fp.isValid() &&
         reader.fileGroupOption(fp.getFiles()[0]) == FormatTools.MUST_GROUP;
     }
