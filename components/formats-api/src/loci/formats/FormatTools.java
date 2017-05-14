@@ -1118,7 +1118,7 @@ public final class FormatTools {
     filename = filename.replaceAll(SERIES_NAME, imageName);
 
     DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
-    int sizeC = retrieve.getPixelsSizeC(series).getValue();
+    int sizeC = retrieve.getChannelCount(series);
     int sizeT = retrieve.getPixelsSizeT(series).getValue();
     int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
     int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
