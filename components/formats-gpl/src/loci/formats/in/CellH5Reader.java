@@ -272,7 +272,9 @@ public class CellH5Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       seriesCount = 0;
-
+      CellH5PositionList.clear();
+      CellH5PathsToImageData.clear();
+      cellObjectNames.clear();
       if (jhdf != null) {
         jhdf.close();
       }
