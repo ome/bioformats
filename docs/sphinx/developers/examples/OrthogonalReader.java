@@ -148,7 +148,7 @@ public class OrthogonalReader {
                     index, 0, y, reader.getSizeX(), 1);
                 bufferXZ.put(line);
             }
-            log.info("y: {}, {}", y, bufferXZ.array().length);
+            log.debug("y: {}, {}", y, bufferXZ.array().length);
             writer.saveBytes(y, bufferXZ.array());
         }
         // Write YZ planes
@@ -163,7 +163,7 @@ public class OrthogonalReader {
                     index, x, 0, 1, reader.getSizeY());
                 bufferYZ.put(line);
             }
-            log.info("x: {}, {}", x, bufferYZ.array().length);
+            log.debug("x: {}, {}", x, bufferYZ.array().length);
             writer.saveBytes(x, bufferYZ.array());
         }
         reader.close();
