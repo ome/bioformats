@@ -337,7 +337,7 @@ public class CellH5Reader extends FormatReader {
 
     int elementSize = jhdf.getElementSize(CellH5PathsToImageData.get(series));
 
-    int[] arrayOrigin = new int[] {channel, time, zslice, 0, 0};
+    int[] arrayOrigin = new int[] {channel, time, zslice, y, 0};
     int[] arrayDimension = new int[] {1, 1, 1, height, width};
 
     MDIntArray test = jhdf.readIntBlockArray(CellH5PathsToImageData.get(series),
