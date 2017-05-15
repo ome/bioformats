@@ -104,7 +104,7 @@ public class UpgradeChecker {
   };
 
   /** Location of the OME registry. */
-  public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
+  public static final String REGISTRY = "http://upgrade-staging.openmicroscopy.org.uk";
 
   /** Value of "bioformats.caller" for Bio-Formats utilities. */
   public static final String DEFAULT_CALLER = "Bio-Formats utilities";
