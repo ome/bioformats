@@ -14,8 +14,7 @@ COPYRIGHTS=( "Copyright (C) " "Copyright © " )
 YEAR="[0-9]\{4\}"
 RANGE=" - "
 AUTHOR=" Open Microscopy Environment"
-CURRENT_YEAR=${1:-$(date +%Y)}
-echo "Updating copyright with $CURRENT_YEAR"
+echo "Updating copyright with last commit year"
 
 # Update year range copyrights
 for COPYRIGHT in "${COPYRIGHTS[@]}";
@@ -23,15 +22,17 @@ do
     echo "Updating $COPYRIGHT"
     for file in $(git grep -l "${COPYRIGHT}${YEAR}${RANGE}${YEAR}${AUTHOR}");
     do
-        inplace_sed "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${CURRENT_YEAR}\2/" $file
+        UPDATE_YEAR=$(git log -1 --format='%ad' --date=short -- $file | cut -c1-4)
+        inplace_sed "s/\(${COPYRIGHT}${YEAR}${RANGE}\)${YEAR}\(${AUTHOR}\)/\1${UPDATE_YEAR}\2/" $file
     done
 
     # Update single year copyrights
     for file in $(git grep -l "${COPYRIGHT}${YEAR}${AUTHOR}");
     do
-        if [ -z "$(git grep "${COPYRIGHT}${CURRENT_YEAR}${AUTHOR}" -- $file)" ];
+        UPDATE_YEAR=$(git log -1 --format='%ad' --date=short -- $file | cut -c1-4)
+        if [ -z "$(git grep "${COPYRIGHT}${UPDATE_YEAR}${AUTHOR}" -- $file)" ];
         then
-            inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${CURRENT_YEAR}\2/" $file
+            inplace_sed "s/\(${COPYRIGHT}${YEAR}\)\(${AUTHOR}\)/\1${RANGE}${UPDATE_YEAR}\2/" $file
         fi
     done
 done
