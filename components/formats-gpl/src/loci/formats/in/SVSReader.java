@@ -78,6 +78,7 @@ public class SVSReader extends BaseTiffReader {
   private Double exposureTime, exposureScale;
   private Double magnification;
   private String date, time;
+  private ArrayList<String> dyeNames = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -212,6 +213,7 @@ public class SVSReader extends BaseTiffReader {
       magnification = null;
       date = null;
       time = null;
+      dyeNames.clear();
     }
   }
 
@@ -310,6 +312,9 @@ public class SVSReader extends BaseTiffReader {
               else if (key.equals("AppMag")) {
                 magnification = DataTools.parseDouble(value);
               }
+              else if (key.equals("Dye")) {
+                dyeNames.add(value);
+              }
             }
           }
         }
@@ -318,6 +323,26 @@ public class SVSReader extends BaseTiffReader {
     setSeries(0);
 
     // repopulate core metadata
+
+    // remove any invalid pyramid resolutions
+    IFD firstIFD = ifds.get(getIFDIndex(0));
+    for (int s=1; s<getSeriesCount() - 2; s++) {
+      int index = getIFDIndex(s);
+      IFD ifd = ifds.get(index);
+      if (ifd.getPixelType() != firstIFD.getPixelType()) {
+        ifds.set(index, null);
+      }
+    }
+    for (int s=0; s<ifds.size(); ) {
+      if (ifds.get(s) != null) {
+        s++;
+      }
+      else {
+        ifds.remove(s);
+        core.remove(s);
+      }
+    }
+    seriesCount = ifds.size();
 
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = core.get(s);
@@ -363,11 +388,33 @@ public class SVSReader extends BaseTiffReader {
     store.setObjectiveID(objective, 0, 0);
     store.setObjectiveNominalMagnification(magnification, 0, 0);
 
+    int lastImage = core.size() - 1;
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
-      store.setImageName("Series " + (i + 1), i);
+      if (hasFlattenedResolutions() || i > 2) {
+        store.setImageName("Series " + (i + 1), i);
+      }
+      else {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            // if there are only two images, assume that there is no label
+            if (lastImage == 1) {
+              store.setImageName("macro image", i);
+            }
+            else {
+              store.setImageName("label image", i);
+            }
+            break;
+          case 2:
+            store.setImageName("macro image", i);
+            break;
+        }
+      }
       store.setImageDescription(comments[i], i);
 
       if (getDatestamp() != null) {
@@ -381,6 +428,10 @@ public class SVSReader extends BaseTiffReader {
 
         if (getExcitation() != null) {
           store.setChannelExcitationWavelength(getExcitation(), i, c);
+        }
+
+        if (c < dyeNames.size()) {
+          store.setChannelName(dyeNames.get(c), i, c);
         }
       }
 
@@ -448,7 +499,7 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected Double getExposureTime() {
-    return exposureTime;
+    return exposureTime * exposureScale * 1000;
   }
 
   protected Timestamp getDatestamp() {
@@ -470,6 +521,10 @@ public class SVSReader extends BaseTiffReader {
 
   protected double getMagnification() {
     return magnification;
+  }
+
+  protected ArrayList<String> getDyeNames() {
+    return dyeNames;
   }
 
 }
