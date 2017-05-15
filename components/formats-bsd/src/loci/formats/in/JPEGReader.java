@@ -52,7 +52,11 @@ import java.util.Date;
 import java.util.HashMap;
 import org.joda.time.DateTime;
 import loci.formats.meta.MetadataStore;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
 import ome.xml.model.primitives.Timestamp;
+
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 /**
  * JPEGReader is the file format reader for JPEG images.
@@ -205,8 +209,38 @@ public class JPEGReader extends DelegateReader {
         }
 
         HashMap<String, String> tags = exif.getTags();
-        for (String tagName : tags.keySet()) {
-          addGlobalMeta(tagName, tags.get(tagName));
+        for (String tagName : tags.keySet()) {  
+          if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_X_RES))) {
+            Length sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)));
+            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
+            if (units != null)
+            {
+              if (Integer.parseInt(units) == 2) { 
+                sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+              }
+              else if (Integer.parseInt(units) == 3) { 
+                sizeX = FormatTools.getPhysicalSizeX(Double.parseDouble(tags.get(tagName)), UNITS.CM);
+              }
+            }
+            store.setPixelsPhysicalSizeX(sizeX, 0);
+          }
+          else if (tagName.equals(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_Y_RES))) {
+            Length sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)));
+            String units = tags.get(exif.getTagName(ExifSubIFDDirectory.TAG_FOCAL_PLANE_UNIT));
+            if (units != null)
+            {
+              if (Integer.parseInt(units) == 2) { 
+                sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.INCH);
+              }
+              else if (Integer.parseInt(units) == 3) { 
+                sizeY = FormatTools.getPhysicalSizeY(Double.parseDouble(tags.get(tagName)), UNITS.CM);
+              }
+            }
+            store.setPixelsPhysicalSizeX(sizeY, 0);
+          }
+          else {
+            addGlobalMeta(tagName, tags.get(tagName));
+          }
         }
       }
       catch (ServiceException e) {

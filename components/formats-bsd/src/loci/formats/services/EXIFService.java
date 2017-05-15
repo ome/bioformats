@@ -52,4 +52,5 @@ public interface EXIFService extends Service {
 
   void close() throws IOException;
 
+  String getTagName(int tagType);
 }
