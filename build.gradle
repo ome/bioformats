@@ -1,0 +1,9 @@
+ant.importBuild 'build.xml'
+
+defaultTasks 'jars'
+
+task assemble(dependsOn: ['jars', 'tools']) {
+}
+
+task check(dependsOn: 'test') {
+}
