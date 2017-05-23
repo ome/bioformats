@@ -1026,8 +1026,7 @@ public abstract class BaseZeissReader extends FormatReader {
           timepoint++;
         }
         else if (image >= 0 && key.startsWith("ImageRelativeTime")) {
-          Double reltime = Double.parseDouble(value) * 1000 * 60*60*24;
-          Time time = new Time(reltime, UNITS.MILLISECOND);
+          Time time = new Time(Double.parseDouble(value), UNITS.DAY);
           String timestr = time.value().toString() + " " + time.unit().getSymbol();
           addSeriesMetaList(key, timestr);
         }
