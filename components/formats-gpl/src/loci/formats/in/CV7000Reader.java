@@ -163,7 +163,7 @@ public class CV7000Reader extends FormatReader {
     }
     files.addAll(extraFiles);
     for (String file : allFiles) {
-      if (!checkSuffix(file, "tif")) {
+      if (!checkSuffix(file, "tif") && !(new Location(file).isDirectory())) {
         files.add(file);
       }
     }
