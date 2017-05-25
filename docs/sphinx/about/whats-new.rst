@@ -15,7 +15,7 @@ File format improvements:
    - fix pyramid resolution indexing for pyramids of different depths
    - fix for incorrect channel names and colors
 * Zeiss AxioVision ZVI
-   - correct parsing of epoch for Zeiss TIFF and Zeiss ZVI(thanks to Niko Ehrenfeuchter)
+   - correct parsing of epoch for Zeiss TIFF and Zeiss ZVI
 
 Bug fixes:
 
