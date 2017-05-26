@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -145,7 +146,8 @@ public class MetadataRatings {
       }
     }
     reader.close();
-    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)));
+    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+      new FileOutputStream(outputFile), Constants.ENCODING));
     for (String line : lines) {
       out.write(line);
       out.write("\n");
