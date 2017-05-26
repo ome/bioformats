@@ -572,7 +572,19 @@ public class ImagePlusReader implements StatusReporter {
 
     final int[] zct = r.getZCTCoords(ndx);
     final StringBuffer sb = new StringBuffer();
+    final int channelCount = meta.getChannelCount(series);
+    String channelName = null;
 
+    // Get channel name if present
+    if (cCount >= 0 && zct[1] < channelCount) {
+        channelName = meta.getChannelName(series, zct[1]);
+        if (channelName != null) {
+            channelName = channelName.trim();
+            if (channelName.equals("")) // treat empty name as no name
+                channelName = null;
+        }
+    }
+    
     int[] subC;
     String[] subCTypes;
     Modulo moduloC = r.getModuloC();
@@ -588,16 +600,23 @@ public class ImagePlusReader implements StatusReporter {
     if (cCount > 1) {
       if (first) first = false;
       else sb.append("; ");
-      int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
-      for (int i=0; i<subC.length; i++) {
-        boolean ch =
-          subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
-        sb.append(ch ? "c" : subCTypes[i]);
-        sb.append(":");
-        sb.append(subCPos[i] + 1);
-        sb.append("/");
-        sb.append(subC[i]);
-        if (i < subC.length - 1) sb.append(", ");
+      
+      
+    if (channelName != null) {
+      sb.append(channelName); // Append channel name
+    } else {
+        // If no channel name, append channel position
+        int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
+        for (int i=0; i<subC.length; i++) {
+          boolean ch =
+            subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
+          sb.append(ch ? "c" : subCTypes[i]);
+          sb.append(":");
+          sb.append(subCPos[i] + 1);
+          sb.append("/");
+          sb.append(subC[i]);
+          if (i < subC.length - 1) sb.append(", ");
+        }
       }
     }
     if (zCount > 1) {
@@ -616,12 +635,7 @@ public class ImagePlusReader implements StatusReporter {
       sb.append("/");
       sb.append(r.getSizeT());
     }
-    // put image name at the end, in case it is long
-    String imageName = meta.getImageName(series);
-    if (imageName != null && !imageName.trim().equals("")) {
-      sb.append(" - ");
-      sb.append(imageName);
-    }
+
     return sb.toString();
   }
 
