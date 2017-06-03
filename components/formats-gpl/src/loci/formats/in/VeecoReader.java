@@ -74,7 +74,7 @@ public class VeecoReader extends FormatReader {
 
     if (image instanceof byte[][]) {
       byte[][] byteImage = (byte[][]) image;
-      for (int row=h+y-1; row>=y; row--) {
+      for (int row=getSizeY()-1-y; row>=getSizeY()-y-h; row--) {
         System.arraycopy(byteImage[row], x, buf, (row - y) * w, w);
       }
     }
@@ -82,7 +82,7 @@ public class VeecoReader extends FormatReader {
       short[][] shortImage = (short[][]) image;
       int output = 0;
 
-      for (int row=h+y-1; row>=y; row--) {
+      for (int row=getSizeY()-1-y; row>=getSizeY()-y-h; row--) {
         for (int col=x; col<x+w; col++) {
           DataTools.unpackBytes(
             shortImage[row][col], buf, output, 2, unpackEndian);
