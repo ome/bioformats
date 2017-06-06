@@ -59,7 +59,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>idr</groupId>
+      <groupId>ome</groupId><!-- skip bump -->
       <artifactId>jxrlib-all</artifactId>
       <version>${jxrlib.version}</version>
     </dependency>
