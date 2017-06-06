@@ -24,7 +24,7 @@ class Replacer(object):
         self.old_group = old_group
         self.new_group = new_group
         self.group_pattern = \
-            r"(<groupId>)%s(</groupId>)" % \
+            r"(<groupId>)%s(</groupId>\s)" % \
             old_group
         self.artifact_pattern = BIO_FORMATS_ARTIFACT % old_group
         self.release_version_pattern = \
