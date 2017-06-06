@@ -32,21 +32,21 @@ settings, the acquired image can be saved with or without a companion file
         - TIFF
         - Yes
         - Full support
-        - MicromanagerReader
+        - :doc:`/metadata/MicromanagerReader`
     
     *
         - Save as image stack file
         - OME-TIFF
         - No
         - Pixel data plus minimal metadata*
-        - OMETiffReader
+        - :doc:`/metadata/OMETiffReader`
     
     *
         - Save as image stack file
         - OME-TIFF
         - Yes**
         - Full Support
-        - MicromanagerReader
+        - :doc:`/metadata/MicromanagerReader`
 
 
 
