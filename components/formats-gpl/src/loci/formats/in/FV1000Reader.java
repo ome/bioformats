@@ -540,14 +540,26 @@ public class FV1000Reader extends FormatReader {
         if (gain != null) channel.gain = new Double(gain);
         String voltage = guiChannel.get("AnalogPMTVoltage");
         if (voltage != null) channel.voltage = new Double(voltage);
-        channel.barrierFilter = guiChannel.get("BF Name");
+        String barrierFilter = guiChannel.get("BF Name");
+        if (barrierFilter != null && barrierFilter.equals("---")) {
+          channel.barrierFilter = "";
+        }
+        else channel.barrierFilter = barrierFilter;
         channel.active = Integer.parseInt(guiChannel.get("CH Activate")) != 0;
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
-        channel.emissionFilter = guiChannel.get("EmissionDM Name");
+        String emissionFilter = guiChannel.get("EmissionDM Name");
+        if (emissionFilter != null && emissionFilter.equals("---")) {
+          channel.emissionFilter = "";
+        }
+        else channel.emissionFilter = emissionFilter;
         String emWave = guiChannel.get("EmissionWavelength");
         if (emWave != null) channel.emWave = new Double(emWave);
-        channel.excitationFilter = guiChannel.get("ExcitationDM Name");
+        String excitationFilter = guiChannel.get("ExcitationDM Name");
+        if (excitationFilter != null && excitationFilter.equals("---")) {
+          channel.excitationFilter = "";
+        }
+        else channel.excitationFilter = excitationFilter;
         String exWave = guiChannel.get("ExcitationWavelength");
         if (emWave != null) channel.exWave = new Double(exWave);
         channels.add(channel);
