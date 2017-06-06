@@ -17,10 +17,22 @@ To convert a file to single output file (e.g. TIFF):
 The output file format is determined by the extension of the output file, e.g.
 .tiff for TIFF files, .ome.tiff for OME-TIFF, .png for PNG.
 
+.. option:: -option KEY VALUE
+
+    Passes options expressed as key/value pairs::
+
+      bfconvert -option key value /path/to/input /path/to/output
+
+    e.g. additional writer options, see :doc:`/formats/options`::
+
+      bfconvert -option ometiff.companion converted.companion.ome input.fake converted.ome.tiff
+
+    .. versionadded:: 5.4.0
+
 .. option:: -series SERIES
 
-    All images in the input file are converted by default.  To convert only one
-    series::
+    All images in the input file are converted by default.  To convert only 
+    one series::
 
       bfconvert -series 0 /path/to/input output-first-series.tiff
 

@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -55,7 +55,9 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.Modulo;
+import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.meta.ModuloAnnotation;
@@ -65,13 +67,12 @@ import loci.formats.ome.OMEXMLMetadataImpl;
 
 import ome.units.quantity.Length;
 
-import ome.xml.meta.MetadataConverter;
 import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Annotation;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
-import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
@@ -876,6 +877,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     MetadataConverter.convertMetadata(src, dest);
   }
 
+  public void convertMetadata(MetadataRetrieve src, MetadataStore dest,
+    MetadataLevel level) {
+    MetadataConverter.convertMetadata(src, dest, level);
+  }
+
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */
   @Override
   public void removeBinData(OMEXMLMetadata omexmlMeta) {
@@ -951,7 +957,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
     src1.resolveReferences();
     src2.resolveReferences();
- 
+
     OMEXMLMetadataRoot omeRoot1 = (OMEXMLMetadataRoot) src1.getRoot();
     OMEXMLMetadataRoot omeRoot2 = (OMEXMLMetadataRoot) src2.getRoot();
 

@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -38,7 +38,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.in.DefaultMetadataOptions;
+import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
@@ -70,12 +70,12 @@ public class MetadataConfigurableTest {
   public void setUp() {
     pixelsOnly = new ImageReader();
     pixelsOnly.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+      new DynamicMetadataOptions(MetadataLevel.MINIMUM));
     all = new ImageReader();
-    all.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.ALL));
+    all.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.ALL));
     noOverlays = new ImageReader();
     noOverlays.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+      new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     id = getProperty(FILENAME_PROPERTY);
     if (null == id) {
       LOGGER.error(SKIP_MESSAGE);
@@ -110,7 +110,7 @@ public class MetadataConfigurableTest {
     } catch (Exception e) {
       throw new FormatException("Cannot initialize OMEXML metadata store");
     }
-  
+
     noOverlays.setId(id);
     assertEquals(MetadataLevel.NO_OVERLAYS,
       noOverlays.getMetadataOptions().getMetadataLevel());

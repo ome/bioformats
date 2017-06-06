@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,13 +38,14 @@ import loci.common.services.Service;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.Modulo;
+import loci.formats.in.MetadataLevel;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import ome.xml.model.OMEModelObject;
 
 /**
- * 
+ *
  */
 public interface OMEXMLService extends Service {
 
@@ -256,6 +257,14 @@ public interface OMEXMLService extends Service {
    * (source) into a metadata store (destination).
    */
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest);
+
+  /**
+   * Copies information from a metadata retrieval object
+   * (source) into a metadata store (destination) applying
+   * the {@link MetadataLevel}.
+   */
+  public void convertMetadata(MetadataRetrieve src, MetadataStore dest,
+    MetadataLevel level);
 
   /**
    * Remove all of the BinData elements from the given OME-XML metadata object.

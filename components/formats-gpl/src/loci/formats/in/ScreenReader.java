@@ -2,22 +2,22 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2016 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -25,13 +25,20 @@
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
+import loci.common.DataTools;
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -39,13 +46,17 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
+import loci.formats.DimensionSwapper;
+import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.AxisGuesser;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
@@ -69,24 +80,47 @@ public class ScreenReader extends FormatReader {
   // -- Fields --
 
   private String[] plateMetadataFiles;
+  private String[][] files;
+  private String[] ordering;
+  private int[][] axisTypes;
+  private String[][] channelNames;
+  private int[][][] fileIndexes;
 
-  private ImageReader[] readers;
-  private boolean[][] plateMaps;
+  private Class<? extends IFormatReader> chosenReader = null;
+  private transient IFormatReader reader;
   private ClassList<IFormatReader> validReaders;
+  private int fields, wells;
+  private HashMap<Integer, Integer> seriesMap = new HashMap<Integer, Integer>();
+  private HashMap<Integer, Integer> spotMap = new HashMap<Integer, Integer>();
+
+  private static int[] readAxisTypes(String iniEntry) throws FormatException {
+    if (null == iniEntry) {
+      return null;
+    }
+    int size = iniEntry.length();
+    int[] ret = new int[size];
+    for (int i = 0; i < size; i++) {
+      ret[i] = AxisGuesser.getAxisType(String.valueOf(iniEntry.charAt(i)));
+      if (ret[i] == AxisGuesser.UNKNOWN_AXIS) {
+        throw new FormatException("invalid axis types: " + iniEntry);
+      }
+    }
+    return ret;
+  }
 
   // -- Constructor --
 
   /** Constructs a new screen reader. */
   public ScreenReader() {
-    super("Screen", "");
-    suffixSufficient = false;
+    super("Screen", "screen");
+    suffixNecessary = true;
     domains = new String[] {FormatTools.HCS_DOMAIN};
 
     ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
     validReaders = new ClassList<IFormatReader>(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
-      if (!c.equals(ScreenReader.class)) {
+      if (!c.equals(ScreenReader.class) && !c.equals(OMETiffReader.class)) {
         validReaders.addClass(c);
       }
     }
@@ -97,39 +131,18 @@ public class ScreenReader extends FormatReader {
 
   @Override
   public void reopenFile() throws IOException {
-    super.reopenFile();
-    for (ImageReader reader : readers) {
-      reader.getReader().reopenFile();
-    }
+    ClassList<IFormatReader> classes = new ClassList<IFormatReader>(IFormatReader.class);
+    classes.addClass(chosenReader);
+    reader = new ImageReader(classes);
+    reader.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.MINIMUM));
+    // memoize whatever files are opened internally if possible.
+    reader = Memoizer.wrap(getMetadataOptions(), reader);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  @Override
-  public boolean isThisType(String filename, boolean open) {
-    if (!open) return super.isThisType(filename, open); // no file system access
-
-    Location file = new Location(filename).getAbsoluteFile();
-    String parent = file.getParent();
-    boolean validNames =
-      isValidWellName(file.getAbsolutePath()) && isValidPlateName(parent);
-
-    ImageReader r = new ImageReader(validReaders);
-    boolean validFormat = r.isThisType(filename);
-    boolean singleFiles = false;
-    try {
-      singleFiles = r.isSingleFile(filename);
-      r.close();
-    }
-    catch (FormatException e) { }
-    catch (IOException e) { }
-
-    return validNames && validFormat && singleFiles;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -148,20 +161,20 @@ public class ScreenReader extends FormatReader {
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0].getCurrentFile() == null) {
+    if (reader == null || reader.getCurrentFile() == null) {
       return null;
     }
-    return readers[0].get8BitLookupTable();
+    return reader.get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0].getCurrentFile() == null) {
+    if (reader == null || reader.getCurrentFile() == null) {
       return null;
     }
-    return readers[0].get16BitLookupTable();
+    return reader.get16BitLookupTable();
   }
 
   /**
@@ -173,11 +186,11 @@ public class ScreenReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int[] spwIndexes = getSPWIndexes(getSeries());
-    int well = spwIndexes[0];
-    int field = spwIndexes[1];
-    readers[well].setSeries(field);
-    return readers[well].openBytes(no, buf, x, y, w, h);
+    int spotIndex = seriesMap.get(getCoreIndex());
+    int fileIndex = fileIndexes[spotIndex][no][0];
+    int planeIndex = fileIndexes[spotIndex][no][1];
+    reader.setId(files[spotIndex][fileIndex]);
+    return reader.openBytes(planeIndex, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -185,37 +198,51 @@ public class ScreenReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    int[] spwIndexes = getSPWIndexes(getSeries());
-    int well = spwIndexes[0];
+    int spotIndex = seriesMap.get(getCoreIndex());
+    final Set<String> allFiles = new LinkedHashSet<String>();
+    try {
+      for (String file : files[spotIndex]) {
+        reader.close();
+        reader.setId(file);
+        if (plateMetadataFiles != null) {
+          for (String f : plateMetadataFiles) {
+            allFiles.add(f);
+          }
+        }
+        String[] readerFiles = reader.getSeriesUsedFiles(noPixels);
+        if (readerFiles != null) {
+          for (String f : readerFiles) {
+            allFiles.add(f);
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.info("Could not initialize file for spot {}", spotIndex, e);
+    }
 
-    final List<String> files = new ArrayList<String>();
-    if (plateMetadataFiles != null) {
-      for (String f : plateMetadataFiles) {
-        files.add(f);
-      }
-    }
-    String[] readerFiles = readers[well].getSeriesUsedFiles(noPixels);
-    if (readerFiles != null) {
-      for (String f : readerFiles) {
-        files.add(f);
-      }
-    }
-    return files.toArray(new String[files.size()]);
+    return allFiles.toArray(new String[allFiles.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (readers != null) {
-      for (ImageReader well : readers) {
-        well.close(fileOnly);
-      }
+    if (reader != null) {
+      reader.close(fileOnly);
     }
     if (!fileOnly) {
-      readers = null;
-      plateMaps = null;
+      reader = null;
       plateMetadataFiles = null;
+      fields = 0;
+      wells = 0;
+      seriesMap.clear();
+      spotMap.clear();
+      files = null;
+      ordering = null;
+      axisTypes = null;
+      channelNames = null;
+      fileIndexes = null;
     }
   }
 
@@ -226,79 +253,98 @@ public class ScreenReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    Location file = new Location(id).getAbsoluteFile();
-    Location plate = null;
-    Location screen = null;
-    if (isValidWellName(file.getAbsolutePath())) {
-      plate = file.getParentFile();
-      screen = plate.getParentFile();
-    }
-    else throw new FormatException(id + " is not a valid well name.");
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
 
-    // build the list of plate directories
+    // ScreenReader only accepts an INI file which defines the plate -> file mappings
+    //  * a "Plate" table is required, and defines the dimensions of the plate
+    //  * a "MetadataFiles" table is optional, and specifies any extra files to attach
+    //  * one uniquely named "Well" table is required for each well defined by the "Plate" table
+
+    IniParser parser = new IniParser();
+    String data = DataTools.readFile(id);
+    IniList tables = parser.parseINI(new BufferedReader(new StringReader(data)));
+
     final List<String> metadataFiles = new ArrayList<String>();
-
-    Comparator<String> c = new Comparator<String>() {
-      @Override
-      public int compare(String s1, String s2) {
-        int row1 = (int) (getRow(s1).charAt(0) - 'A');
-        int row2 = (int) (getRow(s2).charAt(0) - 'A');
-
-        if (row1 != row2) {
-          return row1 - row2;
+    metadataFiles.add(id);
+    IniTable metadataTable = tables.getTable("MetadataFiles");
+    if (metadataTable != null) {
+      String fileCount = metadataTable.get("Count");
+      if (fileCount != null) {
+        int count = 0;
+        try {
+          count = Integer.parseInt(fileCount);
         }
-
-        int col1 = Integer.parseInt(getColumn(s1)) - 1;
-        int col2 = Integer.parseInt(getColumn(s2)) - 1;
-        return col1 - col2;
-      }
-    };
-
-    // build the list of well files for each plate
-    final List<String> tmpWells = new ArrayList<String>();
-
-    String[] plateList = plate.list(true);
-    int maxRow = 0, maxCol = 0;
-    for (String well : plateList) {
-      Location wellFile = new Location(plate, well);
-      if (isValidWellName(wellFile.getAbsolutePath())) {
-        String row = getRow(well);
-        String col = getColumn(well);
-
-        boolean canAdd = true;
-        for (String tmpWell : tmpWells) {
-          String tmpRow = getRow(tmpWell);
-          String tmpCol = getColumn(tmpWell);
-          if (tmpRow.equals(row) && tmpCol.equals(col)) {
-            canAdd = false;
-            break;
+        catch (NumberFormatException e) { }
+        for (int i=0; i<count; i++) {
+          if (metadataTable.containsKey(String.valueOf(i))) {
+            String file = metadataTable.get(String.valueOf(i));
+            if (file.startsWith(File.separator)) {
+              metadataFiles.add(file);
+            }
+            else {
+              metadataFiles.add(new Location(parent, file).getAbsolutePath());
+            }
           }
         }
-        if (!canAdd) continue;
-
-        tmpWells.add(wellFile.getAbsolutePath());
-
-        if ((row.charAt(0) - 'A') > maxRow) {
-          maxRow = row.charAt(0) - 'A';
-        }
-        if (Integer.parseInt(col) - 1 > maxCol) {
-          maxCol = Integer.parseInt(col) - 1;
-        }
-      }
-      else if (!wellFile.isDirectory()) {
-        metadataFiles.add(wellFile.getAbsolutePath());
       }
     }
-    String[] files = tmpWells.toArray(new String[tmpWells.size()]);
 
-    Arrays.sort(files, c);
-    readers = new ImageReader[files.length];
+    IniTable plateTable = tables.getTable("Plate");
+    if (plateTable == null) {
+      throw new FormatException("Missing Plate table");
+    }
 
-    plateMaps = new boolean[maxRow + 1][maxCol + 1];
+    // currently only supports the case where we have one file per well and field
+    // multiple fields or wells per file is not supported, nor is splitting
+    // a field across multiple files (wells are obviously split by field, but not by e.g. channel)
+
+    int maxRow = Integer.parseInt(plateTable.get("Rows"));
+    int maxCol = Integer.parseInt(plateTable.get("Columns"));
+    fields = Integer.parseInt(plateTable.get("Fields"));
+
+    wells = maxRow * maxCol;
+    files = new String[wells * fields][1];
+    ordering = new String[wells * fields];
+    axisTypes = new int[wells * fields][];
+    channelNames = new String[wells * fields][];
+    fileIndexes = new int[wells * fields][][];
+
+    for (int well=0; well<wells; well++) {
+      IniTable wellTable = tables.getTable("Well " + well);
+      if (wellTable == null) {
+        throw new FormatException("Missing 'Well " + well + "' table");
+      }
+      int row = Integer.parseInt(wellTable.get("Row"));
+      int col = Integer.parseInt(wellTable.get("Column"));
+
+      int index = (row * maxCol + col) * fields;
+      for (int field=0; field<fields; field++, index++) {
+        String file = wellTable.get("Field_" + field);
+        if (file != null) {
+          if (file.startsWith(File.separator)) {
+            files[index][0] = file;
+          }
+          else {
+            files[index][0] = new Location(parent, file).getAbsolutePath();
+          }
+        }
+        ordering[index] = wellTable.get("Dimensions");
+        if (ordering[index] != null) {
+          ordering[index] = "XY" + ordering[index];
+        }
+        axisTypes[index] = readAxisTypes(wellTable.get("AxisTypes"));
+        String channelNamesEntry = wellTable.get("ChannelNames");
+        if (null != channelNamesEntry) {
+          channelNames[index] = channelNamesEntry.split(",", -1);
+        }
+      }
+    }
+
+    int coreLength = files.length;
+
     plateMetadataFiles =
       metadataFiles.toArray(new String[metadataFiles.size()]);
 
-    tmpWells.clear();
     metadataFiles.clear();
 
     // initialize each of the well files
@@ -317,32 +363,80 @@ public class ScreenReader extends FormatReader {
       throw new FormatException(se);
     }
 
-    int lastCount = 0;
-    int[] seriesCounts = new int[files.length];
     core.clear();
 
-    for (int well=0; well<files.length; well++) {
-      readers[well] = new ImageReader(validReaders);
-      readers[well].setMetadataStore(omexmlMeta);
-      readers[well].setId(files[well]);
-      List<CoreMetadata> wcore = readers[well].getCoreMetadataList();
-      for (CoreMetadata cw : wcore) {
-        core.add(cw);
+    String excludeReadersEntry = plateTable.get("ExcludeReaders");
+    if (null != excludeReadersEntry) {
+      String[] excludeReaders = excludeReadersEntry.split(",", -1);
+      for (String r : excludeReaders) {
+        try {
+          Class<? extends IFormatReader> c =
+            Class.forName(r).asSubclass(IFormatReader.class);
+          validReaders.removeClass(c);
+        } catch (ClassNotFoundException e) {
+          LOGGER.warn("Reader {} not found", r);
+        }
       }
-      seriesCounts[well] = readers[well].getSeriesCount();
-      lastCount = seriesCounts[well];
+    }
 
-      String row = getRow(files[well]);
-      String col = getColumn(files[well]);
-      int rowIndex = (int) (row.charAt(0) - 'A');
-      int colIndex = Integer.parseInt(col) - 1;
+    ImageReader iReader = new ImageReader(validReaders);
+    FileStitcher stitcher = new FileStitcher(iReader, true);
+    stitcher.setReaderClassList(validReaders);
+    stitcher.setCanChangePattern(false);
+    // After setReaderClassList
+    reader = new DimensionSwapper(stitcher);
+    reader.setMetadataStore(omexmlMeta);
+    // Note: by passing this in we allow lower-level readers
+    // to change our settings here.
+    reader.setMetadataOptions(getMetadataOptions());
 
-      plateMaps[rowIndex][colIndex] = true;
+    for (int well=0; well<files.length; well++) {
+      if (files[well] == null || files[well][0] == null) {
+        continue;
+      }
+      LOGGER.debug("Initializing pattern {} for spot {}", files[well], well);
+      reader.close();
+      if (null != axisTypes[well]) {
+        stitcher.overrideAxisTypes(axisTypes[well]);
+      }
+      reader.setId(files[well][0]);
+
+      // At this point, we have a concrete reader. Use it
+      // for all subsequent setId calls.
+      if (chosenReader == null) {
+        chosenReader = stitcher.unwrap().getClass();
+        LOGGER.info("Using {} for all further calls.",
+          chosenReader.getSimpleName());
+        ClassList<IFormatReader> chosenReaders =
+          new ClassList<IFormatReader>(IFormatReader.class);
+        chosenReaders.addClass(chosenReader);
+        stitcher.setReaderClassList(chosenReaders);
+        // Re-initialize
+        reader.setId(files[well][0]);
+      }
+
+      if (ordering[well] != null && reader instanceof DimensionSwapper) {
+        ((DimensionSwapper) reader).swapDimensions(ordering[well]);
+      }
+      List<CoreMetadata> wcore = reader.getCoreMetadataList();
+      core.add(wcore.get(0));
+      if (wcore.size() > 1) {
+        LOGGER.warn("Ignoring extra series for well #{}", well);
+      }
+      seriesMap.put(core.size() - 1, well);
+      spotMap.put(well, core.size() - 1);
+
+      files[well] = reader.getUsedFiles();
+
+      fileIndexes[well] = new int[wcore.get(0).imageCount][];
+      for (int plane=0; plane<fileIndexes[well].length; plane++) {
+        fileIndexes[well][plane] = stitcher.computeIndices(plane);
+      }
     }
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     Image img = root.getImage(0);
-    for (int i=lastCount; i<core.size(); i++) {
+    for (int i=1; i<core.size(); i++) {
       root.addImage(img);
     }
     ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
@@ -356,155 +450,56 @@ public class ScreenReader extends FormatReader {
 
     String screenID = MetadataTools.createLSID("Screen", 0);
     store.setScreenID(screenID, 0);
-    store.setScreenName(screen.getName(), 0);
+    store.setScreenName(plateTable.get("ScreenName"), 0);
 
     String plateID = MetadataTools.createLSID("Plate", 0);
     store.setPlateID(plateID, 0);
     store.setScreenPlateRef(plateID, 0, 0);
 
-    store.setPlateName(plate.getName(), 0);
-    store.setPlateRows(new PositiveInteger(plateMaps.length), 0);
-    store.setPlateColumns(new PositiveInteger(plateMaps[0].length), 0);
+    store.setPlateName(plateTable.get("Name"), 0);
+    store.setPlateRows(new PositiveInteger(maxRow), 0);
+    store.setPlateColumns(new PositiveInteger(maxCol), 0);
     store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
     store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
     int realWell = 0;
-    for (int row=0; row<plateMaps.length; row++) {
-      for (int col=0; col<plateMaps[row].length; col++) {
-        int well = row * plateMaps[row].length + col;
+    for (int row=0; row<maxRow; row++) {
+      for (int col=0; col<maxCol; col++) {
+        int well = row * maxCol + col;
         String wellID = MetadataTools.createLSID("Well", 0, well);
         store.setWellID(wellID, 0, well);
         store.setWellColumn(new NonNegativeInteger(col), 0, well);
         store.setWellRow(new NonNegativeInteger(row), 0, well);
 
-        if (plateMaps[row][col]) {
-          for (int field=0; field<seriesCounts[realWell]; field++) {
-            int seriesIndex = getSeriesIndex(realWell, field);
+        int nextWellSample = 0;
+        for (int field=0; field<fields; field++) {
+          int spotIndex = well * fields + field;
+          int seriesIndex = -1;
+          if (spotMap.containsKey(spotIndex)) {
+            seriesIndex = spotMap.get(spotIndex);
+          }
+
+          if (seriesIndex >= 0) {
+            String wellSampleID =
+              MetadataTools.createLSID("WellSample", 0, well, nextWellSample);
+            store.setWellSampleID(wellSampleID, 0, well, nextWellSample);
             String imageID = MetadataTools.createLSID("Image", seriesIndex);
             store.setImageID(imageID, seriesIndex);
             store.setImageName("Well " + ((char) (row + 'A')) + (col + 1) +
               ", Field " + (field + 1), seriesIndex);
-            String wellSampleID =
-              MetadataTools.createLSID("WellSample", 0, well, field);
-            store.setWellSampleID(wellSampleID, 0, well, field);
-            store.setWellSampleImageRef(imageID, 0, well, field);
+            store.setWellSampleImageRef(imageID, 0, well, nextWellSample);
             store.setWellSampleIndex(
-              new NonNegativeInteger(seriesIndex), 0, well, field);
-          }
-          realWell++;
-        }
-      }
-    }
-  }
-
-  // -- Helper methods --
-
-  private boolean isValidWellName(String filename) {
-    if (new Location(filename).getAbsoluteFile().isDirectory()) return false;
-    String row = getRow(filename);
-    String col = getColumn(filename);
-
-    try {
-      Integer.parseInt(col);
-      return col.length() <= 2 && Character.isLetter(row.charAt(0));
-    }
-    catch (NumberFormatException e) { }
-
-    return false;
-  }
-
-  private boolean isValidPlateName(String filename) {
-    return new Location(filename).isDirectory();
-  }
-
-  private int getSeriesIndex(int well, int field) {
-    int seriesIndex = 0;
-    int validWells = -1;
-    for (int row=0; row<plateMaps.length; row++) {
-      for (int col=0; col<plateMaps[row].length; col++) {
-         if (plateMaps[row][col]) {
-            validWells++;
-
-            if (validWells == well) {
-              return seriesIndex + field;
+              new NonNegativeInteger(seriesIndex), 0, well, nextWellSample);
+            if (null != channelNames[well]) {
+              for (int i = 0; i < channelNames[well].length; i++) {
+                store.setChannelName(channelNames[well][i], seriesIndex, i);
+              }
             }
-            seriesIndex += readers[validWells].getSeriesCount();
-         }
-      }
-    }
-    return -1;
-  }
-
-  private int[] getSPWIndexes(int seriesIndex) {
-    int s = 0;
-    int wellIndex = 0;
-    for (int row=0; row<plateMaps.length; row++) {
-      for (int col=0; col<plateMaps[row].length; col++) {
-        if (plateMaps[row][col]) {
-          for (int i=0; i<readers[wellIndex].getSeriesCount(); i++) {
-            s++;
-
-            if (s == seriesIndex + 1) {
-              return new int[] {wellIndex, i};
-            }
-          }
-          wellIndex++;
-        }
-      }
-    }
-
-    return new int[] {-1, -1};
-  }
-
-  private int[] getRowAndColumn(int well) {
-    int validWells = 0;
-    for (int row=0; row<plateMaps.length; row++) {
-      for (int col=0; col<plateMaps[row].length; col++) {
-        if (plateMaps[row][col]) {
-          validWells++;
-
-          if (validWells == well + 1) {
-            return new int[] {row, col};
+            nextWellSample++;
           }
         }
       }
     }
-    return new int[] {-1, -1};
-  }
-
-  private boolean hasValidWells(Location plate) {
-    if (!plate.isDirectory()) return false;
-    String[] wells = plate.list(true);
-    for (String well : wells) {
-      if (isValidWellName(new Location(plate, well).getAbsolutePath())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private String getRow(String well) {
-    String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
-    char firstChar = Character.toUpperCase(wellName.charAt(0));
-    while (wellName.indexOf('_') > 0 && (firstChar < 'A' || firstChar > 'P')) {
-      wellName = wellName.substring(wellName.indexOf('_') + 1);
-      firstChar = Character.toUpperCase(wellName.charAt(0));
-    }
-    return wellName.substring(0, 1).toUpperCase();
-  }
-
-  private String getColumn(String well) {
-    String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
-    char firstChar = Character.toUpperCase(wellName.charAt(0));
-    while (wellName.indexOf('_') > 0 && (firstChar < 'A' || firstChar > 'P')) {
-      wellName = wellName.substring(wellName.indexOf('_') + 1);
-      firstChar = Character.toUpperCase(wellName.charAt(0));
-    }
-    int end = wellName.lastIndexOf("_");
-    if (end < 0) end = wellName.lastIndexOf(".");
-    if (end < 0) end = wellName.length();
-    if (end <= 1) return null;
-    return wellName.substring(1, end);
   }
 
 }

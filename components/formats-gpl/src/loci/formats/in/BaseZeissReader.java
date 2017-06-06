@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -953,7 +953,7 @@ public abstract class BaseZeissReader extends FormatReader {
           for (int q=0; q<tokens.length; q++) {
             int slash = tokens[q].indexOf('/');
             if (slash != -1 && slash - q > 0) {
-              Double mag = 
+              Double mag =
                   Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
               store.setObjectiveNominalMagnification(mag, 0, 0);
@@ -1657,7 +1657,7 @@ public abstract class BaseZeissReader extends FormatReader {
     LINE(2, 2), // Single line (2 points)
     CALIPER(3, 6), // Distance at right angles to baseline; two intersecting perpendicular lines; Same as DISTANCE, but omit drawing the last line.
     DISTANCE(4, 6), // Distance between two parallel lines; three lines drawn at right angles; Pair1: distance being measured, p2 and p3 are the caliper ends.  Note that p2/3 are for display only; they need recomputing if edited.
-    MULTIPLE_CALIPER(5, -4), // Multiple distances at right angles to baseline; The last pair is the baseline.  All preceding pairs are distances to the baseline.  First point is on the baseline.  If the baseline is moved, the baseline points need recomputing. 
+    MULTIPLE_CALIPER(5, -4), // Multiple distances at right angles to baseline; The last pair is the baseline.  All preceding pairs are distances to the baseline.  First point is on the baseline.  If the baseline is moved, the baseline points need recomputing.
     MULTIPLE_DISTANCE(5, -4), // Multiple distances between two parallel lines; Same as for 5.  But, an extra line the same length as the baseline is drawn at the other end of each line; this extra line is not stored.
     ANGLE3(7, 4), // In degrees (4 points--2 lines with common origin); angle determined from intersection
     ANGLE4(8, 4), // In degrees (4 points--2 lines with no common origin); angle determined from (virtual) intersection

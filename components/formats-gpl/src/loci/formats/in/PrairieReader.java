@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -541,7 +541,7 @@ public class PrairieReader extends FormatReader {
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(FormatTools.createLength(physicalSizeX, UNITS.MICROMETER), s);
       }
-    
+
       // populate PhysicalSizeY
       final PositiveFloat physicalSizeY =
         pf(firstFrame.getMicronsPerPixelY(), "PhysicalSizeY");
@@ -829,7 +829,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the first sequence associated with the given series.
-   * 
+   *
    * @param s The series (i.e., stage position).
    * @return The first associated {@code Sequence}.
    */
@@ -839,7 +839,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the sequence associated with the given series and time point.
-   * 
+   *
    * @param t The time point.
    * @param s The series (i.e., stage position).
    * @return The associated {@code Sequence}.
@@ -851,7 +851,7 @@ public class PrairieReader extends FormatReader {
 
   /**
    * Gets the sequence associated with the given time point and stage position.
-   * 
+   *
    * @param t The time point.
    * @param p The stage position.
    * @param sizeP The number of stage positions.
@@ -864,7 +864,7 @@ public class PrairieReader extends FormatReader {
   /**
    * Gets the frame index associated with the given (Z, T) position of the
    * specified series.
-   * 
+   *
    * @param sequence The sequence from which to extract the frame.
    * @param z The focal plane.
    * @param t The time point.

@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -127,6 +127,8 @@ public class ImageReader implements IFormatReader {
       IFormatReader reader = null;
       try {
         reader = c[i].newInstance();
+        // TODO: this allows each instance to unnecessarily
+        // create its own MetadataOptions instance first.
         reader.setMetadataOptions(opt);
       }
       catch (IllegalAccessException exc) { }
@@ -226,7 +228,11 @@ public class ImageReader implements IFormatReader {
     return getReaders()[0].getSupportedMetadataLevels();
   }
 
-  /* @see loci.formats.IMetadataConfigurable#getMetadataOptions() */
+  /**
+   * Assumes that all the readers have the same {@link MetadataOption}
+   * instance set. This <em>may</em> not hold if a caller has actively
+   * retrieved one of the readers and called {@link #setMetadataOptions(MetadataOptions)}.
+   */
   @Override
   public MetadataOptions getMetadataOptions() {
     return getReaders()[0].getMetadataOptions();
@@ -665,7 +671,7 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   @Override
   public void setMetadataStore(MetadataStore store) {
-    FormatTools.assertId(currentId, false, 2);
+    //FormatTools.assertId(currentId, false, 2);
     for (int i=0; i<readers.length; i++) readers[i].setMetadataStore(store);
   }
 

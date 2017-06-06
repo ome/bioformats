@@ -87,7 +87,7 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-#if (($privateSpecification) or ($notes))
+#if (($privateSpecification) or ($options) or ($notes))
 **Additional Information**
 #end
 
@@ -96,6 +96,11 @@ Utility: |$utilityRating|
 format, we are not able to distribute them to third parties.**
 #end
 
+#if ($options)
+Additional options are available for reading or writing this format type, see
+:doc:`options` for information.
+
+#end
 #foreach ($note in $notes)
 $note
 #end

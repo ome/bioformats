@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -405,7 +405,7 @@ public class TestTools {
     for (int t = 0; t < sizeT; t++) {
       for (int c = 0; c < sizeC; c++) {
         for (int z = 0; z < sizeZ; z++) {
-          for (int tileOffsetY = 0; 
+          for (int tileOffsetY = 0;
                tileOffsetY < (sizeY + tileHeight - 1) / tileHeight;
                tileOffsetY++) {
             for (int tileOffsetX = 0;

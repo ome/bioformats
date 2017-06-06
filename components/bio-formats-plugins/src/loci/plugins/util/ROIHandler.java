@@ -11,15 +11,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -96,9 +96,9 @@ public class ROIHandler {
    */
   public static void openROIs(IMetadata retrieve, ImagePlus[] images,
           boolean isOMERO) {
-    openROIs(retrieve, images, isOMERO, ImporterOptions.ROIS_MODE_MANAGER);  
+    openROIs(retrieve, images, isOMERO, ImporterOptions.ROIS_MODE_MANAGER);
   }
-  
+
   /**
    * Opens the rois and converts them into ImageJ Rois.
    *
@@ -374,7 +374,7 @@ public class ROIHandler {
               if (shapeObject.getTheT() != null) {
                 t = shapeObject.getTheT().getValue();
               }
-              // ImageJ expects 1-based indexing, opposed to 
+              // ImageJ expects 1-based indexing, opposed to
               // 0-based indexing in OME
               // Roi positions differ between hyperstacks and normal stacks
               ImagePlus imp = images[imageNum];
@@ -413,11 +413,11 @@ public class ROIHandler {
             if (sc != null) {
               roi.setStrokeColor(sc);
             }
-            
+
             if (roisMode.equals(ImporterOptions.ROIS_MODE_MANAGER)) {
                 manager.add(images[imageNum], roi, nextRoi++);
             } else if (roisMode.equals(ImporterOptions.ROIS_MODE_OVERLAY)) {
-                Overlay overlay = images[imageNum].getOverlay();                        
+                Overlay overlay = images[imageNum].getOverlay();
                 if (overlay == null) {
                     overlay = new Overlay(roi);
                     images[imageNum].setOverlay(overlay);

@@ -113,10 +113,15 @@ public class BDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
+    
+    Location location = new Location(name);
+    String id = location.getAbsolutePath();
+    boolean dirCheck = location.isDirectory();
+    if (dirCheck) return false;
     if (name.endsWith(EXPERIMENT_FILE)) return true;
     if (!open) return false;
 
-    String id = new Location(name).getAbsolutePath();
+    
     try {
       id = locateExperimentFile(id);
     }

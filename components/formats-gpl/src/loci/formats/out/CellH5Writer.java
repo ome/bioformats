@@ -11,12 +11,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
@@ -56,10 +56,10 @@ public class CellH5Writer extends FormatWriter {
 
   // -- Fields --
   private transient JHDFService jhdf;
-  
+
   private long bpp;
   private String outputPath;
-  
+
   // -- Constructors --
 
   public CellH5Writer() {
@@ -74,7 +74,7 @@ public class CellH5Writer extends FormatWriter {
 
   /* @see loci.formats.FormatWriter#setId(String) */
   @Override
-  public void setId(String id) throws FormatException, IOException { 
+  public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     super.setId(id);
     try {
@@ -84,7 +84,7 @@ public class CellH5Writer extends FormatWriter {
     } catch (DependencyException e) {
       throw new MissingLibraryException(JHDFServiceImpl.NO_JHDF_MSG, e);
     }
-    
+
     MetadataRetrieve retrieve = getMetadataRetrieve();
 
     int sizeX = retrieve.getPixelsSizeX(0).getValue();
@@ -94,13 +94,13 @@ public class CellH5Writer extends FormatWriter {
     int sizeT = retrieve.getPixelsSizeT(0).getValue();
     int type = FormatTools.pixelTypeFromString(retrieve.getPixelsType(0).toString());
     bpp = FormatTools.getBytesPerPixel(type);
-    
+
     LOGGER.info("CellH5Writer: Found image with dimensions XYZCT {}x{}x{}x{}x{}, and bits per pixel {}", sizeX, sizeY, sizeZ, sizeC, sizeT, bpp);
-    
+
     String plate = "PLATE_00";
     String well = "WELL_00";
     int site = 1;
-    
+
     if (retrieve.getPlateCount()>0) {
         plate = retrieve.getPlateName(0);
         well = retrieve.getWellExternalIdentifier(0, 0);
@@ -109,11 +109,11 @@ public class CellH5Writer extends FormatWriter {
     } else {
         LOGGER.info("CellH5Writer: No plate information found. Using default values...");
     }
-    
+
     jhdf.createGroup(CellH5Constants.DEFINITION + CellH5Reader.CellH5Constants.OBJECT);
     jhdf.createGroup(CellH5Constants.DEFINITION + CellH5Reader.CellH5Constants.FEATURE);
     jhdf.createGroup(CellH5Constants.DEFINITION + CellH5Reader.CellH5Constants.IMAGE);
-    
+
     outputPath = String.format("/sample/0/plate/%s/experiment/%s/position/%d/image/channel", plate, well, site);
     jhdf.initIntArray(outputPath, new long[] {sizeC, sizeT, sizeZ, sizeY, sizeX}, bpp);
   }
@@ -127,13 +127,13 @@ public class CellH5Writer extends FormatWriter {
   {
     LOGGER.info("CellH5Writer: Save image to HDF5 path: " + outputPath);
     MetadataRetrieve r = getMetadataRetrieve();
-    
+
     int sizeX = r.getPixelsSizeX(series).getValue();
     int sizeY = r.getPixelsSizeY(series).getValue();
     int sizeC = r.getPixelsSizeC(series).getValue();
     int sizeT = r.getPixelsSizeT(series).getValue();
     int sizeZ = r.getPixelsSizeZ(series).getValue();
-    
+
     DimensionOrder dimo = r.getPixelsDimensionOrder(0);
     int c, z, t;
     if (dimo.equals(DimensionOrder.XYCZT)) {
@@ -144,19 +144,19 @@ public class CellH5Writer extends FormatWriter {
         c = no % sizeC;
         t = ((no - c) / sizeC) % sizeT;
         z = (((no - c) / sizeC)) / sizeT;
-        
+
     } else if (dimo.equals(DimensionOrder.XYZTC)){
         z = no % sizeZ;
         t = ((no - z) / sizeZ) % sizeT;
         c = (((no - z) / sizeZ)) / sizeT;
-        
+
     } else {
         throw new FormatException("CellH5Writer: Dimension order not understood: " + dimo.getValue());
     }
-    
+
     LOGGER.info("CellH5Writer.saveBytes(): Current c, t, z == {} {} {}", c,t,z);
     LOGGER.info("CellH5Writer.saveBytes(): bpp {} byte buffer len {}", bpp, buf.length);
-    
+
     if (bpp==1) {
         MDByteArray image = new MDByteArray(new int[] {1, 1, 1, sizeY, sizeX});
         for (int x_i=0; x_i < sizeX; x_i++) {
@@ -231,7 +231,7 @@ public class CellH5Writer extends FormatWriter {
       // always save to full image
       saveBytes(no, buf);
   }
-  
+
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
   @Override
   public boolean canDoStacks() { return true; }

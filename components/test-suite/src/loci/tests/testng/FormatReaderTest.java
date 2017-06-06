@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -947,7 +947,7 @@ public class FormatReaderTest {
 
       Length expectedSize = config.getPhysicalSizeX();
       Length realSize = retrieve.getPixelsPhysicalSizeX(i);
-      
+
       if (!isAlmostEqual(realSize,expectedSize))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -967,7 +967,7 @@ public class FormatReaderTest {
       config.setSeries(i);
       Length expectedSize = config.getPhysicalSizeY();
       Length realSize = retrieve.getPixelsPhysicalSizeY(i);
-      
+
       if (!isAlmostEqual(realSize,expectedSize))
       {
         result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
@@ -1123,6 +1123,18 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
+      // Test image acquisition date
+      String expectedDate = config.getDate();
+      String date = null;
+      if (retrieve.getImageAcquisitionDate(i) != null) {
+        date = retrieve.getImageAcquisitionDate(i).getValue();
+      }
+      if (expectedDate != null && date != null && !expectedDate.equals(date)) {
+        result(testName, false, "series " + i +
+          " (expected " + expectedDate + ", actual " + date + ")");
+        return;
+      }
+
       for (int p=0; p<reader.getImageCount(); p++) {
         Time deltaT = null;
         try {
@@ -1185,7 +1197,7 @@ public class FormatReaderTest {
         String expectedXUnit = config.getPositionXUnit(p);
         String expectedYUnit = config.getPositionYUnit(p);
         String expectedZUnit = config.getPositionZUnit(p);
-        
+
         if (posX == null && expectedX == null) {
         }
         else if (posX == null) {
@@ -1637,6 +1649,13 @@ public class FormatReaderTest {
         }
 
         for (int i=0; i<maxFiles && success; i++) {
+          if (reader.getFormat().equals("Screen") &&
+            file.toLowerCase().endsWith(".screen") &&
+            !base[i].toLowerCase().endsWith(".screen"))
+          {
+            continue;
+          }
+
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (reader.getFormat().equals("InCell 1000/2000")) {
@@ -2379,6 +2398,10 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (!used[i].toLowerCase().endsWith(".screen") && r instanceof ScreenReader) {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -2529,7 +2552,7 @@ public class FormatReaderTest {
     // Remove external SlideBook6Reader class for testing purposes
     ImageReader ir = new ImageReader();
     reader = new BufferedImageReader(new FileStitcher(new Memoizer(ir, Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
-    reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
+    reader.setMetadataOptions(new DynamicMetadataOptions(MetadataLevel.NO_OVERLAYS));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);

@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,7 +37,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ArrayIndexOutOfBoundsException;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -46,11 +45,16 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataLevel;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -60,8 +64,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-
-import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -326,6 +328,25 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
+  private static <T> T getMetadataOption(
+      MetadataOptions opts, String name, Class<T> type) {
+
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return null;
+    }
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
+
+    T opt = null;
+    String fullName = String.format("%s.%s", Memoizer.class.getName(), name);
+    try {
+      opt = type.cast(options.get(fullName));
+    } catch (ClassCastException e) {
+      LOGGER.warn("{}: wrong type (expected: {})", name, type.getName());
+    }
+    return opt;
+  }
+
   // -- Constants --
 
   /**
@@ -383,6 +404,8 @@ public class Memoizer extends ReaderWrapper {
 
   private boolean skipSave = false;
 
+  private boolean failIfMissing = false;
+
   /**
    * Boolean specifying whether to invalidate the memo file based upon
    * mismatched major/minor version numbers. By default, the Git commit hash
@@ -430,6 +453,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer() {
     this(DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -444,6 +468,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(long minimumElapsed) {
     this(minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -462,6 +487,7 @@ public class Memoizer extends ReaderWrapper {
     super();
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -474,6 +500,7 @@ public class Memoizer extends ReaderWrapper {
    */
   public Memoizer(IFormatReader r) {
     this(r, DEFAULT_MINIMUM_ELAPSED);
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -490,6 +517,7 @@ public class Memoizer extends ReaderWrapper {
   public Memoizer(IFormatReader r, long minimumElapsed) {
     this(r, minimumElapsed, null);
     this.doInPlaceCaching = true;
+    configure(reader.getMetadataOptions());
   }
 
   /**
@@ -509,8 +537,84 @@ public class Memoizer extends ReaderWrapper {
     super(r);
     this.minimumElapsed = minimumElapsed;
     this.directory = directory;
+    configure(reader.getMetadataOptions());
   }
 
+  /**
+   * Used to inject all the properties necessary for {@link Memoizer}
+   * creation into {@link MetadataOptions}. This is called by every
+   * constructor so that {@link IFormatReader} instances created
+   * internally can also make use of memoization.
+   *
+   * @param options
+   */
+  public void configure(MetadataOptions opts) {
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return;
+    }
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
+
+    String k = Memoizer.class.getName();
+    options.setFile(k + ".cacheDirectory", this.directory);
+    options.setBoolean(k + ".inPlace", this.doInPlaceCaching);
+    options.setLong(k + ".minimumElapsed", this.minimumElapsed);
+    options.setBoolean(k + ".failIfMissing", this.failIfMissing);
+    reader.setMetadataOptions(options);
+  }
+
+  public void setMetadataOptions(MetadataOptions options) {
+    configure(options);
+    reader.setMetadataOptions(options);
+  }
+
+  public void setFailIfMissing(boolean failIfMissing) {
+    MetadataOptions opts = reader.getMetadataOptions();
+    if (!(opts instanceof DynamicMetadataOptions)) {
+      LOGGER.warn("Memoizer requires a DynamicMetadataOptions");
+      return;
+    }
+
+    DynamicMetadataOptions options = (DynamicMetadataOptions) opts;
+    this.failIfMissing = failIfMissing;
+    options.setBoolean(Memoizer.class.getName() + ".failIfMissing", failIfMissing);
+  }
+
+  /**
+   * If {@link MetadataOptions} have been configured per
+   * {@link #configure(MetadataOptions)}, then wrap the given
+   * {@link IFormatReader} with a {@link Memoizer} instance and return.
+   * Otherwise, return the {@link IFormatReader} unchanged.
+   *
+   * @param options If null, return the reader
+   * @param r
+   * @return Either a {@link Memoizer} or the {@link IFormatReader} argument.
+   */
+  public static IFormatReader wrap(MetadataOptions options, IFormatReader r) {
+    if (options == null) {
+      return r;
+    }
+    Long elapsed = getMetadataOption(options, "minimumElapsed", Long.class);
+    if (null == elapsed) {
+      return r;
+    }
+    Boolean inplace = getMetadataOption(options, "inPlace", Boolean.class);
+    Memoizer m = null;
+    if (null != inplace && inplace.booleanValue()) {
+      m = new Memoizer(r, elapsed);
+      r = m;
+    }
+    File cachedir = getMetadataOption(options, "cacheDirectory", File.class);
+    if (null != cachedir) {
+      m = new Memoizer(r, elapsed, cachedir);
+      r = m;
+    }
+    Boolean failIfMissing = getMetadataOption(options, "failIfMissing", Boolean.class);
+    if (m != null && failIfMissing != null) {
+      m.failIfMissing = failIfMissing;
+    }
+    return r;
+  }
 
   /**
    *  Returns whether the {@link #reader} instance currently active was loaded
@@ -671,17 +775,32 @@ public class Memoizer extends ReaderWrapper {
       }
 
       if (memo == null) {
+        if (failIfMissing) {
+          throw new FormatException("Cache file does not exist: " + memoFile);
+        }
         OMEXMLService service = getService();
-        super.setMetadataStore(service.createOMEXMLMetadata());
+        OMEXMLMetadata all = service.createOMEXMLMetadata();
+        OMEXMLMetadata min = service.createOMEXMLMetadata();
+
+        // Load all the data for use
+        super.setMetadataStore(all);
         long start = System.currentTimeMillis();
         super.setId(id);
-        long elapsed = System.currentTimeMillis() - start;
-        handleMetadataStore(null); // Between setId and saveMemo
-        if (elapsed < minimumElapsed) {
-          LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
-          return; // EARLY EXIT!
+
+        try {
+          long elapsed = System.currentTimeMillis() - start;
+          handleMetadataStore(null); // Between setId and saveMemo
+          if (elapsed < minimumElapsed) {
+            LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
+            return; // EARLY EXIT!
+          }
+          // but only persist the minimum information
+          convertMetadata(all, min);
+          reader.setMetadataStore(min);
+          savedToMemo = saveMemo(); // Should never throw.
+        } finally {
+          super.setMetadataStore(all);
         }
-        savedToMemo = saveMemo(); // Should never throw.
       }
     } catch (ServiceException e) {
       LOGGER.error("Could not create OMEXMLMetadata", e);
@@ -1021,8 +1140,7 @@ public class Memoizer extends ReaderWrapper {
       } else if (!(filledStore instanceof MetadataRetrieve)) {
           LOGGER.error("Found non-MetadataRetrieve: {}" + filledStore.getClass());
       } else {
-        OMEXMLService service = getService();
-        service.convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
+        convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
       }
     } else {
       // on save; we've just called super.setId()
@@ -1035,12 +1153,17 @@ public class Memoizer extends ReaderWrapper {
       } else if (!(filledStore instanceof MetadataRetrieve)) {
         LOGGER.error("Found non-MetadataRetrieve: {}" + filledStore.getClass());
       } else {
-        OMEXMLService service = getService();
-        service.convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
+        convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
       }
 
     }
     return memo;
+  }
+
+  private void convertMetadata(MetadataRetrieve retrieve, MetadataStore store)
+    throws MissingLibraryException {
+    OMEXMLService service = getService();
+    service.convertMetadata(retrieve, store, MetadataLevel.MINIMUM);
   }
 
   public static void main(String[] args) throws Exception {

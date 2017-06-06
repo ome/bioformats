@@ -2,10 +2,7 @@
 # available to Bio-Formats, and the order in which they should be used.
 # Please do not edit unless you know what you are doing (see reader-guide.txt).
 
-# generic reader for HCS data
-# disabled for now, as it has been causing no end of problems outside of OMERO
-#loci.formats.in.ScreenReader
-
+loci.formats.in.ScreenReader          # screen
 loci.formats.in.FilePatternReader     # pattern
 
 # readers for compressed/archive files
@@ -115,6 +112,7 @@ loci.formats.in.FujiReader            # inf, img
 loci.formats.in.OperettaReader        # xml, tif, tiff
 loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 loci.formats.in.CellVoyagerReader     # xml, tif
+loci.formats.in.ColumbusReader        # xml, tif
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic

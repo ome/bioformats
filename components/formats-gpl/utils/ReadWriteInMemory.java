@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -35,7 +35,10 @@ import loci.formats.services.OMEXMLService;
 
 /**
  * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
+ * @deprecated Class has been moved to documentation examples and is available for download
+ * from http://www.openmicroscopy.org/site/support/bio-formats/developers/in-memory.html
  */
+@Deprecated
 public class ReadWriteInMemory {
 
   public static void main(String[] args)
@@ -47,6 +50,7 @@ public class ReadWriteInMemory {
     }
     String path = args[0];
 
+    /* file-read-start */
     // read in entire file
     System.out.println("Reading file into memory from disk...");
     File inputFile = new File(path);
@@ -55,7 +59,9 @@ public class ReadWriteInMemory {
     byte[] inBytes = new byte[fileSize];
     in.readFully(inBytes);
     System.out.println(fileSize + " bytes read.");
+    /* file-read-end */
 
+    /* mapping-start */
     // determine input file suffix
     String fileName = inputFile.getName();
     int dot = fileName.lastIndexOf(".");
@@ -64,11 +70,13 @@ public class ReadWriteInMemory {
     // map input id string to input byte array
     String inId = "inBytes" + suffix;
     Location.mapFile(inId, new ByteArrayHandle(inBytes));
+    /* mapping-end */
 
     // read data from byte array using ImageReader
     System.out.println();
     System.out.println("Reading image data from memory...");
 
+    /* read-start */
     ServiceFactory factory = new ServiceFactory();
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
     IMetadata omeMeta = service.createOMEXMLMetadata();
@@ -76,6 +84,8 @@ public class ReadWriteInMemory {
     ImageReader reader = new ImageReader();
     reader.setMetadataStore(omeMeta);
     reader.setId(inId);
+    /* read-end */
+
     int seriesCount = reader.getSeriesCount();
     int imageCount = reader.getImageCount();
     int sizeX = reader.getSizeX();
@@ -94,18 +104,23 @@ public class ReadWriteInMemory {
     System.out.println("\tSizeC = " + sizeC);
     System.out.println("\tSizeT = " + sizeT);
 
+    /* out—mapping-start */
     // map output id string to output byte array
     String outId = fileName + ".ome.tif";
     ByteArrayHandle outputFile = new ByteArrayHandle();
     Location.mapFile(outId, outputFile);
+    /* out—mapping-end */
 
+    /* write—init-start */
     // write data to byte array using ImageWriter
     System.out.println();
     System.out.print("Writing planes to destination in memory: ");
     ImageWriter writer = new ImageWriter();
     writer.setMetadataRetrieve(omeMeta);
     writer.setId(outId);
+    /* write—init-end */
 
+    /* write-start */
     byte[] plane = null;
     for (int i=0; i<imageCount; i++) {
       if (plane == null) {
@@ -125,7 +140,9 @@ public class ReadWriteInMemory {
 
     byte[] outBytes = outputFile.getBytes();
     outputFile.close();
+    /* write-end */
 
+    /* flush-start */
     // flush output byte array to disk
     System.out.println();
     System.out.println("Flushing image data to disk...");
@@ -133,6 +150,7 @@ public class ReadWriteInMemory {
     DataOutputStream out = new DataOutputStream(new FileOutputStream(outFile));
     out.write(outBytes);
     out.close();
+    /* flush-end */
   }
 
 }

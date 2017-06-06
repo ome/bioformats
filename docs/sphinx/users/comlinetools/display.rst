@@ -1,11 +1,11 @@
 Displaying images and metadata
 ==============================
 
-The :command:`showinf` :doc:`command line tool <index>` can be used to show the
-images and metadata contained in a file.
+The :command:`showinf` :doc:`command line tool <index>` can be used to show
+the images and metadata contained in a file.
 
-If no options are specified, :program:`showinf` displays a summary of available
-options.
+If no options are specified, :program:`showinf` displays a summary of
+available options.
 
 .. program:: showinf
 
@@ -50,6 +50,10 @@ dimensions, and other basic metadata will be printed to the console.
     Passes options expressed as key/value pairs::
 
       showinf -option key value /path/to/file
+
+    e.g. additional reader options, see :doc:`/formats/options`::
+
+      showinf -option leicalif.old_physical_size true /path/to/file
 
     .. versionadded:: 5.3.0
 

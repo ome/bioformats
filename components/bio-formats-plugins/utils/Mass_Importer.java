@@ -11,15 +11,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -60,27 +60,27 @@ public class Mass_Importer implements PlugIn {
     File dir = new File(dirPath);
     File[] files = dir.listFiles();
     IJ.showStatus("Scanning directory");
-    
+
     // image reader object, for testing whether a file is in a supported format
     try (ImageReader tester = new ImageReader()) {
       for (int i=0; i<files.length; i++) {
         String id = files[i].getAbsolutePath();
         IJ.showProgress((double) i / files.length);
-  
+
         // skip files that have already been processed
         if (done.contains(id)) continue;
-  
+
         // skip unsupported files
         if (!tester.isThisType(id, false)) continue;
-  
+
         // use FilePattern to group files with similar names
         String name = files[i].getName();
         FilePattern fp = new FilePattern(name, dirPath);
-  
+
         // get a list of all files part of this group, and mark them as done
         String[] used = fp.getFiles();
         for (int j=0; j<used.length; j++) done.add(used[j]);
-  
+
         filesToOpen.add(id);
       }
     } catch (IOException e) {

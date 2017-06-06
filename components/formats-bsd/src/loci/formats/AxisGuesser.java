@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -35,6 +35,9 @@ package loci.formats;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
+
+import static java.util.Collections.unmodifiableSet;
+
 
 import static java.util.Collections.unmodifiableSet;
 
@@ -102,6 +105,24 @@ public class AxisGuesser {
 
   /** Whether the guesser is confident that all axis types are correct. */
   protected boolean certain;
+
+  // -- Helpers --
+
+  private boolean swapZT(int sizeZ, int sizeT, boolean haveZ, boolean haveT) {
+    boolean wrongZ = haveZ && !haveT && sizeZ > 1 && sizeT == 1;
+    boolean wrongT = haveT && !haveZ && sizeT > 1 && sizeZ == 1;
+    if (wrongZ || wrongT) {
+        int indexZ = newOrder.indexOf('Z');
+        int indexT = newOrder.indexOf('T');
+        char[] ch = newOrder.toCharArray();
+        ch[indexZ] = 'T';
+        ch[indexT] = 'Z';
+        newOrder = new String(ch);
+        return true;
+    } else {
+      return false;
+    }
+  }
 
   // -- Constructor --
 
@@ -222,22 +243,23 @@ public class AxisGuesser {
           axisTypes[i] = C_AXIS;
           continue;
         }
+        else {
+          // look for specific channel names
+          for (String element : elements[i]) {
+            String channelName = element.toLowerCase();
+            if (channelName.equals("dapi") || channelName.equals("fitc")) {
+              axisTypes[i] = C_AXIS;
+              continue;
+            }
+          }
+        }
       }
     }
 
     // -- 2) check for special cases where dimension order should be swapped --
 
     if (!isCertain) { // only switch if dimension order is uncertain
-      if (foundZ && !foundT && sizeZ > 1 && sizeT == 1 ||
-        foundT && !foundZ && sizeT > 1 && sizeZ == 1)
-      {
-        // swap Z and T dimensions
-        int indexZ = newOrder.indexOf('Z');
-        int indexT = newOrder.indexOf('T');
-        char[] ch = newOrder.toCharArray();
-        ch[indexZ] = 'T';
-        ch[indexT] = 'Z';
-        newOrder = new String(ch);
+      if (swapZT(sizeZ, sizeT, foundZ, foundT)) {
         int sz = sizeT;
         sizeT = sizeZ;
         sizeZ = sz;
@@ -280,6 +302,32 @@ public class AxisGuesser {
       }
     }
   }
+
+  /**
+   * Alternate constuctor where axis types are externally assigned. In
+   * this case, {@link #getAxisTypes} simply returns the given array,
+   * but other methods are still useful. Note that if this constructor
+   * is used, {@link #getFilePattern} will return <code>null</code>.
+   */
+  public AxisGuesser(int[] axisTypes, String dimOrder,
+      int sizeZ, int sizeT, int sizeC, boolean isCertain) {
+    this.axisTypes = axisTypes;
+    this.dimOrder = newOrder = dimOrder;
+    certain = isCertain;
+    if (!certain) {
+      boolean haveZ = false, haveT = false;
+      for (int t : axisTypes) {
+        if (t == Z_AXIS) {
+          haveZ = true;
+        }
+        if (t == T_AXIS) {
+          haveT = true;
+        }
+      }
+      swapZT(sizeZ, sizeT, haveZ, haveT);
+    }
+  }
+
 
   // -- AxisGuesser API methods --
 

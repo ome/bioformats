@@ -192,6 +192,7 @@ notes = .. seealso:: \n
 extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
 bsd = no
+software = `OpenSlide <http://openslide.org>`_
 versions = 8.0, 8.2, 9.0
 weHave = * many SVS datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/SVS/>`__\n
@@ -734,9 +735,10 @@ mif = true
 extensions = .ndpi, .ndpis
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
-software = `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_
-samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
-weHave = * many example datasets
+software = `NDP.view2 <http://www.hamamatsu.com/eu/en/community/nanozoomer/product/search/U12388-01/index.html>`_ \n
+`OpenSlide <http://openslide.org>`_
+weHave = * many example datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-NDPI/>`__
 weWant = * an official specification document
 pixelsRating = Fair
 metadataRating = Good
@@ -751,8 +753,9 @@ pyramid = yes
 extensions = .vms
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
 bsd = no
-samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+software = `OpenSlide <http://openslide.org>`_
 weHave = * a few example datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/Hamamatsu-VMS/>`__ \n
 * `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
 weWant = * an official specification document \n
 * more example datasets
@@ -1208,6 +1211,7 @@ utilityRating = Very good
 privateSpecification = true
 reader = LIFReader
 mif = true
+options = true
 notes = LAS stands for "Leica Application Suite". \n
 AF stands for "Advanced Fluorescence". \n
 \n
@@ -1224,11 +1228,7 @@ specification documents.  Versions 5.3.3 and later correctly calculate \n
 physical pixel sizes by dividing the physical image size by the number of \n
 pixels minus one.  To revert to the old method of physical pixel size \n
 calculation in 5.3.3 and later, set the ``leicalif.old_physical_size`` option \n
-to ``true``.  This can be done on the command line using \n
-:doc:`showinf -option </users/comlinetools/display>`, in ImageJ via the \n
-:doc:`configuration window </users/imagej/features>`, or via the API using the \n
-:javadoc:`DynamicMetadataOptions class <loci/formats/in/DynamicMetadataOptions.html>`.
-
+to ``true`` as described in :doc:`options`.
 
 [LaVision Imspector]
 extensions = .msr
@@ -1273,6 +1273,7 @@ Commercial applications that support LEI include: \n
 extensions = .scn
 developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
 bsd = no
+software = `OpenSlide <http://openslide.org>`_
 versions = 2012-03-10
 weHave = * a few sample datasets
 weWant = * an official specification document \n
@@ -1567,6 +1568,7 @@ presenceRating = Very good
 utilityRating = Very good
 reader = NativeND2Reader, LegacyND2Reader
 mif = true
+options = true
 notes = There are two distinct versions of ND2: an old version, which uses \n
 JPEG-2000 compression, and a new version which is either uncompressed or \n
 Zip-compressed.  We are not aware of the version number or release date \n
@@ -1717,6 +1719,7 @@ utilityRating = Outstanding
 reader = OMETiffReader
 writer = OMETiffWriter
 mif = true
+options = true
 notes = Bio-Formats can save image stacks as OME-TIFF. \n
 \n
 Commercial applications that support OME-TIFF include: \n
@@ -2469,6 +2472,7 @@ privateSpecification = true
 pyramid = yes
 reader = ZeissCZIReader
 mif = true
+options = true
 notes = JPEG-XR compressed CZI files are supported on the following 64-bit platforms:\n
 \n
 * Windows 7 and above with `Visual Studio 2015 C++ Redistributable <https://www.microsoft.com/en-us/download/details.aspx?id=48145>`_\n

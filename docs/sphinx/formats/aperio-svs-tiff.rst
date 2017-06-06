@@ -21,6 +21,9 @@ Officially Supported Versions: 8.0, 8.2, 9.0
 Reader: SVSReader (:bfreader:`Source Code <SVSReader.java>`, :doc:`Supported Metadata Fields </metadata/SVSReader>`)
 
 
+Freely Available Software:
+
+- `OpenSlide <http://openslide.org>`_
 
 
 We currently have:

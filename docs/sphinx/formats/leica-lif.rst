@@ -56,6 +56,9 @@ Utility: |Very good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+Additional options are available for reading or writing this format type, see
+:doc:`options` for information.
+
 LAS stands for "Leica Application Suite". 
 AF stands for "Advanced Fluorescence". 
 
@@ -72,7 +75,4 @@ specification documents.  Versions 5.3.3 and later correctly calculate
 physical pixel sizes by dividing the physical image size by the number of 
 pixels minus one.  To revert to the old method of physical pixel size 
 calculation in 5.3.3 and later, set the ``leicalif.old_physical_size`` option 
-to ``true``.  This can be done on the command line using 
-:doc:`showinf -option </users/comlinetools/display>`, in ImageJ via the 
-:doc:`configuration window </users/imagej/features>`, or via the API using the 
-:javadoc:`DynamicMetadataOptions class <loci/formats/in/DynamicMetadataOptions.html>`.
+to ``true`` as described in :doc:`options`.

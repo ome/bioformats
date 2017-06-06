@@ -11,15 +11,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -79,7 +79,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_WINDOWLESS      = "windowless";
   public static final String KEY_STITCH_TILES    = "stitchTiles";
   public static final String KEY_MUST_GROUP    	 = "mustGroup";
-  
+
   // possible values for colorMode
   public static final String COLOR_MODE_DEFAULT = "Default";
   public static final String COLOR_MODE_COMPOSITE = "Composite";
@@ -95,7 +95,7 @@ public class ImporterOptions extends OptionsList {
   //possible values for roiMode
   public static final String ROIS_MODE_MANAGER = "ROI manager";
   public static final String ROIS_MODE_OVERLAY = "Overlay";
-  
+
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
   public static final String VIEW_STANDARD   = "Standard ImageJ";
@@ -334,7 +334,7 @@ public class ImporterOptions extends OptionsList {
  public String getROIsMode() { return getValue(KEY_ROIS_MODE); }
  public String[] getROIsModes() { return getPossible(KEY_ROIS_MODE); }
  public void setROIsMode(String s) { setValue(KEY_ROIS_MODE, s); }
-  
+
   // specifyRanges
   public String getSpecifyRangesInfo() { return getInfo(KEY_SPECIFY_RANGES); }
   public boolean isSpecifyRanges() { return isSet(KEY_SPECIFY_RANGES); }
@@ -412,7 +412,7 @@ public class ImporterOptions extends OptionsList {
   public String getMustGroupInfo() { return getInfo(KEY_MUST_GROUP); }
   public boolean doMustGroup() { return isSet(KEY_MUST_GROUP); }
   public void setMustGroup(boolean b) { setValue(KEY_MUST_GROUP, b); }
-  
+
   // -- ImporterOptions methods - secondary options accessors and mutators --
 
   // series options

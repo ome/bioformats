@@ -119,6 +119,7 @@ public class FormatPageAutogen {
       context.put("mif", table.get("mif"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
+      context.put("options", table.get("options"));
       context.put("readerextlink",
         table.get("bsd").equals("no") ? "bfreader" : "bsd-reader");
       context.put("writerextlink",

@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,25 +37,25 @@ import java.nio.ByteBuffer;
 import loci.common.ByteArrayHandle;
 
 public class ByteArrayHandleMock extends ByteArrayHandle {
-  
+
   private long mockCapacity;
-  
+
   public ByteArrayHandleMock(int capacity) {
     buffer = ByteBuffer.allocate(INITIAL_LENGTH);
     buffer.limit(INITIAL_LENGTH);
     mockCapacity = capacity;
   }
-  
+
   @Override
   public void setLength(long length) throws IOException {
     mockCapacity = length;
   }
-  
+
   @Override
   public long length() {
     return mockCapacity;
   }
-  
+
   @Override
   public void seek(long pos) throws IOException {
     if (pos > length()) {
@@ -68,7 +68,7 @@ public class ByteArrayHandleMock extends ByteArrayHandle {
       buffer.position((int) pos);
     }
   }
-  
+
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
     mockCapacity += b.length;

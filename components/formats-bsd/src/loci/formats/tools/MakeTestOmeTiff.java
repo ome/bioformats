@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -104,7 +104,7 @@ public class MakeTestOmeTiff {
       displayUsage();
       return 1;
     }
-    
+
     if (args.length == 10 ) {
       isModulo = true;
     }
@@ -124,7 +124,7 @@ public class MakeTestOmeTiff {
       sizeCsub = Integer.parseInt(args[8]);
       sizeTsub = Integer.parseInt(args[9]);
     }
-    
+
     makeOmeTiff(name, info);
     return 0;
   }
@@ -258,13 +258,13 @@ public class MakeTestOmeTiff {
       serviceFactory.getInstance(OMEXMLService.class);
     final IMetadata meta = omexmlService.createOMEXMLMetadata();
     MetadataTools.populateMetadata(meta, 0, name, info);
-    
+
     if (isModulo) {
       meta.setXMLAnnotationID("Annotation:Modulo:0", 0);
       meta.setXMLAnnotationNamespace("openmicroscopy.org/omero/dimension/modulo", 0);
       meta.setXMLAnnotationDescription("For a description of how 6D, 7D, and 8D data is stored using the Modulo extension see http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html", 0);
       StringBuilder moduloBlock = new StringBuilder();
-      
+
       moduloBlock.append("<Modulo namespace=\"http://www.openmicroscopy.org/Schemas/Additions/2011-09\">");
       if (sizeZsub != 1) {
         moduloBlock.append("<ModuloAlongZ Type=\"other\" TypeDescription=\"Example Data Over Z-Plane\" Start=\"0\" Step=\"1\" End=\"");
@@ -282,7 +282,7 @@ public class MakeTestOmeTiff {
         moduloBlock.append("\"/>");
       }
       moduloBlock.append("</Modulo>");
-      
+
       meta.setXMLAnnotationValue(moduloBlock.toString(), 0);
 
       meta.setImageAnnotationRef("Annotation:Modulo:0", 0, 0);
