@@ -80,6 +80,21 @@ The output file format is determined by the extension of the output file, e.g.
     single tile with a few different tile sizes using the :option:`-crop`
     option. This gives an idea of what the most performant size will be.
 
+.. option:: -crop X,Y,WIDTH,HEIGHT
+
+    For very large images, it may also be useful to convert a small tile from
+    the image instead of reading everything into memory. To convert the
+    upper-left-most 512x512 tile from the images:
+
+    ::
+
+      bfconvert -crop 0,0,512,512 /path/to/file output-512x512-crop.tiff
+
+    The parameter to :option:`-crop` is of the format ``x,y,width,height``.
+    The (x, y) coordinate (0, 0) is the upper-left corner of the image;
+    ``x + width`` must be less than or equal to the image width and
+    ``y + height`` must be less than or equal to the image height.
+
 Images can also be written to multiple files by specifying a pattern string
 in the output file.  For example, to write one series, timepoint, channel, and
 Z section per file::
