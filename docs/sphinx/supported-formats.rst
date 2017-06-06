@@ -59,7 +59,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/alicona-3d`
      - .al3d
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Poor|
      - |Good|
@@ -125,7 +125,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/aperio-afi`
      - .afi, .svs
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Good|
      - |Good|
@@ -136,7 +136,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/aperio-svs-tiff`
      - .svs
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Good|
      - |Good|
@@ -147,7 +147,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/applied-precision-cellworx`
      - .htd, .pnl
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Fair|
      - |Fair|
@@ -180,7 +180,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/bd-pathway`
      - .exp, .tif
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Fair|
      - |Good|
@@ -301,7 +301,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/cellomics`
      - .c01, .dib
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Fair|
      - |Poor|
      - |Poor|
@@ -312,7 +312,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/cellsens-vsi`
      - .vsi
      - |Fair|
-     - |very good|
+     - |fair|
      - |Fair|
      - |Fair|
      - |Fair|
@@ -323,7 +323,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/cellvoyager`
      - .xml, .tif
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Fair|
      - |Good|
@@ -499,7 +499,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/hitachi-s-4800`
      - .txt, .tif, .bmp, .jpg
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Fair|
      - |Fair|
@@ -587,7 +587,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/improvision-openlab-liff`
      - .liff
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Good|
      - |Fair|
@@ -631,7 +631,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/incell-1000`
      - .xdce, .tif
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Fair|
      - |Good|
@@ -686,7 +686,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/iplab-mac`
      - .ipm
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Poor|
      - |Fair|
@@ -818,7 +818,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/leica-scn`
      - .scn
      - |Good|
-     - |outstanding|
+     - |good|
      - |Good|
      - |Fair|
      - |Good|
@@ -829,7 +829,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/leo`
      - .sxm
      - |Good|
-     - |very good|
+     - |good|
      - |Good|
      - |Fair|
      - |Fair|
@@ -862,7 +862,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/metamorph-75-tiff`
      - .tiff
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Fair|
      - |Good|
@@ -873,7 +873,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/metamorph-stack-stk`
      - .stk, .nd
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Very good|
      - |Good|
@@ -884,7 +884,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/mias-maia-scientific`
      - .tif
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Fair|
      - |Poor|
      - |Poor|
@@ -1071,7 +1071,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/olympus-scanr`
      - .xml, .dat, .tif
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Poor|
      - |Fair|
@@ -1082,7 +1082,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/olympus-sis-tiff`
      - .tiff
      - |Good|
-     - |very good|
+     - |good|
      - |Good|
      - |Fair|
      - |Good|
@@ -1159,7 +1159,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/perkinelmer-columbus`
      - .xml, .csv, .tif
      - |Good|
-     - |outstanding|
+     - |good|
      - |Fair|
      - |Good|
      - |Fair|
@@ -1181,7 +1181,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/perkinelmer-operetta`
      - .tiff, .xml
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Good|
      - |Fair|
      - |Good|
@@ -1357,7 +1357,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/simplepci-hcimage-tiff`
      - .tiff
      - |Very good|
-     - |outstanding|
+     - |very good|
      - |Very good|
      - |Fair|
      - |Good|
@@ -1445,7 +1445,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/trestle`
      - .tif, .sld, .jpg
      - |Good|
-     - |very good|
+     - |good|
      - |Good|
      - |Fair|
      - |Fair|

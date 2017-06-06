@@ -108,6 +108,10 @@ public class MetadataRatings {
         }
       }
 
+      if (pixelsIndex >= opennessIndex && metadataIndex > pixelsIndex) {
+        metadataIndex = pixelsIndex;
+      }
+
       if (metadataIndex >= RATINGS.length) {
         metadataIndex = RATINGS.length - 1;
       }
