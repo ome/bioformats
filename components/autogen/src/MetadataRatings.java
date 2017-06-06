@@ -116,10 +116,10 @@ public class MetadataRatings {
         metadataIndex = RATINGS.length - 1;
       }
 
-      String originalRating = table.get("metadataRating").toLowerCase();
-      if (!RATINGS[metadataIndex].equals(originalRating)) {
-        table.put("metadataRating", RATINGS[metadataIndex]);
-      }
+      String rating = RATINGS[metadataIndex];
+      String firstLetter = rating.substring(0, 1).toUpperCase();
+      rating = firstLetter + rating.substring(1);
+      table.put("metadataRating", rating);
     }
     // replace metadata ratings as needed, without altering the key/value pair order
     BufferedReader reader = IniParser.openTextResource(FORMATS, MetadataRatings.class);

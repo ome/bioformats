@@ -36,7 +36,7 @@ We would like to have:
 
 Pixels: |Very good|
 
-Metadata: |very good|
+Metadata: |Very good|
 
 Openness: |Good|
 
