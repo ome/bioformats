@@ -201,10 +201,13 @@ public class NDPISReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     bandUsed = new int[ndpiFiles.length];
+    IFD ifd;
     for (int c=0; c<readers.length; c++) {
       // populate channel names based on IFD entry
-      TiffParser tp = new TiffParser(ndpiFiles[c]);
-      IFD ifd = tp.getIFDs().get(0);
+      try (RandomAccessInputStream in = new RandomAccessInputStream(ndpiFiles[c])) {
+        TiffParser tp = new TiffParser(in);
+        ifd = tp.getIFDs().get(0);
+      }
 
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);
       Float wavelength = (Float) ifd.getIFDValue(TAG_EMISSION_WAVELENGTH);
