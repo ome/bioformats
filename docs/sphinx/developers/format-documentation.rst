@@ -67,7 +67,18 @@ defined for each section:
   presenceRating
   utilityRating
     See :term:`Ratings legend and definitions`. Available choices are: 
-    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`
+    `Poor`, `Fair`, `Good`, `Very Good`, `Outstanding`.
+    The `metadataRating` should be set as follows:
+
+      * base `metadataRating` is the smaller of `opennessRating` and `pixelsRating`
+      * increment `metadataRating` by 1 if any combination of `Instrument.ID` plus `Image.InstrumentRef`,
+        or `Channel.EmissionWavelength`, or `Channel.ExcitationWavelength` are supported
+      * increment `metadataRating` by 1 if any SPW metadata is supported or :term:`pyramid` is ``yes``
+
+    `metadataRating` can also be set to a placeholder value, and updated using
+    the :program:`ant` ``gen-metadata-ratings`` target under the :file:`autogen` component::
+
+      $ ant -f components/autogen/build.xml gen-metadata-ratings
 
   reader
     A string or a comma-separated list of all readers for this format

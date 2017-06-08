@@ -33,7 +33,7 @@ We would like to have:
 
 Pixels: |Good|
 
-Metadata: |Poor|
+Metadata: |Fair|
 
 Openness: |Fair|
 
