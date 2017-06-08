@@ -17,22 +17,37 @@ settings, the acquired image can be saved with or without a companion file
     :alt: Saving options in Micro-Manager
 
 
-+---------------+----------+--------------+--------------+--------------------+
-|Saving         |          |              |              |                    | 
-|Options within |          |Companion     |Bio-Formats   |                    |
-|Micro-Manager  |Format    |File          |Reading       | Reader Used        |
-+===============+==========+==============+==============+====================+ 
-| Save as       |          |              |              |                    |
-| separate      |          |              |              |                    | 
-| image files   | TIFF     | Yes          | Full Support | MicromanagerReader |
-+---------------+----------+--------------+--------------+--------------------+ 
-|               |          |              | Pixel data   |                    |
-|               |          |              | plus minimal |                    |
-|               | OME-TIFF | No           | metadata*    | OMETiffReader      |
-| Save as image +----------+--------------+--------------+--------------------+
-| stack file    |          |              |              |                    |
-|               | OME-TIFF | Yes**        | Full Support | MicromanagerReader |
-+---------------+----------+--------------+--------------+--------------------+ 
+.. list-table::
+    :header-rows: 1
+
+    *
+        - Micro-Manager saving option
+        - Micro-Manager saving format
+        - Companion file
+        - Bio-Formats reading
+        - Reader users
+    
+    *
+        - Save as separate image files
+        - TIFF
+        - Yes
+        - Full support
+        - :doc:`/metadata/MicromanagerReader`
+    
+    *
+        - Save as image stack file
+        - OME-TIFF
+        - No
+        - Pixel data plus minimal metadata*
+        - :doc:`/metadata/OMETiffReader`
+    
+    *
+        - Save as image stack file
+        - OME-TIFF
+        - Yes**
+        - Full Support
+        - :doc:`/metadata/MicromanagerReader`
+
 
 
 ``*`` Not all acquisition metadata is converted to OME-XML.

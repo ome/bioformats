@@ -173,7 +173,7 @@ name of the method:
   cd /path/to/bioformats/components/formats-gpl/test/matlab
   runxunit TestBfsave:testLZW
 
-Finally to output the test results under XML format, you can use the :option:`-xmlfile` option:
+Finally, to output the test results under XML format, you can use the ``-xmlfile`` option:
 
 .. code-block:: matlab
 

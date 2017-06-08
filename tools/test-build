@@ -32,7 +32,7 @@ antbuild()
       ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
-      ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx docs-sphinx
+      ant -Dsphinx.warnopts="-W" clean-docs-sphinx docs-sphinx
     )
 }
 

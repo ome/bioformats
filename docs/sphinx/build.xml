@@ -59,7 +59,7 @@ Type "ant -p" for a list of targets.
     <attribute name="srcdir" default="."/>
     <attribute name="destdir" default=""/>
     <attribute name="opts" default=""/>
-    <attribute name="warnopts" default=""/>
+    <attribute name="warnopts" default="-W"/>
     <sequential>
       <exec executable="${sphinx.build}" failonerror="true">
         <arg value="-D"/>

@@ -72,7 +72,7 @@ dimensions, and other basic metadata will be printed to the console.
 
     For very large images, it may also be useful to open a small tile from the
     image instead of reading everything into memory.  To open the
-    upper-left-most 512x512 tile from the images:
+    upper-left-most 512×512 tile from the images:
 
     ::
 

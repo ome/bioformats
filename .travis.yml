@@ -26,7 +26,7 @@ matrix:
   fast_finish: true
 
 before_install:
-  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx==1.2.3; fi
+  - if [[ $BUILD == 'ant' ]]; then pip install --user flake8 Sphinx; fi
 
 script:
   - ./tools/test-build $BUILD

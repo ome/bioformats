@@ -62,7 +62,7 @@ The output file format is determined by the extension of the output file, e.g.
 
 .. option:: -tilex TILEX, -tiley TILEY
 
-    All images larger than 4096x4096 will be saved as a set of tiles if the
+    All images larger than 4096×4096 will be saved as a set of tiles if the
     output format supports doing so.  The default tile size is determined by
     the input format, and can be overridden like this::
 
@@ -73,12 +73,27 @@ The output file format is determined by the extension of the output file, e.g.
     be slightly smaller if the image width and height are not multiples of the
     specified tile width and height.  Note that specifying :option:`-tilex`
     and :option:`-tiley` will cause tiles to be written even if the image is
-    smaller than 4096x4096.
+    smaller than 4096×4096.
 
     Also note that the specified tile size will affect performance.  If large
     amounts of data are being processed, it is a good idea to try converting a
     single tile with a few different tile sizes using the :option:`-crop`
     option. This gives an idea of what the most performant size will be.
+
+.. option:: -crop X,Y,WIDTH,HEIGHT
+
+    For very large images, it may also be useful to convert a small tile from
+    the image instead of reading everything into memory. To convert the
+    upper-left-most 512×512 tile from the images:
+
+    ::
+
+      bfconvert -crop 0,0,512,512 /path/to/file output-512x512-crop.tiff
+
+    The parameter to :option:`-crop` is of the format ``x,y,width,height``.
+    The (x, y) coordinate (0, 0) is the upper-left corner of the image;
+    ``x + width`` must be less than or equal to the image width and
+    ``y + height`` must be less than or equal to the image height.
 
 Images can also be written to multiple files by specifying a pattern string
 in the output file.  For example, to write one series, timepoint, channel, and
