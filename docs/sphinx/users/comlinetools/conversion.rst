@@ -62,7 +62,7 @@ The output file format is determined by the extension of the output file, e.g.
 
 .. option:: -tilex TILEX, -tiley TILEY
 
-    All images larger than 4096x4096 will be saved as a set of tiles if the
+    All images larger than 4096×4096 will be saved as a set of tiles if the
     output format supports doing so.  The default tile size is determined by
     the input format, and can be overridden like this::
 
@@ -73,7 +73,7 @@ The output file format is determined by the extension of the output file, e.g.
     be slightly smaller if the image width and height are not multiples of the
     specified tile width and height.  Note that specifying :option:`-tilex`
     and :option:`-tiley` will cause tiles to be written even if the image is
-    smaller than 4096x4096.
+    smaller than 4096×4096.
 
     Also note that the specified tile size will affect performance.  If large
     amounts of data are being processed, it is a good idea to try converting a
@@ -84,7 +84,7 @@ The output file format is determined by the extension of the output file, e.g.
 
     For very large images, it may also be useful to convert a small tile from
     the image instead of reading everything into memory. To convert the
-    upper-left-most 512x512 tile from the images:
+    upper-left-most 512×512 tile from the images:
 
     ::
 
