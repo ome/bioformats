@@ -1361,6 +1361,8 @@ public class MetamorphReader extends BaseTiffReader {
     String parent = l.getParent();
 
     if (name.indexOf('_') > 0) {
+      String pattern = "_[swt]\\d+";
+      System.out.println(name.replaceAll(pattern, ""));
       String prefix = name.substring(0, name.indexOf('_'));
       String suffix = name.substring(name.indexOf('_'));
 
