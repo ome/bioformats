@@ -470,15 +470,8 @@ public class OMETiffReader extends FormatReader {
       companion = true;
     }
     else {
-      RandomAccessInputStream ras = new RandomAccessInputStream(fileName, 16);
-      try {
-        TiffParser tp = new TiffParser(ras);
-        firstIFD = tp.getFirstIFD();
-        xml = firstIFD.getComment();
-      }
-      finally {
-        ras.close();
-      }
+      firstIFD = getFirstIFD(fileName);
+      xml = firstIFD.getComment();
     }
 
     if (service == null) setupService();
@@ -489,8 +482,8 @@ public class OMETiffReader extends FormatReader {
       }
       if (companion) {
         String firstTIFF = meta.getUUIDFileName(0, 0);
-        initFile(new Location(dir, firstTIFF).getAbsolutePath());
-        return;
+        firstIFD = getFirstIFD(new Location(dir, firstTIFF).getAbsolutePath());
+        metadataFile = fileName;
       }
     }
     catch (ServiceException se) {
@@ -498,10 +491,12 @@ public class OMETiffReader extends FormatReader {
     }
 
     String metadataPath = null;
-    try {
-      metadataPath = meta.getBinaryOnlyMetadataFile();
-    }
-    catch (NullPointerException e) {
+    if (metadataFile == null) {
+      try {
+        metadataPath = meta.getBinaryOnlyMetadataFile();
+      }
+      catch (NullPointerException e) {
+      }
     }
 
     if (metadataPath != null) {
@@ -1120,6 +1115,19 @@ public class OMETiffReader extends FormatReader {
     }
     // assume metadata file is an XML file
     return DataTools.readFile(metadataFile);
+  }
+
+  private static IFD getFirstIFD(String fname) throws IOException {
+    IFD firstIFD = null;
+    RandomAccessInputStream ras = new RandomAccessInputStream(fname, 16);
+    try {
+      TiffParser tp = new TiffParser(ras);
+      firstIFD = tp.getFirstIFD();
+    }
+    finally {
+      ras.close();
+    }
+    return firstIFD;
   }
 
   // -- Helper classes --
