@@ -539,26 +539,14 @@ public class FV1000Reader extends FormatReader {
         channel.gain = DataTools.parseDouble(guiChannel.get("AnalogPMTGain"));
         channel.voltage = DataTools.parseDouble(
           guiChannel.get("AnalogPMTVoltage"));
-        String barrierFilter = guiChannel.get("BF Name");
-        if (barrierFilter != null && barrierFilter.equals("---")) {
-          channel.barrierFilter = "";
-        }
-        else channel.barrierFilter = barrierFilter;
+        channel.setBarrierFilter(guiChannel.get("BF Name"));
         channel.active = Integer.parseInt(guiChannel.get("CH Activate")) != 0;
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
-        String emissionFilter = guiChannel.get("EmissionDM Name");
-        if (emissionFilter != null && emissionFilter.equals("---")) {
-          channel.emissionFilter = "";
-        }
-        else channel.emissionFilter = emissionFilter;
+        channel.setEmissionFilter(guiChannel.get("EmissionDM Name"));
         channel.emWave = DataTools.parseDouble(
           guiChannel.get("EmissionWavelength"));
-        String excitationFilter = guiChannel.get("ExcitationDM Name");
-        if (excitationFilter != null && excitationFilter.equals("---")) {
-          channel.excitationFilter = "";
-        }
-        else channel.excitationFilter = excitationFilter;
+        channel.setExcitationFilter(guiChannel.get("ExcitationDM Name"));
         channel.exWave = DataTools.parseDouble(
           guiChannel.get("ExcitationWavelength"));
         channels.add(channel);
@@ -1800,6 +1788,23 @@ public class FV1000Reader extends FormatReader {
     public Double exWave;
     public String dyeName;
     public String barrierFilter;
+
+    /* Return a valid filter string */
+    private String getFilter(String value) {
+      if ("---".equals(value)) return null; else return value;
+    }
+
+    public void setBarrierFilter(String value) {
+      this.barrierFilter = getFilter(value);
+    }
+
+    public void setEmissionFilter(String value) {
+      this.emissionFilter = getFilter(value);
+    }
+
+    public void setExcitationFilter(String value) {
+      this.excitationFilter = getFilter(value);
+    }
   }
 
   class PlaneData {
