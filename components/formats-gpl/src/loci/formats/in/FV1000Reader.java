@@ -536,10 +536,9 @@ public class FV1000Reader extends FormatReader {
       IniTable guiChannel = f.getTable("GUI Channel " + index + " Parameters");
       while (guiChannel != null) {
         ChannelData channel = new ChannelData();
-        String gain = guiChannel.get("AnalogPMTGain");
-        if (gain != null) channel.gain = new Double(gain);
-        String voltage = guiChannel.get("AnalogPMTVoltage");
-        if (voltage != null) channel.voltage = new Double(voltage);
+        channel.gain = DataTools.parseDouble(guiChannel.get("AnalogPMTGain"));
+        channel.voltage = DataTools.parseDouble(
+          guiChannel.get("AnalogPMTVoltage"));
         String barrierFilter = guiChannel.get("BF Name");
         if (barrierFilter != null && barrierFilter.equals("---")) {
           channel.barrierFilter = "";
@@ -553,15 +552,15 @@ public class FV1000Reader extends FormatReader {
           channel.emissionFilter = "";
         }
         else channel.emissionFilter = emissionFilter;
-        String emWave = guiChannel.get("EmissionWavelength");
-        if (emWave != null) channel.emWave = new Double(emWave);
+        channel.emWave = DataTools.parseDouble(
+          guiChannel.get("EmissionWavelength"));
         String excitationFilter = guiChannel.get("ExcitationDM Name");
         if (excitationFilter != null && excitationFilter.equals("---")) {
           channel.excitationFilter = "";
         }
         else channel.excitationFilter = excitationFilter;
-        String exWave = guiChannel.get("ExcitationWavelength");
-        if (emWave != null) channel.exWave = new Double(exWave);
+        channel.exWave = DataTools.parseDouble(
+          guiChannel.get("ExcitationWavelength"));
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
