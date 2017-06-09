@@ -198,7 +198,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public String transformToLatestVersion(String xml) throws ServiceException {
     String version = getOMEXMLVersion(xml);
     if (null == version) {
-      throw new ServiceException("Could not get OME XML version");
+      throw new ServiceException("Could not get OME-XML version");
     }
     if (version.equals(getLatestVersion())) return xml;
     LOGGER.debug("Attempting to update XML with version: {}", version);
