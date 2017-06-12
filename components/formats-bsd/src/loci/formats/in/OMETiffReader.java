@@ -83,6 +83,9 @@ import ome.xml.model.primitives.Timestamp;
  */
 public class OMETiffReader extends SubResolutionFormatReader {
 
+  public static final String[] OME_TIFF_SUFFIXES =
+    {"ome.tiff", "ome.tif", "ome.tf2", "ome.tf8", "ome.btf", "companion.ome"};
+
   // -- Fields --
 
   /** Mapping from series and plane numbers to files and IFD entries. */
@@ -104,8 +107,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
   /** Constructs a new OME-TIFF reader. */
   public OMETiffReader() {
-    super("OME-TIFF", new String[] {"ome.tiff", "ome.tif", "ome.tf2",
-                                    "ome.tf8", "ome.btf", "companion.ome"});
+    super("OME-TIFF", OME_TIFF_SUFFIXES);
     suffixNecessary = false;
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
