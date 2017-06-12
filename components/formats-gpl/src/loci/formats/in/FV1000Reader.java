@@ -539,14 +539,16 @@ public class FV1000Reader extends FormatReader {
         channel.gain = DataTools.parseDouble(guiChannel.get("AnalogPMTGain"));
         channel.voltage = DataTools.parseDouble(
           guiChannel.get("AnalogPMTVoltage"));
-        channel.setBarrierFilter(guiChannel.get("BF Name"));
+        channel.barrierFilter = channel.getFilter(guiChannel.get("BF Name"));
         channel.active = Integer.parseInt(guiChannel.get("CH Activate")) != 0;
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
-        channel.setEmissionFilter(guiChannel.get("EmissionDM Name"));
+        channel.emissionFilter = channel.getFilter(
+          guiChannel.get("EmissionDM Name"));
         channel.emWave = DataTools.parseDouble(
           guiChannel.get("EmissionWavelength"));
-        channel.setExcitationFilter(guiChannel.get("ExcitationDM Name"));
+        channel.excitationFilter = channel.getFilter(
+          guiChannel.get("ExcitationDM Name"));
         channel.exWave = DataTools.parseDouble(
           guiChannel.get("ExcitationWavelength"));
         channels.add(channel);
@@ -1790,20 +1792,8 @@ public class FV1000Reader extends FormatReader {
     public String barrierFilter;
 
     /* Return a valid filter string */
-    private String getFilter(String value) {
+    public String getFilter(String value) {
       if ("---".equals(value)) return null; else return value;
-    }
-
-    public void setBarrierFilter(String value) {
-      this.barrierFilter = getFilter(value);
-    }
-
-    public void setEmissionFilter(String value) {
-      this.emissionFilter = getFilter(value);
-    }
-
-    public void setExcitationFilter(String value) {
-      this.excitationFilter = getFilter(value);
     }
   }
 
