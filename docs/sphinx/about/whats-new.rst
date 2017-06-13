@@ -1,6 +1,45 @@
 Version history
 ===============
 
+5.5.2 (2017 June 15)
+-------------------
+
+File format improvements:
+
+* Olympus FluoView FV1000
+   - fix for ``java.lang.ArrayIndexOutOfBoundsException`` caused by filter names
+     of "---"
+   - refactor channel metadata population and make use of ``DataTools`` utility functions
+* Zeiss CZI
+   - fix detection of Z line scans that caused incorrect dimensions in certain filesets
+   - improved exception handling of truncated/invalid files 
+* Veeco AFM
+   - fix for reading tiled images where Y is greater than 0. ``VeecoReader`` flips the 
+     image retrieved using the HDF service vertically to match the expected origin
+* Hamamatsu ndpi
+   - performance improvement to prevent potential memory leak by ensuring all ``TiffParser`` 
+     streams are closed
+
+Bug fixes:
+
+* OMEXMLServiceImpl
+   - improved exception handling in ``OMEXMLServiceImpl`` to deal with potential 
+     ``java.lang.NullPointerException`` when unable to locate OME-XML version while 
+     attempting to transform to the latest version
+
+Documentation improvements:
+
+* updated documentation to be compatible with the latest version of Sphinx 1.6
+* fix the usage/references of the option markup in documentation
+* fix the table in the Micro-Manager user page
+* updated metadata ratings for supported formats
+
+Updated build system:
+
+* OME-Model version bump
+   - the ome-model component has been updated to 5.5.4 which includes improvements to 
+     performance, documentation and the C++ model implementation
+
 5.5.1 (2017 May 25)
 -------------------
 
