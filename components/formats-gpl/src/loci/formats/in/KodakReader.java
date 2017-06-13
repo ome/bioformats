@@ -69,6 +69,7 @@ public class KodakReader extends FormatReader {
   public KodakReader() {
     super("Kodak Molecular Imaging", "bip");
     domains = new String[] {FormatTools.GEL_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
