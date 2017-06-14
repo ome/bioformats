@@ -2,7 +2,7 @@ Version history
 ===============
 
 5.5.2 (2017 June 15)
--------------------
+--------------------
 
 File format improvements:
 
