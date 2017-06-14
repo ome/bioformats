@@ -9,7 +9,7 @@ File format fixes and improvements:
 * Olympus FluoView FV1000
    - fix for ``java.lang.ArrayIndexOutOfBoundsException`` caused by filter names
      of "---" (thanks to Stefan Helfrich)
-   - refactor channel metadata population and make use of ``DataTools`` utility functions
+   - refactored channel metadata population and increased usage of ``DataTools`` utility functions
 * Zeiss CZI
    - fixed detection of Z line scans that caused incorrect dimensions in certain filesets
    - improved exception handling of truncated/invalid files 
