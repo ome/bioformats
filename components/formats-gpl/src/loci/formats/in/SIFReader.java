@@ -121,9 +121,6 @@ public class SIFReader extends FormatReader {
           m.imageCount = getSizeZ() * getSizeT() * getSizeC();
           timestamp = new double[getImageCount()];
           endLine = lineNumber;
-
-          pixelOffset = in.length() - FOOTER_SIZE -
-            (getImageCount() * getSizeX() * getSizeY() * 4);
         }
       }
       else if (lineNumber < endLine) {
@@ -141,6 +138,20 @@ public class SIFReader extends FormatReader {
         addGlobalMetaList("Line", line.trim());
       }
       line = in.readLine();
+
+      if (endLine > 0 && endLine == lineNumber) {
+        String[] tokens = line.split(" ");
+        int x1 = Integer.parseInt(tokens[1]);
+        int y1 = Integer.parseInt(tokens[2]);
+        int x2 = Integer.parseInt(tokens[3]);
+        int y2 = Integer.parseInt(tokens[4]);
+        int x3 = Integer.parseInt(tokens[5]);
+        int y3 = Integer.parseInt(tokens[6]);
+        m.sizeX = (int) (Math.abs(x1 - x2) + x3);
+        m.sizeY = (int) (Math.abs(y1 - y2) + y3);
+        pixelOffset = in.length() - FOOTER_SIZE -
+          (getImageCount() * getSizeX() * getSizeY() * 4);
+      }
     }
 
     m.pixelType = FormatTools.FLOAT;
