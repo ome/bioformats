@@ -168,17 +168,17 @@
       <plugins>
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.5</version>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
+          <version>3.6.1</version>
           <!-- Require the Java 7 platform. -->
           <configuration>
             <source>1.7</source>
@@ -188,22 +188,22 @@
 
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.8</version>
+          <version>3.0.1</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>2.8.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.1</version>
+          <version>2.5.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.0.2</version>
           <!-- Always add classpath to JAR manifests. -->
           <configuration>
             <skipIfEmpty>true</skipIfEmpty>
@@ -238,7 +238,7 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <!-- NB: The same version declaration and configuration block also
                appears in the <reporting> section, and must be kept in sync. -->
-          <version>2.9.1</version>
+          <version>2.10.4</version>
           <configuration>
             <javadocDirectory>${project.basedir}/src</javadocDirectory>
             <maxmemory>1024m</maxmemory>
@@ -258,12 +258,12 @@
 
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.2</version>
+          <version>3.5</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.4.2</version>
+          <version>2.5.3</version>
           <dependencies>
             <dependency>
               <groupId>org.apache.maven.scm</groupId>
@@ -275,17 +275,17 @@
 
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.2</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.3</version>
+          <version>3.6</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>3.0.1</version>
           <!-- Build source artifact in addition to main artifact. -->
           <executions>
             <execution>
@@ -298,7 +298,7 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.16</version>
+          <version>2.20</version>
           <!-- Make sure that:
                A) unit tests run with sufficient RAM allocated;
                B) unit tests do not pop a Java dock icon on OS X;
@@ -323,7 +323,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.4</version>
           <!-- Record SCM revision in manifest. -->
           <executions>
             <execution>
@@ -345,7 +345,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
+          <version>1.6.0</version>
         </plugin>
 
         <!-- License Maven plugin -
@@ -354,7 +354,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>1.6</version>
+          <version>1.13</version>
           <configuration>
             <projectName>${project.description}</projectName>
             <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
@@ -375,7 +375,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.4</version>
         </plugin>
 
         <!-- Eclipse-specific configuration
@@ -497,7 +497,7 @@
   </reporting>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>3.0.5</maven>
   </prerequisites>
 
   <organization>
@@ -585,7 +585,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.8</version>
+            <version>3.0.0</version>
             <configuration>
               <debug>${invoker.debug}</debug>
               <showErrors>true</showErrors>
