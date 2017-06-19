@@ -90,6 +90,9 @@ public class BioRadGelReader extends FormatReader {
       // offsets were determined by trial and error, and may not be 100% correct
       if (diff < 0) {
         in.seek(0x379d1);
+        if (in.getFilePointer() + planeSize > in.length()) {
+          in.seek(PIXEL_OFFSET + 62);
+        }
       }
       else if (diff == 0) {
         in.seek(PIXEL_OFFSET);
@@ -141,6 +144,7 @@ public class BioRadGelReader extends FormatReader {
 
     boolean codeFound = false;
     int skip = 0;
+    long baseFP = 0;
 
     while (!codeFound) {
       short code = in.readShort();
@@ -149,7 +153,11 @@ public class BioRadGelReader extends FormatReader {
 
       in.skipBytes(2 + 2 * length);
       if (codeFound) {
-        skip = (in.readShort() & 0xffff) - 32;
+        baseFP = in.getFilePointer() + 2;
+        if (length > 1) {
+          in.seek(in.getFilePointer() - 2);
+        }
+        skip = in.readInt() - 32;
       }
       else {
         if (length == 1) in.skipBytes(12);
@@ -157,7 +165,6 @@ public class BioRadGelReader extends FormatReader {
       }
     }
 
-    long baseFP = in.getFilePointer();
     diff = BASE_OFFSET - baseFP;
     skip += diff;
 
