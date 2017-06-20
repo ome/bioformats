@@ -63,6 +63,9 @@
     <jxrlib.version>0.2.1</jxrlib.version>
     <xalan.version>2.7.2</xalan.version>
 
+    <!-- Maven plugin versions -->
+    <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -239,9 +242,7 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <!-- NB: The same version declaration and configuration block also
-               appears in the <reporting> section, and must be kept in sync. -->
-          <version>2.10.4</version>
+          <version>${maven-javadoc-plugin.version}</version>
           <configuration>
             <javadocDirectory>${project.basedir}/src</javadocDirectory>
             <maxmemory>1024m</maxmemory>
@@ -479,7 +480,7 @@
              "search[es] the same groupId/artifactId in the
              build.pluginManagement.plugins section", this claim
              unfortunately does not seem to reflect reality. -->
-        <version>2.9.1</version>
+        <version>${maven-javadoc-plugin.version}</version>
         <configuration>
           <javadocDirectory>${project.basedir}/src</javadocDirectory>
           <maxmemory>1024m</maxmemory>
