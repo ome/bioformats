@@ -226,9 +226,9 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    Double physicalX = null;
-    Double physicalY = null;
-    Double physicalZ = null;
+    Length physicalX = null;
+    Length physicalY = null;
+    Length physicalZ = null;
 
     if (isMINC2) {
       Hashtable<String, Object> attrs =
@@ -282,28 +282,22 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(history, 0);
 
-      Length sizeX = FormatTools.getPhysicalSizeX(physicalX);
-      Length sizeY = FormatTools.getPhysicalSizeY(physicalY);
-      Length sizeZ = FormatTools.getPhysicalSizeZ(physicalZ);
-      if (sizeX != null) {
-        store.setPixelsPhysicalSizeX(sizeX, 0);
+      if (physicalX != null) {
+        store.setPixelsPhysicalSizeX(physicalX, 0);
       }
-      if (sizeY != null) {
-        store.setPixelsPhysicalSizeY(sizeY, 0);
+      if (physicalY != null) {
+        store.setPixelsPhysicalSizeY(physicalY, 0);
       }
-      if (sizeZ != null) {
-        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      if (physicalZ != null) {
+        store.setPixelsPhysicalSizeZ(physicalZ, 0);
       }
     }
   }
 
-  private Double getStepSize(Hashtable<String, Object> attrs) {
+  private Length getStepSize(Hashtable<String, Object> attrs) {
     Double stepSize = Double.parseDouble(attrs.get("step").toString());
     String units = attrs.get("units").toString();
-    if (units.equals("mm")) {
-      stepSize *= 1000.0;
-    }
-    return stepSize;
+    return FormatTools.getPhysicalSize(stepSize, units);
   }
 
 }
