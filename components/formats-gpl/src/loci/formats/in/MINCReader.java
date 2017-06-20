@@ -153,14 +153,30 @@ public class MINCReader extends FormatReader {
         isMINC2 = true;
       }
       m.littleEndian = isMINC2;
-      
+
+      boolean signed = false;
+      if (isMINC2) {
+        Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/minc-2.0/image/0/image");
+        String unsigned = attrs.get("_Unsigned").toString();
+        if (!unsigned.startsWith("true")) {
+          signed = true;
+        }
+      }
+      else {
+        Hashtable<String, Object> attrs = netcdf.getVariableAttributes("/image");
+        String signtype = attrs.get("signtype").toString();
+        if (signtype.startsWith("signed")) {
+          signed = true;
+        }
+      }
+
       if (pixels instanceof byte[][][]) {
-        m.pixelType = FormatTools.UINT8;
+        m.pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
       }
       else if (pixels instanceof byte[][][][]) {
         byte[][][][] actualPixels = (byte[][][][]) pixels;
-        m.pixelType = FormatTools.UINT8;
+        m.pixelType = signed ? FormatTools.INT8 : FormatTools.UINT8;
 
         pixelData = new byte[actualPixels.length * actualPixels[0].length][][];
         int nextPlane = 0;
@@ -171,7 +187,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof short[][][]) {
-        m.pixelType = FormatTools.UINT16;
+        m.pixelType = signed ? FormatTools.INT16 : FormatTools.UINT16;
 
         short[][][] s = (short[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -184,7 +200,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof int[][][]) {
-        m.pixelType = FormatTools.UINT32;
+        m.pixelType = signed ? FormatTools.INT32 : FormatTools.UINT32;
 
         int[][][] s = (int[][][]) pixels;
         pixelData = new byte[s.length][][];
