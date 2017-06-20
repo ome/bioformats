@@ -123,6 +123,11 @@
     </testResources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+
       <!-- Create -sources.jar when building. -->
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
@@ -172,6 +177,31 @@
 
     <pluginManagement>
       <plugins>
+        <!-- Enforce minimum maven version -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4.1</version>
+          <executions>
+            <execution>
+              <id>enforce-versions</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>[3.0.5,)</version>
+                  </requireMavenVersion>
+                  <requireJavaVersion>
+                    <version>[1.7,)</version>
+                  </requireJavaVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.0.0</version>
