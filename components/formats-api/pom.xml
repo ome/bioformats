@@ -200,7 +200,7 @@
                     <pluginExecutionFilter>
                       <groupId>org.codehaus.mojo</groupId>
                       <artifactId>exec-maven-plugin</artifactId>
-                      <versionRange>[1.2.1,)</versionRange>
+                      <versionRange>[1.6.0,)</versionRange>
                       <goals>
                         <goal>exec</goal>
                       </goals>
@@ -217,7 +217,7 @@
                       <artifactId>
                         build-helper-maven-plugin
                       </artifactId>
-                      <versionRange>[1.4,)</versionRange>
+                      <versionRange>[3.0.0,)</versionRange>
                       <goals>
                         <goal>add-source</goal>
                       </goals>
