@@ -597,7 +597,7 @@
                       <pluginExecutionFilter>
                         <groupId>org.codehaus.gmaven</groupId>
                         <artifactId>gmaven-plugin</artifactId>
-                        <versionRange>[1.4,)</versionRange>
+                        <versionRange>[2.0.6,)</versionRange>
                         <goals>
                           <goal>execute</goal>
                         </goals>
@@ -610,7 +610,7 @@
                       <pluginExecutionFilter>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>buildnumber-maven-plugin</artifactId>
-                        <versionRange>[1.0,)</versionRange>
+                        <versionRange>[1.4,)</versionRange>
                         <goals>
                           <goal>create</goal>
                         </goals>
@@ -626,7 +626,7 @@
                       <pluginExecutionFilter>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <versionRange>[2.0,)</versionRange>
+                        <versionRange>[3.0.2,)</versionRange>
                         <goals>
                           <goal>jar</goal>
                         </goals>
@@ -642,7 +642,7 @@
                       <pluginExecutionFilter>
                         <groupId>net.imagej</groupId>
                         <artifactId>imagej-maven-plugin</artifactId>
-                        <versionRange>[0.1.0,)</versionRange>
+                        <versionRange>[0.6.0,)</versionRange>
                         <goals>
                           <goal>set-rootdir</goal>
                         </goals>
