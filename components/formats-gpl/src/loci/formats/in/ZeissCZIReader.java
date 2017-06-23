@@ -2453,6 +2453,12 @@ public class ZeissCZIReader extends FormatReader {
           shape = populatePolylines(closedPolylines, i, shape, true);
         }
 
+        NodeList beziers =
+          getGrandchildren(layer, "Elements", "Bezier");
+        if (beziers != null) {
+          shape = populatePolylines(beziers, i, shape, true);
+        }
+
         NodeList rectRoi = getGrandchildren(layer, "Elements", "RectRoi");
         if (rectRoi != null) {
           shape = populateRectangles(rectRoi, i, shape);
