@@ -2326,15 +2326,9 @@ public class NativeND2Reader extends FormatReader {
   }
 
   private int getScanlinePad() {
-    int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
-    if (scanlinePad == 1) {
-      if (split && !isLossless && ((nXFields % 2) != 0 ||
-        (nXFields == 0 && (getSizeC() >= 4 || getSizeC() == 2))))
-      {
-        scanlinePad = 0;
-      }
-    }
-    return scanlinePad;
+    if (getSizeX() % 2 == 0) return 0;
+    if (getSizeC() % 2 == 0) return 0;
+    return 1;
   }
 
   private void parseText(String textString, int offsetCount, boolean useDimensions) {
