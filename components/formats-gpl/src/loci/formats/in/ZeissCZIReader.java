@@ -152,6 +152,7 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<String> binnings = new ArrayList<String>();
   private ArrayList<String> detectorRefs = new ArrayList<String>();
   private ArrayList<Double> timestamps = new ArrayList<Double>();
+  private transient ArrayList<String> gains = new ArrayList<String>();
 
   private Length[] positionsX;
   private Length[] positionsY;
@@ -512,6 +513,7 @@ public class ZeissCZIReader extends FormatReader {
       binnings.clear();
       detectorRefs.clear();
       timestamps.clear();
+      gains.clear();
 
       previousChannel = 0;
       prestitched = null;
@@ -2020,11 +2022,16 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSerialNumber(serialNumber, 0, detectorIndex);
           store.setDetectorLotNumber(lotNumber, 0, detectorIndex);
 
-          if (gain == null) {
+          if (gain == null || gain.equals("0")) {
             gain = getFirstNodeValue(detector, "Gain");
           }
-          if (gain != null && !gain.equals("")) {
-            store.setDetectorGain(new Double(gain), 0, detectorIndex);
+          if (detectorIndex == 0 || detectorIndex >= gains.size()) {
+            store.setDetectorGain(DataTools.parseDouble(gain), 0, detectorIndex);
+          }
+          else {
+            store.setDetectorGain(
+              DataTools.parseDouble(gains.get(detectorIndex)), 0,
+              detectorIndex);
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
@@ -2843,11 +2850,21 @@ public class ZeissCZIReader extends FormatReader {
       return;
     }
 
-    detectors = getGrandchildren(multiTrack, "Detector");
+    NodeList detectorGroups = multiTrack.getElementsByTagName("Detectors");
+    for (int d=0; d<detectorGroups.getLength(); d++) {
+      Element detectorGroup = (Element) detectorGroups.item(d);
+      detectors = detectorGroup.getElementsByTagName("Detector");
 
-    if (detectors != null && detectors.getLength() > 0) {
-      Element detector = (Element) detectors.item(0);
-      gain = getFirstNodeValue(detector, "Voltage");
+      if (detectors != null && detectors.getLength() > 0) {
+        for (int i=0; i<detectors.getLength(); i++) {
+          Element detector = (Element) detectors.item(i);
+          String voltage = getFirstNodeValue(detector, "Voltage");
+          if (i == 0 && d == 0) {
+            gain = voltage;
+          }
+          gains.add(voltage);
+        }
+      }
     }
 
     NodeList tracks = multiTrack.getElementsByTagName("Track");
