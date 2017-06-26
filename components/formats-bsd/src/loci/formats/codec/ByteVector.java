@@ -37,65 +37,16 @@ package loci.formats.codec;
  *
  * @author Wayne Rasband wsr at nih.gov
  */
-public class ByteVector {
-  private byte[] data;
-  private int size;
-
+public class ByteVector extends ome.codecs.ByteVector {
   public ByteVector() {
-    data = new byte[10];
-    size = 0;
+    super();
   }
 
   public ByteVector(int initialSize) {
-    data = new byte[initialSize];
-    size = 0;
+    super(initialSize);
   }
 
   public ByteVector(byte[] byteBuffer) {
-    data = byteBuffer;
-    size = 0;
+    super(byteBuffer);
   }
-
-  public void add(byte x) {
-    while (size >= data.length) doubleCapacity();
-    data[size++] = x;
-  }
-
-  public int size() {
-    return size;
-  }
-
-  public byte get(int index) {
-    return data[index];
-  }
-
-  public void add(byte[] array) { add(array, 0, array.length); }
-
-  public void add(byte[] array, int off, int len) {
-    while (data.length < size + len) doubleCapacity();
-    if (len == 1) data[size] = array[off];
-    else if (len < 35) {
-      // for loop is faster for small number of elements
-      for (int i=0; i<len; i++) data[size + i] = array[off + i];
-    }
-    else System.arraycopy(array, off, data, size, len);
-    size += len;
-  }
-
-  void doubleCapacity() {
-    byte[] tmp = new byte[data.length*2 + 1];
-    System.arraycopy(data, 0, tmp, 0, data.length);
-    data = tmp;
-  }
-
-  public void clear() {
-    size = 0;
-  }
-
-  public byte[] toByteArray() {
-    byte[] bytes = new byte[size];
-    System.arraycopy(data, 0, bytes, 0, size);
-    return bytes;
-  }
-
 }

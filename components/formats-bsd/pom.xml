@@ -29,14 +29,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>formats-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.openmicroscopy</groupId>
-      <artifactId>ome-jai</artifactId>
-      <version>${ome-jai.version}</version>
+      <artifactId>ome-common</artifactId>
+      <version>${ome-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
@@ -47,6 +42,16 @@
       <groupId>org.openmicroscopy</groupId>
       <artifactId>specification</artifactId>
       <version>${ome-model.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-codecs</artifactId>
+      <version>${ome-codecs.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

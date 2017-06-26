@@ -121,7 +121,9 @@ public class TiffCompressionDecompressTest {
       assertNotNull(compression.decompress(DATA, OPTIONS));
     }
     catch (FormatException e) {
-      if (!(e.getCause() instanceof ZipException)) {
+      if (!(e.getCause() instanceof ome.codecs.CodecException &&
+            e.getCause().getCause() instanceof ZipException) &&
+          !(e.getCause().getCause() instanceof ZipException)) {
         fail("Unexpected exception: " + e);
       }
     }
@@ -134,7 +136,9 @@ public class TiffCompressionDecompressTest {
       assertNotNull(compression.decompress(DATA, OPTIONS));
     }
     catch (FormatException e) {
-      if (!(e.getCause() instanceof ZipException)) {
+      if (!(e.getCause() instanceof ome.codecs.CodecException &&
+            e.getCause().getCause() instanceof ZipException) &&
+          !(e.getCause().getCause() instanceof ZipException)) {
         fail("Unexpected exception: " + e);
       }
     }

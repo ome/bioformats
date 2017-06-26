@@ -45,43 +45,8 @@ import loci.formats.FormatException;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class ZlibCodec extends BaseCodec {
-
-  /* @see Codec#compress(byte[], CodecOptions) */
-  @Override
-  public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
-  {
-    if (data == null || data.length == 0)
-      throw new IllegalArgumentException("No data to compress");
-    Deflater deflater = new Deflater();
-    deflater.setInput(data);
-    deflater.finish();
-    byte[] buf = new byte[8192];
-    ByteVector bytes = new ByteVector();
-    int r = 0;
-    // compress until eof reached
-    while ((r = deflater.deflate(buf, 0, buf.length)) > 0) {
-      bytes.add(buf, 0, r);
-    }
-    return bytes.toByteArray();
+public class ZlibCodec extends WrappedCodec {
+  public ZlibCodec() {
+    super(new ome.codecs.ZlibCodec());
   }
-
-  /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
-  @Override
-  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
-  {
-    InflaterInputStream i = new InflaterInputStream(in);
-    ByteVector bytes = new ByteVector();
-    byte[] buf = new byte[8192];
-    int r = 0;
-    // read until eof reached
-    try {
-      while ((r = i.read(buf, 0, buf.length)) > 0) bytes.add(buf, 0, r);
-    }
-    catch (EOFException e) { }
-    return bytes.toByteArray();
-  }
-
 }

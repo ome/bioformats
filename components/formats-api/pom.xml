@@ -30,8 +30,20 @@
   <dependencies>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-common</artifactId>
+      <version>${ome-common.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${ome-model.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.openmicroscopy</groupId>
+        <artifactId>ome-codecs</artifactId>
+        <version>${ome-codecs.version}</version>
     </dependency>
 
     <dependency>
