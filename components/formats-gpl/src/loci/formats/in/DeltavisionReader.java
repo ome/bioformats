@@ -42,6 +42,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
@@ -161,6 +162,11 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    // Extra sanity check; if it's a TIFF, return false immediately, to avoid
+    // false negatives.
+    if(new TiffParser(stream).isValidHeader()) {
+      return false;
+    }
     final int blockLen = 98;
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     stream.seek(96);
@@ -174,7 +180,8 @@ public class DeltavisionReader extends FormatReader {
     int x = stream.readInt();
     int y = stream.readInt();
     int count = stream.readInt();
-    return x > 0 && y > 0 && count > 0;
+    return x > 0 && y > 0 && count > 0 &&
+      ((long) x * (long) y * (long) count < stream.length());
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
