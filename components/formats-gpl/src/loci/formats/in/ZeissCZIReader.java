@@ -1829,6 +1829,28 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
 
+      Element sNode = getFirstNode(dimensions, "S");
+      if (sNode != null) {
+        NodeList scenes = sNode.getElementsByTagName("Scene");
+        int nextPosition = 0;
+        for (int i=0; i<scenes.getLength(); i++) {
+          Element scene = (Element) scenes.item(i);
+          NodeList positions = scene.getElementsByTagName("Position");
+          for (int p=0; p<positions.getLength(); p++) {
+            Element position = (Element) positions.item(p);
+            String x = position.getAttribute("X");
+            String y = position.getAttribute("Y");
+            String z = position.getAttribute("Z");
+            if (nextPosition < positionsX.length && positionsX[nextPosition] == null) {
+              positionsX[nextPosition] = new Length(DataTools.parseDouble(x), UNITS.MICROM);
+              positionsY[nextPosition] = new Length(DataTools.parseDouble(y), UNITS.MICROM);
+              positionsZ[nextPosition] = new Length(DataTools.parseDouble(z), UNITS.MICROM);
+              nextPosition++;
+            }
+          }
+        }
+      }
+
       NodeList channelNodes = getGrandchildren(dimensions, "Channel");
       if (channelNodes == null) {
         channelNodes = image.getElementsByTagName("Channel");
