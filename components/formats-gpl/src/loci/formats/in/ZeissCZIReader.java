@@ -142,6 +142,7 @@ public class ZeissCZIReader extends FormatReader {
   private String userInstitution;
   private String temperature, airPressure, humidity, co2Percent;
   private String correctionCollar, medium, refractiveIndex;
+  private transient Time timeIncrement;
 
   private String zoom;
   private String gain;
@@ -507,6 +508,7 @@ public class ZeissCZIReader extends FormatReader {
       positionsZ = null;
       zoom = null;
       gain = null;
+      timeIncrement = null;
 
       channels.clear();
       binnings.clear();
@@ -1126,6 +1128,9 @@ public class ZeissCZIReader extends FormatReader {
       }
       if (experimenterID != null) {
         store.setImageExperimenterRef(experimenterID, i);
+      }
+      if (timeIncrement != null) {
+        store.setPixelsTimeIncrement(timeIncrement, i);
       }
 
       String imageIndex = String.valueOf(i + 1);
@@ -1814,6 +1819,21 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       Element dimensions = getFirstNode(image, "Dimensions");
+
+      Element tNode = getFirstNode(dimensions, "T");
+      if (tNode != null) {
+        Element positions = getFirstNode(tNode, "Positions");
+        if (positions != null) {
+          Element interval = getFirstNode(positions, "Interval");
+          if (interval != null) {
+            Element incrementNode = getFirstNode(interval, "Increment");
+            if (incrementNode != null) {
+              String increment = incrementNode.getTextContent();
+              timeIncrement = new Time(DataTools.parseDouble(increment), UNITS.SECOND);
+            }
+          }
+        }
+      }
 
       NodeList channelNodes = getGrandchildren(dimensions, "Channel");
       if (channelNodes == null) {
