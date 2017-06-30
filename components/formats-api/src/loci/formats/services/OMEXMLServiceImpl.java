@@ -592,16 +592,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       omexml.setRoot(root);
       xml = getOMEXML(omexml);
     }
-    catch (ServiceException e) {
-      LOGGER.warn("Could not remove Modulo annotations", e);
-    }
-    catch (ParserConfigurationException e) {
-      LOGGER.warn("Could not remove Modulo annotations", e);
-    }
-    catch (SAXException e) {
-      LOGGER.warn("Could not remove Modulo annotations", e);
-    }
-    catch (IOException e) {
+    catch (ServiceException|ParserConfigurationException|SAXException|IOException e) {
       LOGGER.warn("Could not remove Modulo annotations", e);
     }
 
