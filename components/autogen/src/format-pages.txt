@@ -479,8 +479,8 @@ weHave = * a few example datasets \n
 * a VSI specification document (v1.6, 2012 November 27, in PDF) \n
 * a VSI specification document (v1.3, 2010 February 5, in PDF)
 pixelsRating = Fair
-metadataRating = Fair
-opennessRating = Fair
+metadataRating = Very good
+opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
 pyramid = yes
