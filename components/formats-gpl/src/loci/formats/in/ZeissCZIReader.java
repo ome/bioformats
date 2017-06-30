@@ -986,6 +986,7 @@ public class ZeissCZIReader extends FormatReader {
                 plane.coreIndex--;
               }
             }
+            r--;
           }
           else {
             int div = (int) Math.pow(scaleFactor, r);
