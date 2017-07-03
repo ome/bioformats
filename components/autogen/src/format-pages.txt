@@ -475,16 +475,18 @@ mif = true
 extensions = .vsi
 developer = `Olympus <http://www.olympus.com/>`_
 bsd = no
-weHave = * a few example datasets
-weWant = * an official specification document
+weHave = * a few example datasets \n
+* a VSI specification document (v1.6, 2012 November 27, in PDF) \n
+* a VSI specification document (v1.3, 2010 February 5, in PDF)
 pixelsRating = Fair
-metadataRating = Fair
-opennessRating = Fair
+metadataRating = Very good
+opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
 pyramid = yes
 reader = CellSensReader
 mif = true
+privateSpecification = true
 
 [CellVoyager]
 extensions = .xml, .tif

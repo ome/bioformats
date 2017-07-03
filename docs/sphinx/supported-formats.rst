@@ -312,8 +312,8 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/cellsens-vsi`
      - .vsi
      - |Fair|
-     - |Fair|
-     - |Fair|
+     - |Very good|
+     - |Good|
      - |Fair|
      - |Fair|
      - |no|
