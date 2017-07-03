@@ -11,7 +11,7 @@ File format fixes and improvements:
      of Bézier curves to form an approximation of the ROI
    - improved parsing of stage positions in metadata
    - improved parsing of detector gain values
-   - removed OME-XML validation errors by fixing potential for duplicate detector ID's
+   - removed OME-XML validation errors by fixing potential for duplicate detector IDs
    - removed invalid XML failures for Modulo label elements
    - time increment metadata now populated on ``Pixels`` element
    - fix to deal with consecutive empty planes in a series (thanks to Nicholas Trahearn)
