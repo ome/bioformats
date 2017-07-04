@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.5.3 (2017 July 4)
+5.5.3 (2017 July 5)
 -------------------
 
 File format fixes and improvements:
