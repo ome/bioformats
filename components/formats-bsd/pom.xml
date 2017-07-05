@@ -34,9 +34,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-jai</artifactId>
+      <version>${ome-jai.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>

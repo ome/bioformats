@@ -38,7 +38,7 @@ an earlier version using this guide if you need to.
 4) Remove bio-formats_plugins.jar from the 'plugins' sub-folder
 5) Remove all of the .jars from the 'jars/bio-formats' sub-folder:
 
-   - jai_imageio.jar
+   - ome-jai.jar
    - formats-gpl.jar
    - ome-common.jar
    - turbojpeg.jar
@@ -57,7 +57,7 @@ an earlier version using this guide if you need to.
    http://downloads.openmicroscopy.org/bio-formats/) and place them in the
    'jars/bio-formats' sub-folder:
 
-   - jai_imageio.jar
+   - ome-jai.jar
    - formats-gpl.jar
    - ome-common.jar
    - turbojpeg.jar

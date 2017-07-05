@@ -71,6 +71,9 @@ Type "ant -p" for a list of targets.
         <rsel:not>
           <rsel:name name="jai*.jar"/>
         </rsel:not>
+        <rsel:not>
+             <rsel:name name="ome-jai*.jar"/>
+        </rsel:not>
       </restrict>
     </path>
     <testng failureProperty="failedTest">

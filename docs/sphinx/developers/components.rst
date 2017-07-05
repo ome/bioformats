@@ -90,9 +90,7 @@ not be any code here, just build system files.
 
 .. _forks-jai:
 
-:source:`forks/jai (JAI Image I/O Tools) <components/forks/jai>`:
-
-`Ant: jar-jai`
+`OME JAI (deprecated) <https://github.com/ome/ome-jai>`_:
 
 This is a fork of `JAI ImageIO <http://java.net/projects/jai-imageio-core>`_
 which adds support for decoding YCbCr JPEG-2000 data.  This is primarily
