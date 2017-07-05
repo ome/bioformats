@@ -106,20 +106,20 @@ public class TileJPEGReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
     JPEGTileDecoder decoder = new JPEGTileDecoder();
-    decoder.initialize(in, 0, 1, 0);
+    int[] dimensions = decoder.preprocess(in);
+    decoder.close();
+    decoder = null;
 
     CoreMetadata m = core.get(0);
 
     m.interleaved = true;
     m.littleEndian = false;
 
-    m.sizeX = decoder.getWidth();
-    m.sizeY = decoder.getHeight();
+    m.sizeX = dimensions[0];
+    m.sizeY = dimensions[1];
     m.sizeZ = 1;
     m.sizeT = 1;
 
-    decoder.close();
-    decoder = null;
     reopenFile();
 
     m.sizeC = 3;
