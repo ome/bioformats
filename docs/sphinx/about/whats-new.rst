@@ -1,6 +1,41 @@
 Version history
 ===============
 
+5.5.3 (2017 July 5)
+-------------------
+
+File format fixes and improvements:
+
+* Zeiss CZI
+   - fix to store Bézier ROIs as polygons, using the control points for the set 
+     of Bézier curves to form an approximation of the ROI
+   - improved parsing of stage positions in metadata
+   - improved parsing of detector gain values
+   - removed OME-XML validation errors by fixing potential for duplicate detector IDs
+   - removed invalid XML failures for Modulo label elements
+   - time increment metadata now populated on ``Pixels`` element
+   - fix to deal with consecutive empty planes in a series (thanks to Nicholas Trahearn)
+* DICOM
+   - no longer allow core metadata to be modified when determining if files belong to a 
+     DICOM dataset
+* Nikon NIS-Elements ND2
+   - fixed calculation for scanline padding
+* Kodak BIP
+   - stricter file type checking enforced by no longer relying only on the file suffix
+* MINC MRI
+   - improved parsing of metadata by correcting units for physical sizes, pixel type and 
+     capturing XYZ plane positions in OME-XML
+* Bio-Rad Gel
+   - fixed the width of pixel data offset field
+* DeltaVision
+   - improved accuracy of format detection checking for input streams
+* Andor SIF
+   - fixed support for cropped images by parsing bounding box of the stored image
+
+Documentation improvements:
+
+* Olympus cellSens VSI updated to include list of available specifications
+
 5.5.2 (2017 June 15)
 --------------------
 
