@@ -232,6 +232,7 @@ public class ConfigWindow extends JFrame
     bfOptionsPanel.add(upgradePanel);
     bfOptionsPanel.add(sliceNamePanel);
     JLabel sliceDescription = new JLabel("<html>Customize the slice label by specifying a pattern string:"
+                                          + "<br>%s - series index"
                                           + "<br>%n - series name"
                                           + "<br>%c - channel index"
                                           + "<br>%w - channel name"
