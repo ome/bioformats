@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.Region;
 import loci.common.StatusEvent;
@@ -50,12 +51,20 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.Modulo;
+import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.LociPrefs;
 import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualImagePlus;
+import ome.units.UNITS;
+import ome.units.quantity.Time;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * A high-level reader for {@link ij.ImagePlus} objects.
@@ -570,59 +579,71 @@ public class ImagePlusReader implements StatusReporter {
   {
     r.setSeries(series);
 
-    final int[] zct = r.getZCTCoords(ndx);
-    final StringBuffer sb = new StringBuffer();
+    String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
 
-    int[] subC;
-    String[] subCTypes;
-    Modulo moduloC = r.getModuloC();
-    if (moduloC.length() > 1) {
-      subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
-      subCTypes = new String[] {moduloC.parentType, moduloC.type};
-    } else {
-      subC = new int[] {r.getSizeC()};
-      subCTypes = new String[] {FormatTools.CHANNEL};
+    MetadataStore store = r.getMetadataStore();
+    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ? (MetadataRetrieve) store : new DummyMetadata();
+    String filename = sliceLabelPattern.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
+
+    String imageName = retrieve.getImageName(series);
+    if (imageName == null) imageName = "Series" + series;
+    filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
+
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int sizeC = r.getEffectiveSizeC();
+    int sizeT = r.getSizeT();
+    int sizeZ = r.getSizeZ();
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
+
+    if (sizeC > 1) {
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "c:" + String.format("%d", coordinates[1] + 1) + "/" + String.format("%d", sizeC) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
+    }
+    if (sizeZ > 1) {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "z:" + String.format("%d", coordinates[0] + 1) + "/" + String.format("%d", sizeZ) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "");
+    }
+    if (sizeT > 1) {
+      filename = filename.replaceAll(FormatTools.T_NUM, "t:" + String.format("%d", coordinates[2] + 1) + "/" + String.format("%d", sizeT) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.T_NUM, "");
     }
 
-    boolean first = true;
-    if (cCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      int[] subCPos = FormatTools.rasterToPosition(subC, zct[1]);
-      for (int i=0; i<subC.length; i++) {
-        boolean ch =
-          subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
-        sb.append(ch ? "c" : subCTypes[i]);
-        sb.append(":");
-        sb.append(subCPos[i] + 1);
-        sb.append("/");
-        sb.append(subC[i]);
-        if (i < subC.length - 1) sb.append(", ");
+    int channelCount = retrieve.getChannelCount(series);
+    if (coordinates[1] < channelCount) {
+      String channelName = retrieve.getChannelName(series, coordinates[1]);
+      if (channelName == null) channelName = String.valueOf(coordinates[1]);
+      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, channelName);
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, String.valueOf(coordinates[1]));
+    }
+
+    Timestamp timestamp = retrieve.getImageAcquisitionDate(series);
+    long stamp = 0;
+    String date = null;
+    if (timestamp != null) {
+      date = timestamp.getValue();
+      if (retrieve.getPlaneCount(series) > ndx) {
+        Time deltaT = retrieve.getPlaneDeltaT(series, ndx);
+        if (deltaT != null) {
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
+        }
       }
+      stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
     }
-    if (zCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      sb.append("z:");
-      sb.append(zct[0] + 1);
-      sb.append("/");
-      sb.append(r.getSizeZ());
+    else {
+      stamp = System.currentTimeMillis();
     }
-    if (tCount > 1) {
-      if (first) first = false;
-      else sb.append("; ");
-      sb.append("t:");
-      sb.append(zct[2] + 1);
-      sb.append("/");
-      sb.append(r.getSizeT());
-    }
-    // put image name at the end, in case it is long
-    String imageName = meta.getImageName(series);
-    if (imageName != null && !imageName.trim().equals("")) {
-      sb.append(" - ");
-      sb.append(imageName);
-    }
-    return sb.toString();
+    date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
+
+    filename = filename.replaceAll(FormatTools.TIMESTAMP, date);
+    return filename;
   }
 
   private static void saveLUTs(ImagePlus imp, List<LUT> luts) {

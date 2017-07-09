@@ -67,6 +67,7 @@ public final class LociPrefs {
     "bioformats.nativend2.chunkmap";
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
+  public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
 
   // -- Constructor --
 
@@ -190,6 +191,10 @@ public final class LociPrefs {
       LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
   }
 
+  public static String getSliceLabelPattern() {
+    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "%c%z%t- %n");
+  }
+  
   // -- Helper methods --
 
   private static boolean getPref(String pref,
