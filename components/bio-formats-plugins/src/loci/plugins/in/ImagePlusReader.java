@@ -589,11 +589,11 @@ public class ImagePlusReader implements StatusReporter {
     if (imageName == null) imageName = "Series" + series;
     filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
 
-    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    String order = r.getDimensionOrder();
     int sizeC = r.getEffectiveSizeC();
     int sizeT = r.getSizeT();
     int sizeZ = r.getSizeZ();
-    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
+    int[] coordinates = FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
 
     if (sizeC > 1) {
       filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "c:" + String.format("%d", coordinates[1] + 1) + "/" + String.format("%d", sizeC) + " ");
