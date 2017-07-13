@@ -37,16 +37,54 @@ package loci.formats.codec;
  *
  * @author Wayne Rasband wsr at nih.gov
  */
-public class ByteVector extends ome.codecs.ByteVector {
+public class ByteVector {
+  private ome.codecs.ByteVector vector;
+
   public ByteVector() {
-    super();
+    vector = new ome.codecs.ByteVector();
   }
 
   public ByteVector(int initialSize) {
-    super(initialSize);
+    vector = new ome.codecs.ByteVector(initialSize);
   }
 
   public ByteVector(byte[] byteBuffer) {
-    super(byteBuffer);
+    vector = new ome.codecs.ByteVector(byteBuffer);
   }
+
+  public void add(byte x) {
+    this.vector.add(x);
+  }
+
+  public int size() {
+    return this.vector.size();
+  }
+
+  public byte get(int index) {
+    return this.vector.get(index);
+  }
+
+  public void add(byte[] array) {
+    this.vector.add(array);
+  }
+
+  public void add(byte[] array, int off, int len) {
+    this.vector.add(array, off, len);
+  }
+
+  void doubleCapacity() {
+  }
+
+  public void clear() {
+    this.vector.clear();
+  }
+
+  public byte[] toByteArray() {
+    return this.vector.toByteArray();
+  }
+
+  ome.codecs.ByteVector getWrapped() {
+    return this.vector;
+  }
+
 }
