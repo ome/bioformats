@@ -767,8 +767,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         core.add(toAdd);
       }
-      // METADATA-ONLY
-      // seriesToIFD = true;
+      seriesToIFD = true;
     }
 
     List<String> timestamps = null;
