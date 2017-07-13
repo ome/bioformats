@@ -32,7 +32,7 @@ Freely Available Software:
 
 We currently have:
 
-* a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) 
+* a `QuickTime specification document <https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html>` 
 * several QuickTime datasets 
 * the ability to produce more datasets
 
