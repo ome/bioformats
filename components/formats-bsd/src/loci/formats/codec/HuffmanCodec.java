@@ -55,7 +55,7 @@ public class HuffmanCodec extends WrappedCodec {
     throws FormatException
   {
     try {
-      return ((ome.codecs.HuffmanCodec) this.codec).getSample(bb, getOptions(options));
+      return ((ome.codecs.HuffmanCodec) this.codec).getSample(bb.getWrapped(), getOptions(options));
     }
     catch(ome.codecs.CodecException e) {
       throw new FormatException(e);
