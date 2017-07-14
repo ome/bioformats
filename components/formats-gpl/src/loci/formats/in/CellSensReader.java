@@ -1430,10 +1430,6 @@ public class CellSensReader extends FormatReader {
           return;
         }
 
-        if (tag == EXTERNAL_FILE_PROPERTIES) {
-          expectETS = true;
-        }
-
         if (tag == EXTERNAL_FILE_PROPERTIES && previousTag == IMAGE_FRAME_VOLUME) {
           metadataIndex++;
         }
@@ -1725,6 +1721,10 @@ public class CellSensReader extends FormatReader {
           if (tag == DOCUMENT_TIME || tag == CREATION_TIME) {
             value = DateTools.convertDate(
               Long.parseLong(value) * 1000, DateTools.UNIX);
+          }
+
+          if (tag == HAS_EXTERNAL_FILE) {
+            expectETS = Integer.parseInt(value) == 1;
           }
 
           if (tagName != null && populateMetadata) {
