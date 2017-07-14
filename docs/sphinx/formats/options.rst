@@ -14,6 +14,10 @@ Reader options
      - Option
      - Default
      - Description
+   * - :doc:`cellsens`
+     - ``cellsens.fail_on_missing_ets``
+     - false
+     - Throw an exception if an expected associated .ets file is missing
    * - :doc:`leica-lif`
      - ``leicalif.old_physical_size``
      - false
