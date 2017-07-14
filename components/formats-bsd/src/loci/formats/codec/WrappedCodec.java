@@ -65,7 +65,7 @@ class WrappedCodec extends BaseCodec {
       return codec.compress(data, getOptions(options));
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -77,7 +77,7 @@ class WrappedCodec extends BaseCodec {
       return codec.compress(data, getOptions(options));
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -88,7 +88,7 @@ class WrappedCodec extends BaseCodec {
       return codec.decompress(data, getOptions(options));
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -99,7 +99,7 @@ class WrappedCodec extends BaseCodec {
       return codec.decompress(data, getOptions(options));
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -110,7 +110,7 @@ class WrappedCodec extends BaseCodec {
       return codec.decompress(data);
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -121,7 +121,7 @@ class WrappedCodec extends BaseCodec {
       return codec.decompress(data);
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -134,7 +134,7 @@ class WrappedCodec extends BaseCodec {
       return codec.decompress(in, getOptions(options));
     }
     catch (ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw unwrapCodecException(e);
     }
   }
 
@@ -200,4 +200,22 @@ class WrappedCodec extends BaseCodec {
     return newOptions;
   }
 
+  static FormatException unwrapCodecException(ome.codecs.CodecException e)
+  {
+    FormatException fe;
+    if(e.getMessage() != null) {
+      fe = new FormatException(e.getMessage());
+    }
+    else {
+      fe = new FormatException();
+    }
+
+    if(e.getCause() != null) {
+      fe.initCause(e.getCause());
+    }
+
+    fe.setStackTrace(e.getStackTrace());
+
+    return fe;
+  }
 }

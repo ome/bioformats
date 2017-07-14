@@ -58,7 +58,7 @@ public class HuffmanCodec extends WrappedCodec {
       return ((ome.codecs.HuffmanCodec) this.codec).getSample(bb.getWrapped(), getOptions(options));
     }
     catch(ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw WrappedCodec.unwrapCodecException(e);
     }
   }
 
@@ -69,7 +69,7 @@ public class HuffmanCodec extends WrappedCodec {
       return ((ome.codecs.HuffmanCodec) this.codec).getSample(bb, getOptions(options));
     }
     catch(ome.codecs.CodecException e) {
-      throw new FormatException(e);
+      throw WrappedCodec.unwrapCodecException(e);
     }
   }
 }
