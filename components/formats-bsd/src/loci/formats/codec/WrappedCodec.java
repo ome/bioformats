@@ -2,7 +2,7 @@
  * #%L
  * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
+ * Copyright (C) 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -38,11 +38,9 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 
 /**
- * Implements encoding (compress) and decoding (decompress) methods
- * for Wrapped.  This code was adapted from the Jakarta Commons Codec source,
- * http://jakarta.apache.org/commons
- *
- * @author Melissa Linkert melissa at glencoesoftware.com
+ * Generic wrapper for codecs from ome-codecs.  Individual wrapper
+ * codec classes should extend this class and pass the class to wrap
+ * to the constructor.
  */
 class WrappedCodec extends BaseCodec {
 
