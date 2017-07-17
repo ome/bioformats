@@ -199,8 +199,8 @@ In addition to I/O, there are several classes to assist in working with XML
 `OME Codecs <https://github.com/ome/ome-codecs>`_:
 
 Provides classes for encoding and decoding compressed data for a
-variety of compression formats.  There are no dependencies on other
-components.
+variety of compression formats.  :ref:`ome-common <ome-common>` is a
+required dependency for I/O and service loading.
 
 .. _forks-mdbtools:
 
