@@ -166,6 +166,7 @@ now available as separate build dependencies:
 
 - :ref:`Metakit <metakit>`
 - :ref:`OME Common <ome-common>`
+- :ref:`OME Codecs <ome-codecs>`
 - :ref:`OME MDB Tools (Java) <forks-mdbtools>`
 - :ref:`OME Apache Jakarta POI <forks-poi>`
 - :ref:`JXRlib <jxrlib>`
@@ -192,6 +193,14 @@ In addition to I/O, there are several classes to assist in working with XML
 (:common_javadoc:`DateTools <loci/common/DateTools.html>`), logging configuration
 (:common_javadoc:`DebugTools <loci/common/DebugTools.html>`), and byte arithmetic
 (:common_javadoc:`DataTools <loci/common/DataTools.html>`).
+
+.. _ome-codecs:
+
+`OME Codecs <https://github.com/ome/ome-codecs>`_:
+
+Provides classes for encoding and decoding compressed data for a
+variety of compression formats.  There are no dependencies on other
+components.
 
 .. _forks-mdbtools:
 
