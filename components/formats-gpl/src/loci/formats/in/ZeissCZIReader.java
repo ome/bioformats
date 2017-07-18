@@ -174,8 +174,6 @@ public class ZeissCZIReader extends FormatReader {
   private int[] tileHeight;
   private int scaleFactor;
 
-  private transient boolean isPALM = false;
-
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -537,7 +535,6 @@ public class ZeissCZIReader extends FormatReader {
       tileWidth = null;
       tileHeight = null;
       scaleFactor = 0;
-      isPALM = false;
     }
   }
 
@@ -1011,6 +1008,7 @@ public class ZeissCZIReader extends FormatReader {
     String firstXML = null;
     boolean canSkipXML = true;
     String currentPath = new Location(currentId).getAbsolutePath();
+    boolean isPALM = false;
     if (planes.size() <= 2 && getImageCount() <= 2) {
       for (Segment segment : segments) {
         String path = new Location(segment.filename).getAbsolutePath();
