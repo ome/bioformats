@@ -27,7 +27,7 @@ Reader: OBFReader (:bsd-reader:`Source Code <OBFReader.java>`, :doc:`Supported M
 We currently have:
 
 * a few .msr datasets 
-* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html#>`_
+* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html>`_
 
 We would like to have:
 

@@ -959,7 +959,7 @@ owner = `MPI-BPC <http://www.mpibpc.mpg.de/>`_
 developer = `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de>`_
 bsd = yes
 weHave = * a few .msr datasets \n
-* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html#>`_
+* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html>`_
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
