@@ -14,7 +14,7 @@ Reader options
      - Option
      - Default
      - Description
-   * - :doc:`cellsens`
+   * - :doc:`cellsens-vsi`
      - ``cellsens.fail_on_missing_ets``
      - false
      - Throw an exception if an expected associated .ets file is missing
