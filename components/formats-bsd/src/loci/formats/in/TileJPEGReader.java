@@ -78,9 +78,7 @@ public class TileJPEGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (service != null) {
-      service.getTile(buf, x, y, w, h);
-    }
+    service.getTile(buf, x, y, w, h);
 
     return buf;
   }
@@ -146,6 +144,7 @@ public class TileJPEGReader extends FormatReader {
       service.initialize(in, getSizeX(), getSizeY());
     }
     catch (ServiceException se) {
+      service = null;
       throw new IOException("Could not initialize JPEG service", se);
     }
   }
