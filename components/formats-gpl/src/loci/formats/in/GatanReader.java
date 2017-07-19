@@ -236,13 +236,17 @@ public class GatanReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int index = 0;
-      if (pixelSizes.size() >= 3) {
+      if (pixelSizes.size() > 4) {
         index = pixelSizes.size() - 3;
       }
-      else if (pixelSizes.size() >= 2) {
-        index = pixelSizes.size() - 2;
+      else if (pixelSizes.size() == 4) {
+        if (Math.abs(pixelSizes.get(0) - 1.0) < Constants.EPSILON) {
+          index = pixelSizes.size() - 2;
+        }
       }
-      if (Math.abs(pixelSizes.get(index + 1) - pixelSizes.get(index + 2)) < Constants.EPSILON) {
+      if (index + 2 < pixelSizes.size() &&
+        Math.abs(pixelSizes.get(index + 1) - pixelSizes.get(index + 2)) < Constants.EPSILON)
+      {
         if (Math.abs(pixelSizes.get(index) - pixelSizes.get(index + 1)) > Constants.EPSILON &&
           getSizeY() > 1)
         {
@@ -489,7 +493,7 @@ public class GatanReader extends FormatReader {
         skipPadding();
         int num = in.readInt();
         LOGGER.debug("{}{}: group({}) {} {", new Object[] {indent, i, num, labelString});
-        parseTags(num, labelString, indent + "  ");
+        parseTags(num, labelString.isEmpty() ? parent : labelString, indent + "  ");
         LOGGER.debug("{}}", indent);
       }
       else {
@@ -500,12 +504,15 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
-        if (labelString.equals("Scale") && !parent.equals("Calibration")) {
+        boolean validPhysicalSize = parent != null && (parent.equals("Dimension") ||
+          ((pixelSizes.size() == 4 || units.size() == 4) &&
+          (parent.equals("Transform List") || parent.equals("2"))));
+        if (labelString.equals("Scale") && validPhysicalSize) {
           if (value.indexOf(',') == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
           }
         }
-        else if (labelString.equals("Units") && !parent.equals("Calibration")) {
+        else if (labelString.equals("Units") && validPhysicalSize) {
           // make sure that we don't add more units than sizes
           if (pixelSizes.size() == units.size() + 1) {
             units.add(value);
