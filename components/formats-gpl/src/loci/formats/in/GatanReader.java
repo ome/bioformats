@@ -86,7 +86,7 @@ public class GatanReader extends FormatReader {
   private List<Double> pixelSizes;
   private List<String> units;
 
-  private int numPixelBytes;
+  private long numPixelBytes;
 
   private boolean signed;
   private long timestamp;
@@ -128,7 +128,8 @@ public class GatanReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset);
+    long planeOffset = (long) no * FormatTools.getPlaneSize(this);
+    in.seek(pixelOffset + planeOffset);
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -209,16 +210,20 @@ public class GatanReader extends FormatReader {
     if (getSizeX() == 0 || getSizeY() == 0) {
       throw new FormatException("Dimensions information not found");
     }
-    int bytes = numPixelBytes / (getSizeX() * getSizeY());
 
-    if (bytes != FormatTools.getBytesPerPixel(getPixelType())) {
-      m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    if (m.sizeZ == 0) {
+      m.sizeZ = 1;
     }
-    m.sizeZ = 1;
     m.sizeC = 1;
     m.sizeT = 1;
     m.dimensionOrder = "XYZTC";
-    m.imageCount = 1;
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+
+    int bytes = (int) (numPixelBytes / (getSizeX() * getSizeY() * (long) getImageCount()));
+    if (bytes != FormatTools.getBytesPerPixel(getPixelType())) {
+      m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    }
+
     m.rgb = false;
     m.interleaved = false;
     m.metadataComplete = true;
@@ -303,7 +308,10 @@ public class GatanReader extends FormatReader {
       store.setPlanePositionX(posX, 0, 0);
       store.setPlanePositionY(posY, 0, 0);
       store.setPlanePositionZ(posZ, 0, 0);
-      store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, 0);
+
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, i);
+      }
     }
   }
 
@@ -356,8 +364,13 @@ public class GatanReader extends FormatReader {
         if (n == 1) {
           if ("Dimensions".equals(parent) && labelString.length() == 0) {
             if (adjustEndianness) in.order(!in.isLittleEndian());
-            if (i == 0) core.get(0).sizeX = in.readInt();
+            if (i == 0) {
+              core.get(0).sizeX = in.readInt();
+            }
             else if (i == 1) core.get(0).sizeY = in.readInt();
+            else if (i == 2) {
+              core.get(0).sizeZ = in.readInt();
+            }
             if (adjustEndianness) in.order(!in.isLittleEndian());
           }
           else value = String.valueOf(readValue(dataType));
@@ -373,12 +386,20 @@ public class GatanReader extends FormatReader {
           if (dataType == GROUP) {  // this should always be true
             skipPadding();
             dataType = in.readInt();
-            skipPadding();
-            length = in.readInt();
+            long dataLength = 0;
+            if (version == 4) {
+              dataLength = in.readLong();
+            }
+            else {
+              dataLength = in.readInt();
+            }
+            length = (int) (dataLength & 0xffffffff);
             if (labelString.equals("Data")) {
-              pixelOffset = in.getFilePointer();
-              in.skipBytes(getNumBytes(dataType) * length);
-              numPixelBytes = (int) (in.getFilePointer() - pixelOffset);
+              if (dataLength > 0) {
+                pixelOffset = in.getFilePointer();
+                in.seek(in.getFilePointer() + getNumBytes(dataType) * dataLength);
+                numPixelBytes = in.getFilePointer() - pixelOffset;
+              }
             }
             else {
               if (dataType == 10) in.skipBytes(length);
