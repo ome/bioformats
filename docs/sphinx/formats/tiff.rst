@@ -31,7 +31,7 @@ Sample Datasets:
 
 We currently have:
 
-* a `TIFF specification <http://www.awaresystems.be/imaging/tiff.html>`_
+* a `TIFF specification document <http://www.awaresystems.be/imaging/tiff.html>`_ 
 * many TIFF datasets 
 * a few BigTIFF datasets
 

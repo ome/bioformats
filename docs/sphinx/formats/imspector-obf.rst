@@ -6,7 +6,7 @@ Imspector OBF
 
 Extensions: .obf, .msr
 
-Developer: `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/>`_
+Developer: `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de>`_
 
 Owner: `MPI-BPC <http://www.mpibpc.mpg.de/>`_
 
