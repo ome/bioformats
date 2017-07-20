@@ -337,7 +337,7 @@ public class GatanReader extends FormatReader {
     throws FormatException, IOException, ParseException
   {
     for (int i=0; i<numTags; i++) {
-      if (in.getFilePointer() >= in.length()) break;
+      if (in.getFilePointer() + 3 >= in.length()) break;
 
       byte type = in.readByte();  // can be 21 (data) or 20 (tag group)
       int length = in.readShort();
@@ -419,38 +419,23 @@ public class GatanReader extends FormatReader {
             skipPadding();
             skipPadding();
             int numFields = in.readInt();
+            long startFP = in.getFilePointer();
             final StringBuilder s = new StringBuilder();
             in.skipBytes(4);
             skipPadding();
-            long baseFP = in.getFilePointer() + 4;
+            long baseFP = in.getFilePointer();
+            if (version == 4) {
+              baseFP += 4;
+            }
+            int width = version == 4 ? 16 : 8;
             for (int j=0; j<numFields; j++) {
-              if (version == 4) {
-                in.seek(baseFP + j * 16);
-              }
+              in.seek(baseFP + j * width);
               dataType = in.readInt();
+              in.seek(startFP + numFields * width + j * getNumBytes(dataType));
               s.append(readValue(dataType));
               if (j < numFields - 1) s.append(", ");
             }
             value = s.toString();
-            boolean lastTag = parent == null && i == numTags - 1;
-            if (!lastTag) {
-              // search for next tag
-              // empirically, we need to skip 4, 8, 12, 18, 24, or 28
-              // total bytes
-              byte b = 0;
-              final int[] jumps = {4, 3, 3, 5, 5, 3};
-              for (int j=0; j<jumps.length; j++) {
-                in.skipBytes(jumps[j]);
-                if (in.getFilePointer() >= in.length()) return;
-                b = in.readByte();
-                if (b == GROUP || b == VALUE) break;
-              }
-              if (b != GROUP && b != VALUE) {
-                throw new FormatException("Cannot find next tag (pos=" +
-                  in.getFilePointer() + ", label=" + labelString + ")");
-              }
-              in.seek(in.getFilePointer() - 1); // reread tag type code
-            }
           }
           else if (dataType == GROUP) {
             // this is an array of structs
