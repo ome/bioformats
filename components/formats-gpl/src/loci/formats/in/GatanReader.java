@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -46,6 +47,7 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 import ome.units.unit.Unit;
+import ome.xml.model.primitives.Color;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -77,6 +79,12 @@ public class GatanReader extends FormatReader {
   private static final int UNKNOWN = 11;
   private static final int UNKNOWN2 = 12;
 
+  /** Shape types */
+  private static final int LINE = 2;
+  private static final int RECTANGLE = 5;
+  private static final int ELLIPSE = 6;
+  private static final int TEXT = 13;
+
   // -- Fields --
 
   /** Offset to pixel data. */
@@ -98,6 +106,8 @@ public class GatanReader extends FormatReader {
 
   private boolean adjustEndianness = true;
   private int version;
+
+  private transient List<ROIShape> shapes;
 
   // -- Constructor --
 
@@ -151,6 +161,7 @@ public class GatanReader extends FormatReader {
       posX = posY = posZ = null;
       sampleTime = 0;
       units = null;
+      shapes = null;
     }
   }
 
@@ -169,6 +180,7 @@ public class GatanReader extends FormatReader {
     m.littleEndian = false;
     pixelSizes = new ArrayList<Double>();
     units = new ArrayList<String>();
+    shapes = new ArrayList<ROIShape>();
 
     in.order(isLittleEndian());
 
@@ -315,6 +327,66 @@ public class GatanReader extends FormatReader {
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(new Time(sampleTime, UNITS.SECOND), 0, i);
+      }
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS &&
+      shapes.size() > 0)
+    {
+      for (int i=0; i<shapes.size(); i++) {
+        String roi = MetadataTools.createLSID("ROI", i);
+        store.setROIID(roi, i);
+        store.setImageROIRef(roi, 0, i);
+
+        String shapeID = MetadataTools.createLSID("Shape", i, 0);
+        ROIShape shape = shapes.get(i);
+
+        switch (shape.type) {
+          case LINE:
+            store.setLineID(shapeID, i, 0);
+            store.setLineX1(shape.x1, i, 0);
+            store.setLineY1(shape.y1, i, 0);
+            store.setLineX2(shape.x2, i, 0);
+            store.setLineY2(shape.y2, i, 0);
+            store.setLineText(shape.text, i, 0);
+            store.setLineFontSize(shape.fontSize, i, 0);
+            store.setLineStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case TEXT:
+            store.setLabelID(shapeID, i, 0);
+            store.setLabelX(shape.x1, i, 0);
+            store.setLabelY(shape.y1, i, 0);
+            store.setLabelText(shape.text, i, 0);
+            store.setLabelFontSize(shape.fontSize, i, 0);
+            store.setLabelStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case ELLIPSE:
+            store.setEllipseID(shapeID, i, 0);
+
+            double radiusX = (shape.x2 - shape.x1) / 2;
+            double radiusY = (shape.y2 - shape.y1) / 2;
+
+            store.setEllipseX(shape.x1 + radiusX, i, 0);
+            store.setEllipseY(shape.y1 + radiusY, i, 0);
+            store.setEllipseRadiusX(radiusX, i, 0);
+            store.setEllipseRadiusY(radiusY, i, 0);
+            store.setEllipseText(shape.text, i, 0);
+            store.setEllipseFontSize(shape.fontSize, i, 0);
+            store.setEllipseStrokeColor(shape.strokeColor, i, 0);
+            break;
+          case RECTANGLE:
+            store.setRectangleID(shapeID, i, 0);
+            store.setRectangleX(shape.x1, i, 0);
+            store.setRectangleY(shape.y1, i, 0);
+            store.setRectangleWidth(shape.x2 - shape.x1, i, 0);
+            store.setRectangleHeight(shape.y2 - shape.y1, i, 0);
+            store.setRectangleText(shape.text, i, 0);
+            store.setRectangleFontSize(shape.fontSize, i, 0);
+            store.setRectangleStrokeColor(shape.strokeColor, i, 0);
+            break;
+          default:
+            LOGGER.warn("Unknown ROI type: {}", shape.type);
+        }
       }
     }
   }
@@ -489,6 +561,42 @@ public class GatanReader extends FormatReader {
       if (value != null) {
         addGlobalMeta(labelString, value);
 
+        if (parent != null && parent.equals("AnnotationGroupList")) {
+          // ROI found
+          ROIShape shape = new ROIShape();
+          if (labelString.equals("AnnotationType")) {
+            shape.type = DataTools.parseDouble(value).intValue();
+            shapes.add(shape);
+          }
+          else if (shapes.size() > 0) {
+            shape = shapes.get(shapes.size() - 1);
+          }
+
+          if (labelString.equals("Rectangle")) {
+            String[] points = value.split(",");
+            shape.y1 = DataTools.parseDouble(points[0].trim());
+            shape.x1 = DataTools.parseDouble(points[1].trim());
+            shape.y2 = DataTools.parseDouble(points[2].trim());
+            shape.x2 = DataTools.parseDouble(points[3].trim());
+          }
+          else if (labelString.equals("Text")) {
+            shape.text = value;
+          }
+          else if (labelString.equals("ForegroundColor")) {
+            String[] colors = value.split(",");
+            int red = DataTools.parseDouble(colors[0].trim()).intValue() & 0xff;
+            int green = DataTools.parseDouble(colors[1].trim()).intValue() & 0xff;
+            int blue = DataTools.parseDouble(colors[2].trim()).intValue() & 0xff;
+            shape.strokeColor = new Color(red, green, blue, 255);
+          }
+        }
+        else if (parent != null && parent.equals("TextFormat")) {
+          if (labelString.equals("FontSize")) {
+            ROIShape shape = shapes.get(shapes.size() - 1);
+            shape.fontSize = FormatTools.getFontSize(DataTools.parseDouble(value).intValue());
+          }
+        }
+
         boolean validPhysicalSize = parent != null && (parent.equals("Dimension") ||
           ((pixelSizes.size() == 4 || units.size() == 4) &&
           (parent.equals("Transform List") || parent.equals("2"))));
@@ -635,6 +743,17 @@ public class GatanReader extends FormatReader {
       }
     }
     return UNITS.MICROMETER;
+  }
+
+  class ROIShape {
+    public int type;
+    public double x1;
+    public double y1;
+    public double x2;
+    public double y2;
+    public String text;
+    public Length fontSize;
+    public Color strokeColor;
   }
 
 }
