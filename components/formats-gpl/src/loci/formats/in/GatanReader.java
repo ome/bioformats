@@ -598,8 +598,7 @@ public class GatanReader extends FormatReader {
         }
 
         boolean validPhysicalSize = parent != null && (parent.equals("Dimension") ||
-          ((pixelSizes.size() == 4 || units.size() == 4) &&
-          (parent.equals("Transform List") || parent.equals("2"))));
+          ((pixelSizes.size() == 4 || units.size() == 4) && parent.equals("2")));
         if (labelString.equals("Scale") && validPhysicalSize) {
           if (value.indexOf(',') == -1) {
             pixelSizes.add(f.parse(value).doubleValue());
