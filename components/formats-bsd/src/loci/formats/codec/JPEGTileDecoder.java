@@ -36,7 +36,7 @@ import loci.common.RandomAccessInputStream;
 
 /**
  */
-public class JPEGTileDecoder {
+public class JPEGTileDecoder implements AutoCloseable {
   private ome.codecs.JPEGTileDecoder decoder;
 
   public JPEGTileDecoder() {
