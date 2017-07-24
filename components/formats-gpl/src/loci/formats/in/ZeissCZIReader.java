@@ -972,6 +972,7 @@ public class ZeissCZIReader extends FormatReader {
             core.get(s).sizeY = (lastY + maxRow) - minRow;
           }
         }
+        boolean keepMissingPyramid = false;
         for (int r=0; r<core.get(s).resolutionCount; r++) {
           boolean hasValidPlane = false;
           for (SubBlock plane : planes) {
@@ -980,7 +981,7 @@ public class ZeissCZIReader extends FormatReader {
               break;
             }
           }
-          if (!hasValidPlane) {
+          if (!hasValidPlane && r > 0 && !keepMissingPyramid) {
             core.remove(s + r);
             core.get(s).resolutionCount--;
             // adjust the core indexes of any subsequent planes
@@ -993,10 +994,20 @@ public class ZeissCZIReader extends FormatReader {
           }
           else {
             int div = (int) Math.pow(scaleFactor, r);
-            core.get(s + r).sizeX = core.get(s).sizeX / div;
-            core.get(s + r).sizeY = core.get(s).sizeY / div;
+            if (r == 0 && s > 0 && core.get(s).sizeX == 1) {
+              core.get(s).sizeX = core.get(s - maxResolution).sizeX;
+              core.get(s).sizeY = core.get(s - maxResolution).sizeY;
+            }
+            else {
+              core.get(s + r).sizeX = core.get(s).sizeX / div;
+              core.get(s + r).sizeY = core.get(s).sizeY / div;
+            }
             tileWidth[s + r] = tileWidth[s] / div;
             tileHeight[s + r] = tileHeight[s] / div;
+          }
+
+          if (r == 0 && !hasValidPlane) {
+            keepMissingPyramid = true;
           }
         }
         s += core.get(s).resolutionCount;
