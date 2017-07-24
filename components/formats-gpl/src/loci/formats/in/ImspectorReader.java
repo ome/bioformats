@@ -171,6 +171,7 @@ public class ImspectorReader extends FormatReader {
 
     int check = in.readShort();
     while (check != 3 && check != 2) {
+      in.seek(in.getFilePointer() - 1);
       check = in.readShort();
     }
 
@@ -418,7 +419,9 @@ public class ImspectorReader extends FormatReader {
       m.moduloT.type = FormatTools.LIFETIME;
 
       m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
-      if (getSizeZ() > 1 && getSizeT() > 1) {
+      if (getSizeZ() > 1 && getSizeT() > 1 &&
+        getSizeZ() < getSizeT())
+      {
         m.dimensionOrder = "XYTZC";
       }
       else {
