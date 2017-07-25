@@ -183,8 +183,10 @@ public class ImspectorReader extends FormatReader {
     in.skipBytes(6);
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
-    m.sizeZ = in.readInt();
-    m.sizeT = in.readInt();
+    int originalZ = in.readInt();
+    int originalT = in.readInt();
+    m.sizeZ = originalZ;
+    m.sizeT = originalT;
     planesPerBlock.add(m.sizeT * m.sizeZ);
 
     in.skipBytes(16);
@@ -209,7 +211,8 @@ public class ImspectorReader extends FormatReader {
 
     int tileX = 1;
     int tileY = 1;
-    double timeBase = 1.0;
+    Double timeBase = null;
+    int realTimepoints = 1;
 
     // read through the file looking for metadata and pixels offsets
     // 0x8003 and 0xffff appear to be special markers for metadata sections
@@ -224,8 +227,13 @@ public class ImspectorReader extends FormatReader {
       }
       if (length == 0 && check == 65535) {
         in.skipBytes(46);
-        skipTagBlock();
-        in.skipBytes(50);
+        int tagBlockSize = skipTagBlock();
+        if (tagBlockSize == 0) {
+          in.skipBytes(26);
+        }
+        else {
+          in.skipBytes(50);
+        }
         findOffset();
         continue;
       }
@@ -391,11 +399,25 @@ public class ImspectorReader extends FormatReader {
 
         addGlobalMeta(key, value);
 
-        if (key.equals("TCSPC  Z Length")) {
+        if (key.equals("TCSPC  Z Length") ||
+          key.equals("DC-TCSPC T Length"))
+        {
           try {
-            timeBase = Double.parseDouble(value);
+            if (timeBase == null) {
+              timeBase = Double.parseDouble(value);
+            }
           }
           catch (NumberFormatException e) { }
+        }
+        else if (key.equals("xyz-Table Z Resolution")) {
+          int z = Integer.parseInt(value);
+          if (z == 1 && getSizeZ() > 1) {
+            m.sizeT *= getSizeZ();
+            m.sizeZ = 1;
+          }
+        }
+        else if (key.equals("Time Time Resolution")) {
+          realTimepoints = Integer.parseInt(value);
         }
 
         if (check1 == 255 && check2 == 255) {
@@ -419,13 +441,15 @@ public class ImspectorReader extends FormatReader {
       m.moduloT.type = FormatTools.LIFETIME;
 
       m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
-      if (getSizeZ() > 1 && getSizeT() > 1 &&
-        getSizeZ() < getSizeT())
-      {
+      if (getSizeZ() > 1 && getSizeT() > 1) {
         m.dimensionOrder = "XYTZC";
       }
       else {
         m.dimensionOrder = "XYZTC";
+      }
+
+      if (timeBase == null) {
+        timeBase = 1.0;
       }
 
       // convert time base to picoseconds
@@ -433,8 +457,15 @@ public class ImspectorReader extends FormatReader {
         timeBase *= 1000;
       }
 
-      m.moduloT.step = timeBase / m.sizeT;
-      m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
+      if (realTimepoints > 1) {
+        originalT = getSizeT() / realTimepoints;
+      }
+      else if (realTimepoints == 1 && originalT == 1) {
+        originalT = getSizeT();
+      }
+
+      m.moduloT.step = timeBase / originalT;
+      m.moduloT.end = m.moduloT.step * (originalT - 1);
       m.moduloT.unit = "ps";
       m.moduloT.typeDescription = "TCSPC";
     }
@@ -527,10 +558,11 @@ public class ImspectorReader extends FormatReader {
   }
 
   /** Skip an unknown tag. */
-  private void skipTagBlock() throws IOException {
+  private int skipTagBlock() throws IOException {
     in.skipBytes(1);
     int length = in.readShort();
     in.skipBytes(length);
+    return length;
   }
 
   /** Find the offset to the next block of pixel data. */
