@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -320,9 +321,11 @@ public class ImspectorReader extends FormatReader {
             value = String.valueOf(in.readInt() == 1);
             break;
           case 2:
+          case 3:
           case 9:
           case 13:
           case 14:
+          case 17:
             key = value;
             value = String.valueOf(in.readFloat());
             break;
@@ -400,6 +403,7 @@ public class ImspectorReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("TCSPC  Z Length") ||
+          key.equals("TDC  Z Length") ||
           key.equals("DC-TCSPC T Length"))
         {
           try {
@@ -410,7 +414,7 @@ public class ImspectorReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
         else if (key.equals("xyz-Table Z Resolution")) {
-          int z = Integer.parseInt(value);
+          int z = DataTools.parseDouble(value).intValue();
           if (z == 1 && getSizeZ() > 1) {
             m.sizeT *= getSizeZ();
             m.sizeZ = 1;
