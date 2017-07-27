@@ -416,6 +416,8 @@ public class ImspectorReader extends FormatReader {
         else if (key.equals("xyz-Table Z Resolution")) {
           int z = DataTools.parseDouble(value).intValue();
           if (z == 1 && getSizeZ() > 1) {
+            originalT = getSizeT();
+            originalZ = getSizeZ();
             m.sizeT *= getSizeZ();
             m.sizeZ = 1;
           }
@@ -439,6 +441,9 @@ public class ImspectorReader extends FormatReader {
       if (getSizeZ() == 1 || getSizeT() == 1) {
         m.sizeZ = 1;
         m.sizeT = m.imageCount;
+        if (m.imageCount % uniquePMTs.size() == 0) {
+          m.sizeT /= uniquePMTs.size();
+        }
       }
       LOGGER.debug("m.imageCount = {}", m.imageCount);
       m.moduloT.parentType = FormatTools.SPECTRA;
@@ -602,7 +607,7 @@ public class ImspectorReader extends FormatReader {
     // as far as we know, valid PMT names only start with "PMT" or "TCSPC",
     // depending upon the acquisition mode
     if (!uniquePMTs.contains(pmt) && (pmt.startsWith("PMT") ||
-      pmt.startsWith("TCSPC")))
+      pmt.indexOf("TCSPC") >= 0))
     {
       uniquePMTs.add(pmt);
     }
@@ -619,6 +624,7 @@ public class ImspectorReader extends FormatReader {
       newCount * planeSize < in.length() - in.getFilePointer() &&
       newCount > 0 && newCount * planeSize > 0)
     {
+      uniquePMTs.remove(0);
       planesPerBlock.remove(planesPerBlock.size() - 1);
       pixelsOffsets.remove(pixelsOffsets.size() - 1);
       m.sizeZ = newZ;
