@@ -120,6 +120,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** The TIFF's emWavelength */
   private long[] emWavelength;
 
+  private boolean isHCS;
   private String[] stageLabels;
   private double[] wave;
 
@@ -743,7 +744,7 @@ public class MetamorphReader extends BaseTiffReader {
     int cols = 0;
     Map<String, Integer> rowMap = null;
     Map<String, Integer> colMap = null;
-    boolean isHCS = true;
+    isHCS = true;
     if (null == stageLabels) {
       isHCS = false;
     } else {
@@ -1543,7 +1544,7 @@ public class MetamorphReader extends BaseTiffReader {
         name = name.substring(0, name.length() - 1);
       }
     }
-    if (name.length() == 0 && stageLabels != null) {
+    if (name.length() == 0 && isHCS) {
       name = stageLabels[i];
     }
     return name;
