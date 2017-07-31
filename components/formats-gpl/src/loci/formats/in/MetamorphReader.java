@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -1678,7 +1679,7 @@ public class MetamorphReader extends BaseTiffReader {
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
       strlen = in.readInt();
-      stageLabels[i] = in.readString(strlen);
+      stageLabels[i] = readCString(in, strlen);
       addSeriesMeta("stageLabel[" + iAsString + "]", stageLabels[i]);
     }
   }
@@ -2112,6 +2113,21 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int getWellColumn(String label) {
     return Integer.parseInt(label.substring(6, 8)) - 1;
+  }
+
+  /**
+   * Read a null-terminated string. Read at most n characters if the null
+   * character is not found.
+   */
+  private static String readCString(RandomAccessInputStream s, int n)
+      throws IOException {
+    int avail = s.available();
+    if (n > avail) n = avail;
+    byte[] b = new byte[n];
+    s.readFully(b);
+    int i;
+    for (i = 0; i < b.length && b[i] != 0; i++) { }
+    return new String(b, 0, i, Constants.ENCODING);
   }
 
 }
