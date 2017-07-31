@@ -35,6 +35,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -91,6 +97,10 @@ public class MetamorphReader extends BaseTiffReader {
 
   public static final String[] ND_SUFFIX = {"nd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
+
+  public static final Pattern WELL_COORDS = Pattern.compile(
+      "scan\\s+([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
+  );
 
   // IFD tag numbers of important fields
   private static final int METAMORPH_ID = 33628;
@@ -729,43 +739,51 @@ public class MetamorphReader extends BaseTiffReader {
 
     // check stage labels for plate data
 
-    ArrayList<String> uniqueWells = new ArrayList<String>();
     int rows = 0;
     int cols = 0;
-    if (stageLabels != null) {
+    Map<String, Integer> rowMap = null;
+    Map<String, Integer> colMap = null;
+    boolean isHCS = true;
+    if (null == stageLabels) {
+      isHCS = false;
+    } else {
+      Set<Map.Entry<Integer, Integer>> uniqueWells =
+        new HashSet<Map.Entry<Integer, Integer>>();
+      rowMap = new HashMap<String, Integer>();
+      colMap = new HashMap<String, Integer>();
       for (String label : stageLabels) {
-        if (label != null && label.startsWith("Scan ") &&
-          !uniqueWells.contains(label))
-        {
-          uniqueWells.add(label);
-          int row = getWellRow(label);
-          if (row >= rows) {
-            rows = row + 1;
-          }
-          int col = getWellColumn(label);
-          if (col >= cols) {
-            cols = col + 1;
-          }
+        if (null == label) {
+          isHCS = false;
+          break;
         }
-      }
-    }
-
-    // each plane corresponds to a unique well
-    boolean isHCS = stageLabels != null && uniqueWells.size() == stageLabels.length;
-    if (isHCS) {
-      CoreMetadata c = core.get(0);
-      core.clear();
-      c.sizeZ = 1;
-      c.sizeT = 1;
-      c.imageCount = 1;
-      for (int s=0; s<uniqueWells.size(); s++) {
-        CoreMetadata toAdd = new CoreMetadata(c);
-        if (s > 0) {
-          toAdd.seriesMetadata.clear();
+        Map.Entry<Integer, Integer> wellCoords = getWellCoords(label);
+        if (null == wellCoords) {
+          isHCS = false;
+          break;
         }
-        core.add(toAdd);
+        uniqueWells.add(wellCoords);
+        rowMap.put(label, wellCoords.getKey());
+        colMap.put(label, wellCoords.getValue());
       }
-      seriesToIFD = true;
+      if (uniqueWells.size() != stageLabels.length) {
+        isHCS = false;
+      } else {
+        rows = Collections.max(rowMap.values());
+        cols = Collections.max(colMap.values());
+        CoreMetadata c = core.get(0);
+        core.clear();
+        c.sizeZ = 1;
+        c.sizeT = 1;
+        c.imageCount = 1;
+        for (int s = 0; s < uniqueWells.size(); s++) {
+          CoreMetadata toAdd = new CoreMetadata(c);
+          if (s > 0) {
+            toAdd.seriesMetadata.clear();
+          }
+          core.add(toAdd);
+        }
+        seriesToIFD = true;
+      }
     }
 
     List<String> timestamps = null;
@@ -801,8 +819,8 @@ public class MetamorphReader extends BaseTiffReader {
         String label = stageLabels[i];
         String wellID = MetadataTools.createLSID("Well", 0, i);
         store.setWellID(wellID, 0, i);
-        store.setWellColumn(new NonNegativeInteger(getWellColumn(label)), 0, i);
-        store.setWellRow(new NonNegativeInteger(getWellRow(label)), 0, i);
+        store.setWellColumn(new NonNegativeInteger(colMap.get(label)), 0, i);
+        store.setWellRow(new NonNegativeInteger(rowMap.get(label)), 0, i);
         store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, i, 0), 0, i, 0);
         store.setWellSampleImageRef(MetadataTools.createLSID("Image", i), 0, i, 0);
         store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
@@ -2107,12 +2125,15 @@ public class MetamorphReader extends BaseTiffReader {
     return null;
   }
 
-  private int getWellRow(String label) {
-    return (int) (label.charAt(5) - 'A');
-  }
-
-  private int getWellColumn(String label) {
-    return Integer.parseInt(label.substring(6, 8)) - 1;
+  private Map.Entry<Integer, Integer> getWellCoords(String label) {
+    Matcher matcher = WELL_COORDS.matcher(label);
+    if (!matcher.find()) return null;
+    int nGroups = matcher.groupCount();
+    if (nGroups != 2) return null;
+    return new AbstractMap.SimpleEntry(
+      (int) (matcher.group(1).toUpperCase().charAt(0) - 'A'),
+      Integer.parseInt(matcher.group(2)) - 1
+    );
   }
 
   /**
