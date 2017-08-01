@@ -130,6 +130,7 @@ public class BrukerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
+    ArrayList<String> files = new ArrayList<String>();
     String dir = pixelsFiles.get(getSeries());
     Location realDir = new Location(dir).getParentFile();
     if (realDir != null) {
@@ -138,7 +139,6 @@ public class BrukerReader extends FormatReader {
         realDir = realDir.getParentFile();
         if (realDir != null) {
           dir = realDir.getAbsolutePath();
-          ArrayList<String> files = new ArrayList<String>();
           files.add(new Location(getCurrentFile()).getAbsolutePath());
       
           for (String f : allFiles) {
