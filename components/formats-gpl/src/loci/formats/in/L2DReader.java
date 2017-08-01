@@ -192,6 +192,9 @@ public class L2DReader extends FormatReader {
     if (!checkSuffix(id, "l2d") && isGroupFiles()) {
       // find the corresponding .l2d file
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       parent = parent.getParentFile();
       String[] list = parent.list();
       for (String file : list) {

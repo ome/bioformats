@@ -294,6 +294,9 @@ public class PerkinElmerReader extends FormatReader {
 
     if (!checkSuffix(id, HTM_SUFFIX)) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String[] ls = parent.list();
       for (String file : ls) {
         if (checkSuffix(file, HTM_SUFFIX) && !file.startsWith(".")) {

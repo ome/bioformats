@@ -202,10 +202,12 @@ public class BioRadReader extends FormatReader {
   public int fileGroupOption(String id) throws FormatException, IOException {
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
-    String[] list = parent.list(true);
-    for (String f : list) {
-      if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
-        return FormatTools.MUST_GROUP;
+    if (parent != null) {
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
+          return FormatTools.MUST_GROUP;
+        }
       }
     }
     return FormatTools.CAN_GROUP;
@@ -282,7 +284,9 @@ public class BioRadReader extends FormatReader {
     // always initialize a PIC file, even if we were given something else
     if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
-
+      if (dir == null) {
+        throw new FormatException("Unable to locate parent file to " + id;
+      }
       String[] list = dir.list(true);
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], PIC_SUFFIX)) {
@@ -403,6 +407,9 @@ public class BioRadReader extends FormatReader {
     if (isGroupFiles()) {
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + currentId);
+      }
       String parentPath = parent.getAbsolutePath();
       String[] list = parent.list(true);
       Arrays.sort(list);

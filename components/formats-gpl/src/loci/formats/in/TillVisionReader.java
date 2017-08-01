@@ -201,6 +201,9 @@ public class TillVisionReader extends FormatReader {
 
     if (!checkSuffix(id, "vws")) {
       Location pst = new Location(id).getAbsoluteFile();
+      if (pst == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String name = pst.getParentFile().getName();
       Location parent = pst.getParentFile().getParentFile();
       Location vwsFile = new Location(parent, name.replaceAll(".pst", ".vws"));
@@ -257,6 +260,9 @@ public class TillVisionReader extends FormatReader {
         Long[] cimages = null;
 
         Location dir = new Location(id).getAbsoluteFile().getParentFile();
+        if (dir == null) {
+          throw new FormatException("Unable to locate parent file to " + id);
+        }
         String[] list = dir.list(true);
         boolean hasPST = false;
         for (String f : list) {
@@ -414,7 +420,9 @@ public class TillVisionReader extends FormatReader {
 
     Location directory =
       new Location(currentId).getAbsoluteFile().getParentFile();
-
+    if (directory == null) {
+      throw new FormatException("Unable to locate parent file to " + currentId);
+    }
     String[] pixelsFile = new String[nImages];
 
     if (!embeddedImages) {

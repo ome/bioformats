@@ -88,13 +88,10 @@ public class APLReader extends FormatReader {
       Location file = new Location(name).getAbsoluteFile();
       Location parent = file.getParentFile();
       if (parent != null) {
-        try {
-          parent = parent.getParentFile();
-          parent = parent.getParentFile();
-        }
-        catch (NullPointerException e) {
-          return false;
-        }
+        parent = parent.getParentFile();
+        if (parent == null) return false;
+        parent = parent.getParentFile();
+        if (parent == null) return false;
         Location aplFile = new Location(parent, parent.getName() + ".apl");
         return aplFile.exists();
       }
@@ -228,12 +225,16 @@ public class APLReader extends FormatReader {
       }
       else {
         Location parent = new Location(id).getAbsoluteFile().getParentFile();
-        parent = parent.getParentFile();
-        String[] list = parent.list(true);
-        for (String f : list) {
-          if (checkSuffix(f, "mtb")) {
-            currentId = new Location(parent, f).getAbsolutePath();
-            break;
+        if (parent != null) {
+          parent = parent.getParentFile();
+          if (parent != null) {
+            String[] list = parent.list(true);
+            for (String f : list) {
+              if (checkSuffix(f, "mtb")) {
+                currentId = new Location(parent, f).getAbsolutePath();
+                break;
+              }
+            }
           }
         }
         if (!checkSuffix(currentId, "mtb")) {

@@ -98,6 +98,7 @@ public class TCSReader extends FormatReader {
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (checkSuffix(id, "xml")) return false;
     Location file = new Location(id);
+    if (file.getParentFile() == null) return true;
     String[] list = file.getParentFile().list();
     for (String f : list) {
       if (checkSuffix(f, "xml") && DataTools.samePrefix(file.getName(), f)) {
@@ -246,6 +247,9 @@ public class TCSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
     String[] list = parent.list();
     Arrays.sort(list);
 
@@ -528,7 +532,9 @@ public class TCSReader extends FormatReader {
     if (!isGroupFiles()) return;
 
     Location parent = current.getParentFile();
-
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + currentId);
+    }
     String[] list = parent.list();
     Arrays.sort(list);
 

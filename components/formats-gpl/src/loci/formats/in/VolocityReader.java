@@ -115,12 +115,14 @@ public class VolocityReader extends FormatReader {
     if (open && checkSuffix(name, suffixes)) {
       Location file = new Location(name).getAbsoluteFile();
       Location parent = file.getParentFile();
-      parent = parent.getParentFile();
       if (parent != null) {
         parent = parent.getParentFile();
         if (parent != null) {
-          Location mvd2 = new Location(parent, parent.getName() + ".mvd2");
-          return mvd2.exists() && super.isThisType(mvd2.getAbsolutePath());
+          parent = parent.getParentFile();
+          if (parent != null) {
+            Location mvd2 = new Location(parent, parent.getName() + ".mvd2");
+            return mvd2.exists() && super.isThisType(mvd2.getAbsolutePath());
+          }
         }
       }
     }
@@ -243,6 +245,9 @@ public class VolocityReader extends FormatReader {
     if (!checkSuffix(id, "mvd2")) {
       Location file = new Location(id).getAbsoluteFile();
       Location parent = file.getParentFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String[] files = parent.list(true);
       for (String f : files) {
         if (checkSuffix(f, "mvd2")) {

@@ -281,6 +281,9 @@ public class BDReader extends FormatReader {
     id = locateExperimentFile(id);
     super.initFile(id);
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    if (dir == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
     rootList = dir.list(true);
     Arrays.sort(rootList);
 
@@ -533,10 +536,12 @@ public class BDReader extends FormatReader {
   {
     if (!checkSuffix(id, "exp")) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
-      if (checkSuffix(id, "tif")) parent = parent.getParentFile();
-      Location expFile = new Location(parent, EXPERIMENT_FILE);
-      if (expFile.exists()) {
-        return expFile.getAbsolutePath();
+      if (parent != null) {
+        if (checkSuffix(id, "tif")) parent = parent.getParentFile();
+        Location expFile = new Location(parent, EXPERIMENT_FILE);
+        if (expFile.exists()) {
+          return expFile.getAbsolutePath();
+        }
       }
       throw new FormatException("Could not find " + EXPERIMENT_FILE +
         " in " + parent.getAbsolutePath());

@@ -331,6 +331,9 @@ public class InCellReader extends FormatReader {
     if (checkSuffix(id, PIXELS_SUFFIXES) || checkSuffix(id, "xlog")) {
       Location currentFile = new Location(id).getAbsoluteFile();
       Location parent = currentFile.getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, new String[] {"xdce", "xml"})) {

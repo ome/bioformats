@@ -111,13 +111,15 @@ public class CellWorxReader extends FormatReader {
     Location current = new Location(name).getAbsoluteFile();
     Location parent = current.getParentFile();
 
-    String htdName = current.getName();
-    while (htdName.indexOf('_') > 0) {
-      htdName = htdName.substring(0, htdName.lastIndexOf("_"));
-      if (new Location(parent, htdName + ".htd").exists() ||
-        new Location(parent, htdName + ".HTD").exists())
-      {
-        return checkSuffix(name, "log") || isGroupFiles();
+    if (parent != null) {
+      String htdName = current.getName();
+      while (htdName.indexOf('_') > 0) {
+        htdName = htdName.substring(0, htdName.lastIndexOf("_"));
+        if (new Location(parent, htdName + ".htd").exists() ||
+          new Location(parent, htdName + ".HTD").exists())
+        {
+          return checkSuffix(name, "log") || isGroupFiles();
+        }
       }
     }
     return false;
@@ -240,12 +242,14 @@ public class CellWorxReader extends FormatReader {
 
       if (!new Location(id).exists()) {
         Location parent = new Location(id).getAbsoluteFile().getParentFile();
-        directoryList = parent.list(true);
-        for (String f : directoryList) {
-          if (checkSuffix(f, "htd")) {
-            id = new Location(parent, f).getAbsolutePath();
-            LOGGER.info("Found .htd file {}", f);
-            break;
+        if (parent != null) {
+          directoryList = parent.list(true);
+          for (String f : directoryList) {
+            if (checkSuffix(f, "htd")) {
+              id = new Location(parent, f).getAbsolutePath();
+              LOGGER.info("Found .htd file {}", f);
+              break;
+            }
           }
         }
       }
@@ -777,7 +781,7 @@ public class CellWorxReader extends FormatReader {
       nextFile = 0;
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
-      if (directoryList == null) {
+      if (directoryList == null && parent != null) {
         directoryList = parent.list(true);
         Arrays.sort(directoryList);
       }

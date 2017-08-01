@@ -290,6 +290,9 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + currentId);
+      }
       String[] list = parent.list(true);
       Arrays.sort(list);
       ArrayList<String> matchingFiles = new ArrayList<String>();

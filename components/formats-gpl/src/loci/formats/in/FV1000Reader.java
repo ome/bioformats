@@ -662,6 +662,9 @@ public class FV1000Reader extends FormatReader {
           continue;
         }
         else {
+          if (tiffFile.getParentFile() == null) {
+            throw new FormatException("Unable to locate parent file to " + tiffFile);
+          }
           if (!tiffFile.getParentFile().exists()) {
             String realOIFName = new Location(currentId).getName();
             String basePath = tiffFile.getParentFile().getParent();
@@ -1474,6 +1477,9 @@ public class FV1000Reader extends FormatReader {
     Location current = new Location(baseFile).getAbsoluteFile();
     String parent = current.getParent();
     Location tmp = new Location(parent).getParentFile();
+    if (tmp.getParentFile() == null) {
+      throw new FormatException("Unable to locate parent file to " + parent);
+    }
     parent = tmp.getAbsolutePath();
 
     baseFile = current.getName();

@@ -260,7 +260,7 @@ public class MicromanagerReader extends FormatReader {
     if (file.exists()) {
       // look for other positions
 
-      if (parentFile.getName().indexOf("Pos_") >= 0) {
+      if (parentFile != null && parentFile.getName().indexOf("Pos_") >= 0) {
         parentFile = parentFile.getParentFile();
         String[] dirs = parentFile.list(true);
         Arrays.sort(dirs);
@@ -319,7 +319,9 @@ public class MicromanagerReader extends FormatReader {
 
       if (positions.size() > 1) {
         Location parent = new Location(p.metadataFile).getParentFile();
-        store.setImageName(parent.getName(), i);
+        if (parent != null) {
+          store.setImageName(parent.getName(), i);
+        }
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -610,17 +612,19 @@ public class MicromanagerReader extends FormatReader {
 
       Location dir =
         new Location(p.metadataFile).getAbsoluteFile().getParentFile();
-      String[] files = dir.list(true);
-      Arrays.sort(files);
-      for (String f : files) {
-        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
-          String[] blocks = f.split("_");
-          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
-          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
-          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
-
-          String path = new Location(dir, f).getAbsolutePath();
-          p.tiffs.add(path);
+      if (dir != null) {
+        String[] files = dir.list(true);
+        Arrays.sort(files);
+        for (String f : files) {
+          if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
+            String[] blocks = f.split("_");
+            if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
+            if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
+            if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
+  
+            String path = new Location(dir, f).getAbsolutePath();
+            p.tiffs.add(path);
+          }
         }
       }
 

@@ -171,6 +171,9 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
       Location parent =
         new Location(currentId).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + currentId);
+      }
       String[] list = parent.list(true);
       Arrays.sort(list);
       ArrayList<String> matchingFiles = new ArrayList<String>();
@@ -217,8 +220,9 @@ public class SlidebookTiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this, true);
 
     Location file = new Location(currentId).getAbsoluteFile();
-    store.setImageName(file.getParentFile().getName(), 0);
-
+    if (file.getParentFile() != null) {
+      store.setImageName(file.getParentFile().getName(), 0);
+    }
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channelNames.size()) {
