@@ -285,7 +285,7 @@ public class BioRadReader extends FormatReader {
     if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
       if (dir == null) {
-        throw new FormatException("Unable to locate parent file to " + id;
+        throw new FormatException("Unable to locate parent file to " + id);
       }
       String[] list = dir.list(true);
       for (int i=0; i<list.length; i++) {
