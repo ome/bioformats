@@ -336,8 +336,7 @@ public class ImagePlusReader implements StatusReporter {
     final BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
       reader, false, false, false);
     for (int i=0; i<imageCount; i++) {
-      final String label = constructSliceLabel(i,
-        reader, meta, s, zCount, cCount, tCount);
+      String label = FormatTools.getFilename(s, i, reader, LociPrefs.getSliceLabelPattern(), false);
       virtualStack.addSlice(label);
     }
 
@@ -387,8 +386,7 @@ public class ImagePlusReader implements StatusReporter {
         throw new FormatException("Cannot read plane #" + i);
       }
       // generate a label for ith plane
-      final String label = constructSliceLabel(i,
-        reader, meta, s, zCount, cCount, tCount);
+      String label = FormatTools.getFilename(s, i, reader, LociPrefs.getSliceLabelPattern(), false);
 
       for (ImageProcessor ip : p) {
         procs.add(ip);
@@ -572,78 +570,6 @@ public class ImagePlusReader implements StatusReporter {
       title = a + "..." + b;
     }
     return title;
-  }
-
-  private String constructSliceLabel(int ndx, IFormatReader r,
-    IMetadata meta, int series, int zCount, int cCount, int tCount)
-  {
-    r.setSeries(series);
-
-    String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
-
-    MetadataStore store = r.getMetadataStore();
-    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ? (MetadataRetrieve) store : new DummyMetadata();
-    String filename = sliceLabelPattern.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
-
-    String imageName = retrieve.getImageName(series);
-    if (imageName == null) imageName = "Series" + series;
-    filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
-
-    String order = r.getDimensionOrder();
-    int sizeC = r.getEffectiveSizeC();
-    int sizeT = r.getSizeT();
-    int sizeZ = r.getSizeZ();
-    int[] coordinates = FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
-
-    if (sizeC > 1) {
-      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "c:" + String.format("%d", coordinates[1] + 1) + "/" + String.format("%d", sizeC) + " ");
-    }
-    else {
-      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
-    }
-    if (sizeZ > 1) {
-      filename = filename.replaceAll(FormatTools.Z_NUM, "z:" + String.format("%d", coordinates[0] + 1) + "/" + String.format("%d", sizeZ) + " ");
-    }
-    else {
-      filename = filename.replaceAll(FormatTools.Z_NUM, "");
-    }
-    if (sizeT > 1) {
-      filename = filename.replaceAll(FormatTools.T_NUM, "t:" + String.format("%d", coordinates[2] + 1) + "/" + String.format("%d", sizeT) + " ");
-    }
-    else {
-      filename = filename.replaceAll(FormatTools.T_NUM, "");
-    }
-
-    int channelCount = retrieve.getChannelCount(series);
-    if (coordinates[1] < channelCount) {
-      String channelName = retrieve.getChannelName(series, coordinates[1]);
-      if (channelName == null) channelName = String.valueOf(coordinates[1]);
-      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, channelName);
-    }
-    else {
-      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, String.valueOf(coordinates[1]));
-    }
-
-    Timestamp timestamp = retrieve.getImageAcquisitionDate(series);
-    long stamp = 0;
-    String date = null;
-    if (timestamp != null) {
-      date = timestamp.getValue();
-      if (retrieve.getPlaneCount(series) > ndx) {
-        Time deltaT = retrieve.getPlaneDeltaT(series, ndx);
-        if (deltaT != null) {
-          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
-        }
-      }
-      stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
-    }
-    else {
-      stamp = System.currentTimeMillis();
-    }
-    date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
-
-    filename = filename.replaceAll(FormatTools.TIMESTAMP, date);
-    return filename;
   }
 
   private static void saveLUTs(ImagePlus imp, List<LUT> luts) {
