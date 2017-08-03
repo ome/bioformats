@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.Attributes;
@@ -50,6 +52,8 @@ import loci.common.ReflectedUniverse;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.in.DynamicMetadataOptions;
+import loci.formats.in.MetadataOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -116,6 +120,9 @@ public final class FormatTools {
 
   /** Identifies the <i>BIT</i> data type used to store pixel values. */
   public static final int BIT = 8;
+  
+  /** The base used for indices in getFilename. Default value is 0 */
+  public static final String BASE_INDEX = "formattools.base_index";
 
   /** Human readable pixel type. */
   private static final String[] pixelTypes = makePixelTypes();
@@ -196,8 +203,11 @@ public final class FormatTools {
   public static final String SERIES_NAME = "%n";
   public static final String CHANNEL_NUM = "%c";
   public static final String CHANNEL_NAME = "%w";
+  public static final String CHANNEL_SIZE = "%C";
   public static final String Z_NUM = "%z";
+  public static final String Z_SIZE = "%Z";
   public static final String T_NUM = "%t";
+  public static final String T_SIZE = "%T";
   public static final String TIMESTAMP = "%A";
   public static final String TILE_X = "%x";
   public static final String TILE_Y = "%y";
@@ -1098,30 +1108,67 @@ public final class FormatTools {
      MetadataStore store = r.getMetadataStore();
      MetadataRetrieve retrieve = store instanceof MetadataRetrieve ?
        (MetadataRetrieve) store : new DummyMetadata();
-     return getFilename(series, image, retrieve, pattern, padded);
+     MetadataOptions options = r.getMetadataOptions();
+     int baseIndex = 0;
+     if (options instanceof DynamicMetadataOptions) {
+       baseIndex = ((DynamicMetadataOptions) options).getInteger(BASE_INDEX, 0);
+     }
+     return getFilename(series, image, retrieve, pattern, padded, baseIndex);
   }
 
   public static String getFilename(int series, int image, MetadataRetrieve retrieve,
       String pattern, boolean padded) throws FormatException, IOException
   {
+    return getFilename(series, image, retrieve, pattern, padded, 0);
+  }
+
+  public static String getFilename(int series, int image, MetadataRetrieve retrieve,
+      String pattern, boolean padded, int indexBase) throws FormatException, IOException
+  {
+    String filename = pattern;
+    int sizeC = retrieve.getChannelCount(series);
+    int sizeT = retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
+    int seriesCount = retrieve.getImageCount();
+    String imageName = retrieve.getImageName(series);
+    
+    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
+    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
+    String channelName = retrieve.getChannelName(series, coordinates[1]);
+    if (channelName == null) channelName = String.valueOf(coordinates[1]);
+    
+    String[] conditionalStrings = substringsBetween(filename, "[", "]");
+    for (int i = 0; i < conditionalStrings.length; i++) {
+      String subString = conditionalStrings[i];
+      boolean removeSubstring = false;
+      if (subString.contains(SERIES_NUM) && seriesCount == 1) removeSubstring = true;
+      if (subString.contains(SERIES_NAME) && (imageName == null || imageName.isEmpty())) removeSubstring = true;
+      if (subString.contains(CHANNEL_NUM) && sizeC == 1) removeSubstring = true;
+      if (subString.contains(CHANNEL_NAME) && (channelName == null || channelName.isEmpty())) removeSubstring = true;
+      if (subString.contains(CHANNEL_SIZE) && sizeC == 1) removeSubstring = true;
+      if (subString.contains(T_NUM) && sizeT == 1) removeSubstring = true;
+      if (subString.contains(T_SIZE) && sizeT == 1) removeSubstring = true;
+      if (subString.contains(Z_NUM) && sizeZ == 1) removeSubstring = true;
+      if (subString.contains(Z_SIZE) && sizeZ == 1) removeSubstring = true;
+      if (removeSubstring) {
+        filename = filename.replace("["+subString+"]", "");
+      }
+      else {
+        filename = filename.replace("["+subString+"]", subString);
+      }
+    }
+    
     String sPlaces = "%d";
     if (padded) {
       sPlaces = "%0" + String.valueOf(retrieve.getImageCount()).length() + "d";
     }
-    String filename = pattern.replaceAll(SERIES_NUM, String.format(sPlaces, series));
+    filename = filename.replaceAll(SERIES_NUM, String.format(sPlaces, series));
 
-    String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
     imageName = imageName.replaceAll("/", "_");
     imageName = imageName.replaceAll("\\\\", "_");
 
     filename = filename.replaceAll(SERIES_NAME, imageName);
-
-    DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
-    int sizeC = retrieve.getChannelCount(series);
-    int sizeT = retrieve.getPixelsSizeT(series).getValue();
-    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
-    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
 
     String zPlaces = "%d";
     String tPlaces = "%d";
@@ -1131,12 +1178,14 @@ public final class FormatTools {
       tPlaces = "%0" + String.valueOf(sizeT).length() + "d";
       cPlaces = "%0" + String.valueOf(sizeC).length() + "d";
     }
-    filename = filename.replaceAll(Z_NUM, String.format(zPlaces, coordinates[0]));
-    filename = filename.replaceAll(T_NUM, String.format(tPlaces, coordinates[2]));
-    filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, coordinates[1]));
 
-    String channelName = retrieve.getChannelName(series, coordinates[1]);
-    if (channelName == null) channelName = String.valueOf(coordinates[1]);
+    filename = filename.replaceAll(Z_NUM, String.format(zPlaces, indexBase + coordinates[0]));
+    filename = filename.replaceAll(Z_SIZE, String.format(zPlaces, sizeZ));
+    filename = filename.replaceAll(T_NUM, String.format(tPlaces, indexBase + coordinates[2]));
+    filename = filename.replaceAll(T_SIZE, String.format(tPlaces, sizeT));
+    filename = filename.replaceAll(CHANNEL_NUM, String.format(cPlaces, indexBase + coordinates[1]));
+    filename = filename.replaceAll(CHANNEL_SIZE, String.format(cPlaces, sizeC));
+
     channelName = channelName.replaceAll("/", "_");
     channelName = channelName.replaceAll("\\\\", "_");
 
@@ -1973,4 +2022,36 @@ public final class FormatTools {
     }
     return new Time(value.getNumberValue(), valueUnit);
   }
+  
+
+          private static String[] substringsBetween(String str, String open, String close) {
+              if (str == null || open == null || close == null || open.length() == 0 || close.length() == 0) {
+                 return null;
+              }
+              int strLen = str.length();
+             if (strLen == 0) {
+                  return new String [0];
+              }
+              int closeLen = close.length();
+              int openLen = open.length();
+              List<String> list = new ArrayList<String>();
+              int pos = 0;
+              while (pos < (strLen - closeLen)) {
+                  int start = str.indexOf(open, pos);
+                  if (start < 0) {
+                      break;
+                  }
+                  start += openLen;
+                  int end = str.indexOf(close, start);
+                  if (end < 0) {
+                     break;
+                  }
+                  list.add(str.substring(start, end));
+                  pos = end + closeLen;
+              }
+              if (list.isEmpty()) {
+                  return null;
+              } 
+              return (String[]) list.toArray(new String [list.size()]);
+          }
 }
