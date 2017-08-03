@@ -30,6 +30,7 @@ package loci.plugins.util;
 import ij.Prefs;
 
 import loci.formats.ClassList;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.DynamicMetadataOptions;
@@ -68,6 +69,7 @@ public final class LociPrefs {
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
   public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
+  public static final String PREF_SLICE_LABEL_BASE_INDEX = "bioformats.sliceLabelBaseIndex";
 
   // -- Constructor --
 
@@ -104,6 +106,8 @@ public final class LociPrefs {
         NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       ((DynamicMetadataOptions) options).setBoolean(
         LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
+      ((DynamicMetadataOptions) options).setInteger(
+          FormatTools.BASE_INDEX, getSliceLabelBaseIndex());
       reader.setMetadataOptions(options);
     }
 
@@ -192,7 +196,11 @@ public final class LociPrefs {
   }
 
   public static String getSliceLabelPattern() {
-    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "%c%z%t- %n");
+    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "[c:%c/%C ][z:%z/%Z ][t:%t/%T ]- %n");
+  }
+  
+  public static int getSliceLabelBaseIndex() {
+    return Prefs.getInt(PREF_SLICE_LABEL_BASE_INDEX, 1);
   }
   
   // -- Helper methods --
