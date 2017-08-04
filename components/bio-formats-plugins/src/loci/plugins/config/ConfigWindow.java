@@ -235,10 +235,14 @@ public class ConfigWindow extends JFrame
                                           + "<br>%s - series index"
                                           + "<br>%n - series name"
                                           + "<br>%c - channel index"
+                                          + "<br>%C - channel count"
                                           + "<br>%w - channel name"
                                           + "<br>%z - Z index"
+                                          + "<br>%Z - Z count"
                                           + "<br>%t - T index"
-                                          + "<br>%A - acquisition timestamp</html>");
+                                          + "<br>%T - T count"
+                                          + "<br>%A - acquisition timestamp"
+                                          + "<br>[] - optional content when combined with one of the above dimension parameters. Content within the brackets only displays if all dimensions referenced have a size greater than 1</html>");
     bfOptionsPanel.add(sliceDescription);
     SpringUtilities.makeCompactGrid(bfOptionsPanel,3, 1, PAD, PAD, PAD, PAD);
 
