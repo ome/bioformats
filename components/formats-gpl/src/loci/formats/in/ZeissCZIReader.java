@@ -578,6 +578,10 @@ public class ZeissCZIReader extends FormatReader {
     super.initFile(id);
 
     parser = XMLTools.createBuilder();
+    // manage the case when extension is missing
+    if (id.lastIndexOf(".") == -1) {
+  	  id = id + ".czi";
+    }
 
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
