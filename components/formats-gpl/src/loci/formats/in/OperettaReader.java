@@ -45,8 +45,10 @@ import loci.formats.tiff.TiffParser;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -362,6 +364,13 @@ public class OperettaReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrument, 0);
+    String objective = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objective, 0, 0);
+    store.setObjectiveNominalMagnification(planes[0][0].magnification, 0, 0);
+    store.setObjectiveLensNA(planes[0][0].lensNA, 0, 0);
+
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateRows(new PositiveInteger(handler.getPlateRows()), 0);
     store.setPlateColumns(new PositiveInteger(handler.getPlateColumns()), 0);
@@ -391,11 +400,15 @@ public class OperettaReader extends FormatReader {
           String imageID = MetadataTools.createLSID("Image", imageIndex);
           store.setImageID(imageID, imageIndex);
           store.setWellSampleImageRef(imageID, 0, well, field);
+          store.setImageInstrumentRef(instrument, imageIndex);
+          store.setObjectiveSettingsID(objective, imageIndex);
 
           String name = "Well " + (well + 1) + ", Field " + (field + 1);
           store.setImageName(name, imageIndex);
           store.setPlateAcquisitionWellSampleRef(
             wellSampleID, 0, 0, imageIndex);
+
+          store.setImageAcquisitionDate(planes[imageIndex][0].absoluteTime, imageIndex);
         }
       }
     }
@@ -416,6 +429,12 @@ public class OperettaReader extends FormatReader {
           if (planes[i][c] != null && planes[i][c].channelName != null) {
             store.setChannelName(planes[i][c].channelName, i, c);
           }
+          if (planes[i][c] != null) {
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(planes[i][c].emWavelength), i, c);
+            store.setChannelExcitationWavelength(
+              FormatTools.getExcitationWavelength(planes[i][c].exWavelength), i, c);
+          }
         }
 
         if (planes[i][0] != null) {
@@ -430,6 +449,8 @@ public class OperettaReader extends FormatReader {
             store.setPlanePositionX(planes[i][p].positionX, i, p);
             store.setPlanePositionY(planes[i][p].positionY, i, p);
             store.setPlanePositionZ(planes[i][p].positionZ, i, p);
+            store.setPlaneExposureTime(planes[i][p].exposureTime, i, p);
+            store.setPlaneDeltaT(planes[i][p].deltaT, i, p);
           }
         }
       }
@@ -586,18 +607,18 @@ public class OperettaReader extends FormatReader {
         }
         else if ("PositionX".equals(currentName)) {
           // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionX = new Length(meters, UNITS.REFERENCEFRAME);
+          final double meters = Double.parseDouble(value);
+          activePlane.positionX = new Length(meters, UNITS.METRE);
         }
         else if ("PositionY".equals(currentName)) {
           // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionY = new Length(meters, UNITS.REFERENCEFRAME);
+          final double meters = Double.parseDouble(value);
+          activePlane.positionY = new Length(meters, UNITS.METRE);
         }
         else if ("AbsPositionZ".equals(currentName)) {
           // position stored in meters
-          final double meters = Double.parseDouble(value) * 1000000;
-          activePlane.positionZ = new Length(meters, UNITS.REFERENCEFRAME);
+          final double meters = Double.parseDouble(value);
+          activePlane.positionZ = new Length(meters, UNITS.METRE);
         }
         else if ("ObjectiveMagnification".equals(currentName)) {
           activePlane.magnification = Double.parseDouble(value);
@@ -610,6 +631,15 @@ public class OperettaReader extends FormatReader {
         }
         else if ("MainExcitationWavelength".equals(currentName)) {
           activePlane.exWavelength = Double.parseDouble(value);
+        }
+        else if ("ExposureTime".equals(currentName)) {
+          activePlane.exposureTime = new Time(Double.parseDouble(value), UNITS.S);
+        }
+        else if ("MeasurementTimeOffset".equals(currentName)) {
+          activePlane.deltaT = new Time(Double.parseDouble(value), UNITS.S);
+        }
+        else if ("AbsTime".equals(currentName)) {
+          activePlane.absoluteTime = new Timestamp(value);
         }
       }
 
@@ -642,6 +672,9 @@ public class OperettaReader extends FormatReader {
     public double exWavelength;
     public double magnification;
     public double lensNA;
+    public Time exposureTime;
+    public Time deltaT;
+    public Timestamp absoluteTime;
   }
 
   // -- Helper methods --
