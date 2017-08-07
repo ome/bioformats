@@ -66,6 +66,7 @@ import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
 import ome.xml.model.primitives.PrimitiveNumber;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -1113,6 +1114,13 @@ public final class FormatTools {
      if (options instanceof DynamicMetadataOptions) {
        baseIndex = ((DynamicMetadataOptions) options).getInteger(BASE_INDEX, 0);
      }
+     
+     if (retrieve.getChannelCount(series) < r.getEffectiveSizeC()) {
+       Color color = retrieve.getChannelColor(series, 0);
+       for (int i = 1; i < r.getEffectiveSizeC(); i++) {
+         ((MetadataStore)retrieve).setChannelColor(color, series, i);
+       }
+     }
      return getFilename(series, image, retrieve, pattern, padded, baseIndex);
   }
 
@@ -1126,14 +1134,15 @@ public final class FormatTools {
       String pattern, boolean padded, int indexBase) throws FormatException, IOException
   {
     String filename = pattern;
+    int sizeT = retrieve.getPixelsSizeT(series) == null ? 1 : retrieve.getPixelsSizeT(series).getValue();
+    int sizeZ = retrieve.getPixelsSizeZ(series) == null ? 1 : retrieve.getPixelsSizeZ(series).getValue();
     int sizeC = retrieve.getChannelCount(series);
-    int sizeT = retrieve.getPixelsSizeT(series).getValue();
-    int sizeZ = retrieve.getPixelsSizeZ(series).getValue();
     int seriesCount = retrieve.getImageCount();
     String imageName = retrieve.getImageName(series);
     
     DimensionOrder order = retrieve.getPixelsDimensionOrder(series);
-    int[] coordinates = FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
+    int[] coordinates = order == null ? new int[]{1,1,1} : 
+      FormatTools.getZCTCoords(order.getValue(), sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, image);
     String channelName = retrieve.getChannelName(series, coordinates[1]);
     if (channelName == null) channelName = String.valueOf(coordinates[1]);
     
