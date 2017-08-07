@@ -154,6 +154,19 @@ mif = true
 notes = With a few minor exceptions, the ABD-TIFF format is identical to the \n
 Fluoview TIFF format.
 
+[Andor SIF]
+extensions = .sif
+owner = `Andor Technology <http://www.andor.com/>`_
+developer = Andor Bioimaging Department
+bsd = no
+weHave = * a small number of Andor SIF datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = SIFReader
+
 [Animated PNG]
 extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
