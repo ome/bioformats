@@ -2039,7 +2039,7 @@ extensions = .mov
 owner = `Apple Computer <http://www.apple.com/>`_
 bsd = yes
 software = `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
-weHave = * a `QuickTime specification document <https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html>`_ \n
+weHave = * a `QuickTime specification document <https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html#//apple_ref/doc/uid/TP40000939>`_ \n
 * several QuickTime datasets \n
 * the ability to produce more datasets
 weWant = * more QuickTime datasets, including: \n
