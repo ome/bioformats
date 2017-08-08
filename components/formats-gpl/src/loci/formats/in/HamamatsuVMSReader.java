@@ -321,10 +321,11 @@ public class HamamatsuVMSReader extends FormatReader {
           break;
       }
 
-      JPEGTileDecoder decoder = new JPEGTileDecoder();
-      RandomAccessInputStream s = new RandomAccessInputStream(file);
-      int[] dims = decoder.preprocess(s);
-      s.close();
+      int[] dims;
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file);
+           JPEGTileDecoder decoder = new JPEGTileDecoder()) {
+        dims = decoder.preprocess(s);
+      }
 
       CoreMetadata m = new CoreMetadata();
       if (i == 0) {
