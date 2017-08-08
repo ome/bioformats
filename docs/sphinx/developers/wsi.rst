@@ -7,7 +7,7 @@ The width and height of a full resolution whole slide image often exceed 100,000
 This means that only part of the full resolution image can be accessed at any given time.
 
 JPEG or JPEG-2000 compression is typically used such that the size on disk is often less than 100MB.
-Most whole slide formats split each image into many small tiles of 1024x1024 pixels or smaller and compress each tile independently,
+Most whole slide formats split each image into many small tiles of 1024×1024 pixels or smaller and compress each tile independently,
 though some (e.g. :doc:`/formats/hamamatsu-ndpi`) compress the whole image at once.  Many supported whole slide formats are based upon TIFF,
 with vendor-specific extensions for metadata or tile storage.  Notable exceptions include :doc:`/formats/zeiss-czi` and :doc:`/formats/cellsens-vsi`.
 
