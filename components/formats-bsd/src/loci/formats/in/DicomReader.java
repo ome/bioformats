@@ -669,15 +669,7 @@ public class DicomReader extends FormatReader {
             if (fileList == null) {
               fileList = new HashMap<Integer, List<String>>();
             }
-            int seriesIndex = 0;
-            if (originalInstance != null) {
-              try {
-                seriesIndex = Integer.parseInt(originalInstance);
-              }
-              catch (NumberFormatException e) {
-                LOGGER.debug("Could not parse instance number: {}", originalInstance);
-              }
-            }
+            int seriesIndex = originalSeries;
             if (fileList.get(seriesIndex) == null) {
               fileList.put(seriesIndex, new ArrayList<String>());
             }
@@ -701,8 +693,9 @@ public class DicomReader extends FormatReader {
 
     if (id.endsWith("DICOMDIR")) {
       String parent = new Location(currentId).getAbsoluteFile().getParent();
+      Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
+      Arrays.sort(fileKeys);
       for (int q=0; q<fileList.size(); q++) {
-        Integer[] fileKeys = fileList.keySet().toArray(new Integer[0]);
         for (int i=0; i<fileList.get(fileKeys[q]).size(); i++) {
           String file = fileList.get(fileKeys[q]).get(i);
           file = file.replace('\\', File.separatorChar);
@@ -717,7 +710,7 @@ public class DicomReader extends FormatReader {
         companionFiles.set(i, parent + File.separator + file);
       }
       companionFiles.add(new Location(currentId).getAbsolutePath());
-      initFile(fileList.get(0).get(0));
+      initFile(fileList.get(fileKeys[0]).get(0));
       return;
     }
 
