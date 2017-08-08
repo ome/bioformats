@@ -160,6 +160,7 @@ owner = `Andor Technology <http://www.andor.com/>`_
 developer = Andor Bioimaging Department
 bsd = no
 weHave = * a small number of Andor SIF datasets
+weWant = * an Andor SIF specification document
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
