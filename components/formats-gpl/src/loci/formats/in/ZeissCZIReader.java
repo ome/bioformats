@@ -1397,6 +1397,10 @@ public class ZeissCZIReader extends FormatReader {
     if (in != null) {
       in.close();
     }
+    File f = new File(id);
+    if (!f.exists()){
+    		id = id.substring(0, id.lastIndexOf('.'));
+    }
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
