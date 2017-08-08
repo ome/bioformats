@@ -3,7 +3,7 @@ Working with whole slide images
 
 Bio-Formats supports many whole slide image formats, but effectively working with this type of data requires some extra considerations.
 Each file contains images representing one or more physical slides, with each slide typically stored at multiple resolutions.
-The width and height of a full resolution whole slide image often exceeds 100,000 pixels, so the uncompressed image size may be several GBs.
+The width and height of a full resolution whole slide image often exceed 100,000 pixels, so the uncompressed image size may be several gigabytes.
 This means that only part of the full resolution image can be accessed at any given time.
 
 JPEG or JPEG-2000 compression is typically used such that the size on disk is often less than 100MB.
