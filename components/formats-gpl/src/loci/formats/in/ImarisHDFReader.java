@@ -486,6 +486,14 @@ public class ImarisHDFReader extends FormatReader {
       if (value == null) continue;
       value = value.trim();
 
+      if (attr.startsWith("DataSet/ResolutionLevel_")) {
+        int slash = attr.indexOf("/", 24);
+        int n = Integer.parseInt(attr.substring(24, slash == -1 ?
+          attr.length() : slash));
+        if (n == seriesCount) seriesCount++;
+        if (n > 0) continue;
+      }
+
       if (name.equals("X") || name.equals("ImageSizeX")) {
         try {
           ms0.sizeX = Integer.parseInt(value);
@@ -531,13 +539,6 @@ public class ImarisHDFReader extends FormatReader {
       else if (name.equals("ExtMin0")) minX = Double.parseDouble(value);
       else if (name.equals("ExtMin1")) minY = Double.parseDouble(value);
       else if (name.equals("ExtMin2")) minZ = Double.parseDouble(value);
-
-      if (attr.startsWith("DataSet/ResolutionLevel_")) {
-        int slash = attr.indexOf("/", 24);
-        int n = Integer.parseInt(attr.substring(24, slash == -1 ?
-          attr.length() : slash));
-        if (n == seriesCount) seriesCount++;
-      }
 
       if (attr.startsWith("DataSetInfo/Channel_")) {
         String originalValue = value;
