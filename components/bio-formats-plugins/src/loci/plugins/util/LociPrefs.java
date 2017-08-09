@@ -32,6 +32,7 @@ import ij.Prefs;
 import loci.formats.ClassList;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.in.CellSensReader;
 import loci.formats.in.DynamicMetadataOptions;
 import loci.formats.in.LIFReader;
 import loci.formats.in.MetadataOptions;
@@ -67,6 +68,8 @@ public final class LociPrefs {
     "bioformats.nativend2.chunkmap";
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
+  public static final String PREF_CELLSENS_FAIL =
+    "bioformats.cellsens.fail_on_missing_ets";
 
   // -- Constructor --
 
@@ -103,6 +106,8 @@ public final class LociPrefs {
         NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       ((DynamicMetadataOptions) options).setBoolean(
         LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
+      ((DynamicMetadataOptions) options).setBoolean(
+        CellSensReader.FAIL_ON_MISSING_KEY, isCellsensFailOnMissing());
       reader.setMetadataOptions(options);
     }
 
@@ -188,6 +193,10 @@ public final class LociPrefs {
   public static boolean isLeicaLIFPhysicalSizeBackwardsCompatible() {
     return Prefs.get(PREF_LEICA_LIF_PHYSICAL_SIZE,
       LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
+  }
+
+  public static boolean isCellsensFailOnMissing() {
+    return Prefs.get(PREF_CELLSENS_FAIL, CellSensReader.FAIL_ON_MISSING_DEFAULT);
   }
 
   // -- Helper methods --

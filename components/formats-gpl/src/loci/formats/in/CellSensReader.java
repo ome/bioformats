@@ -63,6 +63,9 @@ public class CellSensReader extends FormatReader {
 
   // -- Constants --
 
+  public static final String FAIL_ON_MISSING_KEY = "cellsens.fail_on_missing_ets";
+  public static final boolean FAIL_ON_MISSING_DEFAULT = false;
+
   // Compression types
   private static final int RAW = 0;
   private static final int JPEG = 2;
@@ -399,6 +402,8 @@ public class CellSensReader extends FormatReader {
 
   private ArrayList<Pyramid> pyramids = new ArrayList<Pyramid>();
 
+  private transient boolean expectETS = false;
+
   // -- Constructor --
 
   /** Constructs a new cellSens reader. */
@@ -408,6 +413,18 @@ public class CellSensReader extends FormatReader {
     suffixSufficient = true;
     datasetDescription = "One .vsi file and an optional directory with a " +
       "similar name that contains at least one subdirectory with .ets files";
+  }
+
+  // -- CellSensReader API methods --
+
+
+  public boolean failOnMissingETS() {
+    MetadataOptions options = getMetadataOptions();
+    if (options instanceof DynamicMetadataOptions) {
+      return ((DynamicMetadataOptions) options).getBoolean(
+       FAIL_ON_MISSING_KEY, FAIL_ON_MISSING_DEFAULT);
+    }
+    return FAIL_ON_MISSING_DEFAULT;
   }
 
   // -- IFormatReader API methods --
@@ -589,6 +606,7 @@ public class CellSensReader extends FormatReader {
       backgroundColor.clear();
       metadataIndex = -1;
       previousTag = 0;
+      expectETS = false;
     }
   }
 
@@ -652,6 +670,19 @@ public class CellSensReader extends FormatReader {
     }
     files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
+
+    if (expectETS && files.size() == 1) {
+      String message = "Missing expected .ets files in " + pixelsDir.getAbsolutePath();
+      if (failOnMissingETS()) {
+        throw new FormatException(message);
+      }
+      else {
+        LOGGER.warn(message);
+      }
+    }
+    else if (!expectETS && files.size() > 1) {
+      LOGGER.warn(".ets files present but not expected");
+    }
 
     int seriesCount = files.size();
     core.clear();
@@ -1690,6 +1721,10 @@ public class CellSensReader extends FormatReader {
           if (tag == DOCUMENT_TIME || tag == CREATION_TIME) {
             value = DateTools.convertDate(
               Long.parseLong(value) * 1000, DateTools.UNIX);
+          }
+
+          if (tag == HAS_EXTERNAL_FILE) {
+            expectETS = Integer.parseInt(value) == 1;
           }
 
           if (tagName != null && populateMetadata) {
