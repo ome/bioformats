@@ -578,13 +578,12 @@ public class ZeissCZIReader extends FormatReader {
     super.initFile(id);
 
     parser = XMLTools.createBuilder();
-    // manage the case when extension is missing
-    if (id.lastIndexOf(".") == -1) {
-  	  id = id + ".czi";
-    }
 
     // switch to the master file if this is part of a multi-file dataset
-    String base = id.substring(0, id.lastIndexOf("."));
+    String base = id;
+    if (~id.lastIndexOf(".") == -1) {
+    		base = id.substring(0, id.lastIndexOf("."));
+    }
     if (base.endsWith(")") && isGroupFiles()) {
       LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
@@ -626,8 +625,10 @@ public class ZeissCZIReader extends FormatReader {
 
     Location file = new Location(id).getAbsoluteFile();
     base = file.getName();
-    base = base.substring(0, base.lastIndexOf("."));
-
+    if (~base.lastIndexOf(".") == -1) {
+    		base = base.substring(0, base.lastIndexOf("."));
+    }
+    
     Location parent = file.getParentFile();
     String[] list = parent.list(true);
     for (String f : list) {
@@ -1397,10 +1398,7 @@ public class ZeissCZIReader extends FormatReader {
     if (in != null) {
       in.close();
     }
-    File f = new File(id);
-    if (!f.exists()){
-    		id = id.substring(0, id.lastIndexOf('.'));
-    }
+
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
