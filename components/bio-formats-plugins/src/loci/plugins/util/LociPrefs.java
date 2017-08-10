@@ -106,8 +106,6 @@ public final class LociPrefs {
         NativeND2Reader.USE_CHUNKMAP_KEY, useND2Chunkmap());
       ((DynamicMetadataOptions) options).setBoolean(
         LIFReader.OLD_PHYSICAL_SIZE_KEY, isLeicaLIFPhysicalSizeBackwardsCompatible());
-      ((DynamicMetadataOptions) options).setInteger(
-          FormatTools.BASE_INDEX, getSliceLabelBaseIndex());
       reader.setMetadataOptions(options);
     }
 
@@ -196,7 +194,7 @@ public final class LociPrefs {
   }
 
   public static String getSliceLabelPattern() {
-    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "[c:%c/%C ][z:%z/%Z ][t:%t/%T ]- %n");
+    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "%c%z%t- %n");
   }
   
   public static int getSliceLabelBaseIndex() {
