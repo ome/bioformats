@@ -336,7 +336,7 @@ public class ImagePlusReader implements StatusReporter {
     final BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
       reader, false, false, false);
     for (int i=0; i<imageCount; i++) {
-      String label = FormatTools.getFilename(s, i, reader, LociPrefs.getSliceLabelPattern(), false);
+      String label = constructSliceLabel(i, reader, meta, s, zCount, cCount, tCount);
       virtualStack.addSlice(label);
     }
 
@@ -386,7 +386,7 @@ public class ImagePlusReader implements StatusReporter {
         throw new FormatException("Cannot read plane #" + i);
       }
       // generate a label for ith plane
-      String label = FormatTools.getFilename(s, i, reader, LociPrefs.getSliceLabelPattern(), false);
+      String label = constructSliceLabel(i, reader, meta, s, zCount, cCount, tCount);
 
       for (ImageProcessor ip : p) {
         procs.add(ip);
@@ -570,6 +570,125 @@ public class ImagePlusReader implements StatusReporter {
       title = a + "..." + b;
     }
     return title;
+  }
+
+  private String constructSliceLabel(int ndx, IFormatReader r,
+    IMetadata meta, int series, int zCount, int cCount, int tCount)
+  {
+    r.setSeries(series);
+    String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
+
+    String order = r.getDimensionOrder();
+    int sizeC = r.getEffectiveSizeC();
+    int sizeT = r.getSizeT();
+    int sizeZ = r.getSizeZ();
+    int seriesCount = r.getImageCount();
+    int indexBase = LociPrefs.getSliceLabelBaseIndex();
+    int[] coordinates = FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, sizeZ*sizeC*sizeT, ndx);
+
+    MetadataStore store = r.getMetadataStore();
+    MetadataRetrieve retrieve = store instanceof MetadataRetrieve ? (MetadataRetrieve) store : new DummyMetadata();
+    String filename = sliceLabelPattern.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
+
+    String imageName = retrieve.getImageName(series);
+    if (imageName == null) imageName = "Series" + series;
+    String channelName = retrieve.getChannelName(series, coordinates[1]);
+    if (channelName == null) channelName = String.valueOf(coordinates[1]);
+    filename = sliceLabelPattern;
+    
+    filename = filename.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
+    filename = filename.replaceAll(FormatTools.SERIES_NAME, imageName);
+    if (sizeC > 1) {
+      int[] subC;
+      String[] subCTypes;
+      Modulo moduloC = r.getModuloC();
+      if (moduloC.length() > 1) {
+        subC = new int[] {r.getSizeC() / moduloC.length(), moduloC.length()};
+        subCTypes = new String[] {moduloC.parentType, moduloC.type};
+      } else {
+        subC = new int[] {r.getSizeC()};
+        subCTypes = new String[] {FormatTools.CHANNEL};
+      }
+      int[] subCPos = FormatTools.rasterToPosition(subC, coordinates[1]);
+      StringBuffer channelString = new StringBuffer();
+      for (int i=0; i<subC.length; i++) {
+        boolean ch = subCTypes[i] == null || FormatTools.CHANNEL.equals(subCTypes[i]);
+        channelString.append(ch ? "c" : subCTypes[i]);
+        channelString.append(":");
+        channelString.append(subCPos[i] + 1);
+        channelString.append("/");
+        channelString.append(subC[i]);
+        if (i < subC.length - 1) channelString.append(", ");
+      }
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "c:" + channelString + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
+    }
+    if (sizeZ > 1) {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "z:" + String.format("%d", coordinates[0] + 1) + "/" + String.format("%d", sizeZ) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.Z_NUM, "");
+    }
+    if (sizeT > 1) {
+      filename = filename.replaceAll(FormatTools.T_NUM, "t:" + String.format("%d", coordinates[2] + 1) + "/" + String.format("%d", sizeT) + " ");
+    }
+    else {
+      filename = filename.replaceAll(FormatTools.T_NUM, "");
+    }
+
+    Timestamp timestamp = retrieve.getImageAcquisitionDate(series);
+    long stamp = 0;
+    String date = null;
+    if (timestamp != null) {
+      date = timestamp.getValue();
+      if (retrieve.getPlaneCount(series) > ndx) {
+        Time deltaT = retrieve.getPlaneDeltaT(series, ndx);
+        if (deltaT != null) {
+          stamp = (long) (deltaT.value(UNITS.SECOND).doubleValue() * 1000);
+        }
+      }
+      stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+    }
+    else {
+      stamp = System.currentTimeMillis();
+    }
+    date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
+
+    filename = filename.replaceAll(FormatTools.TIMESTAMP, date);
+    return filename;
+  }
+
+  private static String[] substringsBetween(String str, String open, String close) {
+    if (str == null || open == null || close == null || open.length() == 0 || close.length() == 0) {
+      return null;
+    }
+    int strLen = str.length();
+    if (strLen == 0) {
+      return new String [0];
+    }
+    int closeLen = close.length();
+    int openLen = open.length();
+    List<String> list = new ArrayList<String>();
+    int pos = 0;
+    while (pos < (strLen - closeLen)) {
+      int start = str.indexOf(open, pos);
+      if (start < 0) {
+        break;
+      }
+      start += openLen;
+      int end = str.indexOf(close, start);
+      if (end < 0) {
+        break;
+      }
+      list.add(str.substring(start, end));
+      pos = end + closeLen;
+    }
+    if (list.isEmpty()) {
+      return null;
+    } 
+    return (String[]) list.toArray(new String [list.size()]);
   }
 
   private static void saveLUTs(ImagePlus imp, List<LUT> luts) {
