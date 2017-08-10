@@ -592,8 +592,6 @@ public class ImagePlusReader implements StatusReporter {
 
     String imageName = retrieve.getImageName(series);
     if (imageName == null) imageName = "Series" + series;
-    String channelName = retrieve.getChannelName(series, coordinates[1]);
-    if (channelName == null) channelName = String.valueOf(coordinates[1]);
     filename = sliceLabelPattern;
     
     filename = filename.replaceAll(FormatTools.SERIES_NUM, String.format("%d", series));
@@ -620,7 +618,7 @@ public class ImagePlusReader implements StatusReporter {
         channelString.append(subC[i]);
         if (i < subC.length - 1) channelString.append(", ");
       }
-      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "c:" + channelString + " ");
+      filename = filename.replaceAll(FormatTools.CHANNEL_NUM, channelString.toString() + " ");
     }
     else {
       filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
