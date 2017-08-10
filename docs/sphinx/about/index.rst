@@ -28,10 +28,8 @@ command line tools, refer to the :doc:`users documentation </users/index>`.
 You can also find tips on common issues with specific formats on the
 pages linked from the :doc:`supported formats table </supported-formats>`.
 
-Please `contact us 
-<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats not addressed by referring
-to the documentation.
+Please :community:`contact us <>` if you have any questions or problems with
+Bio-Formats not addressed by referring to the documentation.
 
 Other places where questions are commonly asked and/or bugs are reported
 include:

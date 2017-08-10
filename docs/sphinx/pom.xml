@@ -16,7 +16,7 @@
 
   <name>Bio-Formats Sphinx documentation</name>
   <description>Sphinx-generated Bio-Formats documentation.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>
