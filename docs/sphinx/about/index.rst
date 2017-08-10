@@ -55,7 +55,7 @@ Bio-Formats versions
 
 Since Bio-Formats 5.1.3, Bio-Formats is decoupled from OMERO with its own
 release schedule rather than being updated whenever a new version of
-:products_plone:`OMERO <omero>` is released.
+:omero:`OMERO <>` is released.
 This change allows for more frequent releases to get fixes out to the
 community faster. See the :doc:`version history <whats-new>` for a list of
 changes in each release.

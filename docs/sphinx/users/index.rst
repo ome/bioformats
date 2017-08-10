@@ -47,7 +47,7 @@ OMERO
 =====
 
 OMERO 5 uses Bio-Formats to read original files from over 140 file formats.
-Please refer to the :products_plone:`OMERO <omero>` documentation for further
+Please refer to the :omero:`OMERO <>` documentation for further
 information.
 
 Many other software packages can use Bio-Formats to read and write
