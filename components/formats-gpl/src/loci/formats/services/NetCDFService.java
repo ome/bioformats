@@ -76,6 +76,14 @@ public interface NetCDFService extends Service {
   public String getAttributeValue(String path);
 
   /**
+   * Retrieves a variable's datatype.
+   * @param path HDF path to the variable.
+   * @return String or <code>null</code> 
+   * @throws ServiceException if the variable could not be read
+   */
+  public String getVariableDataType(String path) throws ServiceException;
+
+  /**
    * Retrieves a variable's value.
    * @param path HDF path to the variable.
    * @return The Java one-dimensional array representation of the variable's

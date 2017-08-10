@@ -303,19 +303,25 @@ public class ImarisHDFReader extends FormatReader {
     ms0.thumbnail = false;
     ms0.dimensionOrder = "XYZCT";
 
-    // determine pixel type - this isn't stored in the metadata, so we need
-    // to check the pixels themselves
-
+    //pixel type is stored in file as "DATATYPE" field of variable "Data"
     int type = -1;
-
-    Object pix = getImageData(0, 0, 0, 1, 1);
-    if (pix instanceof byte[][]) type = FormatTools.UINT8;
-    else if (pix instanceof short[][]) type = FormatTools.UINT16;
-    else if (pix instanceof int[][]) type = FormatTools.UINT32;
-    else if (pix instanceof float[][]) type = FormatTools.FLOAT;
-    else if (pix instanceof double[][]) type = FormatTools.DOUBLE;
+    String path = "/DataSet/ResolutionLevel_0/TimePoint_0/Channel_0/Data";
+    String dataType;
+    
+    try {
+      dataType = netcdf.getVariableDataType(path);
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
+    
+    if (dataType.endsWith("byte")) type = FormatTools.UINT8;
+    else if (dataType.endsWith("short")) type = FormatTools.UINT16;
+    else if (dataType.endsWith("int")) type = FormatTools.UINT32;
+    else if (dataType.equals("float")) type = FormatTools.FLOAT;
+    else if (dataType.equals("double")) type = FormatTools.DOUBLE;
     else {
-      throw new FormatException("Unknown pixel type: " + pix);
+      throw new FormatException("Unknown pixel type: " + dataType);
     }
 
     for (int i=0; i<core.size(); i++) {
