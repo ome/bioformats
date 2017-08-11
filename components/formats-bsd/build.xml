@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
   <property name="testng.runWriterTilingTests" value="2"/>
 
   <target name="test" depends="jar,compile-tests,test-long-running,
-      test-no-ome-xml,test-no-lurawave,test-no-jai,test-no-exif,
+      test-no-ome-xml,test-no-exif,
       test-no-xerces,test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
@@ -34,56 +34,6 @@ Type "ant -p" for a list of targets.
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
     </testng>
-  </target>
-
-  <target name="test-no-lurawave" depends="compile-tests"
-    description="run missing LuraWave JAR tests" if="doTests">
-    <copy tofile="${build.dir}/testng.xml" overwrite="true"
-      file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
-    <path id="test-no-lurawave.classpath">
-      <restrict>
-        <path refid="test.classpath"/>
-        <rsel:not>
-          <rsel:name name="lwf*.jar"/>
-        </rsel:not>
-      </restrict>
-    </path>
-    <testng failureProperty="failedTest">
-      <classpath refid="test-no-lurawave.classpath"/>
-      <classpath>
-        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-        <pathelement location="${test-classes.dir}"/>
-        <pathelement location="${classes.dir}"/>
-      </classpath>
-      <xmlfileset file="${build.dir}/testng.xml"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
-  <target name="test-no-jai" depends="compile-tests"
-    description="run missing JAI ImageIO JAR tests" if="doTests">
-    <copy tofile="${build.dir}/testng.xml" overwrite="true"
-      file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
-    <path id="test-no-jai.classpath">
-      <restrict>
-        <path refid="test.classpath"/>
-        <rsel:not>
-          <rsel:name name="jai*.jar"/>
-        </rsel:not>
-      </restrict>
-    </path>
-    <testng failureProperty="failedTest">
-      <classpath refid="test-no-jai.classpath"/>
-      <classpath>
-        <pathelement location="${root.dir}/ant/"/><!-- logback.xml -->
-        <pathelement location="${test-classes.dir}"/>
-        <pathelement location="${classes.dir}"/>
-      </classpath>
-      <xmlfileset file="${build.dir}/testng.xml"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
-    <fail if="failedTest"/>
   </target>
 
   <target name="test-no-ome-xml" depends="compile-tests"

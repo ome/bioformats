@@ -35,6 +35,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -44,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -57,6 +64,9 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Frequency;
 import ome.units.quantity.Length;
@@ -88,6 +98,10 @@ public class MetamorphReader extends BaseTiffReader {
   public static final String[] ND_SUFFIX = {"nd"};
   public static final String[] STK_SUFFIX = {"stk", "tif", "tiff"};
 
+  public static final Pattern WELL_COORDS = Pattern.compile(
+      "scan\\s+([a-z])(\\d+)", Pattern.CASE_INSENSITIVE
+  );
+
   // IFD tag numbers of important fields
   private static final int METAMORPH_ID = 33628;
   private static final int UIC1TAG = METAMORPH_ID;
@@ -106,6 +120,8 @@ public class MetamorphReader extends BaseTiffReader {
   /** The TIFF's emWavelength */
   private long[] emWavelength;
 
+  private boolean isHCS;
+  private String[] stageLabels;
   private double[] wave;
 
   private String binning;
@@ -149,7 +165,7 @@ public class MetamorphReader extends BaseTiffReader {
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
     super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
-    domains = new String[] {FormatTools.LM_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
     datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
@@ -339,6 +355,7 @@ public class MetamorphReader extends BaseTiffReader {
       hasChipOffsets = false;
       hasAbsoluteZ = false;
       hasAbsoluteZValid = false;
+      stageLabels = null;
     }
   }
 
@@ -721,11 +738,68 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
 
+    // check stage labels for plate data
+
+    int rows = 0;
+    int cols = 0;
+    Map<String, Integer> rowMap = null;
+    Map<String, Integer> colMap = null;
+    isHCS = true;
+    if (null == stageLabels) {
+      isHCS = false;
+    } else {
+      Set<Map.Entry<Integer, Integer>> uniqueWells =
+        new HashSet<Map.Entry<Integer, Integer>>();
+      rowMap = new HashMap<String, Integer>();
+      colMap = new HashMap<String, Integer>();
+      for (String label : stageLabels) {
+        if (null == label) {
+          isHCS = false;
+          break;
+        }
+        Map.Entry<Integer, Integer> wellCoords = getWellCoords(label);
+        if (null == wellCoords) {
+          isHCS = false;
+          break;
+        }
+        uniqueWells.add(wellCoords);
+        rowMap.put(label, wellCoords.getKey());
+        colMap.put(label, wellCoords.getValue());
+      }
+      if (uniqueWells.size() != stageLabels.length) {
+        isHCS = false;
+      } else {
+        rows = Collections.max(rowMap.values());
+        cols = Collections.max(colMap.values());
+        CoreMetadata c = core.get(0);
+        core.clear();
+        c.sizeZ = 1;
+        c.sizeT = 1;
+        c.imageCount = 1;
+        for (int s = 0; s < uniqueWells.size(); s++) {
+          CoreMetadata toAdd = new CoreMetadata(c);
+          if (s > 0) {
+            toAdd.seriesMetadata.clear();
+          }
+          core.add(toAdd);
+        }
+        seriesToIFD = true;
+      }
+    }
+
     List<String> timestamps = null;
     MetamorphHandler handler = null;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
+
+    if (isHCS) {
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRows(new PositiveInteger(rows), 0);
+      store.setPlateColumns(new PositiveInteger(cols), 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+    }
 
     int nextObjective = 0;
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -737,16 +811,32 @@ public class MetamorphReader extends BaseTiffReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
-      handler = new MetamorphHandler(getSeriesMetadata());
+      // do not reparse the same XML for every well
+      if (i == 0 || !isHCS) {
+        handler = new MetamorphHandler(getSeriesMetadata());
+      }
+
+      if (isHCS) {
+        String label = stageLabels[i];
+        String wellID = MetadataTools.createLSID("Well", 0, i);
+        store.setWellID(wellID, 0, i);
+        store.setWellColumn(new NonNegativeInteger(colMap.get(label)), 0, i);
+        store.setWellRow(new NonNegativeInteger(rowMap.get(label)), 0, i);
+        store.setWellSampleID(MetadataTools.createLSID("WellSample", 0, i, 0), 0, i, 0);
+        store.setWellSampleImageRef(MetadataTools.createLSID("Image", i), 0, i, 0);
+        store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
+      }
 
       store.setImageInstrumentRef(instrumentID, i);
 
       String comment = getFirstComment(i);
-      if (comment != null && comment.startsWith("<MetaData>")) {
-        try {
-          XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+      if (i == 0 || !isHCS) {
+        if (comment != null && comment.startsWith("<MetaData>")) {
+          try {
+            XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+          }
+          catch (IOException e) { }
         }
-        catch (IOException e) { }
       }
 
       if (creationTime != null) {
@@ -1454,6 +1544,9 @@ public class MetamorphReader extends BaseTiffReader {
         name = name.substring(0, name.length() - 1);
       }
     }
+    if (name.length() == 0 && isHCS) {
+      name = stageLabels[i];
+    }
     return name;
   }
 
@@ -1601,10 +1694,12 @@ public class MetamorphReader extends BaseTiffReader {
   void readStageLabels() throws IOException {
     int strlen;
     String iAsString;
+    stageLabels = new String[mmPlanes];
     for (int i=0; i<mmPlanes; i++) {
       iAsString = intFormatMax(i, mmPlanes);
       strlen = in.readInt();
-      addSeriesMeta("stageLabel[" + iAsString + "]", in.readString(strlen));
+      stageLabels[i] = readCString(in, strlen);
+      addSeriesMeta("stageLabel[" + iAsString + "]", stageLabels[i]);
     }
   }
 
@@ -2029,6 +2124,32 @@ public class MetamorphReader extends BaseTiffReader {
       case 66: return "OverlayPlaneColor";
     }
     return null;
+  }
+
+  private Map.Entry<Integer, Integer> getWellCoords(String label) {
+    Matcher matcher = WELL_COORDS.matcher(label);
+    if (!matcher.find()) return null;
+    int nGroups = matcher.groupCount();
+    if (nGroups != 2) return null;
+    return new AbstractMap.SimpleEntry(
+      (int) (matcher.group(1).toUpperCase().charAt(0) - 'A'),
+      Integer.parseInt(matcher.group(2)) - 1
+    );
+  }
+
+  /**
+   * Read a null-terminated string. Read at most n characters if the null
+   * character is not found.
+   */
+  private static String readCString(RandomAccessInputStream s, int n)
+      throws IOException {
+    int avail = s.available();
+    if (n > avail) n = avail;
+    byte[] b = new byte[n];
+    s.readFully(b);
+    int i;
+    for (i = 0; i < b.length && b[i] != 0; i++) { }
+    return new String(b, 0, i, Constants.ENCODING);
   }
 
 }

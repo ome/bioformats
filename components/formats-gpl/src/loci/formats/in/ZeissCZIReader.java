@@ -1003,6 +1003,78 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
+    // check for PALM data; requires planes to split into separate series
+
+    String firstXML = null;
+    boolean canSkipXML = true;
+    String currentPath = new Location(currentId).getAbsolutePath();
+    boolean isPALM = false;
+    if (planes.size() <= 2 && getImageCount() <= 2) {
+      for (Segment segment : segments) {
+        String path = new Location(segment.filename).getAbsolutePath();
+        if (currentPath.equals(path) && segment instanceof Metadata) {
+          segment.fillInData();
+          String xml = ((Metadata) segment).xml;
+          xml = XMLTools.sanitizeXML(xml);
+          if (firstXML == null && canSkipXML) {
+            firstXML = xml;
+          }
+          if (canSkipXML && firstXML.equals(xml)) {
+            isPALM = checkPALM(xml);
+          }
+          else if (!firstXML.equals(xml)) {
+            canSkipXML = false;
+          }
+          ((Metadata) segment).clearXML();
+        }
+      }
+    }
+
+    if (isPALM) {
+      LOGGER.debug("Detected PALM data");
+      core.get(0).sizeC = 1;
+      core.get(0).imageCount = core.get(0).sizeZ * core.get(0).sizeT;
+
+      for (int i=0; i<planes.size(); i++) {
+        SubBlock p = planes.get(i);
+        int storedX = p.directoryEntry.dimensionEntries[0].storedSize;
+        int storedY = p.directoryEntry.dimensionEntries[1].storedSize;
+        if (p.planeIndex >= getImageCount()) {
+          if (core.size() == 1) {
+            CoreMetadata second = new CoreMetadata(core.get(0));
+            core.add(second);
+          }
+          p.coreIndex = 1;
+          p.planeIndex -= (planes.size() / 2);
+          core.get(1).sizeX = storedX;
+          core.get(1).sizeY = storedY;
+        }
+        else {
+          core.get(0).sizeX = storedX;
+          core.get(0).sizeY = storedY;
+        }
+      }
+      if (core.size() == 2) {
+        // prevent misidentification of PALM data; each plane should be a different size
+        if (core.get(0).sizeX == core.get(1).sizeX &&
+          core.get(0).sizeY == core.get(1).sizeY)
+        {
+          isPALM = false;
+          core.remove(1);
+          core.get(0).sizeC = 2;
+          core.get(0).imageCount *= getSizeC();
+
+          for (int i=0; i<planes.size(); i++) {
+            SubBlock p = planes.get(i);
+            if (p.coreIndex == 1) {
+              p.coreIndex = 0;
+              p.planeIndex += (planes.size() / 2);
+            }
+          }
+        }
+      }
+    }
+
     // find and add attached label/overview images
 
     readAttachments();
@@ -1012,9 +1084,8 @@ public class ZeissCZIReader extends FormatReader {
     store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
-    String firstXML = null;
-    boolean canSkipXML = true;
-    String currentPath = new Location(currentId).getAbsolutePath();
+    firstXML = null;
+    canSkipXML = true;
     for (Segment segment : segments) {
       String path = new Location(segment.filename).getAbsolutePath();
       if (currentPath.equals(path) && segment instanceof Metadata) {
@@ -1288,7 +1359,12 @@ public class ZeissCZIReader extends FormatReader {
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channels.size()) {
-          store.setChannelName(channels.get(c).name, i, c);
+          if (isPALM && i < channels.size()) {
+            store.setChannelName(channels.get(i).name, i, c);
+          }
+          else {
+            store.setChannelName(channels.get(c).name, i, c);
+          }
           store.setChannelFluor(channels.get(c).fluor, i, c);
           if (channels.get(c).filterSetRef != null) {
             store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
@@ -1404,6 +1480,7 @@ public class ZeissCZIReader extends FormatReader {
 
       if (segment instanceof SubBlock) {
         planes.add((SubBlock) segment);
+        LOGGER.trace("plane #{} = {}", planes.size() - 1, segment);
       }
       segment.close();
     }
@@ -1788,6 +1865,66 @@ public class ZeissCZIReader extends FormatReader {
 
     final Deque<String> nameStack = new ArrayDeque<String>();
     populateOriginalMetadata(realRoot, nameStack);
+  }
+
+  private boolean checkPALM(String xml) throws FormatException, IOException {
+    Element root = null;
+    try {
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
+      root = parser.parse(s).getDocumentElement();
+      s.close();
+    }
+    catch (SAXException e) {
+      throw new FormatException(e);
+    }
+
+    if (root == null) {
+      throw new FormatException("Could not parse the XML metadata.");
+    }
+
+    NodeList customAttributes = root.getElementsByTagName("CustomAttributes");
+    if (customAttributes != null && customAttributes.getLength() > 0) {
+      Element attributes = (Element) customAttributes.item(0);
+      if (attributes != null) {
+        NodeList lsmTags = attributes.getElementsByTagName("LsmTag");
+        if (lsmTags != null) {
+          for (int i=0; i<lsmTags.getLength(); i++) {
+            Element tag = (Element) lsmTags.item(i);
+            String name = tag.getAttribute("Name");
+            if (name.toLowerCase().startsWith("palm")) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+
+    NodeList experiments = root.getElementsByTagName("Experiment");
+    if (experiments == null || experiments.getLength() == 0) {
+      return false;
+    }
+
+    Element experimentBlock =
+      getFirstNode((Element) experiments.item(0), "ExperimentBlocks");
+    Element acquisition = getFirstNode(experimentBlock, "AcquisitionBlock");
+    if (acquisition == null) {
+      return false;
+    }
+
+    Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
+    if (multiTrack == null) {
+      return false;
+    }
+    Element trackSetup = getFirstNode(multiTrack, "TrackSetup");
+    if (trackSetup == null) {
+      return false;
+    }
+    Element palmSlider = getFirstNode(trackSetup, "PalmSlider");
+    if (palmSlider == null) {
+      return false;
+    }
+    return Boolean.parseBoolean(palmSlider.getTextContent());
   }
 
   private void translateInformation(Element root) throws FormatException {

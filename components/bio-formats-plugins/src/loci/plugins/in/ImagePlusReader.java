@@ -303,8 +303,11 @@ public class ImagePlusReader implements StatusReporter {
     // configure image
 
     // place metadata key/value pairs in ImageJ's info field
-    final String metadata = process.getOriginalMetadata().toString();
-    imp.setProperty("Info", metadata);
+    // if concatenating images only store metadata on first series
+    if (!options.isConcatenate() || s == 0) {
+      final String metadata = process.getOriginalMetadata().toString();
+      imp.setProperty("Info", metadata);
+    }
     imp.setProperty(PROP_SERIES, s);
 
     // retrieve the spatial calibration information, if available

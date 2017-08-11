@@ -7,8 +7,6 @@
         <classpathentry kind="src" path="components/formats-bsd/src"/>
         <classpathentry kind="src" path="components/formats-gpl/build/src"/>
         <classpathentry kind="src" path="components/formats-gpl/src"/>
-        <classpathentry kind="src" path="components/forks/jai/build/src"/>
-        <classpathentry kind="src" path="components/forks/jai/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/build/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/src"/>
         <classpathentry kind="src" path="components/test-suite/build/src"/>

@@ -111,6 +111,17 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |no|
      - |no|
+   * - :doc:`formats/andor-sif`
+     - .sif
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+     - |no|
+     - |no|
    * - :doc:`formats/animated-png`
      - .png
      - |Very good|
@@ -1708,6 +1719,7 @@ Bio-Formats currently supports **146** formats
     formats/amira-mesh
     formats/amnis-flowsight
     formats/analyze-75
+    formats/andor-sif
     formats/animated-png
     formats/aperio-afi
     formats/aperio-svs-tiff

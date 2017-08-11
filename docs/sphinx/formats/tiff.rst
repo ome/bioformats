@@ -31,7 +31,7 @@ Sample Datasets:
 
 We currently have:
 
-* a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) 
+* a `TIFF specification document <http://www.awaresystems.be/imaging/tiff.html>`_ 
 * many TIFF datasets 
 * a few BigTIFF datasets
 

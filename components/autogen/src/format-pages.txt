@@ -154,6 +154,20 @@ mif = true
 notes = With a few minor exceptions, the ABD-TIFF format is identical to the \n
 Fluoview TIFF format.
 
+[Andor SIF]
+extensions = .sif
+owner = `Andor Technology <http://www.andor.com/>`_
+developer = Andor Bioimaging Department
+bsd = no
+weHave = * a small number of Andor SIF datasets
+weWant = * an Andor SIF specification document
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = SIFReader
+
 [Animated PNG]
 extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
@@ -956,10 +970,10 @@ reader = ImprovisionTiffReader
 [Imspector OBF]
 extensions = .obf, .msr
 owner = `MPI-BPC <http://www.mpibpc.mpg.de/>`_
-developer = `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/index.html>`_
+developer = `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de>`_
 bsd = yes
 weHave = * a few .msr datasets \n
-* `a specification document <https://imspector.mpibpc.mpg.de/documentation/fileformat.html>`_
+* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html>`_
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -2026,7 +2040,7 @@ extensions = .mov
 owner = `Apple Computer <http://www.apple.com/>`_
 bsd = yes
 software = `QuickTime Player <https://support.apple.com/downloads/quicktime>`_
-weHave = * a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
+weHave = * a `QuickTime specification document <https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html#//apple_ref/doc/uid/TP40000939>`_ \n
 * several QuickTime datasets \n
 * the ability to produce more datasets
 weWant = * more QuickTime datasets, including: \n
@@ -2200,7 +2214,7 @@ developer = Aldus and Microsoft
 bsd = yes
 samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
 `Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
-weHave = * a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
+weHave = * a `TIFF specification document <http://www.awaresystems.be/imaging/tiff.html>`_ \n
 * many TIFF datasets \n
 * a few BigTIFF datasets
 pixelsRating = Very good

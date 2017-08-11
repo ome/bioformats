@@ -6,7 +6,7 @@ Imspector OBF
 
 Extensions: .obf, .msr
 
-Developer: `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/index.html>`_
+Developer: `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de>`_
 
 Owner: `MPI-BPC <http://www.mpibpc.mpg.de/>`_
 
@@ -27,7 +27,7 @@ Reader: OBFReader (:bsd-reader:`Source Code <OBFReader.java>`, :doc:`Supported M
 We currently have:
 
 * a few .msr datasets 
-* `a specification document <https://imspector.mpibpc.mpg.de/documentation/fileformat.html>`_
+* `a specification document <https://imspectordocs.readthedocs.io/en/latest/fileformat.html>`_
 
 We would like to have:
 
