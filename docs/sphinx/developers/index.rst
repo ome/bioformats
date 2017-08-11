@@ -39,6 +39,7 @@ Using Bio-Formats as a Java library
     export
     export2
     tiling
+    wsi
     in-memory
     logging
     conversion
