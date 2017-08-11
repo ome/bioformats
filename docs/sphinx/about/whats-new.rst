@@ -30,6 +30,7 @@ File format fixes and improvements:
    - support added for images with more than ``Integer.MAX_VALUE`` pixels
 
 Bug fixes and improvements:
+
 * Bio-Formats Plugin
    - added the option to configure the slice label for display in ImageJ. The label can 
      now be configured via the Bio-Formats Plugin Configuration window in ImageJ using 
