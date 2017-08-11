@@ -943,7 +943,9 @@ public class TiffSaver {
     else if (isTiled) {
       fp = sequentialTileFilePointer;
     }
-    writeIFD(ifd, 0);
+    if (fp == out.getFilePointer()) { // Create IFD only if at the end of file
+      writeIFD(ifd, 0);
+    }
 
     // strips.length is the total number of strips being written during
     // this method call, which is no more than the total number of
