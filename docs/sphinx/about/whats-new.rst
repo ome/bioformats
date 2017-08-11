@@ -39,7 +39,7 @@ Bug fixes and improvements:
    - class now implements AutoCloseable to prevent resource leaks
 * Bio-Formats Plugin
    - improved performance when using options to concatenate multiple series together
-*TiffSaver
+* TiffSaver
    - made performance improvements to prevent the writing of a new IFD for each tile, 
      resulting in significant file size reductions for images with a large quantity of tiles
 
