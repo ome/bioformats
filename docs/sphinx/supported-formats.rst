@@ -1102,7 +1102,7 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |no|
    * - :doc:`formats/ome-tiff`
-     - `.ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
+     - :model_doc:`.ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <ome-tiff/index.html>`
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|
@@ -1113,7 +1113,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
    * - :doc:`formats/ome-xml`
-     - `.ome, .ome.xml <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
+     - :model_doc:`.ome, .ome.xml <ome-xml/index.html>`
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|

@@ -1044,7 +1044,7 @@ Java bug fixes:
 
 * Improvements to performance with network file systems
 * Improvements to developer documentation
-* Initial version of `native C++ implementation <http://www.openmicroscopy.org/site/support/bio-formats5.1/developers/cpp/overview.html>`__
+* Initial version of native C++ implementation
 * Improved support for opening and saving ROI data with ImageJ
 * Added support for :doc:`CellH5 </formats/cellh5>` data (thanks to Christoph Sommer)
 * Added support for :doc:`Perkin Elmer Nuance </formats/perkinelmer-nuance>` data (thanks to Lee Kamentsky)

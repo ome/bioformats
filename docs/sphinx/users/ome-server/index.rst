@@ -1,13 +1,13 @@
 OME Server
 ==========
 
-`OME <http://openmicroscopy.org/site/support/legacy/ome-server>`_ is a
+The OME server is a
 set of software that interacts with a database to manage images, image
 metadata, image analysis and analysis results. The OME system is capable
 of leveraging Bio-Formats to import files.
 
 **Please note** - the OME server is no longer maintained and has now been
-superseded by the :products_plone:`OMERO server <omero>`.  Support for the OME
+superseded by the :omero:`OMERO server <>`.  Support for the OME
 server has been entirely removed in the 5.0.0 version of Bio-Formats; the
 following instructions can still be used with the 4.4.x versions.
 
@@ -102,7 +102,7 @@ Upgrading
 
 OME server is not supported by Bio-Formats versions 5.0.0 and above. To take
 advantage of more recent improvements to Bio-Formats, you must switch to
-:products_plone:`OMERO server <omero>`.
+:omero:`OMERO server <>`.
 
 Source Code
 -----------

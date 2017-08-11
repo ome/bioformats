@@ -28,10 +28,8 @@ command line tools, refer to the :doc:`users documentation </users/index>`.
 You can also find tips on common issues with specific formats on the
 pages linked from the :doc:`supported formats table </supported-formats>`.
 
-Please `contact us 
-<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats not addressed by referring
-to the documentation.
+Please :community:`contact us <>` if you have any questions or problems with
+Bio-Formats not addressed by referring to the documentation.
 
 Other places where questions are commonly asked and/or bugs are reported
 include:
@@ -55,7 +53,7 @@ Bio-Formats versions
 
 Since Bio-Formats 5.1.3, Bio-Formats is decoupled from OMERO with its own
 release schedule rather than being updated whenever a new version of
-:products_plone:`OMERO <omero>` is released.
+:omero:`OMERO <>` is released.
 This change allows for more frequent releases to get fixes out to the
 community faster. See the :doc:`version history <whats-new>` for a list of
 changes in each release.

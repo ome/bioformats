@@ -307,4 +307,4 @@ Other useful things
   most straightforward one). :bfreader:`loci.formats.in.LIFReader <LIFReader.java>` and :bfreader:`InCellReader <InCellReader.java>` are also
   good references that show off some of the nicer features of Bio-Formats.
 
-If you have questions about Bio-Formats, please contact `the OME team <http://www.openmicroscopy.org/site/community>`_.
+If you have questions about Bio-Formats, please contact :community:`the OME team <>`.
