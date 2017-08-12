@@ -323,11 +323,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     if (getSizeZ() == 0) m.sizeZ = 1;
-    m.sizeZ *= uniqueZ.size();
+    if (uniqueZ.size() > 1) m.sizeZ *= uniqueZ.size();
 
-    Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
-    Double physicalSizeZ = Math.abs(zRange);
+    Double physicalSizeZ = null;
     if (m.sizeZ > 1) {
+      Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
+      physicalSizeZ = Math.abs(zRange);
       physicalSizeZ /= (m.sizeZ - 1);
     }
 
@@ -515,7 +516,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
           FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
         Length sizeY =
           FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
-        Length sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+        Length sizeZ = physicalSizeZ == null ? null : 
+          FormatTools.getPhysicalSizeZ(physicalSizeZ);
 
         if (sizeX != null) {
           store.setPixelsPhysicalSizeX(sizeX, s);
