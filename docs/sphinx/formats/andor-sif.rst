@@ -6,8 +6,9 @@ Andor SIF
 
 Extensions: .sif
 
-Developer: `Andor Technology <http://www.andor.com/>`_
+Developer: Andor Bioimaging Department
 
+Owner: `Andor Technology <http://www.andor.com/>`_
 
 **Support**
 
@@ -29,8 +30,7 @@ We currently have:
 
 We would like to have:
 
-* a specification document
-
+* an Andor SIF specification document
 
 **Ratings**
 
