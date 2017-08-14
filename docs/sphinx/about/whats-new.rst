@@ -41,7 +41,7 @@ Bug fixes and improvements:
 
 Documentation improvements:
 
-* updated website and URL links for new <http://www.openmicroscopy.org>`_ website
+* updated website and URL links for new `OME Website <https://www.openmicroscopy.org>`_ website
 * added missing :doc:`Andor SIF</formats/andor-sif>` to supported formats page
 * added a new page :doc:`Working with whole slide images</developers/wsi>` outlining the API support 
   for pyramids/resolutions
