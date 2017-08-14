@@ -1,6 +1,68 @@
 Version history
 ===============
 
+5.6.0 (2017 August 14)
+----------------------
+
+File format fixes and improvements:
+
+* Zeiss CZI
+   - added support for images from Elyra PALM system
+   - prevented a potential infinite loop when a scene with a pyramid is missing
+* cellSens VSI
+   - a new option has been added to throw an exception rather than logging a 
+     warning if .ets file is missing. The option, ``cellsens.fail_on_missing_ets``,
+     can be used via the MetadataOptions API, as a parameter in the command 
+     line tools or via the Bio-Formats configuration dialog in ImageJ
+* MetaMorph Stack (STK)
+   - fixed an error with HCS style datasets always returning the first plane 
+     regardless of the requested index
+   - updated to use stage labels starting with ``Scan`` to detect when a whole plate 
+     is saved in a single .stk file
+   - fixed a bug for ``ArrayIndexOutOfBoundsException`` when an image contains 
+     a single Z plane
+* Gatan Digital Micrograph
+   - added support for Z stacks and ROIs
+   - fixed several bugs in tag parsing
+* PerkinElmer Operetta
+   - ensure TIFF files exist before reading
+* JPEG
+   - support added for images with more than ``Integer.MAX_VALUE`` pixels
+
+Bug fixes and improvements:
+
+* JPEGTileDecoder
+   - class now implements AutoCloseable to prevent resource leaks
+* Bio-Formats Plugin
+   - improved performance when using options to concatenate multiple series together
+* TiffSaver
+   - made performance improvements to prevent the writing of a new IFD for each tile, 
+     resulting in significant file size reductions for images with a large quantity of tiles
+
+Documentation improvements:
+
+* updated website and URL links for new `OME Website <https://www.openmicroscopy.org>`_ website
+* added missing :doc:`Andor SIF</formats/andor-sif>` to supported formats page
+* added a new page :doc:`Working with whole slide images</developers/wsi>` outlining the API support 
+  for pyramids/resolutions
+* fixed broken documentation links for external resources which are no longer available
+* updated the style of Sphinx documentation
+
+Component architecture changes/decoupling:
+
+* decoupled image encoding and decoding routines to the new
+  `ome/ome-codecs GitHub repository <https://github.com/ome/ome-codecs>`_
+  and consumed as 'org.openmicroscopy:ome-codecs' artifact from Maven Central
+* removed components/forks/jai - decoupled to the new
+  `ome/ome-jai GitHub repository <https://github.com/ome/ome-jai>`_
+  and consumed as part of 'org.openmicroscopy:ome-jai' artifact from Maven Central
+* replaced components/formats-api/codecs classes with wrappers around 'org.openmicroscopy:ome-codecs'
+* replaced components/formats-bsd/codecs classes with wrappers around 'org.openmicroscopy:ome-codecs'
+
+Updated build system:
+
+* ant now removes the build files of the bundles during 'clean' to prevent a mix of dependencies
+
 5.5.3 (2017 July 5)
 -------------------
 
