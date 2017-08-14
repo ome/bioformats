@@ -1641,7 +1641,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **146** formats
+Bio-Formats currently supports **147** formats
 
 .. glossary::
     Ratings legend and definitions
