@@ -41,12 +41,12 @@ Bug fixes and improvements:
 
 Documentation improvements:
 
-* updated website and URL links for new ``openmicroscopy.org`` website
-* added missing Andor SIF to supported formats page
-* added a new page ``Working with whole slide images`` outlining the API support 
+* updated website and URL links for new <http://www.openmicroscopy.org>`_ website
+* added missing :doc:`Andor SIF</formats/andor-sif>` to supported formats page
+* added a new page :doc:`Working with whole slide images</developers/wsi>` outlining the API support 
   for pyramids/resolutions
 * fixed broken documentation links for external resources which are no longer available
-* updated the style of sphinx documentation
+* updated the style of Sphinx documentation
 
 Component architecture changes/decoupling:
 
@@ -55,13 +55,13 @@ Component architecture changes/decoupling:
   and consumed as 'org.openmicroscopy:ome-codecs' artifact from Maven Central
 * removed components/forks/jai - decoupled to the new
   `ome/ome-jai GitHub repository <https://github.com/ome/ome-jai>`_
-  and consumed as part of 'org.openmicroscopy:ome-codecs' artifact from Maven Central
-* replaced components/formats-api/codecs classes with wrappers
-* replaced components/formats-bsd/codecs classes with wrappers
+  and consumed as part of 'org.openmicroscopy:ome-jai' artifact from Maven Central
+* replaced components/formats-api/codecs classes with wrappers around 'org.openmicroscopy:ome-codecs'
+* replaced components/formats-bsd/codecs classes with wrappers around 'org.openmicroscopy:ome-codecs'
 
 Updated build system:
 
-* ant now removes bundles build files during 'clean' to prevent a mix of dependencies
+* ant now removes the build files of the bundles during 'clean' to prevent a mix of dependencies
 
 5.5.3 (2017 July 5)
 -------------------
