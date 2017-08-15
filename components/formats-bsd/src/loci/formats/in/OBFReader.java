@@ -156,6 +156,7 @@ public class OBFReader extends FormatReader {
       for (String key = readString(); key.length() > 0; key = readString()) {
         if (key.equals("ome_xml")) {
           final String ome_xml = readString();
+          LOGGER.trace("OME-xml = {}", ome_xml);
 
           try {
             ServiceFactory factory = new ServiceFactory();
