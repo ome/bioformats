@@ -1123,6 +1123,17 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |yes|
      - |no|
+   * - :doc:`formats/omero-pyramid`
+     - 
+     - |Outstanding|
+     - |Outstanding|
+     - |Outstanding|
+     - |Fair|
+     - |Outstanding|
+     - |no|
+     - |yes|
+     - |yes|
+     - |no|
    * - :doc:`formats/oxford-instruments`
      - .top
      - |Good|
@@ -1641,7 +1652,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **147** formats
+Bio-Formats currently supports **148** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1811,6 +1822,7 @@ Bio-Formats currently supports **147** formats
     formats/olympus-sis-tiff
     formats/ome-tiff
     formats/ome-xml
+    formats/omero-pyramid
     formats/oxford-instruments
     formats/pcoraw
     formats/pcx-pc-paintbrush
