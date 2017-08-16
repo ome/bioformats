@@ -1133,7 +1133,7 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |yes|
      - |yes|
-     - |no|
+     - |yes|
    * - :doc:`formats/oxford-instruments`
      - .top
      - |Good|

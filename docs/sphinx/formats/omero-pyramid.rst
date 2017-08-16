@@ -1,10 +1,8 @@
 .. index:: OMERO Pyramid
-.. index:: 
 
 OMERO Pyramid
 ===============================================================================
 
-Extensions: 
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 

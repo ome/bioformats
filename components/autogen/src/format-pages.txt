@@ -1733,7 +1733,6 @@ utilityRating = Good
 reader = SISReader
 
 [OMERO Pyramid]
-extensions =
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 1.0.0
@@ -1747,6 +1746,7 @@ presenceRating = Fair
 utilityRating = Outstanding
 reader = TiffReader
 mif = true
+pyramid = yes
 
 [OME-TIFF]
 indexExtensions = .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf
