@@ -421,7 +421,7 @@ public class TiffReader extends BaseTiffReader {
     if (comment == null) return;
     String[] lines = comment.split("\n");
     if (lines.length > 1) {
-      comment = "";
+      StringBuilder buf = new StringBuilder(comment.length());
       for (String line : lines) {
         int eq = line.indexOf('=');
         if (eq != -1) {
@@ -430,11 +430,12 @@ public class TiffReader extends BaseTiffReader {
           addGlobalMeta(key, value);
         }
         else if (!line.startsWith("[")) {
-          comment += line + "\n";
+          buf.append(line);
+          buf.append("\n");
         }
       }
-      addGlobalMeta("Comment", comment);
-      description = comment;
+      description = buf.toString();
+      addGlobalMeta("Comment", description);
     }
   }
 
