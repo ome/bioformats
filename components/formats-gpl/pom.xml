@@ -70,8 +70,8 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>netcdf</artifactId>
-      <version>4.3.22</version>
+      <artifactId>netcdf4</artifactId>
+      <version>4.6.10</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.protobuf</groupId>
@@ -279,7 +279,8 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:netcdf</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:netcdf4</classpathDependencyExclude>
+                <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
               </classpathDependencyExcludes>
               <systemPropertyVariables>
                 <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
