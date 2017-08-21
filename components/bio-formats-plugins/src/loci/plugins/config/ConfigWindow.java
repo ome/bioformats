@@ -119,6 +119,52 @@ public class ConfigWindow extends JFrame
     tabs.setBorder(new EmptyBorder(PAD, PAD, PAD, PAD));
     setContentPane(tabs);
 
+    JPanel bfOptionsPanel = new JPanel(new SpringLayout());
+    tabs.addTab("General", bfOptionsPanel);
+
+    JPanel upgradePanel = new JPanel(new SpringLayout());
+    JLabel upgradeLabel =
+      new JLabel("Automatically check for new versions of the Bio-Formats plugins");
+    upgradePanel.add(upgradeLabel);
+
+    final boolean checkForUpgrades = Prefs.get(UPGRADE_CHECK_KEY, true);
+    upgradeBox = new JCheckBox("", checkForUpgrades);
+    upgradeBox.addItemListener(this);
+    upgradePanel.add(upgradeBox);
+
+    SpringUtilities.makeCompactGrid(upgradePanel,1, 2, PAD, PAD, PAD, PAD);
+
+    JPanel sliceNamePanel = new JPanel(new SpringLayout());
+    JLabel sliceNameLabel = new JLabel("Slice Label Pattern");
+    sliceNamePanel.add(sliceNameLabel);
+
+    final String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
+    sliceLabel = new JTextField(sliceLabelPattern);
+    int prefHeight = sliceLabel.getPreferredSize().height;
+    sliceLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
+    sliceNamePanel.add(sliceLabel);
+
+    setSliceLabelButton = new JButton("Set");
+    resetSliceLabelButton = new JButton("Reset");
+    setSliceLabelButton.addActionListener(this);
+    resetSliceLabelButton.addActionListener(this);
+    sliceNamePanel.add(setSliceLabelButton);
+    sliceNamePanel.add(resetSliceLabelButton);
+    SpringUtilities.makeCompactGrid(sliceNamePanel,1, 4, PAD, PAD, PAD, PAD);
+
+    bfOptionsPanel.add(upgradePanel);
+    bfOptionsPanel.add(sliceNamePanel);
+    JLabel sliceDescription = new JLabel("<html>Customize the slice label by specifying a pattern string:"
+                                          + "<br>%s - series index"
+                                          + "<br>%n - series name"
+                                          + "<br>%c - channel index"
+                                          + "<br>%w - channel name"
+                                          + "<br>%z - Z index"
+                                          + "<br>%t - T index"
+                                          + "<br>%A - acquisition timestamp</html>");
+    bfOptionsPanel.add(sliceDescription);
+    SpringUtilities.makeCompactGrid(bfOptionsPanel,3, 1, PAD, PAD, PAD, PAD);
+
     JPanel installPanel = new JPanel();
     //tabs.addTab("Install", installPanel);
 
@@ -195,52 +241,6 @@ public class ConfigWindow extends JFrame
     libInfo.add(new JScrollPane(notes));
 
     // TODO: "How to install" for each library?
-
-    JPanel bfOptionsPanel = new JPanel(new SpringLayout());
-    tabs.addTab("Bio-Formats Options", bfOptionsPanel);
-
-    JPanel upgradePanel = new JPanel(new SpringLayout());
-    JLabel upgradeLabel =
-      new JLabel("Automatically check for new versions of the Bio-Formats plugins");
-    upgradePanel.add(upgradeLabel);
-
-    final boolean checkForUpgrades = Prefs.get(UPGRADE_CHECK_KEY, true);
-    upgradeBox = new JCheckBox("", checkForUpgrades);
-    upgradeBox.addItemListener(this);
-    upgradePanel.add(upgradeBox);
-
-    SpringUtilities.makeCompactGrid(upgradePanel,1, 2, PAD, PAD, PAD, PAD);
-
-    JPanel sliceNamePanel = new JPanel(new SpringLayout());
-    JLabel sliceNameLabel = new JLabel("Slice Label Pattern");
-    sliceNamePanel.add(sliceNameLabel);
-
-    final String sliceLabelPattern = LociPrefs.getSliceLabelPattern();
-    sliceLabel = new JTextField(sliceLabelPattern);
-    int prefHeight = sliceLabel.getPreferredSize().height;
-    sliceLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, prefHeight));
-    sliceNamePanel.add(sliceLabel);
-
-    setSliceLabelButton = new JButton("Set");
-    resetSliceLabelButton = new JButton("Reset");
-    setSliceLabelButton.addActionListener(this);
-    resetSliceLabelButton.addActionListener(this);
-    sliceNamePanel.add(setSliceLabelButton);
-    sliceNamePanel.add(resetSliceLabelButton);
-    SpringUtilities.makeCompactGrid(sliceNamePanel,1, 4, PAD, PAD, PAD, PAD);
-
-    bfOptionsPanel.add(upgradePanel);
-    bfOptionsPanel.add(sliceNamePanel);
-    JLabel sliceDescription = new JLabel("<html>Customize the slice label by specifying a pattern string:"
-                                          + "<br>%s - series index"
-                                          + "<br>%n - series name"
-                                          + "<br>%c - channel index"
-                                          + "<br>%w - channel name"
-                                          + "<br>%z - Z index"
-                                          + "<br>%t - T index"
-                                          + "<br>%A - acquisition timestamp</html>");
-    bfOptionsPanel.add(sliceDescription);
-    SpringUtilities.makeCompactGrid(bfOptionsPanel,3, 1, PAD, PAD, PAD, PAD);
 
     JPanel logPanel = new JPanel();
     tabs.addTab("Log", logPanel);
