@@ -622,9 +622,19 @@ public class ImagePlusReader implements StatusReporter {
         if (i < subC.length - 1) channelString.append(", ");
       }
       filename = filename.replaceAll(FormatTools.CHANNEL_NUM, channelString.toString() + " ");
+
+      if (coordinates[1] < sizeC) {
+        String channelName = retrieve.getChannelName(series, coordinates[1]);
+        if (channelName == null) channelName = String.valueOf(coordinates[1]);
+        filename = filename.replaceAll(FormatTools.CHANNEL_NAME, channelName);
+      }
+      else {
+        filename = filename.replaceAll(FormatTools.CHANNEL_NAME, String.valueOf(coordinates[1]));
+      }
     }
     else {
       filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "");
+      filename = filename.replaceAll(FormatTools.CHANNEL_NAME, "");
     }
     if (sizeZ > 1) {
       filename = filename.replaceAll(FormatTools.Z_NUM, "z:" + String.format("%d", coordinates[0] + 1) + "/" + String.format("%d", sizeZ) + " ");
