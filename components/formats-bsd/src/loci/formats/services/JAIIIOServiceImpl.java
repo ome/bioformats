@@ -50,6 +50,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.formats.codec.JPEG2000CodecOptions;
+import loci.formats.FormatTools;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam;
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
@@ -70,7 +71,8 @@ public class JAIIIOServiceImpl extends AbstractService
   public static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files. " +
     "Please obtain jai_imageio.jar from " +
-    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
+    "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+    "/developers/java-library.html";
 
   // -- Fields --
 

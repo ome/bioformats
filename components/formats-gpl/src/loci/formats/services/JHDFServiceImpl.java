@@ -49,7 +49,8 @@ public class JHDFServiceImpl extends AbstractService
     public static final String NO_JHDF_MSG
             = "JHDF is required to read HDF5 files. "
             + "Please obtain the necessary JAR files from "
-            + "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n"
+            + "https://docs.openmicroscopy.org/bio-formats/"
+            + FormatTools.VERSION + "/developers/java-library.html.\n"
             + "Required JAR files is cisd-jhdf5-batteries_included_lin_win_mac.jar.";
 
     // -- Fields --

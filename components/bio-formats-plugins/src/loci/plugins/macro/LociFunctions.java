@@ -75,7 +75,7 @@ public class LociFunctions extends MacroFunctions {
 
   /** URL for Javadocs. */
   public static final String URL_JAVADOCS =
-    "http://ci.openmicroscopy.org/job/BIOFORMATS-5.1-latest/javadoc/";
+    "https://downloads.openmicroscopy.org/bio-formats/" + FormatTools.VERSION + "/api/";
 
   // -- Fields --
 

@@ -48,7 +48,8 @@ public final class About implements PlugIn {
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
-    "http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/features.html";
+    "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+    "/users/imagej/features.html";
 
   /** URL of Data Browser web page. */
   public static final String URL_DATA_BROWSER =
