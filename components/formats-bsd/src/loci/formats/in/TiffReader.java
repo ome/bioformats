@@ -431,7 +431,7 @@ public class TiffReader extends BaseTiffReader {
         }
         else if (!line.startsWith("[")) {
           buf.append(line);
-          buf.append("\n");
+          buf.append('\n');
         }
       }
       description = buf.toString();
