@@ -8,7 +8,7 @@ currently write them outside of OMERO.  For details of how to read image pyramid
 The OMERO pyramid format is a :doc:`TIFF </formats/tiff>` file containing JPEG-2000 compressed image tiles.  All resolutions for a tile
 are encoded in the same JPEG-2000 stream, using the "decompression levels" feature of JPEG-2000.
 As a result, only data types supported by the JPEG-2000 standard (``uint8`` and ``uint16``) are supported.
-Images with pixel type ``uint32``, ``float`` (32 bit floating point), or ``double`` (64 bit floating point) cannot be converted to
+Images with pixel type ``uint32``, ``float`` (32-bit floating point), or ``double`` (64-bit floating point) cannot be converted to
 an OMERO pyramid.  Pyramid files larger than 4 gigabytes are supported, as are pyramids containing multiple channels,
 Z sections, and/or timepoints.
 
