@@ -262,7 +262,7 @@ public class MakeTestOmeTiff {
     if (isModulo) {
       meta.setXMLAnnotationID("Annotation:Modulo:0", 0);
       meta.setXMLAnnotationNamespace("openmicroscopy.org/omero/dimension/modulo", 0);
-      meta.setXMLAnnotationDescription("For a description of how 6D, 7D, and 8D data is stored using the Modulo extension see http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html", 0);
+      meta.setXMLAnnotationDescription("For a description of how 6D, 7D, and 8D data is stored using the Modulo extension see https://docs.openmicroscopy.org/latest/ome-model/developers/6d-7d-and-8d-storage.html", 0);
       StringBuilder moduloBlock = new StringBuilder();
       
       moduloBlock.append("<Modulo namespace=\"http://www.openmicroscopy.org/Schemas/Additions/2011-09\">");

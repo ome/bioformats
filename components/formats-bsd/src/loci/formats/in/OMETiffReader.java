@@ -72,7 +72,7 @@ import ome.xml.model.primitives.Timestamp;
 
 /**
  * OMETiffReader is the file format reader for
- * <a href="http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/">OME-TIFF</a>
+ * <a href="https://docs.openmicroscopy.org/latest/ome-model/ome-tiff/">OME-TIFF</a>
  * files.
  */
 public class OMETiffReader extends FormatReader {

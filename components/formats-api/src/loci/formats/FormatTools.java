@@ -382,7 +382,7 @@ public final class FormatTools {
 
   /** URL of OME-TIFF web page. */
   public static final String URL_OME_TIFF =
-    "http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/";
+    "https://docs.openmicroscopy.org/latest/ome-model/ome-tiff/";
 
   // -- Constructor --
 
