@@ -145,25 +145,6 @@ public class NetCDFServiceImpl extends AbstractService
   }
 
   /* (non-Javadoc)
-   * @see loci.formats.NetCDFService#getVariableDataType(java.lang.String)
-   */
-  @Override
-  public String getVariableDataType(String path) throws ServiceException {
-  
-    String groupName = getDirectory(path);
-    String variableName = getName(path);
-    Group group = getGroup(groupName);
-    
-    Variable variable = group.findVariable(variableName);
-    if (variable == null) {
-      throw new ServiceException("Variable " + "\"" + variableName + "\"" + 
-        " from group " + "\"" + groupName + "\"" + " could not be read");
-    }
-  
-    return variable.getDataType().toString();
-  }
-
-  /* (non-Javadoc)
    * @see loci.formats.NetCDFService#getVariableValue(java.lang.String)
    */
   @Override
