@@ -374,7 +374,7 @@ public final class FormatTools {
 
   /** URL of Bio-Formats web page. */
   public static final String URL_BIO_FORMATS =
-    "http://www.openmicroscopy.org/site/products/bio-formats";
+    "https://www.openmicroscopy.org/bio-formats";
 
   /** URL of 'Bio-Formats as a Java Library' web page. */
   public static final String URL_BIO_FORMATS_LIBRARIES =
