@@ -882,7 +882,7 @@ public class TiffParser {
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
-      ifd.getIFDIntValue(IFD.FILL_ORDER) == 1 &&
+      ifd.getIFDIntValue(IFD.FILL_ORDER) != 2 &&
       numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
       in.length() >= stripOffsets[0] + stripByteCounts[0])
     {
