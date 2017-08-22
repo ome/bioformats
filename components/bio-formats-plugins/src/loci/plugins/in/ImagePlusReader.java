@@ -623,7 +623,8 @@ public class ImagePlusReader implements StatusReporter {
       }
       filename = filename.replaceAll(FormatTools.CHANNEL_NUM, channelString.toString() + " ");
 
-      if (coordinates[1] < sizeC) {
+      int channelCount = retrieve.getChannelCount(series);
+      if (coordinates[1] < channelCount) {
         String channelName = retrieve.getChannelName(series, coordinates[1]);
         if (channelName == null) channelName = String.valueOf(coordinates[1]);
         filename = filename.replaceAll(FormatTools.CHANNEL_NAME, channelName);
