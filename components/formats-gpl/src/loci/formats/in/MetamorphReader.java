@@ -1036,7 +1036,7 @@ public class MetamorphReader extends BaseTiffReader {
         Double expTime = exposureTime;
         Double xmlZPosition = null;
 
-        int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
+        int fileIndex = getIndex(0, coords[1], coords[2]) / getSizeZ();
         if (fileIndex >= 0) {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
