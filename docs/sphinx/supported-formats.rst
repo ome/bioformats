@@ -1129,7 +1129,7 @@ You can sort this table by clicking on any of the headings.
      - |Outstanding|
      - |Outstanding|
      - |Fair|
-     - |Outstanding|
+     - |Fair|
      - |no|
      - |yes|
      - |yes|

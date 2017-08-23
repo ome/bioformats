@@ -41,7 +41,7 @@ Openness: |Outstanding|
 
 Presence: |Fair|
 
-Utility: |Outstanding|
+Utility: |Fair|
 
 
 
