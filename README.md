@@ -12,7 +12,7 @@ Purpose
 
 Bio-Formats' primary purpose is to convert proprietary microscopy data into 
 an open standard called the OME data model, particularly into the OME-TIFF 
-file format. See the [statement of purpose](http://www.openmicroscopy.org/site/support/bio-formats/about/index.html) 
+file format. See the [statement of purpose](docs/sphinx/about/index.rst)
 for a thorough explanation and rationale.
 
 
@@ -20,29 +20,27 @@ Supported formats
 -----------------
 
 Bio-Formats supports [more than a hundred file
-formats](http://www.openmicroscopy.org/site/support/bio-formats/supported-formats.html).
+formats](docs/sphinx/supported-formats.rst).
 
 
 For users
 ---------
 
-[Many software
-packages](http://www.openmicroscopy.org/site/support/bio-formats/users/index.html)
+[Many software packages](docs/sphinx/users/index.rst)
 use Bio-Formats to read and write microscopy formats.
 
 
 For developers
 --------------
 
-You can use Bio-Formats to easily [support these formats in your
-software](http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html).
+You can use Bio-Formats to easily [support these formats in your software](docs/sphinx/developers/java-library.rst).
 
 
 More information
 ----------------
 
 For more information, see the [Bio-Formats web
-site](http://www.openmicroscopy.org/site/products/bio-formats).
+site](https://www.openmicroscopy.org/bio-formats).
 
 
 Pull request testing
@@ -59,7 +57,7 @@ following before submitting a pull request:
  * test at least one file in each affected format, using the ```showinf```
    command
  * internal developers only: [run the data
-   tests](http://www.openmicroscopy.org/site/support/bio-formats/developers/commit-testing.html)
+   tests](docs/sphinx/developers/commit-testing.rst)
    against directories corresponding to the affected format(s)
  * make sure that your commits contain the correct authorship information and,
    if necessary, a signed-off-by line
