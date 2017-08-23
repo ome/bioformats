@@ -38,6 +38,8 @@ import loci.common.Constants;
 import loci.common.Location;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
+import loci.formats.FormatTools;
+
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;

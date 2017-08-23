@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 import loci.common.services.AbstractService;
+import loci.formats.FormatTools;
 
 import ch.systemsx.cisd.base.mdarray.MDByteArray;
 import ch.systemsx.cisd.base.mdarray.MDIntArray;
