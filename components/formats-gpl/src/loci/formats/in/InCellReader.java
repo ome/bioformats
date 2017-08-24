@@ -42,6 +42,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Binning;
@@ -633,6 +634,7 @@ public class InCellReader extends FormatReader {
         int field = getFieldFromSeries(i);
         int timepoint = oneTimepointPerSeries ?
           i % channelsPerTimepoint.size() : 0;
+        Double[][] minMax = new Double[getEffectiveSizeC()][2];
         for (int time=0; time<getSizeT(); time++) {
           if (!oneTimepointPerSeries) timepoint = time;
           int c = channelsPerTimepoint.get(timepoint).intValue();
@@ -650,6 +652,18 @@ public class InCellReader extends FormatReader {
             store.setPlanePositionX(posX.get(field), i, plane);
             store.setPlanePositionY(posY.get(field), i, plane);
             store.setPlanePositionZ(img.zPosition, i, plane);
+
+            int channel = getZCTCoords(plane)[1];
+            if (img.min != null && (minMax[channel][0] == null ||
+              img.min < minMax[channel][0]))
+            {
+              minMax[channel][0] = img.min;
+            }
+            if (img.max != null && (minMax[channel][1] == null ||
+              img.max > minMax[channel][1]))
+            {
+              minMax[channel][1] = img.max;
+            }
           }
         }
 
@@ -681,6 +695,11 @@ public class InCellReader extends FormatReader {
             if (gain != null) {
               store.setDetectorSettingsGain(gain, i, q);
             }
+          }
+          LOGGER.trace("series {} channel {}: min = {}, max = {}", i, q, minMax[q][0], minMax[q][1]);
+          if (store instanceof IMinMaxStore) {
+            IMinMaxStore minMaxStore = (IMinMaxStore) store;
+            minMaxStore.setChannelGlobalMinMax(q, minMax[q][0], minMax[q][1], i);
           }
         }
         if (temperature != null) {
@@ -732,6 +751,7 @@ public class InCellReader extends FormatReader {
     private int nChannels = 0;
     private boolean doT = true;
     private boolean doZ = true;
+    private Image lastImage = null;
 
     @Override
     public void endElement(String uri, String localName, String qName) {
@@ -828,6 +848,13 @@ public class InCellReader extends FormatReader {
         img.isTiff = currentImageFile.endsWith(".tif") ||
           currentImageFile.endsWith(".tiff");
         imageFiles[wellRow * wellCols + wellCol][field][t][index] = img;
+        lastImage = img;
+      }
+      else if (qName.equals("MinMaxMean")) {
+        if (lastImage != null) {
+          lastImage.min = DataTools.parseDouble(attributes.getValue("min"));
+          lastImage.max = DataTools.parseDouble(attributes.getValue("max"));
+        }
       }
       else if (qName.equals("offset_point")) {
         fieldCount++;
@@ -1082,6 +1109,8 @@ public class InCellReader extends FormatReader {
     public boolean isTiff;
     public Double deltaT, exposure;
     public Length zPosition;
+    public Double min;
+    public Double max;
   }
 
 }
