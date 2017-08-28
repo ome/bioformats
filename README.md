@@ -12,28 +12,28 @@ Purpose
 
 Bio-Formats' primary purpose is to convert proprietary microscopy data into 
 an open standard called the OME data model, particularly into the OME-TIFF 
-file format. See the [statement of purpose](docs/sphinx/about/index.rst)
-for a thorough explanation and rationale.
+file format. See [About Bio-Formats](https://docs.openmicroscopy.org/latest/bio-formats/about/index.html)
+for further information.
 
 
 Supported formats
 -----------------
 
 Bio-Formats supports [more than a hundred file
-formats](docs/sphinx/supported-formats.rst).
+formats](https://docs.openmicroscopy.org/latest/bio-formats/supported-formats.html).
 
 
 For users
 ---------
 
-[Many software packages](docs/sphinx/users/index.rst)
+[Many software packages](https://docs.openmicroscopy.org/latest/bio-formats/users/index.html)
 use Bio-Formats to read and write microscopy formats.
 
 
 For developers
 --------------
 
-You can use Bio-Formats to easily [support these formats in your software](docs/sphinx/developers/java-library.rst).
+You can use Bio-Formats to easily [support these formats in your software](https://docs.openmicroscopy.org/latest/bio-formats/developers/java-library.html).
 
 
 More information

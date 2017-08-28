@@ -304,9 +304,9 @@
     <developer>
       <id>callan</id>
       <name>Chris Allan</name>
-      <email>callan@lifesci.dundee.ac.uk</email>
+      <email>callan@glencoesoftware.com</email>
       <url>https://glencoesoftware.com/chris-allan.html</url>
-      <organization>Swedlow Lab, University of Dundee</organization>
+      <organization>Glencoe Software</organization>
       <organizationUrl>https://glencoesoftware.com</organizationUrl>
       <roles>
         <role>architect</role>
