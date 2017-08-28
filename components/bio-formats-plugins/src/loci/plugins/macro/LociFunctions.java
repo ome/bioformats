@@ -725,6 +725,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- dimension order.");
       IJ.log("Ext.getMetadataValue(field, value)");
       IJ.log("-- Obtains the specified metadata field's value.");
+      IJ.log("Ext.getSeriesMetadataValue(field, value)");
+      IJ.log("-- Obtains the specified series metadata field's value.");
       IJ.log("Ext.getSeriesName(seriesName)");
       IJ.log("-- Obtains the name of the current series.");
       IJ.log("Ext.getImageCreationDate(creationDate)");
