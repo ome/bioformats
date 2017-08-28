@@ -486,7 +486,7 @@ public class ImarisHDFReader extends FormatReader {
       if (value == null) continue;
       value = value.trim();
 
-      if (name.equals("X") || name.equals("ImageSizeX")) {
+      if (name.equals("X") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeX"))) {
         try {
           ms0.sizeX = Integer.parseInt(value);
         }
@@ -494,7 +494,7 @@ public class ImarisHDFReader extends FormatReader {
           LOGGER.trace("Failed to parse '" + name + "'", e);
         }
       }
-      else if (name.equals("Y") || name.equals("ImageSizeY")) {
+      else if (name.equals("Y") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeY"))) {
         try {
           ms0.sizeY = Integer.parseInt(value);
         }
@@ -502,7 +502,7 @@ public class ImarisHDFReader extends FormatReader {
           LOGGER.trace("Failed to parse '" + name + "'", e);
         }
       }
-      else if (name.equals("Z") || name.equals("ImageSizeZ")) {
+      else if (name.equals("Z") || (attr.startsWith("DataSet/ResolutionLevel_0") && name.equals("ImageSizeZ"))) {
         try {
           ms0.sizeZ = Integer.parseInt(value);
         }
@@ -536,7 +536,7 @@ public class ImarisHDFReader extends FormatReader {
         int slash = attr.indexOf("/", 24);
         int n = Integer.parseInt(attr.substring(24, slash == -1 ?
           attr.length() : slash));
-        if (n == seriesCount) seriesCount++;
+        if (n >= seriesCount) seriesCount = n + 1;
       }
 
       if (attr.startsWith("DataSetInfo/Channel_")) {
