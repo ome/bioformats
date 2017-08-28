@@ -368,8 +368,10 @@ public class OperettaReader extends FormatReader {
     store.setInstrumentID(instrument, 0);
     String objective = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objective, 0, 0);
-    store.setObjectiveNominalMagnification(planes[0][0].magnification, 0, 0);
-    store.setObjectiveLensNA(planes[0][0].lensNA, 0, 0);
+    if (planes[0][0] != null) {
+      store.setObjectiveNominalMagnification(planes[0][0].magnification, 0, 0);
+      store.setObjectiveLensNA(planes[0][0].lensNA, 0, 0);
+    }
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateRows(new PositiveInteger(handler.getPlateRows()), 0);
@@ -408,7 +410,9 @@ public class OperettaReader extends FormatReader {
           store.setPlateAcquisitionWellSampleRef(
             wellSampleID, 0, 0, imageIndex);
 
-          store.setImageAcquisitionDate(planes[imageIndex][0].absoluteTime, imageIndex);
+          if (planes[imageIndex][0] != null && planes[imageIndex][0].absoluteTime != null) {
+            store.setImageAcquisitionDate(planes[imageIndex][0].absoluteTime, imageIndex);
+          }
         }
       }
     }
