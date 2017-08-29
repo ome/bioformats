@@ -694,7 +694,12 @@ public class NativeND2Reader extends FormatReader {
 
             blockCount --; // one was already added by the outer blockCount ++;
 
-            in.seek(lastImage.position + lastImage.length);
+            if (lastImage.position + lastImage.length >= in.length()) {
+              in.seek(lastImage.position + 16);
+            }
+            else {
+              in.seek(lastImage.position + lastImage.length);
+            }
 
             continue;
 
@@ -1112,8 +1117,10 @@ public class NativeND2Reader extends FormatReader {
       }
 
       boolean allEqual = true;
+      long offsetDiff = imageOffsets.get(0) - imageLengths.get(0)[1];
       for (int i=1; i<imageOffsets.size(); i++) {
-        if (imageLengths.get(i)[1] != imageLengths.get(0)[1]) {
+        long nextOffsetDiff = imageOffsets.get(i) - imageLengths.get(i)[1];
+        if (imageLengths.get(i)[1] != imageLengths.get(0)[1] && offsetDiff != nextOffsetDiff) {
           allEqual = false;
           break;
         }
@@ -1127,12 +1134,14 @@ public class NativeND2Reader extends FormatReader {
             int check = imageLengths.get(i)[2];
             int length = imageLengths.get(i)[1] - 8;
             if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
-              if (i == 0) {
-                fixByteCounts = true;
+              if (imageOffsets.get(i) - length != offsetDiff + 8) {
+                if (i == 0) {
+                  fixByteCounts = true;
+                }
+                imageOffsets.remove(i);
+                imageLengths.remove(i);
+                i--;
               }
-              imageOffsets.remove(i);
-              imageLengths.remove(i);
-              i--;
             }
           }
         }
