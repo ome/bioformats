@@ -44,6 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -97,6 +98,9 @@ public class LIFReader extends FormatReader {
 
   /** The encoding used in this file.*/
   private static final String ENCODING = "ISO-8859-1";
+
+  private static final String LOGO_FILE = "LeicaLogo.jpg";
+  private static final String STYLESHEET_FILE = "LASAF_CIP.xsl";
 
   private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
@@ -391,6 +395,38 @@ public class LIFReader extends FormatReader {
     in.seek(posInFile);
   }
 
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    final List<String> files = new ArrayList<String>();
+    files.add(currentId);
+
+    Location currentFile = new Location(currentId).getAbsoluteFile();
+    Location parent = currentFile.getParentFile();
+    if (parent != null && getSeries() < imageNames.length &&
+      imageNames[getSeries()] != null)
+    {
+      // look for an XML file with the same name as this series
+      Location xmlFile = new Location(parent, imageNames[getSeries()].trim() + ".xml");
+      if (xmlFile.exists()) {
+        files.add(xmlFile.getAbsolutePath());
+      }
+
+      Location logoFile = new Location(parent, LOGO_FILE);
+      if (logoFile.exists()) {
+        files.add(logoFile.getAbsolutePath());
+      }
+
+      Location stylesheetFile = new Location(parent, STYLESHEET_FILE);
+      if (stylesheetFile.exists()) {
+        files.add(stylesheetFile.getAbsolutePath());
+      }
+    }
+
+    return files.toArray(new String[files.size()]);
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   @Override
   public void close(boolean fileOnly) throws IOException {
@@ -564,6 +600,7 @@ public class LIFReader extends FormatReader {
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
+    LOGGER.trace(xml);
 
     translateMetadata(getMetadataRoot(xml));
 
