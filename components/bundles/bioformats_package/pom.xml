@@ -17,7 +17,7 @@
 
   <name>bioformats_package bundle</name>
   <description>A bundle of Bio-Formats and dependencies, without slf4j bindings.</description>
-  <url>https://openmicroscopy.org/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
