@@ -70,24 +70,20 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>netcdf4</artifactId>
+      <artifactId>cdm</artifactId>
       <version>4.6.10</version>
       <exclusions>
         <exclusion>
+          <groupId>com.amazonaws</groupId>
+          <artifactId>aws-java-sdk-s3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.beust</groupId>
+          <artifactId>jcommander</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.google.protobuf</groupId>
           <artifactId>protobuf-java</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sleepycat</groupId>
-          <artifactId>je</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jna</groupId>
-          <artifactId>jna</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-httpclient</groupId>
-          <artifactId>commons-httpclient</artifactId>
         </exclusion>
         <exclusion>
           <groupId>edu.ucar</groupId>
@@ -102,8 +98,8 @@
           <artifactId>jcip-annotations</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache-core</artifactId>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.jdom</groupId>
@@ -254,7 +250,6 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>edu.ucar:netcdf4</classpathDependencyExclude>
                 <classpathDependencyExclude>edu.ucar:cdm</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
