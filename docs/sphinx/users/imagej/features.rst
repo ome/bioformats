@@ -40,7 +40,7 @@ following features:
 - The **Bio-Formats Plugins Configuration** dialog is a useful way to
   configure the behavior of the Bio-Formats plugin or each file format. 
   The general tab allows you to configure features of the Bio-Formats plugin 
-  such as the display of the slice label (see :doc:`/options`).
+  such as the display of the slice label (see :doc:`/users/imagej/options`).
   The Formats tab lists supported file formats and toggles each format on or off, 
   which is useful if your file is detected as the wrong format. 
   It also toggles whether each format bypasses the importer options dialog through 
