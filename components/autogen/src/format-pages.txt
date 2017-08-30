@@ -1736,7 +1736,7 @@ reader = SISReader
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 versions = 1.0.0
-weHave = * a :doc:`specification document </developers/omero-pyramid>`\n
+weHave = * a :ref:`specification document <omero-pyramid>`\n
 * several OMERO Pyramid datasets\n
 * the ability to produce additional datasets
 pixelsRating = Outstanding

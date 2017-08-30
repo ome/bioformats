@@ -23,7 +23,7 @@ Reader: TiffReader (:bsd-reader:`Source Code <TiffReader.java>`, :doc:`Supported
 
 We currently have:
 
-* a :doc:`specification document </developers/omero-pyramid>`
+* a :ref:`specification document <omero-pyramid>`
 * several OMERO Pyramid datasets
 * the ability to produce additional datasets
 
