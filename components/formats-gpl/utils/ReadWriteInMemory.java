@@ -36,7 +36,7 @@ import loci.formats.services.OMEXMLService;
 /**
  * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
  * @deprecated Class has been moved to documentation examples and is available for download 
- * from http://www.openmicroscopy.org/site/support/bio-formats/developers/in-memory.html
+ * from https://docs.openmicroscopy.org/latest/bio-formats/developers/in-memory.html
  */
 @Deprecated
 public class ReadWriteInMemory {

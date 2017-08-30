@@ -17,7 +17,7 @@
 
   <name>LOCI Tools bundle</name>
   <description>An all-in-one bundle of LOCI libraries.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>

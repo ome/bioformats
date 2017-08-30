@@ -56,7 +56,7 @@ public final class LibraryChecker {
 
   /** URL for Bio-Formats web page. */
   public static final String URL_BF_SOFTWARE =
-    "http://www.openmicroscopy.org/site/products/bio-formats";
+    "https://www.openmicroscopy.org/bio-formats";
 
   // -- Constructor --
 

@@ -605,8 +605,10 @@ public class ImageViewer extends JFrame implements ActionListener,
         "<br>Version " + FormatTools.VERSION + " (VCS revision " +
         FormatTools.VCS_REVISION + "), built on " +
         FormatTools.DATE + "<br><br>See <a href=\"" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html\">" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html</a>" +
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/users/index.html\">" +
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/users/index.html</a>" +
         "<br>for help with using Bio-Formats.";
       ImageIcon bioFormatsLogo = new ImageIcon(
           IFormatHandler.class.getResource("bio-formats-logo.png"));

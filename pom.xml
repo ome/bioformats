@@ -12,7 +12,7 @@
 
   <name>Bio-Formats projects</name>
   <description>Umbrella project for the Bio-Formats software project.</description>
-  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <url>https://www.openmicroscopy.org/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <modules>

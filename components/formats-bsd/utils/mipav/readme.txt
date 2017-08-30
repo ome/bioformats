@@ -4,7 +4,7 @@ MIPAV plugin for opening life sciences images using Bio-Formats.
 Steps to try out the plugin:
 
 1) Download the bioformats_package.jar trunk build from:
-     http://www.openmicroscopy.org/site/products/bio-formats/downloads
+     https://www.openmicroscopy.org/bio-formats/downloads
    and save it in your MIPAV directory.
 
 2) Compile the plugin with:

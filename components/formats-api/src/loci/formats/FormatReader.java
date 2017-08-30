@@ -880,8 +880,8 @@ public abstract class FormatReader extends FormatHandler
       throw new FormatException("Image plane too large. Only 2GB of data can " +
         "be extracted at one time. You can workaround the problem by opening " +
         "the plane in tiles; for further details, see: " +
-        "http://www.openmicroscopy.org/site/support/bio-formats/about/" +
-        "bug-reporting.html#common-issues-to-check", e);
+        "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
+        "/about/bug-reporting.html#common-issues-to-check", e);
     }
     return openBytes(no, newBuffer, x, y, w, h);
   }

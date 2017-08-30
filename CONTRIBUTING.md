@@ -1,10 +1,10 @@
 # Contributing to Bio-Formats
 
 Guidance for contributing to OME projects in general can be found at
-http://www.openmicroscopy.org/site/support/contributing/
+https://docs.openmicroscopy.org/contributing/
 
 Developer documentation specifically for Bio-Formats is at
-http://www.openmicroscopy.org/site/support/bio-formats/developers/
+https://docs.openmicroscopy.org/bio-formats/
 
 The README file gives instructions for testing your code before opening a PR,
 please ensure you read these.
@@ -22,7 +22,7 @@ please ensure you read these.
 * We may need you to submit some test data
   [via our QA system](http://qa.openmicroscopy.org.uk/qa/upload/). If the
   files are particularly large (> ~2 GB), contact the
-  [mailing list](http://www.openmicroscopy.org/site/community/mailing-lists)
+  [mailing list](https://www.openmicroscopy.org/support)
   and we will get back to you with secure upload details.
 
 ## External Contributors
@@ -50,13 +50,13 @@ please ensure you read these.
 ## Contributing to Bio-Formats Documentation
 
 The documentation hosted at
-http://www.openmicroscopy.org/site/support/bio-formats/ is built from the
+https://docs.openmicroscopy.org/bio-formats/ is built from the
 `/docs/sphinx/` directory. Contributions are welcome but please follow the
 style guidance from the
 [OME Documentation Repository README](https://github.com/openmicroscopy/ome-documentation/blob/develop/README.rst#conventions-used).
 
 Documentation for new supported formats is auto-generated so it is best to
-contact the [mailing list](http://www.openmicroscopy.org/site/community/mailing-lists)
+contact the [mailing list](https://www.openmicroscopy.org/support)
 before embarking on such a change, or submit your new reader code and let one
 of the main OME team deal with the documentation for you.
 
