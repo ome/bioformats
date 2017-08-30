@@ -1727,6 +1727,10 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("Leica Image File Format")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
             continue;
@@ -2395,6 +2399,13 @@ public class FormatReaderTest {
             // the pattern reader only picks up pattern files
             if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
+            {
+              continue;
+            }
+
+            // ignore companion files for Leica LIF
+            if (!used[i].toLowerCase().endsWith(".lif") &&
+              r instanceof LIFReader)
             {
               continue;
             }
