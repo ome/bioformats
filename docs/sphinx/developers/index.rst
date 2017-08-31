@@ -40,7 +40,6 @@ Using Bio-Formats as a Java library
     export2
     tiling
     wsi
-    omero-pyramid
     in-memory
     logging
     conversion
