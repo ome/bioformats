@@ -933,7 +933,9 @@ public class NativeND2Reader extends FormatReader {
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            zOffset = doubleOffset;
+            if (zOffset == 0) {
+              zOffset = doubleOffset;
+            }
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
