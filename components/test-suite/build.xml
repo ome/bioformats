@@ -179,6 +179,7 @@ Type "ant -p" for a list of targets.
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
       <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemory"/>
     </testng>
     <fail if="failedTest"/>
   </target>
