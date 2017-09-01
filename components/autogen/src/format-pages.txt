@@ -1732,6 +1732,22 @@ presenceRating = Fair
 utilityRating = Good
 reader = SISReader
 
+[OMERO Pyramid]
+developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+bsd = yes
+versions = 1.0.0
+weHave = * a :ref:`specification document <omero-pyramid>`\n
+* several OMERO Pyramid datasets\n
+* the ability to produce additional datasets
+pixelsRating = Outstanding
+metadataRating = Outstanding
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Fair
+reader = TiffReader
+mif = true
+pyramid = yes
+
 [OME-TIFF]
 indexExtensions = .ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf
 extensions = :model_doc:`.ome.tiff, .ome.tif, .ome.tf2, .ome.tf8, .ome.btf <ome-tiff/index.html>`
