@@ -375,8 +375,8 @@ public class IFD extends HashMap<Integer, Object> {
 
     // sanitize line feeds
     if (value != null) {
-      value = value.replaceAll("\r\n", "\n"); // CR-LF to LF
-      value = value.replaceAll("\r", "\n"); // CR to LF
+      value = value.replace("\r\n", "\n"); // CR-LF to LF
+      value = value.replace('\r', '\n'); // CR to LF
     }
 
     return value;
