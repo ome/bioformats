@@ -19,6 +19,7 @@ it within ImageJ and Fiji:
     imagej/installing
     imagej/load-images
     imagej/managing-memory
+    imagej/options
 
 Command line tools
 ==================

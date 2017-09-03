@@ -38,12 +38,14 @@ following features:
   planes or time points.
 
 - The **Bio-Formats Plugins Configuration** dialog is a useful way to
-  configure the behavior of each file format. The Formats tab lists supported
-  file formats and toggles each format on or off, which is useful if your file
-  is detected as the wrong format. It also toggles whether each format
-  bypasses the importer options dialog through the "Windowless" checkbox.
-  You can also configure any specific option for each format (see
-  :doc:`/formats/options`). The Libraries tab provides a list of available 
+  configure the behavior of the Bio-Formats plugin or each file format. 
+  The general tab allows you to configure features of the Bio-Formats plugin 
+  such as the display of the slice label (see :doc:`/users/imagej/options`).
+  The Formats tab lists supported file formats and toggles each format on or off, 
+  which is useful if your file is detected as the wrong format. 
+  It also toggles whether each format bypasses the importer options dialog through 
+  the "Windowless" checkbox. You can also configure any specific option for each format 
+  (see :doc:`/formats/options`). The Libraries tab provides a list of available 
   helper libraries used by Bio-Formats.
 
 - The **Bio-Formats Plugins Shortcut Window** opens a small window with a
