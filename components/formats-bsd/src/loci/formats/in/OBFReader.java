@@ -198,7 +198,6 @@ public class OBFReader extends FormatReader
         if (service.validateOMEXML(ome_xml)) {
           service.convertMetadata( ome_xml, ome ) ;
           parsedXML = true;
-          MetadataTools.populatePixels(ome, this, false, false);
         }
       }
       catch (DependencyException exception) 
@@ -217,6 +216,7 @@ public class OBFReader extends FormatReader
     if (fileVersion <= 1 || !parsedXML)
     {
       MetadataTools.populatePixels(ome, this);
+
       for (int series = 0; series != core.size(); ++ series)
       {
         CoreMetadata obf = core.get(series);
