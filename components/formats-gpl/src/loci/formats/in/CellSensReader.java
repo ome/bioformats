@@ -1423,7 +1423,7 @@ public class CellSensReader extends FormatReader {
         LOGGER.debug("  extendedField = {}", extendedField);
         LOGGER.debug("  realType = {}", realType);
 
-        if (tag < 0) {
+        if (tag < COLLECTION_VOLUME) {
           if (!inlineData && dataSize + vsi.getFilePointer() < vsi.length()) {
             vsi.skipBytes(dataSize);
           }
