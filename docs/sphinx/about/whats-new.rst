@@ -12,7 +12,7 @@ File format fixes and improvements:
 * Nikon NIS-Elements ND2
    - fixed a bug in offset calculation when native chunk map is being used
 * MetaMorph
-   - corrected delta T and position Z values for multi channel images when channels are 
+   - corrected delta T and position Z values for multi-channel images when channels are 
      split across multiple files
 * Amnis FlowSight
    - better handling of exceptions in isThisType method (thanks to Claire McQuin)
@@ -22,7 +22,7 @@ File format fixes and improvements:
 Bug fixes and improvements:
 
 * reviewed and corrected URLs throughout the Bio-Formats source code
-* updated Bio-Formats Macro Extensions list with missing function
+* updated Bio-Formats Macro Extensions list with a missing function
 * added a new option in Bio-Formats plugins to configure the slice label display using patterns
 
 Documentation improvements:
