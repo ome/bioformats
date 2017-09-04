@@ -20,6 +20,7 @@ it within ImageJ and Fiji:
     imagej/load-images
     imagej/managing-memory
     imagej/options
+    /formats/options
 
 Command line tools
 ==================
@@ -41,7 +42,7 @@ for carrying out a variety of tasks:
     comlinetools/ijview
     comlinetools/xmlindent
     comlinetools/mkfake
-
+    /formats/options
 
 
 OMERO
