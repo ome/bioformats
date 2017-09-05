@@ -46,7 +46,9 @@ Using Bio-Formats as a Java library
     matlab-dev
     python-dev
     non-java-code
-    /formats/options
+
+.. seealso::
+   :doc:`/formats/options`
 
 Using Bio-Formats as a native C++ library
 =========================================
