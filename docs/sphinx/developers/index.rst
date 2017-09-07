@@ -47,6 +47,9 @@ Using Bio-Formats as a Java library
     python-dev
     non-java-code
 
+.. seealso::
+   :doc:`/formats/options`
+
 Using Bio-Formats as a native C++ library
 =========================================
 
