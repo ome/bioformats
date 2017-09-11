@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -171,6 +172,7 @@ public class ImspectorReader extends FormatReader {
 
     int check = in.readShort();
     while (check != 3 && check != 2) {
+      in.seek(in.getFilePointer() - 1);
       check = in.readShort();
     }
 
@@ -182,8 +184,10 @@ public class ImspectorReader extends FormatReader {
     in.skipBytes(6);
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
-    m.sizeZ = in.readInt();
-    m.sizeT = in.readInt();
+    int originalZ = in.readInt();
+    int originalT = in.readInt();
+    m.sizeZ = originalZ;
+    m.sizeT = originalT;
     planesPerBlock.add(m.sizeT * m.sizeZ);
 
     in.skipBytes(16);
@@ -208,7 +212,8 @@ public class ImspectorReader extends FormatReader {
 
     int tileX = 1;
     int tileY = 1;
-    double timeBase = 1.0;
+    Double timeBase = null;
+    int realTimepoints = 1;
 
     // read through the file looking for metadata and pixels offsets
     // 0x8003 and 0xffff appear to be special markers for metadata sections
@@ -223,8 +228,13 @@ public class ImspectorReader extends FormatReader {
       }
       if (length == 0 && check == 65535) {
         in.skipBytes(46);
-        skipTagBlock();
-        in.skipBytes(50);
+        int tagBlockSize = skipTagBlock();
+        if (tagBlockSize == 0) {
+          in.skipBytes(26);
+        }
+        else {
+          in.skipBytes(50);
+        }
         findOffset();
         continue;
       }
@@ -311,9 +321,11 @@ public class ImspectorReader extends FormatReader {
             value = String.valueOf(in.readInt() == 1);
             break;
           case 2:
+          case 3:
           case 9:
           case 13:
           case 14:
+          case 17:
             key = value;
             value = String.valueOf(in.readFloat());
             break;
@@ -390,11 +402,28 @@ public class ImspectorReader extends FormatReader {
 
         addGlobalMeta(key, value);
 
-        if (key.equals("TCSPC  Z Length")) {
+        if (key.equals("TCSPC  Z Length") ||
+          key.equals("TDC  Z Length") ||
+          key.equals("DC-TCSPC T Length"))
+        {
           try {
-            timeBase = Double.parseDouble(value);
+            if (timeBase == null) {
+              timeBase = Double.parseDouble(value);
+            }
           }
           catch (NumberFormatException e) { }
+        }
+        else if (key.equals("xyz-Table Z Resolution")) {
+          int z = DataTools.parseDouble(value).intValue();
+          if (z == 1 && getSizeZ() > 1) {
+            originalT = getSizeT();
+            originalZ = getSizeZ();
+            m.sizeT *= getSizeZ();
+            m.sizeZ = 1;
+          }
+        }
+        else if (key.equals("Time Time Resolution")) {
+          realTimepoints = Integer.parseInt(value);
         }
 
         if (check1 == 255 && check2 == 255) {
@@ -412,6 +441,9 @@ public class ImspectorReader extends FormatReader {
       if (getSizeZ() == 1 || getSizeT() == 1) {
         m.sizeZ = 1;
         m.sizeT = m.imageCount;
+        if (m.imageCount % uniquePMTs.size() == 0) {
+          m.sizeT /= uniquePMTs.size();
+        }
       }
       LOGGER.debug("m.imageCount = {}", m.imageCount);
       m.moduloT.parentType = FormatTools.SPECTRA;
@@ -425,13 +457,24 @@ public class ImspectorReader extends FormatReader {
         m.dimensionOrder = "XYZTC";
       }
 
+      if (timeBase == null) {
+        timeBase = 1.0;
+      }
+
       // convert time base to picoseconds
       if (timeBase > 1) {
         timeBase *= 1000;
       }
 
-      m.moduloT.step = timeBase / m.sizeT;
-      m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
+      if (realTimepoints > 1) {
+        originalT = getSizeT() / realTimepoints;
+      }
+      else if (realTimepoints == 1 && originalT == 1) {
+        originalT = getSizeT();
+      }
+
+      m.moduloT.step = timeBase / originalT;
+      m.moduloT.end = m.moduloT.step * (originalT - 1);
       m.moduloT.unit = "ps";
       m.moduloT.typeDescription = "TCSPC";
     }
@@ -524,10 +567,11 @@ public class ImspectorReader extends FormatReader {
   }
 
   /** Skip an unknown tag. */
-  private void skipTagBlock() throws IOException {
+  private int skipTagBlock() throws IOException {
     in.skipBytes(1);
     int length = in.readShort();
     in.skipBytes(length);
+    return length;
   }
 
   /** Find the offset to the next block of pixel data. */
@@ -563,7 +607,7 @@ public class ImspectorReader extends FormatReader {
     // as far as we know, valid PMT names only start with "PMT" or "TCSPC",
     // depending upon the acquisition mode
     if (!uniquePMTs.contains(pmt) && (pmt.startsWith("PMT") ||
-      pmt.startsWith("TCSPC")))
+      pmt.indexOf("TCSPC") >= 0))
     {
       uniquePMTs.add(pmt);
     }
@@ -580,6 +624,7 @@ public class ImspectorReader extends FormatReader {
       newCount * planeSize < in.length() - in.getFilePointer() &&
       newCount > 0 && newCount * planeSize > 0)
     {
+      uniquePMTs.remove(0);
       planesPerBlock.remove(planesPerBlock.size() - 1);
       pixelsOffsets.remove(pixelsOffsets.size() - 1);
       m.sizeZ = newZ;
