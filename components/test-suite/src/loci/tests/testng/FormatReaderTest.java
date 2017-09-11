@@ -1732,6 +1732,17 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Companion file grouping non-ome-tiff files:
+          // setId must be called on the companion file
+          if (reader.getFormat().equals("OME-TIFF")) {
+            if (file.toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(base[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2195,6 +2206,16 @@ public class FormatReaderTest {
           // and only one reader, identifies the dataset as its own
           for (int j=0; j<readers.length; j++) {
             boolean result = readers[j].isThisType(used[i]);
+
+            // Companion file grouping non-ome-tiff files:
+            // setId must be called on the companion file
+            if (!result && readers[j] instanceof OMETiffReader &&
+                r.getCurrentFile().toLowerCase().endsWith(".companion.ome") &&
+                !OMETiffReader.checkSuffix(used[i],
+                                           OMETiffReader.OME_TIFF_SUFFIXES))
+            {
+              continue;
+            }
 
             // TIFF reader is allowed to redundantly green-light files
             if (result && readers[j] instanceof TiffDelegateReader) continue;
