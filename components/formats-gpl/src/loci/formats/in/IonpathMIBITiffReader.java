@@ -59,6 +59,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 	// -- Fields --
 
 	private HashMap<String,Integer> seriesTypes = new HashMap<String,Integer>();
+	private List<Integer> seriesIFDs = new ArrayList<Integer>();
 	private List<String> channelIDs = new ArrayList<String>();
 	private List<String> channelNames = new ArrayList<String>();
 	private Hashtable<String, Object> simsDescription = new Hashtable<String,Object>();
@@ -77,8 +78,8 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 	/* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
 	@Override
 	public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-		TiffParser tp = new TiffParser(stream);
-		IFD ifd = tp.getFirstIFD();
+		TiffParser tiffParser = new TiffParser(stream);
+		IFD ifd = tiffParser.getFirstIFD();
 		if (ifd == null) return false;
 		String software = ifd.getIFDTextValue(IFD.SOFTWARE);
 		if (software == null) return false;
@@ -96,7 +97,8 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 		if (tiffParser == null) {
 			initTiffParser();
 		}
-		tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
+		tiffParser.getSamples(
+		  ifds.get(seriesIFDs.get(getSeries()) + no), buf, x, y, w, h);
 		return buf;
 	}
 
@@ -113,7 +115,8 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 		
 		core.clear();		
 		
-		for (IFD ifd : ifds) {
+		for (int i=0; i<ifds.size(); i++) {
+		  IFD ifd = ifds.get(i);
 			Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
 			if (description == null) {
 				throw new FormatException("Image description is mandatory.");
@@ -140,7 +143,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 				  }
 				  String target = jsonDescription.getString("channel.target");
 				  channelIDs.add(mass);
-					channelNames.add(target != "null" ? target : mass);
+					channelNames.add(target != null && target != "null" ? target : mass);
 				}
 			} catch (JSONException e) {
 				throw new FormatException("Unexpected format in SIMS description JSON.");
@@ -158,6 +161,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 			else {
 				seriesIndex = seriesTypes.size();
 				seriesTypes.put(imageType, seriesIndex);
+				seriesIFDs.add(i);
 
 				core.add(new CoreMetadata()); 
 				setSeries(seriesIndex);
@@ -202,7 +206,6 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 					ms.seriesMetadata = simsDescription;
 				}
 			}
-
 		}
 	}
 
