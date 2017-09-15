@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONObject;
@@ -223,7 +224,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 		    (String) simsDescription.get("mibi.description"), simsIndex);    
 
 		String currentFile = FilenameUtils.getName(this.getCurrentFile());
-		for (HashMap.Entry<String, Integer> entry : seriesTypes.entrySet()) {
+		for (Map.Entry<String, Integer> entry : seriesTypes.entrySet()) {
 			String key = entry.getKey();
 			if (key != null) {
 				store.setImageID(
