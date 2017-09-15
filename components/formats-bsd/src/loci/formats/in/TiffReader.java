@@ -255,6 +255,7 @@ public class TiffReader extends BaseTiffReader {
 
     int z = 1, t = 1;
     int c = getSizeC();
+    int images = 1;
 
     CoreMetadata m = core.get(0);
 
@@ -273,6 +274,9 @@ public class TiffReader extends BaseTiffReader {
       if (token.startsWith("channels=")) c = parseInt(value);
       else if (token.startsWith("slices=")) z = parseInt(value);
       else if (token.startsWith("frames=")) t = parseInt(value);
+      else if (token.startsWith("images=")) {
+        images = parseInt(value);
+      }
       else if (token.startsWith("mode=")) {
         put("Color mode", value);
       }
@@ -318,10 +322,10 @@ public class TiffReader extends BaseTiffReader {
       m.sizeT = t;
       m.sizeC *= c;
     }
-    else if (ifds.size() == 1 && z * t > ifds.size() &&
+    else if (ifds.size() == 1 && images > ifds.size() &&
       ifds.get(0).getCompression() == TiffCompression.UNCOMPRESSED)
     {
-      // file is likely corrupt (missing end IFDs)
+      // file is likely corrupt or larger than 4GB (missing end IFDs)
       //
       // ImageJ writes TIFF files like this:
       // IFD #0
