@@ -933,7 +933,9 @@ public class NativeND2Reader extends FormatReader {
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            zOffset = doubleOffset;
+            if (zOffset == 0) {
+              zOffset = doubleOffset;
+            }
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
@@ -1854,6 +1856,7 @@ public class NativeND2Reader extends FormatReader {
    */
   private void iterateIn(RandomAccessInputStream in, Long stop) {
     Object value; // We don't know if attribute will be int, double, string....
+    Double zHigh = null, zLow = null;
 
     try {
       Integer currentColor = null;
@@ -1971,6 +1974,12 @@ public class NativeND2Reader extends FormatReader {
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
         }
+        else if (name.equals("dZHigh")) {
+          zHigh = DataTools.parseDouble(value.toString());
+        }
+        else if (name.equals("dZLow")) {
+          zLow = DataTools.parseDouble(value.toString());
+        }
         else if (name.equals("dPosX")) {
           positionCount++;
         }
@@ -1982,6 +1991,10 @@ public class NativeND2Reader extends FormatReader {
     }
     catch (Exception e) {
       LOGGER.debug("", e);
+    }
+
+    if (zHigh != null && zLow != null && trueSizeZ != null && trueSizeZ > 0) {
+      core.get(0).sizeZ = (int) (Math.ceil(Math.abs(zHigh - zLow) / trueSizeZ)) + 1;
     }
   }
 
