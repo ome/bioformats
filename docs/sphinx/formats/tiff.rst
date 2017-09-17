@@ -57,6 +57,19 @@ Utility: |Fair|
 Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). 
 Bio-Formats can save image stacks as TIFF or BigTIFF. 
 
+TIFF files written by ImageJ are also supported, including ImageJ TIFFs larger 
+than 4GB.  ImageJ TIFFs are detected based upon the text in the first IFD's 
+"ImageDescription" tag; this tag's value is then used to determine Z, C, and T 
+sizes as well as physical sizes and timestamps.  For ImageJ TIFFs larger than 
+4GB, a single IFD is expected (instead of one IFD per image plane).  The 
+"ImageDescription" is used to determine the number of images, the pixel data 
+for which are expected to be stored contiguously at the offset indicated in 
+the sole IFD.  This differs from standard TIFF and BigTIFF; if the 
+"ImageDescription" tag is missing or invalid, only the first image will be 
+read. 
+
 .. seealso:: 
   `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_ 
-  `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_
+  `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_ 
+  `ImageJ TIFF overview <https://imagej.net/TIFF>`_ 
+  `Source code for ImageJ's native TIFF reader <https://imagej.nih.gov/ij/developer/source/ij/io/TiffDecoder.java.html>`_
