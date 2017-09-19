@@ -1,6 +1,33 @@
 Version history
 ===============
 
+5.7.1 (2017 September 20)
+-------------------------
+
+File format fixes and improvements:
+
+* Nikon NIS-Elements ND2
+   - improved parsing of Z position values
+* LaVision Imspector
+   - corrected the value of time per FLIM channel
+   - fixed a bug which saw the Z and T dimensions swapped
+   - fixed a divide by zero exception
+   - added a fix for incorrect time-base and number of channels
+* TIFF
+   - added support for handling files with a FillOrder of 2 in which the bits in each 
+     byte are reversed
+   - improved support for multi channel ImageJ TIFF files greater than 4GB in size
+
+Performance improvements:
+
+* improved TIFF performance by using non-regexp String replacement (thanks to Thushara Wijeratna)
+* improved TIFF handling of Strings for large metadata (thanks to T. Alexander Popiel)
+
+Documentation improvements:
+
+* updated documentation to reference support for ImageJ TIFFs
+* added links to format options page to user and developer index pages
+
 5.7.0 (2017 September 4)
 ------------------------
 
