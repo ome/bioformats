@@ -16,7 +16,7 @@ File format fixes and improvements:
 * TIFF
    - added support for handling files with a FillOrder of 2 in which the bits in each 
      byte are reversed
-   - improved support for multi channel ImageJ TIFF files greater than 4GB in size
+   - improved support for multi-channel ImageJ TIFF files greater than 4GB in size
 
 Performance improvements:
 
