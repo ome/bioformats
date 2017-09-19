@@ -142,3 +142,10 @@ Usage tips
    is used, select :menuselection:`All files` or :menuselection:`All supported
    file types` in the ``Files of type`` box, as an extension will not be
    automatically added in those cases.
+
+-  Saving an open image using Bio-Formats must be done via
+   :menuselection:`Plugins > Bio-Formats > Bio-Formats Exporter` or the corresponding macro code.
+   :menuselection:`File > Save` and :menuselection:`File > Save As...` do not use Bio-Formats.
+   In particular, using :menuselection:`File > Save As...` to save a TIFF will result in an
+   ImageJ-specific TIFF being written.  While Bio-Formats can read ImageJ TIFFs, other software
+   may not; see :doc:`/formats/tiff` for additional information.
