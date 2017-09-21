@@ -1192,7 +1192,7 @@ public class NativeND2Reader extends FormatReader {
           availableBytes -= 4096;
         }
       }
-      if (planeSize > 0 &&
+      if (planeSize > 0 && imageOffsets.size() > 1 && 
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
         if (availableBytes < DataTools.safeMultiply64(planeSize, 6)) {
