@@ -116,6 +116,7 @@ public class EPSReader extends FormatReader {
 
     if (isTiff) {
       long[] offsets = ifds.get(0).getStripOffsets();
+      long[] byteCounts = ifds.get(0).getStripByteCounts();
       in.seek(offsets[0]);
 
       if (map == null) {
@@ -124,20 +125,26 @@ public class EPSReader extends FormatReader {
       }
 
       byte[] b = new byte[w * h];
-      in.skipBytes(2 * y * getSizeX());
+      int bpp = (int) (byteCounts[0] / (getSizeX() * getSizeY()));
+      in.skipBytes(bpp * y * getSizeX());
       for (int row=0; row<h; row++) {
-        in.skipBytes(x * 2);
+        in.skipBytes(x * bpp);
         for (int col=0; col<w; col++) {
-          b[row * w + col] = (byte) (in.readShort() & 0xff);
+          if (bpp == 1) {
+            b[row * w + col] = in.readByte();
+          }
+          else if (bpp == 2) {
+            b[row * w + col] = (byte) (in.readShort() & 0xff);
+          }
         }
-        in.skipBytes(2 * (getSizeX() - w - x));
+        in.skipBytes(bpp * (getSizeX() - w - x));
       }
 
       for (int i=0; i<b.length; i++) {
         int ndx = b[i] & 0xff;
         for (int j=0; j<getSizeC(); j++) {
           if (j < 3) {
-            buf[i*getSizeC() + j] = (byte) map[ndx + j*256];
+            buf[i*getSizeC() + j] = (byte) ((map[ndx + j*256] >> 8) & 0xff);
           }
           else {
             boolean zero =
@@ -236,6 +243,9 @@ public class EPSReader extends FormatReader {
       m.sizeZ = 1;
       m.sizeT = 1;
       m.sizeC = firstIFD.getSamplesPerPixel();
+      if (map != null && getSizeC() == 1) {
+        m.sizeC = 3;
+      }
       if (getSizeC() == 2) m.sizeC = 4;
       m.littleEndian = firstIFD.isLittleEndian();
       m.interleaved = true;
