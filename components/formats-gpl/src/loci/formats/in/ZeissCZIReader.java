@@ -1339,9 +1339,19 @@ public class ZeissCZIReader extends FormatReader {
         }
         else if (positionsZ != null && i < positionsZ.length) {
           int zIndex = getZCTCoords(plane)[0];
-          double step = zIndex * zStep.value().doubleValue();
-          Length pos = new Length(step + positionsZ[i].value(zStep.unit()).doubleValue(), zStep.unit());
-          store.setPlanePositionZ(pos, i, plane);
+          if (positionsZ[i] != null) {
+            if (zStep != null) {
+              double value = positionsZ[i].value(zStep.unit()).doubleValue();
+              if (zStep != null) {
+                value += zIndex * zStep.value().doubleValue();
+              }
+              Length pos = new Length(value, zStep.unit());
+              store.setPlanePositionZ(pos, i, plane);
+            }
+            else {
+              store.setPlanePositionZ(positionsZ[i], i, plane);
+            }
+          }
         }
 
         if (p.timestamp != null) {
