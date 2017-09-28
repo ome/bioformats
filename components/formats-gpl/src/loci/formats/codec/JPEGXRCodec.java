@@ -31,6 +31,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.ImageTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.services.JPEGXRService;
@@ -76,7 +77,33 @@ public class JPEGXRCodec extends BaseCodec {
   {
     initialize();
 
-    return service.decompress(buf);
+    byte[] uncompressed = service.decompress(buf);
+
+    if (options.interleaved) {
+      return uncompressed;
+    }
+
+    int bpp = options.bitsPerSample / 8;
+    int pixels = options.width * options.height;
+    int c = uncompressed.length / (pixels * bpp);
+
+    if (c == 1) {
+      return uncompressed;
+    }
+
+    byte[] deinterleaved = new byte[uncompressed.length];
+
+    for (int p=0; p<pixels; p++) {
+      for (int channel=0; channel<c; channel++) {
+        for (int b=0; b<bpp; b++) {
+          int bb = options.littleEndian ? b : bpp - b - 1;
+          deinterleaved[bpp * (channel * pixels + p) + bb] =
+            uncompressed[bpp * (p * c + channel) + b];
+        }
+      }
+    }
+
+    return deinterleaved;
   }
 
   // -- Helper methods --
