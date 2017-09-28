@@ -1635,6 +1635,9 @@ public class ZeissCZIReader extends FormatReader {
             if (dimension.start >= illuminations) {
               illuminations = dimension.start + 1;
             }
+            if (dimension.size < illuminations) {
+              illuminations = dimension.size;
+            }
             break;
           case 'B':
             if (dimension.start >= acquisitions) {
@@ -1785,6 +1788,9 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'I':
             i = dimension.start;
+            if (i >= illuminations) {
+              i = illuminations - 1;
+            }
             break;
           case 'B':
             if (extraIndex >= 0) {
