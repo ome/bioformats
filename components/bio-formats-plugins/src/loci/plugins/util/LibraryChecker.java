@@ -106,9 +106,7 @@ public final class LibraryChecker {
 
   /** Checks for a new enough version of the Java Runtime Environment. */
   public static boolean checkJava() {
-    String version = System.getProperty("java.version");
-    double ver = Double.parseDouble(version.substring(0, 3));
-    if (ver < 1.7) {
+    if (!IJ.isJava17()) {
       IJ.error("Bio-Formats Plugins",
         "Sorry, the Bio-Formats plugins require Java 1.7 or later.");
       return false;
