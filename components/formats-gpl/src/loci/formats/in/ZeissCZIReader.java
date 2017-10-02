@@ -3654,9 +3654,10 @@ public class ZeissCZIReader extends FormatReader {
           data = new LZWCodec().decompress(data, options);
           break;
         case JPEGXR:
-          options.maxBytes = directoryEntry.dimensionEntries[0].storedSize *
-            directoryEntry.dimensionEntries[1].storedSize *
-            getRGBChannelCount() * bpp;
+          options.width = directoryEntry.dimensionEntries[0].storedSize;
+          options.height = directoryEntry.dimensionEntries[1].storedSize;
+          options.maxBytes = options.width * options.height *
+            getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
           data = new JPEGXRCodec().decompress(data, options);
           break;
         case 104: // camera-specific packed pixels
