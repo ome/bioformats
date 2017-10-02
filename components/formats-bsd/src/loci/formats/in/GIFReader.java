@@ -34,6 +34,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
@@ -101,6 +103,8 @@ public class GIFReader extends FormatReader {
   private Vector<byte[]> images;
   private Vector<int[]> colorTables;
 
+  private transient Set<Integer> planesRead = new HashSet<Integer>();
+
   // -- Constructor --
 
   /** Constructs a new GIF reader. */
@@ -144,8 +148,8 @@ public class GIFReader extends FormatReader {
     act = colorTables.get(no);
 
     byte[] b = images.get(no);
-    if (no > 0 && transparency) {
-      byte[] prev = images.get(no - 1);
+    if (no > 0 && transparency && !planesRead.contains(no)) {
+      byte[] prev = planesRead.contains(no - 1) ? images.get(no - 1) : openBytes(no - 1);
       int idx = transIndex;
       if (idx >= 127) idx = 0;
       for (int i=0; i<b.length; i++) {
@@ -155,6 +159,7 @@ public class GIFReader extends FormatReader {
       }
       images.setElementAt(b, no);
     }
+    planesRead.add(no);
 
     for (int row=0; row<h; row++) {
       System.arraycopy(b, (row + y) * getSizeX() + x, buf, row*w, w);
