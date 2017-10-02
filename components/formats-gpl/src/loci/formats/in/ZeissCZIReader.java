@@ -3638,10 +3638,13 @@ public class ZeissCZIReader extends FormatReader {
       byte[] data = new byte[(int) dataSize];
       s.read(data);
 
+      int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       CodecOptions options = new CodecOptions();
       options.interleaved = isInterleaved();
       options.littleEndian = isLittleEndian();
-      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() * bpp;
+      options.bitsPerSample = bytesPerPixel * 8;
+      options.maxBytes =
+          getSizeX() * getSizeY() * getRGBChannelCount() * bytesPerPixel;
 
       switch (directoryEntry.compression) {
         case JPEG:
