@@ -31,7 +31,6 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
-import loci.formats.ImageTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.services.JPEGXRService;
