@@ -3621,7 +3621,6 @@ public class ZeissCZIReader extends FormatReader {
       s.order(isLittleEndian());
       s.seek(dataOffset);
 
-      int bpp = FormatTools.getBytesPerPixel(getPixelType());
       if (directoryEntry.compression == UNCOMPRESSED) {
         if (buf == null) {
           buf = new byte[(int) dataSize];
@@ -3657,7 +3656,7 @@ public class ZeissCZIReader extends FormatReader {
           options.width = directoryEntry.dimensionEntries[0].storedSize;
           options.height = directoryEntry.dimensionEntries[1].storedSize;
           options.maxBytes = options.width * options.height *
-            getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+            getRGBChannelCount() * bytesPerPixel;
           data = new JPEGXRCodec().decompress(data, options);
           break;
         case 104: // camera-specific packed pixels
