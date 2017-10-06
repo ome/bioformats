@@ -68,6 +68,11 @@ public class JPEGXRCodec extends BaseCodec {
   /**
    * The CodecOptions parameter should have the following fields set:
    *  {@link CodecOptions#maxBytes maxBytes}
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
    *
    * @see Codec#decompress(byte[], CodecOptions)
    */
