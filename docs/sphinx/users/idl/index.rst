@@ -25,4 +25,4 @@ Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite the requisite JAR files
-with the :downloads:`newer version <>` and restart IDL.
+with the `newer version <https://www.openmicroscopy.org/bio-formats/downloads/>`_ and restart IDL.

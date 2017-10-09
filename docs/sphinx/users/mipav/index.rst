@@ -39,5 +39,6 @@ See the :source:`readme file <components/formats-bsd/utils/mipav/readme.txt>`
 for more information.
 
 To upgrade, just overwrite the old **bioformats\_package.jar** with the
-:downloads:`latest one <>`. You may want to download the latest version of MIPAV first, to take advantage of new
+`latest one <https://www.openmicroscopy.org/bio-formats/downloads/>`_. You may
+want to download the latest version of MIPAV first, to take advantage of new
 features and bug-fixes.

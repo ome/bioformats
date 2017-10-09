@@ -14,8 +14,9 @@ Installation
 ------------
 
 Download the MATLAB toolbox from the Bio-Formats
-:downloads:`downloads page <>`. Unzip :file:`bfmatlab.zip` and add the
-unzipped :file:`bfmatlab` folder to your MATLAB path.
+`downloads page <https://www.openmicroscopy.org/bio-formats/downloads/>`_.
+Unzip :file:`bfmatlab.zip` and add the unzipped :file:`bfmatlab` folder to
+your MATLAB path.
 
 .. note:: As of Bio-Formats 5.0.0, this zip now contains the bundled jar
     and you no longer need to download :file:`loci_tools.jar` or the new
@@ -41,7 +42,7 @@ Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite the content of the
-:file:`bfmatlab` folder with the :downloads:`newer version <>` of the
+:file:`bfmatlab` folder with the `newer version <https://www.openmicroscopy.org/bio-formats/downloads/>`_ of the
 toolbox and restart MATLAB.
 
 Alternative scripts

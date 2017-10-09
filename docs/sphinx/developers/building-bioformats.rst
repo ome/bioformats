@@ -3,13 +3,16 @@
 Obtaining and building Bio-Formats
 ==================================
 
+.. note:: Bio-Formats requires Java 7 or above
+
 .. _source-code:
 
 Source code
 -----------
 
 The source code for this Bio-Formats release is available from the
-:downloads:`download page <>`.  This release and the latest
+:downloads:`downloads site <>`.
+This release and the latest
 Bio-Formats source code are also available from the Git repository.
 This may be accessed using the repository path::
 
