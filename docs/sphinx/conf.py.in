@@ -147,8 +147,8 @@ extlinks = {
     'model_doc' : (docs_root + '/ome-model/' + ome_model_version + '/' + '%s', ''),
     'devs_doc' : (docs_root + '/contributing/%s', ''),
     # Downloads
-    'downloads' : (downloads_root + '/bio-formats/' + version + '/' + '%s', ''),
-    'javadoc' : (downloads_root + '/bio-formats/' + version + '/api/%s', ''),
+    'downloads' : (downloads_root + '/latest/bio-formats5.7/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5.7/api/%s', ''),
     'common_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-common/' + ome_common_version + '/' + '%s', ''),
     'xml_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-xml/' + ome_model_version + '/' + '%s', ''),
     'specification_javadoc' : ('http://static.javadoc.io/org.openmicroscopy/ome-specification/' + ome_model_version + '/' + '%s', ''),
