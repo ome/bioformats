@@ -118,10 +118,10 @@ bf_cpp = bf_github_blob + 'cpp/'
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
 trac_root = 'https://trac.openmicroscopy.org/ome'
-oo_root = 'http://www.openmicroscopy.org'
+oo_root = 'https://www.openmicroscopy.org'
 lists_root = 'http://lists.openmicroscopy.org.uk'
-downloads_root = 'http://downloads.openmicroscopy.org'
-docs_root = 'http://docs.openmicroscopy.org'
+downloads_root = 'https://downloads.openmicroscopy.org'
+docs_root = 'https://docs.openmicroscopy.org'
 
 extlinks = {
     # Trac links

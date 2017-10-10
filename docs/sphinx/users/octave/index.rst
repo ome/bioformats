@@ -33,7 +33,7 @@ Installation
    system-wide or user installation respectively).
 #. Add `bioformats_package.jar` to Octave's *static* javaclasspath (see
    `Octave's documentation <https://www.gnu.org/software/octave/doc/interpreter/Making-Java-Classes-Available.html>`_).
-#. Download :downloads:`Octave package <artifacts/>`.
+#. Download the :downloads:`Octave package <artifacts/>`.
 #. Start octave and install the package with::
 
       >> pkg install path-to-bioformats-octave-version.tar.gz
