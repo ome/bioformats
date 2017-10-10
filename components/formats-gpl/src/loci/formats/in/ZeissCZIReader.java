@@ -3001,19 +3001,19 @@ public class ZeissCZIReader extends FormatReader {
                   positionsX[i] = null;
                 } else {
                   final Double number = Double.valueOf(x);
-                  positionsX[i] = new Length(number, UNITS.METRE);
+                  positionsX[i] = new Length(number, UNITS.MICROMETER);
                 }
                 if (y == null) {
                   positionsY[i] = null;
                 } else {
                   final Double number = Double.valueOf(y);
-                  positionsY[i] = new Length(number, UNITS.METRE);
+                  positionsY[i] = new Length(number, UNITS.MICROMETER);
                 }
                 if (z == null) {
                   positionsZ[i] = null;
                 } else {
                   final Double number = Double.valueOf(z);
-                  positionsZ[i] = new Length(number, UNITS.METRE);
+                  positionsZ[i] = new Length(number, UNITS.MICROMETER);
                 }
               }
             }
