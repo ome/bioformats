@@ -12,7 +12,7 @@ Installing Bio-Formats in ImageJ
 
 Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the
-Bio-Formats :downloads:`download page <>` and saving the
+Bio-Formats `download page <https://www.openmicroscopy.org/bio-formats/downloads/>`_ and saving the
 **bioformats\_package.jar** to the Plugins directory within ImageJ.
 
 .. figure:: /images/PluginDirectory.png

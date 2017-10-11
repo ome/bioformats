@@ -10,13 +10,21 @@ problem has already been addressed. The Fiji updater will automatically do
 this for you, while in ImageJ you can select
 :menuselection:`Plugins --> Bio-Formats --> Update Bio-Formats Plugins`.
 
-You can also download the :downloads:`latest version of Bio-Formats <>`.
-If you are not sure which version you need, select the latest build of the
-Bio-Formats package bundle from the components table.
+You can also download the `latest version of Bio-Formats <https://www.openmicroscopy.org/bio-formats/downloads/>`_ from
+the OME website.
 
 Common issues to check
 ----------------------
 
+-  If you get an error message similar to::
+
+       java.lang.UnsupportedClassVersionError: loci/plugins/LociImporter :
+       Unsupported major.minor version 51.0
+
+       This plugin requires Java 1.7 or later.
+
+   you need to upgrade your system Java version to Java 7 or above, or
+   download a new version of ImageJ/Fiji bundled with Java 8.
 -  If your 12, 14 or 16-bit images look all black when you open them,
    typically the problem is that the pixel values
    are very, very small relative to the maximum possible pixel value (4095,

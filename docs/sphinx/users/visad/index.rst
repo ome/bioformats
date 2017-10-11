@@ -15,8 +15,8 @@ installation is necessary.
 Upgrading
 ---------
 
-It should be possible to use a newer version of Bio-Formats by putting
-the latest
+It should be possible to use a `newer version <https://www.openmicroscopy.org/bio-formats/downloads/>`_ of Bio-Formats by
+putting the latest
 :downloads:`bioformats_package.jar <artifacts/bioformats_package.jar>` or
 :downloads:`formats-gpl.jar <artifacts/formats-gpl.jar>` before **visad.jar**
 in the class path. Alternately, you can create a "VisAD Lite" using the

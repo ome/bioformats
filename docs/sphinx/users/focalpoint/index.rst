@@ -17,7 +17,7 @@ necessary.
 Upgrading
 ---------
 
-It should be possible to use a :downloads:`newer version of Bio-Formats <>` 
+It should be possible to use a `newer version of Bio-Formats <https://www.openmicroscopy.org/bio-formats/downloads/>`_
 by overwriting the old **loci\_tools.jar** within the FocalPoint
 distribution. For Mac OS X, you will have to control click the FocalPoint
 program icon, choose "Show Package Contents" and navigate into

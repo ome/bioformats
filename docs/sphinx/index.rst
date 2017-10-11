@@ -18,8 +18,8 @@ supported by Bio-Formats.
 - :doc:`developers/index`
 - :doc:`formats/index`
 
-Bio-Formats |release| uses the *June 2016* release of the
-:model_doc:`OME Model <>`.
+Bio-Formats |release| requires Java 7 or above and uses the *June 2016*
+release of the :model_doc:`OME Model <>`.
     
 **Bio-Formats is a community project and we welcome your input.** You can
 find guidance on :doc:`about/bug-reporting`, upload files to our
