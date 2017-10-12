@@ -107,7 +107,7 @@ utilityRating = Fair
 reader = GelReader
 privateSpecification = true
 notes = .. seealso:: \n
-  `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
+  `GEL Technical Overview <https://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
 
 [Amira Mesh]
 extensions = .am, .amiramesh, .grey, .hx, .labels
@@ -2228,9 +2228,9 @@ extensions = .tiff, .tif, .tf2, .tf8, .btf
 owner = `Adobe <http://www.adobe.com>`_
 developer = Aldus and Microsoft
 bsd = yes
-samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
-`Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
-weHave = * a `TIFF specification document <http://www.awaresystems.be/imaging/tiff.html>`_ \n
+samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/marlin/Data_Gallery.html>`_ \n
+`Big TIFF <https://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
+weHave = * a `TIFF specification document <https://www.awaresystems.be/imaging/tiff.html>`_ \n
 * many TIFF datasets \n
 * a few BigTIFF datasets
 pixelsRating = Very good
