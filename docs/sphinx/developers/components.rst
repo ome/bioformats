@@ -92,8 +92,10 @@ not be any code here, just build system files.
 
 `OME JAI (deprecated) <https://github.com/ome/ome-jai>`_:
 
-This is a fork of `JAI ImageIO <http://java.net/projects/jai-imageio-core>`_
-which adds support for decoding YCbCr JPEG-2000 data.  This is primarily
+This is a fork of JAI ImageIO [no longer maintained; the most active
+fork is `jai-imageio-core <https://github.com/jai-imageio/jai-imageio-core>`__
+on GitHub].
+JAI provides support for decoding YCbCr JPEG-2000 data.  This is primarily
 needed for reading images from histology/pathology formats in
 :ref:`formats-gpl <formats-gpl>`.  There are no dependencies on other
 components.
