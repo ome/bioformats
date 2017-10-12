@@ -89,20 +89,20 @@ public class JPEGXRCodec extends BaseCodec {
 
     int bpp = options.bitsPerSample / 8;
     int pixels = options.width * options.height;
-    int c = uncompressed.length / (pixels * bpp);
+    int channels = uncompressed.length / (pixels * bpp);
 
-    if (c == 1) {
+    if (channels == 1) {
       return uncompressed;
     }
 
     byte[] deinterleaved = new byte[uncompressed.length];
 
     for (int p=0; p<pixels; p++) {
-      for (int channel=0; channel<c; channel++) {
+      for (int c=0; c<channels; c++) {
         for (int b=0; b<bpp; b++) {
           int bb = options.littleEndian ? b : bpp - b - 1;
-          deinterleaved[bpp * (channel * pixels + p) + bb] =
-            uncompressed[bpp * (p * c + channel) + b];
+          deinterleaved[bpp * (c * pixels + p) + bb] =
+            uncompressed[bpp * (p * channels + c) + b];
         }
       }
     }
