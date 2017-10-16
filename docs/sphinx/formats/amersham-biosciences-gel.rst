@@ -51,4 +51,4 @@ Utility: |Fair|
 format, we are not able to distribute them to third parties.**
 
 .. seealso:: 
-  `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
+  `GEL Technical Overview <https://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_

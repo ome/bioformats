@@ -26,12 +26,12 @@ Writer: TiffWriter (:bsd-writer:`Source Code <TiffWriter.java>`)
 
 Sample Datasets:
 
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
-- `Big TIFF <http://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/marlin/Data_Gallery.html>`_ 
+- `Big TIFF <https://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 
 We currently have:
 
-* a `TIFF specification document <http://www.awaresystems.be/imaging/tiff.html>`_ 
+* a `TIFF specification document <https://www.awaresystems.be/imaging/tiff.html>`_ 
 * many TIFF datasets 
 * a few BigTIFF datasets
 
