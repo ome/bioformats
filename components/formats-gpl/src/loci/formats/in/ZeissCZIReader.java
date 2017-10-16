@@ -625,6 +625,9 @@ public class ZeissCZIReader extends FormatReader {
     base = base.substring(0, base.lastIndexOf("."));
 
     Location parent = file.getParentFile();
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + file.getName());
+    }
     String[] list = parent.list(true);
     for (String f : list) {
       if (f.startsWith(base + "(") || f.startsWith(base + " (")) {

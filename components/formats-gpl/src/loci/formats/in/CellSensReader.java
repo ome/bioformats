@@ -620,8 +620,17 @@ public class CellSensReader extends FormatReader {
     if (!checkSuffix(id, "vsi")) {
       Location current = new Location(id).getAbsoluteFile();
       Location parent = current.getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       parent = parent.getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + current.getParentFile().getName());
+      }
       Location grandparent = parent.getParentFile();
+      if (grandparent == null) {
+        throw new FormatException("Unable to locate parent file to " + parent.getName());
+      }
       String vsi = parent.getName();
       vsi = vsi.substring(1, vsi.length() - 1) + ".vsi";
 
@@ -647,6 +656,9 @@ public class CellSensReader extends FormatReader {
     Location file = new Location(id).getAbsoluteFile();
 
     Location dir = file.getParentFile();
+    if (dir == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
 
     String name = file.getName();
     name = name.substring(0, name.lastIndexOf("."));

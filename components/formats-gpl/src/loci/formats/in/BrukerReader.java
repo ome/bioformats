@@ -130,18 +130,24 @@ public class BrukerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
+    ArrayList<String> files = new ArrayList<String>();
     String dir = pixelsFiles.get(getSeries());
     Location realDir = new Location(dir).getParentFile();
-    realDir = realDir.getParentFile();
-    realDir = realDir.getParentFile();
-    dir = realDir.getAbsolutePath();
-    ArrayList<String> files = new ArrayList<String>();
-    files.add(new Location(getCurrentFile()).getAbsolutePath());
-
-    for (String f : allFiles) {
-      if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
-        if (!files.contains(f)) {
-          files.add(f);
+    if (realDir != null) {
+      realDir = realDir.getParentFile();
+      if (realDir != null) {
+        realDir = realDir.getParentFile();
+        if (realDir != null) {
+          dir = realDir.getAbsolutePath();
+          files.add(new Location(getCurrentFile()).getAbsolutePath());
+      
+          for (String f : allFiles) {
+            if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
+              if (!files.contains(f)) {
+                files.add(f);
+              }
+            }
+          }
         }
       }
     }
@@ -179,6 +185,9 @@ public class BrukerReader extends FormatReader {
 
     Location originalFile = new Location(id).getAbsoluteFile();
     Location parent = originalFile.getParentFile().getParentFile();
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
 
     String[] acquisitionDirs = parent.list(true);
 

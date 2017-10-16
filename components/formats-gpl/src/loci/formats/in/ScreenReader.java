@@ -231,7 +231,13 @@ public class ScreenReader extends FormatReader {
     Location screen = null;
     if (isValidWellName(file.getAbsolutePath())) {
       plate = file.getParentFile();
+      if (plate == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       screen = plate.getParentFile();
+      if (screen == null) {
+        throw new FormatException("Unable to locate parent file to " + plate.getName());
+      }
     }
     else throw new FormatException(id + " is not a valid well name.");
 

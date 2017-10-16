@@ -830,6 +830,9 @@ public class LeicaReader extends FormatReader {
         }
 
         l = l.getParentFile();
+        if (l == null) {
+          throw new FormatException("Unable to locate parent file to " + lei);
+        }
         String[] list = l.list();
         for (int i=0; i<list.length; i++) {
           if (checkSuffix(list[i], LEI_SUFFIX)) {
@@ -861,7 +864,7 @@ public class LeicaReader extends FormatReader {
   private String[] getTIFFList() {
     File dirFile = new File(currentId).getAbsoluteFile();
     String[] listing = null;
-    if (dirFile.exists()) {
+    if (dirFile.exists() && dirFile.getParentFile() != null) {
       listing = dirFile.getParentFile().list();
     }
     else {

@@ -149,6 +149,10 @@ public class CellVoyagerReader extends FormatReader
     final MinimalTiffReader tiffReader = new MinimalTiffReader();
 
     imageFolder = new Location(currentId).getAbsoluteFile().getParentFile();
+    if (imageFolder == null) {
+      tiffReader.close();
+      throw new FormatException("Unable to locate parent file to " + currentId);
+    }
     imageFolder = new Location(imageFolder, "Image");
     for ( final FieldInfo field : area.fields )
     {
@@ -252,7 +256,7 @@ public class CellVoyagerReader extends FormatReader
     if ( localName.equals( "MeasurementResult.xml" ) ) { return true; }
     final Location parent = new Location( name ).getAbsoluteFile().getParentFile();
     Location xml = new Location( parent, "MeasurementResult.xml" );
-    if (!xml.exists()) {
+    if (!xml.exists() && parent != null) {
       xml = new Location(parent.getParentFile(), "MeasurementResult.xml");
       if (!xml.exists()) {
         return false;
@@ -272,7 +276,7 @@ public class CellVoyagerReader extends FormatReader
     if ( !measurementFolder.isDirectory() )
     {
       measurementFolder = measurementFolder.getParentFile();
-      if (measurementFolder.getName().equals("Image")) {
+      if (measurementFolder != null && measurementFolder.getName().equals("Image")) {
         measurementFolder = measurementFolder.getParentFile();
       }
     }

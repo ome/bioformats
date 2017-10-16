@@ -148,7 +148,7 @@ public class ScanrReader extends FormatReader {
     }
 
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    if (checkSuffix(name, "tif") && parent.getName().equalsIgnoreCase("Data"))
+    if (checkSuffix(name, "tif") && parent != null && parent.getName().equalsIgnoreCase("Data"))
     {
       parent = parent.getParentFile();
     }
@@ -301,7 +301,7 @@ public class ScanrReader extends FormatReader {
     // make sure we have the .xml file
     if (!checkSuffix(id, "xml") && isGroupFiles()) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
-      if (checkSuffix(id, "tif") && parent.getName().equalsIgnoreCase("Data"))
+      if (checkSuffix(id, "tif") && parent != null && parent.getName().equalsIgnoreCase("Data"))
       {
         parent = parent.getParentFile();
       }
@@ -338,6 +338,9 @@ public class ScanrReader extends FormatReader {
     }
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
+    if (dir == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
     String[] list = dir.list(true);
 
     for (String file : list) {

@@ -272,6 +272,9 @@ public class DeltavisionReader extends FormatReader {
       Location file = new Location(id).getAbsoluteFile();
       if (!file.exists()) {
         Location dir = file.getParentFile();
+        if (dir == null) {
+          throw new FormatException("Unable to locate parent file to " + id);
+        }
         String[] list = dir.list(true);
         String name = file.getName();
         name = name.substring(0, name.lastIndexOf("."));

@@ -1287,14 +1287,17 @@ public class DicomReader extends FormatReader {
 
       // move up a directory and look for other directories that
       // could contain matching files
-
-      directory = directory.getParentFile();
-      String[] subdirs = directory.list(true);
-      if (subdirs != null) {
-        for (String subdir : subdirs) {
-          Location f = new Location(directory, subdir).getAbsoluteFile();
-          if (!f.isDirectory()) continue;
-          scanDirectory(f, true);
+      if (directory != null) {
+        directory = directory.getParentFile();
+        if (directory != null) {
+          String[] subdirs = directory.list(true);
+          if (subdirs != null) {
+            for (String subdir : subdirs) {
+              Location f = new Location(directory, subdir).getAbsoluteFile();
+              if (!f.isDirectory()) continue;
+              scanDirectory(f, true);
+            }
+          }
         }
       }
 
@@ -1457,14 +1460,16 @@ public class DicomReader extends FormatReader {
    */
   private void attachCompanionFiles() throws IOException {
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-    Location grandparent = parent.getParentFile();
-
-    if (new Location(grandparent, parent.getName() + ".mif").exists()) {
-      String[] list = grandparent.list(true);
-      for (String f : list) {
-        Location file = new Location(grandparent, f);
-        if (!file.isDirectory()) {
-          companionFiles.add(file.getAbsolutePath());
+    if (parent != null) {
+      Location grandparent = parent.getParentFile();
+  
+      if (new Location(grandparent, parent.getName() + ".mif").exists()) {
+        String[] list = grandparent.list(true);
+        for (String f : list) {
+          Location file = new Location(grandparent, f);
+          if (!file.isDirectory()) {
+            companionFiles.add(file.getAbsolutePath());
+          }
         }
       }
     }

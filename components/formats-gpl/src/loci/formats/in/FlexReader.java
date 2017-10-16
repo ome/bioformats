@@ -373,6 +373,9 @@ public class FlexReader extends FormatReader {
 
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
     LOGGER.debug("  Looking for an .mea file in {}", parent.getAbsolutePath());
     String[] list = parent.list();
     for (String file : list) {
@@ -493,6 +496,9 @@ public class FlexReader extends FormatReader {
       // group together .flex files that are in the same directory
 
       Location dir = currentFile.getParentFile();
+      if (dir == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String[] files = dir.list(true);
 
       for (String file : files) {
@@ -593,7 +599,11 @@ public class FlexReader extends FormatReader {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
 
-      if (plateName == null) plateName = currentFile.getParentFile().getName();
+      if (plateName == null) {
+        if (currentFile.getParentFile() != null) {
+          plateName = currentFile.getParentFile().getName();
+        }
+      }
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
       store.setPlateName(plateName, 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
@@ -1057,6 +1067,9 @@ public class FlexReader extends FormatReader {
     final List<String> fileList = new ArrayList<String>();
 
     Location plateDir = baseFile.getParentFile();
+    if (plateDir == null) {
+      throw new IOException("Unable to locate parent file to " + baseFile.getName());
+    }
     String[] files = plateDir.list(true);
 
     // check if the measurement files are in the same directory
@@ -1133,7 +1146,7 @@ public class FlexReader extends FormatReader {
     // check if Flex directories and measurement directories have
     // a different parent
 
-    if (measurementDir == null) {
+    if (measurementDir == null && flexDir != null) {
       Location topDir = flexDir.getParentFile();
       LOGGER.debug("First attempt at finding measurement file directory " +
         "failed.  Looking for an appropriate measurement directory in {}.",

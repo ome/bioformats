@@ -215,7 +215,9 @@ public class ColumbusReader extends FormatReader {
     super.initFile(id);
 
     Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
-
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + currentId);
+    }
     // parse plate layout and image dimensions from the XML files
 
     String xmlData = DataTools.readFile(id);
@@ -598,9 +600,11 @@ public class ColumbusReader extends FormatReader {
     if (xml.exists()) {
       return xml;
     }
-    xml = new Location(parent.getParentFile(), XML_FILE);
-    if (xml.exists()) {
-      return xml;
+    if (parent != null) {
+      xml = new Location(parent.getParentFile(), XML_FILE);
+      if (xml != null && xml.exists()) {
+        return xml;
+      }
     }
     return null;
   }

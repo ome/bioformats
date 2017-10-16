@@ -190,6 +190,9 @@ public class TrestleReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "tif")) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      if (parent == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, "tif")) {

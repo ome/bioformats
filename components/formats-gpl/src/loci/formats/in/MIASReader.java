@@ -168,6 +168,9 @@ public class MIASReader extends FormatReader {
 
     Location baseFile = new Location(filename).getAbsoluteFile();
     Location wellDir = baseFile.getParentFile();
+    if (wellDir == null) {
+      return false;
+    }
     String wellName = wellDir.getName();
 
     if (checkSuffix(filename, "txt")) {
@@ -390,6 +393,9 @@ public class MIASReader extends FormatReader {
 
       Location base = new Location(id).getAbsoluteFile();
       Location plate = null;
+      if (base.getParentFile() == null) {
+        throw new FormatException("Unable to locate parent file to " + id);
+      }
       if (base.getParentFile().getName().equals("Batchresults")) {
         Location experiment = base.getParentFile().getParentFile();
         String[] plates = experiment.list(true);
@@ -481,8 +487,14 @@ public class MIASReader extends FormatReader {
     LOGGER.info("Building list of TIFF files");
 
     Location baseFile = new Location(id).getAbsoluteFile();
-    Location plate = baseFile.getParentFile().getParentFile();
-
+    Location parent = baseFile.getParentFile();
+    if (parent == null) {
+      throw new FormatException("Unable to locate parent file to " + id);
+    }
+    Location plate = parent.getParentFile();
+    if (plate == null) {
+      throw new FormatException("Unable to locate parent file to " + parent.getName());
+    }
     String plateName = plate.getName();
     if (!(plateName.length() == 3 || (plateName.length() > 3 &&
       plateName.replaceAll("\\d", "").startsWith("-"))))

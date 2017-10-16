@@ -613,6 +613,9 @@ public class FilePattern {
   public static String[] findSeriesPatterns(String base) {
     Location file = new Location(base).getAbsoluteFile();
     Location parent = file.getParentFile();
+    if (parent == null) {
+      return null;
+    }
     String[] list = parent.list(true);
     return findSeriesPatterns(base, parent.getAbsolutePath(), list);
   }
