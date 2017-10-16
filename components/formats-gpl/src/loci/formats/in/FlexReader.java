@@ -1695,9 +1695,9 @@ public class FlexReader extends FormatReader {
 
         // trust firstWellPlanes() if we know that the fields are not
         // split across multiple files
-        if (fieldNo > fieldCount && ((thisField < 0 && fieldCount < firstWellPlanes()) ||
-          fieldCount < (thisField * firstWellPlanes())))
-        {
+        if (fieldNo > fieldCount &&
+            (thisField < 0 ||
+             fieldCount < (thisField * firstWellPlanes()))) {
           fieldCount++;
         }
       }
