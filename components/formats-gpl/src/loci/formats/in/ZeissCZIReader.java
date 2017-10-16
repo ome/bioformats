@@ -3621,7 +3621,6 @@ public class ZeissCZIReader extends FormatReader {
       s.order(isLittleEndian());
       s.seek(dataOffset);
 
-      int bpp = FormatTools.getBytesPerPixel(getPixelType());
       if (directoryEntry.compression == UNCOMPRESSED) {
         if (buf == null) {
           buf = new byte[(int) dataSize];
@@ -3638,10 +3637,13 @@ public class ZeissCZIReader extends FormatReader {
       byte[] data = new byte[(int) dataSize];
       s.read(data);
 
+      int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       CodecOptions options = new CodecOptions();
       options.interleaved = isInterleaved();
       options.littleEndian = isLittleEndian();
-      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() * bpp;
+      options.bitsPerSample = bytesPerPixel * 8;
+      options.maxBytes =
+          getSizeX() * getSizeY() * getRGBChannelCount() * bytesPerPixel;
 
       switch (directoryEntry.compression) {
         case JPEG:
@@ -3651,9 +3653,10 @@ public class ZeissCZIReader extends FormatReader {
           data = new LZWCodec().decompress(data, options);
           break;
         case JPEGXR:
-          options.maxBytes = directoryEntry.dimensionEntries[0].storedSize *
-            directoryEntry.dimensionEntries[1].storedSize *
-            getRGBChannelCount() * bpp;
+          options.width = directoryEntry.dimensionEntries[0].storedSize;
+          options.height = directoryEntry.dimensionEntries[1].storedSize;
+          options.maxBytes = options.width * options.height *
+            getRGBChannelCount() * bytesPerPixel;
           data = new JPEGXRCodec().decompress(data, options);
           break;
         case 104: // camera-specific packed pixels
