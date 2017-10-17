@@ -183,6 +183,13 @@ public class OBFReader extends FormatReader
               }
 
               service.convertMetadata( ome_meta_data, metadataStore ) ;
+
+              OMEXMLMetadata reference
+                  = service.getOMEMetadata( service.asRetrieve( metadataStore ) ) ;
+              for (int image = 0 ; image != ome_meta_data.getImageCount() ; ++ image)
+              {
+                service.addMetadataOnly( reference, image ) ;
+              }
             }
           }
           catch (DependencyException exception)
