@@ -1233,7 +1233,7 @@ public class ZeissCZIReader extends FormatReader {
           store.setImageName("", i);
         }
         else {
-          store.setImageName(String.format("Scene #%0" + ((int) Math.log10(positions - extraImages.size()) + 1) + "d", i), i);
+          store.setImageName(String.format("scene position #%0" + ((int) Math.log10(positions - extraImages.size()) + 1) + "d", i), i);
         }
       }
       else if (extraIndex == 0) {
