@@ -87,7 +87,7 @@ public class AmiraParameters {
     throws FormatException, IOException
   {
     String firstLine = inputStream.readLine();
-    Matcher amiraMeshDef = Pattern.compile("#\\s+AmiraMesh.*?" +
+    Matcher amiraMeshDef = Pattern.compile("#\\s+(AmiraMesh|Avizo).*?" +
       "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(firstLine);
     if (amiraMeshDef.find()) {
       if (amiraMeshDef.group(1).equals("BINARY")) {
