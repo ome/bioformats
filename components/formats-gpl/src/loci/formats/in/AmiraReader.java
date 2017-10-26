@@ -272,7 +272,7 @@ public class AmiraReader extends FormatReader {
     if (!FormatTools.validStream(stream, 50, false)) return false;
     String c = stream.readLine();
 
-    Matcher amiraMeshDef = Pattern.compile("#\\s+AmiraMesh.*?" +
+    Matcher amiraMeshDef = Pattern.compile("#\\s+(AmiraMesh|Avizo).*?" +
       "(BINARY|ASCII)(-LITTLE-ENDIAN)*").matcher(c);
     return amiraMeshDef.find();
   }
