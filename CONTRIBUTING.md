@@ -55,7 +55,8 @@ https://docs.openmicroscopy.org/bio-formats/ is built from the
 style guidance from the
 [OME Documentation Repository README](https://github.com/openmicroscopy/ome-documentation/blob/develop/README.rst#conventions-used).
 
-Documentation for new supported formats is auto-generated so it is best to
+Documentation for new supported formats is auto-generated - see
+[Adding format/reader documentation pages](https://docs.openmicroscopy.org/latest/bio-formats/developers/format-documentation.html). If you need any assistance please
 contact the [mailing list](https://www.openmicroscopy.org/support)
 before embarking on such a change, or submit your new reader code and let one
 of the main OME team deal with the documentation for you.
