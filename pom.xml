@@ -41,7 +41,7 @@
     <date>${maven.build.timestamp}</date>
     <year>2017</year>
     <project.rootdir>${basedir}</project.rootdir>
-    <imagej1.version>1.48s</imagej1.version>
+    <imagej1.version>1.51r</imagej1.version>
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
