@@ -62,7 +62,7 @@
     <xalan.version>2.7.2</xalan.version>
 
     <!-- Maven plugin versions -->
-    <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.0.0-M1</maven-javadoc-plugin.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -202,7 +202,7 @@
 
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
 
         <plugin>
@@ -212,7 +212,7 @@
 
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.7.0</version>
           <!-- Require the Java 7 platform. -->
           <configuration>
             <source>1.7</source>
@@ -222,7 +222,7 @@
 
         <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.0.2</version>
         </plugin>
 
         <plugin>
@@ -330,7 +330,7 @@
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20</version>
+          <version>2.20.1</version>
           <!-- Make sure that:
                A) unit tests run with sufficient RAM allocated;
                B) unit tests do not pop a Java dock icon on OS X;
@@ -386,7 +386,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>1.13</version>
+          <version>1.14</version>
           <configuration>
             <projectName>${project.description}</projectName>
             <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
