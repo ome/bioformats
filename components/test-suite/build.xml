@@ -222,6 +222,40 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
+  <target name="test-memoizer" depends="compile"
+    description="run automated tests in group 'memoizer'">
+
+    <testng groups="memoizer" testname="Cache reading tests"
+      listeners="loci.tests.testng.OrderingListener"
+      suitename="Bio-Formats software test suite"
+      parallel="instances" threadCount="${testng.threadCount}"
+      failureProperty="failedTest" useDefaultListeners="false">
+      <classpath>
+        <pathelement location="${basedir}"/><!-- logback.xml -->
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+      <classpath refid="test.classpath"/>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
+      <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.omexmlDirectory" value="${testng.omexmlDirectory}"/>
+      <sysproperty key="testng.configDirectory" value="${testng.configDirectory}"/>
+      <sysproperty key="testng.cacheDirectory" value="${testng.cacheDirectory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+      <jvmarg value="-Duser.language=${user.language}"/>
+      <jvmarg value="-Duser.country=${user.country}"/>
+      <jvmarg value="-Dlogback.configurationFile=${logback.configurationFile}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
   <target name="test-fast" depends="compile"
     description="run automated tests in group 'fast'">
     <testng groups="fast" testname="Fast tests"
