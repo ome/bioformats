@@ -2397,7 +2397,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  @Test(groups = {"all",  "automated"})
+  @Test(groups = {"all",  "automated", "memoizer"})
   public void testMemoFileUsage() {
     String testName = "testMemoFileUsage";
     if (!initFile()) result(testName, false, "initFile");
@@ -2417,19 +2417,28 @@ public class FormatReaderTest {
         result(testName, false, "Memo file not saved");
       }
 
-      String cacheDir = configTree.getCacheDirectory();
-      if (cacheDir != null) {
-        LOGGER.debug("Loading memo from populated cache");
-        memo = new Memoizer(0, new File(cacheDir));
-        memo.setId(reader.getCurrentFile());
-      } else {
-        memo.setId(reader.getCurrentFile());
-      }
+      // first test memo file generated with current build
+
+      memo.setId(reader.getCurrentFile());
       if (!memo.isLoadedFromMemo()) {
         result(testName, false, "Memo file could not be loaded");
       }
       memo.openBytes(0, 0, 0, 1, 1);
       memo.close();
+
+      // now test pre-generated memo file in the cache directory
+
+      String cacheDir = configTree.getCacheDirectory();
+      if (cacheDir != null) {
+        LOGGER.debug("Loading memo from populated cache");
+        memo = new Memoizer(0, new File(cacheDir));
+        memo.setId(reader.getCurrentFile());
+        if (!memo.isLoadedFromMemo()) {
+          result(testName, false, "Existing memo file could not be loaded");
+        }
+        memo.openBytes(0, 0, 0, 1, 1);
+        memo.close();
+      }
 
       result(testName, true);
     }
