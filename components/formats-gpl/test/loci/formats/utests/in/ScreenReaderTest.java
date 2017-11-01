@@ -63,9 +63,21 @@ public class ScreenReaderTest {
     System.out.println(file.getAbsolutePath());
     reader.setId(file.getAbsolutePath());
     m = service.asRetrieve(reader.getMetadataStore());
-    
+
     assertEquals(m.getPlateCount(), 1);
     assertEquals(m.getWellCount(0), 1);
     assertEquals(m.getWellSampleCount(0, 0), 1);
+  }
+
+  @Test
+  public void test4Wells2Fields() throws FormatException, IOException {
+    file = new File(this.getClass().getResource("4W2F.screen").getFile());
+    System.out.println(file.getAbsolutePath());
+    reader.setId(file.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+
+    assertEquals(m.getPlateCount(), 1);
+    assertEquals(m.getWellCount(0), 4);
+    for (int i=0; i<4; i++) assertEquals(m.getWellSampleCount(0, i), 2);
   }
 }
