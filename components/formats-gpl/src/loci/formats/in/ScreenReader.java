@@ -490,9 +490,9 @@ public class ScreenReader extends FormatReader {
             store.setWellSampleImageRef(imageID, 0, well, nextWellSample);
             store.setWellSampleIndex(
               new NonNegativeInteger(seriesIndex), 0, well, nextWellSample);
-            if (null != channelNames[well]) {
-              for (int i = 0; i < channelNames[well].length; i++) {
-                store.setChannelName(channelNames[well][i], seriesIndex, i);
+            if (null != channelNames[spotIndex]) {
+              for (int i = 0; i < channelNames[spotIndex].length; i++) {
+                store.setChannelName(channelNames[spotIndex][i], seriesIndex, i);
               }
             }
             nextWellSample++;
