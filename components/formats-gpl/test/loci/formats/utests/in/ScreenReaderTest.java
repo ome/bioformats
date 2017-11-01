@@ -79,5 +79,33 @@ public class ScreenReaderTest {
     assertEquals(m.getPlateCount(), 1);
     assertEquals(m.getWellCount(0), 4);
     for (int i=0; i<4; i++) assertEquals(m.getWellSampleCount(0, i), 2);
+    assertEquals(m.getImageCount(), 8);
+    for (int i=0; i<8; i++) {
+      assertEquals(m.getChannelCount(i), 3);
+      assertEquals(m.getChannelName(i, 0), "A");
+      assertEquals(m.getChannelName(i, 1), "B");
+      assertEquals(m.getChannelName(i, 2), "C");
+    }
+  }
+
+  @Test
+  public void test4Wells2FieldsSparse() throws FormatException, IOException {
+    file = new File(this.getClass().getResource("4W2Fsparse.screen").getFile());
+    System.out.println(file.getAbsolutePath());
+    reader.setId(file.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+
+    assertEquals(m.getPlateCount(), 1);
+    assertEquals(m.getWellCount(0), 4);
+    assertEquals(m.getImageCount(), 2);
+    for (int i=0; i<3; i++) assertEquals(m.getWellSampleCount(0, i), 0);
+    assertEquals(m.getWellSampleCount(0, 3), 2);
+
+    for (int i=0; i<2; i++) {
+      assertEquals(m.getChannelCount(i), 3);
+      assertEquals(m.getChannelName(i, 0), "A");
+      assertEquals(m.getChannelName(i, 1), "B");
+      assertEquals(m.getChannelName(i, 2), "C");
+    }
   }
 }
