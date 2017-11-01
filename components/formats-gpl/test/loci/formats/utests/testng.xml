@@ -66,4 +66,10 @@
         <class name="loci.formats.utests.XMLAnnotationTest"/>
       </classes>
     </test>
+    <test name="ReaderTests">
+      <groups/>
+      <packages>
+        <package name="loci.formats.utests.in"/>
+      </packages>
+    </test>
 </suite>
