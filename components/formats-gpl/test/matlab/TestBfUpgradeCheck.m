@@ -26,29 +26,26 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 classdef TestBfUpgradeCheck < ReaderTest
-    
+
     properties
         upgrader
     end
-    
-    methods
-        
-        function self = TestBfUpgradeCheck(name)
-            self = self@ReaderTest(name);
-        end
-        
-        function tearDown(self)
+
+
+    methods (TestMethodTeardown)
+        function UpgradeTearDown(self)
             self.upgrader = [];
             upgrader = [];
-            tearDown@ReaderTest(self);
         end
-        
+    end
+
+    methods (Test)
         function testJavaMethod(self)
             self.upgrader = javaObject('loci.formats.UpgradeChecker');
             upgrader = loci.formats.UpgradeChecker();
-            assertEqual( self.upgrader.getClass, upgrader.getClass);
+            self.assertEqual( self.upgrader.getClass, upgrader.getClass);
         end
-        
+
     end
-    
+
 end

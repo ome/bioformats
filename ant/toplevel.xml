@@ -417,13 +417,39 @@ Type "ant -p" for a list of targets.
 
   <target name="test-matlab" description="run Matlab tests" depends="tools">
     <property environment="env"/>
-    <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
+    <if>
+      <isset property="env.MATLABPATH"/>
+      <then>
+        <if>
+          <isset property="isWindows"/>
+          <then>
+            <property name="test.matlabpath" value="${env.MATLABPATH};${root.dir}/components/formats-gpl/matlab;${artifact.dir}"/>
+          </then>
+            <property name="test.matlabpath" value="${env.MATLABPATH}:${root.dir}/components/formats-gpl/matlab:${artifact.dir}"/>
+          <else>
+          </else>
+        </if>
+      </then>
+      <else>
+        <if>
+          <isset property="isWindows"/>
+          <then>
+            <property name="test.matlabpath" value="${root.dir}/components/formats-gpl/matlab;${artifact.dir}"/>
+          </then>
+          <else>
+            <property name="test.matlabpath" value="${root.dir}/components/formats-gpl/matlab:${artifact.dir}"/>
+          </else>
+        </if>
+      </else>
+    </if>
+    <exec executable="matlab" dir="${artifact.dir}" failonerror="true">
+      <env key="MATLABPATH" value="${test.matlabpath}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
       <arg value="runtests ${root.dir}/components/formats-gpl/test/matlab"/>
-    </exec>
+   </exec>
+
   </target>
 
   <!-- Octave -->

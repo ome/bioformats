@@ -26,48 +26,46 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 classdef TestBfCheckJavaMemory < TestBfMatlab
-    
+
     properties
         minMemory
         warning_id = ''
     end
-    
+
     methods
-        function self = TestBfCheckJavaMemory(name)
-            self = self@TestBfMatlab(name);
-        end
-        
         % Dimension size tests
         function runJavaMemoryCheck(self)
             lastwarn('');
             bfCheckJavaMemory(self.minMemory)
             [last_warning_msg, last_warning_id] = lastwarn;
-            assertEqual(last_warning_id, self.warning_id);
+            self.assertEqual(last_warning_id, self.warning_id);
             lastwarn('');
         end
-        
+    end
+
+    methods (Test)
         function testZero(self)
             self.minMemory = 0;
             self.runJavaMemoryCheck()
         end
-        
+
         function testMaxMemory(self)
             self.minMemory = self.getRuntime();
             self.runJavaMemoryCheck()
         end
-        
+
         function testLowMemory(self)
             self.minMemory = round(self.getRuntime() + 100);
             self.warning_id = 'BF:lowJavaMemory';
             self.runJavaMemoryCheck()
         end
     end
+
     methods(Static)
-        
         function memory = getRuntime()
             runtime = java.lang.Runtime.getRuntime();
             memory = runtime.maxMemory() / (1024 * 1024);
         end
     end
-    
+
 end

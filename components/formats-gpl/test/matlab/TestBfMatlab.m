@@ -25,34 +25,32 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfMatlab < TestCase
-    
+classdef TestBfMatlab < matlab.unittest.TestCase
+
     properties
         jarPath
         tmpdir
     end
-    
-    methods
-        function self = TestBfMatlab(name)
-            self = self@TestCase(name);
-        end
-        
-        function setUp(self)
+
+    methods (TestMethodSetup)
+        function BFTestSetUp(self)
             % Get path to Bio-Formats JAR file (assuming it is in Matlab path)
             self.jarPath = which('bioformats_package.jar');
             assert(~isempty(self.jarPath));
-            
+
             % Remove Bio-Formats JAR file from dynamic class path
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
             end
-            
+
             java_tmpdir = char(java.lang.System.getProperty('java.io.tmpdir'));
             uuid = char(java.util.UUID.randomUUID().toString());
             self.tmpdir = fullfile(java_tmpdir, uuid);
         end
-        
-        function tearDown(self)
+    end
+
+    methods (TestMethodTeardown)
+        function BFTestTearDown(self)
             % Remove  Bio-Formats JAR file from dynamic class path
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
