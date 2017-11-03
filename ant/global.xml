@@ -14,17 +14,8 @@ Type "ant -p" for a list of targets.
 
   <!-- Convenient JDK version properties -->
 
-  <available property="jdk1.7+" classname="java.util.Objects"/>
-  <available property="jdk1.8+" classname="java.util.stream.IntStream"/>
-
   <target name="javadoc-properties">
-    <if>
-      <isset property="jdk1.8+"/>
-      <then>
-        <property name="javadoc.doclint" value="-Xdoclint:none"/>
-      </then>
-    </if>
-    <property name="javadoc.doclint" value=""/>
+    <property name="javadoc.doclint" value="-Xdoclint:none"/>
   </target>
 
   <!-- Convenient platform properties -->
