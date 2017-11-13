@@ -377,17 +377,17 @@
     <repository>
       <id>central</id>
       <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
       <id>unidata.releases</id>
-      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+      <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
       <snapshots><enabled>false</enabled></snapshots>
     </repository>
     <repository>
       <id>ome</id>
       <name>OME Artifactory</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
   </repositories>
 </project>

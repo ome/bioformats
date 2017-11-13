@@ -543,12 +543,12 @@
     <repository>
       <id>central</id>
       <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
       <id>ome</id>
       <name>OME Artifactory</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
     </repository>
   </repositories>
 
@@ -556,7 +556,7 @@
     <pluginRepository>
       <id>central</id>
       <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
       <layout>default</layout>
     </pluginRepository>
   </pluginRepositories>
@@ -565,12 +565,12 @@
     <repository>
       <id>ome.staging</id>
       <name>OME Staging Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/ome.staging</url>
     </repository>
     <snapshotRepository>
       <id>ome.snapshots</id>
       <name>OME Snapshots Repository</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <url>https://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
