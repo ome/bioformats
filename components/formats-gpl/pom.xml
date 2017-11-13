@@ -361,6 +361,7 @@
     <repository>
       <id>unidata.releases</id>
       <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
     <repository>
       <id>ome</id>
