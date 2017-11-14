@@ -13,7 +13,9 @@ call "%BF_DIR%\config.bat"
 
 if "%BF_DEVEL%" == "" (
   rem Developer environment variable unset; add JAR libraries to classpath.
-  if exist "%BF_JAR_DIR%\ij.jar" (
+  if exist "%BF_JAR_DIR%\jar\ij.jar" (
+    set BF_CP="%BF_JAR_DIR%\jar\ij.jar"
+  ) else if exist "%BF_JAR_DIR%\ij.jar" (
     set BF_CP="%BF_JAR_DIR%\ij.jar"
   ) else (
     rem Libraries not found; issue an error.
@@ -21,18 +23,11 @@ if "%BF_DEVEL%" == "" (
     echo   ij.jar
     echo from:
     echo   http://imagej.nih.gov/ij/upgrade/
-    echo and place in the same directory as the command line tools.
-    goto end
-  )
-  if exist "%BF_JAR_DIR%\bio-formats_plugins.jar" (
-    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bio-formats_plugins.jar"
-  ) else if not exist "%BF_JAR_DIR%\bioformats_package.jar" (
-    rem Libraries not found; issue an error.
-    echo Required JAR libraries not found. Please download:
-    echo   bioformats_package.jar
-    echo from:
-    echo   https://www.openmicroscopy.org/bio-formats/downloads
-    echo and place in the same directory as the command line tools.
+    if exist "%BF_JAR_DIR%\jar\" (
+      echo and place in %BF_JAR_DIR%/jar.
+    ) else (
+      echo and place in %BF_JAR_DIR%.
+    )
     goto end
   )
 )

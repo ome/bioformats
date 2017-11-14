@@ -23,13 +23,19 @@ rem set BF_DEVEL=1
 
 rem Set the directory containing the JAR libraries.
 if "%BF_JAR_DIR%" == "" (
-  if exist "%BF_DIR%\..\artifacts" (
-    rem Batch files reside in a git working copy.
+  if exist "%BF_DIR%\..\components\bundles\bioformats_package\target\" (
+    rem Batch files reside in a git working copy (maven).
     rem Look for JARs in the artifacts directory.
-    set BF_JAR_DIR=%BF_DIR%\..\artifacts
+    set "BF_JAR_DIR=%BF_DIR%\..\components\bundles\bioformats_package\target"
+    set BF_IN_MVN_SRCDIR=true
+  ) else if exist "%BF_DIR%\..\artifacts\" (
+    rem Batch files reside in a git working copy (ant).
+    rem Look for JARs in the artifacts directory.
+    set "BF_JAR_DIR=%BF_DIR%\..\artifacts"
+    set BF_IN_ANT_SRCDIR=true
   ) else (
     rem Batch files reside in a standalone distribution.
     rem Look for JARs in the same directory as the batch files.
-    set BF_JAR_DIR=%BF_DIR%
+    set "BF_JAR_DIR=%BF_DIR%"
   )
 )

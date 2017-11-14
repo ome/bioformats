@@ -24,11 +24,18 @@
 # Set the directory containing the JAR libraries.
 if [ -z "$BF_JAR_DIR" ]
 then
-  if [ -d "$BF_DIR/../artifacts" ]
+  if [ -d "$BF_DIR/../components/bundles/bioformats_package/target" ]
   then
-    # Scripts reside in a git working copy.
+    # Scripts reside in a git working copy (maven).
+    # Look for JARs in the artifacts directory.
+    BF_JAR_DIR="$BF_DIR/../components/bundles/bioformats_package/target"
+    BF_IN_MVN_SRCDIR=true
+  elif [ -d "$BF_DIR/../artifacts" ]
+  then
+    # Scripts reside in a git working copy (ant).
     # Look for JARs in the artifacts directory.
     BF_JAR_DIR="$BF_DIR/../artifacts"
+    BF_IN_ANT_SRCDIR=true
   else
     # Scripts reside in a standalone distribution.
     # Look for JARs in the same directory as the scripts.
