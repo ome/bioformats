@@ -197,7 +197,6 @@ public class PrintFormatTable {
 
     for (int i=0; i<readers.length; i++) {
       String readerFormatName = readers[i].getFormat();
-      String ext = "";
       boolean read = true;
       boolean write = false;
       boolean wmp = false;
@@ -220,14 +219,17 @@ public class PrintFormatTable {
       }
 
       String[] extensions = readers[i].getSuffixes();
+      StringBuffer ext = new StringBuffer();
       for (int j=0; j<extensions.length; j++) {
-        ext += extensions[j];
-        if (j < extensions.length - 1) ext += (", ");
+        ext.append(extensions[j]);
+        if (j < extensions.length - 1) {
+          ext.append(", ");
+        }
       }
 
       // display information about the format
       LOGGER.info(
-        getFormatLine(printStyle, readerFormatName, read, write, wmp, ext));
+        getFormatLine(printStyle, readerFormatName, read, write, wmp, ext.toString()));
     }
 
     LOGGER.info(getFooter(printStyle));
