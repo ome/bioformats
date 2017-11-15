@@ -620,12 +620,17 @@ public class ZeissTIFFReader extends BaseZeissReader {
     public String
     toString()
     {
-      String s = new String("---Plane---\n");
-      s += "  file=" + filename + "\n keys=\n";
+      StringBuffer s = new StringBuffer("---Plane---\n  file=");
+      s.append(filename);
+      s.append("\n keys=\n");
       for (String k : tags.keySet()) {
-        s += "    " + k + "=" + tags.get(k) + "\n";
+        s.append("    ");
+        s.append(k);
+        s.append("=");
+        s.append(tags.get(k));
+        s.append("\n");
       }
-      return s;
+      return s.toString();
     }
   }
 

@@ -145,7 +145,7 @@ public class MetamorphHandler extends BaseHandler {
 
         String k = null, v = null;
         boolean freeform = true;
-        String freeformDescription = "";
+        StringBuffer freeformDescription = new StringBuffer();
 
         if (value.indexOf(delim) != -1) {
           int currentIndex = -delim.length();
@@ -165,13 +165,13 @@ public class MetamorphHandler extends BaseHandler {
             if (line.startsWith("Exposure: ")) {
               freeform = false;
               if (metadata != null) {
-                metadata.put("User Description", freeformDescription.trim());
+                metadata.put("User Description", freeformDescription.toString().trim());
               }
             }
 
             if (freeform) {
-              freeformDescription += line;
-              freeformDescription += "\n";
+              freeformDescription.append(line);
+              freeformDescription.append("\n");
             }
             else {
               int colon = line.indexOf(':');

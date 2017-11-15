@@ -2412,9 +2412,10 @@ public class NativeND2Reader extends FormatReader {
 
       lines = textString.split(" ");
       for (int i=0; i<lines.length; i++) {
-        String key = lines[i++];
-        while (!key.endsWith(":") && key.indexOf('_') < 0 && i < lines.length) {
-          key += " " + lines[i++];
+        StringBuffer sb = new StringBuffer(lines[i++]);
+        while (sb.charAt(sb.length() - 1) != ':' && sb.indexOf("_") < 0 && i < lines.length) {
+          sb.append(" ");
+          sb.append(lines[i++]);
           if (i >= lines.length) {
             break;
           }
@@ -2423,10 +2424,13 @@ public class NativeND2Reader extends FormatReader {
         if (i >= lines.length) {
           break;
         }
+        String key = sb.toString();
 
-        String value = lines[i++];
+        sb.delete(0, sb.length());
+        sb.append(lines[i++]);
         while (i < lines.length && lines[i].trim().length() > 0) {
-          value += " " + lines[i++];
+          sb.append(' ');
+          sb.append(lines[i++]);
           if (i >= lines.length) {
             break;
           }
@@ -2434,7 +2438,7 @@ public class NativeND2Reader extends FormatReader {
 
         key = key.trim();
         key = key.substring(0, key.length() - 1);
-        value = value.trim();
+        String value = sb.toString().trim();
 
         if (key.startsWith("- Step")) {
           int end = key.indexOf(" ", 8);
