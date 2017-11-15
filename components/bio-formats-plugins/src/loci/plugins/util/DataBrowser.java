@@ -143,13 +143,15 @@ public class DataBrowser extends StackWindow {
       "5dlu, right:pref, 3dlu, pref:grow, 5dlu, pref, 5dlu, pref, 5dlu";
     //       <-labels->        <------sliders------>       <misc>
 
-    String rows = "4dlu, pref, 3dlu, pref";
+    StringBuffer rows = new StringBuffer("4dlu, pref, 3dlu, pref");
     //                   <Z->        <T->        <C->
 
-    for (int i=0; i<channels.length; i++) rows += ", 3dlu, pref";
-    rows += ", 6dlu";
+    for (int i=0; i<channels.length; i++) {
+      rows.append(", 3dlu, pref");
+    }
+    rows.append(", 6dlu");
 
-    controls.setLayout(new FormLayout(cols, rows));
+    controls.setLayout(new FormLayout(cols, rows.toString()));
     controls.setBackground(Color.white);
 
     int c = imp.getNChannels();
