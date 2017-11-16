@@ -6,7 +6,7 @@ cellSens VSI
 
 Extensions: .vsi
 
-Developer: `Olympus <http://www.olympus.com/>`_
+Developer: `Olympus <https://www.olympus-global.com>`_
 
 
 **Support**

@@ -26,7 +26,6 @@ Writer: TiffWriter (:bsd-writer:`Source Code <TiffWriter.java>`)
 
 Sample Datasets:
 
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/marlin/Data_Gallery.html>`_ 
 - `Big TIFF <https://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 
 We currently have:

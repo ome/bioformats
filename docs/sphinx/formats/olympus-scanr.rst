@@ -6,9 +6,9 @@ Olympus ScanR
 
 Extensions: .xml, .dat, .tif
 
-Developer: `Olympus <http://www.olympus.com/>`_
+Developer: `Olympus <https://www.olympus-global.com>`_
 
-Owner: `Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <https://www.olympus-global.com>`_
 
 **Support**
 
