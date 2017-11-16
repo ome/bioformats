@@ -364,4 +364,6 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = ['https://imspector.mpibpc.mpg.de']
+linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
+    'http://www.mathworks.com/matlabcentral/answers/92813',
+]
