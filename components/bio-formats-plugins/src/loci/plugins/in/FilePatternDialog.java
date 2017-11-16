@@ -236,7 +236,8 @@ public class FilePatternDialog extends ImporterDialog {
         pattern.append(increment);
         pattern.append('>');
       }
-      id = pattern.toString() + fp.getSuffix();
+      pattern.append(fp.getSuffix());
+      id = pattern.toString();
     }
 
     options.setId(id);
