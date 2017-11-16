@@ -1096,7 +1096,7 @@ reader = JEOLReader
 extensions = .jp2
 developer = `Independent JPEG Group <http://www.ijg.org/>`_
 bsd = yes
-software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+software = `JJ2000 (JPEG 2000 library for Java) <https://code.google.com/archive/p/jj2000/>`_
 weHave = * a JPEG 2000 specification document (free draft from 2000, no longer available online) \n
 * a few .jp2 files
 pixelsRating = Very good
