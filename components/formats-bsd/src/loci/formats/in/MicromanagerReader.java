@@ -531,7 +531,7 @@ public class MicromanagerReader extends FormatReader {
               (key != null && value == null))
             {
               if (value == null && (propType == null || !propType.equals("PropType"))) {
-                StringBuffer sb = new StringBuffer(token);
+                StringBuilder sb = new StringBuilder(token);
 
                 while (q + 1 < tokens.length && tokens[q + 1].trim().length() > 0) {
                   sb.append(':');
@@ -778,7 +778,7 @@ public class MicromanagerReader extends FormatReader {
 
         token = st.nextToken().trim();
         String key = "";
-        StringBuffer valueBuffer = new StringBuffer();
+        StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
         int nestedCount = 0;
 

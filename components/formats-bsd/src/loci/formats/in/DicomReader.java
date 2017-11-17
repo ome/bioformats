@@ -1072,7 +1072,7 @@ public class DicomReader extends FormatReader {
       case US:
         if (elementLength == 2) value = Integer.toString(in.readShort());
         else {
-          StringBuffer sb = new StringBuffer();
+          StringBuilder sb = new StringBuilder();
           int n = elementLength / 2;
           for (int i=0; i<n; i++) {
             sb.append(in.readShort());

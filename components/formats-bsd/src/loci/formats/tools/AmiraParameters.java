@@ -244,7 +244,7 @@ public class AmiraParameters {
   }
 
   protected String readKey() throws IOException {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     while (c >= '0' || c == '-') {
       result.append(c);
       readByte();
@@ -253,7 +253,7 @@ public class AmiraParameters {
   }
 
   protected Number readNumber() throws FormatException, IOException {
-    StringBuffer string = new StringBuffer();
+    StringBuilder string = new StringBuilder();
     while ((c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+' ||
       c == 'e')
     {
@@ -348,7 +348,7 @@ public class AmiraParameters {
     else if (quote != '"' && quote != '\'') {
       syntaxError("Invalid quote: " + c);
     }
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     for (;;) {
       readByte();
       if (c == quote) {
@@ -455,7 +455,7 @@ public class AmiraParameters {
     }
     if (object instanceof String) {
       String string = (String) object;
-      StringBuffer result = new StringBuffer("\"");
+      StringBuilder result = new StringBuilder("\"");
       int offset = 0;
       for (;;) {
         int nextOffset = string.indexOf('"', offset + 1);
@@ -476,7 +476,7 @@ public class AmiraParameters {
     }
     if (object instanceof Integer[]) {
       Integer[] array = (Integer[]) object;
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
         if (i > 0) {
           result.append(" ");
@@ -487,7 +487,7 @@ public class AmiraParameters {
     }
     if (object instanceof Double[]) {
       Double[] array = (Double[]) object;
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       for (int i = 0; i < array.length; i++) {
         if (i > 0) {
           result.append(" ");
@@ -500,7 +500,7 @@ public class AmiraParameters {
       return "{\n" + toString((Map) object, indent + "\t") + indent + "}";
     }
     if (object instanceof ArrayList) {
-      StringBuffer result = new StringBuffer("{\n");
+      StringBuilder result = new StringBuilder("{\n");
       for (Object item : (ArrayList) object) {
         result.append(entryToString(item, indent + "\t"));
         result.append("\n");

@@ -143,7 +143,7 @@ public class DataBrowser extends StackWindow {
       "5dlu, right:pref, 3dlu, pref:grow, 5dlu, pref, 5dlu, pref, 5dlu";
     //       <-labels->        <------sliders------>       <misc>
 
-    StringBuffer rows = new StringBuffer("4dlu, pref, 3dlu, pref");
+    StringBuilder rows = new StringBuilder("4dlu, pref, 3dlu, pref");
     //                   <Z->        <T->        <C->
 
     for (int i=0; i<channels.length; i++) {

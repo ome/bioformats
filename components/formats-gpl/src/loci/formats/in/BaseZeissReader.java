@@ -2120,7 +2120,7 @@ public abstract class BaseZeissReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer s = new StringBuffer("  SHAPE: ");
+      StringBuilder s = new StringBuilder("  SHAPE: ");
       s.append(id);
       appendValue(s, "    Type=", type);
       appendHexValue(s, "    Unknown1=", unknown1);
@@ -2182,11 +2182,11 @@ public abstract class BaseZeissReader extends FormatReader {
       return s.toString();
     }
 
-    private void appendHexValue(StringBuffer s, String key, int i) {
+    private void appendHexValue(StringBuilder s, String key, int i) {
       appendValue(s, key, formatHex(i));
     }
 
-    private void appendValue(StringBuffer s, String key, Object value) {
+    private void appendValue(StringBuilder s, String key, Object value) {
       s.append(key);
       s.append(value);
     }
@@ -2209,7 +2209,7 @@ public abstract class BaseZeissReader extends FormatReader {
 
     @Override
     public String toString() {
-      StringBuffer s = new StringBuffer("LAYER: ");
+      StringBuilder s = new StringBuilder("LAYER: ");
       s.append(key);
       if (name != null) {
         s.append(" (");

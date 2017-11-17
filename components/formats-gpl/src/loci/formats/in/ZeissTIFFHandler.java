@@ -107,7 +107,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
   @Override
   public String toString()
   {
-    StringBuffer s = new StringBuffer("TIFF-XML parsing\n");
+    StringBuilder s = new StringBuilder("TIFF-XML parsing\n");
     s.append(main_tagset);
     s.append('\n');
     for (Scaling sc : scalings ) {
@@ -584,7 +584,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
     @Override
     public String toString() {
-      StringBuffer s = new StringBuffer("  Tags(" + count + "):\n");
+      StringBuilder s = new StringBuilder("  Tags(" + count + "):\n");
       for (BaseZeissReader.Tag t : tags) {
         s.append(t);
         s.append('\n');
@@ -661,7 +661,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
     @Override
     public String toString() {
-      StringBuffer s = new StringBuffer("Scaling\n");
+      StringBuilder s = new StringBuilder("Scaling\n");
       s.append("  Key=");
       s.append(key);
       s.append("\n  Cat=");

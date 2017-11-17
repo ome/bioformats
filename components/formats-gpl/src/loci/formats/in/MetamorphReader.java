@@ -1522,7 +1522,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Create an appropriate name for the given series. */
   private String makeImageName(int i) {
-    StringBuffer name = new StringBuffer();
+    StringBuilder name = new StringBuilder();
     if (stageNames != null && stageNames.size() > 0) {
       int stagePosition = i / (getSeriesCount() / stageNames.size());
       name.append("Stage");

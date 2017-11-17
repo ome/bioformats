@@ -145,7 +145,7 @@ public class MetamorphHandler extends BaseHandler {
 
         String k = null, v = null;
         boolean freeform = true;
-        StringBuffer freeformDescription = new StringBuffer();
+        StringBuilder freeformDescription = new StringBuilder();
 
         if (value.indexOf(delim) != -1) {
           int currentIndex = -delim.length();

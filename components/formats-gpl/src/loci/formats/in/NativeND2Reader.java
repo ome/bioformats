@@ -2412,7 +2412,7 @@ public class NativeND2Reader extends FormatReader {
 
       lines = textString.split(" ");
       for (int i=0; i<lines.length; i++) {
-        StringBuffer sb = new StringBuffer(lines[i++]);
+        StringBuilder sb = new StringBuilder(lines[i++]);
         while ((sb.length() == 0 || sb.charAt(sb.length() - 1) != ':') && sb.indexOf("_") < 0 && i < lines.length) {
           sb.append(" ");
           sb.append(lines[i++]);

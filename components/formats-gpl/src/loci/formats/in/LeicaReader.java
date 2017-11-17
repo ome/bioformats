@@ -797,7 +797,7 @@ public class LeicaReader extends FormatReader {
 
       String lei =
         baseFile.substring(0, baseFile.lastIndexOf(File.separator) + 1);
-      StringBuffer suffix = new StringBuffer();
+      StringBuilder suffix = new StringBuilder();
 
       StringTokenizer lines = new StringTokenizer(descr, "\n");
       String line = null, key = null, value = null;

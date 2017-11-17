@@ -3949,7 +3949,7 @@ public class ZeissCZIReader extends FormatReader {
         ", pyramidType = " + pyramidType + ", dimensionCount = " + dimensionCount;
       if (dimensionCount > 0) {
         s += ", dimensions = [";
-        StringBuffer sb = new StringBuffer(s);
+        StringBuilder sb = new StringBuilder(s);
         for (int i=0; i<dimensionCount; i++) {
           sb.append(dimensionEntries[i]);
           if (i < dimensionCount - 1) {

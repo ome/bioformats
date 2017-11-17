@@ -1554,7 +1554,7 @@ public class CellSensReader extends FormatReader {
               case PIXEL_INFO_TYPE:
                 int nIntValues = dataSize / 4;
                 int[] intValues = new int[nIntValues];
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 if (nIntValues > 1) {
                   sb.append("(");
                 }
@@ -1590,7 +1590,7 @@ public class CellSensReader extends FormatReader {
               case DOUBLE_4_4:
                 int nDoubleValues = dataSize / 8;
                 double[] doubleValues = new double[nDoubleValues];
-                sb = new StringBuffer();
+                sb = new StringBuilder();
                 if (nDoubleValues > 1) {
                   sb.append("(");
                 }

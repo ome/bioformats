@@ -219,7 +219,7 @@ public class PrintFormatTable {
       }
 
       String[] extensions = readers[i].getSuffixes();
-      StringBuffer ext = new StringBuffer();
+      StringBuilder ext = new StringBuilder();
       for (int j=0; j<extensions.length; j++) {
         ext.append(extensions[j]);
         if (j < extensions.length - 1) {

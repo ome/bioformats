@@ -207,7 +207,7 @@ public class FilePatternDialog extends ImporterDialog {
       }
     }
     else if (useRanges) {
-      StringBuffer pattern = new StringBuffer();
+      StringBuilder pattern = new StringBuilder();
       for (int i=0; i<counts.length; i++) {
         BigInteger first = new BigInteger(firsts[i]);
         BigInteger fileCount = new BigInteger(counts[i]);
