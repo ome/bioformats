@@ -1,0 +1,46 @@
+environment:
+  AV_PROJECTS: 'c:\projects'
+  AV_BF_M2: 'c:\projects\m2'
+  AV_BF_PYTHON: 'c:\projects\python'
+  AV_BF_SOURCE: 'c:\projects\bioformats'
+
+  matrix:
+    - java: 1.8
+      build: maven
+    - java: 1.7
+      build: maven
+    - java: 1.8
+      build: ant
+
+cache:
+  - '%AV_BF_M2% -> appveyor.yml'
+  - '%AV_BF_PYTHON% -> appveyor.yml'
+
+os: 'Visual Studio 2015'
+clone_folder: '%AV_BF_SOURCE%'
+clone_depth: 5
+platform: x64
+
+init:
+  - git config --global core.autocrlf input
+  - if [%build%] == [ant] appveyor-retry cinst -y ant
+  - refreshenv
+  - 'if [%java%] == [1.7] set "JAVA_HOME=C:\Program Files\Java\jdk1.7.0"'
+  - 'if [%java%] == [1.8] set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0"'
+  - PATH=%JAVA_HOME%\bin;%PATH%
+  - 'if NOT EXIST "c:\projects\%java%\%build%\" mkdir "c:\projects\%java%\%build%\"'
+  - 'if NOT EXIST "%AV_BF_PYTHON%\" C:\Python36-x64\python -m pip install virtualenv'
+  - 'if NOT EXIST "%AV_BF_PYTHON%\" C:\Python36-x64\python -m virtualenv %AV_BF_PYTHON%'
+  - PATH=%AV_BF_PYTHON%;%AV_BF_PYTHON%\scripts;%PATH%
+  - python -m pip install sphinx
+  - 'if [%build%] == [maven] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
+  - 'if [%build%] == [ant] set "ANT_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
+
+build_script:
+  - tools\test-build %build%
+
+artifacts:
+  - path: 'components\**\*.zip'
+  - path: 'components\**\*.jar'
+  - path: 'components\**\*.tar.*'
+  - path: 'artifacts\*'
