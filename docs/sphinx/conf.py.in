@@ -369,5 +369,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://www.olympus-global.com',
     'https://code.google.com/archive/p/jj2000/',
     'https://support.apple.com/downloads/quicktime',
-    'https://support.apple.com/quicktime'
+    'https://support.apple.com/quicktime',
+    'https://www.micro-manager.org'
 ]
