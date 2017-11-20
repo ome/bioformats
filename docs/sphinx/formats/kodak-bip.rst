@@ -44,8 +44,5 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-**Additional Information**
 
 
-.. seealso:: 
-  `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_

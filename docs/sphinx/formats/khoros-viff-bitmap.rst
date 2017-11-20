@@ -6,7 +6,7 @@ Khoros VIFF (Visualization Image File Format) Bitmap
 
 Extensions: .xv
 
-Developer: `Khoral <http://www.khoral.com/company/>`_
+Developer: Khoral
 
 Owner: `AccuSoft <http://www.accusoft.com/company/>`_
 

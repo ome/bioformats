@@ -24,7 +24,7 @@ Writer: JPEG2000Writer (:bsd-writer:`Source Code <JPEG2000Writer.java>`)
 
 Freely Available Software:
 
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+- `JJ2000 (JPEG 2000 library for Java) <https://code.google.com/archive/p/jj2000/>`_
 
 
 We currently have:
@@ -51,5 +51,5 @@ Utility: |Poor|
 **Additional Information**
 
 
-Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. 
+Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ library to read JP2 files. 
 JPEG stands for "Joint Photographic Experts Group".

@@ -7,7 +7,7 @@ Olympus OIR
 Extensions: .oir
 
 
-Owner: `Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <https://www.olympus-global.com>`_
 
 **Support**
 

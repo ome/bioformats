@@ -61,7 +61,7 @@ JPEG-2000 compression, and a new version which is either uncompressed or
 Zip-compressed.  We are not aware of the version number or release date 
 for either format. 
 
-Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ 
+Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ 
 library to read ND2 files compressed with JPEG-2000. 
 
 There is also a **legacy** ND2 reader that uses Nikon's native libraries. 

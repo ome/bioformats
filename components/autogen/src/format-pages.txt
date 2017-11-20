@@ -487,7 +487,7 @@ mif = true
 
 [cellSens VSI]
 extensions = .vsi
-developer = `Olympus <http://www.olympus.com/>`_
+developer = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 weHave = * a few example datasets \n
 * a VSI specification document (v1.6, 2012 November 27, in PDF) \n
@@ -1096,7 +1096,7 @@ reader = JEOLReader
 extensions = .jp2
 developer = `Independent JPEG Group <http://www.ijg.org/>`_
 bsd = yes
-software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+software = `JJ2000 (JPEG 2000 library for Java) <https://code.google.com/archive/p/jj2000/>`_
 weHave = * a JPEG 2000 specification document (free draft from 2000, no longer available online) \n
 * a few .jp2 files
 pixelsRating = Very good
@@ -1108,7 +1108,7 @@ pyramid = yes
 reader = JPEG2000Reader
 writer = JPEG2000Writer
 mif = true
-notes = Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. \n
+notes = Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ library to read JP2 files. \n
 JPEG stands for "Joint Photographic Experts Group".
 
 [JPEG]
@@ -1165,7 +1165,7 @@ mif = true
 pagename = khoros-viff-bitmap
 extensions = .xv
 owner = `AccuSoft <http://www.accusoft.com/company/>`_
-developer = `Khoral <http://www.khoral.com/company/>`_
+developer = Khoral
 bsd = no
 samples = `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 weHave = * several VIFF datasets
@@ -1188,8 +1188,6 @@ opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = KodakReader
-notes = .. seealso:: \n
-  `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_
 
 [Lambert Instruments FLIM]
 extensions = .fli
@@ -1590,7 +1588,7 @@ JPEG-2000 compression, and a new version which is either uncompressed or \n
 Zip-compressed.  We are not aware of the version number or release date \n
 for either format. \n
 \n
-Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ \n
+Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ \n
 library to read ND2 files compressed with JPEG-2000. \n
 \n
 There is also a **legacy** ND2 reader that uses Nikon's native libraries. \n
@@ -1620,7 +1618,7 @@ reader = NRRDReader
 
 [Olympus CellR/APL]
 extensions = .apl, .mtb, .tnb, .tif, .obsep
-owner = `Olympus <http://www.olympus.com/>`_
+owner = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 weHave = * a few CellR datasets
 weWant = * more Cellr datasets \n
@@ -1635,7 +1633,7 @@ mif = true
 
 [Olympus FluoView FV1000]
 extensions = .oib, .oif
-owner = `Olympus <http://www.olympus.com/>`_
+owner = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 versions = 1.0, 2.0
 software = `FV-Viewer from Olympus <http://www.olympus-lifescience.com/en/>`_
@@ -1671,7 +1669,7 @@ Commercial applications that support this format include: \n
 
 [Olympus FluoView TIFF]
 extensions = .tif
-owner = `Olympus <http://www.olympus.com/>`_
+owner = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 software = `DIMIN <http://www.dimin.net/>`_
 weHave = * a FluoView specification document (from 2002 November 14, in DOC) \n
@@ -1692,7 +1690,7 @@ notes = Commercial applications that support this format include: \n
 
 [Olympus OIR]
 extensions = .oir
-owner = `Olympus <http://www.olympus.com/>`_
+owner = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 software = `Olympus Viewer Plugin for ImageJ <http://imagej.net/OlympusImageJPlugin>`_
 weHave = * several OIR datasets \n
@@ -1707,8 +1705,8 @@ notes = Support for this format was added in partnership with OLYMPUS EUROPA SE 
 
 [Olympus ScanR]
 extensions = .xml, .dat, .tif
-owner = `Olympus <http://www.olympus.com/>`_
-developer = `Olympus <http://www.olympus.com/>`_
+owner = `Olympus <https://www.olympus-global.com>`_
+developer = `Olympus <https://www.olympus-global.com>`_
 bsd = no
 versions = Up to 2.5.1
 weHave = * several ScanR datasets
@@ -2200,7 +2198,7 @@ reader = SpiderReader
 
 [Targa]
 extensions = .tga
-developer = `Truevision <http://www.truevision.com>`_
+developer = `Truevision <https://en.wikipedia.org/wiki/Truevision>`_
 bsd = no
 weHave = * a Targa specification document \n
 * a few Targa files
@@ -2228,8 +2226,7 @@ extensions = .tiff, .tif, .tf2, .tf8, .btf
 owner = `Adobe <http://www.adobe.com>`_
 developer = Aldus and Microsoft
 bsd = yes
-samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/marlin/Data_Gallery.html>`_ \n
-`Big TIFF <https://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
+samples = `Big TIFF <https://www.awaresystems.be/imaging/tiff/bigtiff.html#samples>`_
 weHave = * a `TIFF specification document <https://www.awaresystems.be/imaging/tiff.html>`_ \n
 * many TIFF datasets \n
 * a few BigTIFF datasets

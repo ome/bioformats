@@ -1342,7 +1342,8 @@ Java bug fixes:
 
 * Updated to :model_doc:`2013-06 OME-XML schema <>`
 * Improved the performance in tiled formats
-* Added caching of Reader metadata using http://code.google.com/p/kryo/
+* Added caching of Reader metadata using
+  https://github.com/EsotericSoftware/kryo
 * Added support for:
    - :doc:`Aperio AFI </formats/aperio-afi>`
    - :doc:`Inveon </formats/inveon>`

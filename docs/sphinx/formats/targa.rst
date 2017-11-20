@@ -6,7 +6,7 @@ Targa
 
 Extensions: .tga
 
-Developer: `Truevision <http://www.truevision.com>`_
+Developer: `Truevision <https://en.wikipedia.org/wiki/Truevision>`_
 
 
 **Support**

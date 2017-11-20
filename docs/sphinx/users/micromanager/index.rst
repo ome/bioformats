@@ -1,7 +1,7 @@
 Micro-Manager
 =============
 
-`Micro-Manager <https://www.micro-manager.org/wiki/Micro-Manager>`_ is a
+`Micro-Manager <https://www.micro-manager.org>`_ is a
 software framework for implementing advanced and novel imaging procedures,
 extending functionality, customization and rapid development of specialized
 imaging applications.
