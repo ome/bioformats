@@ -1,7 +1,7 @@
 Iqm
 ===
 
-`Iqm <http://code.google.com/p/iqm/>`_ is an image processing
+`Iqm <https://sourceforge.net/projects/iqm/>`_ is an image processing
 application written in Java. It is mainly constructed around the Java
 JAI library and furthermore it incorporates the functionality of the
 popular ImageJ image processing software.
