@@ -2094,7 +2094,7 @@ h263   H.263                               -                  read & write \n
 ====== ================================== =================== ============ \n
 \n
 .. seealso:: \n
-    `QuickTime software overview <http://www.apple.com/quicktime/>`_
+    `QuickTime software overview <https://www.apple.com/quicktime/>`_
 
 [RHK]
 extensions = .sm2, .sm3

@@ -85,4 +85,4 @@ h263   H.263                               -                  read & write
 ====== ================================== =================== ============ 
 
 .. seealso:: 
-    `QuickTime software overview <http://www.apple.com/quicktime/>`_
+    `QuickTime software overview <https://www.apple.com/quicktime/>`_
