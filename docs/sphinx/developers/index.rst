@@ -70,8 +70,9 @@ Contributing to Bio-Formats
     service
     useful-scripts
 
-See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org/ome/report/44>`_
-for information on work currently planned or in progress.
+See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org/ome/report/44>`_ and the various
+`Trello boards <https://trello.com/b/4EXb35xQ/getting-started>`_ for
+information on work currently planned or in progress.
 
 For more general guidance about how to contribute to OME projects, see the 
 :devs_doc:`Contributing developers documentation <index.html>`.
