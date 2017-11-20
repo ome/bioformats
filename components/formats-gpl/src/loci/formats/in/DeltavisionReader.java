@@ -990,7 +990,7 @@ public class DeltavisionReader extends FormatReader {
 
     for (String line : lines) {
       int colon = line.indexOf(':');
-      if (colon != -1 && !line.startsWith("Created")) {
+      if (colon >= 0 && colon < line.length() - 1 && !line.startsWith("Created")) {
         key = line.substring(0, colon).trim();
 
         value = line.substring(colon + 1).trim();
@@ -1226,6 +1226,24 @@ public class DeltavisionReader extends FormatReader {
         else {
           LOGGER.warn("Could not parse date '{}'", line);
         }
+      }
+      else if (line.startsWith("#KEY")) {
+        line = line.substring(line.indexOf(" ")).trim();
+        int split = line.indexOf(":");
+        if (split < 0) {
+          split = line.indexOf(" ");
+        }
+        key = line.substring(0, split).trim();
+        value = line.substring(split + 1).trim();
+        addGlobalMeta(key, value);
+      }
+      else if (line.endsWith(":")) {
+        prefix = line.substring(0, line.length() - 1);
+      }
+      else if (!line.startsWith("#") && !line.replace("-", "").isEmpty() &&
+        !prefix.isEmpty())
+      {
+        addGlobalMetaList(prefix, line);
       }
     }
 
