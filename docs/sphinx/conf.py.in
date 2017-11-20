@@ -368,5 +368,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'http://www.mathworks.com/matlabcentral/answers/92813',
     'https://www.olympus-global.com',
     'https://code.google.com/archive/p/jj2000/',
-    'https://support.apple.com/downloads/quicktime'
+    'https://support.apple.com/downloads/quicktime',
+    'https://support.apple.com/quicktime'
 ]
