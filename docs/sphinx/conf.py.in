@@ -364,11 +364,11 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = []
-try:
-    import urllib
-    brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
-    brokenlinks = urllib.urlopen(brokenfiles_url)
-    linkcheck_ignore.extend(brokenlinks.read().splitlines())
-except IOError:
-    print "Could not open list of broken links."
+linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
+    'http://www.mathworks.com/matlabcentral/answers/92813',
+    'https://www.olympus-global.com',
+    'https://code.google.com/archive/p/jj2000/',
+    'https://support.apple.com/downloads/quicktime',
+    'https://support.apple.com/quicktime',
+    'https://www.micro-manager.org'
+]
