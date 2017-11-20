@@ -496,6 +496,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
             if (dualCamera) {
               exposureIndex /= getEffectiveSizeC();
             }
+            if (exposures.size() == 1) {
+              exposureIndex = 0;
+            }
             if (exposureIndex < exposures.size() && exposures.get(exposureIndex) != null) {
               store.setPlaneExposureTime(new Time(exposures.get(exposureIndex), UNITS.SECOND), s, image);
             }
