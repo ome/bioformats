@@ -7,9 +7,9 @@ Version history
 File format fixes and improvements:
 
 * Nikon ND2
-  - fixed a bug which would use the incorrect channel count for small sized single channel images
+  - fixed a bug which would use the incorrect channel count for small-sized single channel images
 * MetaMorph TIFF
-   - changed the readers behaviour to populate exposure times for all planes when only a 
+   - changed the reader's behaviour to populate exposure times for all planes when only a 
      single exposure time is defined
 * DeltaVision
    - improved parsing of the associated log files to add additional key value 
@@ -24,7 +24,7 @@ Bug fixes and improvements:
 * fixed failures with Ant build from a clean Maven repository by updating Maven repositories 
   to use HTTPS rather than HTTP
 * now using safe version checking for Bio-Formats plugins to prevent a bug with Java 9
-* updated the JPEG-XR codec to allow either interleaved  or non-interleaved data to be returned
+* updated the JPEG-XR codec to allow either interleaved or non-interleaved data to be returned
 
 Documentation improvements:
 
