@@ -2431,13 +2431,25 @@ public class FormatReaderTest {
       String cacheDir = configTree.getCacheDirectory();
       if (cacheDir != null) {
         LOGGER.debug("Loading memo from populated cache");
-        memo = new Memoizer(0, new File(cacheDir));
-        memo.setId(reader.getCurrentFile());
-        if (!memo.isLoadedFromMemo()) {
-          result(testName, false, "Existing memo file could not be loaded");
+        File dir = new File(cacheDir);
+
+        if (!dir.exists() || !dir.isDirectory() || !dir.canRead()) {
+          result(testName, false, "Cached memo directory does not exist");
         }
-        memo.openBytes(0, 0, 0, 1, 1);
-        memo.close();
+
+        File expectedMemo = new File(cacheDir + reader.getCurrentFile());
+        if (expectedMemo.exists()) {
+          memo = new Memoizer(0, dir);
+          memo.setId(reader.getCurrentFile());
+          if (!memo.isLoadedFromMemo()) {
+            result(testName, false, "Existing memo file could not be loaded");
+          }
+          memo.openBytes(0, 0, 0, 1, 1);
+          memo.close();
+        }
+        else {
+          LOGGER.warn("Missing memo file {}; passing test anyway", expectedMemo);
+        }
       }
 
       result(testName, true);
