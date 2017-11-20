@@ -340,15 +340,29 @@ extensions = .1sc
 owner = `Bio-Rad <http://www.bio-rad.com>`_
 bsd = no
 weHave = * software that can read Bio-Rad Gel files \n
-* several Bio-Rad Gel files
-weWant = * a Bio-Rad Gel specification \n
-* more Bio-Rad Gel files
+* several Bio-Rad Gel files \n
+* reverse-engineered Bio-Rad Gel (1sc) file format specification \n
+* Bio-Rad's `Image Lab 5.2.1 <http://www.bio-rad.com/en-ch/product/image-lab-software>`_ software
+weWant = * more Bio-Rad Gel files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
 presenceRating = Poor
 utilityRating = Fair
 reader = BioRadGelReader
+notes = * `Bio-Rad Gel Format (1sc) specification <http://biorad1sc-doc.readthedocs.io/>`_ \n
+* Python3 package of a Bio-Rad Gel Format (1sc) reader \n
+\n
+  * ``pip3 install biorad1sc_reader`` \n
+  * `biorad1sc_reader documentation <http://biorad1sc-reader.readthedocs.io/>`_ \n
+  * Includes command-line utilities \n
+\n
+    * bio1sc2tiff - convert 1sc file image to tiff \n
+    * bio1scmeta - report all metadata in a 1sc file \n
+    * bio1scread - report details on internal 1sc file structure \n
+\n
+  * `biorad1sc_reader on pypi <https://pypi.org/project/biorad1sc-reader/>`_ \n
+  * `biorad1sc_reader on github <https://github.com/itsayellow/biorad1sc_reader>`_
 
 [Bio-Rad PIC]
 extensions = .pic, .raw, .xml
