@@ -35,8 +35,6 @@ antbuild()
       # Do not clean here so that we can potentially archive both
       # docs and java archives.
       ant tools dist-bftools dist-matlab dist-octave
-      # Finally, run the unit tests.
-      ant test
     )
 }
 

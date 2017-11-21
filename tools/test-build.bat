@@ -26,6 +26,4 @@ if [%build%] == [ant] (
   REM don't clean, so that the docs zip will be archived along with
   REM the other zips and jars.
   ant tools dist-bftools dist-matlab dist-octave || exit /b 1
-  REM Finally, run the unit tests.
-  ant test || exit /b 1
 )
