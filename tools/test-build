@@ -14,7 +14,7 @@ clean()
 # Test maven build
 maven()
 {
-    mvn
+    mvn install
 }
 
 # Test Ant build targets
@@ -32,7 +32,12 @@ antbuild()
       ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
-      ant -Dsphinx.warnopts=$SPHINXOPTS clean-docs-sphinx docs-sphinx
+      ant -Dsphinx.warnopts="-W" clean-docs-sphinx docs-sphinx
+      # Do not clean here so that we can potentially archive both
+      # docs and java archives.
+      ant tools dist-bftools dist-matlab dist-octave
+      # Finally, run the unit tests.
+      ant test
     )
 }
 
