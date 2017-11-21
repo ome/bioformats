@@ -131,11 +131,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/formats-api" target="formats-api.clean"/>
   </target>
 
-  <target name="utils-formats-api" depends="jar-formats-api"
-    description="compile extra utilities for reader and writer APIs">
-    <ant dir="components/formats-api" target="formats-api.utils"/>
-  </target>
-
   <target name="test-formats-api" depends="jar-formats-api, testing-deps"
     description="compile and run tests for reader and writer APIs">
     <ant dir="components/formats-api" target="test"/>
