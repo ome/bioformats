@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 23 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 23 (100%).
+  * The file format itself supports 26 of them (5%).
+  * Of those, Bio-Formats fully or partially converts 26 (100%).
 
 Supported fields
 ===============================================================================
@@ -37,10 +37,13 @@ These fields are fully supported by the Bio-Formats MINC MRI format reader:
   * :schema:`Pixels : SizeY <OME-2016-06/ome_xsd.html#Pixels_SizeY>`
   * :schema:`Pixels : SizeZ <OME-2016-06/ome_xsd.html#Pixels_SizeZ>`
   * :schema:`Pixels : Type <OME-2016-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : PositionX <OME-2016-06/ome_xsd.html#Plane_PositionX>`
+  * :schema:`Plane : PositionY <OME-2016-06/ome_xsd.html#Plane_PositionY>`
+  * :schema:`Plane : PositionZ <OME-2016-06/ome_xsd.html#Plane_PositionZ>`
   * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 23**
+**Total supported: 26**
 
-**Total unknown or missing: 453**
+**Total unknown or missing: 450**

@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 158 of them (33%).
-  * Of those, Bio-Formats fully or partially converts 158 (100%).
+  * The file format itself supports 159 of them (33%).
+  * Of those, Bio-Formats fully or partially converts 159 (100%).
 
 Supported fields
 ===============================================================================
@@ -146,6 +146,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Pixels : SizeX <OME-2016-06/ome_xsd.html#Pixels_SizeX>`
   * :schema:`Pixels : SizeY <OME-2016-06/ome_xsd.html#Pixels_SizeY>`
   * :schema:`Pixels : SizeZ <OME-2016-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : TimeIncrement <OME-2016-06/ome_xsd.html#Pixels_TimeIncrement>`
   * :schema:`Pixels : Type <OME-2016-06/ome_xsd.html#Pixels_Type>`
   * :schema:`Plane : DeltaT <OME-2016-06/ome_xsd.html#Plane_DeltaT>`
   * :schema:`Plane : ExposureTime <OME-2016-06/ome_xsd.html#Plane_ExposureTime>`
@@ -176,6 +177,6 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`TransmittanceRange : CutOutTolerance <OME-2016-06/ome_xsd.html#TransmittanceRange_CutOutTolerance>`
   * :schema:`TransmittanceRange : Transmittance <OME-2016-06/ome_xsd.html#TransmittanceRange_Transmittance>`
 
-**Total supported: 158**
+**Total supported: 159**
 
-**Total unknown or missing: 318**
+**Total unknown or missing: 317**

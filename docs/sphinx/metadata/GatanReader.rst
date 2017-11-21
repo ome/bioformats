@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 37 of them (7%).
-  * Of those, Bio-Formats fully or partially converts 37 (100%).
+  * The file format itself supports 69 of them (14%).
+  * Of those, Bio-Formats fully or partially converts 69 (100%).
 
 Supported fields
 ===============================================================================
@@ -23,11 +23,34 @@ These fields are fully supported by the Bio-Formats Gatan Digital Micrograph for
   * :schema:`Detector : ID <OME-2016-06/ome_xsd.html#Detector_ID>`
   * :schema:`DetectorSettings : ID <OME-2016-06/ome_xsd.html#DetectorSettings_ID>`
   * :schema:`DetectorSettings : Voltage <OME-2016-06/ome_xsd.html#DetectorSettings_Voltage>`
+  * :schema:`Ellipse : FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
+  * :schema:`Ellipse : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Ellipse : RadiusX <OME-2016-06/ome_xsd.html#Ellipse_RadiusX>`
+  * :schema:`Ellipse : RadiusY <OME-2016-06/ome_xsd.html#Ellipse_RadiusY>`
+  * :schema:`Ellipse : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+  * :schema:`Ellipse : Text <OME-2016-06/ome_xsd.html#Shape_Text>`
+  * :schema:`Ellipse : X <OME-2016-06/ome_xsd.html#Ellipse_X>`
+  * :schema:`Ellipse : Y <OME-2016-06/ome_xsd.html#Ellipse_Y>`
   * :schema:`Image : AcquisitionDate <OME-2016-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2016-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : InstrumentRef <OME-2016-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2016-06/ome_xsd.html#Image_Name>`
+  * :schema:`Image : ROIRef <OME-2016-06/ome_xsd.html#ROIRef_ID>`
   * :schema:`Instrument : ID <OME-2016-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Label : FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
+  * :schema:`Label : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Label : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+  * :schema:`Label : Text <OME-2016-06/ome_xsd.html#Shape_Text>`
+  * :schema:`Label : X <OME-2016-06/ome_xsd.html#Label_X>`
+  * :schema:`Label : Y <OME-2016-06/ome_xsd.html#Label_Y>`
+  * :schema:`Line : FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
+  * :schema:`Line : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Line : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+  * :schema:`Line : Text <OME-2016-06/ome_xsd.html#Shape_Text>`
+  * :schema:`Line : X1 <OME-2016-06/ome_xsd.html#Line_X1>`
+  * :schema:`Line : X2 <OME-2016-06/ome_xsd.html#Line_X2>`
+  * :schema:`Line : Y1 <OME-2016-06/ome_xsd.html#Line_Y1>`
+  * :schema:`Line : Y2 <OME-2016-06/ome_xsd.html#Line_Y2>`
   * :schema:`Objective : Correction <OME-2016-06/ome_xsd.html#Objective_Correction>`
   * :schema:`Objective : ID <OME-2016-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : Immersion <OME-2016-06/ome_xsd.html#Objective_Immersion>`
@@ -54,7 +77,16 @@ These fields are fully supported by the Bio-Formats Gatan Digital Micrograph for
   * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`ROI : ID <OME-2016-06/ome_xsd.html#ROI_ID>`
+  * :schema:`Rectangle : FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
+  * :schema:`Rectangle : Height <OME-2016-06/ome_xsd.html#Rectangle_Height>`
+  * :schema:`Rectangle : ID <OME-2016-06/ome_xsd.html#Shape_ID>`
+  * :schema:`Rectangle : StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+  * :schema:`Rectangle : Text <OME-2016-06/ome_xsd.html#Shape_Text>`
+  * :schema:`Rectangle : Width <OME-2016-06/ome_xsd.html#Rectangle_Width>`
+  * :schema:`Rectangle : X <OME-2016-06/ome_xsd.html#Rectangle_X>`
+  * :schema:`Rectangle : Y <OME-2016-06/ome_xsd.html#Rectangle_Y>`
 
-**Total supported: 37**
+**Total supported: 69**
 
-**Total unknown or missing: 439**
+**Total unknown or missing: 407**
