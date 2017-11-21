@@ -233,10 +233,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 446
    * - :doc:`GatanReader <metadata/GatanReader>`
-     - 37
+     - 69
      - 0
      - 0
-     - 439
+     - 407
    * - :doc:`GelReader <metadata/GelReader>`
      - 21
      - 0
@@ -443,10 +443,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 411
    * - :doc:`MINCReader <metadata/MINCReader>`
-     - 23
+     - 26
      - 0
      - 0
-     - 453
+     - 450
    * - :doc:`MNGReader <metadata/MNGReader>`
      - 19
      - 0
@@ -463,10 +463,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 457
    * - :doc:`MetamorphReader <metadata/MetamorphReader>`
-     - 47
+     - 58
      - 0
      - 0
-     - 429
+     - 418
    * - :doc:`MetamorphTiffReader <metadata/MetamorphTiffReader>`
      - 43
      - 0
@@ -843,10 +843,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 450
    * - :doc:`ZeissCZIReader <metadata/ZeissCZIReader>`
-     - 158
+     - 159
      - 0
      - 0
-     - 318
+     - 317
    * - :doc:`ZeissLMSReader <metadata/ZeissLMSReader>`
      - 23
      - 0
@@ -1261,40 +1261,40 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Ellipse - FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
-     - 2
+     - 3
      - 0
      - 0
-     - 169
+     - 168
    * - :schema:`Ellipse - FontStyle <OME-2016-06/ome_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Ellipse - ID <OME-2016-06/ome_xsd.html#Shape_ID>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Ellipse - Locked <OME-2016-06/ome_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Ellipse - RadiusX <OME-2016-06/ome_xsd.html#Ellipse_RadiusX>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Ellipse - RadiusY <OME-2016-06/ome_xsd.html#Ellipse_RadiusY>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Ellipse - StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+     - 1
      - 0
      - 0
-     - 0
-     - 171
+     - 170
    * - :schema:`Ellipse - StrokeDashArray <OME-2016-06/ome_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
@@ -1306,10 +1306,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Ellipse - Text <OME-2016-06/ome_xsd.html#Shape_Text>`
-     - 3
+     - 4
      - 0
      - 0
-     - 168
+     - 167
    * - :schema:`Ellipse - TheC <OME-2016-06/ome_xsd.html#Shape_TheC>`
      - 0
      - 0
@@ -1331,15 +1331,15 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Ellipse - X <OME-2016-06/ome_xsd.html#Ellipse_X>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Ellipse - Y <OME-2016-06/ome_xsd.html#Ellipse_Y>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Experiment - AnnotationRef <OME-2016-06/ome_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
@@ -1656,10 +1656,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 0
    * - :schema:`Image - ROIRef <OME-2016-06/ome_xsd.html#ROIRef_ID>`
-     - 14
+     - 15
      - 0
      - 0
-     - 157
+     - 156
    * - :schema:`ImagingEnvironment - AirPressure <OME-2016-06/ome_xsd.html#ImagingEnvironment_AirPressure>`
      - 1
      - 0
@@ -1706,30 +1706,30 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Label - FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
-     - 2
+     - 3
      - 0
      - 0
-     - 169
+     - 168
    * - :schema:`Label - FontStyle <OME-2016-06/ome_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Label - ID <OME-2016-06/ome_xsd.html#Shape_ID>`
-     - 5
+     - 6
      - 0
      - 0
-     - 166
+     - 165
    * - :schema:`Label - Locked <OME-2016-06/ome_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Label - StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+     - 1
      - 0
      - 0
-     - 0
-     - 171
+     - 170
    * - :schema:`Label - StrokeDashArray <OME-2016-06/ome_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
@@ -1741,10 +1741,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Label - Text <OME-2016-06/ome_xsd.html#Shape_Text>`
-     - 5
+     - 6
      - 0
      - 0
-     - 166
+     - 165
    * - :schema:`Label - TheC <OME-2016-06/ome_xsd.html#Shape_TheC>`
      - 0
      - 0
@@ -1766,15 +1766,15 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Label - X <OME-2016-06/ome_xsd.html#Label_X>`
-     - 5
+     - 6
      - 0
      - 0
-     - 166
+     - 165
    * - :schema:`Label - Y <OME-2016-06/ome_xsd.html#Label_Y>`
-     - 5
+     - 6
      - 0
      - 0
-     - 166
+     - 165
    * - :schema:`Laser - FrequencyMultiplication <OME-2016-06/ome_xsd.html#Laser_FrequencyMultiplication>`
      - 0
      - 0
@@ -1916,20 +1916,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Line - FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
-     - 2
+     - 3
      - 0
      - 0
-     - 169
+     - 168
    * - :schema:`Line - FontStyle <OME-2016-06/ome_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Line - ID <OME-2016-06/ome_xsd.html#Shape_ID>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Line - Locked <OME-2016-06/ome_xsd.html#Shape_Locked>`
      - 0
      - 0
@@ -1946,10 +1946,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Line - StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
+     - 1
      - 0
      - 0
-     - 0
-     - 171
+     - 170
    * - :schema:`Line - StrokeDashArray <OME-2016-06/ome_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
@@ -1961,10 +1961,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Line - Text <OME-2016-06/ome_xsd.html#Shape_Text>`
-     - 2
+     - 3
      - 0
      - 0
-     - 169
+     - 168
    * - :schema:`Line - TheC <OME-2016-06/ome_xsd.html#Shape_TheC>`
      - 0
      - 0
@@ -1986,25 +1986,25 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 170
    * - :schema:`Line - X1 <OME-2016-06/ome_xsd.html#Line_X1>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Line - X2 <OME-2016-06/ome_xsd.html#Line_X2>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Line - Y1 <OME-2016-06/ome_xsd.html#Line_Y1>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`Line - Y2 <OME-2016-06/ome_xsd.html#Line_Y2>`
-     - 6
+     - 7
      - 0
      - 0
-     - 165
+     - 164
    * - :schema:`ListAnnotation - AnnotationRef <OME-2016-06/ome_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
@@ -2376,10 +2376,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 0
    * - :schema:`Pixels - TimeIncrement <OME-2016-06/ome_xsd.html#Pixels_TimeIncrement>`
-     - 16
+     - 17
      - 0
      - 0
-     - 155
+     - 154
    * - :schema:`Pixels - Type <OME-2016-06/ome_xsd.html#Pixels_Type>`
      - 171
      - 0
@@ -2406,20 +2406,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Plane - PositionX <OME-2016-06/ome_xsd.html#Plane_PositionX>`
-     - 30
+     - 31
      - 0
      - 0
-     - 141
+     - 140
    * - :schema:`Plane - PositionY <OME-2016-06/ome_xsd.html#Plane_PositionY>`
-     - 30
+     - 31
      - 0
      - 0
-     - 141
+     - 140
    * - :schema:`Plane - PositionZ <OME-2016-06/ome_xsd.html#Plane_PositionZ>`
-     - 23
+     - 24
      - 0
      - 0
-     - 148
+     - 147
    * - :schema:`Plane - TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
      - 171
      - 0
@@ -2441,15 +2441,15 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Plate - ColumnNamingConvention <OME-2016-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+     - 9
+     - 0
+     - 0
+     - 162
+   * - :schema:`Plate - Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
      - 8
      - 0
      - 0
      - 163
-   * - :schema:`Plate - Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
-     - 7
-     - 0
-     - 0
-     - 164
    * - :schema:`Plate - Description <OME-2016-06/ome_xsd.html#Plate_Description>`
      - 2
      - 0
@@ -2461,25 +2461,25 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 168
    * - :schema:`Plate - ID <OME-2016-06/ome_xsd.html#Plate_ID>`
-     - 12
+     - 13
      - 0
      - 0
-     - 159
+     - 158
    * - :schema:`Plate - Name <OME-2016-06/ome_xsd.html#Plate_Name>`
      - 12
      - 0
      - 0
      - 159
    * - :schema:`Plate - RowNamingConvention <OME-2016-06/ome_xsd.html#Plate_RowNamingConvention>`
+     - 9
+     - 0
+     - 0
+     - 162
+   * - :schema:`Plate - Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
      - 8
      - 0
      - 0
      - 163
-   * - :schema:`Plate - Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
-     - 7
-     - 0
-     - 0
-     - 164
    * - :schema:`Plate - Status <OME-2016-06/ome_xsd.html#Plate_Status>`
      - 0
      - 0
@@ -2836,10 +2836,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 170
    * - :schema:`ROI - ID <OME-2016-06/ome_xsd.html#ROI_ID>`
-     - 14
+     - 15
      - 0
      - 0
-     - 157
+     - 156
    * - :schema:`ROI - Name <OME-2016-06/ome_xsd.html#ROI_Name>`
      - 4
      - 0
@@ -2886,35 +2886,35 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Rectangle - FontSize <OME-2016-06/ome_xsd.html#Shape_FontSize>`
-     - 2
+     - 3
      - 0
      - 0
-     - 169
+     - 168
    * - :schema:`Rectangle - FontStyle <OME-2016-06/ome_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Rectangle - Height <OME-2016-06/ome_xsd.html#Rectangle_Height>`
-     - 10
+     - 11
      - 0
      - 0
-     - 161
+     - 160
    * - :schema:`Rectangle - ID <OME-2016-06/ome_xsd.html#Shape_ID>`
-     - 10
+     - 11
      - 0
      - 0
-     - 161
+     - 160
    * - :schema:`Rectangle - Locked <OME-2016-06/ome_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Rectangle - StrokeColor <OME-2016-06/ome_xsd.html#Shape_StrokeColor>`
-     - 1
+     - 2
      - 0
      - 0
-     - 170
+     - 169
    * - :schema:`Rectangle - StrokeDashArray <OME-2016-06/ome_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
@@ -2926,10 +2926,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Rectangle - Text <OME-2016-06/ome_xsd.html#Shape_Text>`
-     - 3
+     - 4
      - 0
      - 0
-     - 168
+     - 167
    * - :schema:`Rectangle - TheC <OME-2016-06/ome_xsd.html#Shape_TheC>`
      - 1
      - 0
@@ -2951,20 +2951,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 170
    * - :schema:`Rectangle - Width <OME-2016-06/ome_xsd.html#Rectangle_Width>`
-     - 10
+     - 11
      - 0
      - 0
-     - 161
+     - 160
    * - :schema:`Rectangle - X <OME-2016-06/ome_xsd.html#Rectangle_X>`
-     - 10
+     - 11
      - 0
      - 0
-     - 161
+     - 160
    * - :schema:`Rectangle - Y <OME-2016-06/ome_xsd.html#Rectangle_Y>`
-     - 10
+     - 11
      - 0
      - 0
-     - 161
+     - 160
    * - :schema:`Screen - AnnotationRef <OME-2016-06/ome_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
@@ -3181,10 +3181,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Well - Column <OME-2016-06/ome_xsd.html#Well_Column>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`Well - ExternalDescription <OME-2016-06/ome_xsd.html#Well_ExternalDescription>`
      - 0
      - 0
@@ -3196,20 +3196,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 170
    * - :schema:`Well - ID <OME-2016-06/ome_xsd.html#Well_ID>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`Well - ReagentRef <OME-2016-06/ome_xsd.html#ReagentRef_ID>`
      - 0
      - 0
      - 0
      - 171
    * - :schema:`Well - Row <OME-2016-06/ome_xsd.html#Well_Row>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`Well - Type <OME-2016-06/ome_xsd.html#Well_Type>`
      - 0
      - 0
@@ -3221,20 +3221,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`WellSample - ID <OME-2016-06/ome_xsd.html#WellSample_ID>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`WellSample - ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`WellSample - Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
-     - 13
+     - 14
      - 0
      - 0
-     - 158
+     - 157
    * - :schema:`WellSample - PositionX <OME-2016-06/ome_xsd.html#WellSample_PositionX>`
      - 6
      - 0

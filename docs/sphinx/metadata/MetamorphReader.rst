@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 47 of them (9%).
-  * Of those, Bio-Formats fully or partially converts 47 (100%).
+  * The file format itself supports 58 of them (12%).
+  * Of those, Bio-Formats fully or partially converts 58 (100%).
 
 Supported fields
 ===============================================================================
@@ -64,7 +64,18 @@ These fields are fully supported by the Bio-Formats Metamorph STK format reader:
   * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Plate : ColumnNamingConvention <OME-2016-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+  * :schema:`Plate : Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
+  * :schema:`Plate : ID <OME-2016-06/ome_xsd.html#Plate_ID>`
+  * :schema:`Plate : RowNamingConvention <OME-2016-06/ome_xsd.html#Plate_RowNamingConvention>`
+  * :schema:`Plate : Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
+  * :schema:`Well : Column <OME-2016-06/ome_xsd.html#Well_Column>`
+  * :schema:`Well : ID <OME-2016-06/ome_xsd.html#Well_ID>`
+  * :schema:`Well : Row <OME-2016-06/ome_xsd.html#Well_Row>`
+  * :schema:`WellSample : ID <OME-2016-06/ome_xsd.html#WellSample_ID>`
+  * :schema:`WellSample : ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
+  * :schema:`WellSample : Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
 
-**Total supported: 47**
+**Total supported: 58**
 
-**Total unknown or missing: 429**
+**Total unknown or missing: 418**
