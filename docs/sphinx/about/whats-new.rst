@@ -1,6 +1,43 @@
 Version history
 ===============
 
+5.7.2 (2017 November 21)
+------------------------
+
+File format fixes and improvements:
+
+* Nikon ND2
+  - fixed a bug which would use the incorrect channel count for small-sized single channel images
+* MetaMorph TIFF
+   - changed the reader's behaviour to populate exposure times for all planes when only a 
+     single exposure time is defined
+* DeltaVision
+   - improved parsing of the associated log files to add additional key value 
+     pairs to global metadata
+* EPS (Encapsulated PostScript)
+   - fixed an exception when reading pixel data in cases with embedded TIFF
+* GIF
+   - fixed a bug to display the correct data when reading planes out of order
+
+Bug fixes and improvements:
+
+* fixed failures with Ant build from a clean Maven repository by updating Maven repositories 
+  to use HTTPS rather than HTTP
+* now using safe version checking for Bio-Formats plugins to prevent a bug with Java 9
+* updated the JPEG-XR codec to allow either interleaved or non-interleaved data to be returned
+
+Documentation improvements:
+
+* added clarification regarding Bio-Formats version requirements for using Java 7 or above
+* updated download links to latest Bio-Formats release version
+* updated the link to the most active fork of JAI ImageIO
+* fixed a number of external broken links
+* added a Trello link for contributing external developers
+* added a link to the page :doc:`Adding format/reader documentation pages</developers/format-documentation>` 
+  to help those contributing to the documentation or supported formats pages
+* the :doc:`Bio-Rad Gel</formats/bio-rad-gel>` page has been updated to add a link to biorad1sc_reader, 
+  an external python implementation (thanks to Matthew Clapp)
+
 5.7.1 (2017 September 20)
 -------------------------
 
