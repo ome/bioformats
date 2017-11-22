@@ -58,6 +58,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.units.quantity.Length;
 import ome.units.UNITS;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
@@ -179,7 +180,18 @@ public class OBFReader extends FormatReader
 
               for (int image = 0 ; image != ome_meta_data.getImageCount() ; ++ image)
               {
-                ome_meta_data.setPixelsBigEndian( Boolean.FALSE, image ) ;
+                if (ome_meta_data.getPixelsBigEndian( image ) == null)
+                {
+                  ome_meta_data.setPixelsBigEndian( Boolean.FALSE, image ) ;
+                }
+                int channels = ome_meta_data.getChannelCount( image ) ;
+                for (int channel = 0 ; channel != channels ; ++ channel)
+                {
+                  if (ome_meta_data.getChannelSamplesPerPixel( image, channel ) == null)
+                  {
+                    ome_meta_data.setChannelSamplesPerPixel( new PositiveInteger( 1 ), image, channel ) ;
+                  }
+                }
               }
 
               service.convertMetadata( ome_meta_data, metadataStore ) ;
