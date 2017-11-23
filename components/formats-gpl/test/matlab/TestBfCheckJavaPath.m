@@ -27,39 +27,37 @@
 
 
 classdef TestBfCheckJavaPath < TestBfMatlab
-    
+
     properties
         status
         version
         maxTime = .1
     end
-    
-    methods
-        function self = TestBfCheckJavaPath(name)
-            self = self@TestBfMatlab(name);
-        end
-        
+
+    methods (Test)
         function testDefault(self)
+            javaaddpath(self.jarPath);
             self.status = bfCheckJavaPath();
-            assertTrue(self.status);
+            self.assertTrue(self.status);
         end
-        
+
         function testAutoloadBioformats(self)
+            javaaddpath(self.jarPath);
             self.status = bfCheckJavaPath(true);
-            assertTrue(self.status);
+            self.assertTrue(self.status);
         end
-        
+
         function testNoAutoloadBioformats(self)
             isStatic = ismember(self.jarPath,...
                 javaclasspath('-static'));
             self.status = bfCheckJavaPath(false);
             if isStatic
-                assertTrue(self.status);
+                self.assertTrue(self.status);
             else
-                assertFalse(self.status);
+                self.assertFalse(self.status);
             end
         end
-        
+
         function testPerformance(self)
             nCounts = 10;
             times = zeros(nCounts);
@@ -68,27 +66,28 @@ classdef TestBfCheckJavaPath < TestBfMatlab
                 bfCheckJavaPath();
                 times(i) = toc;
             end
-            
+
             % First call should be the longest as the Bio-Formats JAR file is
             % added to the javaclasspath
-            assertTrue(times(1) > times(2));
+            self.assertTrue(times(1) > times(2));
             % Second call should still be longer than all the following
             % ones. Profiling reveals some amount of time is spent while
             % computing javaclasspath.local_get_static_path
-            assertTrue(all(times(2) > times(3:end)));
+            self.assertTrue(all(times(2) > times(3:end)));
             % From the third call and onwards, javaclasspath and thus
             % bfCheckJavaPath should return fast
-            assertTrue(mean(times(3:end)) < self.maxTime);
+            self.assertTrue(mean(times(3:end)) < self.maxTime);
         end
-        
+
         function testJavaMethod(self)
+            javaaddpath(self.jarPath);
             self.status = bfCheckJavaPath(true);
             version = char(loci.formats.FormatTools.VERSION);
             [self.status self.version]= bfCheckJavaPath(false);
-            assertEqual(self.version,version);
+            self.assertEqual(self.version,version);
             if (exist ('OCTAVE_VERSION', 'builtin'))
                 version = char(java_get('loci.formats.FormatTools', 'VERSION'));
-                assertEqual( self.version, version);
+                self.assertEqual( self.version, version);
             end
         end
     end

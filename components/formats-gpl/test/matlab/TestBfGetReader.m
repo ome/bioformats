@@ -26,46 +26,52 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 classdef TestBfGetReader < ReaderTest
-    
+
     methods
-        function self = TestBfGetReader(name)
-            self = self@ReaderTest(name);
+        % Pixel type tests
+        function checkPixelsType(self, type)
+            self.reader = bfGetReader([type '-test&pixelType=' type '.fake']);
+            pixelType = self.reader.getPixelType();
+            class = char(loci.formats.FormatTools.getPixelTypeString(pixelType));
+            self.assertEqual(class, type);
         end
-        
+    end
+
+    methods (Test)
         % Input check tests
         function testInputClass(self)
-            assertExceptionThrown(@() bfGetReader(0),...
+            self.assertError(@() bfGetReader(0),...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
-        
+
         function testNoInput(self)
             self.reader = bfGetReader();
-            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
-            assertTrue(isempty(self.reader.getCurrentFile()));
+            self.assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            self.assertTrue(isempty(self.reader.getCurrentFile()));
         end
-        
+
         function testEmptyInput(self)
             self.reader = bfGetReader('');
-            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
-            assertTrue(isempty(self.reader.getCurrentFile()));
+            self.assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            self.assertTrue(isempty(self.reader.getCurrentFile()));
         end
-        
+
         function testFakeInput(self)
             self.reader = bfGetReader('test.fake');
-            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
-            assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
+            self.assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            self.assertEqual(char(self.reader.getCurrentFile()), 'test.fake');
         end
-        
+
         function testNonExistingInput(self)
-            assertExceptionThrown(@() bfGetReader('nonexistingfile'),...
+            self.assertError(@() bfGetReader('nonexistingfile'),...
                 'bfGetReader:FileNotFound');
         end
-        
+
         function testFormatTypeInput(self)
             self.reader = bfGetReader('test.fake');
-            assertEqual(char(self.reader.getFormat),'Simulated data');
+            self.assertEqual(char(self.reader.getFormat),'Simulated data');
         end
-        
+
         function testFileInput(self)
             % Create fake file
             mkdir(self.tmpdir);
@@ -74,18 +80,10 @@ classdef TestBfGetReader < ReaderTest
             fclose(fid);
             self.reader = bfGetReader(filepath);
             rmdir(self.tmpdir, 's');
-            assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
-            assertEqual(char(self.reader.getCurrentFile()), filepath);
+            self.assertTrue(isa(self.reader, 'loci.formats.ReaderWrapper'));
+            self.assertEqual(char(self.reader.getCurrentFile()), filepath);
         end
-        
-        % Pixel type tests
-        function checkPixelsType(self, type)
-            self.reader = bfGetReader([type '-test&pixelType=' type '.fake']);
-            pixelType = self.reader.getPixelType();
-            class = char(loci.formats.FormatTools.getPixelTypeString(pixelType));
-            assertEqual(class, type);
-        end
-        
+
         function testINT8(self)
             self.checkPixelsType('int8');
         end
@@ -110,127 +108,127 @@ classdef TestBfGetReader < ReaderTest
         function testDOUBLE(self)
             self.checkPixelsType('double');
         end
-        
+
         % Dimension size tests
         function testSizeX(self)
             sizeX = 200;
             self.reader = bfGetReader(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
-            assertEqual(self.reader.getSizeX(), sizeX);
+            self.assertEqual(self.reader.getSizeX(), sizeX);
         end
-        
+
         function testSizeY(self)
             sizeY = 200;
             self.reader = bfGetReader(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
-            assertEqual(self.reader.getSizeY(), sizeY);
+            self.assertEqual(self.reader.getSizeY(), sizeY);
         end
-        
+
         function testSizeZ(self)
             sizeZ = 200;
             self.reader = bfGetReader(['sizeZ-test&sizeZ=' num2str(sizeZ) '.fake']);
-            assertEqual(self.reader.getSizeZ(), sizeZ);
+            self.assertEqual(self.reader.getSizeZ(), sizeZ);
         end
-        
+
         function testSizeC(self)
             sizeC = 200;
             self.reader = bfGetReader(['sizeC-test&sizeC=' num2str(sizeC) '.fake']);
-            assertEqual(self.reader.getSizeC(), sizeC);
+            self.assertEqual(self.reader.getSizeC(), sizeC);
         end
-        
+
         function testSizeT(self)
             sizeT = 200;
             self.reader = bfGetReader(['sizeT-test&sizeT=' num2str(sizeT) '.fake']);
-            assertEqual(self.reader.getSizeT(), sizeT);
+            self.assertEqual(self.reader.getSizeT(), sizeT);
         end
-        
+
         % Endianness tests
         function testLittleEndian(self)
             self.reader = bfGetReader('little-test&little=true.fake');
-            assertTrue(self.reader.isLittleEndian());
+            self.assertTrue(self.reader.isLittleEndian());
         end
-        
+
         function testBigEndian(self)
             self.reader = bfGetReader('bigendian-test&little=false.fake');
-            assertFalse(self.reader.isLittleEndian());
+            self.assertFalse(self.reader.isLittleEndian());
         end
-        
+
         % Series tests
         function testMonoSeries(self)
             nSeries = 1;
             self.reader = bfGetReader(['series-test&series=' num2str(nSeries) '.fake']);
-            assertEqual(self.reader.getSeriesCount(), nSeries);
+            self.assertEqual(self.reader.getSeriesCount(), nSeries);
         end
-        
+
         function testMultiSeries(self)
             nSeries = 10;
             self.reader = bfGetReader(['series-test&series=' num2str(nSeries) '.fake']);
-            assertEqual(self.reader.getSeriesCount(), nSeries);
+            self.assertEqual(self.reader.getSeriesCount(), nSeries);
         end
-        
+
         function testInterleaved(self)
             self.reader = bfGetReader('interleaved-test&interleaved=true.fake');
-            assertTrue(self.reader.isInterleaved());
+            self.assertTrue(self.reader.isInterleaved());
         end
-        
+
         function testNoInterleaved(self)
             self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
-            assertFalse(self.reader.isInterleaved());
+            self.assertFalse(self.reader.isInterleaved());
         end
-        
+
         function testGetPixelsPhysicalSizeX(self)
             self.reader = bfGetReader('pixelSize-test&physicalSizeX=.3.fake');
             metadata = self.reader.getMetadataStore();
             physicalSizeX = metadata.getPixelsPhysicalSizeX(0);
-            assertFalse(isempty(physicalSizeX));
-            assertEqual(physicalSizeX.value().doubleValue(), .3);
-            assertEqual(char(physicalSizeX.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeX.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
+            self.assertFalse(isempty(physicalSizeX));
+            self.assertEqual(physicalSizeX.value().doubleValue(), .3);
+            self.assertEqual(char(physicalSizeX.unit().getSymbol()), 'Âµm');
+            self.assertEqual(physicalSizeX.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0, 'absTol', 1e-4);
         end
-        
+
         function testGetPixelsPhysicalSizeY(self)
             self.reader = bfGetReader('pixelSize-test&physicalSizeY=.3.fake');
             metadata = self.reader.getMetadataStore();
             physicalSizeY = metadata.getPixelsPhysicalSizeY(0);
-            assertFalse(isempty(physicalSizeY));
-            assertEqual(physicalSizeY.value().doubleValue(), .3);
-            assertEqual(char(physicalSizeY.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeY.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
+            self.assertFalse(isempty(physicalSizeY));
+            self.assertEqual(physicalSizeY.value().doubleValue(), .3);
+            self.assertEqual(char(physicalSizeY.unit().getSymbol()), 'Âµm');
+            self.assertEqual(physicalSizeY.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0, 'absTol', 1e-4);
         end
-        
+
         function testGetPixelsPhysicalSizeZ(self)
             self.reader = bfGetReader('pixelSize-test&physicalSizeZ=.3.fake');
             metadata = self.reader.getMetadataStore();
             physicalSizeZ = metadata.getPixelsPhysicalSizeZ(0);
-            assertFalse(isempty(physicalSizeZ));
-            assertEqual(physicalSizeZ.value().doubleValue(), .3);
-            assertEqual(char(physicalSizeZ.unit().getSymbol()), 'µm');
-            assertElementsAlmostEqual(physicalSizeZ.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0);
+            self.assertFalse(isempty(physicalSizeZ));
+            self.assertEqual(physicalSizeZ.value().doubleValue(), .3);
+            self.assertEqual(char(physicalSizeZ.unit().getSymbol()), 'Âµm');
+            self.assertEqual(physicalSizeZ.value(ome.units.UNITS.NANOMETER).doubleValue(), 300.0, 'absTol', 1e-4);
         end
-        
+
         function testJavaMethod(self)
             self.reader = loci.formats.ChannelFiller();
             self.reader = loci.formats.ChannelSeparator(self.reader);
-            
+
             reader = javaObject('loci.formats.ChannelSeparator', ...
                 javaObject('loci.formats.ChannelFiller'));
-            assertEqual(self.reader.getClass(),reader.getClass());
-            
+            self.assertEqual(self.reader.getClass(),reader.getClass());
+
             OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
             OMEXMLService1 = javaObject('loci.formats.services.OMEXMLServiceImpl');
-            assertEqual(OMEXMLService.getClass(),OMEXMLService1.getClass());
-            
+            self.assertEqual(OMEXMLService.getClass(),OMEXMLService1.getClass());
+
             self.reader.setMetadataStore(OMEXMLService1.createOMEXMLMetadata());
         end
-        
+
         %Test Default Thumb Size
         function testThumbSizeX(self)
             self.reader = bfGetReader('test.fake');
-            assertEqual(self.reader.getThumbSizeX(),128);
+            self.assertEqual(self.reader.getThumbSizeX(),128);
         end
-        
+
         function testThumbSizeY(self)
             self.reader = bfGetReader('test.fake');
-            assertEqual(self.reader.getThumbSizeY(),128);
+            self.assertEqual(self.reader.getThumbSizeY(),128);
         end
-       
+
     end
 end

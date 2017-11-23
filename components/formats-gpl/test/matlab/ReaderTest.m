@@ -26,7 +26,7 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 classdef ReaderTest < TestBfMatlab
-    
+
     properties
         reader
         sizeX
@@ -35,14 +35,9 @@ classdef ReaderTest < TestBfMatlab
         sizeC
         sizeT
     end
-    
-    methods
-        function self = ReaderTest(name)
-            self = self@TestBfMatlab(name);
-        end
-        
-        function setUp(self)
-            setUp@TestBfMatlab(self)
+
+    methods (TestMethodSetup)
+        function ReaderTestSetUp(self)
             javaaddpath(self.jarPath);
             self.reader = loci.formats.in.FakeReader();
             self.sizeX = self.reader.DEFAULT_SIZE_X;
@@ -53,13 +48,14 @@ classdef ReaderTest < TestBfMatlab
             loci.common.DebugTools.setRootLevel('ERROR');
             import ome.units.UNITS.*;
         end
-        
-        function tearDown(self)
+    end
+
+    methods (TestMethodTeardown)
+        function ReaderTestTearDown(self)
             if ~isempty(self.reader),
                 self.reader.close();
                 self.reader = [];
             end
-            tearDown@TestBfMatlab(self)
         end
     end
 end

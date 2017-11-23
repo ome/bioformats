@@ -31,25 +31,23 @@ classdef TestMemoizer < ReaderTest
         filepath
     end
 
-    methods
-        function self = TestMemoizer(name)
-            self = self@ReaderTest(name);
-        end
-
-        function setUp(self)
-            setUp@ReaderTest(self);
-
+    methods (TestMethodSetup)
+        function MemoizerSetUp(self)
             % Create fake file for testing
             mkdir(self.tmpdir);
             self.filepath = fullfile(self.tmpdir, 'test.fake');
             fid = fopen(self.filepath, 'w+');
             fclose(fid);
         end
-        function tearDown(self)
-            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
-            tearDown@ReaderTest(self);
-        end
+    end
 
+    methods (TestMethodTeardown)
+        function MemoizerTearDown(self)
+            if exist(self.tmpdir, 'dir') == 7, rmdir(self.tmpdir, 's'); end
+        end
+    end
+
+    methods (Test)
         function testMinimumElapsed(self)
             % Create memoizer reader with large minimum initialization
             % time
@@ -57,8 +55,8 @@ classdef TestMemoizer < ReaderTest
             self.reader.setId(self.filepath);
 
             % Check reader is not saved to memo file
-            assertFalse(self.reader.isLoadedFromMemo());
-            assertFalse(self.reader.isSavedToMemo());
+            self.assertFalse(self.reader.isLoadedFromMemo());
+            self.assertFalse(self.reader.isSavedToMemo());
             self.reader.close();
         end
 
@@ -69,8 +67,8 @@ classdef TestMemoizer < ReaderTest
             self.reader.setId(self.filepath);
 
             % Check reader has been saved to memo file
-            assertFalse(self.reader.isLoadedFromMemo());
-            assertTrue(self.reader.isSavedToMemo());
+            self.assertFalse(self.reader.isLoadedFromMemo());
+            self.assertTrue(self.reader.isSavedToMemo());
             self.reader.close();
         end
 
@@ -84,8 +82,8 @@ classdef TestMemoizer < ReaderTest
             self.reader.setId(self.filepath);
 
             % Check reader has been loaded from memo file
-            assertTrue(self.reader.isLoadedFromMemo());
-            assertFalse(self.reader.isSavedToMemo());
+            self.assertTrue(self.reader.isLoadedFromMemo());
+            self.assertFalse(self.reader.isSavedToMemo());
         end
 
         function testNewReader(self)
@@ -96,8 +94,8 @@ classdef TestMemoizer < ReaderTest
             % Construct new memoizer
             reader2 = loci.formats.Memoizer(bfGetReader(), 0);
             reader2.setId(self.filepath);
-            assertTrue(reader2.isLoadedFromMemo());
-            assertFalse(reader2.isSavedToMemo());
+            self.assertTrue(reader2.isLoadedFromMemo());
+            self.assertFalse(reader2.isSavedToMemo());
             reader2.close();
             self.reader.close()
             clear reader2
@@ -112,8 +110,8 @@ classdef TestMemoizer < ReaderTest
             for i = 1 : 4
                 r = loci.formats.Memoizer(bfGetReader(), 0);
                 r.setId(localpath);
-                assertTrue(r.isLoadedFromMemo());
-                assertFalse(r.isSavedToMemo());
+                self.assertTrue(r.isLoadedFromMemo());
+                self.assertFalse(r.isSavedToMemo());
                 r.close();
             end
         end

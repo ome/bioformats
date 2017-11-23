@@ -1,12 +1,7 @@
-% Integration tests for the bfUpgradeCheck utility function
-%
-% Require MATLAB xUnit Test Framework to be installed
-% http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
-% https://github.com/psexton/matlab-xunit (GitHub source code)
-
+function []=runbfxunit(xmlfile)
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2017 Open Microscopy Environment:
+% Copyright (C) 2017 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -25,27 +20,19 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfUpgradeCheck < ReaderTest
+    import matlab.unittest.TestRunner
+    import matlab.unittest.TestSuite
+    import matlab.unittest.plugins.XMLPlugin
 
-    properties
-        upgrader
-    end
+    dir = fileparts(mfilename('fullpath'));
 
+    suite = TestSuite.fromFolder(dir)
+    runner = TestRunner.withNoPlugins;
 
-    methods (TestMethodTeardown)
-        function UpgradeTearDown(self)
-            self.upgrader = [];
-            upgrader = [];
-        end
-    end
+    p = XMLPlugin.producingJUnitFormat(xmlfile);
 
-    methods (Test)
-        function testJavaMethod(self)
-            self.upgrader = javaObject('loci.formats.UpgradeChecker');
-            upgrader = loci.formats.UpgradeChecker();
-            self.assertEqual( self.upgrader.getClass, upgrader.getClass);
-        end
-
-    end
+    runner.addPlugin(p)
+    results = runner.run(suite);
+    table(results)
 
 end
