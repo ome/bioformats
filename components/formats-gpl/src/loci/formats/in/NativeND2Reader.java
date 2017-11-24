@@ -123,6 +123,7 @@ public class NativeND2Reader extends FormatReader {
 
   private boolean textData = false;
   private Double refractiveIndex = null;
+  private boolean hasMultipointNames = false;
 
   // -- Constructor --
 
@@ -1980,8 +1981,16 @@ public class NativeND2Reader extends FormatReader {
         else if (name.equals("dZLow")) {
           zLow = DataTools.parseDouble(value.toString());
         }
-        else if (name.equals("dPosX")) {
+        else if (name.equals("dPosName")) {
+          hasMultipointNames = true;
           positionCount++;
+        }
+        else if (name.equals("dPosX") && !hasMultipointNames) {
+          positionCount++;
+        }
+        
+        if (name.toLowerCase().startsWith("dpos")) {
+          name += " " + positionCount;
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
