@@ -712,11 +712,6 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 0
      - 433
-   * - :doc:`ScreenReader <metadata/ScreenReader>`
-     - 34
-     - 0
-     - 0
-     - 442
    * - :doc:`SeikoReader <metadata/SeikoReader>`
      - 22
      - 0

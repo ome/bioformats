@@ -3471,42 +3471,6 @@ WellSample.Index = Yes
 WellSample.PositionX = Yes
 WellSample.PositionY = Yes
 
-[ScreenReader]
-Channel.ID = Yes
-Channel.SamplesPerPixel = Yes
-Image.AcquisitionDate = Yes
-Image.ID = Yes
-Image.Name = Yes
-Pixels.BigEndian = Yes
-Pixels.DimensionOrder = Yes
-Pixels.ID = Yes
-Pixels.Interleaved = Yes
-Pixels.SignificantBits = Yes
-Pixels.SizeC = Yes
-Pixels.SizeT = Yes
-Pixels.SizeX = Yes
-Pixels.SizeY = Yes
-Pixels.SizeZ = Yes
-Pixels.Type = Yes
-Plane.TheC = Yes
-Plane.TheT = Yes
-Plane.TheZ = Yes
-Plate.ColumnNamingConvention = Yes
-Plate.Columns = Yes
-Plate.ID = Yes
-Plate.Name = Yes
-Plate.RowNamingConvention = Yes
-Plate.Rows = Yes
-Screen.ID = Yes
-Screen.Name = Yes
-Screen.PlateRef = Yes
-Well.Column = Yes
-Well.ID = Yes
-Well.Row = Yes
-WellSample.ID = Yes
-WellSample.ImageRef = Yes
-WellSample.Index = Yes
-
 [SDTReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
