@@ -8,7 +8,7 @@ If you need to contact us for further assistance, please see the
 channels for support are our mailing lists and forums.
 
 Before filing a bug report, please read and follow the
-[guidance for bug reporting](https://docs.openmicroscopy.org/latest/bio-formats/about/bug-reporting.html)
+[guidance for bug reporting](https://docs.openmicroscopy.org/latest/bio-formats/about/bug-reporting.html).
 
 You can submit files to our [QA system](http://qa.openmicroscopy.org.uk/qa/upload/)
 or for large files (>2 GB), please write to the
