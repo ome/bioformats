@@ -252,7 +252,10 @@ public class CellVoyagerReader extends FormatReader
     if ( localName.equals( "MeasurementResult.xml" ) ) { return true; }
     final Location parent = new Location( name ).getAbsoluteFile().getParentFile();
     Location xml = new Location( parent, "MeasurementResult.xml" );
-    if (!xml.exists()) {
+    if (!xml.exists() && parent != null) {
+      if (parent.getParent() == null) {
+        return false;
+      }
       xml = new Location(parent.getParentFile(), "MeasurementResult.xml");
       if (!xml.exists()) {
         return false;
