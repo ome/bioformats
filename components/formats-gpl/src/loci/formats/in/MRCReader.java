@@ -274,7 +274,9 @@ public class MRCReader extends FormatReader {
       }
     }
 
-    in.skipBytes(4);
+    int ispg = in.readInt();
+    addGlobalMeta("ISPG", ispg);
+    addGlobalMeta("Is data cube", ispg == 1);
 
     extHeaderSize = in.readInt();
 
