@@ -957,7 +957,7 @@ public class SDTInfo {
         in.skipBytes(len);
       }
       else {
-        in.skipBytes(in.available());
+        in.seek(nextBlockOffs);
       }
     }
   }
