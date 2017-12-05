@@ -44,6 +44,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
+import loci.formats.ImageTools;
 import loci.formats.codec.CodecOptions;
 
 import org.slf4j.Logger;
@@ -878,7 +879,7 @@ public class TiffParser {
 
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
-    if (effectiveChannels == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
+    if ((effectiveChannels == 1 || planarConfig == 1) && (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
@@ -894,6 +895,7 @@ public class TiffParser {
       if (planarConfig == 2) {
         lastTile = stripOffsets.length - 1;
       }
+      int bytes = ifd.getBitsPerSample()[0] / 8;
 
       int offset = 0;
       for (int tile=firstTile; tile<=lastTile; tile++) {
@@ -919,7 +921,7 @@ public class TiffParser {
         else {
           // we only want a piece of the tile, so read each row separately
           // this is especially necessary for large single-tile images
-          int bpp = ifd.getBitsPerSample()[0] / 8;
+          int bpp = bytes * effectiveChannels;
           in.skipBytes((int) (y * bpp * tileWidth));
           for (int row=0; row<height; row++) {
             in.skipBytes(x * bpp);
@@ -936,6 +938,15 @@ public class TiffParser {
               break;
             }
           }
+        }
+      }
+      if (effectiveChannels > 1) {
+        byte[][] split = new byte[effectiveChannels][buf.length / effectiveChannels];
+        for (int c=0; c<split.length; c++) {
+          split[c] = ImageTools.splitChannels(buf, c, effectiveChannels, bytes, false, true);
+        }
+        for (int c=0; c<split.length; c++) {
+          System.arraycopy(split[c], 0, buf, c * split[c].length, split[c].length);
         }
       }
       return buf;
