@@ -371,5 +371,5 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://support.apple.com/downloads/quicktime',
     'https://support.apple.com/quicktime',
     'https://www.micro-manager.org',
-    'https://nifti.nimh.nih.gov/nifti-1/*'
+    'https://nifti.nimh.nih.gov/nifti-1/'
 ]
