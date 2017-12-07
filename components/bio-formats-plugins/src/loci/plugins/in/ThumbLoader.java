@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import loci.common.DebugTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -144,7 +145,10 @@ public class ThumbLoader implements Runnable {
     Exception exc = null;
     try {
       BufferedImage thumb = thumbReader.openThumbImage(ndx);
-      thumb = AWTImageTools.autoscale(thumb);
+      // autoscaling floating point thumbnails typically results in a black image
+      if (!FormatTools.isFloatingPoint(thumbReader.getPixelType())) {
+        thumb = AWTImageTools.autoscale(thumb);
+      }
       ImageIcon icon = new ImageIcon(thumb);
       panel.removeAll();
       panel.add(new JLabel(icon));

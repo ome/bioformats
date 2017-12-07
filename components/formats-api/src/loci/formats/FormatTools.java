@@ -1310,7 +1310,10 @@ public final class FormatTools {
       r.setVar("thumbSizeX", reader.getThumbSizeX());
       r.setVar("thumbSizeY", reader.getThumbSizeY());
       r.setVar("little", reader.isLittleEndian());
-      r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY)");
+
+      // always normalize floating point images, otherwise scaling will fail
+      r.setVar("normal", true);
+      r.exec("img = AWTImageTools.openImage(plane, reader, sizeX, sizeY, normal)");
       r.exec("img = AWTImageTools.makeUnsigned(img)");
       r.exec("thumb = AWTImageTools.scale(img, thumbSizeX, thumbSizeY, false)");
       bytes = (byte[][]) r.exec("AWTImageTools.getPixelBytes(thumb, little)");
