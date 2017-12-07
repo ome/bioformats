@@ -88,6 +88,7 @@ public class VectraReader extends BaseTiffReader {
     super("PerkinElmer Vectra/QPTIFF", new String[] {"tiff", "tif", "qptiff"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN};
     noSubresolutions = true;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -97,39 +98,39 @@ public class VectraReader extends BaseTiffReader {
    */
   @Override
   public boolean isThisType(String name, boolean open) {
-    boolean isThisType = super.isThisType(name, open);
-    if (!isThisType && open) {
-      RandomAccessInputStream stream = null;
-      try {
-        stream = new RandomAccessInputStream(name);
-        TiffParser tiffParser = new TiffParser(stream);
-        tiffParser.setDoCaching(false);
-        if (!tiffParser.isValidHeader()) {
-          return false;
-        }
-        IFD ifd = tiffParser.getFirstIFD();
-        if (ifd == null) {
-          return false;
-        }
-        String software = ifd.getIFDTextValue(IFD.SOFTWARE);
-        return software != null && software.startsWith(SOFTWARE_CHECK);
-      }
-      catch (IOException e) {
-        LOGGER.debug("I/O exception during isThisType() evaluation.", e);
+    if (!open) {
+      return checkSuffix(name, "qptiff");
+    }
+    RandomAccessInputStream stream = null;
+    try {
+      stream = new RandomAccessInputStream(name);
+      TiffParser tiffParser = new TiffParser(stream);
+      tiffParser.setDoCaching(false);
+      if (!tiffParser.isValidHeader()) {
         return false;
       }
-      finally {
-        try {
-          if (stream != null) {
-            stream.close();
-          }
-        }
-        catch (IOException e) {
-          LOGGER.debug("I/O exception during stream closure.", e);
+      IFD ifd = tiffParser.getFirstIFD();
+      if (ifd == null) {
+        return false;
+      }
+      tiffParser.fillInIFD(ifd);
+      String software = ifd.getIFDTextValue(IFD.SOFTWARE);
+      return software != null && software.startsWith(SOFTWARE_CHECK);
+    }
+    catch (IOException e) {
+      LOGGER.debug("I/O exception during isThisType() evaluation.", e);
+      return false;
+    }
+    finally {
+      try {
+        if (stream != null) {
+          stream.close();
         }
       }
+      catch (IOException e) {
+        LOGGER.debug("I/O exception during stream closure.", e);
+      }
     }
-    return isThisType;
   }
 
   /**
