@@ -56,7 +56,9 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -77,6 +79,7 @@ public class VectraReader extends BaseTiffReader {
   // -- Fields --
 
   private int pyramidDepth = 1;
+  private String profileXML;
 
   // -- Constructor --
 
@@ -164,6 +167,7 @@ public class VectraReader extends BaseTiffReader {
     super.close(fileOnly);
     if (!fileOnly) {
       pyramidDepth = 1;
+      profileXML = null;
     }
   }
 
@@ -285,8 +289,17 @@ public class VectraReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(getImageName(seriesToCoreIndex(i)), i);
+      int coreIndex = seriesToCoreIndex(i);
+      store.setImageName(getImageName(coreIndex), i);
       store.setImageDescription("", i);
+
+      int ifdIndex = getIFDIndex(coreIndex, 0);
+      IFD ifd = ifds.get(ifdIndex);
+      double x = ifd.getXResolution();
+      double y = ifd.getYResolution();
+
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(x), i);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(y), i);
     }
 
     // each high-resolution IFD has an XML description that needs to be parsed
@@ -305,7 +318,20 @@ public class VectraReader extends BaseTiffReader {
           String name = e.getNodeName();
           String value = e.getTextContent();
           if (name.equals("ScanProfile")) {
-            //addGlobalMeta(name, XMLTools.getXML(e));
+            try {
+              Document profileRoot = XMLTools.createDocument();
+              Node tmp = profileRoot.importNode(e, true);
+              profileRoot.appendChild(tmp);
+              profileXML = XMLTools.getXML(profileRoot);
+
+              // scan profile XML is usually too long to be saved
+              // when original metadata filtering is enabled, but there
+              // is an API method below to retrieve it
+              addGlobalMeta(name, profileXML);
+            }
+            catch (Exception ex) {
+              LOGGER.debug("Could not preserve scan profile metadata", ex);
+            }
           }
           else {
             addGlobalMetaList(name, value);
@@ -342,6 +368,18 @@ public class VectraReader extends BaseTiffReader {
             store.setObjectiveID(objective, 0, 0);
             store.setObjectiveModel(value, 0, 0);
 
+            // objective model value is usually something like "20x",
+            // so attempt to parse a valid magnification from it
+
+            try {
+              String mag = value.toLowerCase().replace("x", "");
+              Double magFactor = DataTools.parseDouble(mag);
+              store.setObjectiveNominalMagnification(magFactor, 0, 0);
+            }
+            catch (NumberFormatException ex) {
+              LOGGER.info("Could not determine magnification: {}", value);
+            }
+
             for (int series=0; series<getSeriesCount(); series++) {
               store.setImageInstrumentRef(instrument, series);
               store.setObjectiveSettingsID(objective, series);
@@ -363,6 +401,16 @@ public class VectraReader extends BaseTiffReader {
     }
   }
 
+  // -- VectraReader API methods --
+
+  /**
+   * Returns an XML string corresponding to the ScanProfile node.
+   */
+  public String getScanProfileXML() {
+    FormatTools.assertId(currentId, true, 1);
+    return profileXML;
+  }
+
   private String getImageName(int coreIndex) {
     if (coreIndex < pyramidDepth) {
       return "resolution #" + (coreIndex + 1);
@@ -379,6 +427,8 @@ public class VectraReader extends BaseTiffReader {
 
   private String getIFDComment(int ifdIndex) {
     String xml = ifds.get(ifdIndex).getComment().trim();
+    // encoding is incorrectly specified as UTF-16
+    // all files encountered so far are actually UTF-8
     xml = xml.replace("utf-16", "utf-8");
     return xml;
   }
@@ -398,6 +448,20 @@ public class VectraReader extends BaseTiffReader {
     return null;
   }
 
+  /**
+   * Returns the index of the IFD to be used for the given
+   * core index and image number.
+   *
+   * The IFD order in general is:
+   *
+   *  - IFD #0 to n-1: full resolution images (1 RGB for BF data, n grayscale for FL)
+   *  - IFD #n: RGB thumbnail
+   *  - IFD #n+1 to (n*2)-1: 50% resolution images (optional)
+   *  - IFD #n*2 to (n*3)-1: 25% resolution images (optional)
+   *  ...
+   *  - macro/overview image (optional)
+   *  - label image (optional)
+   */
   private int getIFDIndex(int coreIndex, int no) {
     if (coreIndex == 0) {
       return no;
@@ -411,7 +475,7 @@ public class VectraReader extends BaseTiffReader {
       return core.get(0).imageCount;
 
     }
-    // optional extra macro or label image
+    // optional extra macro or label image at the end of the IFD list
     return ifds.size() - (core.size() - coreIndex);
   }
 
