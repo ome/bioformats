@@ -953,12 +953,7 @@ public class SDTInfo {
         meta.put(bhFileBlockHeader + "blockLength", new Long(blockLength));
       }
 
-      if (len <= in.available()) {
-        in.skipBytes(len);
-      }
-      else {
-        in.seek(nextBlockOffs);
-      }
+      in.seek(nextBlockOffs);
     }
   }
 
