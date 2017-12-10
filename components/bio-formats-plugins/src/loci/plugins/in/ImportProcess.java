@@ -48,6 +48,7 @@ import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.ClassList;
 import loci.formats.DimensionSwapper;
+import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -495,7 +496,8 @@ public class ImportProcess implements StatusReporter {
       baseReader.getMetadataOptions().setMetadataLevel(
           MetadataLevel.NO_OVERLAYS);
     }
-    baseReader.setId(options.getId());
+    baseReader.setId(options.isUsingPatternIds() ?
+      new FilePattern(options.getId()).getFiles()[0] : options.getId());
     
     boolean mustGroup = baseReader.fileGroupOption(options.getId()) == FormatTools.MUST_GROUP;
     options.setMustGroup(mustGroup);
@@ -615,7 +617,8 @@ public class ImportProcess implements StatusReporter {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
-      baseReader = imageReader.getReader(options.getId());
+      baseReader = imageReader.getReader(options.isUsingPatternIds() ?
+        new FilePattern(options.getId()).getFiles()[0] : options.getId());
     }
     else if (options.isOMERO()) {
       BF.status(options.isQuiet(), "Establishing server connection");
