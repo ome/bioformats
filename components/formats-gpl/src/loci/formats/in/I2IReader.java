@@ -57,7 +57,21 @@ public class I2IReader extends FormatReader {
   /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return FormatTools.validStream(stream, HEADER_SIZE, false);
+    if (!FormatTools.validStream(stream, HEADER_SIZE, false)) {
+      return false;
+    }
+    char pixelType = (char) stream.readByte();
+    if (pixelType != 'I' && pixelType != 'R' && pixelType != 'C') {
+      return false;
+    }
+    char check = (char) stream.readByte();
+    if (check != ' ') {
+      return false;
+    }
+    long pixelCount = getDimension(stream);
+    pixelCount *= getDimension(stream);
+    pixelCount *= getDimension(stream);
+    return pixelCount > 0;
   }
 
   /**
@@ -109,14 +123,11 @@ public class I2IReader extends FormatReader {
       throw new FormatException("Expected space after pixel type character");
     }
 
-    String x = in.readString(6).trim();
-    String y = in.readString(6).trim();
-    String z = in.readString(6).trim();
+    m.sizeX = getDimension(in);
+    m.sizeY = getDimension(in);
+    m.sizeZ = getDimension(in);
 
     m.littleEndian = (char) in.readByte() != 'B';
-    m.sizeX = Integer.parseInt(x);
-    m.sizeY = Integer.parseInt(y);
-    m.sizeZ = Integer.parseInt(z);
 
     in.order(isLittleEndian());
 
@@ -157,6 +168,16 @@ public class I2IReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+  }
+
+  private int getDimension(RandomAccessInputStream stream) throws IOException {
+    String dim = stream.readString(6).trim();
+    try {
+      return Integer.parseInt(dim);
+    }
+    catch (NumberFormatException e) {
+    }
+    return 0;
   }
 
 }
