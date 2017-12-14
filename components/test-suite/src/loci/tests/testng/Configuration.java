@@ -262,7 +262,8 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
     try {
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), UnitsLength.fromString(sizeXUnits)); 
+      UnitsLength xUnits = sizeXUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeXUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), xUnits); 
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
@@ -273,7 +274,8 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
     String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
     try {
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), UnitsLength.fromString(sizeYUnits));
+      UnitsLength yUnits = sizeYUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeYUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), yUnits);
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
@@ -284,7 +286,8 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
     String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
     try {
-      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), UnitsLength.fromString(sizeZUnits));
+      UnitsLength zUnits = sizeZUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeZUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), zUnits);
     }
     catch (NumberFormatException e) { }
     catch (EnumerationException e) { }
