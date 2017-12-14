@@ -14,8 +14,7 @@ RUN chown -R bf /opt/bioformats
 
 USER bf
 WORKDIR /opt/bioformats
-RUN /opt/ant/bin/ant clean jars
-
+RUN /opt/ant/bin/ant clean jars tools
 
 WORKDIR /opt/bioformats/components/test-suite
 ENTRYPOINT ["/opt/ant/bin/ant", "test-automated", "-Dtestng.directory=/opt/data", "-Dtestng.configDirectory=/opt/config"]
