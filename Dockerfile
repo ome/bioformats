@@ -16,5 +16,7 @@ USER bf
 WORKDIR /opt/bioformats
 RUN /opt/ant/bin/ant clean jars tools
 
+ENV TZ "Europe/London"
+
 WORKDIR /opt/bioformats/components/test-suite
 ENTRYPOINT ["/opt/ant/bin/ant", "test-automated", "-Dtestng.directory=/opt/data", "-Dtestng.configDirectory=/opt/config"]
