@@ -42,7 +42,7 @@ build_script:
   - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m pip install virtualenv'
   - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m virtualenv %AV_BF_PYTHON%'
   - PATH=%AV_BF_PYTHON%;%AV_BF_PYTHON%\scripts;%PATH%
-  - 'if [%AV_BF_CREATE_VENV%] == [true] python -m pip install sphinx'
+  - 'if [%AV_BF_CREATE_VENV%] == [true] python -m pip install sphinx==1.2.3'
   - tools\test-build %build%
 
 #artifacts:
