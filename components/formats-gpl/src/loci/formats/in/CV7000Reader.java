@@ -669,7 +669,10 @@ public class CV7000Reader extends FormatReader {
       String value = currentValue.toString();
       if (qName.equals("bts:MeasurementRecord") && btsType.equals("IMG") &&
         value.trim().length() > 0) {
-        planes.get(planes.size() - 1).file = new Location(parentDir, value).getAbsolutePath();
+        Location imgFile = new Location(parentDir, value);
+        if (imgFile.exists()) {
+          planes.get(planes.size() - 1).file = imgFile.getAbsolutePath();
+        }
       }
     }
 
