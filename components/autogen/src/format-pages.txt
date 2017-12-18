@@ -1123,6 +1123,9 @@ reader = JPEG2000Reader
 writer = JPEG2000Writer
 mif = true
 notes = Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ library to read JP2 files. \n
+Conflicting versions of this no-longer maintained library may cause errors, \n
+see :ref:`JAI ImageIO component <forks-jai>` for details. \n
+\n
 JPEG stands for "Joint Photographic Experts Group".
 
 [JPEG]

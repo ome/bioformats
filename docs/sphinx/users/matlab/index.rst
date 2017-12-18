@@ -38,6 +38,15 @@ approximately half the speed of our
 :doc:`showinf command line tool </users/comlinetools/index>`, due to
 overhead from copying arrays.
 
+Troubleshooting
+---------------
+
+If you encounter an error trying to open JPEG-2000 data in MATLAB but the file
+will open e.g. in Fiji using Bio-Formats, it may be due to conflicting
+versions of JAI ImageIO in different jars. As discussed on the component page,
+:ref:`JAI ImageIO <forks-jai>` is no longer maintained and you will likely
+need to remove the conflicting jar(s) as a work around.
+
 Upgrading
 ---------
 
