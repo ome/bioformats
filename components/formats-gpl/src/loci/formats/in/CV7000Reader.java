@@ -222,7 +222,11 @@ public class CV7000Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     WPIHandler plate = new WPIHandler();
-    XMLTools.parseXML(DataTools.readFile(id), plate);
+    String wpiXML = DataTools.readFile(id).trim();
+    if (wpiXML.endsWith(">>")) {
+      wpiXML = wpiXML.substring(0, wpiXML.length() - 1);
+    }
+    XMLTools.parseXML(wpiXML, plate);
 
     parent = new Location(id).getAbsoluteFile().getParentFile();
     allFiles = parent.list(true);
