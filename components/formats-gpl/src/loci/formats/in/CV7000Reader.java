@@ -222,10 +222,7 @@ public class CV7000Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     WPIHandler plate = new WPIHandler();
-    String wpiXML = DataTools.readFile(id).trim();
-    if (wpiXML.endsWith(">>")) {
-      wpiXML = wpiXML.substring(0, wpiXML.length() - 1);
-    }
+    String wpiXML = readSanitizedXML(id);
     XMLTools.parseXML(wpiXML, plate);
 
     parent = new Location(id).getAbsoluteFile().getParentFile();
@@ -241,7 +238,7 @@ public class CV7000Reader extends FormatReader {
 
     measurementPath = measurementData.getAbsolutePath();
     MeasurementDataHandler measurementHandler = new MeasurementDataHandler(parent.getAbsolutePath());
-    XMLTools.parseXML(DataTools.readFile(measurementPath), measurementHandler);
+    XMLTools.parseXML(readSanitizedXML(measurementPath), measurementHandler);
 
     planeData = measurementHandler.getPlanes();
 
@@ -253,7 +250,7 @@ public class CV7000Reader extends FormatReader {
       channels = new ArrayList<Channel>();
       detailPath = measurementDetail.getAbsolutePath();
       MeasurementDetailHandler detailHandler = new MeasurementDetailHandler();
-      XMLTools.parseXML(DataTools.readFile(detailPath), detailHandler);
+      XMLTools.parseXML(readSanitizedXML(detailPath), detailHandler);
       if (wppPath != null) {
         wppPath = new Location(parent, wppPath).getAbsolutePath();
       }
@@ -265,7 +262,7 @@ public class CV7000Reader extends FormatReader {
     if (settingsPath != null && new Location(settingsPath).exists()) {
       lightSources = new ArrayList<LightSource>();
       MeasurementSettingsHandler settingsHandler = new MeasurementSettingsHandler();
-      String xml = DataTools.readFile(settingsPath).trim();
+      String xml = readSanitizedXML(settingsPath);
       if (xml.length() > 0) {
         XMLTools.parseXML(xml, settingsHandler);
       }
@@ -539,6 +536,14 @@ public class CV7000Reader extends FormatReader {
       }
 
     }
+  }
+
+  private String readSanitizedXML(String filename) throws IOException {
+    String xml = DataTools.readFile(filename).trim();
+    if (xml.endsWith(">>")) {
+      xml = xml.substring(0, xml.length() - 1);
+    }
+    return xml;
   }
 
   private boolean isWellAcquired(int row, int col) {
