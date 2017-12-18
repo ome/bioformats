@@ -374,6 +374,7 @@ public class MetamorphReader extends BaseTiffReader {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
+      Arrays.sort(dirList);
       for (String f : dirList) {
         int underscore = f.indexOf('_');
         if (underscore < 0) underscore = f.indexOf('.');
