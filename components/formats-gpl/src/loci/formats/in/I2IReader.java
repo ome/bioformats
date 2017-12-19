@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -172,12 +173,8 @@ public class I2IReader extends FormatReader {
 
   private int getDimension(RandomAccessInputStream stream) throws IOException {
     String dim = stream.readString(6).trim();
-    try {
-      return Integer.parseInt(dim);
-    }
-    catch (NumberFormatException e) {
-    }
-    return 0;
+    Integer dimension = DataTools.parseInteger(dim);
+    return dimension == null ? 0 : dimension;
   }
 
 }
