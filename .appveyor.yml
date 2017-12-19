@@ -17,6 +17,10 @@ environment:
       build: ant
       ant_version: 1.9.9
 
+branches:
+  except:
+    - /metadata.*/
+
 cache:
   - '%AV_BF_M2% -> appveyor.yml'
   - '%AV_BF_PYTHON% -> appveyor.yml'
