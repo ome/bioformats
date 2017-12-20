@@ -55,4 +55,4 @@ Utility: |Good|
 format, we are not able to distribute them to third parties.**
 
 .. seealso:: 
-  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
+  `Aperio ImageScope <https://www.leicabiosystems.com/digital-pathology/manage/aperio-imagescope/>`_

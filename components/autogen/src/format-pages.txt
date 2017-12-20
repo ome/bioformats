@@ -200,7 +200,7 @@ pyramid = yes
 reader = AFIReader
 mif = true
 notes = .. seealso:: \n
-  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
+  `Aperio ImageScope <https://www.leicabiosystems.com/digital-pathology/manage/aperio-imagescope/>`_
 
 [Aperio SVS TIFF]
 extensions = .svs
@@ -222,7 +222,7 @@ pyramid = yes
 reader = SVSReader
 mif = true
 notes = .. seealso:: \n
-  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
+  `Aperio ImageScope <https://www.leicabiosystems.com/digital-pathology/manage/aperio-imagescope/>`_
 
 [Applied Precision CellWorX]
 extensions = .htd, .pnl
