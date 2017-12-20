@@ -6,7 +6,7 @@ Leica LCS LEI
 
 Extensions: .lei, .tif
 
-Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+Developer: `Leica Microsystems CMS GmbH <https://www.leica-microsystems.com/>`_
 
 Owner: `Leica <http://www.leica.com/>`_
 

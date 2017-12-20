@@ -6,7 +6,7 @@ Leica SCN
 
 Extensions: .scn
 
-Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
+Developer: `Leica Microsystems <https://www.leica-microsystems.com/>`_
 
 
 **Support**
