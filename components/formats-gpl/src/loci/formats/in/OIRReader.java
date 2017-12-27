@@ -572,10 +572,10 @@ public class OIRReader extends FormatReader {
         continue;
       }
       LOGGER.trace("xml = {}", xml);
-      if (channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) {
-        if (file.endsWith(currentId)) {
-          parseXML(s, xml, fp);
-        }
+      if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
+        file.endsWith(currentId)) || xml.indexOf("lut:LUT") > 0)
+      {
+        parseXML(s, xml, fp);
       }
       boolean expectPixelBlock = xml.endsWith(":frameProperties>");
       if (expectPixelBlock) {
@@ -637,7 +637,7 @@ public class OIRReader extends FormatReader {
       long fp = s.getFilePointer();
       String xml = s.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
-      if (file.endsWith(currentId)) {
+      if (file.endsWith(currentId) || xml.indexOf("lut:LUT") > 0) {
         parseXML(s, xml, fp);
       }
     }
