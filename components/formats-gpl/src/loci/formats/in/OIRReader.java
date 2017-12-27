@@ -414,7 +414,7 @@ public class OIRReader extends FormatReader {
       addMetaList("Detector gain", detector.gain, tmpMeta);
     }
     // this ensures that global metadata keys will be sorted before series keys
-    MetadataTools.merge(tmpMeta, metadata, "\0");
+    MetadataTools.merge(tmpMeta, metadata, "- ");
 
     // populate MetadataStore
 
