@@ -181,34 +181,48 @@ public class OIRReader extends FormatReader {
     int bufferEnd = bpp * (((y + h) * getSizeX()) + x + w);
     int bufferPointer = 0;
 
-    for (int i=startIndex; i<end; i++) {
-      PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
+    RandomAccessInputStream s = null;
+    String openFile = null;
+    try {
+      for (int i=startIndex; i<end; i++) {
+        PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
 
-      if (bufferPointer + block.length < bufferOffset ||
-        bufferPointer >= bufferEnd)
-      {
-        bufferPointer += block.length;
-        continue;
-      }
-
-      byte[] pixels = null;
-      try (RandomAccessInputStream s = new RandomAccessInputStream(block.file)) {
-        pixels = readPixelBlock(s, block.offset);
-      }
-      if (pixels != null) {
-        int blockY = bufferPointer / imageWidth;
-        int blockH = pixels.length / imageWidth;
-
-        for (int yy=blockY; yy<blockY+blockH; yy++) {
-          if (yy < y || yy >= y + h) {
-            continue;
-          }
-          int blockOffset = (yy - blockY) * imageWidth + x * bpp;
-          int bufOffset = (yy - y) * rowLen;
-          System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
+        if (bufferPointer + block.length < bufferOffset ||
+          bufferPointer >= bufferEnd)
+        {
+          bufferPointer += block.length;
+          continue;
         }
+
+        byte[] pixels = null;
+        if (s == null || !block.file.equals(openFile)) {
+          if (s != null) {
+            s.close();
+          }
+          s = new RandomAccessInputStream(block.file);
+          openFile = block.file;
+        }
+        pixels = readPixelBlock(s, block.offset);
+        if (pixels != null) {
+          int blockY = bufferPointer / imageWidth;
+          int blockH = pixels.length / imageWidth;
+
+          for (int yy=blockY; yy<blockY+blockH; yy++) {
+            if (yy < y || yy >= y + h) {
+              continue;
+            }
+            int blockOffset = (yy - blockY) * imageWidth + x * bpp;
+            int bufOffset = (yy - y) * rowLen;
+            System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
+          }
+        }
+        bufferPointer += block.length;
       }
-      bufferPointer += block.length;
+    }
+    finally {
+      if (s != null) {
+        s.close();
+      }
     }
 
     return buf;
