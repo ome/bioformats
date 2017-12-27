@@ -265,10 +265,10 @@ public class OIRReader extends FormatReader {
       Arrays.sort(fileList);
       String prefix = current.getName();
       if (prefix.indexOf(".") > 0) {
-        prefix = prefix.substring(0, prefix.indexOf("."));
+        prefix = prefix.substring(0, prefix.lastIndexOf("."));
       }
       else if (!checkSuffix(id, "oir")) {
-        prefix = prefix.substring(0, prefix.indexOf("_"));
+        prefix = prefix.substring(0, prefix.lastIndexOf("_"));
       }
 
       for (String file : fileList) {
