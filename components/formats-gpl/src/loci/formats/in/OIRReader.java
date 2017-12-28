@@ -64,6 +64,7 @@ public class OIRReader extends FormatReader {
   // -- Constants --
 
   private static final String IDENTIFIER = "OLYMPUSRAWFORMAT";
+  private static final int BUFFER_SIZE = 8192;
 
   // -- Fields --
 
@@ -199,7 +200,7 @@ public class OIRReader extends FormatReader {
           if (s != null) {
             s.close();
           }
-          s = new RandomAccessInputStream(block.file);
+          s = new RandomAccessInputStream(block.file, BUFFER_SIZE);
           openFile = block.file;
         }
         pixels = readPixelBlock(s, block.offset);
@@ -299,12 +300,12 @@ public class OIRReader extends FormatReader {
     m.indexed = true;
     m.falseColor = true;
 
-    try (RandomAccessInputStream s = new RandomAccessInputStream(currentId)) {
+    try (RandomAccessInputStream s = new RandomAccessInputStream(currentId, BUFFER_SIZE)) {
       readPixelsFile(current.getAbsolutePath(), s);
     }
 
     for (String file : extraFiles) {
-      try (RandomAccessInputStream s = new RandomAccessInputStream(file)) {
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, BUFFER_SIZE)) {
         readPixelsFile(file, s);
       }
     }
