@@ -200,16 +200,6 @@ public class OBFReader extends FormatReader
                   = service.getOMEMetadata( service.asRetrieve( metadataStore ) ) ;
               for (int image = 0 ; image != ome_meta_data.getImageCount() ; ++ image)
               {
-                Length physicalSizeX = ome_meta_data.getPixelsPhysicalSizeX(image);
-                if (physicalSizeX != null) {
-                  Length formattedPhysicalSizeX = FormatTools.getPhysicalSizeX(physicalSizeX.value().doubleValue(), physicalSizeX.unit());
-                  metadataStore.setPixelsPhysicalSizeX(formattedPhysicalSizeX, image);
-                }
-                Length physicalSizeY = ome_meta_data.getPixelsPhysicalSizeY(image);
-                if (physicalSizeY != null) {
-                  Length formattedPhysicalSizeY = FormatTools.getPhysicalSizeY(physicalSizeY.value().doubleValue(), physicalSizeY.unit());
-                  metadataStore.setPixelsPhysicalSizeY(formattedPhysicalSizeY, image);
-                }
                 service.addMetadataOnly( reference, image ) ;
               }
             }
