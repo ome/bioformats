@@ -1422,7 +1422,7 @@ extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
 versions = Up to 1.4.22
-software = `Micro-Manager <http://micro-manager.org/>`_
+software = `Micro-Manager <https://micro-manager.org/>`_
 weHave = * many Micro-manager datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 pixelsRating = Outstanding
