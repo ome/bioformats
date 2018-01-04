@@ -191,19 +191,19 @@ with their default values, is shown below.
       * 0
     - * plates
       * number of plates to generate
-      * 0
+      * 0*
     - * plateAcqs
       * number of plate runs
-      * 0
+      * 0*
     - * plateRows
       * number of rows per plate
-      * 0
+      * 0*
     - * plateCols
       * number of rows per plate
-      * 0
+      * 0*
     - * fields
       * number of fields per well
-      * 0
+      * 0*
     - * withMicrobeam
       * whether or not a microbeam should be added to the experiment (HCS only)
       * false
@@ -228,6 +228,12 @@ with their default values, is shown below.
     - * ellipses, labels, lines, points, polygons, polylines, rectangles
       * the number of ROIs containing one shape of the given type to generate
       *
+
+\*
+
+    Default value set to 1 if any of the ``screens``, ``plates``,
+    ``plateAcqs``, ``plateRows``, ``plateCols`` or ``fields`` values is set
+    to a value greater than zero.
 
 For full details of these keys, how unset and default values are handled and
 further examples see :source:`loci.formats.in.FakeReader <components/formats-bsd/src/loci/formats/in/FakeReader.java>`.
