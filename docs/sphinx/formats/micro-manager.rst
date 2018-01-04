@@ -23,7 +23,7 @@ Reader: MicromanagerReader (:bsd-reader:`Source Code <MicromanagerReader.java>`,
 
 Freely Available Software:
 
-- `Micro-Manager <http://micro-manager.org/>`_
+- `Micro-Manager <https://micro-manager.org/>`_
 
 
 We currently have:

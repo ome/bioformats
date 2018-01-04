@@ -6,7 +6,7 @@ Leica LAS AF LIF (Leica Image File Format)
 
 Extensions: .lif
 
-Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+Developer: `Leica Microsystems CMS GmbH <https://www.leica-microsystems.com/>`_
 
 Owner: `Leica <http://www.leica.com/>`_
 
@@ -24,7 +24,7 @@ Reader: LIFReader (:bfreader:`Source Code <LIFReader.java>`, :doc:`Supported Met
 
 Freely Available Software:
 
-- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
+- `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (see Downloads section)
 
 
 We currently have:

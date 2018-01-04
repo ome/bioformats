@@ -200,7 +200,7 @@ pyramid = yes
 reader = AFIReader
 mif = true
 notes = .. seealso:: \n
-  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
+  `Aperio ImageScope <https://www.leicabiosystems.com/digital-pathology/manage/aperio-imagescope/>`_
 
 [Aperio SVS TIFF]
 extensions = .svs
@@ -222,7 +222,7 @@ pyramid = yes
 reader = SVSReader
 mif = true
 notes = .. seealso:: \n
-  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
+  `Aperio ImageScope <https://www.leicabiosystems.com/digital-pathology/manage/aperio-imagescope/>`_
 
 [Applied Precision CellWorX]
 extensions = .htd, .pnl
@@ -1222,10 +1222,10 @@ mif = true
 pagename = leica-lif
 extensions = .lif
 owner = `Leica <http://www.leica.com/>`_
-developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+developer = `Leica Microsystems CMS GmbH <https://www.leica-microsystems.com/>`_
 bsd = no
 versions = 1.0, 2.0
-software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
+software = `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (see Downloads section)
 weHave = * a LIF/XLLF/XLEF/LOF specification document (version 3.2, from no later than 2016 December 15, in PDF) \n
 * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 * a LIF specification document (version 1, from no later than 2006 April 3, in PDF) \n
@@ -1275,7 +1275,7 @@ mif = true
 [Leica LCS LEI]
 extensions = .lei, .tif
 owner = `Leica <http://www.leica.com/>`_
-developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+developer = `Leica Microsystems CMS GmbH <https://www.leica-microsystems.com/>`_
 bsd = no
 software = `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 weHave = * an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) \n
@@ -1299,7 +1299,7 @@ Commercial applications that support LEI include: \n
 
 [Leica SCN]
 extensions = .scn
-developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
+developer = `Leica Microsystems <https://www.leica-microsystems.com/>`_
 bsd = no
 software = `OpenSlide <http://openslide.org>`_
 versions = 2012-03-10
@@ -1422,7 +1422,7 @@ extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 bsd = yes
 versions = Up to 1.4.22
-software = `Micro-Manager <http://micro-manager.org/>`_
+software = `Micro-Manager <https://micro-manager.org/>`_
 weHave = * many Micro-manager datasets\n
 * `public sample images <http://downloads.openmicroscopy.org/images/Micro-Manager/>`__
 pixelsRating = Outstanding
