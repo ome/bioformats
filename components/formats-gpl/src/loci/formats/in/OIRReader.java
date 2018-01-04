@@ -83,6 +83,9 @@ public class OIRReader extends FormatReader {
   private String baseName;
   private int lastChannel = -1;
 
+  private int minZ = Integer.MAX_VALUE;
+  private int minT = Integer.MAX_VALUE;
+
   // -- Constructor --
 
   /** Constructs a new OIR reader. */
@@ -158,22 +161,28 @@ public class OIRReader extends FormatReader {
 
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
-    int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
 
-    int first = newNo * getSizeC() * blocksPerPlane + zct[1] * blocksPerPlane;
+    int first = 0;
     int startIndex = -1;
-    int step = blocksPerPlane * getSizeZ() * getSizeT();
+    int end = 0;
     while (first < pixelUIDs.length) {
-      if (pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0) {
-        startIndex = first;
-        break;
+      if (getZ(pixelUIDs[first]) - minZ == zct[0] &&
+        getT(pixelUIDs[first]) - minT == zct[2] &&
+        pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0)
+      {
+        if (startIndex < 0) {
+          startIndex = first;
+        }
+        end = first;
       }
-      else {
-        first += step;
-      }
+      first++;
     }
 
-    int end = startIndex + blocksPerPlane;
+    if (startIndex < 0) {
+      LOGGER.warn("No pixel blocks for plane #{}", no);
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bufferOffset = bpp * ((y * getSizeX()) + x);
@@ -185,7 +194,7 @@ public class OIRReader extends FormatReader {
     RandomAccessInputStream s = null;
     String openFile = null;
     try {
-      for (int i=startIndex; i<end; i++) {
+      for (int i=startIndex; i<=end; i++) {
         PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
 
         if (bufferPointer + block.length < bufferOffset ||
@@ -248,6 +257,8 @@ public class OIRReader extends FormatReader {
       pixelUIDs = null;
       baseName = null;
       lastChannel = -1;
+      minZ = Integer.MAX_VALUE;
+      minT = Integer.MAX_VALUE;
     }
   }
 
@@ -313,14 +324,42 @@ public class OIRReader extends FormatReader {
     m.sizeC *= channels.size();
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
 
+    LOGGER.debug("blocks per plane = {}", blocksPerPlane);
+    LOGGER.debug("number of pixel blocks = {}", pixelBlocks.size());
+
     if (blocksPerPlane * getImageCount() != pixelBlocks.size()) {
-      if (getSizeT() > 1) {
-        m.sizeT = pixelBlocks.size() / (blocksPerPlane * getSizeC() * getSizeZ());
+      // if blocks are missing, set the Z and T dimensions to match the last
+      // plane for which at least one block exists
+      int maxZ = 0;
+      int maxT = 0;
+      for (String uid : pixelBlocks.keySet()) {
+        LOGGER.debug("  checking uid = {}", uid);
+        int thisZ = getZ(uid);
+        int thisT = getT(uid);
+        int block = getBlock(uid);
+        // only count through last full plane
+        if (block == blocksPerPlane - 1) {
+          if (thisZ > maxZ) {
+            maxZ = thisZ;
+          }
+          if (thisT > maxT) {
+            maxT = thisT;
+          }
+          if (thisZ < minZ) {
+            minZ = thisZ;
+          }
+          if (thisT < minT) {
+            minT = thisT;
+          }
+        }
       }
-      else if (getSizeZ() > 1) {
-        m.sizeZ = pixelBlocks.size() / (blocksPerPlane * getSizeC());
-      }
+      m.sizeZ = (maxZ - minZ) + 1;
+      m.sizeT = (maxT - minT) + 1;
       m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    }
+    else {
+      minZ = 0;
+      minT = 0;
     }
 
     m.dimensionOrder = "XYC";
@@ -614,6 +653,9 @@ public class OIRReader extends FormatReader {
           if (xmlLength <= 0 || xmlLength + s.getFilePointer() > s.length()) {
             return;
           }
+        }
+        if (xmlLength > 1024) {
+          return;
         }
         String uid = s.readString(xmlLength);
         xmlLength = s.readInt();
@@ -1335,6 +1377,32 @@ public class OIRReader extends FormatReader {
     byte[] pixels = new byte[pixelBytes];
     s.readFully(pixels);
     return pixels;
+  }
+
+  private int getZ(String uid) {
+    int zIndex = uid.indexOf("z");
+    if (zIndex < 0) {
+      return 0;
+    }
+    // assumes 3 digits
+    return Integer.parseInt(uid.substring(zIndex + 1, zIndex + 4)) - 1;
+  }
+
+  private int getT(String uid) {
+    int tIndex = uid.indexOf("t");
+    if (tIndex < 0) {
+      return 0;
+    }
+    // assumes 3 digits
+    return Integer.parseInt(uid.substring(tIndex + 1, tIndex + 4)) - 1;
+  }
+
+  private int getBlock(String uid) {
+    int index = uid.lastIndexOf("_");
+    if (index < 0) {
+      return 0;
+    }
+    return Integer.parseInt(uid.substring(index + 1));
   }
 
   // -- Helper classes --
