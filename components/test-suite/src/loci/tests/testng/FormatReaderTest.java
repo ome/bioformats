@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -2437,7 +2438,7 @@ public class FormatReaderTest {
       // this should prevent conflicts when running multiple tests
       // on the same system and/or in multiple threads
       String tmpdir = System.getProperty("java.io.tmpdir");
-      memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
+      memoDir = new File(tmpdir, UUID.randomUUID().toString() + ".memo");
       memoDir.mkdir();
       Memoizer memo = new Memoizer(0, memoDir);
       memo.setId(reader.getCurrentFile());
