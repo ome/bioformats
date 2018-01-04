@@ -1225,7 +1225,7 @@ owner = `Leica <http://www.leica.com/>`_
 developer = `Leica Microsystems CMS GmbH <https://www.leica-microsystems.com/>`_
 bsd = no
 versions = 1.0, 2.0
-software = `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (links at bottom of page)
+software = `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (see Downloads section)
 weHave = * a LIF/XLLF/XLEF/LOF specification document (version 3.2, from no later than 2016 December 15, in PDF) \n
 * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 * a LIF specification document (version 1, from no later than 2006 April 3, in PDF) \n
