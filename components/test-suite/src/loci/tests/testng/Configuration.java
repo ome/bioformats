@@ -46,6 +46,8 @@ import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -260,20 +262,23 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     String sizeXUnits = currentTable.get(PHYSICAL_SIZE_X_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeXUnits);
+      UnitsLength xUnits = sizeXUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeXUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), xUnits); 
     }
-    catch (NumberFormatException e) {
-      return null;
-    }
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
   }
 
   public Length getPhysicalSizeY() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
     String sizeYUnits = currentTable.get(PHYSICAL_SIZE_Y_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeYUnits);
+      UnitsLength yUnits = sizeYUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeYUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), yUnits);
     }
     catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
     return null;
   }
 
@@ -281,11 +286,12 @@ public class Configuration {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
     String sizeZUnits = currentTable.get(PHYSICAL_SIZE_Z_UNIT);
     try {
-      return physicalSize == null ? null : FormatTools.getPhysicalSize(new Double(physicalSize), sizeZUnits);
+      UnitsLength zUnits = sizeZUnits == null ? UnitsLength.MICROMETER : UnitsLength.fromString(sizeZUnits);
+      return physicalSize == null ? null : UnitsLength.create(new Double(physicalSize), zUnits);
     }
-    catch (NumberFormatException e) { 
-      return null;
-    } 
+    catch (NumberFormatException e) { }
+    catch (EnumerationException e) { }
+    return null;
   }
 
   public Time getTimeIncrement() {
