@@ -101,9 +101,9 @@ formats in :ref:`formats-gpl <formats-gpl>`.  There are no dependencies
 on other components.
 
 The status of this component means that you may encounter errors due to
-conflicting jars e.g. between Bio-Formats and other toolboxes within Fiji or
+conflicting JARs e.g. between Bio-Formats and other toolboxes within Fiji or
 MATLAB, especially when trying to open JPEG-2000 data. In this case, you will
-need to remove the conflicting jar(s) as a workaround.
+need to remove the conflicting JAR(s) as a workaround.
 
 .. _forks-turbojpeg:
 
