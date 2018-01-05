@@ -808,7 +808,7 @@ public class MicromanagerReader extends FormatReader {
           else {
             int colon = token.indexOf(':');
             key = token.substring(1, colon).trim();
-            valueBuffer.delete(0, valueBuffer.length());
+            valueBuffer.setLength(0);
             valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
 
             key = key.replaceAll("\"", "");

@@ -2426,7 +2426,7 @@ public class NativeND2Reader extends FormatReader {
         }
         String key = sb.toString();
 
-        sb.delete(0, sb.length());
+        sb.setLength(0);
         sb.append(lines[i++]);
         while (i < lines.length && lines[i].trim().length() > 0) {
           sb.append(' ');
