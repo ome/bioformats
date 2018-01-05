@@ -199,7 +199,7 @@ with their default values, is shown below.
       * number of rows per plate
       * 0 [1]_
     - * plateCols
-      * number of rows per plate
+      * number of columns per plate
       * 0 [1]_
     - * fields
       * number of fields per well
