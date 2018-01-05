@@ -52,4 +52,7 @@ Utility: |Poor|
 
 
 Bio-Formats uses the `JAI Image I/O Tools <https://github.com/jai-imageio/jai-imageio-core>`_ library to read JP2 files. 
+Conflicting versions of this no-longer-maintained library may cause errors, 
+see :ref:`JAI ImageIO component <forks-jai>` for details. 
+
 JPEG stands for "Joint Photographic Experts Group".

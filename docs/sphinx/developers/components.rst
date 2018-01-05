@@ -100,6 +100,11 @@ This is primarily needed for reading images from histology/pathology
 formats in :ref:`formats-gpl <formats-gpl>`.  There are no dependencies
 on other components.
 
+The status of this component means that you may encounter errors due to
+conflicting JARs e.g. between Bio-Formats and other toolboxes within Fiji or
+MATLAB, especially when trying to open JPEG-2000 data. In this case, you will
+need to remove the conflicting JAR(s) as a workaround.
+
 .. _forks-turbojpeg:
 
 :source:`forks/turbojpeg (libjpeg-turbo Java bindings) <components/forks/turbojpeg>`:
