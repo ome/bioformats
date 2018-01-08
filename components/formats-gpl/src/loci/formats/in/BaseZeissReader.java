@@ -2120,36 +2120,79 @@ public abstract class BaseZeissReader extends FormatReader {
 
     @Override
     public String toString() {
-      String s = new String();
-      s += "  SHAPE: " + id;
-      s += "    Type=" + type;
-      s += "    Unknown1=" + Long.toHexString(unknown1&0xFFFFFFFFL) + " Unknown2=" + Long.toHexString(unknown2&0xFFFFFFFFL) + " Unknown3=" + Long.toHexString(unknown3&0xFFFFFFFFL) + "\n";
-      s += "    Bbox=" + x1 + "," + y1 + "  " + x2 + "," + y2 + "\n";
-      s += "    Unknown4=" + Long.toHexString(unknown4&0xFFFFFFFFL) + " Unknown5=" + Long.toHexString(unknown5&0xFFFFFFFFL) + " Unknown6=" + Long.toHexString(unknown6&0xFFFFFFFFL) + " Unknown7=" + Long.toHexString(unknown7&0xFFFFFFFFL) + "\n";
-      s += "    Unknown8=" + Long.toHexString(unknown8&0xFFFFFFFFL) + "\n";
-      s += "    Unknown10=" + Long.toHexString(unknown10&0xFFFFFFFFL) + " Unknown11=" + Long.toHexString(unknown11&0xFFFFFFFFL) + " Unknown12=" + Long.toHexString(unknown12&0xFFFFFFFFL) + "\n";
-      s += "    Unknown13=" + Long.toHexString(unknown13&0xFFFFFFFFL) + " Unknown14=" + Long.toHexString(unknown14&0xFFFFFFFFL) + " Unknown15=" + Long.toHexString(unknown15&0xFFFFFFFFL) + " Unknown16=" + Long.toHexString(unknown16&0xFFFFFFFFL) + "\n";
-      s += "    Unknown17=" + Long.toHexString(unknown17&0xFFFFFFFFL) + " Unknown18=" + Long.toHexString(unknown18&0xFFFFFFFFL) + " Unknown19=" + Long.toHexString(unknown19&0xFFFFFFFFL) + "\n";
-      s += "    fillColour=" + Long.toHexString(fillColour&0xFFFFFFFFL)
-          + " textColour=" + Long.toHexString((textColour&0xFFFFFFFFL))
-          + " drawColour=" + Long.toHexString((drawColour&0xFFFFFFFFL)) + "\n";
-      s += "    drawStyle=" + drawStyle
-          +  " fillStyle=" + fillStyle
-          +  " lineEndStyle=" + lineEndStyle
-          +  " lineEndSize=" + lineEndSize
-          +  " lineEndPositions=" + lineEndPositions + "\n";
-      s += "displayTag=" + displayTag + "\n";
-      s += "  fontName=" + fontName + " size="+fontSize + " weight="+fontWeight + " bold="+bold + " italic=" + italic + " underline="+underline + " strikeout="+strikeout + " alignment=" + textAlignment + " charset=" + charset + "\n";
-      s += "  name: " + name + "\n";
-      s += "  text: " + text + "\n";
+      StringBuilder s = new StringBuilder("  SHAPE: ");
+      s.append(id);
+      appendValue(s, "    Type=", type);
+      appendHexValue(s, "    Unknown1=", unknown1);
+      appendHexValue(s, " Unknown2=", unknown2);
+      appendHexValue(s, " Unknown3=", unknown3);
+      s.append("\n    Bbox=");
+      s.append(x1);
+      s.append(",");
+      s.append(y1);
+      s.append("  ");
+      s.append(x2);
+      s.append(",");
+      s.append(y2);
+      appendHexValue(s, "\n    Unknown4=", unknown4);
+      appendHexValue(s, " Unknown5=", unknown5);
+      appendHexValue(s, " Unknown6=", unknown6);
+      appendHexValue(s, " Unknown7=", unknown7);
+      appendHexValue(s, "\n    Unknown8=", unknown8);
+      appendHexValue(s, "\n    Unknown10=", unknown10);
+      appendHexValue(s, " Unknown11=", unknown11);
+      appendHexValue(s, " Unknown12=", unknown12);
+      appendHexValue(s, "\n    Unknown13=", unknown13);
+      appendHexValue(s, " Unknown14=", unknown14);
+      appendHexValue(s, " Unknown15=", unknown15);
+      appendHexValue(s, " Unknown16=", unknown16);
+      appendHexValue(s, "\n    Unknown17=", unknown17);
+      appendHexValue(s, " Unknown18=", unknown18);
+      appendHexValue(s, " Unknown19=", unknown19);
+      appendHexValue(s, "\n    fillColour=", fillColour);
+      appendHexValue(s, " textColour=", textColour);
+      appendHexValue(s, " drawColour=", drawColour);
+      appendValue(s, "\n    drawStyle=", drawStyle);
+      appendValue(s, " fillStyle=", fillStyle);
+      appendValue(s, " lineEndStyle=", lineEndStyle);
+      appendValue(s, " lineEndSize=", lineEndSize);
+      appendValue(s, " lineEndPositions=", lineEndPositions);
+      appendValue(s, "\ndisplayTag=", displayTag);
+      appendValue(s, "\n  fontName=", fontName);
+      appendValue(s, " size=", fontSize);
+      appendValue(s, " weight=", fontWeight);
+      appendValue(s, " bold=", bold);
+      appendValue(s, " italic=", italic);
+      appendValue(s, " underline=", underline);
+      appendValue(s, " strikeout=", strikeout);
+      appendValue(s, " alignment=", textAlignment);
+      appendValue(s, " charset=", charset);
+      appendValue(s, "\n  name: ", name);
+      appendValue(s, "\n  text: ", text);
       //s += "  Zpos: " + zpos;
-      s += "  tagID: " + tagID.getKey() + "\n";
-      s += "  handleSize:" + handleSize + "\n";
-      s += "  pointCount:" + pointCount + "\n    ";
-      for (double point : points)
-        s+=point + ", ";
-      s+= "\n";
-      return s;
+      appendValue(s, "\n  tagID: ", tagID.getKey());
+      appendValue(s, "\n  handleSize:", handleSize);
+      appendValue(s, "\n  pointCount:", pointCount);
+      s.append("\n    ");
+      for (double point : points) {
+        s.append(point);
+        s.append(", ");
+      }
+      s.append("\n");
+      return s.toString();
+    }
+
+    private void appendHexValue(StringBuilder s, String key, int i) {
+      appendValue(s, key, formatHex(i));
+    }
+
+    private void appendValue(StringBuilder s, String key, Object value) {
+      s.append(key);
+      s.append(value);
+    }
+
+    private String formatHex(int i) {
+      return Long.toHexString(i & 0xFFFFFFFFL);
     }
   }
 
@@ -2166,15 +2209,18 @@ public abstract class BaseZeissReader extends FormatReader {
 
     @Override
     public String toString() {
-      String s = new String();
-      s += "LAYER: " + key;
-      if (name != null)
-        s += " (" + name + ")";
-      s+= "\n";
-      for (Shape shape : shapes) {
-        s += shape;
+      StringBuilder s = new StringBuilder("LAYER: ");
+      s.append(key);
+      if (name != null) {
+        s.append(" (");
+        s.append(name);
+        s.append(")");
       }
-      return s;
+      s.append("\n");
+      for (Shape shape : shapes) {
+        s.append(shape);
+      }
+      return s.toString();
     }
   }
 

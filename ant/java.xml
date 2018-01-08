@@ -127,7 +127,7 @@ Type "ant -p" for a list of targets.
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="medium"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
           <auxClasspath refid="runtime.classpath"/>

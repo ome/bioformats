@@ -1554,17 +1554,21 @@ public class CellSensReader extends FormatReader {
               case PIXEL_INFO_TYPE:
                 int nIntValues = dataSize / 4;
                 int[] intValues = new int[nIntValues];
-                value = nIntValues > 1 ? "(" : "";
+                StringBuilder sb = new StringBuilder();
+                if (nIntValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nIntValues; v++) {
                   intValues[v] = vsi.readInt();
-                  value += intValues[v];
+                  sb.append(intValues[v]);
                   if (v < nIntValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nIntValues > 1) {
-                  value += ')';
+                  sb.append(")");
                 }
+                value = sb.toString();
 
                 if (tag == IMAGE_BOUNDARY) {
                   if (pyramid != null && pyramid.width == null) {
@@ -1586,17 +1590,21 @@ public class CellSensReader extends FormatReader {
               case DOUBLE_4_4:
                 int nDoubleValues = dataSize / 8;
                 double[] doubleValues = new double[nDoubleValues];
-                value = nDoubleValues > 1 ? "(" : "";
+                sb = new StringBuilder();
+                if (nDoubleValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nDoubleValues; v++) {
                   doubleValues[v] = vsi.readDouble();
-                  value += doubleValues[v];
+                  sb.append(doubleValues[v]);
                   if (v < nDoubleValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nDoubleValues > 1) {
-                  value += ')';
+                  sb.append(')');
                 }
+                value = sb.toString();
 
                 if (tag == RWC_FRAME_SCALE) {
                   if (pyramid != null && pyramid.physicalSizeX == null) {

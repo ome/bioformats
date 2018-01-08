@@ -3948,14 +3948,16 @@ public class ZeissCZIReader extends FormatReader {
         filePosition + ", filePart = " + filePart + ", compression = " + compression +
         ", pyramidType = " + pyramidType + ", dimensionCount = " + dimensionCount;
       if (dimensionCount > 0) {
-        s += ", dimensions = [";
+        StringBuilder sb = new StringBuilder(s);
+        sb.append(", dimensions = [");
         for (int i=0; i<dimensionCount; i++) {
-          s += dimensionEntries[i];
+          sb.append(dimensionEntries[i]);
           if (i < dimensionCount - 1) {
-            s += "; ";
+            sb.append("; ");
           }
         }
-        s += ']';
+        sb.append(']');
+        s = sb.toString();
       }
       return s;
     }

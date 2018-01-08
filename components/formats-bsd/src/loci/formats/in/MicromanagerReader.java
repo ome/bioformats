@@ -531,13 +531,14 @@ public class MicromanagerReader extends FormatReader {
               (key != null && value == null))
             {
               if (value == null && (propType == null || !propType.equals("PropType"))) {
-                value = token;
+                StringBuilder sb = new StringBuilder(token);
 
                 while (q + 1 < tokens.length && tokens[q + 1].trim().length() > 0) {
-                  value += ':';
-                  value += tokens[q + 1];
+                  sb.append(':');
+                  sb.append(tokens[q + 1]);
                   q++;
                 }
+                value = sb.toString();
               }
               if (!value.equals("PropVal")) {
                 parseKeyAndValue(key, value, digits, plane + i, 1);
@@ -776,7 +777,8 @@ public class MicromanagerReader extends FormatReader {
           token.indexOf("\"", dash)));
 
         token = st.nextToken().trim();
-        String key = "", value = "";
+        String key = "";
+        StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
         int nestedCount = 0;
 
@@ -798,7 +800,7 @@ public class MicromanagerReader extends FormatReader {
               valueArray = false;
             }
             else {
-              value += token.trim().replaceAll("\"", "");
+              valueBuffer.append(token.trim().replaceAll("\"", ""));
               token = st.nextToken().trim();
               continue;
             }
@@ -806,10 +808,10 @@ public class MicromanagerReader extends FormatReader {
           else {
             int colon = token.indexOf(':');
             key = token.substring(1, colon).trim();
-            value = token.substring(colon + 1, token.length() - 1).trim();
+            valueBuffer.setLength(0);
+            valueBuffer.append(token.substring(colon + 1, token.length() - 1).trim().replaceAll("\"", ""));
 
             key = key.replaceAll("\"", "");
-            value = value.replaceAll("\"", "");
 
             if (token.trim().endsWith("[")) {
               valueArray = true;
@@ -818,6 +820,7 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
+          String value = valueBuffer.toString();
           addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {

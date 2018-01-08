@@ -107,18 +107,18 @@ public class ZeissTIFFHandler extends DefaultHandler {
   @Override
   public String toString()
   {
-    String s = new String("TIFF-XML parsing\n");
-    s += main_tagset;
-    s += '\n';
+    StringBuilder s = new StringBuilder("TIFF-XML parsing\n");
+    s.append(main_tagset);
+    s.append('\n');
     for (Scaling sc : scalings ) {
-      s += sc;
-      s += '\n';
+      s.append(sc);
+      s.append('\n');
     }
     for (Plane p : planes ) {
-      s += p;
-      s += '\n';
+      s.append(p);
+      s.append('\n');
     }
-    return s;
+    return s.toString();
   }
 
   // -- DefaultHandler API methods --
@@ -584,12 +584,12 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
     @Override
     public String toString() {
-      String s = new String("  Tags(" + count + "):\n");
+      StringBuilder s = new StringBuilder("  Tags(" + count + "):\n");
       for (BaseZeissReader.Tag t : tags) {
-        s += t;
-        s += '\n';
+        s.append(t);
+        s.append('\n');
       }
-      return s;
+      return s.toString();
     }
   }
 
@@ -661,27 +661,36 @@ public class ZeissTIFFHandler extends DefaultHandler {
 
     @Override
     public String toString() {
-      String s = new String("Scaling\n");
-      s += "  Key=" + key + "\n";
-      s += "  Cat=" + category + "\n";
+      StringBuilder s = new StringBuilder("Scaling\n");
+      s.append("  Key=");
+      s.append(key);
+      s.append("\n  Cat=");
+      s.append(category);
+      s.append("\n");
 
       List<Integer> dimarray = new LinkedList<Integer>(dims.keySet());
       Collections.sort(dimarray);
       for (Integer dim : dimarray)
       {
         Dimension d = dims.get(dim);
-        s += "  Dim" + dim + "=\n"
-            + "    Ftr=" + d.factor + "\n"
-            + "    Typ=" + d.type + "\n"
-            + "    Unt=" + d.unit + "\n"
-            + "    Org=" + d.origin + "\n"
-            + "    Ang=" + d.angle + "\n";
-
+        s.append("  Dim");
+        s.append(dim);
+        s.append("=\n    Ftr=");
+        s.append(d.factor);
+        s.append("\n    Typ=");
+        s.append(d.type);
+        s.append("\n    Unt=");
+        s.append(d.unit);
+        s.append("\n    Org=");
+        s.append(d.origin);
+        s.append("\n    Ang=");
+        s.append(d.angle);
+        s.append("\n");
       }
-      s += tagset;
-      s+= '\n';
+      s.append(tagset);
+      s.append('\n');
 
-      return s;
+      return s.toString();
     }
 
     /**

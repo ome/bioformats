@@ -207,7 +207,7 @@ public class FilePatternDialog extends ImporterDialog {
       }
     }
     else if (useRanges) {
-      String pattern = "";
+      StringBuilder pattern = new StringBuilder();
       for (int i=0; i<counts.length; i++) {
         BigInteger first = new BigInteger(firsts[i]);
         BigInteger fileCount = new BigInteger(counts[i]);
@@ -219,24 +219,25 @@ public class FilePatternDialog extends ImporterDialog {
         // (number of images - 1) * axis increment + axis first image
         fileCount = fileCount.subtract(BigInteger.ONE).multiply(increment).add(first);
 
-        pattern += fp.getPrefix(i);
-        pattern += '<';
+        pattern.append(fp.getPrefix(i));
+        pattern.append('<');
         int firstPadding = paddingZeros[i] - first.toString().length() + 1;
         for (int zero=0; zero<firstPadding; zero++) {
-          pattern += '0';
+          pattern.append('0');
         }
-        pattern += first;
-        pattern += '-';
+        pattern.append(first);
+        pattern.append('-');
         int lastPadding = paddingZeros[i] - fileCount.toString().length() + 1;
         for (int zero=0; zero<lastPadding; zero++) {
-          pattern += '0';
+          pattern.append('0');
         }
-        pattern += fileCount;
-        pattern += ':';
-        pattern += increment;
-        pattern += '>';
+        pattern.append(fileCount);
+        pattern.append(':');
+        pattern.append(increment);
+        pattern.append('>');
       }
-      id = pattern + fp.getSuffix();
+      pattern.append(fp.getSuffix());
+      id = pattern.toString();
     }
 
     options.setId(id);

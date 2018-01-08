@@ -1072,11 +1072,13 @@ public class DicomReader extends FormatReader {
       case US:
         if (elementLength == 2) value = Integer.toString(in.readShort());
         else {
-          value = "";
+          StringBuilder sb = new StringBuilder();
           int n = elementLength / 2;
           for (int i=0; i<n; i++) {
-            value += Integer.toString(in.readShort()) + " ";
+            sb.append(in.readShort());
+            sb.append(" ");
           }
+          value = sb.toString();
         }
         break;
       case IMPLICIT_VR:
