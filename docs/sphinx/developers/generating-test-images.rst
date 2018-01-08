@@ -191,7 +191,7 @@ with their default values, is shown below.
       * 0
     - * plates
       * number of plates to generate
-      * 0*
+      * 0 [1]_
     - * plateAcqs
       * number of plate runs
       * 0 [1]_
