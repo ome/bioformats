@@ -33,7 +33,10 @@
 package loci.formats.in;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.IOException;
+import java.util.zip.GZIPInputStream;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -76,6 +79,9 @@ public class NRRDReader extends FormatReader {
   private String[] pixelSizes;
 
   private boolean initializeHelper = false;
+
+  private transient GZIPInputStream gzip;
+  private transient int lastPlane = -1;
 
   // -- Constructor --
 
@@ -164,17 +170,40 @@ public class NRRDReader extends FormatReader {
 
     // TODO : add support for additional encoding types
     if (dataFile == null) {
+      long planeSize = FormatTools.getPlaneSize(this);
       if (encoding.equals("raw")) {
-        long planeSize = FormatTools.getPlaneSize(this);
         in.seek(offset + no * planeSize);
-
         readPlane(in, x, y, w, h, buf);
-        return buf;
+      }
+      else if (encoding.equals("gzip")) {
+        if (gzip == null || no <= lastPlane) {
+          FileInputStream fis = new FileInputStream(getCurrentFile());
+          safeSkip(fis, offset);
+          gzip = new GZIPInputStream(fis);
+          lastPlane = -1;
+        }
+
+        int bpp = getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+        int rowLen = getSizeX() * bpp;
+        int diff = no - (lastPlane + 1);
+        safeSkip(gzip, (planeSize * diff) + (y * rowLen));
+        int readLen = w * bpp;
+        for (int row=0; row<h; row++) {
+          safeSkip(gzip, x * bpp);
+
+          int toRead = readLen;
+          while (toRead > 0) {
+            toRead -= gzip.read(buf, ((row + y) * readLen) + (readLen - toRead), toRead);
+          }
+          safeSkip(gzip, (getSizeX() - w - x) * bpp);
+        }
+        lastPlane = no;
       }
       else {
         throw new UnsupportedCompressionException(
           "Unsupported encoding: " + encoding);
       }
+      return buf;
     }
     else if (encoding.equals("raw")) {
       RandomAccessInputStream s = new RandomAccessInputStream(dataFile);
@@ -198,6 +227,11 @@ public class NRRDReader extends FormatReader {
       offset = 0;
       pixelSizes = null;
       initializeHelper = false;
+      if (gzip != null) {
+        gzip.close();
+      }
+      gzip = null;
+      lastPlane = -1;
     }
   }
 
@@ -371,6 +405,12 @@ public class NRRDReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
       }
+    }
+  }
+
+  private void safeSkip(InputStream stream, long skip) throws IOException {
+    while (skip > 0) {
+      skip -= stream.skip((int) Math.min(skip, Integer.MAX_VALUE));
     }
   }
 
