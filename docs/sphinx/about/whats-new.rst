@@ -17,7 +17,7 @@ File format fixes and improvements:
 * MetaMorph
   - directory listings are now sorted during file initialization
 * Amira Mesh
-  - now supports ``Avizio`` in the file header in addition to the existing support for ``AmiraMesh``
+  - now supports ``Avizo`` in the file header in addition to the existing support for ``AmiraMesh``
 * Becker & Hickl SPCImage
   - added a fix for IllegalArgumentException when reading files with compressed data
 * Zeiss-CZI
