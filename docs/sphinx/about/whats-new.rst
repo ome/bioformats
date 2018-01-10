@@ -25,9 +25,9 @@ File format fixes and improvements:
 
 Bug fixes and improvements:
 
-* Remove unused target utils-formats-api from ant build
+* removed unused target utils-formats-api from ant build
 * Memoizer updated to use UUID for generating unique memo file directories
-* Detect and fix Findbugs' ``SBSC_USE_STRINGBUFFER_CONCATENATION`` using StringBuilder
+* detect and fix Findbugs' ``SBSC_USE_STRINGBUFFER_CONCATENATION`` using StringBuilder
 
 Documentation improvements:
 
@@ -42,7 +42,7 @@ Updated build system:
 
 * corrected external links which failed automatic link checking
 * configuration files for the automated test suite now use raw physical size rather than formatted size
-* added first version of Dockerfile for running the automated testsuite standalone
+* added first version of Dockerfile for running the automated test suite standalone
 
 5.7.2 (2017 November 21)
 ------------------------
