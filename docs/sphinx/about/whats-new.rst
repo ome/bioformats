@@ -34,9 +34,9 @@ Documentation improvements:
 * added a `support <https://github.com/openmicroscopy/bioformats/blob/develop/SUPPORT.md>`_ 
   page to the Bio-Formats project
 * updated reference URLs for the Aperio ImageScope and Micro-Manager
-* documented issues with conflicts in the :doc:`JAI ImageIO component <forks-jai>`
+* documented issues with conflicts in the :ref:`JAI ImageIO component <forks-jai>`
 * clarified the default values of HCS keys for fake images in the documentation for 
-  :doc:`Generating test images <developers/generating-test-images>`
+  :doc:`Generating test images </developers/generating-test-images>`
 
 Updated build system:
 
