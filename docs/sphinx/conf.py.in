@@ -371,5 +371,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://support.apple.com/downloads/quicktime',
     'https://support.apple.com/quicktime',
     'https://nifti.nimh.nih.gov/nifti-1/',
-    'https://www.leica-microsystems.com'
+    'https://www.leica-microsystems.com',
+    'http://www.lavisionbiotec.com'
 ]
