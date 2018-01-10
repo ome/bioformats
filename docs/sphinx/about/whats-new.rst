@@ -9,7 +9,7 @@ File format fixes and improvements:
 * TIFF
   - fixed a NullPointerException when reading a TIFF file from the root system directory
   - improved support for large images that are stored as a single uncompressed tile with
-    multiple interleaved channels.
+    multiple interleaved channels
 * MRC (Medical Research Council)
   - added support in original metadata for the fields ``ISPG`` and ``Is data cube``
 * TillPhotonics TillVision
