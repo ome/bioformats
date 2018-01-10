@@ -7,21 +7,21 @@ Version history
 File format fixes and improvements:
 
 * TIFF
-  - fixed a NullPointerException when reading a TIFF file from the root system directory
-  - improved support for large images that are stored as a single uncompressed tile with
-    multiple interleaved channels
+   - fixed a NullPointerException when reading a TIFF file from the root system directory
+   - improved support for large images that are stored as a single uncompressed tile with 
+     multiple interleaved channels
 * MRC (Medical Research Council)
-  - added support in original metadata for the fields ``ISPG`` and ``Is data cube``
+   - added support in original metadata for the fields ``ISPG`` and ``Is data cube``
 * TillPhotonics TillVision
-  - directory listings for .pst files are now sorted
+   - directory listings for .pst files are now sorted
 * MetaMorph
-  - directory listings are now sorted during file initialization
+   - directory listings are now sorted during file initialization
 * Amira Mesh
-  - now supports ``Avizo`` in the file header in addition to the existing support for ``AmiraMesh``
+   - now supports ``Avizo`` in the file header in addition to the existing support for ``AmiraMesh``
 * Becker & Hickl SPCImage
-  - added a fix for IllegalArgumentException when reading files with compressed data
+   - added a fix for IllegalArgumentException when reading files with compressed data
 * Zeiss-CZI
-  - fixed an IndexOutOfBoundsException when creating ROI objects
+   - fixed an IndexOutOfBoundsException when creating ROI objects
 
 Bug fixes and improvements:
 
