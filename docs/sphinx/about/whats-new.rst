@@ -1,6 +1,49 @@
 Version history
 ===============
 
+5.7.3 (2018 January 11)
+-----------------------
+
+File format fixes and improvements:
+
+* TIFF
+  - fixed a NullPointerException when reading a TIFF file from the root system directory
+  - improved support for large images that are stored as a single uncompressed tile with
+    multiple interleaved channels.
+* MRC (Medical Research Council)
+  - added support in original metadata for the fields ``ISPG`` and ``Is data cube``
+* TillPhotonics TillVision
+  - directory listings for .pst files are now sorted
+* MetaMorph
+  - directory listings are now sorted during file initialization
+* Amira Mesh
+  - now supports ``Avizio`` in the file header in addition to the existing support for ``AmiraMesh``
+* Becker & Hickl SPCImage
+  - added a fix for IllegalArgumentException when reading files with compressed data
+* Zeiss-CZI
+  - fixed an IndexOutOfBoundsException when creating ROI objects
+
+Bug fixes and improvements:
+
+* Remove unused target utils-formats-api from ant build
+* Memoizer updated to use UUID for generating unique memo file directories
+* Detect and fix Findbugs' ``SBSC_USE_STRINGBUFFER_CONCATENATION`` using StringBuilder
+
+Documentation improvements:
+
+* added a `support <https://github.com/openmicroscopy/bioformats/blob/develop/SUPPORT.md>`_ 
+  page to the Bio-Formats project
+* updated reference URLs for the Aperio ImageScope and Micro-Manager
+* documented issues with conflicts in the :doc:`JAI ImageIO component <forks-jai>`
+* clarified the default values of HCS keys for fake images in the documentation for 
+  :doc:`Generating test images <developers/generating-test-images>`
+
+Updated build system:
+
+* corrected external links which failed automatic link checking
+* configuration files for the automated test suite now use raw physical size rather than formatted size
+* added first version of Dockerfile for running the automated testsuite standalone
+
 5.7.2 (2017 November 21)
 ------------------------
 
