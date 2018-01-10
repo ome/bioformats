@@ -66,6 +66,11 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
+import ome.xml.model.Channel;
+import ome.xml.model.Image;
+import ome.xml.model.Pixels;
+import ome.xml.model.Plane;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -543,7 +548,6 @@ public class OMETiffReader extends FormatReader {
     }
 
     String currentUUID = meta.getUUID();
-    service.convertMetadata(meta, metadataStore);
 
     // special case for ungrouped files
     // attempts to correct the Z, C, and T dimensions
@@ -557,11 +561,16 @@ public class OMETiffReader extends FormatReader {
       reader.close();
       int maxSeries = 0;
       info = new OMETiffPlane[meta.getImageCount()][];
+      ArrayList<Integer> imagesToRemove = new ArrayList<Integer>();
+      ArrayList<int[]> cBounds = new ArrayList<int[]>();
       for (int i=0; i<meta.getImageCount(); i++) {
         int maxZ = 0;
         int maxC = 0;
         int maxT = 0;
- 
+        int minZ = Integer.MAX_VALUE;
+        int minC = Integer.MAX_VALUE;
+        int minT = Integer.MAX_VALUE;
+
         int sizeZ = meta.getPixelsSizeZ(i).getValue();
         int sizeC = meta.getChannelCount(i);
         int sizeT = meta.getPixelsSizeT(i).getValue();
@@ -630,23 +639,67 @@ public class OMETiffReader extends FormatReader {
             if (t > maxT) {
               maxT = t;
             }
-          } 
+            if (z < minZ) {
+              minZ = z;
+            }
+            if (c < minC) {
+              minC = c;
+            }
+            if (t < minT) {
+              minT = t;
+            }
+          }
         }
         if (i <= maxSeries) {
-          m.sizeZ = maxZ + 1;
-          m.sizeC = maxC + 1;
-          m.sizeT = maxT + 1;
+          m.sizeZ = (maxZ - minZ) + 1;
+          m.sizeC = (maxC - minC) + 1;
+          m.sizeT = (maxT - minT) + 1;
           m.imageCount = m.sizeZ * m.sizeC * m.sizeT;
           m.sizeC *= meta.getChannelSamplesPerPixel(i, 0).getValue();
           if (i >= core.size()) {
             core.add(m);
           }
+          cBounds.add(new int[] {minC, maxC});
+        }
+        else {
+          imagesToRemove.add(i);
         }
       }
+
+      // remove extra Images, Channels, and Planes
+
+      meta.resolveReferences();
+      OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
+      List<Image> images = root.copyImageList();
+      for (int i=imagesToRemove.size()-1; i>=0; i--) {
+        images.remove(imagesToRemove.get(i));
+      }
+      for (int i=0; i<images.size(); i++) {
+        Image img = images.get(i);
+        Pixels pix = img.getPixels();
+        List<Plane> planes = pix.copyPlaneList();
+        int count = core.get(i).imageCount;
+        for (int p=count; p<planes.size(); p++) {
+          pix.removePlane(planes.get(p));
+        }
+        pix.setMetadataOnly(null);
+
+        List<Channel> channels = pix.copyChannelList();
+        for (int c=0; c<channels.size(); c++) {
+          if (c < cBounds.get(i)[0] || c > cBounds.get(i)[1]) {
+            pix.removeChannel(channels.get(c));
+          }
+        }
+      }
+      meta.setRoot(root);
+
+      service.convertMetadata(meta, metadataStore);
       MetadataTools.populatePixels(metadataStore, this);
-      
+
       return;
     }
+
+    service.convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
