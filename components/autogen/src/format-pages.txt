@@ -113,7 +113,8 @@ notes = .. seealso:: \n
 extensions = .am, .amiramesh, .grey, .hx, .labels
 developer = `Visage Imaging <http://www.vsg3d.com/>`_
 bsd = no
-weHave = * a few Amira Mesh datasets
+weHave = * a few Amira Mesh datasets \n
+* `public sample images <http://downloads.openmicroscopy.org/images/AmiraMesh/>`__
 weWant = * more Amira Mesh datasets
 pixelsRating = Very good
 metadataRating = Fair
