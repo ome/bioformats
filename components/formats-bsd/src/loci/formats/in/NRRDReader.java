@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ClassList;
@@ -270,6 +271,7 @@ public class NRRDReader extends FormatReader {
       new DefaultMetadataOptions(MetadataLevel.MINIMUM));
 
     String key, v;
+    String[] pixelSizeUnits = null;
 
     int numDimensions = 0;
 
@@ -340,8 +342,11 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("endian")) {
           m.littleEndian = v.equals("little");
         }
-        else if (key.equals("spacings")) {
+        else if (key.equals("spacings") || key.equals("space directions")) {
           pixelSizes = v.split(" ");
+        }
+        else if (key.equals("space units")) {
+          pixelSizeUnits = v.split(" ");
         }
         else if (key.equals("byte skip")) {
           offset = Long.parseLong(v);
@@ -382,21 +387,23 @@ public class NRRDReader extends FormatReader {
         for (int i=0; i<pixelSizes.length; i++) {
           if (pixelSizes[i] == null) continue;
           try {
-            Double d = new Double(pixelSizes[i].trim());
+            Double d = parsePixelSize(i);
+            String unit = pixelSizeUnits == null || i >= pixelSizeUnits.length ?
+              null : pixelSizeUnits[i].replaceAll("\"", "");
             if (i == 0) {
-              Length x = FormatTools.getPhysicalSizeX(d);
+              Length x = FormatTools.getPhysicalSizeX(d, unit);
               if (x != null) {
                 store.setPixelsPhysicalSizeX(x, 0);
               }
             }
             else if (i == 1) {
-              Length y = FormatTools.getPhysicalSizeY(d);
+              Length y = FormatTools.getPhysicalSizeY(d, unit);
               if (y != null) {
                 store.setPixelsPhysicalSizeY(y, 0);
               }
             }
             else if (i == 2) {
-              Length z = FormatTools.getPhysicalSizeZ(d);
+              Length z = FormatTools.getPhysicalSizeZ(d, unit);
               if (z != null) {
                 store.setPixelsPhysicalSizeZ(z, 0);
               }
@@ -412,6 +419,18 @@ public class NRRDReader extends FormatReader {
     while (skip > 0) {
       skip -= stream.skip((int) Math.min(skip, Integer.MAX_VALUE));
     }
+  }
+
+  private Double parsePixelSize(int index) {
+    String size = pixelSizes[index].trim();
+    if (size.startsWith("(")) {
+      size = size.substring(1, size.length() - 1);
+      String[] vector = size.split(",");
+      if (index < vector.length) {
+        return DataTools.parseDouble(vector[index].trim());
+      }
+    }
+    return DataTools.parseDouble(size);
   }
 
 }
