@@ -20,14 +20,16 @@ File format fixes and improvements:
    - now supports ``Avizo`` in the file header in addition to the existing support for ``AmiraMesh``
 * Becker & Hickl SPCImage
    - added a fix for IllegalArgumentException when reading files with compressed data
-* Zeiss-CZI
+* Zeiss CZI
    - fixed an IndexOutOfBoundsException when creating ROI objects
 
 Bug fixes and improvements:
 
 * removed unused target utils-formats-api from ant build
-* Memoizer updated to use UUID for generating unique memo file directories
+* automated Memoizer tests updated to use UUID for generating unique memo file directories
 * detect and fix Findbugs' ``SBSC_USE_STRINGBUFFER_CONCATENATION`` using StringBuilder
+* configuration files for the automated test suite now use raw physical size rather than formatted size
+* added first version of Dockerfile for running the automated test suite standalone
 
 Documentation improvements:
 
@@ -37,12 +39,7 @@ Documentation improvements:
 * documented issues with conflicts in the :ref:`JAI ImageIO component <forks-jai>`
 * clarified the default values of HCS keys for fake images in the documentation for 
   :doc:`Generating test images </developers/generating-test-images>`
-
-Updated build system:
-
 * corrected external links which failed automatic link checking
-* configuration files for the automated test suite now use raw physical size rather than formatted size
-* added first version of Dockerfile for running the automated test suite standalone
 
 5.7.2 (2017 November 21)
 ------------------------
