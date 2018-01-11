@@ -25,7 +25,8 @@ Reader: AmiraReader (:bfreader:`Source Code <AmiraReader.java>`, :doc:`Supported
 
 We currently have:
 
-* a few Amira Mesh datasets
+* a few Amira Mesh datasets 
+* `public sample images <http://downloads.openmicroscopy.org/images/AmiraMesh/>`__
 
 We would like to have:
 
