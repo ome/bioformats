@@ -2521,6 +2521,8 @@ public class ZeissCZIReader extends FormatReader {
     NodeList layers = layersNode.getElementsByTagName("Layer");
 
     if (layers != null) {
+      int roiCount = 0;
+
       for (int i=0; i<layers.getLength(); i++) {
         Element layer = (Element) layers.item(i);
 
@@ -2533,10 +2535,10 @@ public class ZeissCZIReader extends FormatReader {
         int shape = 0;
 
         NodeList lines = getGrandchildren(layer, "Elements", "Line");
-        shape = populateLines(lines, i, shape);
+        shape = populateLines(lines, roiCount, shape);
 
         NodeList arrows = getGrandchildren(layer, "Elements", "OpenArrow");
-        shape = populateLines(arrows, i, shape);
+        shape = populateLines(arrows, roiCount, shape);
 
         NodeList crosses = getGrandchildren(layer, "Elements", "Cross");
         for (int s=0; s<crosses.getLength(); s++, shape+=2) {
@@ -2547,9 +2549,9 @@ public class ZeissCZIReader extends FormatReader {
           Element attributes = getFirstNode(cross, "Attributes");
 
           store.setLineID(
-            MetadataTools.createLSID("Shape", i, shape), i, shape);
+            MetadataTools.createLSID("Shape", roiCount, shape), roiCount, shape);
           store.setLineID(
-            MetadataTools.createLSID("Shape", i, shape + 1), i, shape + 1);
+            MetadataTools.createLSID("Shape", roiCount, shape + 1), roiCount, shape + 1);
 
           String length = getFirstNodeValue(geometry, "Length");
           String centerX = getFirstNodeValue(geometry, "CenterX");
@@ -2558,27 +2560,27 @@ public class ZeissCZIReader extends FormatReader {
           if (length != null) {
             Double halfLen = new Double(length) / 2;
             if (centerX != null) {
-              store.setLineX1(new Double(centerX) - halfLen, i, shape);
-              store.setLineX2(new Double(centerX) + halfLen, i, shape);
+              store.setLineX1(new Double(centerX) - halfLen, roiCount, shape);
+              store.setLineX2(new Double(centerX) + halfLen, roiCount, shape);
 
-              store.setLineX1(new Double(centerX), i, shape + 1);
-              store.setLineX2(new Double(centerX), i, shape + 1);
+              store.setLineX1(new Double(centerX), roiCount, shape + 1);
+              store.setLineX2(new Double(centerX), roiCount, shape + 1);
             }
             if (centerY != null) {
-              store.setLineY1(new Double(centerY), i, shape);
-              store.setLineY2(new Double(centerY), i, shape);
+              store.setLineY1(new Double(centerY), roiCount, shape);
+              store.setLineY2(new Double(centerY), roiCount, shape);
 
-              store.setLineY1(new Double(centerY) - halfLen, i, shape + 1);
-              store.setLineY2(new Double(centerY) + halfLen, i, shape + 1);
+              store.setLineY1(new Double(centerY) - halfLen, roiCount, shape + 1);
+              store.setLineY2(new Double(centerY) + halfLen, roiCount, shape + 1);
             }
           }
-          store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape);
-          store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape + 1);
+          store.setLineText(getFirstNodeValue(textElements, "Text"), roiCount, shape);
+          store.setLineText(getFirstNodeValue(textElements, "Text"), roiCount, shape + 1);
         }
 
         NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
         if (rectangles != null) {
-          shape = populateRectangles(rectangles, i, shape);
+          shape = populateRectangles(rectangles, roiCount, shape);
         }
 
         NodeList ellipses = getGrandchildren(layer, "Elements", "Ellipse");
@@ -2591,7 +2593,7 @@ public class ZeissCZIReader extends FormatReader {
             Element attributes = getFirstNode(ellipse, "Attributes");
 
             store.setEllipseID(
-              MetadataTools.createLSID("Shape", i, shape), i, shape);
+              MetadataTools.createLSID("Shape", roiCount, shape), roiCount, shape);
 
             String radiusX = getFirstNodeValue(geometry, "RadiusX");
             String radiusY = getFirstNodeValue(geometry, "RadiusY");
@@ -2599,93 +2601,94 @@ public class ZeissCZIReader extends FormatReader {
             String centerY = getFirstNodeValue(geometry, "CenterY");
 
             if (radiusX != null) {
-              store.setEllipseRadiusX(new Double(radiusX), i, shape);
+              store.setEllipseRadiusX(new Double(radiusX), roiCount, shape);
             }
             if (radiusY != null) {
-              store.setEllipseRadiusY(new Double(radiusY), i, shape);
+              store.setEllipseRadiusY(new Double(radiusY), roiCount, shape);
             }
             if (centerX != null) {
-              store.setEllipseX(new Double(centerX), i, shape);
+              store.setEllipseX(new Double(centerX), roiCount, shape);
             }
             if (centerY != null) {
-              store.setEllipseY(new Double(centerY), i, shape);
+              store.setEllipseY(new Double(centerY), roiCount, shape);
             }
             store.setEllipseText(
-              getFirstNodeValue(textElements, "Text"), i, shape);
+              getFirstNodeValue(textElements, "Text"), roiCount, shape);
           }
         }
 
         // translate all of the circle ROIs
         NodeList circles = getGrandchildren(layer, "Elements", "Circle");
         if (circles != null) {
-          shape = populateCircles(circles, i, shape);
+          shape = populateCircles(circles, roiCount, shape);
         }
         NodeList inOutCircles =
           getGrandchildren(layer, "Elements", "InOutCircle");
         if (inOutCircles != null) {
-          shape = populateCircles(inOutCircles, i, shape);
+          shape = populateCircles(inOutCircles, roiCount, shape);
         }
         NodeList outInCircles =
           getGrandchildren(layer, "Elements", "OutInCircle");
         if (outInCircles != null) {
-          shape = populateCircles(outInCircles, i, shape);
+          shape = populateCircles(outInCircles, roiCount, shape);
         }
         NodeList pointsCircles =
           getGrandchildren(layer, "Elements", "PointsCircle");
         if (pointsCircles != null) {
-          shape = populateCircles(pointsCircles, i, shape);
+          shape = populateCircles(pointsCircles, roiCount, shape);
         }
 
         NodeList polygons = getGrandchildren(layer, "Elements", "Polygon");
         if (polygons != null) {
-          shape = populatePolylines(polygons, i, shape, true);
+          shape = populatePolylines(polygons, roiCount, shape, true);
         }
 
         NodeList polylines = getGrandchildren(layer, "Elements", "Polyline");
         if (polylines != null) {
-          shape = populatePolylines(polylines, i, shape, false);
+          shape = populatePolylines(polylines, roiCount, shape, false);
         }
 
         NodeList openPolylines =
           getGrandchildren(layer, "Elements", "OpenPolyline");
         if (openPolylines != null) {
-          shape = populatePolylines(openPolylines, i, shape, false);
+          shape = populatePolylines(openPolylines, roiCount, shape, false);
         }
 
         NodeList closedPolylines =
           getGrandchildren(layer, "Elements", "ClosedPolyline");
         if (closedPolylines != null) {
-          shape = populatePolylines(closedPolylines, i, shape, true);
+          shape = populatePolylines(closedPolylines, roiCount, shape, true);
         }
 
         NodeList beziers =
           getGrandchildren(layer, "Elements", "Bezier");
         if (beziers != null) {
-          shape = populatePolylines(beziers, i, shape, true);
+          shape = populatePolylines(beziers, roiCount, shape, true);
         }
 
         NodeList rectRoi = getGrandchildren(layer, "Elements", "RectRoi");
         if (rectRoi != null) {
-          shape = populateRectangles(rectRoi, i, shape);
+          shape = populateRectangles(rectRoi, roiCount, shape);
         }
         NodeList textBoxes = getGrandchildren(layer, "Elements", "TextBox");
         if (textBoxes != null) {
-          shape = populateRectangles(textBoxes, i, shape);
+          shape = populateRectangles(textBoxes, roiCount, shape);
         }
         NodeList text = getGrandchildren(layer, "Elements", "Text");
         if (text != null) {
-          shape = populateRectangles(text, i, shape);
+          shape = populateRectangles(text, roiCount, shape);
         }
 
         if (shape > 0) {
-          String roiID = MetadataTools.createLSID("ROI", i);
-          store.setROIID(roiID, i);
-          store.setROIName(layer.getAttribute("Name"), i);
-          store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+          String roiID = MetadataTools.createLSID("ROI", roiCount);
+          store.setROIID(roiID, roiCount);
+          store.setROIName(layer.getAttribute("Name"), roiCount);
+          store.setROIDescription(getFirstNodeValue(layer, "Usage"), roiCount);
 
           for (int series=0; series<getSeriesCount(); series++) {
-            store.setImageROIRef(roiID, series, i);
+            store.setImageROIRef(roiID, series, roiCount);
           }
+          roiCount++;
         }
       }
     }
