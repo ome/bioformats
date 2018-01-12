@@ -113,6 +113,7 @@ public class FormatReaderTest {
   private Configuration config;
   private String omexmlDir = System.getProperty("testng.omexmlDirectory");
   private String cacheDir  = System.getProperty("testng.cacheDirectory");
+  private String fileList = System.getProperty("testng.file-list");
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -2562,6 +2563,23 @@ public class FormatReaderTest {
       writer.write(xml);
       writer.close();
       reader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    }
+  }
+
+  @Test(groups = {"file-list"})
+  public void saveFileScanList() {
+    try {
+      File f = new File(fileList);
+      OutputStreamWriter writer =
+        new OutputStreamWriter(new FileOutputStream(f, true),
+        Constants.ENCODING);
+      writer.write(id);
+      writer.write("\n");
+      writer.close();
     }
     catch (Throwable t) {
       LOGGER.info("", t);
