@@ -374,6 +374,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://www.leica-microsystems.com',
     'https://valelab4.ucsf.edu/~nstuurman/IJplugins/Ics_Opener.html',
     'http://valelab.ucsf.edu',
-    'https://micro-manager.org/',
+    'https://micro-manager.org',
     'http://www.lavisionbiotec.com'
 ]
