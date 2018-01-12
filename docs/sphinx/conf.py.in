@@ -372,5 +372,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://support.apple.com/quicktime',
     'https://nifti.nimh.nih.gov/nifti-1/',
     'https://www.leica-microsystems.com',
-    'https://valelab4.ucsf.edu/~nstuurman/IJplugins/Ics_Opener.html'
+    'https://valelab4.ucsf.edu/~nstuurman/IJplugins/Ics_Opener.html',
+    'https://micro-manager.org/'
 ]
