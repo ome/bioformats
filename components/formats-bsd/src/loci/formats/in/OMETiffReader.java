@@ -683,9 +683,14 @@ public class OMETiffReader extends FormatReader {
         Image img = images.get(i);
         Pixels pix = img.getPixels();
         List<Plane> planes = pix.copyPlaneList();
-        int count = core.get(i).imageCount;
-        for (int p=count; p<planes.size(); p++) {
-          pix.removePlane(planes.get(p));
+        for (int p=0; p<planes.size(); p++) {
+          Plane plane = planes.get(p);
+          if (plane.getTheZ().getValue() >= core.get(i).sizeZ ||
+            plane.getTheC().getValue() >= core.get(i).sizeC ||
+            plane.getTheT().getValue() >= core.get(i).sizeT)
+          {
+            pix.removePlane(planes.get(p));
+          }
         }
         pix.setMetadataOnly(null);
 
