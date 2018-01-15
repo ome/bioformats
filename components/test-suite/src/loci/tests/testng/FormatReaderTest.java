@@ -643,6 +643,7 @@ public class FormatReaderTest {
         if (retrieve.getImageAcquisitionDate(i) != null) {
           date = retrieve.getImageAcquisitionDate(i).getValue();
         }
+        config.setSeries(i);
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
