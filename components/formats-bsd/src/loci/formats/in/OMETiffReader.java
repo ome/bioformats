@@ -558,6 +558,7 @@ public class OMETiffReader extends FormatReader {
       IFormatReader reader = new MinimalTiffReader();
       reader.setId(currentId);
       core.set(0, reader.getCoreMetadataList().get(0));
+      int ifdCount = reader.getImageCount();
       reader.close();
       int maxSeries = 0;
       info = new OMETiffPlane[meta.getImageCount()][];
@@ -592,8 +593,8 @@ public class OMETiffReader extends FormatReader {
             filename = meta.getUUIDFileName(i, td);
           }
           catch (NullPointerException e) { }
-          if ((uuid != null && !uuid.equals(currentUUID)) ||
-            (filename != null && !currentId.endsWith(filename)))
+          if ((uuid == null || !uuid.equals(currentUUID)) &&
+            (filename == null || !currentId.endsWith(filename)))
           {
             // this plane doesn't appear to be in the current file
             continue;
@@ -609,11 +610,15 @@ public class OMETiffReader extends FormatReader {
           NonNegativeInteger firstT = meta.getTiffDataFirstT(i, td);
 
           int realCount = count == null ? 1 : count.getValue();
+          if (ifd == null && count == null) {
+            realCount = ifdCount;
+          }
           for (int q=0; q<realCount; q++) {
             OMETiffPlane p = new OMETiffPlane();
             p.id = currentId;
+            p.ifd = q;
             if (ifd != null) {
-              p.ifd = ifd.getValue() + q;
+              p.ifd += ifd.getValue();
             }
             p.reader = reader;
             info[i][next++] = p;
