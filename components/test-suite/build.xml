@@ -233,6 +233,7 @@ Type "ant -p" for a list of targets.
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
+      <sysproperty key="testng.file-list" value="${testng.file-list}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>

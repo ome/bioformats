@@ -2577,6 +2577,11 @@ public class FormatReaderTest {
       OutputStreamWriter writer =
         new OutputStreamWriter(new FileOutputStream(f, true),
         Constants.ENCODING);
+      if (f.length() == 0) {
+        // make sure the first line is the base directory
+        writer.write(System.getProperty("testng.directory"));
+        writer.write("\n");
+      }
       writer.write(id);
       writer.write("\n");
       writer.close();
