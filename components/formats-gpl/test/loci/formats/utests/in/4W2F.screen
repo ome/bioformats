@@ -1,0 +1,32 @@
+[Plate]
+Rows = 2
+Columns = 2
+Fields = 2
+
+[Well 0]
+Row = 0
+Column = 0
+ChannelNames = A,B,C
+Field_0 = A01_f1&sizeC=3.fake
+Field_1 = A01_f2&sizeC=3.fake
+
+[Well 1]
+Row = 0
+Column = 1
+ChannelNames = A,B,C
+Field_0 = A02_f1&sizeC=3.fake
+Field_1 = A02_f2&sizeC=3.fake
+
+[Well 2]
+Row = 1
+Column = 0
+ChannelNames = A,B,C
+Field_0 = B01_f1&sizeC=3.fake
+Field_1 = B01_f2&sizeC=3.fake
+
+[Well 3]
+Row = 1
+Column = 1
+ChannelNames = A,B,C
+Field_0 = B02_f1&sizeC=3.fake
+Field_1 = B02_f1&sizeC=3.fake

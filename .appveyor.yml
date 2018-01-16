@@ -1,0 +1,59 @@
+environment:
+  AV_PROJECTS: 'c:\projects'
+  AV_BF_M2: 'c:\projects\m2'
+  AV_BF_PYTHON: 'c:\projects\python'
+  AV_BF_SOURCE: 'c:\projects\bioformats'
+
+# Note that only Oracle JDK is provided.
+  matrix:
+    - java: 1.8
+      build: maven
+    - java: 1.8
+      build: ant
+      ant_version: 1.10.1
+    - java: 1.7
+      build: maven
+    - java: 1.7
+      build: ant
+      ant_version: 1.9.9
+
+branches:
+  except:
+    - /metadata.*/
+
+cache:
+  - '%AV_BF_M2% -> appveyor.yml'
+  - '%AV_BF_PYTHON% -> appveyor.yml'
+
+os: 'Visual Studio 2015'
+clone_folder: '%AV_BF_SOURCE%'
+clone_depth: 5
+platform: x64
+
+init:
+  - git config --global core.autocrlf input
+  - if [%build%] == [ant] appveyor-retry cinst -y ant --version %ant_version%
+  - refreshenv
+  - 'if [%java%] == [1.7] set "JAVA_HOME=C:\Program Files\Java\jdk1.7.0"'
+  - 'if [%java%] == [1.8] set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0"'
+  - PATH=%JAVA_HOME%\bin;%PATH%
+  - 'if [%build%] == [maven] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
+  - 'if [%build%] == [ant] set "ANT_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
+
+build_script:
+  # Cached venv is available from this point.
+  - 'if NOT EXIST "%AV_BF_PYTHON%\" set AV_BF_CREATE_VENV=true'
+  - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m pip install virtualenv'
+  - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m virtualenv %AV_BF_PYTHON%'
+  - PATH=%AV_BF_PYTHON%;%AV_BF_PYTHON%\scripts;%PATH%
+  - 'if [%AV_BF_CREATE_VENV%] == [true] python -m pip install sphinx==1.2.3'
+  - tools\test-build %build%
+
+#artifacts:
+#  - path: 'components\bundles\bioformats_package\target\*.zip'
+#  - path: 'components\bundles\bioformats_package\target\*.jar'
+#  - path: 'components\bundles\bioformats_package\target\*.tar.*'
+#  - path: 'artifacts\bioformats_package.jar'
+#  - path: 'artifacts\bftools.zip'
+#  - path: 'artifacts\bfmatlab.zip'
+#  - path: 'artifacts\bioformats-octave*.tar.*'

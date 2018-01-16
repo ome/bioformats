@@ -1,0 +1,9 @@
+[Plate]
+Rows = 1
+Columns = 1
+Fields = 1
+
+[Well 0]
+Row = 0
+Column = 0
+Field_0 = A01.fake
