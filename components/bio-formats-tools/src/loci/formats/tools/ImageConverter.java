@@ -108,6 +108,7 @@ public final class ImageConverter {
   private int saveTileWidth = 0, saveTileHeight = 0;
   private boolean validate = false;
   private boolean zeroPadding = false;
+  private boolean flat = true;
 
   private IFormatReader reader;
   private MinMaxCalculator minMax;
@@ -149,6 +150,7 @@ public final class ImageConverter {
         else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-validate")) validate = true;
         else if (args[i].equals("-padded")) zeroPadding = true;
+        else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-option")) {
           options.set(args[++i], args[++i]);
         }
@@ -226,11 +228,11 @@ public final class ImageConverter {
     String[] s = {
       "To convert a file between formats, run:",
       "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
-      "    [-bigtiff] [-compression codec] [-series series] [-map id]",
-      "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-      "    [-timepoint timepoint] [-nogroup] [-nolookup] [-autoscale]",
-      "    [-version] [-no-upgrade] [-padded] [-option key value]",
-      "    in_file out_file",
+      "    [-bigtiff] [-compression codec] [-series series] [-noflat]",
+      "    [-map id] [-range start end] [-crop x,y,w,h]",
+      "    [-channel channel] [-z Z] [-timepoint timepoint] [-nogroup]",
+      "    [-nolookup] [-autoscale] [-version] [-no-upgrade] [-padded]",
+      "    [-option key value] in_file out_file",
       "",
       "    -version: print the library version and exit",
       " -no-upgrade: do not perform the upgrade check",
@@ -242,6 +244,7 @@ public final class ImageConverter {
       "    -bigtiff: force BigTIFF files to be written",
       "-compression: specify the codec to use when saving images",
       "     -series: specify which image series to convert",
+      "     -noflat: do not flatten subresolutions",
       "        -map: specify file on disk to which name should be mapped",
       "      -range: specify range of planes to convert (inclusive)",
       "    -nogroup: force multi-file datasets to be read as individual" +
@@ -369,6 +372,7 @@ public final class ImageConverter {
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
+    reader.setFlattenedResolutions(flat);
     OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
