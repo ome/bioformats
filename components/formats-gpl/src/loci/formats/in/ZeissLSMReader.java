@@ -290,7 +290,7 @@ public class ZeissLSMReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     TiffParser parser = new TiffParser(stream);
     if (parser.isValidHeader()) {
-      return true;
+      return parser.getIFDOffsets().length > 1;
     }
     stream.seek(4);
     if (stream.readShort() == 0x5374) {
