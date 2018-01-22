@@ -609,6 +609,7 @@ public class CellSensReader extends FormatReader {
       metadataIndex = -1;
       previousTag = 0;
       expectETS = false;
+      pyramids.clear();
     }
   }
 
