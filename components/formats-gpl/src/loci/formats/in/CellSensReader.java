@@ -46,6 +46,7 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.LosslessJPEGCodec;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -70,6 +71,7 @@ public class CellSensReader extends FormatReader {
   private static final int RAW = 0;
   private static final int JPEG = 2;
   private static final int JPEG_2000 = 3;
+  private static final int JPEG_LOSSLESS = 5;
   private static final int PNG = 8;
   private static final int BMP = 9;
 
@@ -607,6 +609,7 @@ public class CellSensReader extends FormatReader {
       metadataIndex = -1;
       previousTag = 0;
       expectETS = false;
+      pyramids.clear();
     }
   }
 
@@ -1007,6 +1010,10 @@ public class CellSensReader extends FormatReader {
         break;
       case JPEG_2000:
         codec = new JPEG2000Codec();
+        buf = codec.decompress(ets, options);
+        break;
+      case JPEG_LOSSLESS:
+        codec = new LosslessJPEGCodec();
         buf = codec.decompress(ets, options);
         break;
       case PNG:
