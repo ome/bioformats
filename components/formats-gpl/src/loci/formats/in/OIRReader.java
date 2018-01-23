@@ -97,6 +97,18 @@ public class OIRReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
