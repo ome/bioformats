@@ -100,13 +100,15 @@ public class OIRReader extends FormatReader {
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return FormatTools.MUST_GROUP;
+    return isSingleFile(id) ? FormatTools.CAN_GROUP : FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
-    return false;
+    // files with .oir extension that are less than 1 GB should be self-contained
+    Location file = new Location(id);
+    return checkSuffix(id, "oir") && file.length() < 1024 * 1024 * 1024;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
