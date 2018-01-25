@@ -387,8 +387,8 @@ public class PCIReader extends FormatReader {
     String file = imageFiles.get(0);
     RandomAccessInputStream s = poi.getDocumentStream(file);
     TiffParser tp = new TiffParser(s);
-    // don't correct the image width if it's stored as a TIFF
-    if (!tp.isValidHeader() && s.length() > expectedPlaneSize) {
+    // don't correct the image width if it's stored as a TIFF or if binning
+    if (!tp.isValidHeader() && binning == 0 && s.length() > expectedPlaneSize) {
       m.sizeX += (s.length() - expectedPlaneSize) / (m.sizeY * bpp * m.sizeC);
     }
     s.close();
