@@ -848,9 +848,13 @@ public class TiffSaver {
       ifd.putIFDValue(IFD.COMPRESSION, TiffCompression.UNCOMPRESSED.getCode());
     }
 
-    boolean indexed = nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null;
-    PhotoInterp pi = indexed ? PhotoInterp.RGB_PALETTE :
-      nChannels == 1 ? PhotoInterp.BLACK_IS_ZERO : PhotoInterp.RGB;
+    PhotoInterp pi = PhotoInterp.BLACK_IS_ZERO;
+    if (nChannels == 1 && ifd.getIFDValue(IFD.COLOR_MAP) != null) {
+      pi = PhotoInterp.RGB_PALETTE;
+    }
+    else if (nChannels == 3) {
+      pi = PhotoInterp.RGB;
+    }
     ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION, pi.getCode());
 
     ifd.putIFDValue(IFD.SAMPLES_PER_PIXEL, nChannels);
