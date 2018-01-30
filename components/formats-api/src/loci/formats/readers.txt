@@ -170,6 +170,7 @@ loci.formats.in.SISReader             # tif
 loci.formats.in.DNGReader             # cr2, crw, jpg, thm, wav, tif?
 loci.formats.in.ZeissTIFFReader # tif
 loci.formats.in.LeicaSCNReader        # scn
+loci.formats.in.VectraReader          # tif, tiff, qptiff
 loci.formats.in.SlidebookTiffReader   # tiff
 
 # standard TIFF reader must go last (it accepts any TIFF)
