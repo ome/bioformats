@@ -6,7 +6,7 @@ FEI
 
 Extensions: .img
 
-Developer: `FEI <http://www.fei.com/>`_
+Developer: `FEI <https://www.fei.com/home/>`_
 
 
 **Support**

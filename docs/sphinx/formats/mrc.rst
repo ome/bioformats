@@ -6,7 +6,7 @@ MRC (Medical Research Council)
 
 Extensions: .mrc
 
-Developer: `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
+Developer: `MRC Laboratory of Molecular Biology <https://www2.mrc-lmb.cam.ac.uk/>`_
 
 
 **Support**
@@ -55,4 +55,4 @@ Commercial applications that support MRC include:
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 
 
 .. seealso:: 
-  `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_
+  `MRC on Wikipedia <https://en.wikipedia.org/wiki/MRC_%28file_format%29>`_

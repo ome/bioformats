@@ -24,13 +24,13 @@ Reader: GIFReader (:bsd-reader:`Source Code <GIFReader.java>`, :doc:`Supported M
 
 Freely Available Software:
 
-- `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ 
-- `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
+- `Animated GIF Reader plugin for ImageJ <https://imagej.nih.gov/ij/plugins/agr.html>`_ 
+- `GIF Stack Writer plugin for ImageJ <https://imagej.nih.gov/ij/plugins/gif-stack-writer.html>`_
 
 
 We currently have:
 
-* a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) 
+* a `GIF specification document <https://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) 
 * numerous GIF datasets 
 * the ability to produce new datasets
 

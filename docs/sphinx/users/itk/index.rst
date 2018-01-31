@@ -1,7 +1,7 @@
 ITK
 ===
 
-The `Insight Toolkit <http://itk.org/>`_ (ITK) is an open-source,
+The `Insight Toolkit <https://itk.org/>`_ (ITK) is an open-source,
 cross-platform system that provides developers with an extensive suite
 of software tools for image analysis. Developed through extreme
 programming methodologies, ITK employs leading-edge algorithms for

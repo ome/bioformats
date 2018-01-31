@@ -33,5 +33,5 @@ the bundled **loci\_tools.jar** with a newer version.
         Section of the developer documentation describing the Python wrapper
         for Bio-Formats used by CellProfiler
 
-.. _CellProfiler: http://www.cellprofiler.org
-.. _Broad Institute Imaging Platform: http://www.broadinstitute.org/science/platforms/imaging/imaging-platform
+.. _CellProfiler: http://cellprofiler.org/
+.. _Broad Institute Imaging Platform: https://www.broadinstitute.org/imaging

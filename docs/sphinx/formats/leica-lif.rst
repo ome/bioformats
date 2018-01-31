@@ -24,7 +24,7 @@ Reader: LIFReader (:bfreader:`Source Code <LIFReader.java>`, :doc:`Supported Met
 
 Freely Available Software:
 
-- `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/software-for-life-science-research/las-x/>`_ (see Downloads section)
+- `Leica LAS AF Lite <https://www.leica-microsystems.com/products/microscope-software/details/product/leica-las-x-ls/>`_ (see Downloads section)
 
 
 We currently have:
@@ -66,7 +66,7 @@ Commercial applications that support LIF include:
 
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 
 * `SVI Huygens <http://svi.nl/>`_ 
-* `Amira <http://www.amira.com/>`_ 
+* `Amira <https://www.fei.com/software/amira-avizo/>`_ 
 
 Versions of Bio-Formats prior to 5.3.3 incorrectly calculated the physical 
 pixel width and height.  The physical image width and height were divided by 

@@ -50,8 +50,8 @@ Utility: |Poor|
 
 
 Bio-Formats can save individual planes as JPEG. 
-Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. 
+Bio-Formats uses the `Java Image I/O <https://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. 
 JPEG stands for "Joint Photographic Experts Group". 
 
 .. seealso:: 
-  `JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_
+  `JPEG homepage <https://www.jpeg.org/jpeg/index.html>`_

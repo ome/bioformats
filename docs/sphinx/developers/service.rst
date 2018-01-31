@@ -9,21 +9,21 @@ for dealing with external and internal dependencies. The design goal was
 mainly to avoid the cumbersome usage of ``ReflectedUniverse`` where
 possible and to clearly define both service dependency and interface
 between components. This is generally referred to as `dependency
-injection <http://en.wikipedia.org/wiki/Dependency_injection>`_,
+injection <https://en.wikipedia.org/wiki/Dependency_injection>`_,
 `dependency
-inversion <http://en.wikipedia.org/wiki/Dependency_inversion_principle>`_
+inversion <https://en.wikipedia.org/wiki/Dependency_inversion_principle>`_
 or `component based
-design <http://en.wikipedia.org/wiki/Component-based_software_engineering>`_.
+design <https://en.wikipedia.org/wiki/Component-based_software_engineering>`_.
 
 It was decided, at this point, to forgo the usage of potentially more
 powerful but also more complicated solutions such as:
 
--  Spring (http://spring.io)
--  Guice (http://code.google.com/p/google-guice/)
+-  `Spring <http://spring.io>`_
+-  `Guice <https://github.com/google/guice>`_
 -  ...
 
 The Wikipedia page for `dependency
-injection <http://en.wikipedia.org/wiki/Dependency_injection>`_ contains
+injection <https://en.wikipedia.org/wiki/Dependency_injection>`_ contains
 many other implementations in many languages.
 
 An added benefit is the potential code reuse possibilities as a result

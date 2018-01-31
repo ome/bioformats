@@ -6,7 +6,7 @@ PCORAW
 
 Extensions: .pcoraw, .rec
 
-Developer: `PCO <http://www.pco.de/>`_
+Developer: `PCO <https://www.pco.de/>`_
 
 
 **Support**

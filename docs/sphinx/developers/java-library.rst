@@ -51,7 +51,7 @@ The complete list of current dependencies is as follows:
     * - `JHDF5 v14.12.0 <https://wiki-bsse.ethz.ch/display/JHDF5>`_
       - ch.systems.cisd:jhdf5:14.12.0
       - `Apache License v2.0`_
-    * - `XMP Library for Java v5.1.2 <http://www.adobe.com/devnet/xmp.html>`_
+    * - `XMP Library for Java v5.1.2 <https://www.adobe.com/devnet/xmp.html>`_
       - com.adobe.xmp:xmpcore:5.1.2
       - `BSD License`_
     * - `JCommander v1.27 <http://jcommander.org/>`_
@@ -60,13 +60,13 @@ The complete list of current dependencies is as follows:
     * - `metadata-extractor v2.6.2 <https://github.com/drewnoakes/metadata-extractor>`_
       - com.drewnoakes:metadata-extractor:2.6.2
       - `Apache License v2.0`_
-    * - `Kryo v2.24.0 <http://github.com/EsotericSoftware/kryo>`_
+    * - `Kryo v2.24.0 <https://github.com/EsotericSoftware/kryo>`_
       - com.esotericsoftware.kryo:kryo:2.24.0
       - `BSD License`_
     * - `MinLog v1.2 <https://github.com/EsotericSoftware/minlog>`_
       - com.esotericsoftware.minlog:minlog:1.2
       - `BSD License`_
-    * - `Guava v17.0 <http://github.com/google/guava>`_
+    * - `Guava v17.0 <https://github.com/google/guava>`_
       - com.google.guava:guava:17.0
       - `Apache License v2.0`_
     * - `JGoodies Common v1.7.0 <http://www.jgoodies.com/downloads/libraries/>`_
@@ -84,22 +84,22 @@ The complete list of current dependencies is as follows:
     * - `Commons Logging v1.1.1 <http://commons.apache.org/logging/>`_
       - commons-logging:commons-logging:1.1.1
       - `Apache License v2.0`_
-    * - `NetCDF-Java Library v4.3.22 <https://www.unidata.ucar.edu/software/netcdf-java/documentation.htm>`_
+    * - `NetCDF-Java Library v4.3.22 <https://www.unidata.ucar.edu/software/thredds/current/netcdf-java/documentation.htm>`_
       - edu.ucar:netcdf:4.3.22
       - `MIT-Style License`_
-    * - `Joda time v2.2 <http://github.com/JodaOrg/joda-time>`_
+    * - `Joda time v2.2 <https://github.com/JodaOrg/joda-time>`_
       - joda-time:joda-time:2.2
       - `Apache License v2.0`_
-    * - `JUnit v4.10 <http://www.junit.org>`_
+    * - `JUnit v4.10 <http://junit.org>`_
       - junit:junit:4.10
       - `Common Public License v1.0`_
     * - `Apache Log4j v1.2.17 <http://logging.apache.org/log4j/1.2>`_
       - log4j:log4j:1.2.17
       - `Apache License v2.0`_
-    * - `ImageJ v1.48s <http://imagej.net>`_
+    * - `ImageJ v1.48s <http://imagej.net/Welcome>`_
       - net.imagej:ij:1.48s
       - Public domain
-    * - `Assume NG v1.2.4 <http://github.com/hierynomus/assumeng>`_
+    * - `Assume NG v1.2.4 <https://github.com/hierynomus/assumeng>`_
       - nl.javadude.assumeng:assumeng:1.2.4
       - `Apache License v2.0`_
     * - `Apache Velocity v1.6.4 <http://velocity.apache.org>`_
@@ -117,7 +117,7 @@ The complete list of current dependencies is as follows:
     * - `Perf4J v0.9.13 <https://github.com/perf4j/perf4j>`_
       - org.perf4j:perf4j:0.9.13
       - `Apache License v2.0`_
-    * - `Native Library Loader v2.1.4 <http://github.com/scijava/native-lib-loader>`_
+    * - `Native Library Loader v2.1.4 <https://github.com/scijava/native-lib-loader>`_
       - org.scijava:native-lib-loader:2.1.4
       - `BSD License`_
     * - `SLF4J API v1.7.4 <https://www.slf4j.org>`_
@@ -126,7 +126,7 @@ The complete list of current dependencies is as follows:
     * - `SLF4J LOG4J-12 Binding v1.7.6 <https://www.slf4j.org>`_
       - org.slf4j:slf4j-log4j12:1.7.6
       - `MIT License`_
-    * - `TestNG v6.8 <http://testng.org>`_
+    * - `TestNG v6.8 <http://testng.org/doc/>`_
       - org.testng:testng:6.8
       - `Apache License v2.0`_
     * - `SnakeYAML v1.6 <https://bitbucket.org/asomov/snakeyaml>`_
@@ -147,7 +147,7 @@ The complete list of current dependencies is as follows:
     * - `Xerces2 Java Parser v2.8.1 <http://xerces.apache.org/xerces2-j>`_
       - xerces:xercesImpl:2.8.1
       - `Apache License v2.0`_
-    * - `XML Commons External Components XML APIs v1.3.04 <http://xml.apache.org/commons/components/external>`_
+    * - `XML Commons External Components XML APIs v1.3.04 <http://xerces.apache.org/xml-commons/components/external/>`_
       - xml-apis:xml-apis:1.3.04
       - `Apache License v2.0`_
 

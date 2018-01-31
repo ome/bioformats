@@ -6,7 +6,7 @@ SPIDER
 
 Extensions: .spi, .stk
 
-Developer: `Wadsworth Center <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+Developer: `Wadsworth Center <https://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 
 **Support**
@@ -23,13 +23,13 @@ Reader: SpiderReader (:bfreader:`Source Code <SpiderReader.java>`, :doc:`Support
 
 Freely Available Software:
 
-- `SPIDER <http://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+- `SPIDER <https://spider.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 
 We currently have:
 
 * a few example datasets 
-* `official file format documentation <http://spider.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+* `official file format documentation <https://spider.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
 
 We would like to have:
 

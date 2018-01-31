@@ -1630,7 +1630,7 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |no|
    * - :doc:`formats/zeiss-czi`
-     - `.czi <http://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
+     - `.czi <https://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Very good|

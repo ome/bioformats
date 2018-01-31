@@ -157,7 +157,7 @@ There are three basic forms to the “< >” blocks:
 
 It can also accept a
 `Java regular expression
-<http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html>`_.
+<https://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html>`_.
 
 Autoscale
 ---------

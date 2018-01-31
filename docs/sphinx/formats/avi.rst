@@ -24,8 +24,8 @@ Writer: AVIWriter (:bsd-writer:`Source Code <AVIWriter.java>`)
 
 Freely Available Software:
 
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
-- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
+- `AVI Reader plugin for ImageJ <https://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
+- `AVI Writer plugin for ImageJ <https://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
@@ -65,5 +65,5 @@ Utility: |Poor|
   * JPEG 
 
 .. seealso:: 
-  `AVI RIFF File Reference <http://msdn2.microsoft.com/en-us/library/ms779636.aspx>`_ 
-  `AVI on Wikipedia <http://en.wikipedia.org/wiki/Audio_Video_Interleave>`_
+  `AVI RIFF File Reference <https://msdn.microsoft.com/en-us/library/ms779636.aspx>`_ 
+  `AVI on Wikipedia <https://en.wikipedia.org/wiki/Audio_Video_Interleave>`_

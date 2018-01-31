@@ -6,7 +6,7 @@ Minolta MRW
 
 Extensions: .mrw
 
-Developer: `Minolta <http://www.konicaminolta.com/>`_
+Developer: `Minolta <https://www.konicaminolta.com/uk-en/index.html>`_
 
 
 **Support**

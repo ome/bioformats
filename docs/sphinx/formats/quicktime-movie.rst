@@ -7,7 +7,7 @@ QuickTime Movie
 Extensions: .mov
 
 
-Owner: `Apple Computer <http://www.apple.com/>`_
+Owner: `Apple Computer <https://www.apple.com/>`_
 
 **Support**
 

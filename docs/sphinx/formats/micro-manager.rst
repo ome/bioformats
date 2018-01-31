@@ -6,7 +6,7 @@ Micro-Manager
 
 Extensions: .tif, .txt, .xml
 
-Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
+Developer: `Vale Lab <https://valelab.ucsf.edu/>`_
 
 
 **Support**

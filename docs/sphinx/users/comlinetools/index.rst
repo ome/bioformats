@@ -126,4 +126,4 @@ invoke the HPROF_ agent library to profile Heap and CPU usage. Setting the
 
     BF_PROFILE=true showinf -nopix -no-upgrade myfile
 
-.. _HPROF: http://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html
+.. _HPROF: https://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html

@@ -7,7 +7,7 @@ LEO
 Extensions: .sxm
 
 
-Owner: `Zeiss <http://www.zeiss.de>`_
+Owner: `Zeiss <https://www.zeiss.de/corporate/home.html>`_
 
 **Support**
 

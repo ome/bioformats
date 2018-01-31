@@ -6,7 +6,7 @@ Canon DNG
 
 Extensions: .cr2, .crw
 
-Developer: `Canon <http://canon.com>`_
+Developer: `Canon <http://global.canon/en/index.html>`_
 
 
 **Support**

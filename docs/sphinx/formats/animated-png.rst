@@ -6,7 +6,7 @@ Animated PNG
 
 Extensions: .png
 
-Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
+Developer: `The Animated PNG Project <https://www.animatedpng.com/>`_
 
 
 **Support**
@@ -24,7 +24,7 @@ Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Freely Available Software:
 
-- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
+- `Firefox 3+ <https://www.mozilla.com/en-US/firefox>`_ 
 - `Opera 9.5+ <http://www.opera.com>`_ 
 - `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 

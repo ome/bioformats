@@ -1,7 +1,7 @@
 MATLAB
 ======
 
-`MATLAB <http://www.mathworks.com/products/matlab/>`_ is a high-level
+`MATLAB <https://www.mathworks.com/products/matlab.html>`_ is a high-level
 language and interactive environment that facilitates rapid development
 of algorithms for performing computationally intensive tasks.
 
@@ -60,5 +60,5 @@ Alternative scripts
 Several other groups have developed their own MATLAB scripts that use
 Bio-Formats, including the following:
 
-- `<https://github.com/prakatmac/bf-tools/>`_
+- `<https://github.com/pramukta/bf-tools>`_
 - `imread for multiple life science image file formats <http://www.mathworks.com/matlabcentral/fileexchange/32920-imread-for-multiple-life-science-image-file-formats>`_

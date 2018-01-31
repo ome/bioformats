@@ -21,7 +21,7 @@ Reader: BrukerReader (:bfreader:`Source Code <BrukerReader.java>`, :doc:`Support
 
 Freely Available Software:
 
-- `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
+- `Bruker plugin for ImageJ <https://imagej.nih.gov/ij/plugins/bruker.html>`_
 
 
 We currently have:

@@ -6,7 +6,7 @@ ECAT7
 
 Extensions: .v
 
-Developer: `Siemens <http://www.siemens.com>`_
+Developer: `Siemens <https://www.siemens.com/global/en/home.html>`_
 
 
 **Support**

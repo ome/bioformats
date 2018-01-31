@@ -10,7 +10,7 @@ following features:
   standardizes their acquisition metadata into the common
   :doc:`OME data model </about/index>`. It will also extract and set basic
   metadata values such as `spatial
-  calibration <http://fiji.sc/SpatialCalibration>`_
+  calibration <http://imagej.net/SpatialCalibration>`_
   if they are available in the file.
 
 - The **Bio-Formats Exporter** is a plugin for exporting data to disk. It

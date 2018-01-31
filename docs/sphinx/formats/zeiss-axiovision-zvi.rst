@@ -6,9 +6,9 @@ Zeiss AxioVision ZVI (Zeiss Vision Image)
 
 Extensions: .zvi
 
-Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
+Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <https://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 
-Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
+Owner: `Carl Zeiss Microscopy GmbH <https://www.zeiss.com/microscopy/int/home.html>`_
 
 **Support**
 
@@ -24,7 +24,7 @@ Reader: ZeissZVIReader (:bfreader:`Source Code <ZeissZVIReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
+- `Zeiss Axiovision LE <https://www.zeiss.com/microscopy/int/products/microscope-software/axiovision.html>`_
 
 
 We currently have:
@@ -57,7 +57,7 @@ Utility: |Good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. 
+Bio-Formats uses a modified version of the `Apache POI library <http://poi.apache.org/>`_ to read ZVI files. 
 ImageJ/FIJI will use the ZVI reader plugin in preference to Bio-Formats if 
 both are installed. If you have a problem which is solved by opening the file 
 using the Bio-Formats Importer plugin, you can just remove the 

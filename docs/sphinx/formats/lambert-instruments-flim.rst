@@ -6,7 +6,7 @@ Lambert Instruments FLIM
 
 Extensions: .fli
 
-Developer: `Lambert Instruments <http://www.lambert-instruments.com>`_
+Developer: `Lambert Instruments <https://www.lambert-instruments.com>`_
 
 
 **Support**

@@ -23,7 +23,7 @@ Reader: FV1000Reader (:bfreader:`Source Code <FV1000Reader.java>`, :doc:`Support
 
 Freely Available Software:
 
-- `FV-Viewer from Olympus <http://www.olympus-lifescience.com/en/>`_
+- `FV-Viewer from Olympus <https://www.olympus-lifescience.com/en/>`_
 
 
 We currently have:
@@ -56,8 +56,8 @@ Utility: |Very good|
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-Bio-Formats uses a modified version of the `Apache Jakarta POI 
-<http://jakarta.apache.org/poi/>`_ library to read OIB files. 
+Bio-Formats uses a modified version of the `Apache POI 
+<http://poi.apache.org/>`_ library to read OIB files. 
 OIF stands for "Original Imaging Format". 
 OIB stands for "Olympus Image Binary". 
 OIF is a multi-file format that includes an .oif file and a directory of 
@@ -70,4 +70,4 @@ Commercial applications that support this format include:
 * `SVI Huygens <http://svi.nl/>`_ 
 
 .. seealso:: 
-  `Olympus FluoView Resource Center <http://www.olympus-lifescience.com/>`_
+  `Olympus FluoView Resource Center <https://www.olympus-lifescience.com/en/>`_

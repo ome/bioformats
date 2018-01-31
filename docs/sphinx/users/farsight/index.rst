@@ -1,7 +1,7 @@
 FARSIGHT
 ========
 
-`FARSIGHT <http://www.farsight-toolkit.org/>`_ is a collection of
+`FARSIGHT <http://www.farsight-toolkit.org/wiki/Main_Page>`_ is a collection of
 modules for image analysis created by LOCI's collaborators at the
 `University of Houston <http://www.uh.edu/>`_. These
 open source modules are built on the :doc:`/users/itk/index` library

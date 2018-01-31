@@ -6,7 +6,7 @@ JPX
 
 Extensions: .jpx
 
-Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
+Developer: `JPEG Committee <https://jpeg.org/jpeg2000/>`_
 
 
 **Support**

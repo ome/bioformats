@@ -6,7 +6,7 @@ PICT (Macintosh Picture)
 
 Extensions: .pict
 
-Developer: `Apple Computer <http://www.apple.com>`_
+Developer: `Apple Computer <https://www.apple.com>`_
 
 
 **Support**

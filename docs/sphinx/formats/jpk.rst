@@ -6,7 +6,7 @@ JPK
 
 Extensions: .jpk
 
-Developer: `JPK Instruments <http://www.jpk.com>`_
+Developer: `JPK Instruments <https://www.jpk.com>`_
 
 
 **Support**
