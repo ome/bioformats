@@ -101,9 +101,7 @@ public class VectraReader extends BaseTiffReader {
     if (!open) {
       return checkSuffix(name, "qptiff");
     }
-    RandomAccessInputStream stream = null;
-    try {
-      stream = new RandomAccessInputStream(name);
+    try (RandomAccessInputStream stream = new RandomAccessInputStream(name)) {
       TiffParser tiffParser = new TiffParser(stream);
       tiffParser.setDoCaching(false);
       if (!tiffParser.isValidHeader()) {
@@ -120,16 +118,6 @@ public class VectraReader extends BaseTiffReader {
     catch (IOException e) {
       LOGGER.debug("I/O exception during isThisType() evaluation.", e);
       return false;
-    }
-    finally {
-      try {
-        if (stream != null) {
-          stream.close();
-        }
-      }
-      catch (IOException e) {
-        LOGGER.debug("I/O exception during stream closure.", e);
-      }
     }
   }
 
