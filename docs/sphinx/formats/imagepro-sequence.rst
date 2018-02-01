@@ -25,7 +25,7 @@ Reader: SEQReader (:bfreader:`Source Code <SEQReader.java>`, :doc:`Supported Met
 
 We currently have:
 
-* the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+* the `Image-Pro Plus <http://www.mediacy.com/imageproplus>`_ software 
 * a few SEQ datasets 
 * the ability to produce more datasets
 

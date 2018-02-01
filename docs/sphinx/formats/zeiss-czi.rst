@@ -4,9 +4,9 @@
 Zeiss CZI
 ===============================================================================
 
-Extensions: `.czi <http://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
+Extensions: `.czi <https://www.zeiss.com/microscopy/int/products/microscope-software/zen/czi.html>`_
 
-Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
+Developer: `Carl Zeiss Microscopy GmbH <https://www.zeiss.com/microscopy/int/home.html>`_
 
 
 **Support**
@@ -23,7 +23,7 @@ Reader: ZeissCZIReader (:bfreader:`Source Code <ZeissCZIReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss ZEN <http://www.zeiss.com/microscopy/int/products/microscope-software/zen.html>`_
+- `Zeiss ZEN <https://www.zeiss.com/microscopy/int/products/microscope-software/zen.html>`_
 
 
 We currently have:

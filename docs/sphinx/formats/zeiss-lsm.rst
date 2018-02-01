@@ -7,7 +7,7 @@ Zeiss LSM (Laser Scanning Microscope) 510/710
 Extensions: .lsm, .mdb
 
 
-Owner: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/int/home.html>`_
+Owner: `Carl Zeiss Microscopy GmbH <https://www.zeiss.com/microscopy/int/home.html>`_
 
 **Support**
 
@@ -23,9 +23,9 @@ Reader: ZeissLSMReader (:bfreader:`Source Code <ZeissLSMReader.java>`, :doc:`Sup
 
 Freely Available Software:
 
-- `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_ 
+- `Zeiss LSM Image Browser <https://www.zeiss.com/microscopy/int/downloads/lsm-5-series.html>`_ 
 - `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ 
-- `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ 
+- `LSM Reader plugin for ImageJ <https://imagej.nih.gov/ij/plugins/lsm-reader.html>`_ 
 - `DIMIN <http://www.dimin.net/>`_
 
 
@@ -63,5 +63,5 @@ Commercial applications that support this format include:
 
 * `SVI Huygens <https://svi.nl/HomePage>`_ 
 * `Bitplane Imaris <http://www.bitplane.com/>`_ 
-* `Amira <http://www.amira.com/>`_ 
+* `Amira <https://www.fei.com/software/amira-avizo/>`_ 
 * `Image-Pro Plus <http://www.mediacy.com/>`_

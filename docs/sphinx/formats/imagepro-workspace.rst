@@ -25,7 +25,7 @@ Reader: IPWReader (:bfreader:`Source Code <IPWReader.java>`, :doc:`Supported Met
 
 We currently have:
 
-* the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+* the `Image-Pro Plus <http://www.mediacy.com/imageproplus>`_ software 
 * a few IPW datasets 
 * the ability to produce more datasets
 
@@ -54,4 +54,4 @@ Utility: |Poor|
 
 
 Bio-Formats uses a modified version of the `Apache Jakarta 
-POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.
+POI <http://poi.apache.org/>`_ library to read IPW files.

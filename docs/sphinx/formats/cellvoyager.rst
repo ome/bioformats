@@ -7,7 +7,7 @@ CellVoyager
 Extensions: .xml, .tif
 
 
-Owner: `Yokogawa <http://www.yokogawa.com/>`_
+Owner: `Yokogawa <https://www.yokogawa.com/>`_
 
 **Support**
 

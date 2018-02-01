@@ -3,8 +3,8 @@ FocalPoint
 
 `FocalPoint <https://www.bioinformatics.babraham.ac.uk/projects/focalpoint/>`_
 is an image browser, similar to `Windows
-Explorer <http://en.wikipedia.org/wiki/Windows_Explorer>`_ or other
-`file manager <http://en.wikipedia.org/wiki/File_manager>`_ application,
+Explorer <https://en.wikipedia.org/wiki/Windows_Explorer>`_ or other
+`file manager <https://en.wikipedia.org/wiki/File_manager>`_ application,
 specifically designed to work with more complex image types. FocalPoint
 uses Bio-Formats to generate thumbnails for some formats.
 

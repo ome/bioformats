@@ -23,7 +23,7 @@ Reader: BMPReader (:bsd-reader:`Source Code <BMPReader.java>`, :doc:`Supported M
 
 Freely Available Software:
 
-- `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
+- `BMP Writer plugin for ImageJ <https://imagej.nih.gov/ij/plugins/bmp-writer.html>`_
 
 
 We currently have:

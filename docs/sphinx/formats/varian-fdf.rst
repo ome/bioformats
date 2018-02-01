@@ -8,7 +8,7 @@ Extensions: .fdf
 
 Developer: Varian, Inc.
 
-Owner: `Agilent Technologies <http://www.agilent.com/home>`_
+Owner: `Agilent Technologies <https://www.agilent.com/home>`_
 
 **Support**
 

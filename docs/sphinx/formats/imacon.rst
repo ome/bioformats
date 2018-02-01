@@ -7,7 +7,7 @@ Imacon
 Extensions: .fff
 
 
-Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
+Owner: `Hasselblad <https://www.hasselblad.com/>`_
 
 **Support**
 

@@ -6,7 +6,7 @@ Kodak BIP
 
 Extensions: .bip
 
-Developer: `Kodak/Carestream <http://carestream.com>`_
+Developer: `Kodak/Carestream <https://www.carestream.com/en/us>`_
 
 
 **Support**

@@ -6,7 +6,7 @@ Nikon NIS-Elements ND2
 
 Extensions: .nd2
 
-Developer: `Nikon USA <http://www.nikonusa.com/>`_
+Developer: `Nikon USA <https://www.nikonusa.com/en/index.page>`_
 
 
 **Support**
@@ -66,7 +66,7 @@ library to read ND2 files compressed with JPEG-2000.
 
 There is also a **legacy** ND2 reader that uses Nikon's native libraries. 
 To use it, you must be using Windows 32-bit and have `Nikon's ND2 reader plugin for ImageJ 
-<http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. 
+<https://imagej.nih.gov/ij/plugins/nd2-reader.html>`_ installed. 
 Additionally, you will need to download :source:`LegacyND2Reader.dll 
 <lib/LegacyND2Reader.dll?raw=true>` 
 and place it in your ImageJ plugin folder. 

@@ -7,7 +7,7 @@ Oxford Instruments
 Extensions: .top
 
 
-Owner: `Oxford Instruments <http://www.oxinst.com>`_
+Owner: `Oxford Instruments <https://www.oxford-instruments.com/>`_
 
 **Support**
 

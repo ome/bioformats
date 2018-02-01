@@ -3,8 +3,8 @@ Endrov
 
 `Endrov <https://github.com/mahogny/Endrov>`_ (EV) is a multi-purpose image
 analysis program developed by the `Thomas Burglin
-group <http://www.biosci.ki.se/groups/tbu>`_ at `Karolinska
-Institute <http://www.ki.se/>`_, Department of Biosciences and
+group <http://www.bionut.ki.se/groups/tbu/>`_ at `Karolinska
+Institute <http://ki.se/start>`_, Department of Biosciences and
 Nutrition.
 
 Installation

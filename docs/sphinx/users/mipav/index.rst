@@ -3,8 +3,8 @@ MIPAV
 
 The `MIPAV <http://mipav.cit.nih.gov/>`_ (Medical Image Processing,
 Analysis, and Visualization) application—developed at the `Center for
-Information Technology <http://cit.nih.gov/>`_ at the `National
-Institutes of Health <http://nih.gov/>`_—enables quantitative analysis
+Information Technology <https://cit.nih.gov/>`_ at the `National
+Institutes of Health <https://nih.gov/>`_—enables quantitative analysis
 and visualization of medical images of numerous modalities such as PET,
 MRI, CT, or microscopy. You can use Bio-Formats as a plugin for MIPAV to
 read images in the formats it supports.

@@ -6,7 +6,7 @@ Photoshop TIFF
 
 Extensions: .tif, .tiff
 
-Developer: `Adobe <http://www.adobe.com>`_
+Developer: `Adobe <https://www.adobe.com>`_
 
 
 **Support**

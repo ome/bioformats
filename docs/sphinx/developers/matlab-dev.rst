@@ -39,9 +39,8 @@ may try to increase the default values of ``-XX:MaxPermSize`` and
 
 .. seealso::
 
-	http://www.mathworks.com/matlabcentral/answers/92813
-		How do I increase the heap space for the Java VM in MATLAB 6.0 (R12)
-		and later versions?
+	`How do I increase the heap space for the Java VM in MATLAB 6.0 (R12)
+	and later versions? <https://uk.mathworks.com/matlabcentral/answers/92813-how-do-i-increase-the-heap-space-for-the-java-vm-in-matlab-6-0-r12-and-later-versions>`_
 
 	:mailinglist:`[ome-users] Release of OMERO & Bio-Formats 5.1.1 <ome-users/2015-April/005331.html>`
 

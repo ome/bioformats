@@ -23,7 +23,7 @@ Reader: GatanReader (:bfreader:`Source Code <GatanReader.java>`, :doc:`Supported
 
 Freely Available Software:
 
-- `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ 
+- `DM3 Reader plugin for ImageJ <https://imagej.nih.gov/ij/plugins/DM3_Reader.html>`_ 
 - `EMAN <http://blake.bcm.edu/emanwiki/EMAN2>`_
 
 

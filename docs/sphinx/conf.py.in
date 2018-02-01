@@ -365,11 +365,5 @@ texinfo_documents = [
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
 linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
-    'http://www.mathworks.com/matlabcentral/answers/92813',
-    'https://www.olympus-global.com',
-    'https://code.google.com/archive/p/jj2000/',
-    'https://support.apple.com/downloads/quicktime',
-    'https://support.apple.com/quicktime',
-    'https://nifti.nimh.nih.gov/nifti-1/',
-    'https://www.leica-microsystems.com'
+    'https://www.olympus-global.com'
 ]

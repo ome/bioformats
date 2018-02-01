@@ -95,5 +95,5 @@ A pattern file that groups all PNG files beginning with ``test_`` would look lik
 
 This and most other Java-style regular expressions can be used in place of the
 ``<>`` notation above.  See `the java.util.regex.Pattern Javadoc
-<http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html>`_
+<https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html>`_
 for more information on constructing regular expressions.

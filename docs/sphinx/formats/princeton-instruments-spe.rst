@@ -6,7 +6,7 @@ Princeton Instruments SPE
 
 Extensions: .spe
 
-Developer: `Princeton Instruments <http://www.princetoninstruments.com>`_
+Developer: `Princeton Instruments <https://www.princetoninstruments.com>`_
 
 
 **Support**

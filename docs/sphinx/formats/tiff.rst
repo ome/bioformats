@@ -8,7 +8,7 @@ Extensions: .tiff, .tif, .tf2, .tf8, .btf
 
 Developer: Aldus and Microsoft
 
-Owner: `Adobe <http://www.adobe.com>`_
+Owner: `Adobe <https://www.adobe.com>`_
 
 **Support**
 
@@ -68,7 +68,7 @@ the sole IFD.  This differs from standard TIFF and BigTIFF; if the
 read. 
 
 .. seealso:: 
-  `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_ 
-  `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_ 
+  `TIFF technical overview <https://www.awaresystems.be/imaging/tiff/faq.html#q3>`_ 
+  `BigTIFF technical overview <https://www.awaresystems.be/imaging/tiff/bigtiff.html>`_ 
   `ImageJ TIFF overview <https://imagej.net/TIFF>`_ 
   `Source code for ImageJ's native TIFF reader <https://imagej.nih.gov/ij/developer/source/ij/io/TiffDecoder.java.html>`_

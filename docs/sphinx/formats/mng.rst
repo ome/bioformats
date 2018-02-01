@@ -23,11 +23,11 @@ Reader: MNGReader (:bsd-reader:`Source Code <MNGReader.java>`, :doc:`Supported M
 
 Freely Available Software:
 
-- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+- `libmng (MNG reference library) <https://sourceforge.net/projects/libmng/>`_
 
 Sample Datasets:
 
-- `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
+- `MNG sample files <https://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
 
 We currently have:
 

@@ -25,7 +25,7 @@ Writer: ICSWriter (:bsd-writer:`Source Code <ICSWriter.java>`)
 Freely Available Software:
 
 - `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
-- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enstuurman/IJplugins/Ics_Opener.html>`_ 
+- `ICS Opener plugin for ImageJ <https://valelab4.ucsf.edu/~nstuurman/IJplugins/Ics_Opener.html>`_ 
 - `IrfanView <http://www.irfanview.com/>`_
 
 

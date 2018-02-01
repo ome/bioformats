@@ -24,7 +24,7 @@ Reader: IPLabReader (:bfreader:`Source Code <IPLabReader.java>`, :doc:`Supported
 
 Freely Available Software:
 
-- `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
+- `IPLab Reader plugin for ImageJ <https://imagej.nih.gov/ij/plugins/iplab-reader.html>`_
 
 
 We currently have:

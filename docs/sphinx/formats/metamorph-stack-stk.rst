@@ -7,7 +7,7 @@ MetaMorph Stack (STK)
 Extensions: .stk, .nd
 
 
-Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
+Owner: `Molecular Devices <https://www.moleculardevices.com/>`_
 
 **Support**
 
@@ -58,4 +58,4 @@ Commercial applications that support STK include:
 * `DIMIN <http://dimin.net/>`_ 
 
 .. seealso:: 
-  `Metamorph imaging system overview <http://www.metamorph.com/>`_
+  `Metamorph imaging system overview <https://www.moleculardevices.com/systems/metamorph-research-imaging/metamorph-microscopy-automation-and-image-analysis-software>`_

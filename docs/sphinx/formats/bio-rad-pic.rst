@@ -8,7 +8,7 @@ Extensions: .pic, .raw, .xml
 
 Developer: Bio-Rad
 
-Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+Owner: `Carl Zeiss, Inc. <https://www.zeiss.com/corporate/int/home.html>`_
 
 **Support**
 
@@ -24,7 +24,7 @@ Reader: BioRadReader (:bfreader:`Source Code <BioRadReader.java>`, :doc:`Support
 
 Freely Available Software:
 
-- `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+- `Bio-Rad PIC reader plugin for ImageJ <https://imagej.nih.gov/ij/plugins/biorad.html>`_
 
 
 We currently have:

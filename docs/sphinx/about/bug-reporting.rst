@@ -35,7 +35,7 @@ Common issues to check
 -  If the file is very, very small (4096 bytes) and any exception is
    generated when reading the file, then make sure it is not a `Mac OS
    X resource
-   fork <http://en.wikipedia.org/wiki/Resource_fork#The_Macintosh_file_system>`_.
+   fork <https://en.wikipedia.org/wiki/Resource_fork#The_Macintosh_file_system>`_.
    The 'file' command should tell you:
 
    ::

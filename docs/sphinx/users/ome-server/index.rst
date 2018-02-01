@@ -112,7 +112,7 @@ three languages, using piped system calls in both directions to
 communicate, with imported pixels written to OMEIS pixels files. The
 relevant source files are:
 
--  `OmeisImporter.java <http://github.com/openmicroscopy/bioformats/tree/v4.4.10/components/scifio/src/loci/formats/ome/OmeisImporter.java>`_
+-  `OmeisImporter.java <https://github.com/openmicroscopy/bioformats/tree/v4.4.10/components/scifio/src/loci/formats/ome/OmeisImporter.java>`_
    – omebf Java command line tool
 -  `BioFormats.pm <http://downloads.openmicroscopy.org/ome/code/BioFormats.pm>`_
    – Perl module for OME Bio-Formats importer

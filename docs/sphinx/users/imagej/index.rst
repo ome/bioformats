@@ -25,7 +25,7 @@ ways:
 -  In a standard ImageJ window (including as a hyperstack)
 -  Using the `LOCI Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
 -  With Joachim Walter's
-   `Image5D <http://developer.imagej.net/plugins/image5d>`_ plugin
+   `Image5D <http://imagej.net/Image5D>`_ plugin
    (if installed)
 -  With Rainer Heintzmann's
    `View5D <http://www.nanoimaging.uni-jena.de/View5D/View5D.html>`_ plugin (if installed)

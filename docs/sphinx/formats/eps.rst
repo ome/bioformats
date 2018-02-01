@@ -6,7 +6,7 @@ EPS (Encapsulated PostScript)
 
 Extensions: .eps, .epsi, .ps
 
-Developer: `Adobe <http://www.adobe.com/>`_
+Developer: `Adobe <https://www.adobe.com/>`_
 
 
 **Support**
@@ -24,7 +24,7 @@ Writer: EPSWriter (:bsd-writer:`Source Code <EPSWriter.java>`)
 
 Freely Available Software:
 
-- `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+- `EPS Writer plugin for ImageJ <https://imagej.nih.gov/ij/plugins/eps-writer.html>`_
 
 
 We currently have:

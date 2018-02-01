@@ -24,7 +24,7 @@ Writer: APNGWriter (:bsd-writer:`Source Code <APNGWriter.java>`)
 
 Freely Available Software:
 
-- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
+- `PNG Writer plugin for ImageJ <https://imagej.nih.gov/ij/plugins/png-writer.html>`_
 
 
 We currently have:
@@ -51,7 +51,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_  
+Bio-Formats uses the `Java Image I/O <https://docs.oracle.com/javase/7/docs/technotes/guides/imageio/>`_  
 API to read and write PNG files. 
 
 .. seealso:: 

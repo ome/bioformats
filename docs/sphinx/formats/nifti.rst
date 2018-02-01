@@ -6,7 +6,7 @@ NIfTI
 
 Extensions: .img, .hdr, .nii, .nii.gz
 
-Developer: `National Institutes of Health <http://www.nih.gov/>`_
+Developer: `National Institutes of Health <https://www.nih.gov/>`_
 
 
 **Support**

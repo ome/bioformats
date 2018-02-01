@@ -49,4 +49,4 @@ Utility: |Fair|
 
 .. seealso:: 
   `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_ 
-  `FITS Support Office <http://fits.gsfc.nasa.gov/>`_
+  `FITS Support Office <https://fits.gsfc.nasa.gov/>`_
