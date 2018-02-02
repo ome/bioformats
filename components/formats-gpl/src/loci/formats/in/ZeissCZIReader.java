@@ -3123,9 +3123,6 @@ public class ZeissCZIReader extends FormatReader {
 
   private void populateOriginalMetadata(Element root, Deque<String> nameStack) {
     String name = root.getNodeName();
-    if (name.equals("DisplaySetting")) {
-      return;
-    }
     nameStack.push(name);
 
     final StringBuilder key = new StringBuilder();
@@ -3146,7 +3143,12 @@ public class ZeissCZIReader extends FormatReader {
         if (s.endsWith("|")){
           s = s.substring(0, s.length() - 1);
         }
-        addGlobalMetaList(s, value);
+        if (s.startsWith("DisplaySetting")) {
+          addGlobalMeta(s, value);
+        }
+        else {
+          addGlobalMetaList(s, value);
+        }
 
         if (key.toString().endsWith("|Rotations|")) {
           rotationLabels = value.split(" ");
@@ -3174,7 +3176,12 @@ public class ZeissCZIReader extends FormatReader {
         keyString = keyString.substring(0, keyString.length() - 1);
       }
 
-      addGlobalMetaList(keyString + attrName, attrValue);
+      if (keyString.startsWith("DisplaySetting")) {
+        addGlobalMeta(keyString + attrName, attrValue);
+      }
+      else {
+        addGlobalMetaList(keyString + attrName, attrValue);
+      }
     }
 
     NodeList children = root.getChildNodes();
