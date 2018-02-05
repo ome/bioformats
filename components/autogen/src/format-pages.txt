@@ -1953,6 +1953,20 @@ Commercial applications that support this format include: \n
 .. seealso:: \n
   `PerkinElmer UltraVIEW system overview (pdf) <http://www.perkinelmer.com/lab-solutions/resources/PDFs/LST/Brochures/BRO_UltraVIEW-VoX-Product-Brochure.pdf>`_
 
+[PerkinElmer Vectra QPTIFF]
+extensions = .tif, .qptiff
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+bsd = no
+weHave = * a `specification document <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/PKI_Image%20Format.docx>`_ \n
+* `several datasets <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/>`_
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Fair
+reader = VectraReader
+notes = Support for this format was added in partnership with PerkinElmer
+
 [Portable Any Map]
 pagename = pgm
 extensions = .pbm, .pgm, .ppm
