@@ -799,7 +799,7 @@ public class VolocityReader extends FormatReader {
           break;
         }
       }
-      if (parentID == originalID) {
+      if (parentID.equals(originalID)) {
         break;
       }
     }
