@@ -1738,6 +1738,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Inveon only reliably detected from header file
+          if (reader.getFormat().equals("Inveon")) {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2409,6 +2414,11 @@ public class FormatReaderTest {
             if (!used[i].toLowerCase().endsWith(".lif") &&
               r instanceof LIFReader)
             {
+              continue;
+            }
+
+            // Inveon only reliably detected from header file
+            if (!result && r instanceof InveonReader) {
               continue;
             }
 
