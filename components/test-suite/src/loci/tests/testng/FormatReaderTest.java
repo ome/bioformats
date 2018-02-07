@@ -1733,13 +1733,13 @@ public class FormatReaderTest {
             continue;
           }
 
-          // pattern datasets can only be detected with the pattern file
-          if (reader.getFormat().equals("File pattern")) {
+          // Inveon only reliably detected from header file
+          if (reader.getFormat().equals("Inveon")) {
             continue;
           }
 
-          // Inveon only reliably detected from header file
-          if (reader.getFormat().equals("Inveon")) {
+          // pattern datasets can only be detected with the pattern file
+          if (reader.getFormat().equals("File pattern")) {
             continue;
           }
 
