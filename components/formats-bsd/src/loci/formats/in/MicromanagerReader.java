@@ -779,7 +779,6 @@ public class MicromanagerReader extends FormatReader {
         String key = "", value = "";
         boolean valueArray = false;
         int nestedCount = 0;
-
         while (!token.startsWith("}") || nestedCount > 0) {
 
           if (token.trim().endsWith("{")) {
@@ -793,7 +792,7 @@ public class MicromanagerReader extends FormatReader {
             continue;
           }
 
-          if (valueArray) {
+          if (valueArray || token.trim().equals("],")) {
             if (token.trim().equals("],")) {
               valueArray = false;
             }
