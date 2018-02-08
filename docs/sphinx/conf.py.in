@@ -365,5 +365,6 @@ texinfo_documents = [
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
 linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
-    'https://www.olympus-global.com'
+    'https://www.olympus-global.com',
+    'http://bio3d.colorado.edu'
 ]
