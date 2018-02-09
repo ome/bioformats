@@ -1626,7 +1626,8 @@ bsd = yes
 software = `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 samples = `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 weHave = * an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) \n
-* a few nrrd datasets
+* a few nrrd datasets \n
+* `public sample images <https://downloads.openmicroscopy.org/images/NRRD/>`__
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
