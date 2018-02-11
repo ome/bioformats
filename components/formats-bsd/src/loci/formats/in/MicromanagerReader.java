@@ -781,6 +781,7 @@ public class MicromanagerReader extends FormatReader {
         StringBuilder valueBuffer = new StringBuilder();
         boolean valueArray = false;
         int nestedCount = 0;
+
         while (!token.startsWith("}") || nestedCount > 0) {
 
           if (token.trim().endsWith("{")) {
