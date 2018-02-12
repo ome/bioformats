@@ -32,7 +32,8 @@ Sample Datasets:
 We currently have:
 
 * an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) 
-* a few nrrd datasets
+* a few nrrd datasets 
+* `public sample images <https://downloads.openmicroscopy.org/images/NRRD/>`__
 
 We would like to have:
 
