@@ -66,10 +66,4 @@
         <class name="loci.formats.utests.XMLAnnotationTest"/>
       </classes>
     </test>
-    <test name="ScreenReader">
-      <groups/>
-      <classes>
-        <class name="loci.formats.utests.ScreenDetectionTest"/>
-      </classes>
-    </test>
 </suite>
