@@ -45,9 +45,11 @@
     <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
-    <lwf-stubs.version>5.3.0</lwf-stubs.version>
-    <mipav-stubs.version>5.3.0</mipav-stubs.version>
-    <metakit.version>5.3.0</metakit.version>
+    <ome-stubs.version>5.3.0</ome-stubs.version>
+    <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
+    <mipav-stubs.version>${ome-stubs.version}</mipav-stubs.version>
+    <ome-metakit.version>5.3.0</ome-metakit.version>
+    <metakit.version>${ome-metakit.version}</metakit.version>
     <slf4j.version>1.7.6</slf4j.version>
     <kryo.version>2.24.0</kryo.version>
     <testng.version>6.8</testng.version>
