@@ -331,9 +331,6 @@ public final class FormatTools {
 
   /** Identifies the astronomy domain. */
   public static final String ASTRONOMY_DOMAIN = "Astronomy";
-  
-  /** Identifies the secondary ion mass spectrometry domain. */
-  public static final String SIMS_DOMAIN = "Secondary Ion Mass Spectrometry (SIMS)";
 
   /**
    * Identifies the graphics domain.
@@ -347,14 +344,13 @@ public final class FormatTools {
   /** List of non-graphics domains. */
   public static final String[] NON_GRAPHICS_DOMAINS = new String[] {
     LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
-    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, HCS_DOMAIN, SIMS_DOMAIN,
-    UNKNOWN_DOMAIN,
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, HCS_DOMAIN, UNKNOWN_DOMAIN
   };
 
   /** List of non-HCS domains. */
   public static final String[] NON_HCS_DOMAINS = new String[] {
     LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
-    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, SIMS_DOMAIN, UNKNOWN_DOMAIN
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, UNKNOWN_DOMAIN
   };
 
   /**
@@ -364,13 +360,13 @@ public final class FormatTools {
    */
   public static final String[] NON_SPECIAL_DOMAINS = new String[] {
     LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
-    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, SIMS_DOMAIN, UNKNOWN_DOMAIN
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, UNKNOWN_DOMAIN
   };
 
   /** List of all supported domains. */
   public static final String[] ALL_DOMAINS = new String[] {
     HCS_DOMAIN, LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN,
-    MEDICAL_DOMAIN, HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, SIMS_DOMAIN,
+    MEDICAL_DOMAIN, HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN,
     GRAPHICS_DOMAIN, UNKNOWN_DOMAIN
   };
 

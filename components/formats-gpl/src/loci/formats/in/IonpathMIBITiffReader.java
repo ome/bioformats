@@ -70,7 +70,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
 	/** Constructs a new Ionpath MIBI reader. */
 	public IonpathMIBITiffReader() {
 		super("Ionpath MIBI", new String[] {"tif, tiff"});
-		domains = new String[] {FormatTools.SIMS_DOMAIN};
+		domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
 		suffixSufficient = false;
 	}
 
