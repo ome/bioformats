@@ -1957,8 +1957,8 @@ Commercial applications that support this format include: \n
 extensions = .tif, .qptiff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
-weHave = * a `specification document <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/PKI_Image%20Format.docx>`_ \n
-* `several datasets <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/>`_
+weHave = * a specification document
+* several datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding

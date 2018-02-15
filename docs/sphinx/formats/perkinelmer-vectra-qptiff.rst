@@ -25,8 +25,7 @@ Reader: VectraReader (:bfreader:`Source Code <VectraReader.java>`, :doc:`Support
 
 We currently have:
 
-* a `specification document <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/PKI_Image%20Format.docx>`_ 
-* `several datasets <http://downloads.openmicroscopy.org/images/vectra-qptiff/perkinelmer/>`_
+* a specification document
 
 We would like to have:
 
