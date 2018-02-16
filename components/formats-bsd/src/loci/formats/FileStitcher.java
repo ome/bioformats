@@ -567,7 +567,12 @@ public class FileStitcher extends ReaderWrapper {
   @Override
   public void setSeries(int no) {
     FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getCoreMetadataList().size();
+    if (n > 1 || noStitch) {
+      reader.setSeries(no);
+    }
     setCoreIndex(seriesToCoreIndex(no));
+    reader.setResolution(0);
   }
 
   /* @see IFormatReader#getSeries() */
@@ -575,6 +580,27 @@ public class FileStitcher extends ReaderWrapper {
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getSeries() > 0 ? reader.getSeries() : series;
+  }
+
+  /* @see IFormatReader#setResolution(int) */
+  @Override
+  public void setResolution(int no) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    coreIndex = (coreIndex - getResolution()) + no;
+    reader.setResolution(no);
+    reader.setCoreIndex(coreIndex);
+  }
+
+  /* @see IFormatReader#getResolution() */
+  @Override
+  public int getResolution() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getCoreMetadataList().size();
+    if (n > 1 || noStitch) return reader.getResolution();
+    if (hasFlattenedResolutions()) {
+      return 0;
+    }
+    return getCoreIndex() - coreIndexToSeries(getCoreIndex());
   }
 
   /* @see IFormatReader#seriesToCoreIndex(int) */
@@ -600,9 +626,9 @@ public class FileStitcher extends ReaderWrapper {
     int n = reader.getCoreMetadataList().size();
     if (n > 1 || noStitch) reader.setCoreIndex(no);
     else {
-      coreIndex = no;
       series = no;
     }
+    coreIndex = no;
   }
 
   /* @see IFormatReader#getCoreIndex() */
