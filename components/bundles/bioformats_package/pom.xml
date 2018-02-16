@@ -64,6 +64,8 @@
 
   <properties>
     <project.rootdir>${basedir}/../../..</project.rootdir>
+    <!-- For ant compatibility with octave/DESCRIPTION.in substitution -->
+    <DATE>${date}</DATE>
   </properties>
 
   <build>
@@ -72,29 +74,70 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>assembly.xml</descriptor>
-          </descriptors>
-          <archive>
-            <manifest>
-              <mainClass>loci.formats.gui.ImageViewer</mainClass>
-              <addClasspath>true</addClasspath>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Implementation-URL>${project.url}</Implementation-URL>
-            </manifestEntries>
-          </archive>
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id>
+            <id>jar</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>jar-assembly.xml</descriptor>
+              </descriptors>
+              <archive>
+                <manifest>
+                  <mainClass>loci.formats.gui.ImageViewer</mainClass>
+                  <addClasspath>true</addClasspath>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                  <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+                  <Implementation-Build>${buildNumber}</Implementation-Build>
+                  <Implementation-URL>${project.url}</Implementation-URL>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bftools</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>bftools-${project.version}</finalName>
+              <descriptors>
+                <descriptor>bftools-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bfmatlab</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>bfmatlab-${project.version}</finalName>
+              <descriptors>
+                <descriptor>bfmatlab-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>bfoctave</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>bioformats-octave-${project.version}</finalName>
+              <descriptors>
+                <descriptor>bfoctave-assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
           </execution>
         </executions>
       </plugin>

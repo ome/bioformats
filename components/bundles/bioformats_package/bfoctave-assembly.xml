@@ -1,0 +1,42 @@
+<assembly
+  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+  <id>bioformats-octave</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>../../formats-gpl/matlab</directory>
+      <outputDirectory>bioformats-octave-${project.version}/inst</outputDirectory>
+      <includes>
+        <include>**/*.m</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <files>
+    <file>
+      <source>../../../docs/sphinx/about/whats-new.rst</source>
+      <outputDirectory>bioformats-octave-${project.version}/</outputDirectory>
+      <destName>NEWS</destName>
+    </file>
+    <file>
+      <source>../../../LICENSE.txt</source>
+      <outputDirectory>bioformats-octave-${project.version}/</outputDirectory>
+      <destName>COPYING</destName>
+    </file>
+    <file>
+      <source>../../formats-gpl/octave/DESCRIPTION.in</source>
+      <outputDirectory>bioformats-octave-${project.version}/</outputDirectory>
+      <destName>DESCRIPTION</destName>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>../../formats-gpl/octave/PKG_ADD</source>
+      <outputDirectory>bioformats-octave-${project.version}/</outputDirectory>
+      <destName>PKG_ADD</destName>
+    </file>
+  </files>
+</assembly>
