@@ -232,4 +232,17 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
   private static String formatMetadata(String key, String value) {
     return key + ":" + value.replaceAll("\\s", "_");
   }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      seriesTypes.clear();
+      seriesIFDs.clear();
+      channelIDs.clear();
+      channelNames.clear();
+      simsDescription .clear();
+    }
+  }
 }
