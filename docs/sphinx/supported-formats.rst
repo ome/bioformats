@@ -1222,6 +1222,17 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |no|
      - |no|
+   * - :doc:`formats/perkinelmer-vectra-qptiff`
+     - .tif, .qptiff
+     - |Very good|
+     - |Very good|
+     - |Outstanding|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+     - |no|
+     - |no|
    * - :doc:`formats/pgm`
      - .pbm, .pgm, .ppm
      - |Very good|
@@ -1652,7 +1663,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **148** formats
+Bio-Formats currently supports **149** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1831,6 +1842,7 @@ Bio-Formats currently supports **148** formats
     formats/perkinelmer-nuance
     formats/perkinelmer-operetta
     formats/perkinelmer-ultraview
+    formats/perkinelmer-vectra-qptiff
     formats/pgm
     formats/photoshop-psd
     formats/photoshop-tiff
