@@ -233,6 +233,10 @@ public class AVIReader extends FormatReader {
     int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX() * bytes;
     int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
 
+    if (bmpBitsPerPixel > 8 && pad == getRGBChannelCount()) {
+      pad = bytes;
+    }
+
     in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * (getSizeY() - h - y));
 
     if (getSizeX() == w && pad == 0) {
