@@ -352,6 +352,11 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 0
      - 446
+   * - :doc:`IonpathMIBITiffReader <metadata/IonpathMIBITiffReader>`
+     - 22
+     - 0
+     - 0
+     - 454
    * - :doc:`IvisionReader <metadata/IvisionReader>`
      - 34
      - 0
@@ -1021,10 +1026,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 170
    * - :schema:`Channel - Name <OME-2016-06/ome_xsd.html#Channel_Name>`
-     - 37
+     - 38
      - 0
      - 0
-     - 135
+     - 134
    * - :schema:`Channel - PinholeSize <OME-2016-06/ome_xsd.html#Channel_PinholeSize>`
      - 11
      - 0
@@ -1616,10 +1621,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Image - Description <OME-2016-06/ome_xsd.html#Image_Description>`
-     - 45
+     - 46
      - 0
      - 0
-     - 127
+     - 126
    * - :schema:`Image - ExperimentRef <OME-2016-06/ome_xsd.html#ExperimentRef_ID>`
      - 2
      - 0
@@ -1686,10 +1691,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`Instrument - ID <OME-2016-06/ome_xsd.html#Instrument_ID>`
-     - 54
+     - 55
      - 0
      - 0
-     - 118
+     - 117
    * - :schema:`Label - FillColor <OME-2016-06/ome_xsd.html#Shape_FillColor>`
      - 0
      - 0
@@ -2441,15 +2446,15 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`Plate - ColumnNamingConvention <OME-2016-06/ome_xsd.html#Plate_ColumnNamingConvention>`
-     - 9
-     - 0
-     - 0
-     - 163
-   * - :schema:`Plate - Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
      - 8
      - 0
      - 0
      - 164
+   * - :schema:`Plate - Columns <OME-2016-06/ome_xsd.html#Plate_Columns>`
+     - 7
+     - 0
+     - 0
+     - 165
    * - :schema:`Plate - Description <OME-2016-06/ome_xsd.html#Plate_Description>`
      - 2
      - 0
@@ -2461,25 +2466,25 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 169
    * - :schema:`Plate - ID <OME-2016-06/ome_xsd.html#Plate_ID>`
-     - 13
-     - 0
-     - 0
-     - 159
-   * - :schema:`Plate - Name <OME-2016-06/ome_xsd.html#Plate_Name>`
      - 12
      - 0
      - 0
      - 160
+   * - :schema:`Plate - Name <OME-2016-06/ome_xsd.html#Plate_Name>`
+     - 11
+     - 0
+     - 0
+     - 161
    * - :schema:`Plate - RowNamingConvention <OME-2016-06/ome_xsd.html#Plate_RowNamingConvention>`
-     - 9
-     - 0
-     - 0
-     - 163
-   * - :schema:`Plate - Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
      - 8
      - 0
      - 0
      - 164
+   * - :schema:`Plate - Rows <OME-2016-06/ome_xsd.html#Plate_Rows>`
+     - 7
+     - 0
+     - 0
+     - 165
    * - :schema:`Plate - Status <OME-2016-06/ome_xsd.html#Plate_Status>`
      - 0
      - 0
@@ -2976,20 +2981,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`Screen - ID <OME-2016-06/ome_xsd.html#Screen_ID>`
-     - 2
-     - 0
-     - 0
-     - 170
-   * - :schema:`Screen - Name <OME-2016-06/ome_xsd.html#Screen_Name>`
-     - 2
-     - 0
-     - 0
-     - 170
-   * - :schema:`Screen - PlateRef <OME-2016-06/ome_xsd.html#Screen_Screen_PlateRef_ID>`
      - 1
      - 0
      - 0
      - 171
+   * - :schema:`Screen - Name <OME-2016-06/ome_xsd.html#Screen_Name>`
+     - 1
+     - 0
+     - 0
+     - 171
+   * - :schema:`Screen - PlateRef <OME-2016-06/ome_xsd.html#Screen_Screen_PlateRef_ID>`
+     - 0
+     - 0
+     - 0
+     - 172
    * - :schema:`Screen - ProtocolDescription <OME-2016-06/ome_xsd.html#Screen_ProtocolDescription>`
      - 0
      - 0
@@ -3181,10 +3186,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`Well - Column <OME-2016-06/ome_xsd.html#Well_Column>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`Well - ExternalDescription <OME-2016-06/ome_xsd.html#Well_ExternalDescription>`
      - 0
      - 0
@@ -3196,20 +3201,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 171
    * - :schema:`Well - ID <OME-2016-06/ome_xsd.html#Well_ID>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`Well - ReagentRef <OME-2016-06/ome_xsd.html#ReagentRef_ID>`
      - 0
      - 0
      - 0
      - 172
    * - :schema:`Well - Row <OME-2016-06/ome_xsd.html#Well_Row>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`Well - Type <OME-2016-06/ome_xsd.html#Well_Type>`
      - 0
      - 0
@@ -3221,20 +3226,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`WellSample - ID <OME-2016-06/ome_xsd.html#WellSample_ID>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`WellSample - ImageRef <OME-2016-06/ome_xsd.html#ImageRef_ID>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`WellSample - Index <OME-2016-06/ome_xsd.html#WellSample_Index>`
-     - 14
+     - 13
      - 0
      - 0
-     - 158
+     - 159
    * - :schema:`WellSample - PositionX <OME-2016-06/ome_xsd.html#WellSample_PositionX>`
      - 6
      - 0

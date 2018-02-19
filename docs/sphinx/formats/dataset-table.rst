@@ -208,6 +208,9 @@ You can sort this table by clicking on any of the headings.
    * - Inveon
      - .hdr
      - One .hdr file plus one similarly-named file
+   * - Ionpath MIBI
+     - .tif, tiff
+     - Single file
    * - JEOL
      - .dat, .img, .par
      - A single .dat file or an .img file with a similarly-named .par file
@@ -370,6 +373,9 @@ You can sort this table by clicking on any of the headings.
    * - PerkinElmer Operetta
      - .tif, .tiff, .xml
      - Directory with XML file and one .tif/.tiff file per plane
+   * - PerkinElmer Vectra/QPTIFF
+     - .tiff, .tif, .qptiff
+     - Single file
    * - PicoQuant Bin
      - .bin
      - Single file

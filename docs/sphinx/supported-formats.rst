@@ -683,6 +683,17 @@ You can sort this table by clicking on any of the headings.
      - |no|
      - |yes|
      - |no|
+   * - :doc:`formats/ionpath-mibi`
+     - .tif, .tiff
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+     - |no|
+     - |no|
    * - :doc:`formats/iplab`
      - .ipl
      - |Outstanding|
@@ -1225,7 +1236,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/perkinelmer-vectra-qptiff`
      - .tif, .qptiff
      - |Very good|
-     - |Very good|
+     - |Outstanding|
      - |Outstanding|
      - |Fair|
      - |Fair|
@@ -1663,7 +1674,7 @@ You can sort this table by clicking on any of the headings.
      - |yes|
      - |no|
 
-Bio-Formats currently supports **149** formats
+Bio-Formats currently supports **150** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1793,6 +1804,7 @@ Bio-Formats currently supports **149** formats
     formats/incell-3000
     formats/inr
     formats/inveon
+    formats/ionpath-mibi
     formats/iplab
     formats/iplab-mac
     formats/jeol
