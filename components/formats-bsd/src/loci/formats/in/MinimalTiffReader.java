@@ -466,6 +466,12 @@ public class MinimalTiffReader extends FormatReader {
 
     ifds = new IFDList();
     thumbnailIFDs = new IFDList();
+
+    Integer x = null;
+    Integer y = null;
+    Integer type = null;
+    boolean separateSeries = false;
+
     subResolutionIFDs = new ArrayList<IFDList>();
     for (IFD ifd : allIFDs) {
       tiffParser.fillInIFD(ifd);
@@ -473,6 +479,20 @@ public class MinimalTiffReader extends FormatReader {
       int subfileType = subfile == null ? 0 : subfile.intValue();
       if (subfileType != 1 || allIFDs.size() <= 1) {
         ifds.add(ifd);
+
+        if (x == null && y == null && type == null) {
+          x = (int) ifd.getImageWidth();
+          y = (int) ifd.getImageLength();
+          type = ifd.getPixelType();
+        }
+        else {
+          if ((int) ifd.getImageWidth() != x ||
+            (int) ifd.getImageLength() != y ||
+            ifd.getPixelType() != type)
+          {
+            separateSeries = true;
+          }
+        }
       }
       else if (subfileType == 1) {
         thumbnailIFDs.add(ifd);
@@ -483,7 +503,17 @@ public class MinimalTiffReader extends FormatReader {
 
     CoreMetadata ms0 = core.get(0);
 
-    ms0.imageCount = ifds.size();
+    if (separateSeries) {
+      core.clear();
+      for (int i=0; i<ifds.size(); i++) {
+        core.add(new CoreMetadata());
+        core.get(i).imageCount = 1;
+      }
+      seriesToIFD = true;
+    }
+    else {
+      ms0.imageCount = ifds.size();
+    }
 
     tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
@@ -559,34 +589,41 @@ public class MinimalTiffReader extends FormatReader {
       }
     }
 
-    IFD firstIFD = ifds.get(0);
+    for (int i=0; i<core.size(); i++) {
+      setSeries(i);
+      IFD firstIFD = ifds.get(i);
 
-    PhotoInterp photo = firstIFD.getPhotometricInterpretation();
-    int samples = firstIFD.getSamplesPerPixel();
-    ms0.rgb = samples > 1 || photo == PhotoInterp.RGB;
-    ms0.interleaved = false;
-    ms0.littleEndian = firstIFD.isLittleEndian();
+      PhotoInterp photo = firstIFD.getPhotometricInterpretation();
+      int samples = firstIFD.getSamplesPerPixel();
 
-    ms0.sizeX = (int) firstIFD.getImageWidth();
-    ms0.sizeY = (int) firstIFD.getImageLength();
-    ms0.sizeZ = 1;
-    ms0.sizeC = isRGB() ? samples : 1;
-    ms0.sizeT = ifds.size();
-    ms0.pixelType = firstIFD.getPixelType();
-    ms0.metadataComplete = true;
-    ms0.indexed = photo == PhotoInterp.RGB_PALETTE &&
-      (get8BitLookupTable() != null || get16BitLookupTable() != null);
-    if (isIndexed()) {
-      ms0.sizeC = 1;
-      ms0.rgb = false;
-      for (IFD ifd : ifds) {
-        ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
-          PhotoInterp.RGB_PALETTE);
+      core.get(i).rgb = samples > 1 || photo == PhotoInterp.RGB;
+      core.get(i).interleaved = false;
+      core.get(i).littleEndian = firstIFD.isLittleEndian();
+
+      core.get(i).sizeX = (int) firstIFD.getImageWidth();
+      core.get(i).sizeY = (int) firstIFD.getImageLength();
+      core.get(i).sizeZ = 1;
+      core.get(i).sizeC = isRGB() ? samples : 1;
+      core.get(i).sizeT = core.size() == 1 ? ifds.size() : 1;
+
+      core.get(i).pixelType = firstIFD.getPixelType();
+      core.get(i).metadataComplete = true;
+      core.get(i).indexed = photo == PhotoInterp.RGB_PALETTE &&
+        (get8BitLookupTable() != null || get16BitLookupTable() != null);
+      if (isIndexed()) {
+        core.get(i).sizeC = 1;
+        core.get(i).rgb = false;
+        for (IFD ifd : ifds) {
+          ifd.putIFDValue(IFD.PHOTOMETRIC_INTERPRETATION,
+            PhotoInterp.RGB_PALETTE);
+        }
       }
+      if (getSizeC() == 1 && !isIndexed()) core.get(i).rgb = false;
+      core.get(i).dimensionOrder = "XYCZT";
+      core.get(i).bitsPerPixel = firstIFD.getBitsPerSample()[0];
+      core.get(i).imageCount = core.size() == 1 ? ifds.size() : 1;
     }
-    if (getSizeC() == 1 && !isIndexed()) ms0.rgb = false;
-    ms0.dimensionOrder = "XYCZT";
-    ms0.bitsPerPixel = firstIFD.getBitsPerSample()[0];
+    setSeries(0);
 
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null && subResolutionIFDs.size() > 0) {
