@@ -687,7 +687,7 @@ You can sort this table by clicking on any of the headings.
      - .tif, .tiff
      - |Very good|
      - |Good|
-     - |Good|
+     - |Very good|
      - |Poor|
      - |Fair|
      - |no|

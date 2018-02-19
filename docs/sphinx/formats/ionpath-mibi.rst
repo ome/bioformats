@@ -38,7 +38,7 @@ Pixels: |Very good|
 
 Metadata: |Good|
 
-Openness: |Good|
+Openness: |Very good|
 
 Presence: |Poor|
 
