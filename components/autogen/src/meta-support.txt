@@ -1834,6 +1834,30 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[IonpathMIBITiffReader]
+Channel.ID = Yes
+Channel.Name = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.Description = Yes
+Image.ID = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Pixels.BigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.Interleaved = Yes
+Pixels.SignificantBits = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [IPLabReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
