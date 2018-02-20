@@ -1225,7 +1225,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/perkinelmer-vectra-qptiff`
      - .tif, .qptiff
      - |Very good|
-     - |Very good|
+     - |Outstanding|
      - |Outstanding|
      - |Fair|
      - |Fair|
