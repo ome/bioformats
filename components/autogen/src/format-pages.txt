@@ -1961,7 +1961,7 @@ bsd = no
 weHave = * a specification document
 * several datasets
 pixelsRating = Very good
-metadataRating = Very good
+metadataRating = Outstanding
 opennessRating = Outstanding
 presenceRating = Fair
 utilityRating = Fair
