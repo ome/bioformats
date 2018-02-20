@@ -1057,7 +1057,9 @@ owner = `IonPath <https://www.ionpath.com/>`_
 developer = `IonPath <https://www.ionpath.com/>`_
 versions = 0.1
 bsd = no
-weHave = a few IonPath MIBI datasets
+weHave = * a few sample datasets\n
+* a specification document
+weWant = * more sample datasets
 privateSpecification = true
 pixelsRating = Very good
 metadataRating = Very good

@@ -686,7 +686,7 @@ You can sort this table by clicking on any of the headings.
    * - :doc:`formats/ionpath-mibi`
      - .tif, .tiff
      - |Very good|
-     - |Good|
+     - |Very good|
      - |Very good|
      - |Poor|
      - |Fair|

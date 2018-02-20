@@ -26,17 +26,19 @@ Reader: IonpathMIBITiffReader (:bfreader:`Source Code <IonpathMIBITiffReader.jav
 
 We currently have:
 
-a few IonPath MIBI datasets
+* a few sample datasets
+* a specification document
 
 We would like to have:
 
+* more sample datasets
 
 **Ratings**
 
 
 Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Very good|
 
 Openness: |Very good|
 
