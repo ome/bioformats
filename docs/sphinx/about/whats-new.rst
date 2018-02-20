@@ -4,15 +4,19 @@ Version history
 5.8.0 (2018 February 20)
 ------------------------
 
+New file formats:
+* Ionpath MIBI
+   - added a new reader to support the reading of Ionpath Multiplexed Ion Beam Imaging (MIBI)
+     files (thanks to Rachel Finck)
+* PerkinElmer Vectra QPTIFF
+   - added support for PerkinElmer Vectra QPTIFF files
+
 File format fixes and improvements:
 
 * cellSens VSI
    - added support for lossless JPEG compression
 * Imspector OBF
    - improved the parsing of OBF files with embedded OME-XML metadata (thanks to Bjoern Thiel)
-* Ionpath MIBI
-   - added a new reader to support the reading of Ionpath Multiplexed Ion Beam Imaging (MIBI)
-     files (thanks to Rachel Finck)
 * Leica LIF
    - companion metadata files are now attached if present
 * Micro-Manager
@@ -20,12 +24,10 @@ File format fixes and improvements:
 * NRRD (Nearly Raw Raster Data)
    - added support for GZIP pixel stream contained within a .nrrd file
 * Olympus OIR
-   - added support for multi file datasets
+   - added support for multi-file datasets
 * OME-TIFF
    - when files are ungrouped the dimensions are corrected by checking the indexes for each
      associated TiffData
-* PerkinElmer Vectra QPTIFF
-   - added support for PerkinElmer Vectra QPTIFF files
 * PerkinElmer Operetta
    - added support for additional metadata fields such as ``Instrument``, ``Wavelength``
      and ``Exposure time``
