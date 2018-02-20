@@ -5,6 +5,7 @@ Version history
 ------------------------
 
 New file formats:
+
 * Ionpath MIBI
    - added a new reader to support the reading of Ionpath Multiplexed Ion Beam Imaging (MIBI)
      files (thanks to Rachel Finck)
