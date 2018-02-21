@@ -10,7 +10,8 @@ New file formats:
    - added a new reader to support the reading of Ionpath Multiplexed Ion Beam Imaging (MIBI)
      files (thanks to Rachel Finck)
 * PerkinElmer Vectra QPTIFF
-   - added support for PerkinElmer Vectra QPTIFF files
+   - added support for PerkinElmer Vectra QPTIFF files (The QPTIFF Bio-Formats reader is provided 
+     through a collaboration between PerkinElmer, Inc and Glencoe Software Inc.)
 
 File format fixes and improvements:
 
