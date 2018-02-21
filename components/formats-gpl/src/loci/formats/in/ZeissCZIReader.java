@@ -174,6 +174,8 @@ public class ZeissCZIReader extends FormatReader {
   private int[] tileHeight;
   private int scaleFactor;
 
+  private transient Length zStep;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -535,6 +537,7 @@ public class ZeissCZIReader extends FormatReader {
       tileWidth = null;
       tileHeight = null;
       scaleFactor = 0;
+      zStep = null;
     }
   }
 
@@ -1335,7 +1338,20 @@ public class ZeissCZIReader extends FormatReader {
           store.setPlanePositionZ(p.stageZ, i, plane);
         }
         else if (positionsZ != null && i < positionsZ.length) {
-          store.setPlanePositionZ(positionsZ[i], i, plane);
+          int zIndex = getZCTCoords(plane)[0];
+          if (positionsZ[i] != null) {
+            if (zStep != null) {
+              double value = positionsZ[i].value(zStep.unit()).doubleValue();
+              if (zStep != null) {
+                value += zIndex * zStep.value().doubleValue();
+              }
+              Length pos = new Length(value, zStep.unit());
+              store.setPlanePositionZ(pos, i, plane);
+            }
+            else {
+              store.setPlanePositionZ(positionsZ[i], i, plane);
+            }
+          }
         }
 
         if (p.timestamp != null) {
@@ -2447,8 +2463,9 @@ public class ZeissCZIReader extends FormatReader {
             }
           }
           else if (id.equals("Z")) {
+            zStep = FormatTools.createLength(size, UNITS.MICROM);
             for (int series=0; series<getSeriesCount(); series++) {
-              store.setPixelsPhysicalSizeZ(FormatTools.createLength(size, UNITS.MICROMETER), series);
+              store.setPixelsPhysicalSizeZ(zStep, series);
             }
           }
         }
@@ -2934,13 +2951,28 @@ public class ZeissCZIReader extends FormatReader {
           String y = position.getAttribute("Y");
           String z = position.getAttribute("Z");
 
-          Length xPos = FormatTools.getStagePosition(DataTools.parseDouble(x), UNITS.REFERENCEFRAME);
-          Length yPos = FormatTools.getStagePosition(DataTools.parseDouble(y), UNITS.REFERENCEFRAME);
-          Length zPos = FormatTools.getStagePosition(DataTools.parseDouble(z), UNITS.REFERENCEFRAME);
+          Length xPos = null;
+          try {
+            xPos = new Length(Double.valueOf(x), UNITS.METRE);
+          }
+          catch (NumberFormatException e) { }
+          Length yPos = null;
+          try {
+            yPos = new Length(Double.valueOf(y), UNITS.METRE);
+          }
+          catch (NumberFormatException e) { }
+          Length zPos = null;
+          try {
+            zPos = new Length(Double.valueOf(z), UNITS.METRE);
+          }
+          catch (NumberFormatException e) { }
 
           int numTiles = (tilesX == null || tilesY == null) ? 0 : tilesX * tilesY;
           for (int tile=0; tile<numTiles; tile++) {
             int index = i * tilesX * tilesY + tile;
+            if (groups.getLength() == core.size()) {
+              index = i;
+            }
             if (index < positionsX.length) {
               positionsX[index] = xPos;
               positionsY[index] = yPos;
@@ -2972,27 +3004,25 @@ public class ZeissCZIReader extends FormatReader {
                   positionsX[i] = null;
                 } else {
                   final Double number = Double.valueOf(x);
-                  positionsX[i] = new Length(number, UNITS.REFERENCEFRAME);
+                  positionsX[i] = new Length(number, UNITS.MICROMETER);
                 }
                 if (y == null) {
                   positionsY[i] = null;
                 } else {
                   final Double number = Double.valueOf(y);
-                  positionsY[i] = new Length(number, UNITS.REFERENCEFRAME);
+                  positionsY[i] = new Length(number, UNITS.MICROMETER);
                 }
                 if (z == null) {
                   positionsZ[i] = null;
                 } else {
                   final Double number = Double.valueOf(z);
-                  positionsZ[i] = new Length(number, UNITS.REFERENCEFRAME);
+                  positionsZ[i] = new Length(number, UNITS.MICROMETER);
                 }
               }
             }
           }
         }
       }
-
-
     }
 
     NodeList detectors = getGrandchildren(acquisition, "Detector");
