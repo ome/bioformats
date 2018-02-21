@@ -1,6 +1,59 @@
 Version history
 ===============
 
+5.8.0 (2018 February 21)
+------------------------
+
+New file formats:
+
+* Ionpath MIBI
+   - added a new reader to support the reading of Ionpath Multiplexed Ion Beam Imaging (MIBI)
+     files (thanks to Rachel Finck)
+* PerkinElmer Vectra QPTIFF
+   - added support for PerkinElmer Vectra QPTIFF files (The QPTIFF Bio-Formats reader is provided 
+     through a collaboration between PerkinElmer, Inc and Glencoe Software Inc.)
+
+File format fixes and improvements:
+
+* cellSens VSI
+   - added support for lossless JPEG compression
+* Imspector OBF
+   - improved the parsing of OBF files with embedded OME-XML metadata (thanks to Bjoern Thiel)
+* Leica LIF
+   - companion metadata files are now attached if present
+* Micro-Manager
+   - fixed a bug related to the parsing of the metadata closing block
+* NRRD (Nearly Raw Raster Data)
+   - added support for GZIP pixel stream contained within a .nrrd file
+* Olympus OIR
+   - added support for multi-file datasets
+* OME-TIFF
+   - when files are ungrouped the dimensions are corrected by checking the indexes for each
+     associated TiffData
+* PerkinElmer Operetta
+   - added support for additional metadata fields such as ``Instrument``, ``Wavelength``
+     and ``Exposure time``
+* TIFF
+   - fixed a bug when printing IFD values of type ``OnDemandLongArray``
+   - fixed a bug when writing tile sizes for multi-series images
+* Zeiss CZI
+   - when Z positions are not enumerated then values are calculated from a Z step
+   - metadata for DisplaySetting will now be preserved in the original metadata table
+
+Bug fixes and improvements:
+
+* removed unused ScreenReader in preparation for migrating it to be an external reader
+* fixed a bug with the generation of thumbnails in Bio-Formats plugins
+* updated the Maven POM to unify component version property names
+* tile size is now reported in the core metadata when using the showinf tool
+* added ``setFilePatternIds`` to ``ImporterOptions`` for use with Bio-Formats plugins
+* improved the precision of format identification for MRC, I2I, and Zeiss LSM
+
+Documentation improvements:
+
+* fixed and updated a number of external documentation links
+* added links to `public NRRD samples <https://downloads.openmicroscopy.org/images/NRRD/>`_
+
 5.7.3 (2018 January 11)
 -----------------------
 
