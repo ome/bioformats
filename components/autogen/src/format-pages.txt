@@ -1051,6 +1051,23 @@ utilityRating = Fair
 reader = InveonReader
 mif = true
 
+[Ionpath MIBI]
+extensions = .tif, .tiff
+owner = `IonPath <https://www.ionpath.com/>`_
+developer = `IonPath <https://www.ionpath.com/>`_
+versions = 0.1
+bsd = no
+weHave = * a few sample datasets\n
+* a specification document
+weWant = * more sample datasets
+privateSpecification = true
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = IonpathMIBITiffReader
+
 [IVision]
 pagename = iplab-mac
 extensions = .ipm
@@ -1961,7 +1978,7 @@ bsd = no
 weHave = * a specification document
 * several datasets
 pixelsRating = Very good
-metadataRating = Very good
+metadataRating = Outstanding
 opennessRating = Outstanding
 presenceRating = Fair
 utilityRating = Fair
