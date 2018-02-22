@@ -47,8 +47,6 @@ Type "ant -p" for a list of targets.
         prefix="bftools"/>
       <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
         prefix="bftools" filemode="755"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
-        fullpath="bftools/NEWS.rst"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bftools"/>
     </zip>
   </target>
@@ -59,8 +57,6 @@ Type "ant -p" for a list of targets.
       <zipfileset dir="${root.dir}/components/formats-gpl/matlab"
         includes="**/*" prefix="bfmatlab"/>
       <zipfileset file="${artifact.dir}/${bundle.jar}" prefix="bfmatlab"/>
-      <zipfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
-        fullpath="bfmatlab/NEWS.rst"/>
     </zip>
   </target>
 </project>

@@ -22,7 +22,6 @@ antbuild()
 {
     (
       ant clean compile
-      ant clean compile-autogen
       ant clean compile-formats-api
       ant clean compile-bio-formats-plugins
       ant clean compile-formats-bsd
@@ -31,7 +30,6 @@ antbuild()
       ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
-      ant -Dsphinx.warnopts="-W" clean-docs-sphinx docs-sphinx
       # Do not clean here so that we can potentially archive both
       # docs and java archives.
       ant tools dist-bftools dist-matlab dist-octave

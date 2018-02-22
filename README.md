@@ -57,7 +57,7 @@ following before submitting a pull request:
  * test at least one file in each affected format, using the ```showinf```
    command
  * internal developers only: [run the data
-   tests](docs/sphinx/developers/commit-testing.rst)
+   tests](https://docs.openmicroscopy.org/bio-formats/latest/developers/commit-testing.html)
    against directories corresponding to the affected format(s)
  * make sure that your commits contain the correct authorship information and,
    if necessary, a signed-off-by line
