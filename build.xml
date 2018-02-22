@@ -10,17 +10,6 @@ This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
 
-Formats code generator
-    Package for generating other code, including the Bio-Formats metadata API,
-    related documentation, Ice bindings, and Bio-Formats C++ bindings headers
-    -=-
-    JAR file:      bf-autogen.jar
-    Path:          components/autogen
-    Project deps:  Bio-Formats, Formats Common
-    Library deps:  Apache Velocity
-    Optional:      (none)
-    License:       GPL
-
 Bio-Formats
     A library for reading and writing popular microscopy file formats
     -=-
@@ -180,13 +169,6 @@ TestNG
     JAR file:  testng-6.8.jar
     URL:       http://testng.org/
     Notes:     testing framework used for the automated test suite
-    License:   Apache
-
-Apache Velocity
-    JAR file:  velocity-1.6.3-dep.jar
-    URL:       http://velocity.apache.org/
-    Notes:     used to autogenerate the loci.formats.meta and loci.formats.ome
-               Bio-Formats packages
     License:   Apache
 
 Xalan
