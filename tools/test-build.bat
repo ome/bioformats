@@ -17,7 +17,6 @@ if [%build%] == [ant] (
   ant clean compile-formats-bsd || exit /b 1
   ant clean compile-formats-gpl || exit /b 1
   ant clean compile-bio-formats-tools || exit /b 1
-  ant clean compile-tests || exit /b 1
   ant clean compile-turbojpeg || exit /b 1
   ant clean utils || exit /b 1
 )

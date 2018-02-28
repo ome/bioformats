@@ -21,7 +21,6 @@
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
     <module>components/bio-formats-tools</module>
-    <module>components/test-suite</module>
   </modules>
 
   <properties>

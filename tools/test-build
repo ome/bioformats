@@ -26,7 +26,6 @@ antbuild()
       ant clean compile-formats-bsd
       ant clean compile-formats-gpl
       ant clean compile-bio-formats-tools
-      ant clean compile-tests
       ant clean compile-turbojpeg
       ant clean utils
     )
