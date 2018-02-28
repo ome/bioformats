@@ -14,7 +14,6 @@ if [%build%] == [ant] (
   REM Test the ant build
   ant clean compile || exit /b 1
   ant clean compile-formats-api || exit /b 1
-  ant clean compile-bio-formats-plugins || exit /b 1
   ant clean compile-formats-bsd || exit /b 1
   ant clean compile-formats-gpl || exit /b 1
   ant clean compile-bio-formats-tools || exit /b 1

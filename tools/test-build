@@ -23,7 +23,6 @@ antbuild()
     (
       ant clean compile
       ant clean compile-formats-api
-      ant clean compile-bio-formats-plugins
       ant clean compile-formats-bsd
       ant clean compile-formats-gpl
       ant clean compile-bio-formats-tools

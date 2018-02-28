@@ -24,18 +24,6 @@ Bio-Formats
     License:       GPL
 
 
-Plugins for ImageJ
-    A collection of plugins for ImageJ, including the Bio-Formats Importer,
-    Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
-    Colorizer and Stack Slicer
-    -=-
-    JAR file:      bio-formats_plugins.jar
-    Path:          components/bio-formats-plugins
-    Project deps:  Bio-Formats, Formats Common, OME-XML Java library
-    Library deps:  JGoodies Forms, ImageJ, JUnit, Logback
-    Optional:      (none)
-    License:       GPL
-
 OME-XML Java library
     A library for working with OME-XML metadata structures
     -=-

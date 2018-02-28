@@ -14,7 +14,6 @@ Type "ant -p" for a list of targets.
 
   <target name="compile"
     depends="compile-formats-gpl,
-      compile-bio-formats-plugins,
       compile-formats-api,
       compile-formats-bsd,
       compile-bio-formats-tools,
@@ -25,7 +24,6 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-formats-gpl,
-      jar-bio-formats-plugins,
       jar-formats-api,
       jar-formats-bsd,
       jar-bio-formats-tools,
@@ -35,7 +33,6 @@ Type "ant -p" for a list of targets.
 
   <target name="findbugs"
     depends="findbugs-formats-gpl,
-      findbugs-bio-formats-plugins,
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
@@ -45,7 +42,6 @@ Type "ant -p" for a list of targets.
   <target name="clean"
     depends="
       clean-formats-gpl,
-      clean-bio-formats-plugins,
       clean-formats-api,
       clean-formats-bsd,
       clean-bio-formats-tools,
@@ -58,7 +54,6 @@ Type "ant -p" for a list of targets.
 
   <target name="test"
     depends="test-formats-gpl,
-      test-bio-formats-plugins,
       test-formats-api,
       test-formats-bsd,
       test-bio-formats-tools,
@@ -70,7 +65,6 @@ Type "ant -p" for a list of targets.
   <target name="utils"
     depends="jars,
       utils-formats-gpl,
-      utils-bio-formats-plugins,
       utils-formats-bsd"
     description="compile all extra utilities"/>
 
@@ -218,46 +212,6 @@ Type "ant -p" for a list of targets.
   <target name="test-formats-gpl" depends="jar-formats-gpl, testing-deps"
     description="compile and run tests for GPL format implementations">
     <ant dir="components/formats-gpl" target="test"/>
-  </target>
-
-  <!-- Bio-Formats Plugins for ImageJ -->
-
-  <target name="deps-bio-formats-plugins"
-    depends="copy-jars, jar-formats-gpl,
-      jar-formats-api,
-      jar-formats-bsd"/>
-
-  <target name="compile-bio-formats-plugins" depends="deps-bio-formats-plugins"
-    description="compile classes for Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.compile"/>
-  </target>
-
-  <target name="jar-bio-formats-plugins" depends="deps-bio-formats-plugins"
-    description="generate JAR file for Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.jar"/>
-  </target>
-
-  <target name="findbugs-bio-formats-plugins" depends="jar-bio-formats-plugins"
-    description="run findbugs on Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.findbugs"/>
-  </target>
-
-  <target name="clean-bio-formats-plugins"
-    depends="clean-formats-gpl,
-      clean-formats-api,
-      clean-formats-bsd"
-    description="remove build files for Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.clean"/>
-  </target>
-
-  <target name="utils-bio-formats-plugins" depends="jar-bio-formats-plugins"
-    description="compile extra utilities for Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.utils"/>
-  </target>
-
-  <target name="test-bio-formats-plugins" depends="jar-bio-formats-plugins, testing-deps"
-    description="compile and run tests for Bio-Formats Plugins for ImageJ">
-    <ant dir="components/bio-formats-plugins" target="test"/>
   </target>
 
   <!-- Testing framework -->
