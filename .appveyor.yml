@@ -36,10 +36,3 @@ init:
 
 build_script:
   - tools\test-build %build%
-
-#artifacts:
-#  - path: 'components\bundles\bioformats_package\target\*.zip'
-#  - path: 'components\bundles\bioformats_package\target\*.jar'
-#  - path: 'components\bundles\bioformats_package\target\*.tar.*'
-#  - path: 'artifacts\bioformats_package.jar'
-#  - path: 'artifacts\bftools.zip'

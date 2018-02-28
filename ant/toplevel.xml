@@ -50,8 +50,7 @@ Type "ant -p" for a list of targets.
       clean-formats-bsd,
       clean-bio-formats-tools,
       clean-tests,
-      clean-turbojpeg,
-      clean-bundles"
+      clean-turbojpeg"
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
@@ -74,14 +73,6 @@ Type "ant -p" for a list of targets.
       utils-bio-formats-plugins,
       utils-formats-bsd"
     description="compile all extra utilities"/>
-
-  <target name="docs" depends="jars"
-    description="generate the Javadocs for most components">
-    <echo>----------=========== Javadocs ===========----------</echo>
-    <ant dir="components/bundles/bioformats_package" target="docs"/>
-  </target>
-
-  <target name="docs-zip" depends="docs"/>
 
   <target name="copy-jars" description="copy JARS (deprecated)"/>
 
@@ -326,31 +317,6 @@ Type "ant -p" for a list of targets.
   <target name="test-turbojpeg" depends="jar-turbojpeg, testing-deps"
     description="compile and run tests for Turbojpeg Java bindings">
     <ant dir="components/forks/turbojpeg" target="test"/>
-  </target>
-
-  <!-- Tool collections -->
-
-  <target name="clean-bundles"
-    description="remove build files in bundles component">
-    <ant dir="components/bundles/bioformats_package" target="bioformats_package.clean"/>
-    <ant dir="components/bundles/loci_tools" target="loci_tools.clean"/>
-  </target>
-
-  <target name="tools" depends="jars"
-    description="generate JAR file bundles of Bio-Formats and dependencies">
-
-    <echo>----------=========== bioformats_package ===========----------</echo>
-    <ant dir="components/bundles/bioformats_package" target="bundle"/>
-
-    <echo>----------=========== loci_tools ===========----------</echo>
-    <ant dir="components/bundles/loci_tools" target="bundle"/>
-  </target>
-
-  <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix"
-      description="generate a zip bundle of the command line tools">
-    <echo>----------=========== bftools ===========----------</echo>
-    <ant dir="components/bundles/bioformats_package" target="bftools"/>
   </target>
 
   <!-- Internal targets -->
