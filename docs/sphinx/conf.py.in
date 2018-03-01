@@ -372,6 +372,6 @@ linkcheck_retries = int(os.environ.get("SPHINX_LINKCHECK_RETRIES", 5))
 linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://www.olympus-global.com',
     'http://www.lavisionbiotec.com/',
-    r'http://mdbtools.cvs.sourceforge.net/.*',
+    r'.*[.]sourceforge.net',
     'https://nifti.nimh.nih.gov/nifti-1/'
 ]
