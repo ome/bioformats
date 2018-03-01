@@ -1104,7 +1104,7 @@ public class MicromanagerReader extends FormatReader {
 
     public String metadataFile;
     public String xmlFile;
-    public String name;
+    public transient String name;
 
     public String[] channels;
 
