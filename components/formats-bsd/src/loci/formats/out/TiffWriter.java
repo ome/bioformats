@@ -243,7 +243,7 @@ public class TiffWriter extends FormatWriter {
           synchronized (this) {
             // This operation is synchronized against the TIFF saver.
             synchronized (tiffSaver) {
-              index = prepareToWriteImage(tileNo++, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
+              index = prepareToWriteImage(no, tileNo++, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
               if (index == -1) {
                 return;
               }
@@ -260,7 +260,7 @@ public class TiffWriter extends FormatWriter {
       synchronized (this) {
         // This operation is synchronized against the TIFF saver.
         synchronized (tiffSaver) {
-          index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
+          index = prepareToWriteImage(no, 0, buf, ifd, x, y, w, h);
           if (index == -1) {
             return;
           }
@@ -278,7 +278,7 @@ public class TiffWriter extends FormatWriter {
    * ensure thread safety.
    */
   protected int prepareToWriteImage(
-      int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
+      int no, int tileno, byte[] buf, IFD ifd, int x, int y, int w, int h)
   throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     boolean littleEndian = false;
