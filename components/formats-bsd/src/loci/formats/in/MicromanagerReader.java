@@ -317,9 +317,13 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      if (positions.size() > 1) {
-        Location parent = new Location(p.metadataFile).getParentFile();
-        store.setImageName(parent.getName(), i);
+      if (p.name != null) {
+        store.setImageName(p.name, i);
+      } else {
+        if (positions.size() > 1) {
+          Location parent = new Location(p.metadataFile).getParentFile();
+          store.setImageName(parent.getName(), i);
+        }
       }
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -853,6 +857,9 @@ public class MicromanagerReader extends FormatReader {
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
             p.voltage.add(new Double(value));
           }
+          else if (key.equals("PositionName")) {
+            p.name = value;
+          }
           else if (key.equals("FileName")) {
             p.fileNameMap.put(new Index(slice), value);
             Location realFile = new Location(parent, value);
@@ -1100,6 +1107,7 @@ public class MicromanagerReader extends FormatReader {
 
     public String metadataFile;
     public String xmlFile;
+    public String name;
 
     public String[] channels;
 
