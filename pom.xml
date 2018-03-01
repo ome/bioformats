@@ -16,7 +16,6 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/forks/turbojpeg</module>
     <module>components/formats-api</module>
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
