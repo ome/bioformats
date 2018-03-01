@@ -857,7 +857,7 @@ public class MicromanagerReader extends FormatReader {
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
             p.voltage.add(new Double(value));
           }
-          else if (key.equals("PositionName")) {
+          else if (key.equals("PositionName") && !value.equals("null")) {
             p.name = value;
           }
           else if (key.equals("FileName")) {
