@@ -373,5 +373,6 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     'https://www.olympus-global.com',
     'http://www.lavisionbiotec.com/',
     r'.*[.]sourceforge.net',
+    'http://www.libpng.org/pub/mng/',
     'https://nifti.nimh.nih.gov/nifti-1/'
 ]
