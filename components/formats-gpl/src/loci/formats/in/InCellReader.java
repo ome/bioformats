@@ -604,7 +604,7 @@ public class InCellReader extends FormatReader {
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
-      wellIndex = i / fieldCount;
+      wellIndex = i / (fieldCount * totalTimepoints);
 
       if (well != prevWell) {
         String wellID = MetadataTools.createLSID("Well", 0, wellIndex);
@@ -644,15 +644,15 @@ public class InCellReader extends FormatReader {
       int sampleIndex = field * totalTimepoints + timepoint;
 
       String wellSampleID =
-        MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
+        MetadataTools.createLSID("WellSample", 0, wellIndex, sampleIndex);
       store.setWellSampleID(wellSampleID, 0, wellIndex, sampleIndex);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, wellIndex, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, wellIndex, sampleIndex);
-      if (posX.containsKey(field - 1)) {
-        store.setWellSamplePositionX(posX.get(field - 1), 0, wellIndex, sampleIndex);
+      if (posX.containsKey(field)) {
+        store.setWellSamplePositionX(posX.get(field), 0, wellIndex, sampleIndex);
       }
-      if (posY.containsKey(field - 1)) {
-        store.setWellSamplePositionY(posY.get(field - 1), 0, wellIndex, sampleIndex);
+      if (posY.containsKey(field)) {
+        store.setWellSamplePositionY(posY.get(field), 0, wellIndex, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
