@@ -60,6 +60,7 @@
     <ome-mdbtools.version>5.3.0</ome-mdbtools.version>
     <ome-jai.version>0.1.0</ome-jai.version>
     <ome-codecs.version>0.2.0</ome-codecs.version>
+    <ome-turbojpeg.version>0.1.0-SNAPSHOT</ome-turbojpeg.version>
     <jxrlib.version>0.2.1</jxrlib.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
