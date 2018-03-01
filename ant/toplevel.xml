@@ -16,7 +16,6 @@ Type "ant -p" for a list of targets.
     depends="compile-formats-gpl,
       compile-formats-api,
       compile-formats-bsd,
-      compile-bio-formats-tools,
       compile-turbojpeg"
     description="compile classes for all components"/>
 
@@ -25,15 +24,13 @@ Type "ant -p" for a list of targets.
       jar-formats-gpl,
       jar-formats-api,
       jar-formats-bsd,
-      jar-bio-formats-tools,
       jar-turbojpeg"
     description="generate JAR files for software packages"/>
 
   <target name="findbugs"
     depends="findbugs-formats-gpl,
       findbugs-formats-api,
-      findbugs-formats-bsd,
-      findbugs-bio-formats-tools"
+      findbugs-formats-bsd"
     description="run findbugs on most components"/>
 
   <target name="clean"
@@ -41,7 +38,6 @@ Type "ant -p" for a list of targets.
       clean-formats-gpl,
       clean-formats-api,
       clean-formats-bsd,
-      clean-bio-formats-tools,
       clean-turbojpeg"
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
@@ -52,7 +48,6 @@ Type "ant -p" for a list of targets.
     depends="test-formats-gpl,
       test-formats-api,
       test-formats-bsd,
-      test-bio-formats-tools,
       test-turbojpeg"
     description="compile and run tests for all components">
   </target>
@@ -132,42 +127,6 @@ Type "ant -p" for a list of targets.
   <target name="test-formats-bsd" depends="jar-formats-bsd, testing-deps"
     description="compile and run tests for BSD format implementations">
     <ant dir="components/formats-bsd" target="test"/>
-  </target>
-
-  <!-- Bio-Formats command line tools -->
-
-  <target name="deps-bio-formats-tools"
-    depends="copy-jars,
-      jar-formats-api,
-      jar-formats-gpl,
-      jar-formats-bsd"/>
-
-  <target name="compile-bio-formats-tools" depends="deps-bio-formats-tools"
-    description="compile classes for Bio-Formats tools">
-    <ant dir="components/bio-formats-tools" target="bio-formats-tools.compile"/>
-  </target>
-
-  <target name="jar-bio-formats-tools" depends="deps-bio-formats-tools"
-    description="generate JAR file for Bio-Formats tools">
-    <ant dir="components/bio-formats-tools" target="bio-formats-tools.jar"/>
-  </target>
-
-  <target name="findbugs-bio-formats-tools" depends="jar-bio-formats-tools"
-    description="run findbugs on Bio-Formats tools">
-    <ant dir="components/bio-formats-tools" target="bio-formats-tools.findbugs"/>
-  </target>
-
-  <target name="clean-bio-formats-tools"
-    depends="clean-formats-api,
-      clean-formats-bsd,
-      clean-formats-gpl"
-    description="remove build files for Bio-Formats tools">
-    <ant dir="components/bio-formats-tools" target="bio-formats-tools.clean"/>
-  </target>
-
-  <target name="test-bio-formats-tools" depends="jar-bio-formats-tools, testing-deps"
-    description="compile and run tests for Bio-Formats tools">
-    <ant dir="components/bio-formats-tools" target="test"/>
   </target>
 
   <!-- Bio-Formats -->
