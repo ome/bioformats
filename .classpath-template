@@ -8,6 +8,8 @@
         <classpathentry kind="src" path="components/formats-gpl/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/build/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/src"/>
+        <classpathentry kind="src" path="components/test-suite/build/src"/>
+        <classpathentry kind="src" path="components/test-suite/src"/>
         <classpathentry kind="src" path="components/formats-api/test"/>
         <classpathentry kind="src" path="components/formats-bsd/test"/>
         <classpathentry kind="src" path="components/formats-gpl/test"/>

@@ -34,6 +34,16 @@ OME-XML Java library
     Optional:      Logback
     License:       GPL
 
+Testing framework
+    Framework for automated and manual testing of software components
+    -=-
+    JAR file:      bio-formats-testing-framework.jar
+    Path:          components/test-suite
+    Project deps:  Bio-Formats, Formats Common, OME I/O
+    Library deps:  Logback, Simple Logging Facade for Java API, TestNG
+    Optional:      (none)
+    License:       BSD
+
 ===============================================================================
 The following components are forks of third party projects:
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+  <appender name="performance" class="loci.tests.testng.TimestampedLogFileAppender">
+    <File>target/target-test-runner-performance.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d %-10.10r [%10.10t] %-6.6p %40.40c %x - %m%n</pattern>
+    </layout>
+  </appender>
+  <appender name="default" class="loci.tests.testng.TimestampedLogFileAppender">
+    <File>target/target-test-runner.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d %-10.10r [%10.10t] %-6.6p %40.40c %x - %m%n</pattern>
+    </layout>
+  </appender>
+  <logger name="org.perf4j" level="info">
+    <appender-ref ref="performance"/>
+  </logger>
+  <root level="debug">
+    <appender-ref ref="default"/>
+  </root>
+</configuration>

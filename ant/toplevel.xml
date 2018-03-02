@@ -15,27 +15,31 @@ Type "ant -p" for a list of targets.
   <target name="compile"
     depends="compile-formats-gpl,
       compile-formats-api,
-      compile-formats-bsd"
+      compile-formats-bsd,
+      compile-tests"
     description="compile classes for all components"/>
 
   <target name="jars"
     depends="copy-jars,
       jar-formats-gpl,
       jar-formats-api,
-      jar-formats-bsd"
+      jar-formats-bsd,
+      jar-tests"
     description="generate JAR files for software packages"/>
 
   <target name="findbugs"
     depends="findbugs-formats-gpl,
       findbugs-formats-api,
-      findbugs-formats-bsd"
+      findbugs-formats-bsd,
+      findbugs-tests"
     description="run findbugs on most components"/>
 
   <target name="clean"
     depends="
       clean-formats-gpl,
       clean-formats-api,
-      clean-formats-bsd"
+      clean-formats-bsd,
+      clean-tests"
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
@@ -44,7 +48,8 @@ Type "ant -p" for a list of targets.
   <target name="test"
     depends="test-formats-gpl,
       test-formats-api,
-      test-formats-bsd"
+      test-formats-bsd,
+      test-tests"
     description="compile and run tests for all components">
   </target>
 
@@ -161,6 +166,41 @@ Type "ant -p" for a list of targets.
   <target name="test-formats-gpl" depends="jar-formats-gpl, testing-deps"
     description="compile and run tests for GPL format implementations">
     <ant dir="components/formats-gpl" target="test"/>
+  </target>
+
+  <!-- Testing framework -->
+
+  <target name="deps-tests"
+    depends="copy-jars, jar-formats-gpl,
+      jar-formats-api,
+      jar-formats-bsd"/>
+
+  <target name="compile-tests" depends="deps-tests"
+    description="compile classes for Bio-Formats testing framework">
+    <ant dir="components/test-suite" target="tests.compile"/>
+  </target>
+
+  <target name="jar-tests" depends="deps-tests"
+    description="generate JAR file for Bio-Formats testing framework">
+    <ant dir="components/test-suite" target="tests.jar"/>
+  </target>
+
+  <target name="findbugs-tests" depends="jar-tests"
+    description="run findbugs on Bio-Formats testing framework">
+    <ant dir="components/test-suite" target="tests.findbugs"/>
+  </target>
+
+  <target name="clean-tests"
+    depends="clean-formats-gpl,
+      clean-formats-api,
+      clean-formats-bsd"
+    description="remove build files for Bio-Formats testing framework">
+    <ant dir="components/test-suite" target="tests.clean"/>
+  </target>
+
+  <target name="test-tests" depends="jar-tests, testing-deps"
+    description="compile and run tests for Bio-Formats testing framework">
+    <ant dir="components/test-suite" target="test"/>
   </target>
 
   <!-- Internal targets -->
