@@ -9,12 +9,14 @@ sudo: false
 cache:
   directories:
   - $HOME/.m2
+  - downloads
 
 addons:
   apt_packages:
     - git
 
 jdk:
+  - oraclejdk9
   - oraclejdk8
   - openjdk7
 

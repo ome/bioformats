@@ -6,6 +6,11 @@ environment:
 
 # Note that only Oracle JDK is provided.
   matrix:
+    - java: 9
+      build: maven
+    - java: 9
+      build: ant
+      ant_version: 1.10.1
     - java: 1.8
       build: maven
     - java: 1.8
@@ -32,6 +37,7 @@ init:
   - refreshenv
   - 'if [%java%] == [1.7] set "JAVA_HOME=C:\Program Files\Java\jdk1.7.0"'
   - 'if [%java%] == [1.8] set "JAVA_HOME=C:\Program Files\Java\jdk1.8.0"'
+  - 'if [%java%] == [9] set "JAVA_HOME=C:\Program Files\Java\jdk9"'
   - PATH=%JAVA_HOME%\bin;%PATH%
   - 'if [%build%] == [maven] set "MAVEN_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
   - 'if [%build%] == [ant] set "ANT_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
