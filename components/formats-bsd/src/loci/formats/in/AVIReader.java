@@ -195,7 +195,7 @@ public class AVIReader extends FormatReader {
     }
 
     long fileOff = offsets.get(no).longValue();
-    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : in.length();
+    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : fileOff + lengths.get(no);
     long maxBytes = end - fileOff;
     in.seek(fileOff);
 
