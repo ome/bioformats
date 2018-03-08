@@ -1138,7 +1138,7 @@ public class FakeReader extends FormatReader {
 
       if (exposureTime != null) {
         try {
-          Double v = new Double(exposureTime);
+          Double v = Double.valueOf(exposureTime);
           Time exposure = FormatTools.getTime(v, exposureTimeUnit);
           if (exposure != null) {
             store.setPlaneExposureTime(exposure, newSeries, i);
@@ -1149,80 +1149,20 @@ public class FakeReader extends FormatReader {
         }
       }
 
-      String positionX = table.get("PositionX_" + i);
-      String positionXUnit = table.get("PositionXUnit_" + i);
-
-      if (positionX != null) {
-        try {
-          Double v = new Double(positionX);
-
-          Length x = new Length(v, UNITS.MICROM);
-          if (positionXUnit != null) {
-            try {
-              UnitsLength ul = UnitsLength.fromString(positionXUnit);
-              x = UnitsLength.create(v, ul);
-            }
-            catch (EnumerationException e) {
-              LOGGER.trace("Could not parse PositionXUnit for series #" + s + " plane #" + i);
-            }
-          }
-          if (x != null) {
-            store.setPlanePositionX(x, newSeries, i);
-          }
-        }
-        catch (NumberFormatException e) {
-          LOGGER.trace("Could not parse PositionX for series #" + s + " plane #" + i, e);
-        }
+      // TODO: could be cleaned up further when Java 8 is the minimum version
+      Length x = parsePosition("X", s, i, table);
+      if (x != null) {
+        store.setPlanePositionX(x, newSeries, i);
       }
 
-      String positionY = table.get("PositionY_" + i);
-      String positionYUnit = table.get("PositionYUnit_" + i);
-
-      if (positionY != null) {
-        try {
-          Double v = new Double(positionY);
-          Length y = new Length(v, UNITS.MICROM);
-          if (positionYUnit != null) {
-            try {
-              UnitsLength ul = UnitsLength.fromString(positionYUnit);
-              y = UnitsLength.create(v, ul);
-            }
-            catch (EnumerationException e) {
-              LOGGER.trace("Could not parse PositionYUnit for series #" + s + " plane #" + i);
-            }
-          }
-          if (y != null) {
-            store.setPlanePositionY(y, newSeries, i);
-          }
-        }
-        catch (NumberFormatException e) {
-          LOGGER.trace("Could not parse PositionY for series #" + s + " plane #" + i, e);
-        }
+      Length y = parsePosition("Y", s, i, table);
+      if (y != null) {
+        store.setPlanePositionY(y, newSeries, i);
       }
 
-      String positionZ = table.get("PositionZ_" + i);
-      String positionZUnit = table.get("PositionZUnit_" + i);
-
-      if (positionZ != null) {
-        try {
-          Double v = new Double(positionZ);
-          Length z = new Length(v, UNITS.MICROM);
-          if (positionZUnit != null) {
-            try {
-              UnitsLength ul = UnitsLength.fromString(positionZUnit);
-              z = UnitsLength.create(v, ul);
-            }
-            catch (EnumerationException e) {
-              LOGGER.trace("Could not parse PositionZUnit for series #" + s + " plane #" + i);
-            }
-          }
-          if (z != null) {
-            store.setPlanePositionZ(z, newSeries, i);
-          }
-        }
-        catch (NumberFormatException e) {
-          LOGGER.trace("Could not parse PositionZ for series #" + s + " plane #" + i, e);
-        }
+      Length z = parsePosition("Z", s, i, table);
+      if (z != null) {
+        store.setPlanePositionZ(z, newSeries, i);
       }
     }
 
@@ -1397,4 +1337,32 @@ public class FakeReader extends FormatReader {
       }
       return null;
   }
+
+  private Length parsePosition(String axis, int s, int index, IniTable table) {
+    String position = table.get("Position" + axis + "_" + index);
+    String positionUnit = table.get("Position" + axis + "Unit_" + index);
+
+    if (position != null) {
+      try {
+        Double v = Double.valueOf(position);
+        Length size = new Length(v, UNITS.MICROM);
+        if (positionUnit != null) {
+          try {
+            UnitsLength ul = UnitsLength.fromString(positionUnit);
+            size = UnitsLength.create(v, ul);
+          }
+          catch (EnumerationException e) {
+            LOGGER.trace("Could not parse Position" + axis + "Unit for series #" + s + " plane #" + index);
+          }
+        }
+        return size;
+      }
+      catch (NumberFormatException e) {
+        LOGGER.trace("Could not parse Position" + axis + " for series #" + s + " plane #" + index, e);
+      }
+    }
+
+    return null;
+  }
+
 }
