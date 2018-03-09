@@ -39,6 +39,21 @@ global metadata map:
     echo "[GlobalMetadata]" >> my-special-test-file.fake.ini
     echo "my.key=some.value" >> my-special-test-file.fake.ini
 
+The :file:`.ini` file can also contain one section for each series, which allows metadata such as
+exposure times and positions to be set for each plane:
+
+::
+
+    echo "[series_0]" >> my-special-test-file.fake.ini
+    echo "ExposureTime_0=10" >> my-special-test-file.fake.ini
+    echo "ExposureTimeUnit_0=ms" >> my-special-test-file.fake.ini
+    echo "PositionX_0=5" >> my-special-test-file.fake.ini
+    echo "PositionY_0=-5" >> my-special-test-file.fake.ini
+    echo "PositionZ_0=1" >> my-special-test-file.fake.ini
+    echo "PositionXUnit_0=mm" >> my-special-test-file.fake.ini
+    echo "PositionYUnit_0=mm" >> my-special-test-file.fake.ini
+    echo "PositionZUnit_0=mm" >> my-special-test-file.fake.ini
+
 
 Several keys have support for units and can be expressed as ``KEY=VALUE UNIT`` where ``UNIT`` is the symbol of the desired unit::
 
@@ -228,10 +243,37 @@ with their default values, is shown below.
     - * ellipses, labels, lines, points, polygons, polylines, rectangles
       * the number of ROIs containing one shape of the given type to generate
       *
+    - * ExposureTime_x
+      * floating point exposure time for plane ``x`` [2]_
+      *
+    - * ExposureTimeUnit_x
+      * string defining the units for the corresponding ``ExposureTime_x`` [2]_
+      * seconds
+    - * PositionX_x
+      * floating point X position for plane ``x`` [2]_
+      *
+    - * PositionXUnit_x
+      * string defining the units for the corresponding ``PositionX_x`` [2]_
+      * microns
+    - * PositionY_x
+      * floating point Y position for plane ``x`` [2]_
+      *
+    - * PositionYUnit_x
+      * string defining the units for the corresponding ``PositionY_x`` [2]_
+      * microns
+    - * PositionZ_x
+      * floating point Z position for plane ``x`` [2]_
+      *
+    - * PositionZUnit_x
+      * string defining the units for the corresponding ``PositionZ_x`` [2]_
+      * microns
+
 
 .. [1] Default value set to 1 if any of the ``screens``, ``plates``,
        ``plateAcqs``, ``plateRows``, ``plateCols`` or ``fields`` values is set
        to a value greater than zero.
+
+.. [2] Must be stored in the INI file under a ``[series_n]`` section, where ``n`` is the 0-based series index.
 
 For full details of these keys, how unset and default values are handled and
 further examples see :source:`loci.formats.in.FakeReader <components/formats-bsd/src/loci/formats/in/FakeReader.java>`.
