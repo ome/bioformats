@@ -1352,7 +1352,7 @@ public class FakeReader extends FormatReader {
             size = UnitsLength.create(v, ul);
           }
           catch (EnumerationException e) {
-            LOGGER.trace("Could not parse Position" + axis + "Unit for series #" + s + " plane #" + index);
+            LOGGER.trace("Could not parse Position" + axis + "Unit for series #" + s + " plane #" + index, e);
           }
         }
         return size;
