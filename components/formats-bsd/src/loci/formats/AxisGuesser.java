@@ -215,10 +215,22 @@ public class AxisGuesser {
         char third = elements[i].length == 2 ? 'b' :
           elements[i][2].toLowerCase().charAt(0);
 
-        if ((first == 'r' || second == 'r' || third == 'r') &&
-          (first == 'g' || second == 'g' || third == 'g') &&
-          (first == 'b' || second == 'b' || third == 'b'))
-        {
+        boolean hasRed = first == 'r' || second == 'r' || third == 'r';
+        boolean hasGreen = first == 'g' || second == 'g' || third == 'g';
+        boolean hasBlue = first == 'b' || second == 'b' || third == 'b';
+
+        int rgbChannels = 0;
+        if (hasRed) {
+          rgbChannels++;
+        }
+        if (hasGreen) {
+          rgbChannels++;
+        }
+        if (hasBlue) {
+          rgbChannels++;
+        }
+
+        if (rgbChannels >= 2) {
           axisTypes[i] = C_AXIS;
           continue;
         }
