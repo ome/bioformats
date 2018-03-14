@@ -227,7 +227,6 @@ public class TiffWriter extends FormatWriter {
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
     if (currentTileSizeX < w || currentTileSizeY < h) {
-      int tileNo = no;
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
       int numTilesY = (h + (y % currentTileSizeY) + currentTileSizeY - 1) / currentTileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
@@ -243,7 +242,7 @@ public class TiffWriter extends FormatWriter {
           synchronized (this) {
             // This operation is synchronized against the TIFF saver.
             synchronized (tiffSaver) {
-              index = prepareToWriteImage(tileNo++, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
+              index = prepareToWriteImage(no, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
               if (index == -1) {
                 return;
               }
@@ -292,7 +291,7 @@ public class TiffWriter extends FormatWriter {
     // Ensure that no more than one thread manipulated the initialized array
     // at one time.
     synchronized (this) {
-      if (no < initialized[series].length && !initialized[series][no]) {
+      if (!initialized[series][no]) {
         initialized[series][no] = true;
 
         RandomAccessInputStream tmp = createInputStream();
