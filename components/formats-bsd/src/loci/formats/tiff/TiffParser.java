@@ -229,14 +229,6 @@ public class TiffParser {
         subOffsets = ifd.getIFDLongArray(IFD.SUB_IFD);
       }
       catch (FormatException e) { }
-      if (subOffsets != null) {
-        for (long subOffset : subOffsets) {
-          IFD sub = getIFD(subOffset);
-          if (sub != null) {
-            ifds.add(sub);
-          }
-        }
-      }
     }
     if (doCaching) ifdList = ifds;
 
