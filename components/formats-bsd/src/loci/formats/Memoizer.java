@@ -797,7 +797,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Check either the in-place folder or the main memoizer directory
       // exists and is writeable
-      if (!writeDirectory.exists() || !writeDirectory.canWrite()) {
+      if (!isWritableDirectory(writeDirectory)) {
         LOGGER.warn("skipping memo: directory not writeable - {}",
           writeDirectory);
         return null;
@@ -808,6 +808,15 @@ public class Memoizer extends ReaderWrapper {
     String p = f.getParent();
     String n = f.getName();
     return new File(p, "." + n + ".bfmemo");
+  }
+
+  /**
+   * Test if the given {@link File} instance is a writable directory.
+   * @param writeDirectory a possible writable directory
+   * @return if the given {@link File} is indeed a writable directory
+   */
+  protected boolean isWritableDirectory(File writeDirectory) {
+      return writeDirectory.canWrite() && writeDirectory.isDirectory();
   }
 
   /**
