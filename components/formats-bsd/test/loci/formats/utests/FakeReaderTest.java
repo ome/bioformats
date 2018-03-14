@@ -56,6 +56,7 @@ import loci.common.services.ServiceFactory;
 
 import ome.units.UNITS;
 import ome.units.quantity.Length;
+import ome.units.quantity.Time;
 
 import ome.xml.model.primitives.Timestamp;
 
@@ -359,6 +360,29 @@ public class FakeReaderTest {
     reader.setId(fakeIni.getAbsolutePath());
     assertTrue(service.validateOMEXML(service.getOMEXML(m)));
     assertEquals(reader.getGlobalMetadata().get("foo"), "bar");
+  }
+
+  @Test
+  public void testPlaneMetadata() throws Exception {
+    File fakeIni = mkIni("foo.fake.ini", "sizeC=2",
+      "[series_0]", "ExposureTime_0=100.0", "ExposureTimeUnit_0=ms",
+      "ExposureTime_1=50.0", "ExposureTimeUnit_1=ns",
+      "PositionX_0=10.0", "PositionY_0=20.0", "PositionZ_0=30.0",
+      "PositionXUnit_0=mm", "PositionYUnit_0=mm", "PositionZUnit_0=mm",
+      "PositionX_1=5.0", "PositionY_1=10.0", "PositionZ_1=15.0",
+      "PositionXUnit_1=nm", "PositionYUnit_1=nm", "PositionZUnit_1=nm");
+    reader.setId(fakeIni.getAbsolutePath());
+    m = service.asRetrieve(reader.getMetadataStore());
+
+    assertEquals(m.getPixelsSizeC(0).getNumberValue(), 2);
+    assertEquals(m.getPlaneExposureTime(0, 0), new Time(100.0, UNITS.MILLISECOND));
+    assertEquals(m.getPlaneExposureTime(0, 1), new Time(50.0, UNITS.NANOSECOND));
+    assertEquals(m.getPlanePositionX(0, 0), new Length(10.0, UNITS.MM));
+    assertEquals(m.getPlanePositionY(0, 0), new Length(20.0, UNITS.MM));
+    assertEquals(m.getPlanePositionZ(0, 0), new Length(30.0, UNITS.MM));
+    assertEquals(m.getPlanePositionX(0, 1), new Length(5.0, UNITS.NM));
+    assertEquals(m.getPlanePositionY(0, 1), new Length(10.0, UNITS.NM));
+    assertEquals(m.getPlanePositionZ(0, 1), new Length(15.0, UNITS.NM));
   }
 
   @Test(dataProvider = "physical sizes")
