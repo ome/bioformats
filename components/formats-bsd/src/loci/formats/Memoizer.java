@@ -755,7 +755,7 @@ public class Memoizer extends ReaderWrapper {
     return service;
   }
   protected Slf4JStopWatch stopWatch() {
-      return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
+    return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
 
   /**
@@ -816,7 +816,7 @@ public class Memoizer extends ReaderWrapper {
    * @return if the given {@link File} is indeed a writable directory
    */
   protected boolean isWritableDirectory(File writeDirectory) {
-      return writeDirectory.canWrite() && writeDirectory.isDirectory();
+    return writeDirectory.canWrite() && writeDirectory.isDirectory();
   }
 
   /**
