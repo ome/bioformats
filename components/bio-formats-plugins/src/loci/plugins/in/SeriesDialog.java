@@ -273,9 +273,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     buttons.add(select);
     buttons.add(deselect);
 
-    gbc.gridx = 2;
     gbc.gridy = buttonRow;
-    gbc.anchor = GridBagConstraints.EAST;
+    gbc.anchor = GridBagConstraints.WEST;
     gbc.insets = new Insets(15, 0, 0, 0);
     gdl.setConstraints(buttons, gbc);
     gd.add(buttons);
