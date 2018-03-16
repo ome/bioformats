@@ -315,24 +315,6 @@ public class TiffWriter extends FormatWriter {
       c = buf.length / (w * h * bytesPerPixel);
     }
 
-    if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      // split channels
-      checkParams = false;
-
-      if (no == 0) {
-        initialized[series] = new boolean[initialized[series].length * c];
-      }
-
-      for (int i=0; i<c; i++) {
-        byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
-          false, interleaved);
-
-        saveBytes(no * c + i, b, (IFD) ifd.clone(), x, y, w, h);
-      }
-      checkParams = true;
-      return -1;
-    }
-
     formatCompression(ifd);
     byte[][] lut = AWTImageTools.get8BitLookupTable(cm);
     if (lut != null) {
@@ -444,20 +426,6 @@ public class TiffWriter extends FormatWriter {
     return getPlaneCount(series);
   }
   
-  @Override
-  protected int getPlaneCount(int series) {
-    MetadataRetrieve retrieve = getMetadataRetrieve();
-    int c = getSamplesPerPixel(series);
-    int type = FormatTools.pixelTypeFromString(
-      retrieve.getPixelsType(series).toString());
-    int bytesPerPixel = FormatTools.getBytesPerPixel(type);
-
-    if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      return super.getPlaneCount(series) * c;
-    }
-    return super.getPlaneCount(series);
-  }
-
   // -- IFormatWriter API methods --
 
   /**
