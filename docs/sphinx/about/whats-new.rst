@@ -7,7 +7,7 @@ Version history
 File format fixes and improvements:
 
 * TIFF
-   - updated TiffWriter so that planes will no longer be split when using nonstandard
+   - updated TiffWriter so that planes will no longer be split when using non-standard
      SamplesPerPixel e.g. images with 2 or 4 samples per pixel. This will ensure the ``TiffData``
      elements represent the structure specified by the user. If users wish to split planes the 
      ``ChannelSeparator`` and ``bfconvert`` provide the means to do this explicitly
@@ -25,10 +25,10 @@ Bug fixes and improvements:
 
 * limited the number of exceptions in the Bio-Formats plugins exporter when an unsupported pixel 
   type is found
-* fake test images now allow for per-plane ExposureTime{X,Y,Z} and Position{X,Y,Z} keys in the INI file. 
-  For further details see the documentation for :doc:`Generating test images </developers/generating-test-images>`
+* fake test images now allow for per-plane ExposureTime{X,Y,Z} and Position{X,Y,Z} keys in the INI file
+  (for further details see the documentation for :doc:`Generating test images </developers/generating-test-images>`)
 * file patterns now have expanded support for multi-channel pyramids, allowing for the matching of 
-  at least two channels rather than three. Also fixes the stitching of files containing a pyramid
+  at least two channels rather than three, and the stitching of files containing a pyramid has also been fixed
 
 Documentation improvements:
 
