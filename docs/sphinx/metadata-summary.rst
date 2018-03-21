@@ -188,10 +188,10 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 363
    * - :doc:`FakeReader <metadata/FakeReader>`
-     - 84
+     - 87
      - 0
      - 0
-     - 392
+     - 389
    * - :doc:`FilePatternReader <metadata/FilePatternReader>`
      - 19
      - 0
@@ -2411,20 +2411,20 @@ You can sort this table by clicking on any of the headings.
      - 0
      - 172
    * - :schema:`Plane - PositionX <OME-2016-06/ome_xsd.html#Plane_PositionX>`
-     - 31
+     - 32
      - 0
      - 0
-     - 141
+     - 140
    * - :schema:`Plane - PositionY <OME-2016-06/ome_xsd.html#Plane_PositionY>`
-     - 31
+     - 32
      - 0
      - 0
-     - 141
+     - 140
    * - :schema:`Plane - PositionZ <OME-2016-06/ome_xsd.html#Plane_PositionZ>`
-     - 24
+     - 25
      - 0
      - 0
-     - 148
+     - 147
    * - :schema:`Plane - TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
      - 172
      - 0
