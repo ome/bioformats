@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 476 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 84 of them (17%).
-  * Of those, Bio-Formats fully or partially converts 84 (100%).
+  * The file format itself supports 87 of them (18%).
+  * Of those, Bio-Formats fully or partially converts 87 (100%).
 
 Supported fields
 ===============================================================================
@@ -73,6 +73,9 @@ These fields are fully supported by the Bio-Formats Simulated data format reader
   * :schema:`Pixels : SizeZ <OME-2016-06/ome_xsd.html#Pixels_SizeZ>`
   * :schema:`Pixels : Type <OME-2016-06/ome_xsd.html#Pixels_Type>`
   * :schema:`Plane : ExposureTime <OME-2016-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : PositionX <OME-2016-06/ome_xsd.html#Plane_PositionX>`
+  * :schema:`Plane : PositionY <OME-2016-06/ome_xsd.html#Plane_PositionY>`
+  * :schema:`Plane : PositionZ <OME-2016-06/ome_xsd.html#Plane_PositionZ>`
   * :schema:`Plane : TheC <OME-2016-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2016-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2016-06/ome_xsd.html#Plane_TheZ>`
@@ -102,6 +105,6 @@ These fields are fully supported by the Bio-Formats Simulated data format reader
   * :schema:`XMLAnnotation : Namespace <OME-2016-06/ome_xsd.html#Annotation_Namespace>`
   * :schema:`XMLAnnotation : Value <OME-2016-06/ome_xsd.html#XMLAnnotation_Value>`
 
-**Total supported: 84**
+**Total supported: 87**
 
-**Total unknown or missing: 392**
+**Total unknown or missing: 389**

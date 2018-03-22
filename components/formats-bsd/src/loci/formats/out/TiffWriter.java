@@ -227,7 +227,6 @@ public class TiffWriter extends FormatWriter {
       ifd.put(new Integer(IFD.TILE_LENGTH), new Long(currentTileSizeY));
     }
     if (currentTileSizeX < w || currentTileSizeY < h) {
-      int tileNo = no;
       int numTilesX = (w + (x % currentTileSizeX) + currentTileSizeX - 1) / currentTileSizeX;
       int numTilesY = (h + (y % currentTileSizeY) + currentTileSizeY - 1) / currentTileSizeY;
       for (int yTileIndex = 0; yTileIndex < numTilesY; yTileIndex++) {
@@ -243,7 +242,7 @@ public class TiffWriter extends FormatWriter {
           synchronized (this) {
             // This operation is synchronized against the TIFF saver.
             synchronized (tiffSaver) {
-              index = prepareToWriteImage(tileNo++, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
+              index = prepareToWriteImage(no, tileBuf, ifd, tileParams.x, tileParams.y, tileParams.width, tileParams.height);
               if (index == -1) {
                 return;
               }
@@ -292,7 +291,7 @@ public class TiffWriter extends FormatWriter {
     // Ensure that no more than one thread manipulated the initialized array
     // at one time.
     synchronized (this) {
-      if (no < initialized[series].length && !initialized[series][no]) {
+      if (!initialized[series][no]) {
         initialized[series][no] = true;
 
         RandomAccessInputStream tmp = createInputStream();
@@ -314,24 +313,6 @@ public class TiffWriter extends FormatWriter {
     int blockSize = w * h * c * bytesPerPixel;
     if (blockSize > buf.length) {
       c = buf.length / (w * h * bytesPerPixel);
-    }
-
-    if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      // split channels
-      checkParams = false;
-
-      if (no == 0) {
-        initialized[series] = new boolean[initialized[series].length * c];
-      }
-
-      for (int i=0; i<c; i++) {
-        byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
-          false, interleaved);
-
-        saveBytes(no * c + i, b, (IFD) ifd.clone(), x, y, w, h);
-      }
-      checkParams = true;
-      return -1;
     }
 
     formatCompression(ifd);
@@ -445,20 +426,6 @@ public class TiffWriter extends FormatWriter {
     return getPlaneCount(series);
   }
   
-  @Override
-  protected int getPlaneCount(int series) {
-    MetadataRetrieve retrieve = getMetadataRetrieve();
-    int c = getSamplesPerPixel(series);
-    int type = FormatTools.pixelTypeFromString(
-      retrieve.getPixelsType(series).toString());
-    int bytesPerPixel = FormatTools.getBytesPerPixel(type);
-
-    if (bytesPerPixel > 1 && c != 1 && c != 3) {
-      return super.getPlaneCount(series) * c;
-    }
-    return super.getPlaneCount(series);
-  }
-
   // -- IFormatWriter API methods --
 
   /**
