@@ -47,6 +47,8 @@ import org.libjpegturbo.turbojpeg.TJDecompressor;
 
 import org.scijava.nativelib.NativeLibraryUtil;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * Based upon the NDPI to OME-TIFF converter by Matthias Baldauf:
  *
@@ -57,6 +59,9 @@ import org.scijava.nativelib.NativeLibraryUtil;
 public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- Constants --
+
+  private static final org.slf4j.Logger LOGGER =
+    LoggerFactory.getLogger(JPEGTurboServiceImpl.class);
 
   private static final String NATIVE_LIB_CLASS =
     "org.scijava.nativelib.NativeLibraryUtil";
@@ -142,8 +147,11 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       int length = in.readShort() & 0xffff;
       long end = in.getFilePointer() + length - 2;
 
+      LOGGER.debug("found marker = {} at pointer = {}", marker, in.getFilePointer());
+
       if (marker == DRI) {
         restartInterval = in.readShort() & 0xffff;
+        LOGGER.debug("set restart interval to {}", restartInterval);
       }
       else if (marker == SOF0) {
         imageDimensions = in.getFilePointer() + 1;
@@ -186,6 +194,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           marker = DataTools.bytesToShort(buf, i, 2, false) & 0xffff;
           if (marker >= RST0 && marker <= RST7) {
             restartMarkers.add(in.getFilePointer() - n + i + 2);
+            LOGGER.debug("adding RST marker at {}", restartMarkers.get(restartMarkers.size() - 1));
             i += restartInterval;
           }
         }
@@ -206,6 +215,11 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
     if (yTiles * tileDim != imageHeight) {
       yTiles++;
+    }
+
+    if (restartInterval == 1 && restartMarkers.size() <= 1) {
+      // interval and markers are not present or invalid
+      throw new IOException("Restart interval and markers invalid");
     }
   }
 
