@@ -168,7 +168,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       }
     }
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     IniTable cameraTable = ini.getTable(" CAPTURE DEVICE ");
     binning = cameraTable.get("Binning") + "x" + cameraTable.get("Binning");

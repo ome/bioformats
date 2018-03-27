@@ -36,16 +36,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.formats.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatReader;
-import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -60,7 +56,7 @@ import loci.formats.tiff.TiffParser;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class MinimalTiffReader extends FormatReader {
+public class MinimalTiffReader extends SubResolutionFormatReader {
 
   // -- Constants --
 
@@ -468,7 +464,7 @@ public class MinimalTiffReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
 
     ms0.imageCount = ifds.size();
 
@@ -595,7 +591,7 @@ public class MinimalTiffReader extends FormatReader {
 
       for (IFD ifd : ifds) {
         CoreMetadata ms =  new CoreMetadata(this, 0);
-        core.add(ms);
+        core.add(0, ms);
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
         ms.sizeT = ms0.sizeT;

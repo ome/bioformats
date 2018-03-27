@@ -415,28 +415,30 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     for (int s=0; s<core.size(); s++) {
-      IFD ifd = ifds.get(getIFDIndex(s, 0));
-      PhotoInterp p = ifd.getPhotometricInterpretation();
-      int samples = ifd.getSamplesPerPixel();
-      CoreMetadata ms = core.get(s);
-      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
+      for (int r = 0; r < core.size(s); r++) {
+        IFD ifd = ifds.get(getIFDIndex(s, 0));
+        PhotoInterp p = ifd.getPhotometricInterpretation();
+        int samples = ifd.getSamplesPerPixel();
+        CoreMetadata ms = core.get(s, r);
+        ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      ms.sizeX = (int) ifd.getImageWidth();
-      ms.sizeY = (int) ifd.getImageLength();
-      ms.sizeZ = s < pyramidHeight ? sizeZ : 1;
-      ms.sizeT = 1;
-      ms.sizeC = ms.rgb ? samples : 1;
-      ms.littleEndian = ifd.isLittleEndian();
-      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
-        (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.imageCount = ms.sizeZ * ms.sizeT;
-      ms.pixelType = ifd.getPixelType();
-      ms.metadataComplete = true;
-      ms.interleaved =
-        ms.sizeX > MAX_SIZE && ms.sizeY > MAX_SIZE;
-      ms.falseColor = false;
-      ms.dimensionOrder = "XYCZT";
-      ms.thumbnail = s != 0;
+        ms.sizeX = (int) ifd.getImageWidth();
+        ms.sizeY = (int) ifd.getImageLength();
+        ms.sizeZ = s < pyramidHeight ? sizeZ : 1;
+        ms.sizeT = 1;
+        ms.sizeC = ms.rgb ? samples : 1;
+        ms.littleEndian = ifd.isLittleEndian();
+        ms.indexed = p == PhotoInterp.RGB_PALETTE &&
+          (get8BitLookupTable() != null || get16BitLookupTable() != null);
+        ms.imageCount = ms.sizeZ * ms.sizeT;
+        ms.pixelType = ifd.getPixelType();
+        ms.metadataComplete = true;
+        ms.interleaved =
+          ms.sizeX > MAX_SIZE && ms.sizeY > MAX_SIZE;
+        ms.falseColor = false;
+        ms.dimensionOrder = "XYCZT";
+        ms.thumbnail = s != 0;
+      }
     }
 
     String metadataTag = ifds.get(0).getIFDStringValue(METADATA_TAG);

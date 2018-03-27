@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import loci.formats.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -53,10 +54,6 @@ import loci.common.Location;
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -666,7 +663,7 @@ public class MetamorphReader extends BaseTiffReader {
       RandomAccessInputStream s = new RandomAccessInputStream(file, 16);
       TiffParser tp = new TiffParser(s);
       IFD ifd = tp.getFirstIFD();
-      CoreMetadata ms0 = core.get(0);
+      CoreMetadata ms0 = core.get(0, 0);
       s.close();
       ms0.sizeX = (int) ifd.getImageWidth();
       ms0.sizeY = (int) ifd.getImageLength();
@@ -683,7 +680,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (stks != null && stks.length > 1) {
         // Note that core can't be replaced with newCore until the end of this block.
-        ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
+        CoreMetadataList newCore = new CoreMetadataList();
         for (int i=0; i<stks.length; i++) {
           CoreMetadata ms = new CoreMetadata();
           newCore.add(ms);
@@ -703,12 +700,12 @@ public class MetamorphReader extends BaseTiffReader {
         if (stks.length > nstages) {
           for (int j=0; j<stagesCount; j++) {
             int idx = j * 2 + 1;
-            CoreMetadata midx = newCore.get(idx);
-            CoreMetadata pmidx = newCore.get(j * 2);
+            CoreMetadata midx = newCore.get(idx, 0);
+            CoreMetadata pmidx = newCore.get(j * 2, 0);
             pmidx.sizeC = stks[j * 2].length / getSizeT();
             midx.sizeC = stks[idx].length / midx.sizeT;
             midx.sizeZ =
-             hasZ.size() > 1 && hasZ.get(1) && core.get(0).sizeZ == 1 ? zc : 1;
+             hasZ.size() > 1 && hasZ.get(1) && core.get(0, 0).sizeZ == 1 ? zc : 1;
             pmidx.imageCount = pmidx.sizeC *
               pmidx.sizeT * pmidx.sizeZ;
             midx.imageCount =
@@ -772,7 +769,7 @@ public class MetamorphReader extends BaseTiffReader {
       } else {
         rows = Collections.max(rowMap.values());
         cols = Collections.max(colMap.values());
-        CoreMetadata c = core.get(0);
+        CoreMetadata c = core.get(0, 0);
         core.clear();
         c.sizeZ = 1;
         c.sizeT = 1;
@@ -1167,7 +1164,7 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0, 0);
 
     ms0.sizeZ = 1;
     ms0.sizeT = 0;
@@ -1586,7 +1583,7 @@ public class MetamorphReader extends BaseTiffReader {
       zDistances[i] = readRational(in).doubleValue();
       addSeriesMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
-      if (zDistances[i] != 0.0) core.get(0).sizeZ++;
+      if (zDistances[i] != 0.0) core.get(0, 0).sizeZ++;
 
       cDate = decodeDate(in.readInt());
       cTime = decodeTime(in.readInt());
@@ -1599,7 +1596,7 @@ public class MetamorphReader extends BaseTiffReader {
       // modification date and time are skipped as they all seem equal to 0...?
       in.skip(8);
     }
-    if (getSizeZ() == 0) core.get(0).sizeZ = 1;
+    if (getSizeZ() == 0) core.get(0, 0).sizeZ = 1;
 
     in.seek(saveLoc);
   }
@@ -1692,7 +1689,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
     if (uniqueZ.size() == mmPlanes) {
-      core.get(0).sizeZ = mmPlanes;
+      core.get(0, 0).sizeZ = mmPlanes;
     }
   }
 
@@ -1892,7 +1889,7 @@ public class MetamorphReader extends BaseTiffReader {
             skipKey = true;
           }
           else if (valOrOffset == 0 && getSizeZ() < mmPlanes) {
-            core.get(0).sizeZ = 1;
+            core.get(0, 0).sizeZ = 1;
           }
           break;
         case 49:

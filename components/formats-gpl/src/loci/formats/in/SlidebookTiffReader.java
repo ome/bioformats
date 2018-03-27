@@ -189,7 +189,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
     readers = new MinimalTiffReader[files.length];
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.imageCount = ifds.size() * files.length;
     m.sizeT = ifds.size();

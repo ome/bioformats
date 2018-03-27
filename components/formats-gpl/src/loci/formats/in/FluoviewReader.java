@@ -286,7 +286,7 @@ public class FluoviewReader extends BaseTiffReader {
 
     // calculate the dimension order and axis sizes
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     dimensionOrder = "XY";
     int seriesCount = 1;

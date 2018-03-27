@@ -204,7 +204,7 @@ public class VectraReader extends BaseTiffReader {
 
     // count number of channels
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
     m.sizeC = 1;
 
     if (ifds.get(0).getSamplesPerPixel() == 1) {
@@ -212,8 +212,7 @@ public class VectraReader extends BaseTiffReader {
       long height = ifds.get(0).getImageLength();
       int ifd = 1;
       while (ifds.get(ifd).getImageWidth() == width &&
-        ifds.get(ifd).getImageLength() == height)
-      {
+        ifds.get(ifd).getImageLength() == height) {
         m.sizeC++;
         ifd++;
       }
@@ -221,12 +220,11 @@ public class VectraReader extends BaseTiffReader {
 
     // count number of pyramid resolutions
 
-    for (int start=m.sizeC+1; start<ifds.size(); start+=m.sizeC) {
+    for (int start = m.sizeC + 1; start < ifds.size(); start += m.sizeC) {
       IFD ifd = ifds.get(start);
       if (ifd.getIFDIntValue(IFD.NEW_SUBFILE_TYPE) == 1) {
         pyramidDepth++;
-      }
-      else break;
+      } else break;
     }
 
     int coreSize = ifds.size() - (pyramidDepth * (m.sizeC - 1));
@@ -234,7 +232,7 @@ public class VectraReader extends BaseTiffReader {
     // repopulate core metadata
 
     core.clear();
-    for (int s=0; s<coreSize; s++) {
+    for (int s = 0; s < coreSize; s++) {
       CoreMetadata ms = new CoreMetadata(m);
       if (s == 0) {
         ms.resolutionCount = pyramidDepth;
@@ -242,31 +240,33 @@ public class VectraReader extends BaseTiffReader {
       core.add(ms);
     }
 
-    for (int s=0; s<core.size(); s++) {
-      CoreMetadata ms = core.get(s);
-      int index = getIFDIndex(s, 0);
-      IFD ifd = ifds.get(index);
-      PhotoInterp p = ifd.getPhotometricInterpretation();
-      int samples = ifd.getSamplesPerPixel();
-      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
+    for (int s = 0; s < core.size(); s++) {
+      for (int r = 0; r < core.size(s); r++) {
+        CoreMetadata ms = core.get(s, r);
+        int index = getIFDIndex(s, 0);
+        IFD ifd = ifds.get(index);
+        PhotoInterp p = ifd.getPhotometricInterpretation();
+        int samples = ifd.getSamplesPerPixel();
+        ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      ms.sizeX = (int) ifd.getImageWidth();
-      ms.sizeY = (int) ifd.getImageLength();
-      ms.sizeZ = 1;
-      ms.sizeT = 1;
-      if (ms.rgb) {
-        ms.sizeC = samples;
+        ms.sizeX = (int) ifd.getImageWidth();
+        ms.sizeY = (int) ifd.getImageLength();
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
+        if (ms.rgb) {
+          ms.sizeC = samples;
+        }
+        ms.littleEndian = ifd.isLittleEndian();
+        ms.indexed = p == PhotoInterp.RGB_PALETTE &&
+          (get8BitLookupTable() != null || get16BitLookupTable() != null);
+        ms.imageCount = ms.sizeC / samples;
+        ms.pixelType = ifd.getPixelType();
+        ms.metadataComplete = true;
+        ms.interleaved = false;
+        ms.falseColor = false;
+        ms.dimensionOrder = "XYCZT";
+        ms.thumbnail = s != 0;
       }
-      ms.littleEndian = ifd.isLittleEndian();
-      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
-        (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      ms.imageCount = ms.sizeC / samples;
-      ms.pixelType = ifd.getPixelType();
-      ms.metadataComplete = true;
-      ms.interleaved = false;
-      ms.falseColor = false;
-      ms.dimensionOrder = "XYCZT";
-      ms.thumbnail = s != 0;
     }
   }
 
@@ -461,7 +461,7 @@ public class VectraReader extends BaseTiffReader {
     if (coreIndex == pyramidDepth) {
       // this is always the RGB thumbnail, which is stored between the
       // largest resolution and the rest of the pyramid
-      return core.get(0).imageCount;
+      return core.get(0, 0).imageCount;
 
     }
     // optional extra macro or label image at the end of the IFD list

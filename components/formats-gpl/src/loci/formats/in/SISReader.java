@@ -113,7 +113,7 @@ public class SISReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     IFD ifd = ifds.get(0);
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     String iniMetadata = ifd.getIFDTextValue(SIS_INI_TAG);
     if (iniMetadata != null) {

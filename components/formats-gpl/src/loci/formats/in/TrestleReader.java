@@ -248,7 +248,7 @@ public class TrestleReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int s=0; s<core.size(); s++) {
-      CoreMetadata ms = core.get(s);
+      CoreMetadata ms = core.get(s, 0);
       IFD ifd = ifds.get(s);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
