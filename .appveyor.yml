@@ -1,7 +1,6 @@
 environment:
   AV_PROJECTS: 'c:\projects'
   AV_BF_M2: 'c:\projects\m2'
-  AV_BF_PYTHON: 'c:\projects\python'
   AV_BF_SOURCE: 'c:\projects\bioformats'
 
 # Note that only Oracle JDK is provided.
@@ -19,7 +18,6 @@ environment:
 
 cache:
   - '%AV_BF_M2% -> appveyor.yml'
-  - '%AV_BF_PYTHON% -> appveyor.yml'
 
 os: 'Visual Studio 2015'
 clone_folder: '%AV_BF_SOURCE%'
@@ -37,12 +35,6 @@ init:
   - 'if [%build%] == [ant] set "ANT_OPTS=-Dmaven.repo.local=%AV_BF_M2%"'
 
 build_script:
-  # Cached venv is available from this point.
-  - 'if NOT EXIST "%AV_BF_PYTHON%\" set AV_BF_CREATE_VENV=true'
-  - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m pip install virtualenv'
-  - 'if [%AV_BF_CREATE_VENV%] == [true] C:\Python36-x64\python -m virtualenv %AV_BF_PYTHON%'
-  - PATH=%AV_BF_PYTHON%;%AV_BF_PYTHON%\scripts;%PATH%
-  - 'if [%AV_BF_CREATE_VENV%] == [true] python -m pip install sphinx'
   - tools\test-build %build%
 
 #artifacts:

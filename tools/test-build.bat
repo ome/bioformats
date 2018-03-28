@@ -13,7 +13,6 @@ if [%build%] == [maven] (
 if [%build%] == [ant] (
   REM Test the ant build
   ant clean compile || exit /b 1
-  ant clean compile-autogen || exit /b 1
   ant clean compile-formats-api || exit /b 1
   ant clean compile-bio-formats-plugins || exit /b 1
   ant clean compile-formats-bsd || exit /b 1
@@ -22,8 +21,7 @@ if [%build%] == [ant] (
   ant clean compile-tests || exit /b 1
   ant clean compile-turbojpeg || exit /b 1
   ant clean utils || exit /b 1
-  ant -Dsphinx.warnopts="-W" clean-docs-sphinx docs-sphinx || exit /b 1
-  REM Do not clean here so that we can potentially archive both
-  REM docs and java archives.
+  REM Do not clean here so that we can potentially archive the
+  REM java archives.
   ant tools dist-bftools dist-matlab dist-octave || exit /b 1
 )
