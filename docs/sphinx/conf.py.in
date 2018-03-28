@@ -376,5 +376,5 @@ linkcheck_ignore = ['https://imspector.mpibpc.mpg.de',
     r'http://www.libpng.org/.*',
     'https://nifti.nimh.nih.gov/nifti-1/',
     'https://msdn.microsoft.com/en-us/library/ms779636.aspx',
-    r'https://cbia.fi.muni.cz/.*'
+    r'http://cbia.fi.muni.cz/.*'
 ]
