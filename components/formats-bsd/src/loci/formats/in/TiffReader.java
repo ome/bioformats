@@ -127,6 +127,7 @@ public class TiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
     String comment = ifds.get(0).getComment();
+    String lastComment = ifds.get(ifds.size() - 1).getComment();
 
     LOGGER.info("Checking comment style");
 
@@ -180,7 +181,15 @@ public class TiffReader extends BaseTiffReader {
 
     // check for ImageJ-style TIFF comment
     boolean ij = checkCommentImageJ(comment);
-    if (ij) parseCommentImageJ(comment);
+    if (ij) {
+      parseCommentImageJ(comment);
+    }
+    else {
+      ij = checkCommentImageJ(lastComment);
+      if (ij) {
+        parseCommentImageJ(lastComment);
+      }
+    }
 
     // check for MetaMorph-style TIFF comment
     boolean metamorph = checkCommentMetamorph(comment);

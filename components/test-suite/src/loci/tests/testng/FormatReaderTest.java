@@ -2399,7 +2399,7 @@ public class FormatReaderTest {
             }
 
             // the pattern reader only picks up pattern files
-            if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
+            if (!used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
             {
               continue;
