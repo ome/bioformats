@@ -1378,7 +1378,7 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Initializes a reader from the input file name.
+   * Initialize a reader from the input file name.
    *
    * Calls {@link #initFile(String id)} to initializes the input file, reads
    * all of the metadata and sets the reader up for reading planes.
