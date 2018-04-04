@@ -1359,8 +1359,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   /**
    * Initialize a reader from the input file name.
    *
-   * Calls {@link #initFile(String id)} to initializes the input file, reads
-   * all of the metadata and sets the reader up for reading planes.
+   * Calls {@link #initFile(String id)} to initialize the input file, read
+   * all of the metadata and set the reader up for reading planes.
    * The performance of this method depends on the format and can be up to
    * several minutes for large file sets.
    *
