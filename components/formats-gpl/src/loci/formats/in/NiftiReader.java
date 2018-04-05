@@ -248,8 +248,22 @@ public class NiftiReader extends FormatReader {
     m.sizeY = in.readShort();
     m.sizeZ = in.readShort();
     m.sizeT = in.readShort();
+    m.sizeC = 1;
+    int[] extraDims = new int[3];
+    extraDims[0] = in.readShort();
+    extraDims[1] = in.readShort();
+    extraDims[2] = in.readShort();
+    if (nDimensions > 4) {
+      LOGGER.debug("nDimensions = {}", nDimensions);
 
-    in.skipBytes(20);
+      for (int i=0; i<nDimensions-4; i++) {
+        LOGGER.debug("  processing dimension = {}, Z = {}, T = {}, C = {}",
+          extraDims[i], getSizeZ(), getSizeT(), getSizeC());
+        m.sizeC *= extraDims[i];
+      }
+    }
+
+    in.skipBytes(14);
     short dataType = in.readShort();
     in.skipBytes(36);
     pixelOffset = (int) in.readFloat();
@@ -260,16 +274,15 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    m.sizeC = 1;
     if (getSizeZ() == 0) m.sizeZ = 1;
     if (getSizeT() == 0) m.sizeT = 1;
 
-    m.imageCount = getSizeZ() * getSizeT();
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
     m.indexed = false;
     m.dimensionOrder = "XYCZT";
 
     populatePixelType(dataType);
-    m.rgb = getSizeC() > 1;
+    m.rgb = getSizeC() > 1 && getImageCount() == getSizeZ() * getSizeT();
     m.interleaved = isRGB();
 
     LOGGER.info("Populating MetadataStore");
