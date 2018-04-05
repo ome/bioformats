@@ -162,6 +162,12 @@ public class FormatReaderTestFactory {
       configSuffix = "";
     }
 
+    // detect whether or not to ignore missing configuration
+    final String allowMissingProp = "testng.allow-missing";
+    String allowMissingValue = getProperty(allowMissingProp);
+    boolean allowMissing = Boolean.parseBoolean(allowMissingValue);
+    LOGGER.info("testng.allow-missing = {}", allowMissing);
+
     // display local information
     LOGGER.info("user.language = {}", System.getProperty("user.language"));
     LOGGER.info("user.country = {}", System.getProperty("user.country"));
@@ -266,14 +272,23 @@ public class FormatReaderTestFactory {
     for (int i=0; i<tests.length; i++) {
       String id = (String) files.get(i);
       try {
+        boolean found = true;
         if (FormatReaderTest.configTree.get(id) == null) {
-          LOGGER.error("{} not configured.", id);
+          found = false;
+          if (allowMissing) {
+            LOGGER.warn("{} not configured.", id);
+          }
+          else {
+            LOGGER.error("{} not configured.", id);
+          }
+        }
+        if (found || !allowMissing) {
+          tests[i] = new FormatReaderTest(id, multiplier, inMemory);
         }
       }
       catch (Exception e) {
         LOGGER.warn("", e);
       }
-      tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
     else System.out.println("Ready to test " + tests.length + " files");
