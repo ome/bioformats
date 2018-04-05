@@ -268,32 +268,31 @@ public class FormatReaderTestFactory {
 
     // create test class instances
     System.out.println("Building list of tests...");
-    Object[] tests = new Object[files.size()];
-    for (int i=0; i<tests.length; i++) {
-      String id = (String) files.get(i);
+    List<Object> tests = new ArrayList<>();
+    for (String id : files) {
       try {
         boolean found = true;
         if (FormatReaderTest.configTree.get(id) == null) {
           found = false;
           if (allowMissing) {
-            LOGGER.warn("{} not configured.", id);
+            LOGGER.warn("{} not configured (skipping).", id);
           }
           else {
             LOGGER.error("{} not configured.", id);
           }
         }
         if (found || !allowMissing) {
-          tests[i] = new FormatReaderTest(id, multiplier, inMemory);
+          tests.add(new FormatReaderTest(id, multiplier, inMemory));
         }
       }
       catch (Exception e) {
         LOGGER.warn("", e);
       }
     }
-    if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
-    else System.out.println("Ready to test " + tests.length + " files");
+    if (tests.size() == 1) System.out.println("Ready to test " + files.get(0));
+    else System.out.println("Ready to test " + tests.size() + " files");
 
-    return tests;
+    return tests.toArray(new Object[tests.size()]);
   }
 
 }
