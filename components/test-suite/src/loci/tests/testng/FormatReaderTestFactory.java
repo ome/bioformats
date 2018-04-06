@@ -252,14 +252,34 @@ public class FormatReaderTestFactory {
       }
     }
     if (!failingIds.isEmpty()) {
-      String msg = String.format("setId failed on %s", failingIds);
       if (!allowMissing) {
+        String msg = String.format("setId failed on %s", failingIds);
         LOGGER.error(msg);
         throw new RuntimeException(msg);
       }
       else {
-       msg += " (skipping)";
-       LOGGER.warn(msg);
+        for (String id : failingIds) {
+          boolean found = false;
+          try {
+            if (FormatReaderTest.configTree.get(id) != null) {
+              found = true;
+              }
+            }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
+          if (found) {
+            // setId failed and configuration present
+            String msg = String.format("setId failed on %s", id);
+            LOGGER.error(msg);
+            throw new RuntimeException(msg);
+          }
+          else {
+            // setId failed and configuration missing
+            String msg = String.format("setId failed on %s (skipping)", id);
+            LOGGER.warn(msg);
+          }
+        }
       }
     }
     files = new ArrayList<String>();
