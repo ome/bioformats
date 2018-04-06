@@ -487,7 +487,22 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName("Series " + (i + 1), i);
+      if (hasFlattenedResolutions() || i > 2) {
+        store.setImageName("Series " + (i + 1), i);
+      }
+      else {
+        switch (i) {
+          case 0:
+            store.setImageName("", i);
+            break;
+          case 1:
+            store.setImageName("macro image", i);
+            break;
+          case 2:
+            store.setImageName("macro mask image", i);
+            break;
+        }
+      }
 
       store.setImageInstrumentRef(instrumentID, i);
       store.setObjectiveSettingsID(objectiveID, i);
