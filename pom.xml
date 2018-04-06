@@ -415,40 +415,6 @@
     </pluginManagement>
   </build>
 
-  <reporting>
-    <plugins>
-      <!-- Generate javadocs as part of site generation. -->
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <!-- NB: The following version declaration and configuration block
-             are fully replicated from the pluginManagement section. This
-             is necessary because many versions of maven-site-plugin
-             (including 3.3) do not respect the pluginManagement values.
-             See: http://jira.codehaus.org/browse/MSITE-443
-             While the maven-site-plugin documentation states that it
-             "search[es] the same groupId/artifactId in the
-             build.pluginManagement.plugins section", this claim
-             unfortunately does not seem to reflect reality. -->
-        <version>${maven-javadoc-plugin.version}</version>
-        <configuration>
-          <javadocDirectory>${project.basedir}/src</javadocDirectory>
-          <maxmemory>1024m</maxmemory>
-          <!-- Workaround for javadoc bug when classes in the default
-               package access classes from non-default packages. See:
-               http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101868 -->
-          <use>false</use>
-          <links>
-            <!-- Java 7 -->
-            <link>http://docs.oracle.com/javase/7/docs/api/</link>
-
-            <!-- ImageJ1 -->
-            <link>http://jenkins.imagej.net/job/ImageJ1-javadoc/javadoc/</link>
-          </links>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <prerequisites>
     <maven>3.0.5</maven>
   </prerequisites>
