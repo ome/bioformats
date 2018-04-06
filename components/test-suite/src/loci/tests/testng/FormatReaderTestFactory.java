@@ -253,8 +253,14 @@ public class FormatReaderTestFactory {
     }
     if (!failingIds.isEmpty()) {
       String msg = String.format("setId failed on %s", failingIds);
-      LOGGER.error(msg);
-      throw new RuntimeException(msg);
+      if (!allowMissing) {
+        LOGGER.error(msg);
+        throw new RuntimeException(msg);
+      }
+      else {
+       msg += " (skipping)";
+       LOGGER.warn(msg);
+      }
     }
     files = new ArrayList<String>();
     for (String s: minimalFiles) {
