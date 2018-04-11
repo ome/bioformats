@@ -2,6 +2,7 @@
 .project
 .settings
 .DS_Store
+.idea
 artifacts
 build
 components/*/utils/*.class
