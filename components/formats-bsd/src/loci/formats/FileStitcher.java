@@ -570,9 +570,9 @@ public class FileStitcher extends ReaderWrapper {
     int n = reader.getCoreMetadataList().size();
     if (n > 1 || noStitch) {
       reader.setSeries(no);
+      reader.setResolution(0);
     }
     setCoreIndex(seriesToCoreIndex(no));
-    reader.setResolution(0);
   }
 
   /* @see IFormatReader#getSeries() */
