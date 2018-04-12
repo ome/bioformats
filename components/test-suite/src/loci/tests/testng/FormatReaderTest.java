@@ -71,6 +71,7 @@ import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -173,6 +174,8 @@ public class FormatReaderTest {
       BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
+
+        Assert.assertEquals(reader.getSeries(), i);
 
         int x = reader.getSizeX();
         int y = reader.getSizeY();
@@ -1915,9 +1918,13 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
           config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
 
           long planeSize = -1;
           try {
