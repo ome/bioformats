@@ -1869,22 +1869,6 @@ public abstract class SubResolutionFormatReader extends FormatHandler
     }
   }
 
-  /**
-   * Construct an {@link ome.xml.model.AffineTransform} corresponding to
-   * the given angle.
-   * @param theta the angle of rotation in radians
-   */
-  protected AffineTransform getRotationTransform(double theta) {
-    AffineTransform transform = new AffineTransform();
-    transform.setA02(0.0);
-    transform.setA12(0.0);
-    transform.setA00(Math.cos(theta));
-    transform.setA11(Math.cos(theta));
-    transform.setA01(Math.sin(theta));
-    transform.setA10(-1 * Math.sin(theta));
-    return transform;
-  }
-
   protected CoreMetadata currentCore() {
     return core.get(series, resolution);
   }
