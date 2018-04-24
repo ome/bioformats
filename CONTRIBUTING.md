@@ -51,13 +51,6 @@ please ensure you read these.
 
 The documentation hosted at
 https://docs.openmicroscopy.org/bio-formats/ is built from the
-`/docs/sphinx/` directory. Contributions are welcome but please follow the
-style guidance from the
+[Bio-Formats Documentation Repository](https://github.com/ome/bio-formats-documentation).
+Contributions are welcome but please follow the style guidance from the
 [OME Documentation Repository README](https://github.com/openmicroscopy/ome-documentation/blob/develop/README.rst#conventions-used).
-
-Documentation for new supported formats is auto-generated - see
-[Adding format/reader documentation pages](https://docs.openmicroscopy.org/latest/bio-formats/developers/format-documentation.html). If you need any assistance please
-contact the [mailing list](https://www.openmicroscopy.org/support)
-before embarking on such a change, or submit your new reader code and let one
-of the main OME team deal with the documentation for you.
-

@@ -583,7 +583,8 @@ public class ZeissCZIReader extends FormatReader {
     parser = XMLTools.createBuilder();
 
     // switch to the master file if this is part of a multi-file dataset
-    String base = id.substring(0, id.lastIndexOf("."));
+    int lastDot = id.lastIndexOf(".");
+    String base = lastDot < 0 ? id : id.substring(0, lastDot);
     if (base.endsWith(")") && isGroupFiles()) {
       LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
@@ -625,7 +626,10 @@ public class ZeissCZIReader extends FormatReader {
 
     Location file = new Location(id).getAbsoluteFile();
     base = file.getName();
-    base = base.substring(0, base.lastIndexOf("."));
+    lastDot = base.lastIndexOf(".");
+    if (lastDot >= 0) {
+      base = base.substring(0, lastDot);
+    }
 
     Location parent = file.getParentFile();
     String[] list = parent.list(true);

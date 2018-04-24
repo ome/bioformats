@@ -175,6 +175,9 @@ public class ImageReader implements IFormatReader {
    // e.g., for files, this will throw an exception if the file is missing.
    if (!fake && !omero) {
      Location.checkValidId(id);
+     if (new Location(id).length() == 0) {
+       LOGGER.error("File has length 0 and may be corrupt");
+     }
    }
 
     if (!id.equals(currentId)) {
