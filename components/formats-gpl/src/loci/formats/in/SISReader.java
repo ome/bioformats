@@ -250,14 +250,14 @@ public class SISReader extends BaseTiffReader {
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
       store.setObjectiveNominalMagnification(magnification, 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
       store.setObjectiveSettingsID(objective, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);
       store.setDetectorModel(cameraName, 0, 0);
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
+      store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
       store.setDetectorSettingsID(detector, 0, 0);
 
       physicalSizeX /= 1000;

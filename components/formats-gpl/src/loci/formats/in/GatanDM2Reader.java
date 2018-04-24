@@ -295,7 +295,7 @@ public class GatanDM2Reader extends FormatReader {
       }
       else if (label.equals("Binning")) {
         int bin = (int) Double.parseDouble(value.toString());
-        store.setDetectorSettingsBinning(getBinning(bin + "x" + bin), 0, 0);
+        store.setDetectorSettingsBinning(MetadataTools.getBinning(bin + "x" + bin), 0, 0);
         String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
         store.setDetectorSettingsID(detectorID, 0, 0);

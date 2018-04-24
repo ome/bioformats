@@ -637,10 +637,10 @@ public class OperettaReader extends FormatReader {
           activePlane.exWavelength = Double.parseDouble(value);
         }
         else if ("ExposureTime".equals(currentName)) {
-          activePlane.exposureTime = new Time(Double.parseDouble(value), UNITS.S);
+          activePlane.exposureTime = new Time(Double.parseDouble(value), UNITS.SECOND);
         }
         else if ("MeasurementTimeOffset".equals(currentName)) {
-          activePlane.deltaT = new Time(Double.parseDouble(value), UNITS.S);
+          activePlane.deltaT = new Time(Double.parseDouble(value), UNITS.SECOND);
         }
         else if ("AbsTime".equals(currentName)) {
           activePlane.absoluteTime = new Timestamp(value);

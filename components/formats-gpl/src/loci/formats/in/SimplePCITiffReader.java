@@ -247,16 +247,16 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
       store.setObjectiveNominalMagnification(magnification, 0, 0);
-      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+      store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);
       store.setDetectorModel(cameraType + " " + cameraName, 0, 0);
-      store.setDetectorType(getDetectorType("CCD"), 0, 0);
+      store.setDetectorType(MetadataTools.getDetectorType("CCD"), 0, 0);
 
       for (int i=0; i<getSizeC(); i++) {
         store.setDetectorSettingsID(detector, 0, i);
-        store.setDetectorSettingsBinning(getBinning(binning), 0, i);
+        store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), 0, i);
       }
 
       for (int i=0; i<getImageCount(); i++) {

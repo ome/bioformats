@@ -179,7 +179,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     String detector = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detector, 0, 0);
     store.setDetectorModel(handler.getCameraModel(), 0, 0);
-    store.setDetectorType(getDetectorType("Other"), 0, 0);
+    store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
 
     ArrayList<String> channelNames = handler.getChannelNames();
     ArrayList<String> modality = handler.getModalities();
@@ -202,7 +202,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       }
       if (c < modality.size()) {
         store.setChannelAcquisitionMode(
-          getAcquisitionMode(modality.get(c)), 0, c);
+          MetadataTools.getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
         Length em = FormatTools.getEmissionWavelength(emWave.get(c));
@@ -217,7 +217,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
         }
       }
       if (c < binning.size()) {
-        store.setDetectorSettingsBinning(getBinning(binning.get(c)), 0, c);
+        store.setDetectorSettingsBinning(MetadataTools.getBinning(binning.get(c)), 0, c);
       }
       if (c < gain.size()) {
         store.setDetectorSettingsGain(gain.get(c), 0, c);
@@ -250,11 +250,11 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     String immersion = handler.getImmersion();
     if (immersion == null) immersion = "Other";
-    store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+    store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
 
     String correction = handler.getCorrection();
     if (correction == null || correction.length() == 0) correction = "Other";
-    store.setObjectiveCorrection(getCorrection(correction), 0, 0);
+    store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, 0);
 
     String objective = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objective, 0, 0);

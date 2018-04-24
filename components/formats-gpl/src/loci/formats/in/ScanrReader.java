@@ -698,8 +698,8 @@ public class ScanrReader extends FormatReader {
       String row = wellRows > 26 ? "Number" : "Letter";
       String col = wellRows > 26 ? "Letter" : "Number";
 
-      store.setPlateRowNamingConvention(getNamingConvention(row), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention(col), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention(row), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention(col), 0);
       store.setPlateName(plateName, 0);
     }
   }

@@ -544,7 +544,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (offsets != null && offsets[i] != null) {
         store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
-      store.setDetectorType(getDetectorType("Other"), 0, i);
+      store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
       if (detectorManufacturer != null) {
         store.setDetectorManufacturer(detectorManufacturer, 0, i);
       }
@@ -562,14 +562,14 @@ public class FluoviewReader extends BaseTiffReader {
     }
     else if (mag == null) mag = "1";
 
-    store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-    store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+    store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+    store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
 
     if (objectiveManufacturer != null) {
       String[] objectiveData = objectiveManufacturer.split(" ");
       store.setObjectiveModel(objectiveData[0], 0, 0);
       if (objectiveData.length > 2) {
-        store.setObjectiveImmersion(getImmersion(objectiveData[2]), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion(objectiveData[2]), 0, 0);
       }
     }
 

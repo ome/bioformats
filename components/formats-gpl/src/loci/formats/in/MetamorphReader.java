@@ -805,7 +805,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     store.setInstrumentID(instrumentID, 0);
     store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorType(getDetectorType("Other"), 0, 0);
+    store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
@@ -940,7 +940,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
         if (binning != null) {
-          store.setDetectorSettingsBinning(getBinning(binning), i, c);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), i, c);
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(
@@ -967,8 +967,8 @@ public class MetamorphReader extends BaseTiffReader {
               MetadataTools.createLSID("LightSource", 0, laserIndex);
             store.setLaserID(lightSourceID, 0, laserIndex);
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-            store.setLaserType(getLaserType("Other"), 0, laserIndex);
-            store.setLaserLaserMedium(getLaserMedium("Other"), 0, laserIndex);
+            store.setLaserType(MetadataTools.getLaserType("Other"), 0, laserIndex);
+            store.setLaserLaserMedium(MetadataTools.getLaserMedium("Other"), 0, laserIndex);
 
             if (wavelength != null) {
               store.setChannelLightSourceSettingsWavelength(wavelength, i, c);

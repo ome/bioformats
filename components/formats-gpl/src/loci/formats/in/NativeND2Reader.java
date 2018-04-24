@@ -2180,7 +2180,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorModel(handler.getCameraModel(), 0, 0);
-    store.setDetectorType(getDetectorType("Other"), 0, 0);
+    store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
 
     ArrayList<String> modality = handler.getModalities();
     ArrayList<String> binning = handler.getBinnings();
@@ -2218,7 +2218,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
         if (index < modality.size()) {
           store.setChannelAcquisitionMode(
-            getAcquisitionMode(modality.get(index)), i, c);
+            MetadataTools.getAcquisitionMode(modality.get(index)), i, c);
         }
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Double value = index < emWave.size() ? emWave.get(index) :
@@ -2240,7 +2240,7 @@ public class NativeND2Reader extends SubResolutionFormatReader {
         }
         if (index < binning.size()) {
           store.setDetectorSettingsBinning(
-            getBinning(binning.get(index)), i, c);
+            MetadataTools.getBinning(binning.get(index)), i, c);
         }
         if (index < gain.size()) {
           store.setDetectorSettingsGain(gain.get(index), i, c);
@@ -2281,11 +2281,11 @@ public class NativeND2Reader extends SubResolutionFormatReader {
 
     String immersion = handler.getImmersion();
     if (immersion == null) immersion = "Other";
-    store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+    store.setObjectiveImmersion(MetadataTools.getImmersion(immersion), 0, 0);
 
     String correction = handler.getCorrection();
     if (correction == null || correction.length() == 0) correction = "Other";
-    store.setObjectiveCorrection(getCorrection(correction), 0, 0);
+    store.setObjectiveCorrection(MetadataTools.getCorrection(correction), 0, 0);
 
     // link Objective to Image
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
