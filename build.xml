@@ -10,17 +10,6 @@ This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
 
-Formats code generator
-    Package for generating other code, including the Bio-Formats metadata API,
-    related documentation, Ice bindings, and Bio-Formats C++ bindings headers
-    -=-
-    JAR file:      bf-autogen.jar
-    Path:          components/autogen
-    Project deps:  Bio-Formats, Formats Common
-    Library deps:  Apache Velocity
-    Optional:      (none)
-    License:       GPL
-
 Bio-Formats
     A library for reading and writing popular microscopy file formats
     -=-

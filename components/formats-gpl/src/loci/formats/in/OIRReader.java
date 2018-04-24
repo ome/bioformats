@@ -30,11 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -61,6 +63,8 @@ public class OIRReader extends FormatReader {
 
   // -- Constants --
 
+  private static final String IDENTIFIER = "OLYMPUSRAWFORMAT";
+  private static final int BUFFER_SIZE = 8192;
 
   // -- Fields --
 
@@ -79,15 +83,55 @@ public class OIRReader extends FormatReader {
   private String baseName;
   private int lastChannel = -1;
 
+  private int minZ = Integer.MAX_VALUE;
+  private int minT = Integer.MAX_VALUE;
+
   // -- Constructor --
 
   /** Constructs a new OIR reader. */
   public OIRReader() {
     super("Olympus OIR", "oir");
     domains = new String[] {FormatTools.LM_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return isSingleFile(id) ? FormatTools.CAN_GROUP : FormatTools.MUST_GROUP;
+  }
+
+  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    // files with .oir extension that are less than 1 GB should be self-contained
+    Location file = new Location(id);
+    return checkSuffix(id, "oir") && file.length() < 1024 * 1024 * 1024;
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true ,1);
+
+    HashSet<String> files = new HashSet<String>();
+    for (String key : pixelBlocks.keySet()) {
+      files.add(pixelBlocks.get(key).file);
+    }
+    String[] allFiles = files.toArray(new String[files.size()]);
+    Arrays.sort(allFiles);
+    return allFiles;
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int length = 16;
+    if (!FormatTools.validStream(stream, length, true)) return false;
+    return stream.readString(length).equals(IDENTIFIER);
+  }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   @Override
@@ -131,22 +175,28 @@ public class OIRReader extends FormatReader {
 
     int[] zct = getZCTCoords(no);
     lastChannel = zct[1];
-    int newNo = getIndex(zct[0], 0, zct[2]) / getSizeC();
 
-    int first = newNo * getSizeC() * blocksPerPlane + zct[1] * blocksPerPlane;
+    int first = 0;
     int startIndex = -1;
-    int step = blocksPerPlane * getSizeZ() * getSizeT();
+    int end = 0;
     while (first < pixelUIDs.length) {
-      if (pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0) {
-        startIndex = first;
-        break;
+      if (getZ(pixelUIDs[first]) - minZ == zct[0] &&
+        getT(pixelUIDs[first]) - minT == zct[2] &&
+        pixelUIDs[first].indexOf(channels.get(zct[1] % channels.size()).id) > 0)
+      {
+        if (startIndex < 0) {
+          startIndex = first;
+        }
+        end = first;
       }
-      else {
-        first += step;
-      }
+      first++;
     }
 
-    int end = startIndex + blocksPerPlane;
+    if (startIndex < 0) {
+      LOGGER.warn("No pixel blocks for plane #{}", no);
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int bufferOffset = bpp * ((y * getSizeX()) + x);
@@ -155,31 +205,48 @@ public class OIRReader extends FormatReader {
     int bufferEnd = bpp * (((y + h) * getSizeX()) + x + w);
     int bufferPointer = 0;
 
-    for (int i=startIndex; i<end; i++) {
-      PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
+    RandomAccessInputStream s = null;
+    String openFile = null;
+    try {
+      for (int i=startIndex; i<=end; i++) {
+        PixelBlock block = pixelBlocks.get(pixelUIDs[i]);
 
-      if (bufferPointer + block.length < bufferOffset ||
-        bufferPointer >= bufferEnd)
-      {
-        bufferPointer += block.length;
-        continue;
-      }
-
-      byte[] pixels = readPixelBlock(block.offset);
-      if (pixels != null) {
-        int blockY = bufferPointer / imageWidth;
-        int blockH = pixels.length / imageWidth;
-
-        for (int yy=blockY; yy<blockY+blockH; yy++) {
-          if (yy < y || yy >= y + h) {
-            continue;
-          }
-          int blockOffset = (yy - blockY) * imageWidth + x * bpp;
-          int bufOffset = (yy - y) * rowLen;
-          System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
+        if (bufferPointer + block.length < bufferOffset ||
+          bufferPointer >= bufferEnd)
+        {
+          bufferPointer += block.length;
+          continue;
         }
+
+        byte[] pixels = null;
+        if (s == null || !block.file.equals(openFile)) {
+          if (s != null) {
+            s.close();
+          }
+          s = new RandomAccessInputStream(block.file, BUFFER_SIZE);
+          openFile = block.file;
+        }
+        pixels = readPixelBlock(s, block.offset);
+        if (pixels != null) {
+          int blockY = bufferPointer / imageWidth;
+          int blockH = pixels.length / imageWidth;
+
+          for (int yy=blockY; yy<blockY+blockH; yy++) {
+            if (yy < y || yy >= y + h) {
+              continue;
+            }
+            int blockOffset = (yy - blockY) * imageWidth + x * bpp;
+            int bufOffset = (yy - y) * rowLen;
+            System.arraycopy(pixels, blockOffset, buf, bufOffset, rowLen);
+          }
+        }
+        bufferPointer += block.length;
       }
-      bufferPointer += block.length;
+    }
+    finally {
+      if (s != null) {
+        s.close();
+      }
     }
 
     return buf;
@@ -204,6 +271,8 @@ public class OIRReader extends FormatReader {
       pixelUIDs = null;
       baseName = null;
       lastChannel = -1;
+      minZ = Integer.MAX_VALUE;
+      minT = Integer.MAX_VALUE;
     }
   }
 
@@ -213,8 +282,40 @@ public class OIRReader extends FormatReader {
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
-    in.order(true);
+
+    Location current = new Location(id).getAbsoluteFile();
+    Location parent = current.getParentFile();
+    ArrayList<String> extraFiles = new ArrayList<String>();
+    if (parent != null) {
+      String[] fileList = parent.list();
+      Arrays.sort(fileList);
+      String prefix = current.getName();
+      if (prefix.indexOf(".") > 0) {
+        prefix = prefix.substring(0, prefix.lastIndexOf("."));
+      }
+      else if (!checkSuffix(id, "oir")) {
+        prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+      }
+
+      for (String file : fileList) {
+        // look for files ending with an underscore plus a 5 digit number
+        if (file.startsWith(prefix + "_") && file.length() == prefix.length() + 6) {
+          try {
+            int index = Integer.parseInt(file.substring(file.lastIndexOf("_") + 1));
+            if (index != extraFiles.size() + 1) {
+              LOGGER.warn("Found file {} with index {}; expected index {}", file, index, extraFiles.size() + 1);
+            }
+            extraFiles.add(new Location(parent, file).getAbsolutePath());
+          }
+          catch (NumberFormatException e) {
+          }
+        }
+        else if (file.startsWith(prefix) && checkSuffix(file, "oir")) {
+          current = new Location(parent, file);
+          currentId = current.getAbsolutePath();
+        }
+      }
+    }
 
     CoreMetadata m = core.get(0);
     m.littleEndian = true;
@@ -224,65 +325,55 @@ public class OIRReader extends FormatReader {
     m.indexed = true;
     m.falseColor = true;
 
-    // pixel data is stored raw in multiple blocks
-    // each block is preceded by a UID indicating the plane and block index, e.g.
-    // z001t001_<channel ID #0>_0
-    // z001t001_<channel ID #0>_1
-    // z001t001_<channel ID #1>_0
-    // ...
-    // z010t010_<channel ID #1>_1
-    //
-    // blocks of XML are interspersed, which define the acquisition parameters
-    // including image dimensions and color lookup tables
+    try (RandomAccessInputStream s = new RandomAccessInputStream(currentId, BUFFER_SIZE)) {
+      readPixelsFile(current.getAbsolutePath(), s);
+    }
 
-    long baseOffset = 16;
-    in.seek(baseOffset);
-    while (in.readInt() != 0xffffffff);
-    in.skipBytes(4);
-
-    // seek past reference image blocks
-    while (skipPixelBlock(false));
-
-    readXMLBlock();
-
-    while (skipPixelBlock(true));
-
-    readXMLBlock();
-
-    while (in.getFilePointer() < in.length() - 16) {
-      in.findString("<?xml");
-      in.seek(in.getFilePointer() - 9);
-      int length = in.readInt();
-      if (length < 0 || length + in.getFilePointer() > in.length()) {
-        break;
-      }
-      long fp = in.getFilePointer();
-      String xml = in.readString(length);
-      if (!xml.startsWith("<?xml")) {
-        in.seek(fp - 2);
-        continue;
-      }
-      LOGGER.trace("xml = {}", xml);
-      if (channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) {
-        parseXML(xml, fp);
-      }
-      boolean expectPixelBlock = xml.endsWith(":frameProperties>");
-      if (expectPixelBlock) {
-        while (skipPixelBlock(true));
+    for (String file : extraFiles) {
+      try (RandomAccessInputStream s = new RandomAccessInputStream(file, BUFFER_SIZE)) {
+        readPixelsFile(file, s);
       }
     }
 
     m.sizeC *= channels.size();
     m.imageCount = getSizeC() * getSizeZ() * getSizeT();
 
-    if (blocksPerPlane * getImageCount() > pixelBlocks.size()) {
-      if (getSizeT() > 1) {
-        m.sizeT = pixelBlocks.size() / (blocksPerPlane * getSizeC() * getSizeZ());
+    LOGGER.debug("blocks per plane = {}", blocksPerPlane);
+    LOGGER.debug("number of pixel blocks = {}", pixelBlocks.size());
+
+    if (blocksPerPlane * getImageCount() != pixelBlocks.size()) {
+      // if blocks are missing, set the Z and T dimensions to match the last
+      // plane for which at least one block exists
+      int maxZ = 0;
+      int maxT = 0;
+      for (String uid : pixelBlocks.keySet()) {
+        LOGGER.debug("  checking uid = {}", uid);
+        int thisZ = getZ(uid);
+        int thisT = getT(uid);
+        int block = getBlock(uid);
+        // only count through last full plane
+        if (block == blocksPerPlane - 1) {
+          if (thisZ > maxZ) {
+            maxZ = thisZ;
+          }
+          if (thisT > maxT) {
+            maxT = thisT;
+          }
+          if (thisZ < minZ) {
+            minZ = thisZ;
+          }
+          if (thisT < minT) {
+            minT = thisT;
+          }
+        }
       }
-      else if (getSizeZ() > 1) {
-        m.sizeZ = pixelBlocks.size() / (blocksPerPlane * getSizeC());
-      }
+      m.sizeZ = (maxZ - minZ) + 1;
+      m.sizeT = (maxT - minT) + 1;
       m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    }
+    else {
+      minZ = 0;
+      minT = 0;
     }
 
     m.dimensionOrder = "XYC";
@@ -391,7 +482,7 @@ public class OIRReader extends FormatReader {
       addMetaList("Detector gain", detector.gain, tmpMeta);
     }
     // this ensures that global metadata keys will be sorted before series keys
-    MetadataTools.merge(tmpMeta, metadata, "\0");
+    MetadataTools.merge(tmpMeta, metadata, "- ");
 
     // populate MetadataStore
 
@@ -485,44 +576,110 @@ public class OIRReader extends FormatReader {
 
   // -- Helper methods --
 
-  private void readXMLBlock() throws FormatException, IOException {
-    long offset = in.getFilePointer();
-    if (in.getFilePointer() + 8 >= in.length()) {
+  private void readPixelsFile(String file, RandomAccessInputStream s) throws FormatException, IOException {
+    // pixel data is stored raw in multiple blocks
+    // each block is preceded by a UID indicating the plane and block index, e.g.
+    // z001t001_<channel ID #0>_0
+    // z001t001_<channel ID #0>_1
+    // z001t001_<channel ID #1>_0
+    // ...
+    // z010t010_<channel ID #1>_1
+    //
+    // blocks of XML are interspersed, which define the acquisition parameters
+    // including image dimensions and color lookup tables
+
+    LOGGER.info("Reading pixel blocks from {}", file);
+
+    s.order(true);
+    defaultXMLSkip = 36;
+
+    long baseOffset = 16;
+    s.seek(baseOffset);
+    while (s.readInt() != 0xffffffff);
+    s.skipBytes(4);
+
+    long pixelStart = s.getFilePointer();
+    // seek past reference image blocks
+    while (skipPixelBlock(file, s, false));
+
+    if (s.getFilePointer() == pixelStart && !file.endsWith(currentId)) {
+      while (s.readInt() != 0xffffffff);
+      s.skipBytes(4);
+    }
+    readXMLBlock(file, s);
+
+    while (skipPixelBlock(file, s, true));
+
+    readXMLBlock(file, s);
+
+    while (s.getFilePointer() < s.length() - 16) {
+      s.findString("<?xml");
+      s.seek(s.getFilePointer() - 9);
+      int length = s.readInt();
+      if (length < 0 || length + s.getFilePointer() > s.length()) {
+        break;
+      }
+      long fp = s.getFilePointer();
+      String xml = s.readString(length);
+      if (!xml.startsWith("<?xml")) {
+        s.seek(fp - 2);
+        continue;
+      }
+      LOGGER.trace("xml = {}", xml);
+      if (((channels.size() == 0 || getSizeX() == 0 || getSizeY() == 0) &&
+        file.endsWith(currentId)) || xml.indexOf("lut:LUT") > 0)
+      {
+        parseXML(s, xml, fp);
+      }
+      boolean expectPixelBlock = xml.endsWith(":frameProperties>");
+      if (expectPixelBlock) {
+        while (skipPixelBlock(file, s, true));
+      }
+    }
+  }
+
+  private void readXMLBlock(String file, RandomAccessInputStream s) throws FormatException, IOException {
+    long offset = s.getFilePointer();
+    LOGGER.debug("reading XML block from {}", offset);
+    if (s.getFilePointer() + 8 >= s.length()) {
       return;
     }
     // total block length could include multiple strings of XML
-    int totalBlockLength = in.readInt();
-    long end = in.getFilePointer() + totalBlockLength - 4;
-    in.skipBytes(4);
+    int totalBlockLength = s.readInt();
+    long end = s.getFilePointer() + totalBlockLength - 4;
+    s.skipBytes(4);
 
-    while (in.getFilePointer() < end) {
-      long start = in.getFilePointer();
-      in.skipBytes(defaultXMLSkip);
-      int xmlLength = in.readInt();
+    while (s.getFilePointer() < end) {
+      long start = s.getFilePointer();
+      s.skipBytes(defaultXMLSkip);
+      int xmlLength = s.readInt();
       if (xmlLength <= 32) {
-        xmlLength = in.readInt();
-        String uid = in.readString(xmlLength);
-        xmlLength = in.readInt();
+        xmlLength = s.readInt();
+        String uid = s.readString(xmlLength);
+        xmlLength = s.readInt();
       }
-      else if (xmlLength < 0 || xmlLength >= (in.length() - in.getFilePointer())) {
-        in.seek(in.getFilePointer() - 40);
-        xmlLength = in.readInt();
-        if (xmlLength <= 0 || xmlLength + in.getFilePointer() > in.length()) {
-          in.seek(start);
-          xmlLength = in.readInt();
-          if (xmlLength <= 0 || xmlLength + in.getFilePointer() > in.length()) {
+      else if (xmlLength < 0 || xmlLength >= (s.length() - s.getFilePointer())) {
+        s.seek(s.getFilePointer() - 40);
+        xmlLength = s.readInt();
+        if (xmlLength <= 0 || xmlLength + s.getFilePointer() > s.length()) {
+          s.seek(start);
+          xmlLength = s.readInt();
+          if (xmlLength <= 0 || xmlLength + s.getFilePointer() > s.length()) {
             return;
           }
         }
-        String uid = in.readString(xmlLength);
-        xmlLength = in.readInt();
+        if (xmlLength > 1024) {
+          return;
+        }
+        String uid = s.readString(xmlLength);
+        xmlLength = s.readInt();
         if (xmlLength < 0 || xmlLength > totalBlockLength) {
-          in.seek(offset + 4);
+          s.seek(offset + 4);
           int skipped = 0;
-          while (in.readInt() != totalBlockLength - skipped) {
+          while (s.readInt() != totalBlockLength - skipped) {
             skipped += 4;
-            if (in.getFilePointer() + 4 >= in.length()) {
-              in.seek(end);
+            if (s.getFilePointer() + 4 >= s.length()) {
+              s.seek(end);
               return;
             }
           }
@@ -531,17 +688,19 @@ public class OIRReader extends FormatReader {
         }
       }
 
-      if (xmlLength <= 32 || in.getFilePointer() + xmlLength > end + 8) {
+      if (xmlLength <= 32 || s.getFilePointer() + xmlLength > end + 8) {
         break;
       }
-      long fp = in.getFilePointer();
-      String xml = in.readString(xmlLength).trim();
+      long fp = s.getFilePointer();
+      String xml = s.readString(xmlLength).trim();
       LOGGER.trace("xml = {}", xml);
-      parseXML(xml, fp);
+      if (file.endsWith(currentId) || xml.indexOf("lut:LUT") > 0) {
+        parseXML(s, xml, fp);
+      }
     }
   }
 
-  private void parseXML(String xml, long startFilePointer) throws FormatException, IOException {
+  private void parseXML(RandomAccessInputStream s, String xml, long startFilePointer) throws FormatException, IOException {
     Element root = null;
     try {
       root = XMLTools.parseDOM(xml).getDocumentElement();
@@ -564,11 +723,11 @@ public class OIRReader extends FormatReader {
         parseFrameProperties(root);
       }
       else if ("lut:LUT".equals(name)) {
-        long fp = in.getFilePointer();
-        in.seek(startFilePointer - 44);
-        int uidLength = in.readInt();
-        String uid = in.readString(uidLength);
-        in.seek(fp);
+        long fp = s.getFilePointer();
+        s.seek(startFilePointer - 44);
+        int uidLength = s.readInt();
+        String uid = s.readString(uidLength);
+        s.seek(fp);
 
         parseLUT(root, uid);
       }
@@ -1152,40 +1311,42 @@ public class OIRReader extends FormatReader {
     return (Element) list.item(0);
   }
 
-  private boolean skipPixelBlock(boolean store) throws IOException {
-    long offset = in.getFilePointer();
-    if (offset + 8 >= in.length()) {
+  private boolean skipPixelBlock(String currentFile, RandomAccessInputStream s, boolean store) throws IOException {
+    long offset = s.getFilePointer();
+    LOGGER.debug("reading pixel block from {}", offset);
+    if (offset + 8 >= s.length()) {
       return false;
     }
-    int checkLength = in.readInt();
-    int check = in.readInt();
+    int checkLength = s.readInt();
+    int check = s.readInt();
     if (check != 3) {
-      in.seek(offset);
+      s.seek(offset);
       if (check == 2) {
-        in.seek(offset + checkLength + 8);
+        s.seek(offset + checkLength + 8);
         return true;
       }
       return false;
     }
 
-    in.skipBytes(8);
-    int uidLength = in.readInt();
+    s.skipBytes(8);
+    int uidLength = s.readInt();
     if (checkLength != uidLength + 12) {
-      in.seek(offset);
+      s.seek(offset);
       return false;
     }
-    String uid = in.readString(uidLength);
+    String uid = s.readString(uidLength);
     if (store) {
       LOGGER.debug("pixel uid = {} @ {}", uid, offset);
     }
-    if (in.getFilePointer() + 4 >= in.length()) {
+    if (s.getFilePointer() + 4 >= s.length()) {
       return false;
     }
-    int pixelBytes = in.readInt();
-    in.skipBytes(4);
+    int pixelBytes = s.readInt();
+    s.skipBytes(4);
 
     if (store && pixelBytes > 0) {
       PixelBlock block = new PixelBlock();
+      block.file = currentFile;
       block.offset = offset;
       block.length = pixelBytes;
       pixelBlocks.put(uid, block);
@@ -1198,37 +1359,64 @@ public class OIRReader extends FormatReader {
     else if (pixelBytes <= 0) {
       return false;
     }
-    in.skipBytes(pixelBytes);
+    s.skipBytes(pixelBytes);
     return true;
   }
 
-  private byte[] readPixelBlock(long offset) throws IOException {
-    in.seek(offset);
+  private byte[] readPixelBlock(RandomAccessInputStream s, long offset) throws IOException {
+    s.order(true);
+    s.seek(offset);
 
-    int checkLength = in.readInt();
-    int check = in.readInt();
+    int checkLength = s.readInt();
+    int check = s.readInt();
     if (check != 3) {
-      in.seek(offset);
+      s.seek(offset);
       return null;
     }
 
-    in.skipBytes(8); // currently unknown
+    s.skipBytes(8); // currently unknown
 
-    int uidLength = in.readInt();
-    String uid = in.readString(uidLength);
+    int uidLength = s.readInt();
+    String uid = s.readString(uidLength);
     LOGGER.debug("reading pixel block with uid = {}", uid);
     if (checkLength != uidLength + 12) {
-      in.seek(offset);
+      s.seek(offset);
       return null;
     }
 
-    int pixelBytes = in.readInt();
+    int pixelBytes = s.readInt();
 
-    in.skipBytes(4); // currently unknown
+    s.skipBytes(4); // currently unknown
 
     byte[] pixels = new byte[pixelBytes];
-    in.readFully(pixels);
+    s.readFully(pixels);
     return pixels;
+  }
+
+  private int getZ(String uid) {
+    int zIndex = uid.indexOf("z");
+    if (zIndex < 0) {
+      return 0;
+    }
+    // assumes 3 digits
+    return Integer.parseInt(uid.substring(zIndex + 1, zIndex + 4)) - 1;
+  }
+
+  private int getT(String uid) {
+    int tIndex = uid.indexOf("t");
+    if (tIndex < 0) {
+      return 0;
+    }
+    // assumes 3 digits
+    return Integer.parseInt(uid.substring(tIndex + 1, tIndex + 4)) - 1;
+  }
+
+  private int getBlock(String uid) {
+    int index = uid.lastIndexOf("_");
+    if (index < 0) {
+      return 0;
+    }
+    return Integer.parseInt(uid.substring(index + 1));
   }
 
   // -- Helper classes --
@@ -1271,6 +1459,7 @@ public class OIRReader extends FormatReader {
   }
 
   class PixelBlock {
+    public String file;
     public long offset;
     public int length;
   }

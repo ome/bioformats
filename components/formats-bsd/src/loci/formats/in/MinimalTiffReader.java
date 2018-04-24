@@ -455,6 +455,7 @@ public class MinimalTiffReader extends FormatReader {
     thumbnailIFDs = new IFDList();
     subResolutionIFDs = new ArrayList<IFDList>();
     for (IFD ifd : allIFDs) {
+      tiffParser.fillInIFD(ifd);
       Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
       int subfileType = subfile == null ? 0 : subfile.intValue();
       if (subfileType != 1 || allIFDs.size() <= 1) {
@@ -473,7 +474,6 @@ public class MinimalTiffReader extends FormatReader {
 
     tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
-      tiffParser.fillInIFD(ifd);
       if ((ifd.getCompression() == TiffCompression.JPEG_2000
           || ifd.getCompression() == TiffCompression.JPEG_2000_LOSSY) &&
           ifd.getImageWidth() == ifds.get(0).getImageWidth()) {

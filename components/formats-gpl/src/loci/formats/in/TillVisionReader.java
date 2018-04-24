@@ -435,6 +435,7 @@ public class TillVisionReader extends FormatReader {
           Location pst = new Location(directory, f);
           if (pst.isDirectory() && f.startsWith(name)) {
             String[] subfiles = pst.list(true);
+            Arrays.sort(subfiles);
             for (String q : subfiles) {
               if (checkSuffix(q, "pst") && nextFile < nImages) {
                 pixelsFile[nextFile++] = f + File.separator + q;

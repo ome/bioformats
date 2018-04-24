@@ -694,7 +694,12 @@ public class NativeND2Reader extends FormatReader {
 
             blockCount --; // one was already added by the outer blockCount ++;
 
-            in.seek(lastImage.position + lastImage.length);
+            if (lastImage.position + lastImage.length >= in.length()) {
+              in.seek(lastImage.position + 16);
+            }
+            else {
+              in.seek(lastImage.position + lastImage.length);
+            }
 
             continue;
 
@@ -928,7 +933,9 @@ public class NativeND2Reader extends FormatReader {
             customDataLengths.add(new int[] {nameLength, (int) dataLength});
           }
           else if (blockType.startsWith("CustomData|Z")) {
-            zOffset = doubleOffset;
+            if (zOffset == 0) {
+              zOffset = doubleOffset;
+            }
             extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
@@ -1112,8 +1119,10 @@ public class NativeND2Reader extends FormatReader {
       }
 
       boolean allEqual = true;
+      long offsetDiff = imageOffsets.get(0) - imageLengths.get(0)[1];
       for (int i=1; i<imageOffsets.size(); i++) {
-        if (imageLengths.get(i)[1] != imageLengths.get(0)[1]) {
+        long nextOffsetDiff = imageOffsets.get(i) - imageLengths.get(i)[1];
+        if (imageLengths.get(i)[1] != imageLengths.get(0)[1] && offsetDiff != nextOffsetDiff) {
           allEqual = false;
           break;
         }
@@ -1127,12 +1136,14 @@ public class NativeND2Reader extends FormatReader {
             int check = imageLengths.get(i)[2];
             int length = imageLengths.get(i)[1] - 8;
             if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
-              if (i == 0) {
-                fixByteCounts = true;
+              if (imageOffsets.get(i) - length != offsetDiff + 8) {
+                if (i == 0) {
+                  fixByteCounts = true;
+                }
+                imageOffsets.remove(i);
+                imageLengths.remove(i);
+                i--;
               }
-              imageOffsets.remove(i);
-              imageLengths.remove(i);
-              i--;
             }
           }
         }
@@ -1181,7 +1192,7 @@ public class NativeND2Reader extends FormatReader {
           availableBytes -= 4096;
         }
       }
-      if (planeSize > 0 &&
+      if (planeSize > 0 && imageOffsets.size() > 1 &&
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
         if (availableBytes < DataTools.safeMultiply64(planeSize, 6)) {
@@ -1845,6 +1856,7 @@ public class NativeND2Reader extends FormatReader {
    */
   private void iterateIn(RandomAccessInputStream in, Long stop) {
     Object value; // We don't know if attribute will be int, double, string....
+    Double zHigh = null, zLow = null;
 
     try {
       Integer currentColor = null;
@@ -1962,6 +1974,12 @@ public class NativeND2Reader extends FormatReader {
         else if (name.equals("dZStep")) {
           trueSizeZ = new Double(value.toString());
         }
+        else if (name.equals("dZHigh")) {
+          zHigh = DataTools.parseDouble(value.toString());
+        }
+        else if (name.equals("dZLow")) {
+          zLow = DataTools.parseDouble(value.toString());
+        }
         else if (name.equals("dPosX")) {
           positionCount++;
         }
@@ -1973,6 +1991,10 @@ public class NativeND2Reader extends FormatReader {
     }
     catch (Exception e) {
       LOGGER.debug("", e);
+    }
+
+    if (zHigh != null && zLow != null && trueSizeZ != null && trueSizeZ > 0) {
+      core.get(0).sizeZ = (int) (Math.ceil(Math.abs(zHigh - zLow) / trueSizeZ)) + 1;
     }
   }
 
@@ -2390,9 +2412,10 @@ public class NativeND2Reader extends FormatReader {
 
       lines = textString.split(" ");
       for (int i=0; i<lines.length; i++) {
-        String key = lines[i++];
-        while (!key.endsWith(":") && key.indexOf('_') < 0 && i < lines.length) {
-          key += " " + lines[i++];
+        StringBuilder sb = new StringBuilder(lines[i++]);
+        while ((sb.length() == 0 || sb.charAt(sb.length() - 1) != ':') && sb.indexOf("_") < 0 && i < lines.length) {
+          sb.append(" ");
+          sb.append(lines[i++]);
           if (i >= lines.length) {
             break;
           }
@@ -2401,10 +2424,13 @@ public class NativeND2Reader extends FormatReader {
         if (i >= lines.length) {
           break;
         }
+        String key = sb.toString();
 
-        String value = lines[i++];
+        sb.setLength(0);
+        sb.append(lines[i++]);
         while (i < lines.length && lines[i].trim().length() > 0) {
-          value += " " + lines[i++];
+          sb.append(' ');
+          sb.append(lines[i++]);
           if (i >= lines.length) {
             break;
           }
@@ -2412,7 +2438,7 @@ public class NativeND2Reader extends FormatReader {
 
         key = key.trim();
         key = key.substring(0, key.length() - 1);
-        value = value.trim();
+        String value = sb.toString().trim();
 
         if (key.startsWith("- Step")) {
           int end = key.indexOf(" ", 8);

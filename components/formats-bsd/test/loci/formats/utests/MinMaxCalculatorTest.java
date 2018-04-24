@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import loci.common.Location;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MinMaxCalculator;
@@ -121,7 +122,7 @@ public class MinMaxCalculatorTest {
     assertEquals(maximum, knownGlobalMax);
     List<List<double[]>> seriesGlobalMinimaMaxima = 
       minMaxStore.seriesGlobalMinimaMaxima;
-    assertEquals(1, seriesGlobalMinimaMaxima.size());
+    assertEquals(minMaxCalculator.getCoreIndex() + 1, seriesGlobalMinimaMaxima.size());
     List<double[]> channelGlobalMinimaMaxima = 
       seriesGlobalMinimaMaxima.get(0);
     assertEquals(1, channelGlobalMinimaMaxima.size());
@@ -196,6 +197,39 @@ public class MinMaxCalculatorTest {
     minMaxCalculator.openBytes(0, buf, 0, halfway, sizeX, halfway);
     minMaxCalculator.openBytes(0, buf, 0, 0, sizeX, halfway);
     assertMinMax(-2.0, 2.0);
+  }
+
+  /**
+   * Checks that the min and max values for each core index do not change
+   * when the resolutions are unflattened.
+   */
+  @Test
+  public void testMultipleResolutions() throws Exception {
+    minMaxCalculator.setCoreIndex(0);
+    minMaxCalculator.openBytes(0);
+    assertMinMax(-2.0, 101.0);
+    minMaxCalculator.setCoreIndex(1);
+    minMaxCalculator.openBytes(0);
+    assertMinMax(-1.0, 102.0);
+
+    MinMaxCalculator unflattened = new MinMaxCalculator(new MinMaxCalculatorTestReader());
+    try {
+      unflattened.setFlattenedResolutions(false);
+      unflattened.setId(TEST_FILE);
+
+      unflattened.setCoreIndex(0);
+      unflattened.openBytes(0);
+      assertEquals(-2.0, unflattened.getPlaneMinimum(0)[0]);
+      assertEquals(103.0, unflattened.getPlaneMaximum(0)[0]);
+
+      unflattened.setCoreIndex(1);
+      unflattened.openBytes(0);
+      assertEquals(-1.0, unflattened.getPlaneMinimum(0)[0]);
+      assertEquals(104.0, unflattened.getPlaneMaximum(0)[0]);
+    }
+    finally {
+      unflattened.close();
+    }
   }
 
   /**
@@ -284,6 +318,18 @@ public class MinMaxCalculatorTest {
         fullPlaneCallIndex++;
       }
       return buf;
+    }
+
+    @Override
+    public void setId(String id) throws FormatException, IOException {
+      super.setId(id);
+
+      // insert a single sub-resolution
+
+      core.add(new CoreMetadata(core.get(0)));
+      core.get(0).resolutionCount++;
+      core.get(1).sizeX /= 2;
+      core.get(1).sizeY /= 2;
     }
   }
 }

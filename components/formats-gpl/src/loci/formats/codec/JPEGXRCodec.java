@@ -67,6 +67,11 @@ public class JPEGXRCodec extends BaseCodec {
   /**
    * The CodecOptions parameter should have the following fields set:
    *  {@link CodecOptions#maxBytes maxBytes}
+   *  {@link CodecOptions#interleaved interleaved}
+   *  {@link CodecOptions#bitsPerSample bitsPerSample}
+   *  {@link CodecOptions#littleEndian littleEndian}
+   *  {@link CodecOptions#width width}
+   *  {@link CodecOptions#height height}
    *
    * @see Codec#decompress(byte[], CodecOptions)
    */
@@ -76,7 +81,33 @@ public class JPEGXRCodec extends BaseCodec {
   {
     initialize();
 
-    return service.decompress(buf);
+    byte[] uncompressed = service.decompress(buf);
+
+    if (options.interleaved) {
+      return uncompressed;
+    }
+
+    int bpp = options.bitsPerSample / 8;
+    int pixels = options.width * options.height;
+    int channels = uncompressed.length / (pixels * bpp);
+
+    if (channels == 1) {
+      return uncompressed;
+    }
+
+    byte[] deinterleaved = new byte[uncompressed.length];
+
+    for (int p=0; p<pixels; p++) {
+      for (int c=0; c<channels; c++) {
+        for (int b=0; b<bpp; b++) {
+          int bb = options.littleEndian ? b : bpp - b - 1;
+          deinterleaved[bpp * (c * pixels + p) + bb] =
+            uncompressed[bpp * (p * channels + c) + b];
+        }
+      }
+    }
+
+    return deinterleaved;
   }
 
   // -- Helper methods --

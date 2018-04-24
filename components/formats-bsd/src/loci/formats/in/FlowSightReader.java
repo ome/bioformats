@@ -95,8 +95,13 @@ public class FlowSightReader extends FormatReader {
    */
   @Override
   public boolean isThisType(RandomAccessInputStream stream)
-      throws IOException {
-    TiffParser tiffParser = new TiffParser(stream);
+          throws IOException {
+    TiffParser tiffParser;
+    try {
+      tiffParser = new TiffParser(stream);
+    } catch (java.lang.IllegalArgumentException iae) {
+      return false;
+    }
     if (! tiffParser.isValidHeader()) return false;
     IFD ifd = tiffParser.getFirstIFD();
     if (ifd == null) return false;

@@ -30,6 +30,7 @@ package loci.plugins.util;
 import ij.Prefs;
 
 import loci.formats.ClassList;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.CellSensReader;
@@ -68,6 +69,8 @@ public final class LociPrefs {
     "bioformats.nativend2.chunkmap";
   public static final String PREF_LEICA_LIF_PHYSICAL_SIZE =
     "bioformats.leicalif.physicalsize.compatibility";
+  public static final String PREF_SLICE_LABEL_PATTERN = "bioformats.sliceLabelPattern";
+  public static final String PREF_SLICE_LABEL_BASE_INDEX = "bioformats.sliceLabelBaseIndex";
   public static final String PREF_CELLSENS_FAIL =
     "bioformats.cellsens.fail_on_missing_ets";
 
@@ -195,6 +198,14 @@ public final class LociPrefs {
       LIFReader.OLD_PHYSICAL_SIZE_DEFAULT);
   }
 
+  public static String getSliceLabelPattern() {
+    return Prefs.get(PREF_SLICE_LABEL_PATTERN, "%c%z%t- %n");
+  }
+  
+  public static int getSliceLabelBaseIndex() {
+    return Prefs.getInt(PREF_SLICE_LABEL_BASE_INDEX, 1);
+  }
+  
   public static boolean isCellsensFailOnMissing() {
     return Prefs.get(PREF_CELLSENS_FAIL, CellSensReader.FAIL_ON_MISSING_DEFAULT);
   }

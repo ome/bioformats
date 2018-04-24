@@ -127,7 +127,7 @@ Type "ant -p" for a list of targets.
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="medium"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
           <auxClasspath refid="runtime.classpath"/>
@@ -190,7 +190,7 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Implementation-Date" value="${DATE}"/>
         <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
         <attribute name="Implementation-Build" value="${build.version}"/>
-        <attribute name="Implementation-URL" value="http://www.openmicroscopy.org/site/products/bio-formats/"/>
+        <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${component.jar}">
@@ -212,7 +212,7 @@ your FindBugs installation's lib directory. E.g.:
         <attribute name="Implementation-Date" value="${DATE}"/>
         <attribute name="Implementation-Vendor" value="Open Microscopy Environment"/>
         <attribute name="Implementation-Build" value="${build.version}"/>
-        <attribute name="Implementation-URL" value="http://www.openmicroscopy.org/site/products/bio-formats/"/>
+        <attribute name="Implementation-URL" value="https://www.openmicroscopy.org/bio-formats/"/>
       </manifest>
     </jar>
     <artifact:install file="${artifact.dir}/${bundle.jar}">

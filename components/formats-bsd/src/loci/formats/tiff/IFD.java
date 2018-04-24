@@ -375,8 +375,8 @@ public class IFD extends HashMap<Integer, Object> {
 
     // sanitize line feeds
     if (value != null) {
-      value = value.replaceAll("\r\n", "\n"); // CR-LF to LF
-      value = value.replaceAll("\r", "\n"); // CR to LF
+      value = value.replace("\r\n", "\n"); // CR-LF to LF
+      value = value.replace('\r', '\n'); // CR to LF
     }
 
     return value;
@@ -970,6 +970,21 @@ public class IFD extends HashMap<Integer, Object> {
       {
         v = value.toString();
         LOGGER.trace("\t{}={}", getIFDTagName(tag.intValue()), v);
+      }
+      else if (value instanceof OnDemandLongArray) {
+        // this is an array of primitive types, Strings, or TiffRationals
+        LOGGER.trace("\t{}=", getIFDTagName(tag.intValue()));
+        try {
+          OnDemandLongArray dvalue = (OnDemandLongArray) value;
+          long nElements = dvalue.size();
+          long[] darray = dvalue.toArray();
+          for (long i=0; i<nElements; i++) {
+            LOGGER.trace("\t\t{}", Array.get(darray, (int) i));
+          }
+        }
+        catch (IOException e) {
+          LOGGER.trace("Error reading array", e);
+        }
       }
       else {
         // this is an array of primitive types, Strings, or TiffRationals

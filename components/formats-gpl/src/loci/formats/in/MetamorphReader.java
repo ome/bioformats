@@ -374,6 +374,7 @@ public class MetamorphReader extends BaseTiffReader {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
+      Arrays.sort(dirList);
       for (String f : dirList) {
         int underscore = f.indexOf('_');
         if (underscore < 0) underscore = f.indexOf('.');
@@ -1036,7 +1037,7 @@ public class MetamorphReader extends BaseTiffReader {
         Double expTime = exposureTime;
         Double xmlZPosition = null;
 
-        int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
+        int fileIndex = getIndex(0, coords[1], coords[2]) / getSizeZ();
         if (fileIndex >= 0) {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
@@ -1522,10 +1523,13 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Create an appropriate name for the given series. */
   private String makeImageName(int i) {
-    String name = "";
+    StringBuilder name = new StringBuilder();
     if (stageNames != null && stageNames.size() > 0) {
       int stagePosition = i / (getSeriesCount() / stageNames.size());
-      name += "Stage" + (stagePosition + 1) + " " + stageNames.get(stagePosition);
+      name.append("Stage");
+      name.append(stagePosition + 1);
+      name.append(" ");
+      name.append(stageNames.get(stagePosition));
     }
 
     if (firstSeriesChannels != null &&
@@ -1533,21 +1537,22 @@ public class MetamorphReader extends BaseTiffReader {
       stageNames.size() != getSeriesCount()))
     {
       if (name.length() > 0) {
-        name += "; ";
+        name.append("; ");
       }
       for (int c=0; c<firstSeriesChannels.length; c++) {
         if (firstSeriesChannels[c] == ((i % 2) == 0) && c < waveNames.size()) {
-          name += waveNames.get(c) + "/";
+          name.append(waveNames.get(c));
+          name.append("/");
         }
       }
       if (name.length() > 0) {
-        name = name.substring(0, name.length() - 1);
+        return name.substring(0, name.length() - 1);
       }
     }
     if (name.length() == 0 && isHCS) {
-      name = stageLabels[i];
+      return stageLabels[i];
     }
-    return name;
+    return name.toString();
   }
 
   /**

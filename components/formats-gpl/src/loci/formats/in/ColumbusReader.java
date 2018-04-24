@@ -598,9 +598,11 @@ public class ColumbusReader extends FormatReader {
     if (xml.exists()) {
       return xml;
     }
-    xml = new Location(parent.getParentFile(), XML_FILE);
-    if (xml.exists()) {
-      return xml;
+    if (parent.getParent() != null) {
+      xml = new Location(parent.getParentFile(), XML_FILE);
+      if (xml.exists()) {
+        return xml;
+      }
     }
     return null;
   }

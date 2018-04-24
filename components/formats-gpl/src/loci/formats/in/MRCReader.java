@@ -81,7 +81,26 @@ public class MRCReader extends FormatReader {
   /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    return FormatTools.validStream(stream, HEADER_SIZE, false);
+    if (!FormatTools.validStream(stream, HEADER_SIZE, false)) {
+      return false;
+    }
+    stream.seek(ENDIANNESS_OFFSET);
+    stream.order(stream.read() == 68);
+    stream.seek(0);
+
+    int x = stream.readInt();
+    if (x <= 0 || x >= stream.length()) {
+      return false;
+    }
+    int y = stream.readInt();
+    if (y <= 0 || y >= stream.length()) {
+      return false;
+    }
+    int z = stream.readInt();
+    if (z <= 0 || z >= stream.length()) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -274,7 +293,9 @@ public class MRCReader extends FormatReader {
       }
     }
 
-    in.skipBytes(4);
+    int ispg = in.readInt();
+    addGlobalMeta("ISPG", ispg);
+    addGlobalMeta("Is data cube", ispg == 1);
 
     extHeaderSize = in.readInt();
 

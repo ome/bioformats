@@ -13,8 +13,7 @@ Type "ant -p" for a list of targets.
   <!-- Global build targets -->
 
   <target name="compile"
-    depends="compile-autogen,
-      compile-formats-gpl,
+    depends="compile-formats-gpl,
       compile-bio-formats-plugins,
       compile-formats-api,
       compile-formats-bsd,
@@ -25,7 +24,6 @@ Type "ant -p" for a list of targets.
 
   <target name="jars"
     depends="copy-jars,
-      jar-autogen,
       jar-formats-gpl,
       jar-bio-formats-plugins,
       jar-formats-api,
@@ -36,8 +34,7 @@ Type "ant -p" for a list of targets.
     description="generate JAR files for software packages"/>
 
   <target name="findbugs"
-    depends="findbugs-autogen,
-      findbugs-formats-gpl,
+    depends="findbugs-formats-gpl,
       findbugs-bio-formats-plugins,
       findbugs-formats-api,
       findbugs-formats-bsd,
@@ -47,7 +44,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean"
     depends="
-      clean-autogen,
       clean-formats-gpl,
       clean-bio-formats-plugins,
       clean-formats-api,
@@ -55,7 +51,6 @@ Type "ant -p" for a list of targets.
       clean-bio-formats-tools,
       clean-tests,
       clean-turbojpeg,
-      clean-docs-sphinx,
       clean-bundles"
     description="remove build files for all components">
     <delete dir="${artifact.dir}"/>
@@ -63,8 +58,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test"
-    depends="test-autogen,
-      test-formats-gpl,
+    depends="test-formats-gpl,
       test-bio-formats-plugins,
       test-formats-api,
       test-formats-bsd,
@@ -88,19 +82,6 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="docs-zip" depends="docs"/>
-
-  <target name="docs-sphinx"
-    description="generate the Sphinx HTML documentation">
-    <echo>----------=========== Sphinx HTML ===========----------</echo>
-    <ant dir="docs/sphinx" target="html"/>
-    <echo>----------=========== Sphinx MAN ===========----------</echo>
-    <ant dir="docs/sphinx" target="man"/>
-  </target>
-
-  <target name="clean-docs-sphinx"
-	description="remove build files for the Sphinx HTML documentation">
-    <ant dir="docs/sphinx" target="clean"/>
-  </target>
 
   <target name="copy-jars" description="copy JARS (deprecated)"/>
 
@@ -129,11 +110,6 @@ Type "ant -p" for a list of targets.
   <target name="clean-formats-api"
     description="remove build files for reader and writer APIs">
     <ant dir="components/formats-api" target="formats-api.clean"/>
-  </target>
-
-  <target name="utils-formats-api" depends="jar-formats-api"
-    description="compile extra utilities for reader and writer APIs">
-    <ant dir="components/formats-api" target="formats-api.utils"/>
   </target>
 
   <target name="test-formats-api" depends="jar-formats-api, testing-deps"
@@ -251,37 +227,6 @@ Type "ant -p" for a list of targets.
   <target name="test-formats-gpl" depends="jar-formats-gpl, testing-deps"
     description="compile and run tests for GPL format implementations">
     <ant dir="components/formats-gpl" target="test"/>
-  </target>
-
-  <!-- Bio-Formats autogen -->
-
-  <target name="deps-autogen"
-    depends="copy-jars, jar-formats-api,jar-formats-bsd,jar-formats-gpl"/>
-
-  <target name="compile-autogen" depends="deps-autogen"
-    description="compile classes for Bio-Formats autogen">
-    <ant dir="components/autogen" target="autogen.compile"/>
-  </target>
-
-  <target name="jar-autogen" depends="deps-autogen"
-    description="generate JAR file for Bio-Formats autogen">
-    <ant dir="components/autogen" target="autogen.jar"/>
-  </target>
-
-  <target name="findbugs-autogen" depends="jar-autogen"
-    description="run findbugs on Bio-Formats autogen">
-    <ant dir="components/autogen" target="autogen.findbugs"/>
-  </target>
-
-  <target name="clean-autogen"
-    depends="clean-formats-api,clean-formats-bsd"
-    description="remove build files for Bio-Formats autogen">
-    <ant dir="components/autogen" target="autogen.clean"/>
-  </target>
-
-  <target name="test-autogen" depends="jar-autogen, testing-deps"
-    description="compile and run tests for Bio-Formats autogen">
-    <ant dir="components/autogen" target="test"/>
   </target>
 
   <!-- Bio-Formats Plugins for ImageJ -->
@@ -445,8 +390,6 @@ Type "ant -p" for a list of targets.
                   prefix="bioformats/" excludes="DESCRIPTION.in"/>
       <tarfileset file="${temp.file}" fullpath="bioformats/DESCRIPTION"/>
       <tarfileset file="${root.dir}/LICENSE.txt" fullpath="bioformats/COPYING"/>
-      <tarfileset file="${root.dir}/docs/sphinx/about/whats-new.rst"
-                  fullpath="bioformats/NEWS"/>
       <tarfileset dir="${root.dir}/components/formats-gpl/matlab"
                   prefix="bioformats/inst/"/>
     </tar>

@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import loci.common.Constants;
 import loci.common.DataTools;
@@ -642,6 +643,7 @@ public class FormatReaderTest {
         if (retrieve.getImageAcquisitionDate(i) != null) {
           date = retrieve.getImageAcquisitionDate(i).getValue();
         }
+        config.setSeries(i);
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
@@ -1727,6 +1729,10 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("Leica Image File Format")) {
+            continue;
+          }
+
           // pattern datasets can only be detected with the pattern file
           if (reader.getFormat().equals("File pattern")) {
             continue;
@@ -2393,8 +2399,15 @@ public class FormatReaderTest {
             }
 
             // the pattern reader only picks up pattern files
-            if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
+            if (!used[i].toLowerCase().endsWith(".pattern") &&
               r instanceof FilePatternReader)
+            {
+              continue;
+            }
+
+            // ignore companion files for Leica LIF
+            if (!used[i].toLowerCase().endsWith(".lif") &&
+              r instanceof LIFReader)
             {
               continue;
             }
@@ -2437,7 +2450,7 @@ public class FormatReaderTest {
       // this should prevent conflicts when running multiple tests
       // on the same system and/or in multiple threads
       String tmpdir = System.getProperty("java.io.tmpdir");
-      memoDir = new File(tmpdir, System.currentTimeMillis() + ".memo");
+      memoDir = new File(tmpdir, UUID.randomUUID().toString() + ".memo");
       memoDir.mkdir();
       Memoizer memo = new Memoizer(0, memoDir);
       memo.setId(reader.getCurrentFile());

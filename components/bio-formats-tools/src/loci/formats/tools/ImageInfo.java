@@ -573,6 +573,8 @@ public class ImageInfo {
       Modulo moduloT = reader.getModuloT();
       int thumbSizeX = reader.getThumbSizeX();
       int thumbSizeY = reader.getThumbSizeY();
+      int tileSizeX = reader.getOptimalTileWidth();
+      int tileSizeY = reader.getOptimalTileHeight();
       boolean little = reader.isLittleEndian();
       String dimOrder = reader.getDimensionOrder();
       boolean orderCertain = reader.isOrderCertain();
@@ -636,6 +638,7 @@ public class ImageInfo {
       if (imageCount != sizeZ * effSizeC * sizeT) {
         LOGGER.info("\t************ ZCT mismatch ************");
       }
+      LOGGER.info("\tTile size = {} x {}", tileSizeX, tileSizeY);
       LOGGER.info("\tThumbnail size = {} x {}", thumbSizeX, thumbSizeY);
       LOGGER.info("\tEndianness = {}",
         little ? "intel (little)" : "motorola (big)");

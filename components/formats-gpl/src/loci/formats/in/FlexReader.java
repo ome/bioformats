@@ -282,8 +282,13 @@ public class FlexReader extends FormatReader {
     // read pixels from the file
     TiffParser tp = new TiffParser(s);
     tp.fillInIFD(ifd);
+
+    // log the first offset used
+    LOGGER.trace("first offset for series={} no={}: {}", getCoreIndex(), no, ifd.getStripOffsets()[0]);
+
     tp.getSamples(ifd, buf, x, y, w, h);
     factor = file.factors == null ? 1d : file.factors[imageNumber];
+    LOGGER.trace("  using factor = {}", factor);
     tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
@@ -968,6 +973,10 @@ public class FlexReader extends FormatReader {
 
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
+    if (getImageCount() == imageNames.size()) {
+      fieldCount = 1;
+    }
+
     // if the calculated image count is the same as the number of planes
     // in the file, then we can assume one field per file
     // otherwise assume that fields are stored within the files
@@ -1307,10 +1316,16 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16 ||
+              firstIFD.getStripOffsets().length == 1)
+            {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
+              if (firstIFD.getStripOffsets().length == 1) {
+                // used to ensure that image offsets are read, not calculated
+                compressed = true;
+              }
             }
             else {
               // if the pixel data is uncompressed and the IFD is stored

@@ -797,6 +797,7 @@ public class LeicaReader extends FormatReader {
 
       String lei =
         baseFile.substring(0, baseFile.lastIndexOf(File.separator) + 1);
+      StringBuilder suffix = new StringBuilder();
 
       StringTokenizer lines = new StringTokenizer(descr, "\n");
       String line = null, key = null, value = null;
@@ -807,8 +808,11 @@ public class LeicaReader extends FormatReader {
         value = line.substring(line.indexOf('=') + 1).trim();
         addGlobalMeta(key, value);
 
-        if (key.startsWith("Series Name")) lei += value;
+        if (key.startsWith("Series Name")) {
+          suffix.append(value);
+        }
       }
+      lei += suffix.toString();
 
       // now open the LEI file
 

@@ -34,7 +34,7 @@ package loci.formats;
 
 /**
  * Represents a subdimension of Z, C, or T as needed for supporting Modulo
- * annotations.  See http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html
+ * annotations.  See https://docs.openmicroscopy.org/latest/ome-model/developers/6d-7d-and-8d-storage.html
  */
 public class Modulo {
 

@@ -97,9 +97,11 @@ public class SEQReader extends BaseTiffReader {
         short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
 
         if (tag1 != null) {
-          String seqId = "";
-          for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-          addGlobalMeta("Image-Pro SEQ ID", seqId);
+          StringBuilder seqId = new StringBuilder();
+          for (int i=0; i<tag1.length; i++) {
+            seqId.append(tag1[i]);
+          }
+          addGlobalMeta("Image-Pro SEQ ID", seqId.toString());
         }
       }
 

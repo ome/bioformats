@@ -609,6 +609,7 @@ public class Exporter {
             if (notSupportedType) {
                 IJ.error("Pixel type (" + FormatTools.getPixelTypeString(thisType) +
                         ") not supported by this format.");
+                return;
             }
 
             if (codecs != null && codecs.length > 1) {

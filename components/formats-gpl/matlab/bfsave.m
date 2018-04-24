@@ -17,7 +17,7 @@ function bfsave(varargin)
 %    OME-XML metadata object when saving the file instead of creating a
 %    minimal OME-XML metadata object from the input 5D matrix.
 %
-%    For more information, see https://www.openmicroscopy.org/site/support/bio-formats5/developers/matlab-dev.html
+%    For more information, see https://docs.openmicroscopy.org/latest/bio-formats/developers/matlab-dev.html
 %
 %    Examples:
 %

@@ -46,6 +46,7 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
+import loci.formats.codec.LosslessJPEGCodec;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -70,6 +71,7 @@ public class CellSensReader extends FormatReader {
   private static final int RAW = 0;
   private static final int JPEG = 2;
   private static final int JPEG_2000 = 3;
+  private static final int JPEG_LOSSLESS = 5;
   private static final int PNG = 8;
   private static final int BMP = 9;
 
@@ -607,6 +609,7 @@ public class CellSensReader extends FormatReader {
       metadataIndex = -1;
       previousTag = 0;
       expectETS = false;
+      pyramids.clear();
     }
   }
 
@@ -1007,6 +1010,10 @@ public class CellSensReader extends FormatReader {
         break;
       case JPEG_2000:
         codec = new JPEG2000Codec();
+        buf = codec.decompress(ets, options);
+        break;
+      case JPEG_LOSSLESS:
+        codec = new LosslessJPEGCodec();
         buf = codec.decompress(ets, options);
         break;
       case PNG:
@@ -1554,17 +1561,21 @@ public class CellSensReader extends FormatReader {
               case PIXEL_INFO_TYPE:
                 int nIntValues = dataSize / 4;
                 int[] intValues = new int[nIntValues];
-                value = nIntValues > 1 ? "(" : "";
+                StringBuilder sb = new StringBuilder();
+                if (nIntValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nIntValues; v++) {
                   intValues[v] = vsi.readInt();
-                  value += intValues[v];
+                  sb.append(intValues[v]);
                   if (v < nIntValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nIntValues > 1) {
-                  value += ')';
+                  sb.append(")");
                 }
+                value = sb.toString();
 
                 if (tag == IMAGE_BOUNDARY) {
                   if (pyramid != null && pyramid.width == null) {
@@ -1586,17 +1597,21 @@ public class CellSensReader extends FormatReader {
               case DOUBLE_4_4:
                 int nDoubleValues = dataSize / 8;
                 double[] doubleValues = new double[nDoubleValues];
-                value = nDoubleValues > 1 ? "(" : "";
+                sb = new StringBuilder();
+                if (nDoubleValues > 1) {
+                  sb.append("(");
+                }
                 for (int v=0; v<nDoubleValues; v++) {
                   doubleValues[v] = vsi.readDouble();
-                  value += doubleValues[v];
+                  sb.append(doubleValues[v]);
                   if (v < nDoubleValues - 1) {
-                    value += ", ";
+                    sb.append(", ");
                   }
                 }
                 if (nDoubleValues > 1) {
-                  value += ')';
+                  sb.append(')');
                 }
+                value = sb.toString();
 
                 if (tag == RWC_FRAME_SCALE) {
                   if (pyramid != null && pyramid.physicalSizeX == null) {

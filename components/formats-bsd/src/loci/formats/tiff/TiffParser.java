@@ -44,6 +44,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
+import loci.formats.ImageTools;
 import loci.formats.codec.CodecOptions;
 
 import org.slf4j.Logger;
@@ -725,6 +726,14 @@ public class TiffParser {
     in.seek(stripOffset);
     in.read(tile);
 
+    // reverse bits in each byte if FillOrder == 2
+
+    if (ifd.getIFDIntValue(IFD.FILL_ORDER) == 2) {
+      for (int i=0; i<tile.length; i++) {
+        tile[i] = (byte) (Integer.reverse(tile[i]) >> 24);
+      }
+    }
+
     codecOptions.maxBytes = (int) Math.max(size, tile.length);
     codecOptions.ycbcr =
       ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR &&
@@ -870,10 +879,11 @@ public class TiffParser {
 
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
-    if (effectiveChannels == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
+    if ((effectiveChannels == 1 || planarConfig == 1) && (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED &&
+      ifd.getIFDIntValue(IFD.FILL_ORDER) != 2 &&
       numTileRows * numTileCols == 1 && stripOffsets != null && stripByteCounts != null &&
       in.length() >= stripOffsets[0] + stripByteCounts[0])
     {
@@ -885,6 +895,7 @@ public class TiffParser {
       if (planarConfig == 2) {
         lastTile = stripOffsets.length - 1;
       }
+      int bytes = ifd.getBitsPerSample()[0] / 8;
 
       int offset = 0;
       for (int tile=firstTile; tile<=lastTile; tile++) {
@@ -910,7 +921,7 @@ public class TiffParser {
         else {
           // we only want a piece of the tile, so read each row separately
           // this is especially necessary for large single-tile images
-          int bpp = ifd.getBitsPerSample()[0] / 8;
+          int bpp = bytes * effectiveChannels;
           in.skipBytes((int) (y * bpp * tileWidth));
           for (int row=0; row<height; row++) {
             in.skipBytes(x * bpp);
@@ -927,6 +938,15 @@ public class TiffParser {
               break;
             }
           }
+        }
+      }
+      if (effectiveChannels > 1) {
+        byte[][] split = new byte[effectiveChannels][buf.length / effectiveChannels];
+        for (int c=0; c<split.length; c++) {
+          split[c] = ImageTools.splitChannels(buf, c, effectiveChannels, bytes, false, true);
+        }
+        for (int c=0; c<split.length; c++) {
+          System.arraycopy(split[c], 0, buf, c * split[c].length, split[c].length);
         }
       }
       return buf;
