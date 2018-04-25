@@ -930,7 +930,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
     FormatTools.assertId(currentId, true, 1);
     if (hasFlattenedResolutions()) {
       return core.flattenedSize();
-    } else {
+    }
+    else {
       return core.size();
     }
   }
@@ -946,7 +947,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
       int[] pos = core.flattenedIndexes(no);
       series = pos[0];
       resolution = pos[1];
-    } else {
+    }
+    else {
       series = no;
       resolution = 0;
     }
@@ -957,7 +959,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   public int getSeries() {
     if (hasFlattenedResolutions()) {
       return core.flattenedIndex(series, resolution);
-    } else {
+    }
+    else {
       return series;
     }
   }
@@ -1268,7 +1271,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   public int seriesToCoreIndex(int s) {
     if (hasFlattenedResolutions()) {
       return s;
-    } else {
+    }
+    else {
       return core.flattenedIndex(s, 0);
     }
   }
@@ -1277,7 +1281,8 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   public int coreIndexToSeries(int index) {
     if (hasFlattenedResolutions()) {
       return index;
-    } else {
+    }
+    else {
       return core.flattenedIndexes(index)[0];
     }
   }
