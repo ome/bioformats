@@ -36,7 +36,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import loci.formats.*;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.SubResolutionFormatReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
