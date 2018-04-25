@@ -377,11 +377,9 @@ public abstract class FormatReader extends FormatHandler
   protected void addMetaList(String key, Object value,
     Hashtable<String, Object> meta)
   {
-    Vector list = (Vector) meta.get(key);
-    meta.remove(key);
+    Vector list = (Vector) meta.remove(key);
     addMeta(key, value, meta);
-    Object newValue = meta.get(key);
-    meta.remove(key);
+    Object newValue = meta.remove(key);
     if (newValue != null) {
       if (list == null) {
         list = new Vector();
