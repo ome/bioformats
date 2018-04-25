@@ -180,4 +180,10 @@
         <class name="loci.formats.utests.ImageReaderTest"/>
       </classes>
     </test>
+    <test name="MinMaxCalculatorTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.MinMaxCalculatorTest"/>
+      </classes>
+    </test>
 </suite>

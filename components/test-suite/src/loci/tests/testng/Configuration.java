@@ -623,17 +623,17 @@ public class Configuration {
           }
           Length xPos = retrieve.getPlanePositionX(series, p);
           if (xPos != null) {
-            seriesTable.put(X_POSITION + p, xPos.value().toString());
+            seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
             seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
           }
           Length yPos = retrieve.getPlanePositionY(series, p);
           if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, yPos.value().toString());
+            seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
             seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
           }
           Length zPos = retrieve.getPlanePositionZ(series, p);
           if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, zPos.value().toString());
+            seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
             seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
           }
         }

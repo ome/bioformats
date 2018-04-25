@@ -467,7 +467,10 @@ public class LociFunctions extends MacroFunctions {
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
     Double val = null;
     if (planeIndex >= 0) {
-      val = retrieve.getPlaneExposureTime(imageIndex, planeIndex).value(UNITS.SECOND).doubleValue();
+      Time valTime = retrieve.getPlaneExposureTime(imageIndex, planeIndex);
+      if (valTime != null) {
+        val = valTime.value(UNITS.SECOND).doubleValue();
+      }
     }
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }

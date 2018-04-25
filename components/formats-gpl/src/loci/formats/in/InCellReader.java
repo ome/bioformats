@@ -414,18 +414,51 @@ public class InCellReader extends FormatReader {
       }
     }
 
+    for (int t=imageFiles[0][0].length-1; t>=0; t--) {
+      boolean allNull = true;
+      for (int well=0; well<imageFiles.length; well++) {
+        for (int field=0; field<imageFiles[well].length; field++) {
+          for (int p=0; p<imageFiles[well][field][t].length; p++) {
+            if (imageFiles[well][field][t][p] != null) {
+              allNull = false;
+              break;
+            }
+          }
+        }
+      }
+      if (allNull) {
+        ms0.sizeT--;
+      }
+    }
+
     int seriesCount = 0;
 
     if (exclude != null) {
       for (int row=0; row<wellRows; row++) {
         for (int col=0; col<wellCols; col++) {
           if (!exclude[row][col]) {
-            seriesCount += imageFiles[row*wellCols + col].length;
+            int well = row * wellCols + col;
+            boolean hasNonNullImage = false;
+            for (int field=0; field<imageFiles[well].length; field++) {
+              for (int t=0; t<imageFiles[well][field].length; t++) {
+                for (int p=0; p<imageFiles[well][field][t].length; p++) {
+                  if (imageFiles[well][field][t][p] != null) {
+                    hasNonNullImage = true;
+                    break;
+                  }
+                }
+              }
+            }
+            if (hasNonNullImage) {
+              seriesCount += imageFiles[well].length;
+            }
           }
         }
       }
       int expectedSeries = totalImages / (getSizeZ() * getSizeC() * getSizeT());
-      seriesCount = (int) Math.min(seriesCount, expectedSeries);
+      if (expectedSeries > 0) {
+        seriesCount = (int) Math.min(seriesCount, expectedSeries);
+      }
     }
     else seriesCount = totalImages / (getSizeZ() * getSizeC() * getSizeT());
 
@@ -520,16 +553,8 @@ public class InCellReader extends FormatReader {
     store.setPlateName(plateName, 0);
     store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
     store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
-
-    for (int r=0; r<wellRows; r++) {
-      for (int c=0; c<wellCols; c++) {
-        int well = r * wellCols + c;
-        String wellID = MetadataTools.createLSID("Well", 0, well);
-        store.setWellID(wellID, 0, well);
-        store.setWellRow(new NonNegativeInteger(r), 0, well);
-        store.setWellColumn(new NonNegativeInteger(c), 0, well);
-      }
-    }
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
+    store.setPlateColumns(new PositiveInteger(wellCols), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
@@ -552,6 +577,7 @@ public class InCellReader extends FormatReader {
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
 
+    int prevWell = -1;
     for (int i=0; i<seriesCount; i++) {
       store.setObjectiveSettingsID(objectiveID, i);
 
@@ -566,7 +592,7 @@ public class InCellReader extends FormatReader {
       }
 
       int well = getWellFromSeries(i);
-      int field = getFieldFromSeries(i) + 1;
+      int field = getFieldFromSeries(i);
       int totalTimepoints =
         oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
       int timepoint = oneTimepointPerSeries ? (i % totalTimepoints) + 1 : -1;
@@ -578,6 +604,15 @@ public class InCellReader extends FormatReader {
 
       int wellRow = well / wellCols;
       int wellCol = well % wellCols;
+      wellIndex = i / (fieldCount * totalTimepoints);
+
+      if (well != prevWell) {
+        String wellID = MetadataTools.createLSID("Well", 0, wellIndex);
+        store.setWellID(wellID, 0, wellIndex);
+        store.setWellRow(new NonNegativeInteger(wellRow), 0, wellIndex);
+        store.setWellColumn(new NonNegativeInteger(wellCol), 0, wellIndex);
+        prevWell = well;
+      }
 
       char rowChar = rowName.charAt(rowName.length() - 1);
       char colChar = colName.charAt(colName.length() - 1);
@@ -594,7 +629,7 @@ public class InCellReader extends FormatReader {
       }
       else col += (char) (colChar + wellCol);
 
-      String imageName = "Well " + row + "-" + col + ", Field #" + field;
+      String imageName = "Well " + row + "-" + col + ", Field #" + (field + 1);
       if (timepoint >= 0) {
         imageName += ", Timepoint #" + timepoint;
       }
@@ -606,18 +641,18 @@ public class InCellReader extends FormatReader {
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
-      int sampleIndex = (field - 1) * totalTimepoints + timepoint;
+      int sampleIndex = field * totalTimepoints + timepoint;
 
       String wellSampleID =
-        MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
-      store.setWellSampleID(wellSampleID, 0, well, sampleIndex);
-      store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
-      store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-      if (posX.containsKey(field - 1)) {
-        store.setWellSamplePositionX(posX.get(field - 1), 0, well, sampleIndex);
+        MetadataTools.createLSID("WellSample", 0, wellIndex, sampleIndex);
+      store.setWellSampleID(wellSampleID, 0, wellIndex, sampleIndex);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, wellIndex, sampleIndex);
+      store.setWellSampleImageRef(imageID, 0, wellIndex, sampleIndex);
+      if (posX.containsKey(field)) {
+        store.setWellSamplePositionX(posX.get(field), 0, wellIndex, sampleIndex);
       }
-      if (posY.containsKey(field - 1)) {
-        store.setWellSamplePositionY(posY.get(field - 1), 0, well, sampleIndex);
+      if (posY.containsKey(field)) {
+        store.setWellSamplePositionY(posY.get(field), 0, wellIndex, sampleIndex);
       }
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);

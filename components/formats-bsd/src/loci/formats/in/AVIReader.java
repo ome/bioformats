@@ -195,7 +195,7 @@ public class AVIReader extends FormatReader {
     }
 
     long fileOff = offsets.get(no).longValue();
-    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : in.length();
+    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : fileOff + lengths.get(no);
     long maxBytes = end - fileOff;
     in.seek(fileOff);
 
@@ -232,6 +232,10 @@ public class AVIReader extends FormatReader {
 
     int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX() * bytes;
     int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
+
+    if (bmpBitsPerPixel > 8 && pad == getRGBChannelCount()) {
+      pad = bytes;
+    }
 
     in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * (getSizeY() - h - y));
 
