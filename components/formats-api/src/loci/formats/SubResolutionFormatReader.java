@@ -1383,8 +1383,7 @@ public abstract class SubResolutionFormatReader extends FormatHandler
         if (store instanceof OMEXMLMetadata) {
           setupService();
           Hashtable<String, Object> allMetadata =
-            new Hashtable<String, Object>();
-          allMetadata.putAll(metadata);
+            new Hashtable<>(metadata);
 
           for (int s=0; s < getSeriesCount(); s++) {
             String name = "Series " + s;

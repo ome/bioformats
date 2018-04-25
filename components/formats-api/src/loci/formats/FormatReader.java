@@ -1401,8 +1401,7 @@ public abstract class FormatReader extends FormatHandler
         if (store instanceof OMEXMLMetadata) {
           setupService();
           Hashtable<String, Object> allMetadata =
-            new Hashtable<String, Object>();
-          allMetadata.putAll(metadata);
+            new Hashtable<>(metadata);
 
           for (int series=0; series<getSeriesCount(); series++) {
             String name = "Series " + series;
