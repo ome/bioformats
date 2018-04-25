@@ -322,42 +322,42 @@ public abstract class SubResolutionFormatReader extends FormatHandler
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, boolean value) {
-    addGlobalMeta(key, new Boolean(value));
+    addGlobalMeta(key, Boolean.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, byte value) {
-    addGlobalMeta(key, new Byte(value));
+    addGlobalMeta(key, Byte.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, short value) {
-    addGlobalMeta(key, new Short(value));
+    addGlobalMeta(key, Short.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, int value) {
-    addGlobalMeta(key, new Integer(value));
+    addGlobalMeta(key, Integer.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, long value) {
-    addGlobalMeta(key, new Long(value));
+    addGlobalMeta(key, Long.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, float value) {
-    addGlobalMeta(key, new Float(value));
+    addGlobalMeta(key, Float.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, double value) {
-    addGlobalMeta(key, new Double(value));
+    addGlobalMeta(key, Double.valueOf(value));
   }
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, char value) {
-    addGlobalMeta(key, new Character(value));
+    addGlobalMeta(key, Character.valueOf(value));
   }
 
   /** Gets a value from the global metadata table. */
@@ -464,42 +464,42 @@ public abstract class SubResolutionFormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, boolean value) {
-    addSeriesMeta(key, new Boolean(value));
+    addSeriesMeta(key, Boolean.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, byte value) {
-    addSeriesMeta(key, new Byte(value));
+    addSeriesMeta(key, Byte.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, short value) {
-    addSeriesMeta(key, new Short(value));
+    addSeriesMeta(key, Short.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, int value) {
-    addSeriesMeta(key, new Integer(value));
+    addSeriesMeta(key, Integer.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, long value) {
-    addSeriesMeta(key, new Long(value));
+    addSeriesMeta(key, Long.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, float value) {
-    addSeriesMeta(key, new Float(value));
+    addSeriesMeta(key, Float.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, double value) {
-    addSeriesMeta(key, new Double(value));
+    addSeriesMeta(key, Double.valueOf(value));
   }
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, char value) {
-    addSeriesMeta(key, new Character(value));
+    addSeriesMeta(key, Character.valueOf(value));
   }
 
   /** Gets an entry from the metadata table for the current series. */
