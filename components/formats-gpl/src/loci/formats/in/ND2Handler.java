@@ -27,12 +27,15 @@ package loci.formats.in;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.xml.BaseHandler;
-import loci.formats.*;
+import loci.formats.CoreMetadata;
+import loci.formats.CoreMetadataList;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.units.UNITS;
