@@ -879,7 +879,7 @@ public abstract class SubResolutionFormatReader extends FormatHandler
     }
     catch (IllegalArgumentException e) {
       throw new FormatException("Image plane too large. Only 2GB of data can " +
-        "be extracted at one time. You can workaround the problem by opening " +
+        "be extracted at one time. You can work around the problem by opening " +
         "the plane in tiles; for further details, see: " +
         "https://docs.openmicroscopy.org/bio-formats/" + FormatTools.VERSION +
         "/about/bug-reporting.html#common-issues-to-check", e);
