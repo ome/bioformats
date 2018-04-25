@@ -239,7 +239,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     Image i = handler.imageMap.get(pos);
 
     if (c == null || i == null) {
-      throw new FormatException("Error setting core metadata for series " + series + " resolution" + resolution);
+      throw new FormatException("Error setting core metadata for series " + series + " resolution " + resolution);
     }
 
     CoreMetadata ms = core.get(series, resolution);
