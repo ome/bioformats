@@ -1343,7 +1343,6 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   /* @see IFormatHandler#setCoreIndex(int) */
   @Override
   public void setCoreIndex(int no) {
-
     if (no < 0 || no >= core.flattenedSize()) {
       throw new IllegalArgumentException("Invalid series: " + no);
     }
