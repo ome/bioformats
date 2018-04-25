@@ -136,7 +136,7 @@ public abstract class SubResolutionFormatReader extends FormatHandler
   protected int resolution = 0;
 
   /**
-   *
+   * List of {@CoreMetadata} objects for each series and resolution.
    */
   protected CoreMetadataList core;
 
