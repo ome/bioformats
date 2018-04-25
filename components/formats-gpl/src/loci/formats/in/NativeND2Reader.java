@@ -26,7 +26,11 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -34,7 +38,14 @@ import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
-import loci.formats.*;
+
+import loci.formats.CoreMetadata;
+import loci.formats.CoreMetadataList;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+import loci.formats.ImageTools;
+import loci.formats.MetadataTools;
+import loci.formats.SubResolutionFormatReader;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
