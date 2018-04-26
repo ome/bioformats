@@ -233,15 +233,16 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  protected void initCoreMetadata(int s, int resolution) throws FormatException, IOException {
+  protected void initCoreMetadata(int series, int resolution) throws FormatException, IOException {
+    int pos = core.flattenedIndex(series, resolution);
     ImageCollection c = handler.collection;
-    Image i = handler.imageMap.get(s);
+    Image i = handler.imageMap.get(pos);
 
     if (c == null || i == null) {
-      throw new FormatException("Error setting core metadata for image number " + s);
+      throw new FormatException("Error setting core metadata for series " + series + " resolution " + resolution);
     }
 
-    CoreMetadata ms = core.get(s);
+    CoreMetadata ms = core.get(series, resolution);
 
     // repopulate core metadata
 
@@ -269,7 +270,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     if ((ifd.getImageWidth() != ms.sizeX) || (ifd.getImageLength() != ms.sizeY))
     {
       throw new FormatException("IFD dimensions do not match XML dimensions for image " +
-        s + ": x=" + ifd.getImageWidth() + ", " + ms.sizeX + ", y=" + ifd.getImageLength() +
+        pos + ": x=" + ifd.getImageWidth() + ", " + ms.sizeX + ", y=" + ifd.getImageLength() +
         ", " + ms.sizeY);
     }
 
@@ -314,19 +315,20 @@ public class LeicaSCNReader extends BaseTiffReader {
     }
 
     core.clear();
-    int resolution = 0;
-    int parent = 0;
+    int currentSeries = 0;
+    int currentResolution = 0;
     for (int i=0; i<count; i++) {
-      if (resolution == 0) {
-        parent = i;
+      if (currentResolution == 0) {
+        core.add();
       }
       CoreMetadata ms = new CoreMetadata();
-      core.add(ms);
+      core.add(currentSeries, ms);
       tiffParser.fillInIFD(ifds.get(handler.IFDMap.get(i)));
-      initCoreMetadata(i, resolution);
-      resolution++;
-      if (resolution == core.get(parent).resolutionCount) {
-        resolution = 0;
+      initCoreMetadata(currentSeries, currentResolution);
+      currentResolution++;
+      if (currentResolution == core.get(currentSeries, 0).resolutionCount) {
+        currentSeries++;
+        currentResolution = 0;
       }
     }
   }
@@ -344,116 +346,104 @@ public class LeicaSCNReader extends BaseTiffReader {
     HashMap<String,String> objectives = new HashMap<String,String>();
     int objectiveidno = 0;
 
-    int parent = 0;
-    for (int s=0; s<getSeriesCount(); s++) {
-      int coreIndex = seriesToCoreIndex(s);
-      ImageCollection c = handler.collection;
-      Image i = handler.imageMap.get(coreIndex);
+    for (int s=0; s<core.size(); s++) {
+      for (int r = 0; r < core.size(s); r++) {
+        int pos = core.flattenedIndex(s, r);
+        ImageCollection c = handler.collection;
+        Image i = handler.imageMap.get(pos);
 
-      int subresolution = coreIndex - parent;
-      if (!hasFlattenedResolutions()) {
-        subresolution = 0;
+        int subresolution = r;
+        if (!hasFlattenedResolutions()) {
+          subresolution = 0;
+        }
+
+        Dimension dimension = i.pixels.lookupDimension(0, 0, r);
+        if (dimension == null) {
+          throw new FormatException(
+            "No dimension information for subresolution=" + subresolution);
+        }
+
+        // Leica units are nanometres; convert to µm
+        double sizeX = i.vSizeX / 1000.0;
+        double sizeY = i.vSizeY / 1000.0;
+        final Length offsetX = new Length(i.vOffsetX, UNITS.REFERENCEFRAME);
+        final Length offsetY = new Length(i.vOffsetY, UNITS.REFERENCEFRAME);
+        double sizeZ = i.vSpacingZ / 1000.0;
+
+        store.setPixelsPhysicalSizeX(
+          FormatTools.getPhysicalSizeX(sizeX / dimension.sizeX), pos);
+        store.setPixelsPhysicalSizeY(
+          FormatTools.getPhysicalSizeY(sizeY / dimension.sizeY), pos);
+        store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), pos);
+
+        if (instrumentIDs.get(i.devModel) == null) {
+          String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
+          instrumentIDs.put(i.devModel, instrumentidno);
+          store.setInstrumentID(instrumentID, instrumentidno);
+          instrumentidno++;
+        }
+
+        int inst = instrumentIDs.get(i.devModel);
+        String objectiveName = i.devModel + ":" + i.objMag;
+        if (objectives.get(objectiveName) == null) {
+          String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
+          objectives.put(objectiveName, objectiveID);
+          store.setObjectiveID(objectiveID, inst, objectiveidno);
+
+          Double mag = Double.parseDouble(i.objMag);
+          store.setObjectiveNominalMagnification(mag, inst, objectiveidno);
+          store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
+          store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
+          objectiveidno++;
+        }
+
+        store.setImageInstrumentRef(
+          MetadataTools.createLSID("Instrument", inst), pos);
+        store.setObjectiveSettingsID(objectives.get(objectiveName), pos);
+        // TODO: Only "brightfield" has been seen in example files
+        if (i.illumSource.equals("brightfield")) {
+          store.setChannelIlluminationType(IlluminationType.TRANSMITTED, pos, 0);
+        } else {
+          store.setChannelIlluminationType(IlluminationType.OTHER, pos, 0);
+          LOGGER.debug("Unknown illumination source {}", i.illumSource);
+        }
+
+        CoreMetadata ms = core.get(s, r);
+
+        for (int q = 0; q < ms.imageCount; q++) {
+          store.setPlanePositionX(offsetX, pos, q);
+          store.setPlanePositionY(offsetY, pos, q);
+        }
+
+        store.setImageName(i.name + " (R" + subresolution + ")", pos);
+        store.setImageDescription("Collection " + c.name, pos);
+
+        store.setImageAcquisitionDate(new Timestamp(i.creationDate), pos);
+
+        // Original metadata...
+        addSeriesMeta("collection.name", c.name);
+        addSeriesMeta("collection.uuid", c.uuid);
+        addSeriesMeta("collection.barcode", c.barcode);
+        addSeriesMeta("collection.ocr", c.ocr);
+        addSeriesMeta("creationDate", i.creationDate);
+
+        addSeriesMeta("device.model for image", i.devModel);
+        addSeriesMeta("device.version for image", i.devVersion);
+        addSeriesMeta("view.sizeX for image", i.vSizeX);
+        addSeriesMeta("view.sizeY for image", i.vSizeY);
+        addSeriesMeta("view.offsetX for image", i.vOffsetX);
+        addSeriesMeta("view.offsetY for image", i.vOffsetY);
+        addSeriesMeta("view.spacingZ for image", i.vSpacingZ);
+        addSeriesMeta("scanSettings.objectiveSettings.objective for image", i.objMag);
+        addSeriesMeta("scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
+        addSeriesMeta("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
       }
-
-      if (core.get(s).resolutionCount > 1) {
-        parent = s;
-      }
-      else if (core.get(parent).resolutionCount -1 == subresolution) {
-        parent = s + 1;
-      }
-
-      Dimension dimension = i.pixels.lookupDimension(0, 0, subresolution);
-      if (dimension == null) {
-        throw new FormatException(
-          "No dimension information for subresolution=" + subresolution);
-      }
-
-      // Leica units are nanometres; convert to µm
-      double sizeX = i.vSizeX / 1000.0;
-      double sizeY = i.vSizeY / 1000.0;
-      final Length offsetX = new Length(i.vOffsetX, UNITS.REFERENCEFRAME);
-      final Length offsetY = new Length(i.vOffsetY, UNITS.REFERENCEFRAME);
-      double sizeZ = i.vSpacingZ / 1000.0;
-
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(sizeX / dimension.sizeX), s);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(sizeY / dimension.sizeY), s);
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(sizeZ), s);
-
-      if (instrumentIDs.get(i.devModel) == null) {
-        String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
-        instrumentIDs.put(i.devModel, instrumentidno);
-        store.setInstrumentID(instrumentID, instrumentidno);
-        instrumentidno++;
-      }
-
-      int inst = instrumentIDs.get(i.devModel);
-      String objectiveName = i.devModel + ":" + i.objMag;
-      if (objectives.get(objectiveName) == null) {
-        String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
-        objectives.put(objectiveName, objectiveID);
-        store.setObjectiveID(objectiveID, inst, objectiveidno);
-
-        Double mag = Double.parseDouble(i.objMag);
-        store.setObjectiveNominalMagnification(mag, inst, objectiveidno);
-        store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
-        store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
-        objectiveidno++;
-      }
-
-      store.setImageInstrumentRef(
-        MetadataTools.createLSID("Instrument", inst), s);
-      store.setObjectiveSettingsID(objectives.get(objectiveName), s);
-      // TODO: Only "brightfield" has been seen in example files
-      if (i.illumSource.equals("brightfield")) {
-        store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
-      } else {
-        store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        LOGGER.debug("Unknown illumination source {}", i.illumSource);
-      }
-
-      CoreMetadata ms = core.get(s);
-
-      for (int q=0; q<ms.imageCount; q++) {
-        store.setPlanePositionX(offsetX, s, q);
-        store.setPlanePositionY(offsetY, s, q);
-      }
-
-      store.setImageName(i.name + " (R" + subresolution + ")", s);
-      store.setImageDescription("Collection " + c.name, s);
-
-      store.setImageAcquisitionDate(new Timestamp(i.creationDate), s);
-
-      // Original metadata...
-      addSeriesMeta("collection.name", c.name);
-      addSeriesMeta("collection.uuid", c.uuid);
-      addSeriesMeta("collection.barcode", c.barcode);
-      addSeriesMeta("collection.ocr", c.ocr);
-      addSeriesMeta("creationDate", i.creationDate);
-
-      addSeriesMeta("device.model for image", i.devModel);
-      addSeriesMeta("device.version for image", i.devVersion);
-      addSeriesMeta("view.sizeX for image", i.vSizeX);
-      addSeriesMeta("view.sizeY for image", i.vSizeY);
-      addSeriesMeta("view.offsetX for image", i.vOffsetX);
-      addSeriesMeta("view.offsetY for image", i.vOffsetY);
-      addSeriesMeta("view.spacingZ for image", i.vSpacingZ);
-      addSeriesMeta("scanSettings.objectiveSettings.objective for image", i.objMag);
-      addSeriesMeta("scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
-      addSeriesMeta("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
     }
   }
 
   private int getParent(int coreIndex) {
-    for (int parent=0; parent<core.size(); ) {
-      int resCount = core.get(parent).resolutionCount;
-      if (parent + resCount > coreIndex) {
-        return parent;
-      }
-      parent += resCount;
-    }
-    return -1;
+    int[] pos = core.flattenedIndexes(coreIndex);
+    return core.flattenedIndex(pos[0], 0);
   }
 
   /**

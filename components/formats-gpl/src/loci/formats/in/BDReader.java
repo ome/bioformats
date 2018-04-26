@@ -494,7 +494,7 @@ public class BDReader extends FormatReader {
           store.setDetectorSettingsID(detectorID, i, c);
           store.setDetectorSettingsGain(gain[c], i, c);
           store.setDetectorSettingsOffset(offset[c], i, c);
-          store.setDetectorSettingsBinning(getBinning(binning), i, c);
+          store.setDetectorSettingsBinning(MetadataTools.getBinning(binning), i, c);
         }
 
         long firstPlane = 0;
@@ -514,8 +514,8 @@ public class BDReader extends FormatReader {
       }
 
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-      store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
+      store.setPlateRowNamingConvention(MetadataTools.getNamingConvention("Letter"), 0);
+      store.setPlateColumnNamingConvention(MetadataTools.getNamingConvention("Number"), 0);
       store.setPlateName(plateName, 0);
       store.setPlateDescription(plateDescription, 0);
 

@@ -31,6 +31,16 @@
   -->
 
 <suite name="Formats API Tests">
+   <test name="CoreMetadataList">
+      <classes>
+        <class name="loci.formats.utests.CoreMetadataListTest"/>
+      </classes>
+    </test>
+    <test name="MetadataList">
+      <classes>
+        <class name="loci.formats.utests.MetadataListTest"/>
+      </classes>
+    </test>
     <test name="FormatTools">
       <classes>
         <class name="loci.formats.utests.FormatToolsTest"/>

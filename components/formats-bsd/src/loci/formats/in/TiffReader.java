@@ -131,7 +131,7 @@ public class TiffReader extends BaseTiffReader {
 
     LOGGER.info("Checking comment style");
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     if (ifds.size() > 1) m.orderCertain = false;
 
@@ -266,7 +266,7 @@ public class TiffReader extends BaseTiffReader {
     int c = getSizeC();
     int images = 1;
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     if (ifds.get(0).containsKey(IMAGEJ_TAG)) {
       comment += "\n" + ifds.get(0).getIFDTextValue(IMAGEJ_TAG);

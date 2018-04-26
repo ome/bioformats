@@ -305,14 +305,14 @@ public class FEITiffReader extends BaseTiffReader {
           String detectorID = MetadataTools.createLSID("Detector", 0, i);
           store.setDetectorID(detectorID, 0, i);
           store.setDetectorModel(detectors.get(i), 0, i);
-          store.setDetectorType(getDetectorType("Other"), 0, i);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, i);
         }
       }
       if (magnification != null) {
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
         store.setObjectiveNominalMagnification(magnification, 0, 0);
-        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-        store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+        store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
       }
 
       store.setStageLabelX(stageX, 0);

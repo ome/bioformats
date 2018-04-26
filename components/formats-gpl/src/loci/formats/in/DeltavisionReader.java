@@ -1032,7 +1032,7 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse N.A. '{}'", na);
             }
             if (tokens.length >= 2) {
-              store.setObjectiveCorrection(getCorrection(tokens[1]), 0, 0);
+              store.setObjectiveCorrection(MetadataTools.getCorrection(tokens[1]), 0, 0);
             }
             // TODO:  Token #2 is the microscope model name.
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
@@ -1051,8 +1051,8 @@ public class DeltavisionReader extends FormatReader {
             for (int series=0; series<getSeriesCount(); series++) {
               store.setObjectiveSettingsID(objectiveID, series);
             }
-            store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-            store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+            store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+            store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
           }
         }
         // Image properties
@@ -1095,12 +1095,12 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         else if (key.equals("Binning")) {
-          store.setDetectorType(getDetectorType("Other"), 0, 0);
+          store.setDetectorType(MetadataTools.getDetectorType("Other"), 0, 0);
           String detectorID = MetadataTools.createLSID("Detector", 0, 0);
           store.setDetectorID(detectorID, 0, 0);
           for (int series=0; series<getSeriesCount(); series++) {
             for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsBinning(getBinning(value), series, c);
+              store.setDetectorSettingsBinning(MetadataTools.getBinning(value), series, c);
               // link DetectorSettings to an actual Detector
               store.setDetectorSettingsID(detectorID, series, c);
             }
@@ -1393,8 +1393,8 @@ public class DeltavisionReader extends FormatReader {
   {
     Double lensNA = null;
     Double workingDistance = null;
-    Immersion immersion = getImmersion("Other");
-    Correction correction = getCorrection("Other");
+    Immersion immersion = MetadataTools.getImmersion("Other");
+    Correction correction = MetadataTools.getCorrection("Other");
     String manufacturer = null;
     String model = null;
     double magnification = 0;
@@ -1426,861 +1426,861 @@ public class DeltavisionReader extends FormatReader {
     switch (lensID) {
       case 2001:
         lensNA = 1.15;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 10100:
         lensNA = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP134";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10101:
         lensNA = 0.40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB331";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10102:
         lensNA = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP134";
         break;
       case 10103:
         lensNA = 0.13;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP124";
         break;
       case 10104:
         lensNA = 0.40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB331";
         break;
       case 10105:
         lensNA = 0.40;
         workingDistance = 3.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP331";
         break;
       case 10106:
         lensNA = 0.16;
         calibratedMagnification = 4.0;
         workingDistance = 13.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "1-UB822";
         break;
       case 10107:
         lensNA = 0.40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         workingDistance = 3.10;
         model = "1-UB823";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10108:
         lensNA = 0.25;
         workingDistance = 9.8;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC243";
         break;
       case 10109:
         lensNA = 0.30;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB532";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10110:
         lensNA = 0.13;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10111:
         lensNA = 0.08;
         calibratedMagnification = 2.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10112:
         lensNA = 0.13;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB522";
         break;
       case 10113:
         lensNA = 0.04;
         calibratedMagnification = 1.25;
         workingDistance = 5.1;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB920";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10114:
         lensNA = 0.08;
         calibratedMagnification = 2.0;
         workingDistance = 6.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB921";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10200:
         lensNA = 0.40;
         workingDistance = 3.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10201:
         lensNA = 0.65;
         workingDistance = 1.03;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB343";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10202:
         lensNA = 0.40;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LP146";
         break;
       case 10203:
         lensNA = 0.80;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB342";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10204:
         lensNA = 0.70;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-LB341";
         break;
       case 10205:
         lensNA = 0.75;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB765";
-        correction = getCorrection("Apo");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10206:
         lensNA = 0.50;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC525";
         break;
       case 10207:
         lensNA = 0.40;
         workingDistance = 3.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC145";
-        correction = getCorrection("Achromat");
+        correction = MetadataTools.getCorrection("Achromat");
         break;
       case 10208:
         lensNA = 0.50;
         workingDistance = 0.55;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB525";
         break;
       case 10209:
         lensNA = 0.40;
         workingDistance = 6.9;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC345";
         break;
       case 10210:
         lensNA = 0.40;
         workingDistance = 6.9;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB345";
         break;
       case 10400:
         lensNA = 0.55;
         workingDistance = 2.04;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10401:
         lensNA = 0.85;
         workingDistance = 0.25;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10402:
         lensNA = 1.30;
         workingDistance = 0.12;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB356";
         break;
       case 10403:
         lensNA = 1.35;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB768";
         break;
       case 10404:
         lensNA = 0.85;
         workingDistance = 0.20;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "1-UB827";
         break;
       case 10405:
         lensNA = 0.95;
         workingDistance = 0.14;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB927";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10406:
         lensNA = 1.0;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "1-UB828";
         break;
       case 10407:
         lensNA = 0.75;
-        correction = getCorrection("PlanFluor");
-        immersion = getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB527";
         break;
       case 10408:
         lensNA = 0.60;
         workingDistance = 2.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB347";
         break;
       case 10409:
         lensNA = 0.60;
         workingDistance = 2.15;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC347";
         break;
       case 10410:
         lensNA = 1.15;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-UB769";
         break;
       case 10411:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC527";
-        correction = getCorrection("PlanFluor");
+        correction = MetadataTools.getCorrection("PlanFluor");
         break;
       case 10412:
         lensNA = 1.34;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("Apo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Apo");
         break;
       case 10000:
         lensNA = 1.30;
-        correction = getCorrection("Apo");
-        immersion = getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Apo");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB393";
         break;
       case 10001:
         lensNA = 1.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB392";
         break;
       case 10002:
         lensNA = 1.40;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB935";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10003:
         lensNA = 1.35;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB836";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10004:
         lensNA = 1.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB535";
         break;
       case 10005:
         lensNA = 1.35;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10006:
         lensNA = 1.40;
         workingDistance = 0.10;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10007:
         lensNA = 1.40;
         workingDistance = 0.13;
-        immersion = getImmersion("Oil");;
+        immersion = MetadataTools.getImmersion("Oil");;
         model = "1-U2B836";
         break;
       case 10600:
         lensNA = 1.40;
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 10601:
         lensNA = 1.40;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-LB751";
         break;
       case 10602:
         lensNA = 1.40;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB932";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10603:
         lensNA = 1.20;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "1-UB891";
         break;
       case 10604:
         lensNA = 1.20;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 10605:
         lensNA = 0.70;
         workingDistance = 1.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UB351";
         break;
       case 10606:
         lensNA = 0.70;
         workingDistance = 1.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "1-UC351";
         break;
       case 10607:
         lensNA = 1.40;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UC932";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10608:
         lensNA = 1.25;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB532";
         break;
       case 10609:
         lensNA = 1.40;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-UB933";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10610:
         lensNA = 1.40;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10611:
         lensNA = 1.20;
         workingDistance = 0.25;
-        immersion = getImmersion("Water");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Water");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 10612:
         lensNA = 1.42;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "1-U2B933";
-        correction = getCorrection("PlanApo");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 12201:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         model = "93146";
         break;
       case 12203:
         lensNA = 0.45;
         workingDistance = 8.1;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         model = "93150";
         break;
       case 12204:
         lensNA = 0.45;
         workingDistance = 4.50;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MUE01200/92777";
         break;
       case 12205:
         lensNA = 0.50;
         workingDistance = 2.10;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         model = "MRH00200/93135";
         break;
       case 12401:
         lensNA = 1.30;
         workingDistance = 0.16;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85028";
         break;
       case 12402:
         lensNA = 1.30;
         workingDistance = 0.22;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85004";
         break;
       case 12403:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "140508";
         break;
       case 12404:
         lensNA = 1.30;
         workingDistance = 0.22;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 12405:
         lensNA = 0.95;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "93105";
         break;
       case 12406:
         lensNA = 1.00;
         workingDistance = 0.16;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "93106";
         break;
       case 12600:
         lensNA = 1.40;
         workingDistance = 0.17;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85020";
         break;
       case 12601:
         lensNA = 1.40;
         workingDistance = 0.21;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "93108";
         break;
       case 12602:
         lensNA = 1.20;
         workingDistance = 0.22;
-        immersion = getImmersion("Water");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Water");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "93109";
         break;
       case 12000:
         lensNA = 1.40;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "85025";
         break;
       case 12001:
         lensNA = 1.30;
         workingDistance = 0.14;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "85005";
         break;
       case 12002:
         lensNA = 1.30;
         workingDistance = 0.14;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("UV");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("UV");
         model = "85005";
         break;
       case 12003:
         lensNA = 1.40;
         workingDistance = 0.13;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "93110";
         break;
       case 12004:
         lensNA = 1.30;
         workingDistance = 0.20;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "93129";
         break;
       case 12101:
         lensNA = 0.10;
         calibratedMagnification = 2.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "202294";
         break;
       case 12102:
         lensNA = 0.20;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "108388";
         break;
       case 12103:
         lensNA = 0.2;
         calibratedMagnification = 4.0;
         workingDistance = 15.7;
-        correction = getCorrection("PlanApo");
-        immersion = getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93102";
         break;
       case 12104:
         lensNA = 0.45;
         workingDistance = 4.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "93103";
         break;
       case 12105:
         lensNA = 0.30;
         workingDistance = 16.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanFluor");
         model = "93134";
         break;
       case 12106:
         lensNA = 0.50;
         workingDistance = 1.20;
-        immersion = getImmersion("Air");
-        correction = getCorrection("SuperFluor");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("SuperFluor");
         model = "93126";
         break;
       case 12107:
         lensNA = 0.25;
         workingDistance = 10.5;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "93183";
         break;
       case 12108:
         lensNA = 0.25;
         workingDistance = 6.10;
-        immersion = getImmersion("Air");
-        correction = getCorrection("Achromat");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("Achromat");
         model = "93161";
         break;
       case 14001:
         lensNA = 1.40;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 07 08 (02)";
         break;
       case 14002:
         lensNA = 1.30;
         workingDistance = 0.1;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 86";
         break;
       case 14003:
         lensNA = 1.40;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 07 80 (02)";
         break;
       case 14004:
         lensNA = 1.30;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "46 19 46 - 9903";
         break;
       case 14005:
         lensNA = 1.40;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         model = "44 07 86 (02)";
         break;
       case 14006:
         lensNA = 1.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 14601:
         lensNA = 1.40;
         calibratedMagnification = 63.0;
         workingDistance = 0.09;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 07 60 (03)";
         break;
       case 14602:
         lensNA = 1.40;
         calibratedMagnification = 63.0;
         workingDistance = 0.09;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 07 62 (02)";
         break;
       case 14603:
         lensNA = 0.90;
         calibratedMagnification = 63.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "44 00 69";
         break;
       case 14604:
         lensNA = 1.20;
         workingDistance = 0.09;
         calibratedMagnification = 63.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         model = "44 06 68";
         break;
       case 14401:
         lensNA = 1.30;
         workingDistance = 0.14;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("Fluar");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Fluar");
         model = "44 02 55 (01)";
         break;
       case 14402:
         lensNA = 1.00;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 07 51";
         break;
       case 14403:
         lensNA = 1.20;
-        immersion = getImmersion("Water");
-        correction = getCorrection("Apo");
+        immersion = MetadataTools.getImmersion("Water");
+        correction = MetadataTools.getCorrection("Apo");
         model = "44 00 52";
         break;
       case 14404:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 03 51";
         break;
       case 14405:
         lensNA = 1.30;
         workingDistance = 0.15;
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 04 50";
         break;
       case 14406:
         lensNA = 0.60;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 08 65";
         break;
       case 14407:
         lensNA = 1.30;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         break;
       case 14301:
         lensNA = 0.80;
         calibratedMagnification = 25.0;
         workingDistance = 0.80;
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 05 44";
         break;
       case 14302:
         lensNA = 0.80;
         workingDistance = 0.80;
         calibratedMagnification = 25.0;
-        correction = getCorrection("PlanNeofluar");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 05 42";
         break;
       case 14303:
         lensNA = 0.80;
         calibratedMagnification = 25.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 05 45";
         break;
       case 14201:
         lensNA = 0.50;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 03 41 (01)";
         break;
       case 14202:
         lensNA = 0.60;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 06 40";
         break;
       case 14203:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 06 49";
         break;
       case 14204:
         lensNA = 0.75;
-        immersion = getImmersion("Air");
-        correction = getCorrection("Fluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("Fluar");
         model = "44 01 45";
         break;
       case 14101:
         lensNA = 0.30;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanNeofluar");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanNeofluar");
         model = "44 03 30";
         break;
       case 14102:
         lensNA = 0.25;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 01 31";
         break;
       case 14103:
         lensNA = 0.25;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "44 00 31";
         break;
       case 14104:
         lensNA = 0.45;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 06 39";
         break;
       case 14105:
         lensNA = 0.16;
         calibratedMagnification = 5.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         model = "44 06 20";
         break;
       case 18101:
         lensNA = 0.20;
         workingDistance = 3.33;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18102:
         lensNA = 0.20;
         workingDistance = 2.883;
         calibratedMagnification = 2.46;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18103:
         lensNA = 0.20;
         workingDistance = 2.883;
         calibratedMagnification = 4.0;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18104:
         lensNA = 0.45;
         calibratedMagnification = 6.15;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18105:
         lensNA = 0.45;
         workingDistance = 2.883;
-        immersion = getImmersion("Air");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Air");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 18106:
         lensNA = 0.1;
         workingDistance = 24.00;
         calibratedMagnification = 1.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18201:
         lensNA = 0.55;
         workingDistance = 13.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18202:
         lensNA = 0.50;
         workingDistance = 13.00;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 18204:
         lensNA = 0.45;
         workingDistance = 4.50;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MUE01200/92777";
         break;
       case 18205:
         lensNA = 0.50;
         workingDistance = 2.10;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         model = "MRH00200/93135";
         break;
       case 1:
         lensNA = 0.25;
         manufacturer = "Zeiss";
         calibratedMagnification = 10.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 2:
         lensNA = 0.50;
         manufacturer = "Zeiss";
         calibratedMagnification = 25.0;
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 3:
         lensNA = 1.00;
         manufacturer = "Zeiss";
         calibratedMagnification = 50.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 4:
         lensNA = 1.25;
         manufacturer = "Zeiss";
         calibratedMagnification = 63.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 5:
         lensNA = 1.30;
         manufacturer = "Zeiss";
         calibratedMagnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 6:
         lensNA = 1.30;
         calibratedMagnification = 100.0;
-        correction = getCorrection("Neofluor");
-        immersion = getImmersion("Oil");
+        correction = MetadataTools.getCorrection("Neofluor");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 7:
         lensNA = 1.40;
         calibratedMagnification = 63.0;
         manufacturer = "Leitz";
-        immersion = getImmersion("Oil");
-        correction = getCorrection("PlanApo");
+        immersion = MetadataTools.getImmersion("Oil");
+        correction = MetadataTools.getCorrection("PlanApo");
         break;
       case 8:
         lensNA = 1.20;
         calibratedMagnification = 63.0;
-        immersion = getImmersion("Water");
+        immersion = MetadataTools.getImmersion("Water");
         break;
       case 9:
         lensNA = 0.40;
         workingDistance = 0.30;
         calibratedMagnification = 10.0;
         manufacturer = "Olympus";
-        immersion = getImmersion("Air");
+        immersion = MetadataTools.getImmersion("Air");
         break;
       case 10:
         lensNA = 0.80;
         workingDistance = 0.30;
         manufacturer = "Olympus";
         calibratedMagnification = 20.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 11:
         lensNA = 1.30;
         calibratedMagnification = 40.0;
         manufacturer = "Olympus";
         workingDistance = 0.30;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 12:
         lensNA = 1.40;
         workingDistance = 0.30;
         manufacturer = "Olympus";
         calibratedMagnification = 60.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
       case 13:
         lensNA = 1.40;
         workingDistance = 0.30;
         manufacturer = "Nikon";
         calibratedMagnification = 100.0;
-        immersion = getImmersion("Oil");
+        immersion = MetadataTools.getImmersion("Oil");
         break;
     }
 

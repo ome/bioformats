@@ -753,8 +753,8 @@ public class VolocityReader extends FormatReader {
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
       store.setObjectiveNominalMagnification(stack.magnification, 0, i);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, i);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, i);
+      store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, i);
+      store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, i);
       store.setObjectiveSettingsID(objective, i);
 
       String detectorID = MetadataTools.createLSID("Detector", 0, i);

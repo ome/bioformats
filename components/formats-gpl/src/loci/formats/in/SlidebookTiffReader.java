@@ -189,7 +189,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
     readers = new MinimalTiffReader[files.length];
 
-    CoreMetadata m = core.get(0);
+    CoreMetadata m = core.get(0, 0);
 
     m.imageCount = ifds.size() * files.length;
     m.sizeT = ifds.size();
@@ -250,8 +250,8 @@ public class SlidebookTiffReader extends BaseTiffReader {
       if (mag != null) {
         store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-        store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+        store.setObjectiveCorrection(MetadataTools.getCorrection("Other"), 0, 0);
+        store.setObjectiveImmersion(MetadataTools.getImmersion("Other"), 0, 0);
         store.setObjectiveNominalMagnification(new Double(mag), 0, 0);
       }
 

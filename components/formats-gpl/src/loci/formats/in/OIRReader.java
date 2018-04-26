@@ -1011,7 +1011,7 @@ public class OIRReader extends FormatReader {
               objective.ri = DataTools.parseDouble(refraction.getTextContent());
             }
             if (immersion != null) {
-              objective.immersion = getImmersion(immersion.getTextContent());
+              objective.immersion = MetadataTools.getImmersion(immersion.getTextContent());
             }
 
             objectives.add(objective);

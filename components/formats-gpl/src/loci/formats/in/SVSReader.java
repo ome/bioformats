@@ -27,9 +27,6 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +49,16 @@ import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.UNITS;
 
+class SVSCoreMetadata extends CoreMetadata {
+  int ifdIndex;
+  String comment;
+  Length pixelSize;
+
+  SVSCoreMetadata() {
+    super();
+  }
+}
+
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
  */
@@ -64,15 +71,11 @@ public class SVSReader extends BaseTiffReader {
     LoggerFactory.getLogger(SVSReader.class);
 
   /** TIFF image description prefix for Aperio SVS files. */
-  public static final String APERIO_IMAGE_DESCRIPTION_PREFIX = "Aperio Image";
+  private static final String APERIO_IMAGE_DESCRIPTION_PREFIX = "Aperio Image";
 
   private static final String DATE_FORMAT = "MM/dd/yy HH:mm:ss";
 
   // -- Fields --
-
-  private Length[] pixelSize;
-  private String[] comments;
-  private int[] ifdmap;
 
   private Double emissionWavelength, excitationWavelength;
   private Double exposureTime, exposureScale;
@@ -168,7 +171,7 @@ public class SVSReader extends BaseTiffReader {
     if (tiffParser == null) {
       initTiffParser();
     }
-    int ifd = ifdmap[getCoreIndex()];
+    int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
@@ -201,10 +204,6 @@ public class SVSReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      pixelSize = null;
-      comments = null;
-      ifdmap = null;
-
       emissionWavelength = null;
       excitationWavelength = null;
       exposureTime = null;
@@ -220,7 +219,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ifdmap[getCoreIndex()];
+      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -234,7 +233,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = ifdmap[getCoreIndex()];
+      int ifd = ((SVSCoreMetadata) currentCore()).ifdIndex;
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -252,80 +251,39 @@ public class SVSReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
+
     int seriesCount = ifds.size();
 
-    pixelSize = new Length[seriesCount];
-    comments = new String[seriesCount];
-
     core.clear();
-    for (int i=0; i<seriesCount; i++) {
-      core.add(new CoreMetadata());
+    if (seriesCount > 2) {
+      core.add();
+      for (int r=0; r < seriesCount - 2; r++) {
+        core.add(0, new SVSCoreMetadata());
+      }
+      core.add(new SVSCoreMetadata());
+      core.add(new SVSCoreMetadata());
     }
-
-    for (int i=0; i<seriesCount; i++) {
-      setSeries(i);
-      int index = getIFDIndex(i);
-      tiffParser.fillInIFD(ifds.get(index));
-
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        String comment = ifds.get(index).getComment();
-        if (comment == null) {
-          continue;
-        }
-        String[] lines = comment.split("\n");
-        String[] tokens;
-        String key, value;
-        for (String line : lines) {
-          tokens = line.split("[|]");
-          for (String t : tokens) {
-            if (t.indexOf('=') == -1) {
-              addGlobalMeta("Comment", t);
-              comments[i] = t;
-            }
-            else {
-              key = t.substring(0, t.indexOf('=')).trim();
-              value = t.substring(t.indexOf('=') + 1).trim();
-              addSeriesMeta(key, value);
-              if (key.equals("MPP")) {
-                pixelSize[i] = FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));
-              }
-              else if (key.equals("Date")) {
-                date = value;
-              }
-              else if (key.equals("Time")) {
-                time = value;
-              }
-              else if (key.equals("Emission Wavelength")) {
-                emissionWavelength = DataTools.parseDouble(value);
-              }
-              else if (key.equals("Excitation Wavelength")) {
-                excitationWavelength = DataTools.parseDouble(value);
-              }
-              else if (key.equals("Exposure Time")) {
-                exposureTime = DataTools.parseDouble(value);
-              }
-              else if (key.equals("Exposure Scale")) {
-                exposureScale = DataTools.parseDouble(value);
-              }
-              else if (key.equals("AppMag")) {
-                magnification = DataTools.parseDouble(value);
-              }
-            }
-          }
-        }
+    else {
+      // Should never happen unless the SVS is corrupt?
+      for (int s=0; s<seriesCount; s++) {
+        core.add(new SVSCoreMetadata());
       }
     }
-    setSeries(0);
-
-    // repopulate core metadata
-
     for (int s=0; s<seriesCount; s++) {
-      CoreMetadata ms = core.get(s);
-      if (s == 0 && getSeriesCount() > 2) {
-        ms.resolutionCount = getSeriesCount() - 2;
+      int[] pos = core.flattenedIndexes(s);
+      setCoreIndex(s);
+
+      SVSCoreMetadata ms = (SVSCoreMetadata) core.get(pos[0], pos[1]);
+
+      ms.ifdIndex = getIFDIndex(s);
+
+      if (s == 0 && seriesCount > 2) {
+        ms.resolutionCount = seriesCount - 2;
       }
 
-      IFD ifd = ifds.get(getIFDIndex(s));
+      IFD ifd = ifds.get(ms.ifdIndex);
+      tiffParser.fillInIFD(ifds.get(ms.ifdIndex));
+
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       ms.rgb = samples > 1 || p == PhotoInterp.RGB;
@@ -345,9 +303,61 @@ public class SVSReader extends BaseTiffReader {
       ms.falseColor = false;
       ms.dimensionOrder = "XYCZT";
       ms.thumbnail = s != 0;
-    }
 
-    reorderResolutions();
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        String comment = ifds.get(ms.ifdIndex).getComment();
+        if (comment == null) {
+          continue;
+        }
+        String[] lines = comment.split("\n");
+        String[] tokens;
+        String key, value;
+        for (String line : lines) {
+          tokens = line.split("[|]");
+          for (String t : tokens) {
+            if (t.indexOf('=') == -1) {
+              addGlobalMeta("Comment", t);
+              ((SVSCoreMetadata) currentCore()).comment = t;
+            }
+            else {
+              key = t.substring(0, t.indexOf('=')).trim();
+              value = t.substring(t.indexOf('=') + 1).trim();
+              addSeriesMeta(key, value);
+              switch (key) {
+                case "MPP":
+                  ((SVSCoreMetadata) currentCore()).pixelSize =
+                    FormatTools.getPhysicalSizeX(DataTools.parseDouble(value));
+                  break;
+                case "Date":
+                  date = value;
+                  break;
+                case "Time":
+                  time = value;
+                  break;
+                case "Emission Wavelength":
+                  emissionWavelength = DataTools.parseDouble(value);
+                  break;
+                case "Excitation Wavelength":
+                  excitationWavelength = DataTools.parseDouble(value);
+                  break;
+                case "Exposure Time":
+                  exposureTime = DataTools.parseDouble(value);
+                  break;
+                case "Exposure Scale":
+                  exposureScale = DataTools.parseDouble(value);
+                  break;
+                case "AppMag":
+                  magnification = DataTools.parseDouble(value);
+                  break;
+              }
+            }
+          }
+        }
+      }
+    }
+    setSeries(0);
+
+    core.reorder();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -364,11 +374,14 @@ public class SVSReader extends BaseTiffReader {
     store.setObjectiveNominalMagnification(magnification, 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
+
       store.setImageInstrumentRef(instrument, i);
       store.setObjectiveSettingsID(objective, i);
 
       store.setImageName("Series " + (i + 1), i);
-      store.setImageDescription(comments[i], i);
+      String comment = ((SVSCoreMetadata) currentCore()).comment;
+      store.setImageDescription(comment, i);
 
       if (getDatestamp() != null) {
         store.setImageAcquisitionDate(getDatestamp(), i);
@@ -384,9 +397,10 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
-      if (i < pixelSize.length && pixelSize[i] != null && pixelSize[i].value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
-        store.setPixelsPhysicalSizeX(pixelSize[i], i);
-        store.setPixelsPhysicalSizeY(pixelSize[i], i);
+      Length pixelSize = ((SVSCoreMetadata) currentCore()).pixelSize;
+      if (pixelSize != null && pixelSize.value(UNITS.MICROMETER).doubleValue() - Constants.EPSILON > 0) {
+        store.setPixelsPhysicalSizeX(pixelSize, i);
+        store.setPixelsPhysicalSizeY(pixelSize, i);
       }
     }
   }
@@ -397,40 +411,6 @@ public class SVSReader extends BaseTiffReader {
       index = core.size() - 2 - coreIndex;
     }
     return index;
-  }
-
-  /**
-   * Validate the order of resolutions for the current series, in
-   * decending order of size.  If the order is wrong, reorder it.
-   */
-  protected void reorderResolutions() {
-    ifdmap = new int[core.size()];
-
-    for (int i = 0; i < core.size();) {
-      int resolutions = core.get(i).resolutionCount;
-
-      List<CoreMetadata> savedCore = new ArrayList<CoreMetadata>();
-      int savedIFDs[] = new int[resolutions];
-      HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
-      for (int c = 0; c < resolutions; c++) {
-        savedCore.add(core.get(i + c));
-        savedIFDs[c] = getIFDIndex(i+c);
-        levels.put(savedCore.get(c).sizeX, c);
-      }
-
-      Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
-      Arrays.sort(keys);
-
-      for (int j = 0; j < resolutions; j++) {
-        core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
-        ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
-        if (j == 0)
-          core.get(i + j).resolutionCount = resolutions;
-        else
-          core.get(i + j).resolutionCount = 1;
-      }
-      i += core.get(i).resolutionCount;
-    }
   }
 
   protected Length getEmission() {
@@ -465,7 +445,13 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected Length[] getPhysicalSizes() {
-    return pixelSize;
+    Length psizes[] = new Length[getSeriesCount()];
+    for(int i = 0; i < getSeriesCount(); i++) {
+      int[] pos = core.flattenedIndexes(i);
+      SVSCoreMetadata c = (SVSCoreMetadata) core.get(pos[0], pos[1]);
+      psizes[i] = c.pixelSize;
+    }
+    return psizes;
   }
 
   protected double getMagnification() {

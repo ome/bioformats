@@ -58,6 +58,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
+
 import ome.xml.model.enums.UnitsLength;
 import ome.xml.model.enums.handlers.UnitsLengthEnumHandler;
 import ome.xml.model.enums.UnitsTime;
@@ -1976,4 +1977,5 @@ public final class FormatTools {
     }
     return new Time(value.getNumberValue(), valueUnit);
   }
+
 }

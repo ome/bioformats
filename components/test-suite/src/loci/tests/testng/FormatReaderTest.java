@@ -71,6 +71,7 @@ import ome.units.UNITS;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -173,6 +174,8 @@ public class FormatReaderTest {
       BufferedImage b = null;
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
+
+        Assert.assertEquals(reader.getSeries(), i);
 
         int x = reader.getSizeX();
         int y = reader.getSizeY();
@@ -506,29 +509,34 @@ public class FormatReaderTest {
         String type = FormatTools.getPixelTypeString(reader.getPixelType());
 
         if (reader.getSizeX() !=
-          retrieve.getPixelsSizeX(i).getValue().intValue())
-        {
-          msg = "SizeX";
+          retrieve.getPixelsSizeX(i).getValue().intValue()) {
+          msg = String.format("SizeX (expected %d, actually %d)",
+            reader.getSizeX(),
+            retrieve.getPixelsSizeX(i).getValue().intValue());
         }
         if (reader.getSizeY() !=
-          retrieve.getPixelsSizeY(i).getValue().intValue())
-        {
-          msg = "SizeY";
+          retrieve.getPixelsSizeY(i).getValue().intValue()) {
+          msg = String.format("SizeY (expected %d, actually %d)",
+            reader.getSizeY(),
+            retrieve.getPixelsSizeY(i).getValue().intValue());
         }
         if (reader.getSizeZ() !=
-          retrieve.getPixelsSizeZ(i).getValue().intValue())
-        {
-          msg = "SizeZ";
+          retrieve.getPixelsSizeZ(i).getValue().intValue()) {
+          msg = String.format("SizeZ (expected %d, actually %d)",
+            reader.getSizeZ(),
+            retrieve.getPixelsSizeZ(i).getValue().intValue());
         }
         if (reader.getSizeC() !=
-          retrieve.getPixelsSizeC(i).getValue().intValue())
-        {
-          msg = "SizeC";
+          retrieve.getPixelsSizeC(i).getValue().intValue()) {
+          msg = String.format("SizeC (expected %d, actually %d)",
+            reader.getSizeC(),
+            retrieve.getPixelsSizeC(i).getValue().intValue());
         }
         if (reader.getSizeT() !=
-          retrieve.getPixelsSizeT(i).getValue().intValue())
-        {
-          msg = "SizeT";
+          retrieve.getPixelsSizeT(i).getValue().intValue()) {
+          msg = String.format("SizeT (expected %d, actually %d)",
+            reader.getSizeT(),
+            retrieve.getPixelsSizeT(i).getValue().intValue());
         }
 
         // NB: OME-TIFF files do not have a BinData element under Pixels
@@ -1910,9 +1918,13 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
           config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
 
           long planeSize = -1;
           try {

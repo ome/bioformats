@@ -112,7 +112,7 @@ import ome.xml.model.enums.handlers.PulseEnumHandler;
 /**
  * Abstract superclass of all biological file format readers.
  */
-public abstract class FormatReader extends FormatHandler
+public abstract class SubResolutionFormatReader extends FormatHandler
   implements IFormatReader
 {
 
@@ -129,17 +129,16 @@ public abstract class FormatReader extends FormatHandler
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable<String, Object> metadata;
 
-  /** The number of the current series. */
-  protected int coreIndex = 0;
-
   /** The number of the current series (non flat). */
   protected int series = 0;
 
-  /** Core metadata values. */
-  protected List<CoreMetadata> core;
-
   /** The number of the current resolution. */
   protected int resolution = 0;
+
+  /**
+   * List of {@CoreMetadata} objects for each series and resolution.
+   */
+  protected CoreMetadataList core;
 
   /** Whether or not resolutions are flattened. */
   protected boolean flattenedResolutions = true;
@@ -192,10 +191,10 @@ public abstract class FormatReader extends FormatHandler
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
-  public FormatReader(String format, String suffix) { super(format, suffix); }
+  public SubResolutionFormatReader(String format, String suffix) { super(format, suffix); }
 
   /** Constructs a format reader with the given name and default suffixes. */
-  public FormatReader(String format, String[] suffixes) {
+  public SubResolutionFormatReader(String format, String[] suffixes) {
     super(format, suffixes);
   }
 
@@ -228,13 +227,13 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
-    coreIndex = 0;
     series = 0;
+    resolution = 0;
     close();
     currentId = id;
     metadata = new Hashtable<String, Object>();
 
-    core = new ArrayList<CoreMetadata>();
+    core = new CoreMetadataList();
     CoreMetadata core0 = new CoreMetadata();
     core.add(core0);
     core0.orderCertain = true;
@@ -410,7 +409,7 @@ public abstract class FormatReader extends FormatHandler
    * and the value will be appended to the list.
    */
   protected void addSeriesMetaList(String key, Object value) {
-    addMetaList(key, value, core.get(getCoreIndex()).seriesMetadata);
+    addMetaList(key, value, currentCore().seriesMetadata);
   }
 
   /**
@@ -421,8 +420,10 @@ public abstract class FormatReader extends FormatHandler
     updateMetadataLists(metadata);
 
     for (int s=0; s<core.size(); s++) {
-      if (core.get(s).seriesMetadata.size() > 0) {
-        updateMetadataLists(core.get(s).seriesMetadata);
+      for (int r=0; r<core.size(s); r++) {
+        if (core.get(s, r).seriesMetadata.size() > 0) {
+          updateMetadataLists(core.get(s, r).seriesMetadata);
+        }
       }
     }
   }
@@ -456,7 +457,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, Object value) {
-    addMeta(key, value, core.get(getCoreIndex()).seriesMetadata);
+    addMeta(key, value, currentCore().seriesMetadata);
   }
 
   /** Adds an entry to the metadata table for the current series. */
@@ -501,7 +502,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Gets an entry from the metadata table for the current series. */
   protected Object getSeriesMeta(String key) {
-    return core.get(getCoreIndex()).seriesMetadata.get(key);
+    return currentCore().seriesMetadata.get(key);
   }
 
   /** Reads a raw plane from disk. */
@@ -645,67 +646,67 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).imageCount;
+    return currentCore().imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
   @Override
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).rgb;
+    return currentCore().rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
   @Override
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).sizeX;
+    return currentCore().sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
   @Override
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).sizeY;
+    return currentCore().sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
   @Override
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).sizeZ;
+    return currentCore().sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
   @Override
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).sizeC;
+    return currentCore().sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
   @Override
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).sizeT;
+    return currentCore().sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
   @Override
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).pixelType;
+    return currentCore().pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
   @Override
   public int getBitsPerPixel() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).bitsPerPixel == 0) {
-      core.get(getCoreIndex()).bitsPerPixel =
+    if (currentCore().bitsPerPixel == 0) {
+      currentCore().bitsPerPixel =
         FormatTools.getBytesPerPixel(getPixelType()) * 8;
     }
-    return core.get(getCoreIndex()).bitsPerPixel;
+    return currentCore().bitsPerPixel;
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -729,14 +730,14 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).indexed;
+    return currentCore().indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
   @Override
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).falseColor;
+    return currentCore().falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -755,28 +756,28 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public Modulo getModuloZ() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).moduloZ;
+    return currentCore().moduloZ;
   }
 
   /* @see IFormatReader#getModuloC() */
   @Override
   public Modulo getModuloC() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).moduloC;
+    return currentCore().moduloC;
   }
 
   /* @see IFormatReader#getModuloT() */
   @Override
   public Modulo getModuloT() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).moduloT;
+    return currentCore().moduloT;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
   @Override
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).thumbSizeX == 0) {
+    if (currentCore().thumbSizeX == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeX = 0;
@@ -787,14 +788,14 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
     }
-    return core.get(getCoreIndex()).thumbSizeX;
+    return currentCore().thumbSizeX;
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   @Override
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).thumbSizeY == 0) {
+    if (currentCore().thumbSizeY == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeY = 1;
@@ -805,35 +806,35 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;
     }
-    return core.get(getCoreIndex()).thumbSizeY;
+    return currentCore().thumbSizeY;
   }
 
   /* @see IFormatReader.isLittleEndian() */
   @Override
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).littleEndian;
+    return currentCore().littleEndian;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   @Override
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).dimensionOrder;
+    return currentCore().dimensionOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
   @Override
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).orderCertain;
+    return currentCore().orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
   @Override
   public boolean isThumbnailSeries() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).thumbnail;
+    return currentCore().thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -846,7 +847,7 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).interleaved;
+    return currentCore().interleaved;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -917,29 +918,49 @@ public abstract class FormatReader extends FormatHandler
     }
   }
 
-  /* @see IFormatReader#getSeriesCount() */
+  /**
+   * @see IFormatReader#getSeriesCount()
+   * Note that the value can change depending upon whether resolutions are flattened,
+   * and so reader implementations should use the series and resolutions fields internally.
+   */
   @Override
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
     if (hasFlattenedResolutions()) {
+      return core.flattenedSize();
+    }
+    else {
       return core.size();
     }
-
-    return coreIndexToSeries(core.size() - 1) + 1;
   }
 
-  /* @see IFormatReader#setSeries(int) */
+  /**
+   * @see IFormatReader#setSeries(int)
+   * Note that the value can change depending upon whether resolutions are flattened,
+   * and so reader implementations should use the series and resolutions fields internally.
+   */
   @Override
   public void setSeries(int no) {
-    coreIndex = seriesToCoreIndex(no);
-    series = no;
-    resolution = 0;
+    if (hasFlattenedResolutions()) {
+      int[] pos = core.flattenedIndexes(no);
+      series = pos[0];
+      resolution = pos[1];
+    }
+    else {
+      series = no;
+      resolution = 0;
+    }
   }
 
   /* @see IFormatReader#getSeries() */
   @Override
   public int getSeries() {
-    return series;
+    if (hasFlattenedResolutions()) {
+      return core.flattenedIndex(series, resolution);
+    }
+    else {
+      return series;
+    }
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -967,7 +988,7 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public boolean isMetadataComplete() {
     FormatTools.assertId(currentId, true, 1);
-    return core.get(getCoreIndex()).metadataComplete;
+    return currentCore().metadataComplete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -1129,17 +1150,17 @@ public abstract class FormatReader extends FormatHandler
   @Override
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).seriesMetadata.size() > 0) {
+    if (currentCore().seriesMetadata.size() > 0) {
       flattenHashtables();
     }
-    return core.get(getCoreIndex()).seriesMetadata;
+    return currentCore().seriesMetadata;
   }
 
-  /* @see IFormatReader#getCoreMetadataList() */
+  /* @see IFormatReader#getcoredataList() */
   @Override
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
-    return core;
+    return core.getFlattenedList();
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
@@ -1245,68 +1266,23 @@ public abstract class FormatReader extends FormatHandler
   // -- Sub-resolution API methods --
 
   @Override
-  public int seriesToCoreIndex(int series)
-  {
+  public int seriesToCoreIndex(int s) {
     if (hasFlattenedResolutions()) {
-      // coreIndex and series are identical
-      if (series < 0 || series >= core.size()) {
-        throw new IllegalArgumentException("Invalid series: " + series);
-      }
-      return series;
+      return s;
     }
-
-    // Use corresponding coreIndex
-    if (this.series == series) {
-      return coreIndex - resolution;
+    else {
+      return core.flattenedIndex(s, 0);
     }
-
-    int index = 0;
-
-    for (int i = 0; i < series && index < core.size(); i++) {
-      if (core.get(i) != null)
-        index += core.get(index).resolutionCount;
-      else
-        throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
-    }
-
-    if (index < 0 || index >= core.size()) {
-      throw new IllegalArgumentException("Invalid series: " + series + "  index="+index);
-    }
-
-    return index;
   }
 
   @Override
-  public int coreIndexToSeries(int index)
-  {
-    if (index < 0 || index >= core.size()) {
-      throw new IllegalArgumentException("Invalid index: " + index);
-    }
-
+  public int coreIndexToSeries(int index) {
     if (hasFlattenedResolutions()) {
-      // coreIndex and series are identical
       return index;
     }
-
-    // Use corresponding series
-    if (coreIndex == index) {
-      return series;
+    else {
+      return core.flattenedIndexes(index)[0];
     }
-
-    // Convert from non-flattened coreIndex to flattened series
-    int series = 0;
-    for (int i=0; i<index;) {
-      if (core.get(i) != null) {
-        int nextSeries = i + core.get(i).resolutionCount;
-      if (index < nextSeries)
-        break;
-      i = nextSeries;
-      } else {
-        throw new IllegalArgumentException("Invalid coreIndex (null core["+i+"]: " + index);
-      }
-      series++;
-    }
-    return series;
   }
 
   /* @see IFormatReader#getResolutionCount() */
@@ -1317,8 +1293,9 @@ public abstract class FormatReader extends FormatHandler
     if (hasFlattenedResolutions()) {
       return 1;
     }
-
-    return core.get(seriesToCoreIndex(getSeries())).resolutionCount;
+    else {
+      return core.size(series);
+    }
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -1327,14 +1304,20 @@ public abstract class FormatReader extends FormatHandler
     if (no < 0 || no >= getResolutionCount()) {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
-    coreIndex = seriesToCoreIndex(getSeries()) + no;
-    resolution = no;
+    if (!hasFlattenedResolutions()) {
+      resolution = no;
+    }
   }
 
   /* @see IFormatReader#getResolution() */
   @Override
   public int getResolution() {
-    return resolution;
+    if (hasFlattenedResolutions()) {
+      return 0;
+    }
+    else {
+      return resolution;
+    }
   }
 
   /* @see IFormatReader#hasFlattenedResolutions */
@@ -1352,18 +1335,18 @@ public abstract class FormatReader extends FormatHandler
 
   @Override
   public int getCoreIndex() {
-    return coreIndex;
+    return core.flattenedIndex(series, resolution);
   }
 
   /* @see IFormatHandler#setCoreIndex(int) */
   @Override
   public void setCoreIndex(int no) {
-    if (no < 0 || no >= core.size()) {
+    if (no < 0 || no >= core.flattenedSize()) {
       throw new IllegalArgumentException("Invalid series: " + no);
     }
-    series = coreIndexToSeries(no);
-    coreIndex = no;
-    resolution = no - seriesToCoreIndex(series);
+    int[] pos = core.flattenedIndexes(no);
+    series = pos[0];
+    resolution = pos[1];
   }
 
   // -- IFormatHandler API methods --
@@ -1378,7 +1361,7 @@ public abstract class FormatReader extends FormatHandler
   /**
    * Initialize a reader from the input file name.
    *
-   * Call {@link #initFile(String id)} to initialize the input file, read
+   * Calls {@link #initFile(String id)} to initialize the input file, read
    * all of the metadata and set the reader up for reading planes.
    * The performance of this method depends on the format and can be up to
    * several minutes for large file sets.
@@ -1393,7 +1376,6 @@ public abstract class FormatReader extends FormatHandler
       new Location(currentId).getAbsolutePath()))
     {
       initFile(id);
-
       MetadataStore store = getMetadataStore();
       if (saveOriginalMetadata) {
         if (store instanceof OMEXMLMetadata) {
@@ -1401,16 +1383,16 @@ public abstract class FormatReader extends FormatHandler
           Hashtable<String, Object> allMetadata =
             new Hashtable<>(metadata);
 
-          for (int series=0; series<getSeriesCount(); series++) {
-            String name = "Series " + series;
+          for (int s=0; s < getSeriesCount(); s++) {
+            String name = "Series " + s;
             try {
-              String realName = ((IMetadata) store).getImageName(series);
+              String realName = ((IMetadata) store).getImageName(s);
               if (realName != null && realName.trim().length() != 0) {
                 name = realName;
               }
             }
             catch (Exception e) { }
-            setSeries(series);
+            setSeries(s);
             MetadataTools.merge(getSeriesMetadata(), allMetadata, name + " ");
           }
           setSeries(0);
@@ -1432,14 +1414,14 @@ public abstract class FormatReader extends FormatHandler
           }
         }
 
-        for (int series=0; series<getSeriesCount(); series++) {
-          setSeries(series);
+        for (int s=0; s < getSeriesCount(); s++) {
+          setSeries(s);
 
           if (getModuloZ().length() > 1 || getModuloC().length() > 1 ||
             getModuloT().length() > 1)
           {
             service.addModuloAlong(
-              (OMEXMLMetadata) store, core.get(series), series);
+              (OMEXMLMetadata) store, core.get(series, resolution), s);
           }
         }
         setSeries(0);
@@ -1466,333 +1448,12 @@ public abstract class FormatReader extends FormatHandler
     close(false);
   }
 
-  // -- Metadata enumeration convenience methods --
-
   /**
-   * Retrieves an {@link ome.xml.model.enums.AcquisitionMode} enumeration
-   * value for the given String.
+   * Get the CoreMetadata corresponding to the current series and resolution
    *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getAcquisitionMode(String)}.
+   * @return the CoreMetadata
    */
-  @Deprecated
-  protected AcquisitionMode getAcquisitionMode(String value)
-    throws FormatException {
-    return MetadataTools.getAcquisitionMode(value);
+  protected CoreMetadata currentCore() {
+    return core.get(series, resolution);
   }
-
-  /**
-   * Retrieves an {@link ome.xml.model.enums.ArcType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getArcType(String)}.
-   */
-  @Deprecated
-  protected ArcType getArcType(String value) throws FormatException {
-    return MetadataTools.getArcType(value);
-  }
-
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Binning} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getBinning(String)}.
-   */
-  @Deprecated
-  protected Binning getBinning(String value) throws FormatException {
-    return MetadataTools.getBinning(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Compression} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getCompression(String)}.
-   */
-  @Deprecated
-  protected Compression getCompression(String value) throws FormatException {
-    return MetadataTools.getCompression(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.ContrastMethod} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getContrastMethod(String)}.
-   */
-  @Deprecated
-  protected ContrastMethod getContrastMethod(String value)
-    throws FormatException {
-    return MetadataTools.getContrastMethod(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Correction} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getCorrection(String)}.
-   */
-  @Deprecated
-  protected Correction getCorrection(String value) throws FormatException {
-    return MetadataTools.getCorrection(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.DetectorType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getDetectorType(String)}.
-   */
-  @Deprecated
-  protected DetectorType getDetectorType(String value) throws FormatException {
-    return MetadataTools.getDetectorType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.DimensionOrder} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getDimensionOrder(String)}.
-   */
-  @Deprecated
-  protected DimensionOrder getDimensionOrder(String value)
-    throws FormatException {
-    return MetadataTools.getDimensionOrder(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.ExperimentType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getExperimentType(String)}.
-   */
-  @Deprecated
-  protected ExperimentType getExperimentType(String value)
-    throws FormatException {
-    return MetadataTools.getExperimentType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.FilamentType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getFilamentType(String)}.
-   */
-  @Deprecated
-  protected FilamentType getFilamentType(String value) throws FormatException {
-    return MetadataTools.getFilamentType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.FillRule} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getFillRule(String)}.
-   */
-  @Deprecated
-  protected FillRule getFillRule(String value) throws FormatException {
-    return MetadataTools.getFillRule(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.FilterType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getFilterType(String)}.
-   */
-  @Deprecated
-  protected FilterType getFilterType(String value) throws FormatException {
-    return MetadataTools.getFilterType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.FontFamily} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getFontFamily(String)}.
-   */
-  @Deprecated
-  protected FontFamily getFontFamily(String value) throws FormatException {
-    return MetadataTools.getFontFamily(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.FontStyle} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getFontStyle(String)}.
-   */
-  @Deprecated
-  protected FontStyle getFontStyle(String value) throws FormatException {
-    return MetadataTools.getFontStyle(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.IlluminationType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getIlluminationType(String)}.
-   */
-  @Deprecated
-  protected IlluminationType getIlluminationType(String value)
-    throws FormatException {
-    return MetadataTools.getIlluminationType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Immersion} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getImmersion(String)}.
-   */
-  @Deprecated
-  protected Immersion getImmersion(String value) throws FormatException {
-    return MetadataTools.getImmersion(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.LaserMedium} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getLaserMedium(String)}.
-   */
-  @Deprecated
-  protected LaserMedium getLaserMedium(String value) throws FormatException {
-    return MetadataTools.getLaserMedium(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.LaserType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getLaserType(String)}.
-   */
-  @Deprecated
-  protected LaserType getLaserType(String value) throws FormatException {
-    return MetadataTools.getLaserType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Marker} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getMarker(String)}.
-   */
-  @Deprecated
-  protected Marker getMarker(String value) throws FormatException {
-    return MetadataTools.getMarker(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Medium} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getMedium(String)}.
-   */
-  @Deprecated
-  protected Medium getMedium(String value) throws FormatException {
-    return MetadataTools.getMedium(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.MicrobeamManipulationType}
-   * enumeration value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getMicrobeamManipulationType(String)}.
-   */
-  @Deprecated
-  protected MicrobeamManipulationType getMicrobeamManipulationType(String value)
-    throws FormatException {
-    return MetadataTools.getMicrobeamManipulationType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.MicroscopeType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getMicroscopeType(String)}.
-   */
-  @Deprecated
-  protected MicroscopeType getMicroscopeType(String value)
-    throws FormatException {
-    return MetadataTools.getMicroscopeType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.NamingConvention} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getNamingConvention(String)}.
-   */
-  @Deprecated
-  protected NamingConvention getNamingConvention(String value)
-    throws FormatException {
-    return MetadataTools.getNamingConvention(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.PixelType} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getPixelType(String)}.
-   */
-  @Deprecated
-  protected PixelType getPixelType(String value) throws FormatException {
-    return MetadataTools.getPixelType(value);
-  }
-  /**
-   * Retrieves an {@link ome.xml.model.enums.Pulse} enumeration
-   * value for the given String.
-   *
-   * @throws ome.xml.model.enums.EnumerationException if an appropriate
-   *  enumeration value is not found.
-   * @deprecated Use {@link MetadataTools#getPulse(String)}.
-   */
-  @Deprecated
-  protected Pulse getPulse(String value) throws FormatException {
-    return MetadataTools.getPulse(value);
-  }
-
-  /**
-   * Construct an {@link ome.xml.model.AffineTransform} corresponding to
-   * the given angle.
-   * @param theta the angle of rotation in radians
-   */
-  protected AffineTransform getRotationTransform(double theta) {
-    AffineTransform transform = new AffineTransform();
-    transform.setA02(0.0);
-    transform.setA12(0.0);
-    transform.setA00(Math.cos(theta));
-    transform.setA11(Math.cos(theta));
-    transform.setA01(Math.sin(theta));
-    transform.setA10(-1 * Math.sin(theta));
-    return transform;
-  }
-
 }

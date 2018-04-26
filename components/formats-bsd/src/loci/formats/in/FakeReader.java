@@ -736,7 +736,7 @@ public class FakeReader extends FormatReader {
       throw new FormatException("Invalid sizeC/rgb combination: " +
         sizeC + "/" + rgb);
     }
-    getDimensionOrder(dimOrder);
+    MetadataTools.getDimensionOrder(dimOrder);
     if (falseColor && !indexed) {
       throw new FormatException("False color images must be indexed");
     }

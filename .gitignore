@@ -1,4 +1,5 @@
 .classpath
+.idea
 .project
 .settings
 .DS_Store
@@ -15,3 +16,5 @@ testng.css
 tools/*.jar
 *.log
 *.xpr
+*.class
+*.iml
