@@ -1284,4 +1284,22 @@ public class TiffParser {
     return new TiffIFDEntry(entryTag, entryType, valueCount, offset);
   }
 
+  public IFDList getSubIFDs(IFD ifd) throws IOException {
+    IFDList list = new IFDList();
+    long[] offsets = null;
+    try {
+      fillInIFD(ifd);
+      offsets = ifd.getIFDLongArray(IFD.SUB_IFD);
+    } catch (FormatException e) {
+    }
+
+    if (offsets != null) {
+      for (long offset : offsets) {
+        list.add(getIFD(offset));
+      }
+    }
+
+    return list;
+  }
+
 }
