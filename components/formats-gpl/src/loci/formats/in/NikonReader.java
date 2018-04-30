@@ -437,6 +437,8 @@ public class NikonReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
+    mergeSubIFDs = true;
+
     super.initFile(id);
 
     original = ifds.get(0);

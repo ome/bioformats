@@ -94,6 +94,8 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
 
   protected boolean seriesToIFD = false;
 
+  protected boolean mergeSubIFDs = false;
+
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;
 
@@ -384,6 +386,7 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
       resolutionLevels = null;
       j2kCodecOptions = null;
       seriesToIFD = false;
+      mergeSubIFDs = false;
     }
   }
 
@@ -445,7 +448,19 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
 
     LOGGER.info("Reading IFDs");
 
-    IFDList allIFDs = tiffParser.getIFDs();
+    IFDList allIFDs = null;
+    if (!mergeSubIFDs) {
+      allIFDs = tiffParser.getIFDs();
+    }
+    else {
+      allIFDs = new IFDList();
+      for (IFD ifd : tiffParser.getIFDs()) {
+        allIFDs.add(ifd);
+        for (IFD subifd : tiffParser.getSubIFDs(ifd)) {
+          allIFDs.add(subifd);
+        }
+      }
+    }
 
     if (allIFDs == null || allIFDs.size() == 0) {
       throw new FormatException("No IFDs found");
