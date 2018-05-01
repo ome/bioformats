@@ -359,7 +359,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     FormatTools.assertId(currentId, true, 1);
     int series = getSeries();
     if (noPixels) return null;
-    final List<String> usedFiles = new ArrayList<String>();
+    final List<String> usedFiles = new ArrayList<>();
     if (metadataFile != null) {
       usedFiles.add(metadataFile);
     }
@@ -549,8 +549,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
       reader.close();
       int maxSeries = 0;
       info = new OMETiffPlane[meta.getImageCount()][];
-      ArrayList<Integer> imagesToRemove = new ArrayList<Integer>();
-      ArrayList<int[]> cBounds = new ArrayList<int[]>();
+      ArrayList<Integer> imagesToRemove = new ArrayList<>();
+      ArrayList<int[]> cBounds = new ArrayList<>();
       for (int i=0; i<meta.getImageCount(); i++) {
         int maxZ = 0;
         int maxC = 0;
@@ -709,7 +709,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     tileWidth = new int[seriesCount];
     tileHeight = new int[seriesCount];
     // compile list of file/UUID mappings
-    Hashtable<String, String> files = new Hashtable<String, String>();
+    Hashtable<String, String> files = new Hashtable<>();
     boolean needSearch = false;
     for (int i=0; i<seriesCount; i++) {
       int tiffDataCount = meta.getTiffDataCount(i);
@@ -778,8 +778,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     for (int i=0; i<used.length; i++) used[i] = (String) iter.next();
 
     // process TiffData elements
-    Hashtable<String, IFormatReader> readers =
-      new Hashtable<String, IFormatReader>();
+    Hashtable<String, IFormatReader> readers = new Hashtable<>();
     boolean adjustedSamples = false;
     for (int i=0; i<seriesCount; i++) {
       int s = i;
