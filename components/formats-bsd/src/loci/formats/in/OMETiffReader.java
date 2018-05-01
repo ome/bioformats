@@ -513,7 +513,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     hasSPW = meta.getPlateCount() > 0;
 
     for (int i=0; i<meta.getImageCount(); i++) {
-      int sizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      int sizeC = meta.getPixelsSizeC(i).getValue();
       service.removeChannels(meta, i, sizeC);
     }
 
@@ -810,16 +810,16 @@ public class OMETiffReader extends SubResolutionFormatReader {
         adjustedSamples = false;
       }
 
-      int effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      int effSizeC = meta.getPixelsSizeC(i).getValue();
       if (!adjustedSamples) {
         effSizeC /= samples;
       }
       if (effSizeC == 0) effSizeC = 1;
-      if (effSizeC * samples != meta.getPixelsSizeC(i).getValue().intValue()) {
-        effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      if (effSizeC * samples != meta.getPixelsSizeC(i).getValue()) {
+        effSizeC = meta.getPixelsSizeC(i).getValue();
       }
-      int sizeT = meta.getPixelsSizeT(i).getValue().intValue();
-      int sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
+      int sizeT = meta.getPixelsSizeT(i).getValue();
+      int sizeZ = meta.getPixelsSizeZ(i).getValue();
       int num = effSizeC * sizeT * sizeZ;
 
       OMETiffPlane[] planes = new OMETiffPlane[num];
@@ -1035,21 +1035,21 @@ public class OMETiffReader extends SubResolutionFormatReader {
         tileWidth[s] = info[s][0].reader.getOptimalTileWidth();
         tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
 
-        m.sizeX = meta.getPixelsSizeX(i).getValue().intValue();
+        m.sizeX = meta.getPixelsSizeX(i).getValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
         if (m.sizeX != tiffWidth && s == 0) {
           LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
             m.sizeX, tiffWidth);
         }
-        m.sizeY = meta.getPixelsSizeY(i).getValue().intValue();
+        m.sizeY = meta.getPixelsSizeY(i).getValue();
         int tiffHeight = (int) firstIFD.getImageLength();
         if (m.sizeY != tiffHeight && s ==  0) {
           LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
             m.sizeY, tiffHeight);
         }
-        m.sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
-        m.sizeC = meta.getPixelsSizeC(i).getValue().intValue();
-        m.sizeT = meta.getPixelsSizeT(i).getValue().intValue();
+        m.sizeZ = meta.getPixelsSizeZ(i).getValue();
+        m.sizeC = meta.getPixelsSizeC(i).getValue();
+        m.sizeT = meta.getPixelsSizeT(i).getValue();
         m.pixelType = FormatTools.pixelTypeFromString(
           meta.getPixelsType(i).toString());
         int tiffPixelType = firstIFD.getPixelType();
