@@ -94,6 +94,7 @@ public class MinimalTiffReader extends FormatReader {
 
   protected boolean seriesToIFD = false;
 
+  /** Merge SubIFDs into the main IFD list. */
   protected boolean mergeSubIFDs = false;
 
   /** Number of JPEG 2000 resolution levels. */
