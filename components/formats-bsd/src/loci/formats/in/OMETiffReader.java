@@ -184,9 +184,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       } catch (ServiceException se) {
         LOGGER.debug("OME-XML parsing failed", se);
         return false;
-      } catch (IOException e) {
-        return false;
-      } catch (NullPointerException e) {
+      } catch (IOException | NullPointerException e) {
         return false;
       }
     }
@@ -255,17 +253,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
       }
       return meta.getImageCount() > 0;
     }
-    catch (ServiceException se) {
+    catch (ServiceException | NullPointerException | FormatException | IndexOutOfBoundsException se) {
       LOGGER.debug("OME-XML parsing failed", se);
-    }
-    catch (NullPointerException e) {
-      LOGGER.debug("OME-XML parsing failed", e);
-    }
-    catch (FormatException e) {
-      LOGGER.debug("OME-XML parsing failed", e);
-    }
-    catch (IndexOutOfBoundsException e) {
-      LOGGER.debug("OME-XML parsing failed", e);
     }
     return false;
   }
@@ -393,10 +382,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       boolean single = isSingleFile(id);
       return single ? FormatTools.CAN_GROUP : FormatTools.MUST_GROUP;
     }
-    catch (FormatException e) {
-      LOGGER.debug("", e);
-    }
-    catch (IOException e) {
+    catch (FormatException | IOException e) {
       LOGGER.debug("", e);
     }
     return FormatTools.CAN_GROUP;
