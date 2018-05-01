@@ -387,7 +387,6 @@ public class MinimalTiffReader extends FormatReader {
       resolutionLevels = null;
       j2kCodecOptions = null;
       seriesToIFD = false;
-      mergeSubIFDs = false;
     }
   }
 

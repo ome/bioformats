@@ -83,6 +83,7 @@ public class DNGReader extends BaseTiffReader {
       new String[] {"cr2", "crw", "jpg", "thm", "wav", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    mergeSubIFDs = true;
   }
 
   // -- IFormatReader API methods --
@@ -338,8 +339,6 @@ public class DNGReader extends BaseTiffReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   @Override
   protected void initFile(String id) throws FormatException, IOException {
-    mergeSubIFDs = true;
-
     super.initFile(id);
 
     original = ifds.get(0);
