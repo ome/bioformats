@@ -7,9 +7,6 @@ environment:
   matrix:
     - java: 9
       build: maven
-    - java: 9
-      build: ant
-      ant_version: 1.10.1
     - java: 1.8
       build: maven
     - java: 1.8
@@ -17,9 +14,6 @@ environment:
       ant_version: 1.10.1
     - java: 1.7
       build: maven
-    - java: 1.7
-      build: ant
-      ant_version: 1.9.9
 
 cache:
   - '%AV_BF_M2% -> appveyor.yml'
