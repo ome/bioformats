@@ -456,9 +456,7 @@ public class MinimalTiffReader extends SubResolutionFormatReader {
       allIFDs = new IFDList();
       for (IFD ifd : tiffParser.getIFDs()) {
         allIFDs.add(ifd);
-        for (IFD subifd : tiffParser.getSubIFDs(ifd)) {
-          allIFDs.add(subifd);
-        }
+        allIFDs.addAll(tiffParser.getSubIFDs(ifd));
       }
     }
 
