@@ -114,9 +114,17 @@ public class OMETiffReader extends SubResolutionFormatReader {
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
     hasCompanionFiles = true;
     datasetDescription = "One or more .ome.tiff files";
+    flattenedResolutions = false; // note setFlattenedResolutions override
   }
 
   // -- IFormatReader API methods --
+
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  @Override
+  public void setFlattenedResolutions(boolean flattened) {
+    // Flattening is not possible with OME-TIFF, because splitting out the
+    // resolutions as separate series would break the OME-XML metadata.
+  }
 
   /* @see loci.formats.SubResolutionFormatReader#isSingleFile(String) */
   @Override
