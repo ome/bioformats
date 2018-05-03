@@ -112,6 +112,7 @@ Type "ant -p" for a list of targets.
             <pathelement location="${test-classes.dir}"/>
             <pathelement location="${test.dir}"/>
           </classpath>
+          <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
           <xmlfileset file="${testng.xml}"/>
           <jvmarg value="-mx${testng.memory}"/>
         </testng>

@@ -36,6 +36,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
       </classpath>
       <classpath refid="test.classpath"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <xmlfileset file="testng.xml"/>
       <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
     </testng>
@@ -54,6 +55,7 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
       </classpath>
       <classpath refid="test.classpath"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <xmlfileset file="testng.xml"/>
       <jvmarg value="-Dlogback.configurationFile=logback-target-test-runner.xml"/>
     </testng>
@@ -83,6 +85,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -113,6 +116,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -142,6 +146,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -175,6 +180,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -206,6 +212,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -236,6 +243,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -266,6 +274,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -296,6 +305,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -324,6 +334,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Duser.language=${user.language}"/>
       <jvmarg value="-Duser.country=${user.country}"/>
@@ -342,6 +353,7 @@ Type "ant -p" for a list of targets.
       <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/loci/tests/testng/MetadataConfigurableTest.class"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="bioformats_can_do_upgrade_check" value="false"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
     <fail if="failedTest"/>
