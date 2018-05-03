@@ -350,6 +350,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
     RandomAccessInputStream s =
       new RandomAccessInputStream(info[series][no].id, 16);
     TiffParser p = new TiffParser(s);
+    if(resolution > 0) {
+      IFDList subifds = p.getSubIFDs(ifd);
+      ifd = subifds.get(((OMETiffCoreMetadata)core.get(series, resolution)).subresolutionOffset);
+    }
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
 
@@ -700,6 +704,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
 
       service.convertMetadata(meta, metadataStore);
       MetadataTools.populatePixels(metadataStore, this);
+
+      addSubResolutions();
 
       return;
     }
@@ -1209,6 +1215,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
             new Timestamp(acquiredDates[i]), i);
       }
     }
+
+    addSubResolutions();
   }
 
   // -- OMETiffReader API methods --
@@ -1265,6 +1273,38 @@ public class OMETiffReader extends SubResolutionFormatReader {
     catch (DependencyException de) {
       throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
+  }
+
+  private void addSubResolutions() throws IOException, FormatException {
+    for(int s = 0; s < core.size(); s++) {
+      OMETiffCoreMetadata c0 = (OMETiffCoreMetadata) core.get(s, 0);
+      int i = info[s][0].ifd;
+      MinimalTiffReader r = (MinimalTiffReader) info[s][0].reader;
+      if (r.getCurrentFile() == null) {
+        r.setId(info[s][0].id);
+      }
+      r.lastPlane = i;
+      IFDList ifdList = r.getIFDs();
+      if (i >= ifdList.size()) {
+        LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed (IFD #{} missing).", i);
+        continue;
+      }
+      IFD ifd = ifdList.get(i);
+      RandomAccessInputStream rs =
+        new RandomAccessInputStream(info[s][0].id, 16);
+      TiffParser p = new TiffParser(rs);
+      IFDList subifds = p.getSubIFDs(ifd);
+
+      for (int si = 0; si < subifds.size(); si++) {
+        IFD subifd = subifds.get(si);
+        OMETiffCoreMetadata c = new OMETiffCoreMetadata(c0);
+        c.subresolutionOffset = si;
+        c.sizeX = (int) subifd.getImageWidth();
+        c.sizeY = (int) subifd.getImageLength();
+        core.add(s, c);
+      }
+    }
+    core.reorder();
   }
 
   /** Extracts the OME-XML from the current {@link #metadataFile}. */
