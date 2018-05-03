@@ -552,7 +552,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     if (!isGroupFiles() && !isSingleFile(currentId)) {
       IFormatReader reader = new MinimalTiffReader();
       reader.setId(currentId);
-      core.set(0, 0, reader.getCoreMetadataList().get(0));
+      core.set(0, 0, new OMETiffCoreMetadata(reader.getCoreMetadataList().get(0)));
       int ifdCount = reader.getImageCount();
       reader.close();
       int maxSeries = 0;
@@ -572,7 +572,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         int sizeT = meta.getPixelsSizeT(i).getValue();
         String order = meta.getPixelsDimensionOrder(i).getValue();
         int num = sizeZ * sizeC * sizeT;
-        CoreMetadata m = i < core.size() ? core.get(i, 0) : new CoreMetadata(core.get(0, 0));
+        OMETiffCoreMetadata m = (OMETiffCoreMetadata) (i < core.size() ? core.get(i, 0) : new CoreMetadata(core.get(0, 0)));
         m.dimensionOrder = order;
 
         info[i] = new OMETiffPlane[meta.getTiffDataCount(i)];
@@ -710,7 +710,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     int seriesCount = meta.getImageCount();
     core.clear();
     for (int i=0; i<seriesCount; i++) {
-      core.add(new CoreMetadata());
+      core.add(new OMETiffCoreMetadata());
     }
     info = new OMETiffPlane[seriesCount][];
 
@@ -1009,7 +1009,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
       LOGGER.debug("  }");
 
       // populate core metadata
-      CoreMetadata m = core.get(s, 0);
+      OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(s, 0);
       info[s] = planes;
       try {
         RandomAccessInputStream testFile = new RandomAccessInputStream(info[s][0].id, 16);
@@ -1154,7 +1154,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
     if (getImageCount() == 1) {
-      CoreMetadata ms0 = core.get(0, 0);
+      OMETiffCoreMetadata ms0 = (OMETiffCoreMetadata) core.get(0, 0);
       ms0.sizeZ = 1;
       if (!ms0.rgb) {
         ms0.sizeC = 1;
@@ -1163,7 +1163,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
     }
 
     for (int i=0; i<core.size(); i++) {
-      CoreMetadata m = core.get(i, 0);
+      OMETiffCoreMetadata m = (OMETiffCoreMetadata) core.get(i, 0);
       Modulo z = service.getModuloAlongZ(meta, i);
       if (z != null) {
         m.moduloZ = z;
@@ -1302,4 +1302,21 @@ public class OMETiffReader extends SubResolutionFormatReader {
     public boolean exists = true;
   }
 
+  private class OMETiffCoreMetadata extends CoreMetadata {
+    /** SubIFD offset for sub-resolution level; -1 if the main IFD. */
+    int subresolutionOffset = -1;
+
+    OMETiffCoreMetadata() {
+      super();
+    }
+
+    OMETiffCoreMetadata(OMETiffCoreMetadata copy) {
+      super(copy);
+      subresolutionOffset = copy.subresolutionOffset;
+    }
+
+    OMETiffCoreMetadata(CoreMetadata copy) {
+      super(copy);
+    }
+  }
 }
