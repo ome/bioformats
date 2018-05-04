@@ -94,9 +94,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
   private int lastPlane = 0;
   private boolean hasSPW;
 
-  private int[] tileWidth;
-  private int[] tileHeight;
-
   private OMEXMLService service;
   private transient OMEXMLMetadata meta;
   private String metaFile;
@@ -426,8 +423,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
       info = null;
       used = null;
       lastPlane = 0;
-      tileWidth = null;
-      tileHeight = null;
       metadataFile = null;
     }
   }
@@ -436,14 +431,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return tileWidth[getSeries()];
+    return ((OMETiffCoreMetadata) currentCore()).tileWidth;
   }
 
   /* @see loci.formats.SubResolutionFormatReader#getOptimalTileHeight() */
   @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return tileHeight[getSeries()];
+    return ((OMETiffCoreMetadata) currentCore()).tileHeight;
   }
 
   // -- Internal FormatReader API methods --
@@ -723,8 +718,6 @@ public class OMETiffReader extends SubResolutionFormatReader {
     }
     info = new OMETiffPlane[seriesCount][];
 
-    tileWidth = new int[seriesCount];
-    tileHeight = new int[seriesCount];
     // compile list of file/UUID mappings
     Hashtable<String, String> files = new Hashtable<>();
     boolean needSearch = false;
@@ -1049,8 +1042,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
         }
 
         info[s][0].reader.setId(info[s][0].id);
-        tileWidth[s] = info[s][0].reader.getOptimalTileWidth();
-        tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
+        m.tileWidth = info[s][0].reader.getOptimalTileWidth();
+        m.tileHeight = info[s][0].reader.getOptimalTileHeight();
 
         m.sizeX = meta.getPixelsSizeX(i).getValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
@@ -1304,6 +1297,29 @@ public class OMETiffReader extends SubResolutionFormatReader {
         c.subresolutionOffset = si;
         c.sizeX = (int) subifd.getImageWidth();
         c.sizeY = (int) subifd.getImageLength();
+        try {
+          c.tileWidth = (int) subifd.getTileWidth();
+        }
+        catch (FormatException e) {
+          c.tileWidth = c.sizeX;
+        }
+        try {
+          c.tileHeight = (int) subifd.getTileLength();
+          if (c.tileHeight <= 0) {
+            c.tileHeight = c.sizeY;
+          }
+        }
+        catch (FormatException e) {
+          c.tileHeight = c.sizeY;
+        }
+        // Duplicate MinimalTiffReader getOptimalTileHeight logic
+        if (DataTools.safeMultiply32(c.tileHeight, c.tileWidth) >
+          10 * 1024 * 1024) {
+          int bpp = FormatTools.getBytesPerPixel(c.pixelType);
+          int effC = c.sizeC / (c.imageCount / (c.sizeZ * c.sizeT));
+          int maxHeight = (1024 * 1024) / (c.sizeX * effC * bpp);
+          c.tileHeight = (int) Math.min(maxHeight, c.sizeY);
+        }
         core.add(s, c);
       }
     }
@@ -1348,6 +1364,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
   private class OMETiffCoreMetadata extends CoreMetadata {
     /** SubIFD offset for sub-resolution level; -1 if the main IFD. */
     int subresolutionOffset = -1;
+    /** Tile size X. */
+    int tileWidth;
+    /** Tile size Y. */
+    int tileHeight;
 
     OMETiffCoreMetadata() {
       super();
@@ -1356,6 +1376,8 @@ public class OMETiffReader extends SubResolutionFormatReader {
     OMETiffCoreMetadata(OMETiffCoreMetadata copy) {
       super(copy);
       subresolutionOffset = copy.subresolutionOffset;
+      tileWidth = copy.tileWidth;
+      tileHeight = copy.tileHeight;
     }
 
     OMETiffCoreMetadata(CoreMetadata copy) {
