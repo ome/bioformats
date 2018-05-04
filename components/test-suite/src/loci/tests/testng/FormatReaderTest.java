@@ -1983,7 +1983,8 @@ public class FormatReaderTest {
         long planeSize = -1;
         try {
           planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getRGBChannelCount(),
+            reader.getSizeY(), reader.getEffectiveSizeC(),
+            reader.getRGBChannelCount(),
             FormatTools.getBytesPerPixel(reader.getPixelType()));
         }
         catch (IllegalArgumentException e) {
