@@ -563,7 +563,7 @@ public class OMETiffReader extends SubResolutionFormatReader {
         int sizeT = meta.getPixelsSizeT(i).getValue();
         String order = meta.getPixelsDimensionOrder(i).getValue();
         int num = sizeZ * sizeC * sizeT;
-        OMETiffCoreMetadata m = (OMETiffCoreMetadata) (i < core.size() ? core.get(i, 0) : new CoreMetadata(core.get(0, 0)));
+        OMETiffCoreMetadata m = (OMETiffCoreMetadata) (i < core.size() ? core.get(i, 0) : new OMETiffCoreMetadata(core.get(0, 0)));
         m.dimensionOrder = order;
 
         info[i] = new OMETiffPlane[meta.getTiffDataCount(i)];
