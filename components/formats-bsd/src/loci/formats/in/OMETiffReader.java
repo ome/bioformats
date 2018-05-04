@@ -124,6 +124,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public void setFlattenedResolutions(boolean flattened) {
     // Flattening is not possible with OME-TIFF, because splitting out the
     // resolutions as separate series would break the OME-XML metadata.
+    if (flattened == true) {
+      LOGGER.warn("OMETiffReader does not support resolution flattening");
+    }
   }
 
   /* @see loci.formats.SubResolutionFormatReader#isSingleFile(String) */
