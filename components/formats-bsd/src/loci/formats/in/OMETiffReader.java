@@ -111,20 +111,9 @@ public class OMETiffReader extends SubResolutionFormatReader {
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
     hasCompanionFiles = true;
     datasetDescription = "One or more .ome.tiff files";
-    flattenedResolutions = false; // note setFlattenedResolutions override
   }
 
   // -- IFormatReader API methods --
-
-  /* @see IFormatReader#setFlattenedResolutions(boolean) */
-  @Override
-  public void setFlattenedResolutions(boolean flattened) {
-    // Flattening is not possible with OME-TIFF, because splitting out the
-    // resolutions as separate series would break the OME-XML metadata.
-    if (flattened == true) {
-      LOGGER.warn("OMETiffReader does not support resolution flattening");
-    }
-  }
 
   /* @see loci.formats.SubResolutionFormatReader#isSingleFile(String) */
   @Override
@@ -1272,6 +1261,14 @@ public class OMETiffReader extends SubResolutionFormatReader {
   }
 
   private void addSubResolutions() throws IOException, FormatException {
+    // If sub-resolutions are flattened, we simply ignore them.  This
+    // is because the MetadataStore contains only the Images present
+    // in the original OME-XML and adding additional ones afterward is
+    // rather difficult.  It also interacts badly with the reader
+    // wrappers.
+    if(flattenedResolutions) {
+      return;
+    }
     for(int s = 0; s < core.size(); s++) {
       OMETiffCoreMetadata c0 = (OMETiffCoreMetadata) core.get(s, 0);
       int i = info[s][0].ifd;
