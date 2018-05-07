@@ -69,6 +69,7 @@ public class Configuration {
   private static final String HAS_VALID_XML = "hasValidXML";
   private static final String READER = "reader";
   private static final String SERIES = " series_";
+  private static final String RESOLUTION = "resolution_";
 
   private static final String SIZE_X = "SizeX";
   private static final String SIZE_Y = "SizeY";
@@ -108,6 +109,7 @@ public class Configuration {
   private static final String NAME = "Name";
   private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
+  private static final String RESOLUTION_COUNT = "resolution_count";
   private static final String CHANNEL_COUNT = "channel_count";
   private static final String DATE = "Date";
   private static final String DELTA_T = "DeltaT_";
@@ -406,9 +408,23 @@ public class Configuration {
     return currentTable.get(DATE);
   }
 
-  public void setSeries(int series) {
+  public void setSeries(int series) throws IndexOutOfBoundsException {
     Location file = new Location(dataFile);
-    currentTable = ini.getTable(file.getName() + SERIES + series);
+    setResolution(series, 0);
+  }
+
+  public void setResolution(int series, int resolution) throws IndexOutOfBoundsException {
+    Location file = new Location(dataFile);
+    String tableName;
+    if (resolution == 0) {
+      tableName = file.getName() + SERIES + series;
+    } else {
+      tableName = file.getName() + SERIES + series + " " + RESOLUTION + resolution;
+    }
+    currentTable = ini.getTable(tableName);
+    if (currentTable == null) {
+      throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
+    }
   }
 
   public void saveToFile() throws IOException {
@@ -485,165 +501,171 @@ public class Configuration {
 
     for (int series=0; series<seriesCount; series++) {
       reader.setSeries(series);
+      int resolutionCount = reader.getResolutionCount();
+      for (int resolution = 0; resolution < resolutionCount; resolution++) {
+        reader.setResolution(resolution);
 
-      IniTable seriesTable = new IniTable();
-      putTableName(seriesTable, reader, SERIES + series);
-
-      seriesTable.put(SIZE_X, String.valueOf(reader.getSizeX()));
-      seriesTable.put(SIZE_Y, String.valueOf(reader.getSizeY()));
-      seriesTable.put(SIZE_Z, String.valueOf(reader.getSizeZ()));
-      seriesTable.put(SIZE_C, String.valueOf(reader.getSizeC()));
-      seriesTable.put(SIZE_T, String.valueOf(reader.getSizeT()));
-      seriesTable.put(DIMENSION_ORDER, reader.getDimensionOrder());
-      seriesTable.put(IS_INTERLEAVED, String.valueOf(reader.isInterleaved()));
-      seriesTable.put(IS_INDEXED, String.valueOf(reader.isIndexed()));
-      seriesTable.put(IS_FALSE_COLOR, String.valueOf(reader.isFalseColor()));
-      seriesTable.put(IS_RGB, String.valueOf(reader.isRGB()));
-      seriesTable.put(THUMB_SIZE_X, String.valueOf(reader.getThumbSizeX()));
-      seriesTable.put(THUMB_SIZE_Y, String.valueOf(reader.getThumbSizeY()));
-      seriesTable.put(PIXEL_TYPE,
-        FormatTools.getPixelTypeString(reader.getPixelType()));
-      seriesTable.put(IS_LITTLE_ENDIAN,
-        String.valueOf(reader.isLittleEndian()));
-
-      seriesTable.put(CHANNEL_COUNT,
-        String.valueOf(retrieve.getChannelCount(series)));
-
-      try {
-        planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-          reader.getSizeY(), reader.getEffectiveSizeC(),
-          reader.getRGBChannelCount(),
-          FormatTools.getBytesPerPixel(reader.getPixelType()));
-        canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
-      }
-      catch (IllegalArgumentException e) {
-        canOpenImages = false;
-      }
-
-      if (canOpenImages) {
-        try {
-          byte[] plane = reader.openBytes(0);
-          seriesTable.put(MD5, TestTools.md5(plane));
+        IniTable seriesTable = new IniTable();
+        if (resolution == 0) {
+          putTableName(seriesTable, reader, SERIES + series);
         }
-        catch (FormatException e) {
+        else {
+          putTableName(seriesTable, reader, SERIES + series + " " + RESOLUTION + resolution);
+        }
+
+        if (resolution == 0) {
+          seriesTable.put(RESOLUTION_COUNT, String.valueOf(resolutionCount));
+        }
+        seriesTable.put(SIZE_X, String.valueOf(reader.getSizeX()));
+        seriesTable.put(SIZE_Y, String.valueOf(reader.getSizeY()));
+        seriesTable.put(SIZE_Z, String.valueOf(reader.getSizeZ()));
+        seriesTable.put(SIZE_C, String.valueOf(reader.getSizeC()));
+        seriesTable.put(SIZE_T, String.valueOf(reader.getSizeT()));
+        seriesTable.put(DIMENSION_ORDER, reader.getDimensionOrder());
+        seriesTable.put(IS_INTERLEAVED, String.valueOf(reader.isInterleaved()));
+        seriesTable.put(IS_INDEXED, String.valueOf(reader.isIndexed()));
+        seriesTable.put(IS_FALSE_COLOR, String.valueOf(reader.isFalseColor()));
+        seriesTable.put(IS_RGB, String.valueOf(reader.isRGB()));
+        seriesTable.put(THUMB_SIZE_X, String.valueOf(reader.getThumbSizeX()));
+        seriesTable.put(THUMB_SIZE_Y, String.valueOf(reader.getThumbSizeY()));
+        seriesTable.put(PIXEL_TYPE,
+          FormatTools.getPixelTypeString(reader.getPixelType()));
+        seriesTable.put(IS_LITTLE_ENDIAN,
+          String.valueOf(reader.isLittleEndian()));
+
+        seriesTable.put(CHANNEL_COUNT,
+          String.valueOf(retrieve.getChannelCount(series)));
+
+        try {
+          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+            reader.getSizeY(), reader.getEffectiveSizeC(),
+            reader.getRGBChannelCount(),
+            FormatTools.getBytesPerPixel(reader.getPixelType()));
+          canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
+        } catch (IllegalArgumentException e) {
+          canOpenImages = false;
+        }
+
+        if (canOpenImages) {
+          try {
+            byte[] plane = reader.openBytes(0);
+            seriesTable.put(MD5, TestTools.md5(plane));
+          } catch (FormatException e) {
+            // TODO
+          } catch (IOException e) {
+            // TODO
+          }
+        }
+
+        try {
+          int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
+          int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
+
+          byte[] tile = reader.openBytes(0, 0, 0, w, h);
+          seriesTable.put(TILE_MD5, TestTools.md5(tile));
+        } catch (FormatException e) {
+          // TODO
+        } catch (IOException e) {
           // TODO
         }
-        catch (IOException e) {
-          // TODO
+
+        seriesTable.put(NAME, retrieve.getImageName(series));
+        seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
+
+        Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
+        if (physicalX != null) {
+          seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
+          seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
         }
-      }
-
-      try {
-        int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
-        int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
-
-        byte[] tile = reader.openBytes(0, 0, 0, w, h);
-        seriesTable.put(TILE_MD5, TestTools.md5(tile));
-      }
-      catch (FormatException e) {
-        // TODO
-      }
-      catch (IOException e) {
-        // TODO
-      }
-
-      seriesTable.put(NAME, retrieve.getImageName(series));
-      seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
-
-      Length physicalX = retrieve.getPixelsPhysicalSizeX(series);
-      if (physicalX != null) {
-        seriesTable.put(PHYSICAL_SIZE_X, physicalX.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_X_UNIT, physicalX.unit().getSymbol());
-      }
-      Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
-      if (physicalY != null) {
-        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
-      }
-      Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
-      if (physicalZ != null) {
-        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
-        seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
-      }
-      Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
-      if (timeIncrement != null) {
-        seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
-        seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
-      }
-
-      Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
-      if (acquisition != null) {
-        String date = acquisition.getValue();
-        if (date != null) {
-          seriesTable.put(DATE, date);
+        Length physicalY = retrieve.getPixelsPhysicalSizeY(series);
+        if (physicalY != null) {
+          seriesTable.put(PHYSICAL_SIZE_Y, physicalY.value().toString());
+          seriesTable.put(PHYSICAL_SIZE_Y_UNIT, physicalY.unit().getSymbol());
         }
-      }
-
-      for (int c=0; c<retrieve.getChannelCount(series); c++) {
-        seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(series, c));
-        try {
-          seriesTable.put(LIGHT_SOURCE + c,
-            retrieve.getChannelLightSourceSettingsID(series, c));
+        Length physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+        if (physicalZ != null) {
+          seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.value().toString());
+          seriesTable.put(PHYSICAL_SIZE_Z_UNIT, physicalZ.unit().getSymbol());
         }
-        catch (NullPointerException e) { }
+        Time timeIncrement = retrieve.getPixelsTimeIncrement(series);
+        if (timeIncrement != null) {
+          seriesTable.put(TIME_INCREMENT, timeIncrement.value().toString());
+          seriesTable.put(TIME_INCREMENT_UNIT, timeIncrement.unit().getSymbol());
+        }
 
-        try {
-          int plane = reader.getIndex(0, c, 0);
-          if (plane < retrieve.getPlaneCount(series)) {
-            seriesTable.put(EXPOSURE_TIME + c,
-              retrieve.getPlaneExposureTime(series, plane).value().toString());
-            seriesTable.put(EXPOSURE_TIME_UNIT + c,
-              retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
+        Timestamp acquisition = retrieve.getImageAcquisitionDate(series);
+        if (acquisition != null) {
+          String date = acquisition.getValue();
+          if (date != null) {
+            seriesTable.put(DATE, date);
           }
         }
-        catch (NullPointerException e) { }
 
-        Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
-        if (emWavelength != null) {
-          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
-          seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
+        for (int c = 0; c < retrieve.getChannelCount(series); c++) {
+          seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(series, c));
+          try {
+            seriesTable.put(LIGHT_SOURCE + c,
+              retrieve.getChannelLightSourceSettingsID(series, c));
+          } catch (NullPointerException e) {
+          }
+
+          try {
+            int plane = reader.getIndex(0, c, 0);
+            if (plane < retrieve.getPlaneCount(series)) {
+              seriesTable.put(EXPOSURE_TIME + c,
+                retrieve.getPlaneExposureTime(series, plane).value().toString());
+              seriesTable.put(EXPOSURE_TIME_UNIT + c,
+                retrieve.getPlaneExposureTime(series, plane).unit().getSymbol());
+            }
+          } catch (NullPointerException e) {
+          }
+
+          Length emWavelength = retrieve.getChannelEmissionWavelength(series, c);
+          if (emWavelength != null) {
+            seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.value().toString());
+            seriesTable.put(EMISSION_WAVELENGTH_UNIT + c, emWavelength.unit().getSymbol());
+          }
+          Length exWavelength =
+            retrieve.getChannelExcitationWavelength(series, c);
+          if (exWavelength != null) {
+            seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
+            seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
+          }
+          try {
+            seriesTable.put(DETECTOR + c,
+              retrieve.getDetectorSettingsID(series, c));
+          } catch (NullPointerException e) {
+          }
         }
-        Length exWavelength =
-          retrieve.getChannelExcitationWavelength(series, c);
-        if (exWavelength != null) {
-          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.value().toString());
-          seriesTable.put(EXCITATION_WAVELENGTH_UNIT + c, exWavelength.unit().getSymbol());
+
+        for (int p = 0; p < reader.getImageCount(); p++) {
+          try {
+            Time deltaT = retrieve.getPlaneDeltaT(series, p);
+            if (deltaT != null) {
+              seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
+            }
+            Length xPos = retrieve.getPlanePositionX(series, p);
+            if (xPos != null) {
+              seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
+              seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
+            }
+            Length yPos = retrieve.getPlanePositionY(series, p);
+            if (yPos != null) {
+              seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
+              seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
+            }
+            Length zPos = retrieve.getPlanePositionZ(series, p);
+            if (zPos != null) {
+              seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
+              seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
+            }
+          } catch (IndexOutOfBoundsException e) {
+            // only happens if no Plane elements were populated
+          }
         }
-        try {
-          seriesTable.put(DETECTOR + c,
-            retrieve.getDetectorSettingsID(series, c));
-        }
-        catch (NullPointerException e) { }
+
+        ini.add(seriesTable);
       }
-
-      for (int p=0; p<reader.getImageCount(); p++) {
-        try {
-          Time deltaT = retrieve.getPlaneDeltaT(series, p);
-          if (deltaT != null) {
-            seriesTable.put(DELTA_T + p, deltaT.value(UNITS.SECOND).toString());
-          }
-          Length xPos = retrieve.getPlanePositionX(series, p);
-          if (xPos != null) {
-            seriesTable.put(X_POSITION + p, String.valueOf(xPos.value().doubleValue()));
-            seriesTable.put(X_POSITION_UNIT + p, xPos.unit().getSymbol());
-          }
-          Length yPos = retrieve.getPlanePositionY(series, p);
-          if (yPos != null) {
-            seriesTable.put(Y_POSITION + p, String.valueOf(yPos.value().doubleValue()));
-            seriesTable.put(Y_POSITION_UNIT + p, yPos.unit().getSymbol());
-          }
-          Length zPos = retrieve.getPlanePositionZ(series, p);
-          if (zPos != null) {
-            seriesTable.put(Z_POSITION + p, String.valueOf(zPos.value().doubleValue()));
-            seriesTable.put(Z_POSITION_UNIT + p, zPos.unit().getSymbol());
-          }
-        }
-        catch (IndexOutOfBoundsException e) {
-          // only happens if no Plane elements were populated
-        }
-      }
-
-      ini.add(seriesTable);
     }
 
   }
