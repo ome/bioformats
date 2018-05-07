@@ -1922,9 +1922,15 @@ public class FormatReaderTest {
 
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
 
           Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           long planeSize = -1;
           try {
@@ -2079,7 +2085,13 @@ public class FormatReaderTest {
 
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           int w = (int) Math.min(Configuration.TILE_SIZE,
             resolutionReader.getSizeX());
@@ -2646,6 +2658,9 @@ public class FormatReaderTest {
         Location.setIdMap(idMap);
 
         reallyInMemory = TestTools.mapFile(id);
+      }
+      if(id.endsWith(".ome.tiff")) {
+        reader.setFlattenedResolutions(false);
       }
       reader.setId(id);
       // remove used files
