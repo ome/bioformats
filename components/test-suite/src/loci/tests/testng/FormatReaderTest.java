@@ -1971,14 +1971,15 @@ public class FormatReaderTest {
         long planeSize = -1;
         try {
           planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getRGBChannelCount(),
+            reader.getSizeY(), reader.getEffectiveSizeC(),
+            reader.getRGBChannelCount(),
             FormatTools.getBytesPerPixel(reader.getPixelType()));
         }
         catch (IllegalArgumentException e) {
           continue;
         }
 
-        if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+        if (planeSize <= 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
 
