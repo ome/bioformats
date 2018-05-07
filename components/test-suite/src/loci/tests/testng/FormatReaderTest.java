@@ -1997,7 +1997,7 @@ public class FormatReaderTest {
           continue;
         }
 
-        if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+        if (planeSize <= 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
 
