@@ -138,6 +138,16 @@ public class CoreMetadataList extends MetadataList<CoreMetadata> {
     }
   }
 
+  public List<CoreMetadata> getUnflattenedList() {
+    List<CoreMetadata> l = new ArrayList<>();
+
+    for (int i = 0; i < size(); ++i) {
+      l.add(get(i, 0));
+    }
+
+    return l;
+  }
+
   /**
    * Get flattened size (all resolutions in all series)
    * @return The number of all resolutions in all series
