@@ -430,6 +430,18 @@ public class OMETiffReader extends SubResolutionFormatReader {
     return ((OMETiffCoreMetadata) currentCore()).tileHeight;
   }
 
+  /* @see IFormatReader#getcoredataList() */
+  @Override
+  public List<CoreMetadata> getCoreMetadataList() {
+    FormatTools.assertId(currentId, true, 1);
+    if (flattenedResolutions) {
+      return core.getFlattenedList();
+    }
+    else {
+      return core.getUnflattenedList();
+    }
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.SubResolutionFormatReader#initFile(String) */
