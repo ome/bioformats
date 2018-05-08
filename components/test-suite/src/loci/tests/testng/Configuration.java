@@ -410,17 +410,21 @@ public class Configuration {
 
   public void setSeries(int series) throws IndexOutOfBoundsException {
     Location file = new Location(dataFile);
-    setResolution(series, 0);
+    try {
+      setResolution(series, 0);
+    }
+    catch (IndexOutOfBoundsException e) {
+      String tableName = file.getName() + SERIES + series;
+      currentTable = ini.getTable(tableName);
+      if (currentTable == null) {
+        throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
+      }
+    }
   }
 
   public void setResolution(int series, int resolution) throws IndexOutOfBoundsException {
     Location file = new Location(dataFile);
-    String tableName;
-    if (resolution == 0) {
-      tableName = file.getName() + SERIES + series;
-    } else {
-      tableName = file.getName() + SERIES + series + " " + RESOLUTION + resolution;
-    }
+    String tableName = file.getName() + SERIES + series + " " + RESOLUTION + resolution;
     currentTable = ini.getTable(tableName);
     if (currentTable == null) {
       throw new IndexOutOfBoundsException("Invalid table name: " + tableName);
@@ -506,12 +510,7 @@ public class Configuration {
         reader.setResolution(resolution);
 
         IniTable seriesTable = new IniTable();
-        if (resolution == 0) {
-          putTableName(seriesTable, reader, SERIES + series);
-        }
-        else {
-          putTableName(seriesTable, reader, SERIES + series + " " + RESOLUTION + resolution);
-        }
+        putTableName(seriesTable, reader, SERIES + series + " " + RESOLUTION + resolution);
 
         if (resolution == 0) {
           seriesTable.put(RESOLUTION_COUNT, String.valueOf(resolutionCount));
