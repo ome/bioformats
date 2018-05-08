@@ -2010,7 +2010,9 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2121,7 +2123,9 @@ public class FormatReaderTest {
             (expected1 != null || expected2 != null))
           {
             success = false;
-            msg = "series " + i + ", resolution " + r;
+            msg = "series " + i + ", resolution " + r +
+              ", md5 " + md5 +
+              ", expected " + expected1 + " or " + expected2;
           }
         }
       }
@@ -2174,7 +2178,9 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
