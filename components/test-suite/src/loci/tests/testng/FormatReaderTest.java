@@ -2085,8 +2085,12 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
 
           try {
             config.setResolution(i, r);
