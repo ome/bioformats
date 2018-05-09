@@ -450,11 +450,11 @@ public class MinimalTiffReader extends FormatReader {
 
     IFDList allIFDs = null;
     if (!mergeSubIFDs) {
-      allIFDs = tiffParser.getIFDs();
+      allIFDs = tiffParser.getMainIFDs();
     }
     else {
       allIFDs = new IFDList();
-      for (IFD ifd : tiffParser.getIFDs()) {
+      for (IFD ifd : tiffParser.getMainIFDs()) {
         allIFDs.add(ifd);
         allIFDs.addAll(tiffParser.getSubIFDs(ifd));
       }

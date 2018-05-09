@@ -452,7 +452,7 @@ public class MicromanagerReader extends FormatReader {
       }
       try {
         TiffParser parser = new TiffParser(path);
-        int nIFDs = parser.getIFDs().size();
+        int nIFDs = parser.getMainIFDs().size();
         IFD firstIFD = parser.getFirstIFD();
         parser.fillInIFD(firstIFD);
 
@@ -484,7 +484,7 @@ public class MicromanagerReader extends FormatReader {
           }
         }
 
-        IFDList ifds = parser.getIFDs();
+        IFDList ifds = parser.getMainIFDs();
         for (int i=0; i<ifds.size(); i++) {
           if (!parseMMJSONTag) {
             break;

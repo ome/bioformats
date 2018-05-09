@@ -292,7 +292,7 @@ public class NDPIReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
 
     // fix the offsets for > 4 GB files
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);

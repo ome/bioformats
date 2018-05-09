@@ -84,7 +84,7 @@ public class JPKReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
 
     // repopulate core metadata
 
