@@ -139,29 +139,7 @@ public class CoreMetadataListTest {
     for (int i = 0; i < data.size(); i++) {
       CoreMetadata cdata = data.get(i);
       CoreMetadata cflat= flat.get(i);
-
-      assertEquals(cdata.sizeX, cflat.sizeX);
-      assertEquals(cdata.sizeY, cflat.sizeY);
-      assertEquals(cdata.sizeZ, cflat.sizeZ);
-      assertEquals(cdata.sizeC, cflat.sizeC);
-      assertEquals(cdata.sizeT, cflat.sizeT);
-      assertEquals(cdata.thumbSizeX, cflat.thumbSizeX);
-      assertEquals(cdata.thumbSizeY, cflat.thumbSizeY);
-      assertEquals(cdata.pixelType, cflat.pixelType);
-      assertEquals(cdata.bitsPerPixel, cflat.bitsPerPixel);
-      assertEquals(cdata.imageCount, cflat.imageCount);
-      assertEquals(cdata.dimensionOrder, cflat.dimensionOrder);
-      assertEquals(cdata.orderCertain, cflat.orderCertain);
-      assertEquals(cdata.rgb, cflat.rgb);
-      assertEquals(cdata.littleEndian, cflat.littleEndian);
-      assertEquals(cdata.interleaved, cflat.interleaved);
-      assertEquals(cdata.indexed, cflat.indexed);
-      assertEquals(cdata.falseColor, cflat.falseColor);
-      assertEquals(cdata.metadataComplete, cflat.metadataComplete);
-      assertEquals(cdata.seriesMetadata, cflat.seriesMetadata);
-      assertEquals(cdata.thumbnail, cflat.thumbnail);
-      assertEquals(cdata.resolutionCount, cflat.resolutionCount);
-      // Skip Modulo fields for the purpose of this test.
+      compareCoreMetadata(cflat, cdata, true);
     }
   }
 
@@ -191,29 +169,7 @@ public class CoreMetadataListTest {
     for (int i = 0; i < data.size(); i++) {
       CoreMetadata cdata = data.get(i);
       CoreMetadata cflat= flat.get(i);
-
-      assertEquals(cdata.sizeX, cflat.sizeX);
-      assertEquals(cdata.sizeY, cflat.sizeY);
-      assertEquals(cdata.sizeZ, cflat.sizeZ);
-      assertEquals(cdata.sizeC, cflat.sizeC);
-      assertEquals(cdata.sizeT, cflat.sizeT);
-      assertEquals(cdata.thumbSizeX, cflat.thumbSizeX);
-      assertEquals(cdata.thumbSizeY, cflat.thumbSizeY);
-      assertEquals(cdata.pixelType, cflat.pixelType);
-      assertEquals(cdata.bitsPerPixel, cflat.bitsPerPixel);
-      assertEquals(cdata.imageCount, cflat.imageCount);
-      assertEquals(cdata.dimensionOrder, cflat.dimensionOrder);
-      assertEquals(cdata.orderCertain, cflat.orderCertain);
-      assertEquals(cdata.rgb, cflat.rgb);
-      assertEquals(cdata.littleEndian, cflat.littleEndian);
-      assertEquals(cdata.interleaved, cflat.interleaved);
-      assertEquals(cdata.indexed, cflat.indexed);
-      assertEquals(cdata.falseColor, cflat.falseColor);
-      assertEquals(cdata.metadataComplete, cflat.metadataComplete);
-      assertEquals(cdata.seriesMetadata, cflat.seriesMetadata);
-      assertEquals(cdata.thumbnail, cflat.thumbnail);
-      assertEquals(cdata.resolutionCount, cflat.resolutionCount);
-      // Skip Modulo fields for the purpose of this test.
+      compareCoreMetadata(cflat, cdata, true);
     }
   }
 
@@ -231,29 +187,7 @@ public class CoreMetadataListTest {
     for (int i = 0; i < list.size(); i++) {
       CoreMetadata clist = list.get(i, 0);
       CoreMetadata cflat= flat.get(i);
-
-      assertEquals(clist.sizeX, cflat.sizeX);
-      assertEquals(clist.sizeY, cflat.sizeY);
-      assertEquals(clist.sizeZ, cflat.sizeZ);
-      assertEquals(clist.sizeC, cflat.sizeC);
-      assertEquals(clist.sizeT, cflat.sizeT);
-      assertEquals(clist.thumbSizeX, cflat.thumbSizeX);
-      assertEquals(clist.thumbSizeY, cflat.thumbSizeY);
-      assertEquals(clist.pixelType, cflat.pixelType);
-      assertEquals(clist.bitsPerPixel, cflat.bitsPerPixel);
-      assertEquals(clist.imageCount, cflat.imageCount);
-      assertEquals(clist.dimensionOrder, cflat.dimensionOrder);
-      assertEquals(clist.orderCertain, cflat.orderCertain);
-      assertEquals(clist.rgb, cflat.rgb);
-      assertEquals(clist.littleEndian, cflat.littleEndian);
-      assertEquals(clist.interleaved, cflat.interleaved);
-      assertEquals(clist.indexed, cflat.indexed);
-      assertEquals(clist.falseColor, cflat.falseColor);
-      assertEquals(clist.metadataComplete, cflat.metadataComplete);
-      assertEquals(clist.seriesMetadata, cflat.seriesMetadata);
-      assertEquals(clist.thumbnail, cflat.thumbnail);
-      assertEquals(1, cflat.resolutionCount);
-      // Skip Modulo fields for the purpose of this test.
+      compareCoreMetadata(cflat, clist, false);
     }
   }
 
@@ -386,5 +320,36 @@ public class CoreMetadataListTest {
     assertEquals(0, list.get(0,4).sizeY);
     assertEquals(0, list.get(0,4).sizeZ);
 
+  }
+
+  public static void compareCoreMetadata(CoreMetadata observed, CoreMetadata expected,
+                                         boolean includeResolutionCount) {
+    assertEquals(expected.sizeX, observed.sizeX);
+    assertEquals(expected.sizeY, observed.sizeY);
+    assertEquals(expected.sizeZ, observed.sizeZ);
+    assertEquals(expected.sizeC, observed.sizeC);
+    assertEquals(expected.sizeT, observed.sizeT);
+    assertEquals(expected.thumbSizeX, observed.thumbSizeX);
+    assertEquals(expected.thumbSizeY, observed.thumbSizeY);
+    assertEquals(expected.pixelType, observed.pixelType);
+    assertEquals(expected.bitsPerPixel, observed.bitsPerPixel);
+    assertEquals(expected.imageCount, observed.imageCount);
+    assertEquals(expected.dimensionOrder, observed.dimensionOrder);
+    assertEquals(expected.orderCertain, observed.orderCertain);
+    assertEquals(expected.rgb, observed.rgb);
+    assertEquals(expected.littleEndian, observed.littleEndian);
+    assertEquals(expected.interleaved, observed.interleaved);
+    assertEquals(expected.indexed, observed.indexed);
+    assertEquals(expected.falseColor, observed.falseColor);
+    assertEquals(expected.metadataComplete, observed.metadataComplete);
+    assertEquals(expected.seriesMetadata, observed.seriesMetadata);
+    assertEquals(expected.thumbnail, observed.thumbnail);
+    if (includeResolutionCount) {
+      assertEquals(expected.resolutionCount, observed.resolutionCount);
+    }
+    else {
+      assertEquals(1, observed.resolutionCount);
+    }
+    // Skip Modulo fields for the purpose of this test.
   }
 }
