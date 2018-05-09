@@ -435,10 +435,10 @@ public class OMETiffReader extends SubResolutionFormatReader {
   public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
     if (flattenedResolutions) {
-      return core.getFlattenedList();
+      return core.getSeriesList();
     }
     else {
-      return core.getUnflattenedList();
+      return core.getFlattenedList();
     }
   }
 

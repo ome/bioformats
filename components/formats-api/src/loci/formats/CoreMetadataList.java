@@ -120,7 +120,7 @@ public class CoreMetadataList extends MetadataList<CoreMetadata> {
         get(i, 0).resolutionCount = sizes[i];
       }
       for (int j = 0; j < sizes[i]; ++j) {
-        l.add(get(i,j));
+        l.add(new CoreMetadata(get(i,j)));
       }
     }
 
@@ -138,11 +138,14 @@ public class CoreMetadataList extends MetadataList<CoreMetadata> {
     }
   }
 
-  public List<CoreMetadata> getUnflattenedList() {
+  public List<CoreMetadata> getSeriesList() {
     List<CoreMetadata> l = new ArrayList<>();
 
     for (int i = 0; i < size(); ++i) {
-      l.add(get(i, 0));
+      l.add(new CoreMetadata(get(i, 0)));
+    }
+    for (CoreMetadata c : l) {
+      c.resolutionCount = 1;
     }
 
     return l;
