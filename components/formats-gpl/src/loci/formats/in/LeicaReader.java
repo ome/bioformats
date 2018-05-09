@@ -784,7 +784,7 @@ public class LeicaReader extends FormatReader {
 
       // open the TIFF file and look for the "Image Description" field
 
-      ifds = tp.getIFDs();
+      ifds = tp.getMainIFDs();
       if (ifds == null) throw new FormatException("No IFDs found");
       String descr = ifds.get(0).getComment();
 
