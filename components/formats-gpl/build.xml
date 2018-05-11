@@ -67,6 +67,9 @@ Type "ant -p" for a list of targets.
         <rsel:not>
           <rsel:name name="netcdf*.jar"/>
         </rsel:not>
+        <rsel:not>
+          <rsel:name name="cdm*.jar"/>
+        </rsel:not>
       </restrict>
     </path>
     <testng failureProperty="failedTest">
