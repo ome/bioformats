@@ -174,6 +174,14 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getDomains() */
+  @Override
+  public String[] getDomains() {
+    FormatTools.assertId(currentId, true, 1);
+    return isHCS ? new String[] {FormatTools.HCS_DOMAIN} :
+      new String[] {FormatTools.LM_DOMAIN};
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   @Override
   public boolean isThisType(String name, boolean open) {
