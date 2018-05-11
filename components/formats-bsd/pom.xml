@@ -172,6 +172,7 @@
           <systemPropertyVariables>
             <testng.runWriterSaveBytesTests>2</testng.runWriterSaveBytesTests>
             <testng.runWriterTilingTests>2</testng.runWriterTilingTests>
+            <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
           </systemPropertyVariables>
         </configuration>
       </plugin>

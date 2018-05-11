@@ -104,6 +104,9 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
+          <systemPropertyVariables>
+            <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

@@ -207,6 +207,9 @@
               <additionalClasspathElements>
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -225,6 +228,9 @@
               <classpathDependencyExcludes>
                 <classpathDependencyExclude>org.openmicroscopy:ome-mdbtools</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -243,6 +249,9 @@
               <classpathDependencyExcludes>
                 <classpathDependencyExclude>org.openmicroscopy:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
           <execution>
@@ -261,6 +270,9 @@
               <classpathDependencyExcludes>
                 <classpathDependencyExclude>edu.ucar:netcdf</classpathDependencyExclude>
               </classpathDependencyExcludes>
+              <systemPropertyVariables>
+                <bioformats_can_do_upgrade_check>false</bioformats_can_do_upgrade_check>
+              </systemPropertyVariables>
             </configuration>
           </execution>
         </executions>
