@@ -1922,9 +1922,15 @@ public class FormatReaderTest {
 
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
 
           Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           long planeSize = -1;
           try {
@@ -1983,14 +1989,15 @@ public class FormatReaderTest {
         long planeSize = -1;
         try {
           planeSize = DataTools.safeMultiply32(reader.getSizeX(),
-            reader.getSizeY(), reader.getRGBChannelCount(),
+            reader.getSizeY(), reader.getEffectiveSizeC(),
+            reader.getRGBChannelCount(),
             FormatTools.getBytesPerPixel(reader.getPixelType()));
         }
         catch (IllegalArgumentException e) {
           continue;
         }
 
-        if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+        if (planeSize <= 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
 
@@ -2003,7 +2010,9 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2076,9 +2085,19 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
+        Assert.assertEquals(resolutionReader.getSeries(), i);
+
         for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
-          config.setSeries(resolutionReader.getCoreIndex());
+
+          Assert.assertEquals(resolutionReader.getResolution(), r);
+
+          try {
+            config.setResolution(i, r);
+          }
+          catch(IndexOutOfBoundsException e) {
+            config.setSeries(resolutionReader.getCoreIndex());
+          }
 
           int w = (int) Math.min(Configuration.TILE_SIZE,
             resolutionReader.getSizeX());
@@ -2108,7 +2127,9 @@ public class FormatReaderTest {
             (expected1 != null || expected2 != null))
           {
             success = false;
-            msg = "series " + i + ", resolution " + r;
+            msg = "series " + i + ", resolution " + r +
+              ", md5 " + md5 +
+              ", expected " + expected1 + " or " + expected2;
           }
         }
       }
@@ -2161,7 +2182,9 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i + " (" + md5 + ")";
+          msg = "series " + i +
+            ", md5 " + md5 +
+            ", expected " + expected1 + " or " + expected2;
         }
       }
     }
@@ -2645,6 +2668,9 @@ public class FormatReaderTest {
         Location.setIdMap(idMap);
 
         reallyInMemory = TestTools.mapFile(id);
+      }
+      if(id.endsWith(".ome.tiff")) {
+        reader.setFlattenedResolutions(false);
       }
       reader.setId(id);
       // remove used files

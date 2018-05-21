@@ -308,7 +308,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     int count = handler.count();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
 
     if (ifds.size() < count) {
       count = ifds.size();
@@ -346,15 +346,19 @@ public class LeicaSCNReader extends BaseTiffReader {
     HashMap<String,String> objectives = new HashMap<String,String>();
     int objectiveidno = 0;
 
+    int pos = 0;
     for (int s=0; s<core.size(); s++) {
       for (int r = 0; r < core.size(s); r++) {
-        int pos = core.flattenedIndex(s, r);
+        int coreIndex = core.flattenedIndex(s, r);
         ImageCollection c = handler.collection;
-        Image i = handler.imageMap.get(pos);
+        Image i = handler.imageMap.get(coreIndex);
 
         int subresolution = r;
         if (!hasFlattenedResolutions()) {
           subresolution = 0;
+        }
+        if (!hasFlattenedResolutions() && r > 0) {
+          continue;
         }
 
         Dimension dimension = i.pixels.lookupDimension(0, 0, r);
@@ -437,6 +441,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         addSeriesMeta("scanSettings.objectiveSettings.objective for image", i.objMag);
         addSeriesMeta("scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
         addSeriesMeta("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
+
+        ++pos;
       }
     }
   }

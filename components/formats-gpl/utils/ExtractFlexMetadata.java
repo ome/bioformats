@@ -50,7 +50,7 @@ public class ExtractFlexMetadata {
         String outId = (dot >= 0 ? id.substring(0, dot) : id) + ".xml";
         RandomAccessInputStream in = new RandomAccessInputStream(id);
         TiffParser parser = new TiffParser(in);
-        IFD firstIFD = parser.getIFDs().get(0);
+        IFD firstIFD = parser.getMainIFDs().get(0);
         String xml = firstIFD.getIFDTextValue(FlexReader.FLEX);
         in.close();
         FileWriter writer = new FileWriter(new File(outId));

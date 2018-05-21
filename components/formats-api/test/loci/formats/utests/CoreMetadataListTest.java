@@ -36,6 +36,7 @@ import loci.common.Constants;
 import loci.formats.CoreMetadata;
 import loci.formats.CoreMetadataList;
 
+import loci.formats.Modulo;
 import ome.units.quantity.Length;
 import ome.units.unit.Unit;
 import ome.units.UNITS;
@@ -134,7 +135,12 @@ public class CoreMetadataListTest {
     list.setFlattenedList(data);
 
     List<CoreMetadata> flat = list.getFlattenedList();
-    assertArrayEquals(data.toArray(), flat.toArray());
+
+    for (int i = 0; i < data.size(); i++) {
+      CoreMetadata cdata = data.get(i);
+      CoreMetadata cflat= flat.get(i);
+      compareCoreMetadata(cflat, cdata, true);
+    }
   }
 
   @Test(dataProvider = "corelist")
@@ -157,7 +163,32 @@ public class CoreMetadataListTest {
     CoreMetadataList list2 = new CoreMetadataList(list);
 
     List<CoreMetadata> flat = list2.getFlattenedList();
-    assertArrayEquals(data.toArray(), flat.toArray());
+
+    assertEquals(data.size(), flat.size());
+
+    for (int i = 0; i < data.size(); i++) {
+      CoreMetadata cdata = data.get(i);
+      CoreMetadata cflat= flat.get(i);
+      compareCoreMetadata(cflat, cdata, true);
+    }
+  }
+
+  @Test(dataProvider = "corelist")
+  public void testSeriesCopy(List<CoreMetadata> data, int[] expected) {
+    CoreMetadataList list = new CoreMetadataList();
+    list.setFlattenedList(data);
+
+    CoreMetadataList list2 = new CoreMetadataList(list);
+
+    List<CoreMetadata> flat = list2.getSeriesList();
+
+    assertEquals(list.size(), flat.size());
+
+    for (int i = 0; i < list.size(); i++) {
+      CoreMetadata clist = list.get(i, 0);
+      CoreMetadata cflat= flat.get(i);
+      compareCoreMetadata(cflat, clist, false);
+    }
   }
 
 
@@ -289,5 +320,36 @@ public class CoreMetadataListTest {
     assertEquals(0, list.get(0,4).sizeY);
     assertEquals(0, list.get(0,4).sizeZ);
 
+  }
+
+  public static void compareCoreMetadata(CoreMetadata observed, CoreMetadata expected,
+                                         boolean includeResolutionCount) {
+    assertEquals(expected.sizeX, observed.sizeX);
+    assertEquals(expected.sizeY, observed.sizeY);
+    assertEquals(expected.sizeZ, observed.sizeZ);
+    assertEquals(expected.sizeC, observed.sizeC);
+    assertEquals(expected.sizeT, observed.sizeT);
+    assertEquals(expected.thumbSizeX, observed.thumbSizeX);
+    assertEquals(expected.thumbSizeY, observed.thumbSizeY);
+    assertEquals(expected.pixelType, observed.pixelType);
+    assertEquals(expected.bitsPerPixel, observed.bitsPerPixel);
+    assertEquals(expected.imageCount, observed.imageCount);
+    assertEquals(expected.dimensionOrder, observed.dimensionOrder);
+    assertEquals(expected.orderCertain, observed.orderCertain);
+    assertEquals(expected.rgb, observed.rgb);
+    assertEquals(expected.littleEndian, observed.littleEndian);
+    assertEquals(expected.interleaved, observed.interleaved);
+    assertEquals(expected.indexed, observed.indexed);
+    assertEquals(expected.falseColor, observed.falseColor);
+    assertEquals(expected.metadataComplete, observed.metadataComplete);
+    assertEquals(expected.seriesMetadata, observed.seriesMetadata);
+    assertEquals(expected.thumbnail, observed.thumbnail);
+    if (includeResolutionCount) {
+      assertEquals(expected.resolutionCount, observed.resolutionCount);
+    }
+    else {
+      assertEquals(1, observed.resolutionCount);
+    }
+    // Skip Modulo fields for the purpose of this test.
   }
 }

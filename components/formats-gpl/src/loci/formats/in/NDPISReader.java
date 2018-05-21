@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.ChannelSeparator;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -206,7 +205,7 @@ public class NDPISReader extends FormatReader {
       // populate channel names based on IFD entry
       try (RandomAccessInputStream in = new RandomAccessInputStream(ndpiFiles[c])) {
         TiffParser tp = new TiffParser(in);
-        ifd = tp.getIFDs().get(0);
+        ifd = tp.getMainIFDs().get(0);
       }
 
       String channelName = ifd.getIFDStringValue(TAG_CHANNEL);

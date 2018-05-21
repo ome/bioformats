@@ -601,7 +601,7 @@ public class FV1000Reader extends FormatReader {
         for (String previewName : previewNames) {
           RandomAccessInputStream preview = getFile(previewName);
           TiffParser tp = new TiffParser(preview);
-          ifds = tp.getIFDs();
+          ifds = tp.getMainIFDs();
           preview.close();
           tp = null;
           ms1.imageCount += ifds.size();
@@ -966,7 +966,7 @@ public class FV1000Reader extends FormatReader {
         }
         try {
           TiffParser tp = new TiffParser(plane);
-          IFDList ifd = tp.getIFDs();
+          IFDList ifd = tp.getMainIFDs();
           ifds.add(ifd);
         }
         finally {

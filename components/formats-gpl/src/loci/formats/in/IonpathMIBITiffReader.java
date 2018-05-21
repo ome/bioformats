@@ -102,7 +102,7 @@ public class IonpathMIBITiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     int seriesIndex;
     String imageType = null;
 

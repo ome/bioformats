@@ -26,18 +26,12 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import loci.common.Constants;
 import loci.common.DataTools;
-import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -50,9 +44,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.Timestamp;
 
-import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
@@ -195,7 +187,7 @@ public class VectraReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    ifds = tiffParser.getIFDs();
+    ifds = tiffParser.getMainIFDs();
     thumbnailIFDs = null;
 
     for (IFD ifd : ifds) {

@@ -410,7 +410,7 @@ public class APLReader extends FormatReader {
 
       parser[i] = new TiffParser(tiffFiles[i]);
       parser[i].setDoCaching(false);
-      ifds[i] = parser[i].getIFDs();
+      ifds[i] = parser[i].getMainIFDs();
 
       for (IFD ifd : ifds[i]) {
         parser[i].fillInIFD(ifd);
