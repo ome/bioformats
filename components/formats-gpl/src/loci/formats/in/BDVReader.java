@@ -374,6 +374,7 @@ public class BDVReader extends FormatReader {
     List<String> seriesWell = new ArrayList<String>();
     List<String> seriesSite = new ArrayList<String>();
 
+    if (sizeC == 0) sizeC = 1;
     for (H5Coordinate coord : H5PositionList) {
       if (jhdf.exists(coord.pathToImageData)) {
         CoreMetadata m = new CoreMetadata();
