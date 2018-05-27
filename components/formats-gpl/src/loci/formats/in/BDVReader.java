@@ -379,7 +379,13 @@ public class BDVReader extends FormatReader {
       if (jhdf.exists(coord.pathToImageData)) {
         CoreMetadata m = new CoreMetadata();
         core.add(m);
-        setSeries(seriesCount);
+        if (hasFlattenedResolutions()) {
+          setSeries(seriesCount);
+        }
+        else {
+          setSeries(seriesCount / resolutionCount);
+          setResolution(seriesCount % resolutionCount);
+        }
 
         LOGGER.debug(coord.pathToImageData);
         int[] ctzyx = jhdf.getShape(coord.pathToImageData);
