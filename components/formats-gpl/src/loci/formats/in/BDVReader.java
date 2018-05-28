@@ -133,6 +133,13 @@ public class BDVReader extends FormatReader {
       parseROIs(0);
     }
   }
+  
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles() {
+    FormatTools.assertId(currentId, true, 1);
+    return new String[] {currentId, h5Id};
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   @Override
