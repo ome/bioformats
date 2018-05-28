@@ -136,7 +136,7 @@ public class BDVReader extends FormatReader {
   
   /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
   @Override
-  public String[] getUsedFiles() {
+  public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return new String[] {currentId, h5Id};
   }
