@@ -431,10 +431,12 @@ public class BDVReader extends FormatReader {
           throw new FormatException("Pixel type not understood. Only 8, 16 and 32 bit images supported");
         }
 
-        seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
-        seriesPlate.add(coord.plate);
-        seriesWell.add(coord.well);
-        seriesSite.add(coord.site);
+        if (getResolution() == 0) {
+          seriesNames.add(String.format("P_%s, W_%s_%s", coord.plate, coord.well, coord.site));
+          seriesPlate.add(coord.plate);
+          seriesWell.add(coord.well);
+          seriesSite.add(coord.site);
+        }
         H5PathsToImageData.add(coord.pathToImageData);
         seriesCount++;
       }
