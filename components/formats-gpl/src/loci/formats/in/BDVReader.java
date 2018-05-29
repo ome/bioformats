@@ -305,13 +305,18 @@ public class BDVReader extends FormatReader {
     int channel = zct[1];
     int time = zct[2];
     int width = getSizeX();
-
-    int elementSize = jhdf.getElementSize(H5PathsToImageData.get(series));
+    
+    int imagePathIndex = series;
+    if (!hasFlattenedResolutions()) {
+      imagePathIndex *= getResolutionCount();
+      imagePathIndex += getResolution();
+    }
+    int elementSize = jhdf.getElementSize(H5PathsToImageData.get(imagePathIndex));
 
     int[] arrayOrigin = new int[] {zslice, y, 0};
     int[] arrayDimension = new int[] {1, height, width};
 
-    MDIntArray test = jhdf.readIntBlockArray(H5PathsToImageData.get(series),
+    MDIntArray test = jhdf.readIntBlockArray(H5PathsToImageData.get(imagePathIndex),
       arrayOrigin, arrayDimension);
 
     if (elementSize == 1) {
