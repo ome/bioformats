@@ -123,6 +123,8 @@ public class BDVReader extends FormatReader {
       throw new FormatException("Malformed XML", e);
     }
     store.setXMLAnnotationValue(bdvxml, 0);
+    String xml_id = MetadataTools.createLSID("XMLAnnotation", 0); 
+    store.setXMLAnnotationID(xml_id, 0);
     initializeJHDFService(h5Id);
     parseStructure();
 
