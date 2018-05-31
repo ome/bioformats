@@ -73,6 +73,9 @@ if isempty(ip.Results.metadata)
         ip.Results.dimensionOrder);
 else
     metadata = ip.Results.metadata;
+    if ~ismember('dimensionOrder', ip.UsingDefaults)
+        warning('''dimensionOrders'' is ignored if passing ''metadata''');
+    end
 end
 
 % Create ImageWriter
