@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import loci.common.CBZip2InputStream;
 import loci.common.DataTools;
 import loci.common.Location;
@@ -364,7 +366,14 @@ public class KLBReader extends FormatReader {
     for (int i=0; i < blocksPerPlane; i++) {
       blockOffsets[i] = readUInt64();
     }
-    pixelsFilePointer = in.getFilePointer();
+  }
+  
+  /* @see loci.formats.IFormatReader#getUsedFiles(boolean) */
+  @Override
+  public String[] getUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    String [] xProjections = (String[])ArrayUtils.addAll(xyProjections, xzProjections);
+    return (String[])ArrayUtils.addAll(xProjections, yzProjections);
   }
   
   // Needed as offsets array can only be int max and full image may be greater
