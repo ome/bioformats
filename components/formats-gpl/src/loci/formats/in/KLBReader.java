@@ -372,8 +372,17 @@ public class KLBReader extends FormatReader {
   @Override
   public String[] getUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    String [] xProjections = (String[])ArrayUtils.addAll(xyProjections, xzProjections);
-    return (String[])ArrayUtils.addAll(xProjections, yzProjections);
+    String [] fileList = new String[getSizeT() * getSizeC() * 3];
+    int index = 0;
+    for (int timepoint = 0; timepoint < getSizeT(); timepoint++) {
+      for (int channel = 0; channel < getSizeC(); channel++) {
+        fileList[index] = xyProjections[timepoint][channel];
+        fileList[index + 1] = xzProjections[timepoint][channel];
+        fileList[index + 2] = yzProjections[timepoint][channel];
+        index += 3;
+      }
+    }
+    return noPixels ? ArrayUtils.EMPTY_STRING_ARRAY : fileList;
   }
   
   // Needed as offsets array can only be int max and full image may be greater
