@@ -25,11 +25,14 @@
 package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import loci.common.CBZip2InputStream;
+import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -84,6 +87,9 @@ public class KLBReader extends FormatReader {
   private long offsetFilePointer;
   private int headerVersion;
   
+  private String[][] xyProjections;
+  private String[][] xzProjections;
+  private String[][] yzProjections;
   // -- Constructor --
 
   /**
@@ -104,6 +110,22 @@ public class KLBReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    in.close();
+    String fileName;
+    int[] currentCoords = getZCTCoords(no);
+    int currentSeries = getSeries();
+
+    if (currentSeries == 0) {
+      fileName = xyProjections[currentCoords[2]][currentCoords[1]];
+    }
+    else if (currentSeries == 1) {
+      fileName = xzProjections[currentCoords[2]][currentCoords[1]];
+    }
+    else {
+      fileName = yzProjections[currentCoords[2]][currentCoords[1]];
+    }
+    in = new RandomAccessInputStream(fileName);
+    
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     
     //As number of offsets can be greater than INT_MAX only storing enough required for given plane
@@ -216,24 +238,100 @@ public class KLBReader extends FormatReader {
     super.initFile(id);
     store = makeFilterMetadata();
     in = new RandomAccessInputStream(id);
-    readHeader();
+
+    core.add(new CoreMetadata(this, 0));
+    core.add(new CoreMetadata(this, 0));
+
+    int sizeT = 0;
+    int sizeC = 1;
+
+    String parent = new Location(id).getAbsoluteFile().getParent();
+    File folder = new File(parent);
+    File[] listOfFiles = folder.listFiles();
+    String basePrefix = id.substring(0, id.indexOf("_CHN"));
+    for (int i=0; i < listOfFiles.length; i++) {
+      String fileName = listOfFiles[i].getName();
+      int channelNum = DataTools.parseInteger(fileName.substring(fileName.indexOf("_CHN")+4, fileName.indexOf('.')));
+      if (channelNum == sizeC) {
+        sizeC = channelNum + 1;
+      }
+    }
+
+    String topLevelFolder = new Location(parent).getAbsoluteFile().getParent();
+    folder = new File(topLevelFolder);
+    listOfFiles = folder.listFiles();
+    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.indexOf('.'));
+
+    for (int i=0; i < listOfFiles.length; i++) {
+      String fileName = listOfFiles[i].getName();
+      if (fileName.startsWith(basePrefix)) {
+        sizeT++;
+      }
+    }
+
+    xyProjections = new String[sizeT][sizeC];
+    xzProjections = new String[sizeT][sizeC];
+    yzProjections = new String[sizeT][sizeC];
+
+    basePrefix = parent.substring(parent.lastIndexOf(File.separator)+1, parent.indexOf('.'));
+    for (int i=0; i < listOfFiles.length; i++) {
+      String fileName = listOfFiles[i].getName();
+      if (fileName.startsWith(basePrefix)) {
+        int currentTimepoint = DataTools.parseInteger(fileName.substring(fileName.indexOf(".TM")+3, fileName.indexOf("_timeFused")));
+        File[] innerFileList = listOfFiles[i].listFiles();
+        for (int j=0; j < innerFileList.length; j++) {
+          String innerFileName = innerFileList[j].getName();
+          if (innerFileName.contains("Projection")) {
+            int currentChannelNum = DataTools.parseInteger(innerFileName.substring(innerFileName.indexOf("_CHN")+4, innerFileName.indexOf('.')));
+            if (innerFileName.indexOf("fusedStack_") >= 0) {
+              String projection = innerFileName.substring(innerFileName.indexOf("fusedStack_")+11, innerFileName.indexOf("Projection"));
+              if (projection.equals("xy")) {
+                xyProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  in.close();
+                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                  readHeader(core.get(0));
+                }
+              }
+              else if (projection.equals("xz")) {
+                xzProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  in.close();
+                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                  readHeader(core.get(1));
+                }
+              }
+              else if (projection.equals("yz")) {
+                yzProjections[currentTimepoint][currentChannelNum] = innerFileList[j].getAbsolutePath();
+                if (currentTimepoint == 0 && currentChannelNum == 0) {
+                  in.close();
+                  in = new RandomAccessInputStream(innerFileList[j].getAbsolutePath());
+                  readHeader(core.get(2));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
-  private void readHeader() throws IOException, FormatException {
+  private void readHeader(CoreMetadata coreMeta) throws IOException, FormatException {
     headerVersion = in.readUnsignedByte();
-    CoreMetadata ms0 = core.get(0);
-    ms0.littleEndian = true;
+    coreMeta.littleEndian = true;
     for (int i=0; i < KLB_DATA_DIMS; i++) {
       dims_xyzct[i] = readUInt32();
     }
-    ms0.dimensionOrder = "XYZCT";
+    coreMeta.dimensionOrder = "XYZCT";
 
-    ms0.sizeX = dims_xyzct[0];
-    ms0.sizeY = dims_xyzct[1];
-    ms0.sizeZ = dims_xyzct[2];
-    ms0.sizeC = dims_xyzct[3];
-    ms0.sizeT = dims_xyzct[4];
-    ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    coreMeta.sizeX = dims_xyzct[0];
+    coreMeta.sizeY = dims_xyzct[1];
+    coreMeta.sizeZ = dims_xyzct[2];
+    //coreMeta.sizeC = dims_xyzct[3];
+    //coreMeta.sizeT = dims_xyzct[4];
+    coreMeta.sizeT = xyProjections.length;
+    coreMeta.sizeC = xyProjections[0].length;
+    coreMeta.imageCount = coreMeta.sizeZ * coreMeta.sizeC * coreMeta.sizeT;
 
     PositiveFloat[] dims_pixelSize = new PositiveFloat[KLB_DATA_DIMS];
     for (int i=0; i < KLB_DATA_DIMS; i++) {
@@ -244,7 +342,7 @@ public class KLBReader extends FormatReader {
     store.setPixelsPhysicalSizeZ(FormatTools.createLength(dims_pixelSize[2], UNITS.MICROMETER), 0);
 
     int dataType = in.readUnsignedByte();
-    convertPixelType(ms0, dataType);
+    convertPixelType(coreMeta, dataType);
 
     compressionType = in.readUnsignedByte();
     byte[] user_metadata = new byte[KLB_METADATA_SIZE];
@@ -253,7 +351,8 @@ public class KLBReader extends FormatReader {
     for (int i=0; i < KLB_DATA_DIMS; i++) {
       dims_blockSize[i] = readUInt32();
     }
-    blocksPerPlane = (int) (Math.ceil((float)getSizeX()/dims_blockSize[0]) * Math.ceil((float)getSizeY()/dims_blockSize[1]));
+    blocksPerPlane = (int) (Math.ceil((float)coreMeta.sizeX/dims_blockSize[0]) * Math.ceil((float)coreMeta.sizeY/dims_blockSize[1]));
+    numBlocks = 1;
     for (int i=0; i < KLB_DATA_DIMS; i++) {
       numBlocks *= Math.ceil((float)(dims_xyzct[i]) / (float)(dims_blockSize[i]));
     }
@@ -265,10 +364,38 @@ public class KLBReader extends FormatReader {
     for (int i=0; i < blocksPerPlane; i++) {
       blockOffsets[i] = readUInt64();
     }
+    pixelsFilePointer = in.getFilePointer();
   }
   
   // Needed as offsets array can only be int max and full image may be greater
   private void reCalculateBlockOffsets(int no) throws IOException, FormatException {
+    
+    headerVersion = in.readUnsignedByte();
+    for (int i=0; i < KLB_DATA_DIMS; i++) {
+      dims_xyzct[i] = readUInt32();
+    }
+
+    PositiveFloat[] dims_pixelSize = new PositiveFloat[KLB_DATA_DIMS];
+    for (int i=0; i < KLB_DATA_DIMS; i++) {
+      dims_pixelSize[i] = readFloat32();
+    }
+    int dataType = in.readUnsignedByte();
+    compressionType = in.readUnsignedByte();
+    byte[] user_metadata = new byte[KLB_METADATA_SIZE];
+    in.read(user_metadata);
+
+    for (int i=0; i < KLB_DATA_DIMS; i++) {
+      dims_blockSize[i] = readUInt32();
+    }
+    blocksPerPlane = (int) (Math.ceil((float)getSizeX()/dims_blockSize[0]) * Math.ceil((float)getSizeY()/dims_blockSize[1]));
+    
+    numBlocks = 1;
+    for (int i=0; i < KLB_DATA_DIMS; i++) {
+      numBlocks *= Math.ceil((float)(dims_xyzct[i]) / (float)(dims_blockSize[i]));
+    }
+
+    headerSize = (long) ((KLB_DATA_DIMS * 12) + 2 + (numBlocks * 8) + KLB_METADATA_SIZE + 1);
+    
     String order = core.get(getSeries()).dimensionOrder;
     int[] ztc = FormatTools.getZCTCoords(order, getSizeZ(), getSizeC(), getSizeT(), getImageCount(), no);
 
@@ -279,6 +406,7 @@ public class KLBReader extends FormatReader {
     long filePoointer = in.getFilePointer();
 
     // Seek to start of offsets and read required offsets
+    blockOffsets = new long[blocksPerPlane];
     in.seek(offsetFilePointer + (requiredBlockNum * blocksPerPlane * 8));
     for (int i=0; i < blocksPerPlane; i++) {
       blockOffsets[i] = readUInt64();
