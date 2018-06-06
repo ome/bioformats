@@ -1045,6 +1045,26 @@ public class Memoizer extends ReaderWrapper {
     return memo;
   }
 
+  /**
+   * Convenience method to generate (or regenerate) the memo file for a given file.
+   * Uses the cache directory and timing settings passed via Memoizer's constructor.
+   *
+   * @param file the file for which to generate a memo file
+   * @return true if a memo file was saved
+   */
+  public boolean generateMemo(String file) throws IOException {
+    try {
+      setId(file);
+    }
+    catch (FormatException e) {
+      LOGGER.warn("Could not initialize " + file, e);
+    }
+    finally {
+      close();
+    }
+    return isSavedToMemo();
+  }
+
   public static void main(String[] args) throws Exception {
     if (args.length == 0 || args.length > 2) {
       System.err.println("Usage: memoizer file [tmpdir]");
