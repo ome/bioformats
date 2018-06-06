@@ -2529,13 +2529,10 @@ public class FormatReaderTest {
       LOGGER.info("No cache directory specified");
       return;
     }
-    String file = reader.getCurrentFile();
     try {
       Memoizer memo = new Memoizer(0, new File(cacheDir));
-      memo.setId(reader.getCurrentFile());
-      memo.close();
+      assert memo.generateMemo(reader.getCurrentFile());
       File memoFile = memo.getMemoFile(reader.getCurrentFile());
-      assert memo.isSavedToMemo();
       LOGGER.info("Saved memo file to {}", memoFile);
     }
     catch (Throwable t) {
