@@ -132,7 +132,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
-      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
@@ -266,7 +265,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
       </classpath>
-      <classpath refid="test.classpath"/>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
       <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>

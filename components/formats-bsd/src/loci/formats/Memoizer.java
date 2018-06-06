@@ -608,6 +608,19 @@ public class Memoizer extends ReaderWrapper {
     this.versionChecking = version;
   }
 
+  /**
+   * Set whether a memo file should be saved if a valid file is not present.
+   *
+   * If {@code false} (default), then a memo file will be saved.  This may
+   * cause an existing memo file to be overwritten.
+   *
+   * If {@code true}, then a memo file will not be saved.  This effectively
+   * makes the current Memoizer read-only.
+   */
+  public void setReadOnly(boolean skip) {
+    this.skipSave = skip;
+  }
+
   protected void cleanup() {
     if (ser != null) {
       ser.close();
@@ -716,7 +729,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected boolean deleteQuietly(File file) {
     try {
-      if (file != null && file.exists()) {
+      if (file != null && file.exists() && !skipSave) {
         if (file.delete()) {
           LOGGER.trace("deleted {}", file);
           return true;

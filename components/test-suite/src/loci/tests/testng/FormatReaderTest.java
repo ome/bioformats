@@ -2438,7 +2438,11 @@ public class FormatReaderTest {
           result(testName, false, "Cached memo directory does not exist");
         }
 
-        File expectedMemo = new File(cacheDir + reader.getCurrentFile());
+        File currentFile = new File(reader.getCurrentFile());
+        String relativeName = "." + currentFile.getName() + ".bfmemo";
+        File expectedMemo = new File(cacheDir, currentFile.getParent());
+        expectedMemo = new File(expectedMemo, relativeName);
+
         if (expectedMemo.exists()) {
           memo = new Memoizer(0, dir);
           memo.setId(reader.getCurrentFile());
