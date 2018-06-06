@@ -2445,6 +2445,8 @@ public class FormatReaderTest {
 
         if (expectedMemo.exists()) {
           memo = new Memoizer(0, dir);
+          // do not allow an existing memo file to be overwritten
+          memo.setReadOnly(true);
           memo.setId(reader.getCurrentFile());
           if (!memo.isLoadedFromMemo()) {
             result(testName, false, "Existing memo file could not be loaded");
