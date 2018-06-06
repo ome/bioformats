@@ -256,6 +256,12 @@ Type "ant -p" for a list of targets.
   <target name="test-memoizer" depends="compile"
     description="run automated tests in group 'memoizer'">
 
+    <condition property="testng.threadCount" value="1">
+      <not>
+        <isset property="testng.threadCount"/>
+      </not>
+    </condition>
+
     <testng groups="memoizer" testname="Cache reading tests"
       listeners="loci.tests.testng.OrderingListener"
       suitename="Bio-Formats software test suite"
@@ -264,6 +270,7 @@ Type "ant -p" for a list of targets.
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
